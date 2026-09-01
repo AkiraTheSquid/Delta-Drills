@@ -3,10 +3,10 @@ kc: python.values-and-names
 title: Values and names — what = really does
 supporting: []
 new_syntax: [builtin.print, builtin.type, syntax.assign, syntax.tuple]
-faded: [568, 569]
+faded: [568, 569, 718, 719, 720, 721, 722, 723, 724, 725]
 guided: []
-independent: [570, 571]
-integrated: [572, 573]
+independent: [570, 571, 708, 709, 710, 711, 726, 727, 728, 729]
+integrated: [572, 573, 712, 730]
 ---
 
 ## Concept
@@ -65,6 +65,27 @@ is how a piece of code gives more than one answer at once.
 ```python
 pair = (1, 2)
 print(pair)
+```
+
+Every value has a **kind** — a whole number, a decimal, a piece of text, a
+tuple. `type(...)` reports it, and the answer is about the value, not about the
+name stuck to it.
+
+```python
+count = 5
+label = "five"
+print(type(count))
+print(type(label))
+```
+
+Re-attaching a name to a different value can change the kind as well as the
+value, because the kind was never the name's to begin with.
+
+```python
+n = 5
+print(type(n))
+n = (5, 5)
+print(type(n))
 ```
 
 ## Watch out
@@ -141,6 +162,156 @@ def solve(x, y):
     return (first, second)
 ```
 
+### q718
+Name the first result, then build the second out of that name.
+
+```python starter
+def solve(price, quantity, fee):
+    """Name the first result, then read that name to build the second."""
+    subtotal = price * quantity
+    total = _____ + fee
+    return total
+```
+
+```python solution
+def solve(price, quantity, fee):
+    """Name the first result, then read that name to build the second."""
+    subtotal = price * quantity
+    total = subtotal + fee
+    return total
+```
+
+### q719
+Build the new value out of the name's own old value.
+
+```python starter
+def solve(n):
+    """The right-hand side runs first, reading the OLD value."""
+    n = _____ + 5
+    return n
+```
+
+```python solution
+def solve(n):
+    """The right-hand side runs first, reading the OLD value."""
+    n = n + 5
+    return n
+```
+
+### q720
+Put both inputs and their sum into one tuple.
+
+```python starter
+def solve(first, second):
+    """Three values, one tuple."""
+    s = first + second
+    p = (_____, _____, s)
+    return p
+```
+
+```python solution
+def solve(first, second):
+    """Three values, one tuple."""
+    s = first + second
+    p = (first, second, s)
+    return p
+```
+
+### q721
+Ask what KIND of value arrived, and hand the answer back.
+
+```python starter
+def solve(value):
+    """type(...) reports the kind of the VALUE."""
+    kind = _____(value)
+    return kind
+```
+
+```python solution
+def solve(value):
+    """type(...) reports the kind of the VALUE."""
+    kind = type(value)
+    return kind
+```
+
+### q722
+Stick a second label on the same value, then read both.
+
+```python starter
+def solve(base):
+    """Two labels stuck to one value."""
+    left = base
+    right = _____
+    return (left, right, left + right)
+```
+
+```python solution
+def solve(base):
+    """Two labels stuck to one value."""
+    left = base
+    right = base
+    return (left, right, left + right)
+```
+
+### q723
+Re-attach the name to its own square.
+
+```python starter
+def solve(a):
+    """Re-attach the name to its own square."""
+    x = a
+    x = _____ * _____
+    return x
+```
+
+```python solution
+def solve(a):
+    """Re-attach the name to its own square."""
+    x = a
+    x = x * x
+    return x
+```
+
+### q724
+Build a new string, name it, and report its kind.
+
+```python starter
+def solve(word):
+    """A built string is a value like any other: name it, ask its kind."""
+    greeting = word + _____
+    kind = type(greeting)
+    return (greeting, kind)
+```
+
+```python solution
+def solve(word):
+    """A built string is a value like any other: name it, ask its kind."""
+    greeting = word + "!"
+    kind = type(greeting)
+    return (greeting, kind)
+```
+
+### q725
+Two named results, handed back as one pair.
+
+```python starter
+def solve(a, b):
+    """Two named results, packed as one pair."""
+    diff = a - b
+    prod = _____ * _____
+    both = (diff, prod)
+    return both
+```
+
+```python solution
+def solve(a, b):
+    """Two named results, packed as one pair."""
+    diff = a - b
+    prod = a * b
+    both = (diff, prod)
+    return both
+```
+
 ## Solo practice
 
 ### q570
@@ -164,6 +335,30 @@ print("reused, not recomputed:", doubled)
 ### q571
 Add 3 to the same name twice, and report where it ends up.
 
+### q708
+Name each argument, then report what kind of value one of them is.
+
+### q709
+Re-attach one name twice and report the kind before and after.
+
+### q710
+Two names, one value: move one label and show the other did not follow.
+
+### q711
+Rotate three values by one place, keeping the one that would be overwritten.
+
+### q726
+A running total: name the first sum, read it to build the grand total.
+
+### q727
+A quoted word is a value too: pair a text label with a computed number.
+
+### q728
+Powers by reuse: square the square, never multiply four times.
+
+### q729
+Re-attach a name to a tuple built from its own old value, and report the new kind.
+
 ## Integrated practice
 
 ### q572
@@ -171,6 +366,13 @@ Three named results — a sum, a difference, and a swapped pair — returned tog
 
 ### q573
 A chain: each step is built from the name the step before it wrote.
+
+### q712
+Name a result, build a second value out of it, then re-attach the first name —
+and show that the value built earlier kept what it was given.
+
+### q730
+Swap by naming, join by reading, and report the kind + made — for numbers and for text.
 
 ## Misconceptions
 

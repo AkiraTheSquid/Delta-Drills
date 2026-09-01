@@ -107,6 +107,12 @@ def check_public_api():
     assert "Array.isArray(saved.draft.cells)" in timer, (
         "saved-session parser drops multi-cell notebook draft on reload"
     )
+    assert "/api/practice/question-context?question_id=" in timer, (
+        "legacy paused questions no longer recover server-only concept/rung context"
+    )
+    assert "await _recoverQuestionContext(restored)" in timer, (
+        "saved-question restore no longer waits for context recovery before render"
+    )
     assert "holdClock" in timer and "releaseClock" in timer
     assert 'holdClock("problem-feedback-note")' in events
     assert 'releaseClock("problem-feedback-note")' in events
@@ -662,61 +668,80 @@ def check_every_placement_question_gets_the_same_clock():
 
 
 def check_a_taken_placement_leaves_the_learner_home():
-    """The placement card is a one-off offer, and the account menu is the way back.
+    """The placement lives on its own page, and the account menu is the way to it.
 
     Seth, 2026-08-31: "don't put it on the learner home tab ... remove it from
-    there. It should show up there only whenever the student hasn't taken the
-    diagnostic before" — and, in the same breath, "keep the diagnostic in the
-    drop-down ... that way you can always retake the placement diagnostic".
+    there" — and, in the same breath, "keep the diagnostic in the drop-down ...
+    that way you can always retake the placement diagnostic". Then 2026-09-01:
+    "we can probably just keep the interface for the diagnostic ... separate,
+    and then it only gets displayed whenever you click on the drop-down one and
+    you go to it specifically".
 
-    Those two halves only hold together as a pair, which is why they are checked
-    as one. Hide the card without the menu row and a learner who wants a retake
-    has NO route to one. Ship the row without the hide and the daily screen still
-    carries a card for a test already sat.
+    The second ask subsumes the first and is enforced structurally instead of by
+    a visibility class: the card is not on the Learner Home in ANY state, so
+    there is no longer a state in which it can come back. What still has to hold
+    as a pair is the removal and the ROUTE — a card nothing points at is a
+    feature that has been deleted, whatever the markup says.
 
-    🔴 THE HIDE IS CONDITIONAL ON A COMPLETED PLACEMENT, and the condition is the
-    check. `!!status?.completed_at && !status.active` is what keeps the card on
-    screen for the two learners who need it — the one who has never taken it, and
-    the one who is in the middle of one (#diagnostic-practice-btn, the only way
-    to load the next probe, lives inside this card). An unknown status is not a
-    taken one either: render(null) is a signed-out visitor, not a graduate.
+    🔴 THE OLD RULE IS ASSERTED GONE, not just replaced. `.placement-taken` hid
+    the card on `!!status?.completed_at && !status.active` and `forceShow` lifted
+    that for one visit. Both would now be actively wrong: they would hide, on
+    arrival, the only thing on a page the learner navigated to on purpose.
     """
     page = read(os.path.join(HERE, "diagnostic-page.js"))
     css = read(os.path.join(SHARED, "styles", "practice", "diagnostic.css"))
     menu_js = read(os.path.join(SHARED, "account-menu.js"))
     index = read(os.path.join(SHARED, "index.html"))
 
-    assert "#page-practice.placement-taken #diagnostic-overview" in css, (
-        "the rule that takes a finished placement off the Learner Home is gone"
+    home = index.split('id="page-practice"')[1].split("\n  </main>")[0]
+    assert 'id="diagnostic-overview"' not in home, (
+        "the placement card is back on the Learner Home. Seth, 2026-09-01: it "
+        "is its own page and shows only when you go to it specifically"
     )
-    assert "placement-taken" in page, (
-        "diagnostic-page.js is no longer the writer of .placement-taken — the "
-        "CSS rule is inert and the card is back on the daily screen"
+    # 🔴 THE PAGE ALWAYS SHOWS ITS CARD. The visibility machinery is gone, and a
+    # regrown copy of it would hide the page's only content on arrival.
+    # Matched on the RULE and on the WRITE, not on the word: both files explain
+    # at length what .placement-taken was and why it went, and an assertion that
+    # a name is gone must not be tripped by the note explaining it.
+    assert ".placement-taken " not in css, (
+        "the .placement-taken hide is back in the stylesheet. It belonged to a "
+        "card parked on the daily screen; on a page reached deliberately it is "
+        "a dead end"
     )
-    assert 'status?.completed_at && !status.active' in page, (
-        "the placement card is hidden on something other than a COMPLETED, "
-        "not-running placement. A learner mid-test loses the only button that "
-        "loads the next probe; a signed-out visitor loses the whole pitch"
+    assert 'toggle("placement-taken"' not in page, (
+        "diagnostic-page.js is writing .placement-taken again — the card it "
+        "hides is the only content of the page it is on"
     )
-    # The way back. Both ends: the row exists, and it does more than route —
-    # a bare [data-goto-tab] lands on a page the card is not on.
+    # The ASSIGNMENT, for the same reason: the file explains what forceShow was.
+    assert "forceShow =" not in page, (
+        "the reveal override is back. It existed only to lift .placement-taken "
+        "for one visit, and there is nothing left to lift"
+    )
+    # The route. The row exists, it points at the page, and the page has a way
+    # back out — a page with no tab in the strip that a learner can be dropped
+    # on by the welcome fork MUST have a door.
     assert "data-placement-retake" in index, (
-        "the account menu lost the placement row, and the card is hidden — "
-        "there is now no route to a retake at all"
+        "the account menu lost the placement row — with no tab in the strip, "
+        "that row is the only standing route to the placement page"
     )
-    assert "DiagnosticPage?.reveal" in menu_js, (
-        "account-menu.js stopped calling reveal(), so the placement row routes "
-        "to a Learner Home the card is hidden on"
+    assert 'data-goto-tab="placement"' in index, (
+        "nothing routes to #page-placement any more; the page is reachable "
+        "only by typing /diagnostic"
     )
-    assert "reveal" in page.split("return {")[-1], (
-        "DiagnosticPage stopped exporting reveal() — account-menu.js's optional "
-        "call would silently do nothing"
+    assert 'id="placement-skip-btn"' in index, (
+        "the placement page lost its way out. The welcome fork's right arm "
+        "lands a first-time learner here, and a learner who does not want the "
+        "test would be stranded on it"
     )
-    # The override is for the visit, not for the session.
-    leave = page.split("const leave = () =>")[1].split("};")[0]
-    assert "forceShow = false" in leave, (
-        "leaving the Learner Home no longer clears the reveal override, so one "
-        "click on the menu row undoes the rule for the rest of the session"
+    # account-menu.js may no longer call reveal() — the export is gone — but it
+    # must still do the part a bare jump cannot: point at the button that acts.
+    assert "placement-cta-flash" in menu_js, (
+        "the placement row stopped flashing the button it routes to, so the "
+        "row is a bare page switch onto a card with two controls on it"
+    )
+    assert "reveal" not in page.split("return {")[-1], (
+        "DiagnosticPage is exporting reveal() again — there is no visibility "
+        "override left for it to set, so it can only mislead its callers"
     )
 
 

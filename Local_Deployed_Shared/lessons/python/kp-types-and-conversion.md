@@ -2,11 +2,11 @@
 kc: python.types-and-conversion
 title: The everyday types, and converting between them
 supporting: [python.values-and-names]
-new_syntax: [builtin.bool, builtin.float, builtin.int, builtin.round, builtin.str, python.type-name]
-faded: [574, 575]
+new_syntax: [builtin.bool, builtin.float, builtin.int, builtin.round, builtin.str, python.type-name, syntax.equality]
+faded: [574, 575, 731, 732, 733, 734, 735, 736, 737, 738]
 guided: []
-independent: [576, 577]
-integrated: [578, 579]
+independent: [576, 577, 713, 714, 715, 716, 739, 740, 741, 742]
+integrated: [578, 579, 717, 743]
 ---
 
 ## Concept
@@ -43,6 +43,22 @@ print("4" + "2")
 That is not a quirk — it is the type deciding the meaning. Numbers add; text
 joins end to end.
 
+Asking whether they are **equal** gives the same answer for the same reason.
+`==` compares values, and a value made of characters is never equal to a value
+made of digits — no matter how alike they look on the page:
+
+```python
+print("42" == 42)
+print(42 == 42)
+```
+
+Comparing does not convert. If you want the question answered about the
+*number*, you have to do the converting yourself first:
+
+```python
+print(int("42") == 42)
+```
+
 To move between the two you **convert**, by calling the type's own name as a
 function. Each conversion produces a NEW value and leaves the original alone:
 
@@ -70,6 +86,25 @@ part **away**, while `round(...)` goes to the nearest whole number.
 print(int(3.9))
 print(round(3.9))
 print(int(-2.7), round(-2.7))
+```
+
+`bool(...)` is a conversion too, and the one that surprises people. It asks a
+single question of a value — *is there anything here?* — and almost everything
+answers yes. Zero answers no, and so does empty text:
+
+```python
+print(bool(7), bool(0))
+print(bool("hi"), bool(""))
+print(bool(0.0), bool(-3))
+```
+
+The trap is the text `"0"`. It is one character long, so there **is** something
+there and it converts to `True`. The zero only shows up once the digits have
+been read as a number:
+
+```python
+print(bool("0"))
+print(bool(int("0")))
 ```
 
 ## Watch out
@@ -139,6 +174,132 @@ def solve(digits):
     return int(digits) + 8
 ```
 
+### q731
+Convert first — then * means arithmetic, not repetition.
+
+```python starter
+def solve(text):
+    """Convert first — then * means arithmetic."""
+    return _____(text) * 2
+```
+
+```python solution
+def solve(text):
+    """Convert first — then * means arithmetic."""
+    return float(text) * 2
+```
+
+### q732
+A number cannot be glued onto text until it IS text.
+
+```python starter
+def solve(count):
+    """str() makes a number gluable."""
+    label = _____(count)
+    return label + " items"
+```
+
+```python solution
+def solve(count):
+    """str() makes a number gluable."""
+    label = str(count)
+    return label + " items"
+```
+
+### q733
+Its truth, and the name of its kind.
+
+```python starter
+def solve(value):
+    """Its truth, and the name of its kind."""
+    return (_____(value), type(value).__name__)
+```
+
+```python solution
+def solve(value):
+    """Its truth, and the name of its kind."""
+    return (bool(value), type(value).__name__)
+```
+
+### q734
+To the nearest whole number — not truncated.
+
+```python starter
+def solve(x):
+    """round() goes to the nearest whole number."""
+    return _____(x)
+```
+
+```python solution
+def solve(x):
+    """round() goes to the nearest whole number."""
+    return round(x)
+```
+
+### q735
+Put both values on the same side of the type line, then compare.
+
+```python starter
+def solve(text, number):
+    """Convert to the SAME type, then compare."""
+    return text == _____(number)
+```
+
+```python solution
+def solve(text, number):
+    """Convert to the SAME type, then compare."""
+    return text == str(number)
+```
+
+### q736
+Truncate both — drop the fraction, do not round — then multiply.
+
+```python starter
+def solve(x, y):
+    """int() drops the fraction; it does not round."""
+    return _____(x) * _____(y)
+```
+
+```python solution
+def solve(x, y):
+    """int() drops the fraction; it does not round."""
+    return int(x) * int(y)
+```
+
+### q737
+Text to number to text: the kind changes twice, the digits never do.
+
+```python starter
+def solve(digits):
+    """Text to number to text: the kind changes, the digits do not."""
+    n = _____(digits)
+    back = _____(n)
+    return (n, back)
+```
+
+```python solution
+def solve(digits):
+    """Text to number to text: the kind changes, the digits do not."""
+    n = int(digits)
+    back = str(n)
+    return (n, back)
+```
+
+### q738
+The truth of the NUMBER, not of the text holding it.
+
+```python starter
+def solve(text):
+    """bool of the NUMBER, not of the text holding it."""
+    return bool(_____(text))
+```
+
+```python solution
+def solve(text):
+    """bool of the NUMBER, not of the text holding it."""
+    return bool(int(text))
+```
+
 ## Solo practice
 
 ### q576
@@ -158,6 +319,30 @@ print(str(int(text)), type(str(int(text))).__name__)
 ### q577
 Truncating and rounding, side by side, on the same number.
 
+### q713
+Ask two values whether they count as a yes.
+
+### q714
+Round a number that arrives as text — which it cannot be until it is converted.
+
+### q715
+The same digits compared as text and as a number.
+
+### q716
+Ask before converting, and ask after, on a piece of text holding `0`.
+
+### q739
+Convert two digit strings, add as numbers, and carry the sum back as text too.
+
+### q740
+One float, three readings: truncated, rounded, and whether they agree.
+
+### q741
+Two values can share a truth without being equal.
+
+### q742
+Each conversion has a kind of its own — name both.
+
 ## Integrated practice
 
 ### q578
@@ -165,6 +350,13 @@ Name the type, show the text, and decide whether the value counts as a number.
 
 ### q579
 The same `+` doing both of its jobs, in one function.
+
+### q717
+Text in — round it, name the type of what you get, say whether it counts as a
+yes, and whether writing it back out spells what you started with.
+
+### q743
+Parse a quantity, rebuild it into a label, and report its truth and the label's kind.
 
 ## Misconceptions
 

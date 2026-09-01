@@ -3820,7 +3820,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-faded"
  },
@@ -3837,7 +3838,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-faded"
  },
@@ -3854,7 +3856,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-independent"
  },
@@ -3871,7 +3874,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-independent"
  },
@@ -3888,7 +3892,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-integrated"
  },
@@ -3905,7 +3910,8 @@
    "builtin.int",
    "builtin.round",
    "builtin.str",
-   "python.type-name"
+   "python.type-name",
+   "syntax.equality"
   ],
   "source": "kp-integrated"
  },
@@ -6050,6 +6056,1464 @@
    "numpy.ndarray-model"
   ],
   "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "708": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "709": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "710": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "711": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "712": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "713": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "714": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "715": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "716": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "717": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-integrated"
+ },
+ "718": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "719": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "720": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "721": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "722": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "723": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "724": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "725": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "726": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "727": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "728": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "729": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "730": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "731": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "732": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "733": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "734": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "735": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "736": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "737": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "738": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "739": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "740": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "741": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "742": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "743": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-integrated"
+ },
+ "744": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "745": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "746": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "747": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "748": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "749": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "750": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "751": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-faded"
+ },
+ "752": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "753": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "754": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "755": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "756": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "757": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "758": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "759": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "760": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "761": {
+  "target_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names",
+   "python.types-and-conversion"
+  ],
+  "new_syntax": [
+   "builtin.len",
+   "builtin.list",
+   "builtin.tuple",
+   "syntax.list-literal",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
+ },
+ "762": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "763": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "764": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "765": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "766": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "767": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "768": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "769": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "770": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "771": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "772": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "773": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "774": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "775": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "776": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "777": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "778": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
+ },
+ "779": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
+ },
+ "780": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "781": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "782": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "783": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "784": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "785": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "786": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "787": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "788": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "789": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "790": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "791": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "792": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "793": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "794": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "795": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "796": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-integrated"
+ },
+ "797": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
   "source": "kp-integrated"
  }
 }

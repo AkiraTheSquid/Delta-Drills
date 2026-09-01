@@ -1,34 +1,51 @@
-/* THE PLACEMENT TEST, on the Learner Home.
+/* THE PLACEMENT TEST, on #page-placement.
 
    The route, the ids and the backend endpoints all still say `diagnostic` —
    only the learner-facing words changed, and then where they are drawn.
 
-   🔴 THERE IS NO PLACEMENT PAGE ANY MORE (Seth, 2026-08-24: "the diagnostic and
-   practice should be combined into one tab, with it being called Learner
-   Home"). #page-diagnostic is deleted; the overview card, the results card and
-   #diagnostic-workspace-host all live inside #page-practice now, and this file
-   drives them there.
+   🔴 IT HAS ITS OWN PAGE AGAIN (Seth, 2026-09-01: "we can probably just keep
+   the interface for the diagnostic ... separate, and then it only gets
+   displayed whenever you click on the drop-down one and you go to it
+   specifically"). It was merged into the Learner Home on 2026-08-24 and that
+   merge is what is undone here. The page is #page-placement — NOT the retired
+   #page-diagnostic id, which nothing may look for again.
 
-   WHAT THAT MADE UNNECESSARY, and what it did not:
+   WHAT IS ON WHICH PAGE, because that split is the whole design:
 
-     GONE — the Practice tab lock. Two tabs sharing one editor and one
-     `PracticeAPI.currentQuestion` meant opening Practice mid-test showed the
-     PROBE under the Practice tab's name; the fix was to disable the tab for the
-     length of a placement and redirect every route to it. One tab cannot be
-     locked against itself, so `setPracticeLock` and app.js's matching redirect
-     both went (see the note where the lock used to be).
+     #page-placement — the overview card, its results, and the workspace host.
+     Everything about a test taken once. It has no tab in the strip; the account
+     menu row, the welcome fork's right arm and /diagnostic reach it.
 
-     KEPT — the workspace host. `.practice-container` still moves into
+     #page-practice — the readiness dial, the clock picker and the AREA BARS.
+     The screen a learner opens every day. This file still writes the bars from
+     the same status payload (renderAreas), because they are a daily readout of
+     what the test measured, not part of the offer to sit it.
+
+   WHAT THE SPLIT BRINGS BACK:
+
+     The practice/placement redirect, in app.js. There is one
+     `.practice-container` and one `PracticeAPI.currentQuestion`, so with two
+     pages a route to Practice mid-probe would drag the probe onto the Learner
+     Home and render it under that page's name. Asking for Practice while
+     `running` lands on the placement instead. It is a redirect, NOT the old
+     tab-disabling `setPracticeLock` — a disabled tab has no :disabled style, so
+     it looks live and eats the click.
+
+     The hand-off. A placement that completes hands the learner to Practice
+     (see the transition in `render`), which is the seam Seth asked for: "after
+     they'd take the placement diagnostic ... it would seamlessly transition to
+     regular practice".
+
+   WHAT IT KEEPS:
+
+     The workspace host. `.practice-container` moves into
      #diagnostic-workspace-host while a probe is on screen and back to
-     #practice-workspace-home when it is not, and that is now what takes the
-     idle surface (readiness dial, area bars, placement card) off the screen for
-     the duration of a probe and puts it back afterwards. Same mechanism, one
-     page, and `syncWorkspace` is still idempotent — re-inserting a node that is
-     already in place would tear a live editor out of the document and back in.
+     #practice-workspace-home when it is not. `syncWorkspace` is idempotent —
+     re-inserting a node that is already in place would tear a live editor out
+     of the document and back in.
 
-     KEPT — the on-screen half of `hosted`. It used to stop the workspace being
-     parented to a hidden page; it now stops a status call that lands while the
-     learner is reading the explainer tab from hauling the workspace anywhere. */
+     The on-screen half of `hosted`: a status call that lands while the learner
+     is reading some other tab must not haul the workspace anywhere. */
 const DiagnosticPage = (() => {
   const byId = (id) => document.getElementById(id);
   let running = false;
@@ -46,13 +63,12 @@ const DiagnosticPage = (() => {
      change. `moveWorkspace` still writes `running`, which is what
      `isRunning()` and `progressLabel()` read. */
 
-  /* THE PAGE THE PLACEMENT IS ON. It was #page-diagnostic until 2026-08-24 and
-     it is #page-practice now — the Learner Home, which carries the placement
-     card, its results, the readiness dial and the area bars on one screen. The
-     name of this helper is kept because what it asks has not changed: is the
-     surface that owns the placement on screen? */
+  /* THE PAGE THE PLACEMENT IS ON. #page-diagnostic until 2026-08-24, then the
+     Learner Home, and #page-placement since 2026-09-01. The name of this helper
+     has outlived all three because what it asks has not changed: is the surface
+     that owns the placement on screen? */
   const diagnosticOnScreen = () =>
-    byId("page-practice")?.classList.contains("hidden") === false;
+    byId("page-placement")?.classList.contains("hidden") === false;
 
   // Mirrors app.js's own check: the practice page owes its setup panel only
   // when nothing holds the question. Releasing the workspace must not stomp a
@@ -71,19 +87,19 @@ const DiagnosticPage = (() => {
   // its subtree out of the document and back in, which would reload any live
   // editor/iframe inside the workspace. Only move when it is in the wrong home.
   const syncWorkspace = () => {
-    /* 🔴 ONE PAGE, TWO NAMES. `page` and `practicePage` were #page-diagnostic
-       and #page-practice; since the merge they are the same element, and both
-       bindings are kept because they mean different things three lines apart —
-       `page` is what carries `.diagnostic-running` (styles/practice/diagnostic.css
-       hangs the overview's visibility off it), `practicePage` is what carries
-       `.session-idle` (timer.js owns that one). Collapsing them to one name
-       would hide which class belongs to which owner. */
-    const page = byId("page-practice");
-    const practicePage = page;
+    /* 🔴 TWO PAGES, TWO NAMES — and they are different elements again. `page`
+       is the placement page, which carries `.diagnostic-running`
+       (styles/practice/diagnostic.css hangs the overview's visibility off it);
+       `practicePage` is the Learner Home, which carries `.session-idle`
+       (timer.js owns that one). They were the same element between 2026-08-24
+       and 2026-09-01 and the two names were kept through the merge precisely so
+       this split would not have to re-derive which class belongs to whom. */
+    const page = byId("page-placement");
+    const practicePage = byId("page-practice");
     const host = byId("diagnostic-workspace-host");
     const home = byId("practice-workspace-home");
     const workspace = document.querySelector(".practice-container");
-    if (!page || !host || !home || !workspace) return;
+    if (!page || !practicePage || !host || !home || !workspace) return;
 
     /* 🔴 A PROBE ON SCREEN, not merely a placement in progress. Self-review
        caught this the moment the overview started hiding on `running` alone:
@@ -136,61 +152,36 @@ const DiagnosticPage = (() => {
     }
   };
 
-  /* 🔴 THE PLACEMENT CARD LEAVES THE LEARNER HOME ONCE IT HAS BEEN TAKEN
-     (Seth, 2026-08-31: "don't put it on the learner home tab ... remove it from
-     there. It should show up there only whenever the student hasn't taken the
-     diagnostic before").
+  /* 🔴 THE CARD IS NOT ON THE LEARNER HOME AT ALL ANY MORE (Seth, 2026-09-01:
+     keep the placement interface "separate ... it only gets displayed whenever
+     you click on the drop-down one and you go to it specifically"). It lives on
+     #page-placement, which a learner reaches on purpose.
 
-     The Learner Home is the screen opened every day; a finished placement is a
-     thing done once, and leaving its card parked at the bottom of that screen
-     spends the daily surface on an offer already accepted. So a COMPLETED
-     placement hides the whole of #diagnostic-overview — the card, and the
-     results section inside it — and the account menu's "Retake the placement
-     test" row is the way back to both.
+     THAT REPLACED A VISIBILITY RULE, and deleting the rule is the point. From
+     2026-08-31 the card sat on the Learner Home and was hidden once the
+     placement was COMPLETE (`#page-practice.placement-taken`), with a
+     `forceShow` override the account-menu row set for one visit so a learner
+     could read their results and press Retake. Both are gone: a page you
+     navigated to must show what it is for, every time, in every state — a
+     placement page that hides its own card on arrival is the "nothing to click"
+     dead end that override existed to patch.
 
-     WHO IS STILL SHOWN IT: anyone who has not finished one. No status (signed
-     out, or a backend that did not answer) is NOT "taken" — an unknown record
-     must not delete the only pitch a first-time visitor gets. A placement in
-     progress is not "taken" either: `#diagnostic-practice-btn` lives in this
-     card and is the only way to load the next probe.
-
-     🔴 `forceShow` IS THE MENU ROW'S OVERRIDE and it is deliberately not
-     persisted. `reveal()` sets it; every render after that keeps the card up,
-     which is what lets the learner read their last results and then press
-     Retake. `leave()` clears it, so the card is gone again the next time they
-     open the Learner Home under their own steam — the row is what shows it, not
-     a one-way switch that undoes Seth's rule for the rest of the session. */
+     WHAT SURVIVES is the sentence under the area bars, because it is the one
+     thing on the Learner Home that pointed AT the card. It said "below", and
+     below is not where the card is from any page. */
   let lastStatus = null;
-  let forceShow = false;
 
-  /* 🔴 AND THE COPY UNDER THE AREA BARS POINTS AT THE CARD. It reads "Take the
-     placement test BELOW" — static markup, no other writer — and below is where
-     the card no longer is once it has been taken. A line that points at nothing
-     is how a learner concludes the app is broken rather than that the offer is
-     spent, so the sentence names the route that does exist instead. */
   const AREAS_NOTE_UNTAKEN =
-    "Each bar is this area's estimated readiness. Take the placement test below " +
-    "to measure them instead of assuming them.";
+    "Each bar is this area's estimated readiness. Take the placement test from " +
+    "Account and Settings to measure them instead of assuming them.";
   const AREAS_NOTE_TAKEN =
     "Each bar is this area's estimated readiness, measured by your placement " +
     "test. Retake it any time from Account and Settings.";
 
   const syncOverviewVisibility = (status) => {
-    const page = byId("page-practice");
-    if (!page) return;
     const taken = !!status?.completed_at && !status.active;
-    const away = taken && !forceShow;
-    page.classList.toggle("placement-taken", away);
     const note = byId("learner-areas-note");
-    if (note) note.textContent = away ? AREAS_NOTE_TAKEN : AREAS_NOTE_UNTAKEN;
-  };
-
-  /* Called by account-menu.js when the placement row is picked. It re-syncs off
-     the LAST status rather than waiting for the refresh that follows, so the
-     card is on screen in the same frame as the scroll that goes to it. */
-  const reveal = () => {
-    forceShow = true;
-    syncOverviewVisibility(lastStatus);
+    if (note) note.textContent = taken ? AREAS_NOTE_TAKEN : AREAS_NOTE_UNTAKEN;
   };
 
   /* `running` is the one fact this file publishes about a placement, and
@@ -346,12 +337,31 @@ const DiagnosticPage = (() => {
     const priorEl = byId("self-report-row");
     const continueEl = byId("diagnostic-practice-btn");
     const startEl = byId("placement-start-btn");
+    const skipEl = byId("placement-skip-btn");
     const resultsEl = byId("diagnostic-results");
+
+    /* 🔴 "SKIP FOR NOW" IS OFFERED ONLY WHEN THERE IS SOMETHING TO SKIP.
+
+       While a placement is ACTIVE the backend's next-question endpoint serves
+       PROBES — there is no practice stream running beside a live test — so
+       "go to practice" mid-test cannot deliver what it says. Measured: with the
+       test open, leaving to the Learner Home fetched question 486 with
+       `diagnostic_active: true`, restarted the probe clock on it and left it
+       ticking behind the idle surface, where it would have expired into a
+       recorded miss on a probe the learner never saw.
+
+       So the door is on the two states it is honest in: not started (the
+       welcome fork's arm lands a first-time learner here and "no thanks" has to
+       work) and completed (they came to read results). Mid-test the card offers
+       "Load next placement question", which is the only thing that is true. */
+    const showSkip = !status?.active;
     if (!status) {
       if (statusEl) statusEl.textContent = "Sign in to take the placement test.";
       priorEl?.classList.add("hidden");
       continueEl?.classList.add("hidden");
       startEl?.classList.add("hidden");
+      // A signed-out visitor gets no test and must still be able to leave.
+      skipEl?.classList.remove("hidden");
       resultsEl?.classList.add("hidden");
       // No status is not "you finished one": a stale "Retake the placement
       // test" in the account menu is a claim about this learner's record.
@@ -383,6 +393,7 @@ const DiagnosticPage = (() => {
     const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
     const hasProbeOnScreen = !!_papi?.currentQuestion?.diagnostic_active;
     continueEl?.classList.toggle("hidden", !status.active || hasProbeOnScreen);
+    skipEl?.classList.toggle("hidden", !showSkip);
     renderStartButton(status, startEl);
     /* This file owns WHETHER the results card shows; placement-results.js owns
        what is in it. Fill before unhiding so the card never flashes the shape
@@ -405,12 +416,63 @@ const DiagnosticPage = (() => {
     const showResults = !!status.completed_at && !status.active;
     if (showResults) window.PlacementResults?.render(status);
     resultsEl?.classList.toggle("hidden", !showResults);
+    /* Read BEFORE moveWorkspace, which is what writes `running`: the hand-off
+       below fires on the EDGE from a live test to a finished one, and after
+       that call there is no record left that a test was running. */
+    const wasRunning = running;
     moveWorkspace(!!status.active);
-    /* AFTER the results card is filled, not before: the same status that says
-       "completed" is what takes the whole overview off the Learner Home, and
-       the menu row's reveal has to find a results card with this placement in
-       it rather than the shape of the last one. */
     syncOverviewVisibility(status);
+    /* 🔴 THE HAND-OFF TO PRACTICE, back with the page that needs one (Seth,
+       2026-09-01: "after they'd take the placement diagnostic, it would ...
+       seamlessly transition to regular practice"). The placement page has no
+       tab in the strip, so a learner who has just finished the test is on a
+       screen whose whole purpose is spent, with the account menu as the only
+       way off it.
+
+       🔴 ONLY ON THE EDGE, and only from this page. `wasRunning && showResults`
+       is the moment the last probe was graded — not every render of a completed
+       status, which is also what a learner gets when they open the page from
+       the menu to read their results or press Retake. Switching THEM would make
+       the menu row unusable: click it, land on Practice.
+
+       `diagnosticOnScreen()` guards the other half: a status call can resolve
+       while the learner is on some other tab entirely, and a page switch nobody
+       asked for is worse than a stale card.
+
+       The results stay rendered on the page behind them. `renderAreas` has
+       already written the area bars this same status carries onto the Learner
+       Home, so the screen they land on is the one their test just moved. */
+    if (wasRunning && showResults && diagnosticOnScreen() && typeof switchTab === "function") {
+      /* 🔴 THE PROBE IS OVER, SO THE PRACTICE PAGE MUST NOT OPEN ON IT. The
+         workspace `moveWorkspace(false)` just handed back still holds the last
+         probe — `PracticeAPI.currentQuestion.diagnostic_active` is true and its
+         clock is still on the notch — and `syncWorkspace` restores
+         `.session-idle` only when nothing "holds the question", which counts a
+         PAUSED session as a holder. So a learner with a paused block from
+         before the placement finished their test and landed on the graded probe
+         they had just finished, rendered under the practice page's name. That
+         is the exact failure the 2026-08-23 tab lock existed for, arriving
+         through the back door.
+
+         Idle unless something LIVE owns the surface: a running block or a
+         lesson (`?lesson=<kc>`) is a real question the learner is inside, and
+         hiding it would be the destructive half of this. A PAUSED session is
+         not — the idle surface is exactly where it belongs, with the resume
+         panel and "Continue practicing" on it.
+
+         The clock goes with it. `PlacementTimer.stop()` is idempotent and the
+         normal submit path has usually called it already; it has not when the
+         placement ends on a probe that was never submitted, and a placement
+         countdown left ticking over a practice screen auto-fires against a
+         question that no longer exists. */
+      const heldLive =
+        document.body.classList.contains("lesson-mode") ||
+        window.KcPractice?.isActive?.() === true ||
+        (typeof PracticeSession !== "undefined" && PracticeSession.isActive?.() === true);
+      if (!heldLive) byId("page-practice")?.classList.add("session-idle");
+      window.PlacementTimer?.stop?.();
+      switchTab("practice");
+    }
     /* 🔴 THE HAND-OFF TO PRACTICE USED TO BE HERE and is gone, because there is
        nowhere to hand off TO. A finished placement in basic mode was switched to
        the Practice tab the moment its results arrived — that was the only exit
@@ -521,23 +583,27 @@ const DiagnosticPage = (() => {
     clearTimeout(retryTimer);
     retryTimer = null;
     generation += 1;
-    // The menu row's override is for the visit it was clicked in. Coming back
-    // to the Learner Home any other way finds the card put away again.
-    forceShow = false;
     syncWorkspace();
   };
 
   /* app.js calls leave() on every tab switch, but page visibility is the real
      signal and it is not ours to depend on: watch the class instead, so the
-     workspace follows the Learner Home even if some other route (a solo deep
-     link, a future nav) shows or hides it without telling us. */
-  const watched = byId("page-practice");
-  if (watched && typeof MutationObserver === "function") {
-    new MutationObserver(() => syncWorkspace())
-      .observe(watched, { attributes: true, attributeFilter: ["class"] });
-  }
+     workspace follows the pages even if some other route (a solo deep link, a
+     future nav) shows or hides one without telling us.
 
-  return { refresh, leave, reveal, renderStartButton, isRunning: () => running, progressLabel };
+     🔴 BOTH PAGES, since the split. `hosted` is a function of the PLACEMENT
+     page being on screen, and the workspace's home is on the PRACTICE page —
+     watching only one of them means a change to the other moves nothing until
+     something else happens to call syncWorkspace. */
+  ["page-placement", "page-practice"].forEach((id) => {
+    const watched = byId(id);
+    if (watched && typeof MutationObserver === "function") {
+      new MutationObserver(() => syncWorkspace())
+        .observe(watched, { attributes: true, attributeFilter: ["class"] });
+    }
+  });
+
+  return { refresh, leave, renderStartButton, isRunning: () => running, progressLabel };
 })();
 window.DiagnosticPage = DiagnosticPage;
 
@@ -563,7 +629,16 @@ window.DiagnosticPage = DiagnosticPage;
    init.js (a solo route, a test harness) — it must still end up rendering
    something rather than sitting on "Checking…" forever. */
 (function bootDiagnosticPage() {
-  if (document.getElementById("page-practice")?.classList.contains("hidden")) return;
+  /* 🔴 EITHER PAGE. The guard asks "is a surface this file writes on screen?",
+     and since 2026-09-01 there are two: the Learner Home (area bars) and
+     #page-placement (the card). Left reading only the Home, a learner who
+     landed straight on the placement — /diagnostic, or the welcome fork's right
+     arm on a first load — got no boot refresh at all and a card stuck on
+     "Loading placement status…" until they navigated away and back. */
+  const _onScreen = ["page-practice", "page-placement"].some(
+    (id) => document.getElementById(id)?.classList.contains("hidden") === false
+  );
+  if (!_onScreen) return;
   const statusEl = document.getElementById("diagnostic-status");
   if (statusEl) statusEl.textContent = "Checking your placement status…";
   /* 🔴 THE FALLBACK MUST NOT LATCH. An earlier version set one `fired` flag from

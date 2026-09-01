@@ -25,9 +25,68 @@ const KcPractice = (() => {
 
   let active = false;
   let kcId = null;
+  let kcTitle = null;      // the KP's own title — see _stamp
   let subtopicKeys = []; // see _resolveSubtopicKeys
   let queue = [];
   let served = 0;
+
+  /* This ladder's rung names, in the vocabulary the REST of the app already
+     speaks. `item.kind` is this file's word for the authored bucket a drill
+     came out of; `ladder_stage` is the backend's word for the rung it was
+     served at, and every reader of a served question keys off that one —
+     `practice/ladder.js` (_stageOf), `practice/stage-ladder.js`
+     (STAGE_ALIASES), `practice/timer.js` (the pause snapshot). Mapped here
+     rather than renaming `kind`, because the two are not the same thing: a
+     `guided` item is an authored bucket, and the rung it serves is Faded.
+
+     The pairs are the backend's own, from `kc_graph._STAGE_TO_RANKS` and the
+     table above it:
+       faded / guided  → `faded`    the blanked starter, or hints
+       independent     → `partial`  write it unaided (displayed "Solo")
+       integrated      → `solo`     the whole-KP problem (displayed "Integrated")
+     Anything unrecognised maps to nothing and the readout hides, which is the
+     behaviour this whole flow had before. */
+  const STAGE_FOR_KIND = {
+    faded: "faded",
+    guided: "faded",
+    independent: "partial",
+    integrated: "solo",
+  };
+
+  /* The rungs that put support on the page — the same claim
+     `kc_graph.stage_requires_support` makes server-side, and the reason it is
+     only these two: a faded item hands over a blanked solution and a guided one
+     hands over hints. An independent or integrated item hands over nothing. */
+  const SUPPORTED_KINDS = new Set(["faded", "guided"]);
+
+  /* 🔴 THE CONCEPT FIELDS EVERY READOUT KEYS OFF, PUT BACK ON A BANK QUESTION.
+
+     `_hydrate` builds through `buildPracticeQuestionFromBank`, and the bank has
+     no opinion about `ladder_kc` / `ladder_stage` / `ladder_kc_title` — those
+     exist only on a question the BACKEND QUEUE served. `practice/timer.js` says
+     so at length where the same gap broke a paused resume. Here it broke the
+     Knowledge Graph's Practice ⤢ flow outright: `LadderUI.decorate` calls
+     `_syncTopbar`, which reads exactly those two fields, finds neither, and
+     calls `StageLadder.hide()` — so the ladder card went AND the topbar's
+     concept pill went with it, on every question this ladder served. The one
+     surface that is about a single concept was the one with no reading for it.
+     Seth, 2026-09-01: "it gets rid of the competency bar at the top".
+
+     Nothing here is a second scoring system, and it must not become one: the
+     stage is the rung of the item being SERVED, which this file chose, and no
+     number is invented. The fill within the rung still comes from the server's
+     `ladder_estimate` on the submit response (`practice/events.js`
+     setProgress), exactly as it does on the adaptive queue. */
+  const _stamp = (q, item) => {
+    const stage = STAGE_FOR_KIND[item.kind];
+    if (!q || !kcId || !stage) return q;
+    q.ladder_kc = kcId;
+    q.ladder_stage = stage;
+    q.ladder_kc_title = kcTitle || kcId;
+    q.ladder_support = SUPPORTED_KINDS.has(item.kind);
+    q.ladder_integrated = item.kind === "integrated";
+    return q;
+  };
 
   // The two modes disagree on what a "subtopic" string is, and BKT is keyed by
   // whatever `question.subtopic` says:
@@ -141,6 +200,10 @@ const KcPractice = (() => {
     await loadQuestionsBank();
 
     kcId = kc;
+    // The name the concept pill and the ladder's readout say out loud. The KP's
+    // own title first — it is what the graph's node and its lesson pane both
+    // show — with the KC id as the last resort so the readout is never blank.
+    kcTitle = (entry.kp && entry.kp.title) || (entry.lesson && entry.lesson.title) || kc;
     // Keys must be resolved BEFORE _buildQueue — the faded/independent
     // ordering reads mastery, which is looked up by those keys.
     subtopicKeys = _resolveSubtopicKeys(entry.lesson, _sampleBankQuestion(entry.kp));
@@ -169,6 +232,7 @@ const KcPractice = (() => {
       const q = _hydrate(item);
       if (q) {
         q.ladder_kind = item.kind;
+        _stamp(q, item);
         if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);
         return q;
       }

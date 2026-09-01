@@ -604,10 +604,32 @@ html.dd-colab-edition .kg2-controls .kg2-max {
    Knowledge Graph — maximize overlay (own focused practice page)
    ============================================================ */
 /* Inside the embedded iframe (?embed=1): hide app chrome so no tabs show and
-   only the practice page is visible — it reads as its own separate page. */
-.kg-embed .topbar,
+   only the practice page is visible — it reads as its own separate page.
+
+   🔴 THE TOPBAR ITSELF IS NOT HIDDEN, AND IT WAS UNTIL 2026-09-01. It carried
+   `display: none !important` in the list below, which took the whole bar out —
+   including the CONCEPT PILL (#dd-concept, concept-pill.js), the one readout on
+   the practice screen that says how far into this concept the learner is. So
+   the Knowledge Graph's own Practice ⤢ overlay — the surface whose entire
+   subject IS one concept — was the single place in the app where that reading
+   could not be seen, and it disappeared at the exact moment the learner started
+   working the problem. Seth, 2026-09-01: "it keeps the progress bar displaying
+   what your estimated competency for the problem is at the top rather than
+   … get rid of the competency bar at the top".
+
+   What actually had to go is the NAVIGATION — the tab strip and the two side
+   cells (level pill, account control) — because the overlay has its own bar
+   above this one with the concept's name and Minimize in it. The bar is a
+   3-column grid whose cells are placed by explicit `grid-column`
+   (styles/layout.css), so hiding the outer two leaves the middle one centred
+   on the viewport rather than reflowing anything. The notch goes with them: it
+   is the session clock, and this flow deliberately runs with no session or
+   quota (practice/lessons.js). */
 .kg-embed .guest-banner,
 .kg-embed .tp-banner { display: none !important; }
+.kg-embed .topbar .tabs,
+.kg-embed .topbar-side,
+.kg-embed .practice-notch { display: none !important; }
 .kg-embed main.page:not(#page-practice) { display: none !important; }
 /* 🔴 `display: flex`, NOT `block`. This rule exists to beat `.hidden` so the
    practice page is on screen in the embed — but `#page-practice` is a FLEX
@@ -621,13 +643,16 @@ html.dd-colab-edition .kg2-controls .kg2-max {
    Keep the display value the page's own rule uses; only the visibility is
    this rule's business.
 
-   The height is re-stated for the same reason: the embed hides `.topbar`
-   above, so subtracting its 44px reserves a dead band at the bottom of the
-   iframe for a bar that is not on the page. */
-.kg-embed #page-practice { display: flex !important; height: 100vh; }
+   🔴 THE HEIGHT SUBTRACTS THE TOPBAR AGAIN. It was a flat `100vh` for as
+   long as the embed hid `.topbar` entirely — reserving 44px for a bar that was
+   not on the page would have left a dead band at the bottom of the iframe. The
+   bar is back (stripped to the concept pill, above), so the page has to fit
+   under it or the last 44px of the practice panel is pushed out of the frame
+   and the panel's own `overflow-y` never reaches it. */
+.kg-embed #page-practice { display: flex !important; height: calc(100vh - var(--dd-topbar-h)); }
 /* Single-concept view: the adaptive-queue framing (what Practice is, where to
    start across all topics) is about a different flow and reads as noise here.
-   The competency bar is the header for this page. */
+   The concept pill in the topbar is the header for this page. */
 .kg-embed #self-report-row { display: none !important; }
 
 /* Parent overlay: full-screen, above everything, with a slim Minimize bar. */

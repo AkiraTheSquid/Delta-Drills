@@ -314,6 +314,103 @@ def check_stdout_expected(code_runner, question: dict) -> list[dict]:
     return []
 
 
+def check_starter_harness(code_runner, question: dict) -> list[dict]:
+    """Run the starter AS HANDED to the learner through the real harness.
+
+    The confirmed-cheat path only ever tries `return <leaked_var>`; it never
+    runs the starter itself, so a placeholder that happens to satisfy cases
+    was invisible. Found by the first bank-wide run (2026-09-01): q550's
+    `return None` passes its two None-expected cases. Grading is
+    all-or-nothing (`grading.py: correct = all(...)`), so a partial pass is
+    not exploitable — it is reported as informational because those cases
+    contribute nothing to telling the working solution from the placeholder.
+    A starter passing EVERY case is a free full mark and blocks."""
+    cases = question.get("test_cases") or []
+    starter = question.get("starter_code") or ""
+    if not cases or not starter.strip():
+        return []
+    try:
+        results, _execution = code_runner.run_function_tests(starter, cases)
+    except Exception as exc:
+        return [{"check": "confirm_error", "var": "starter",
+                 "detail": f"{type(exc).__name__}: {exc}"}]
+    passed = sum(1 for r in results if r.passed)
+    if not results or passed == 0:
+        return []
+    check = ("starter_passes_all_cases" if passed == len(results)
+             else "starter_passes_some_cases")
+    return [{"check": check,
+             "detail": f"starter as handed to the learner passes {passed}/{len(results)} "
+                       "graded cases"}]
+
+
+def check_wrong_examples(question: dict, code_runner=None) -> list[dict]:
+    """A wrong_examples entry whose output IS the correct output.
+
+    `wrong_examples` is shown to the learner as "if you got this, here is the
+    misconception behind it". An entry whose output equals the RIGHT answer
+    for its anchor tells a learner with the correct result that they hold the
+    misconception — q713 shipped exactly that (2026-09-01): its "conversion
+    never happened" example printed `(True, True)`, which is also what the
+    correct solution prints for the example inputs, because `bool(5)` is True
+    with or without the conversion. The misconception was real; the inputs
+    chosen could not witness it.
+
+    The anchor is the entry's own `call` snippet when it has one (q484's
+    pattern — setup lines then a final expression), else the question's
+    example-run `expected_output`. The no-call compare is a free string check
+    and always runs; the call-anchored compare must execute the answer, so it
+    runs only under --confirm like the other execution checks. A snippet that
+    will not run or whose last line is not an expression is reported as
+    `wrong_example_call_error` rather than skipped silently.
+    """
+    findings: list[dict] = []
+    for idx, wx in enumerate(question.get("wrong_examples") or []):
+        out = str(wx.get("output") or "").strip()
+        if not out:
+            continue
+        call = str(wx.get("call") or "").strip()
+        if not call:
+            stored = str(question.get("expected_output") or "").strip()
+            if stored and out == stored:
+                findings.append({
+                    "check": "wrong_example_matches_correct",
+                    "detail": f"wrong_examples[{idx}] output equals the example run's "
+                              f"correct output ({out[:60]!r}) — the inputs cannot "
+                              "witness the misconception",
+                })
+            continue
+        if code_runner is None:
+            continue
+        answer = question.get("answer_code") or ""
+        if code_runner.code_uses_torch(answer + "\n" + call):
+            try:
+                import torch  # noqa: F401 — in-process, like scan_function_question
+            except ImportError:
+                findings.append({"check": "torch_unavailable",
+                                 "detail": f"wrong_examples[{idx}] call unaudited — no torch"})
+                continue
+        ns = base_namespace()
+        lines = [line for line in call.splitlines() if line.strip()]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                exec(answer, ns)
+                if lines[:-1]:
+                    exec_seeded("\n".join(lines[:-1]), ns)
+                value = eval(lines[-1], ns)
+        except Exception as exc:
+            findings.append({"check": "wrong_example_call_error",
+                             "detail": f"wrong_examples[{idx}]: {type(exc).__name__}: {exc}"})
+            continue
+        if out in (repr(value).strip(), str(value).strip()):
+            findings.append({
+                "check": "wrong_example_matches_correct",
+                "detail": f"wrong_examples[{idx}] output equals the correct result of its "
+                          f"own call ({out[:60]!r})",
+            })
+    return findings
+
+
 def _load_bkt_module():
     bkt_path = THIS_DIR_ONLY / "backend" / "app" / "bkt_mastery.py"
     spec = importlib.util.spec_from_file_location("delta_bkt_mastery", bkt_path)
@@ -525,9 +622,11 @@ def audit(confirm: bool) -> dict:
         findings += check_todo_answer_leak(question)
         if confirm:
             findings += check_stdout_expected(code_runner, question)
+        findings += check_wrong_examples(question, code_runner if confirm else None)
         if question.get("submission_mode") == "function":
             findings += scan_function_question(question)
             if confirm:
+                findings += check_starter_harness(code_runner, question)
                 leaked = [f["var"] for f in findings
                           if f["check"] in ("precompute_leak", "precompute_leak_scalar")]
                 if leaked:
@@ -545,7 +644,15 @@ def audit(confirm: bool) -> dict:
     return report
 
 
+# `confirm_error` blocks (2026-09-01, codex finding): it means the harness
+# CRASHED while confirming a cheat or running a starter, so the question is
+# unverified, not clean — fail closed. Torch fork-runner flakiness cannot
+# reintroduce the 2026-07-06 spurious-GATE-FAIL mode: stdout torch answers are
+# skipped unconditionally above, and function-mode torch grading uses the same
+# preloaded fork path prod uses.
 BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
+                   "confirm_error",
+                   "wrong_example_matches_correct", "starter_passes_all_cases",
                    "expected_eval_error", "setup_exec_error", "identity_expected",
                    "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error",
                    "atom_tag_unwired", "atom_prereq_untrainable", "atom_graph_cycle",

@@ -3,10 +3,10 @@ kc: python.lists-and-tuples
 title: Lists and tuples — holding more than one value
 supporting: [python.values-and-names, python.types-and-conversion]
 new_syntax: [builtin.len, builtin.list, builtin.tuple, syntax.list-literal, syntax.tuple]
-faded: [580, 581]
+faded: [580, 581, 744, 745, 746, 747, 748, 749, 750, 751]
 guided: []
-independent: [582, 583]
-integrated: [584, 585]
+independent: [582, 583, 752, 753, 754, 755, 756, 757, 758, 759]
+integrated: [584, 585, 760, 761]
 ---
 
 ## Concept
@@ -139,6 +139,138 @@ def solve(a, b):
     return (a, b)
 ```
 
+### q744
+The trailing comma is what makes the tuple.
+
+```python starter
+def solve(x):
+    """(x) is just x; (x,) is a tuple holding it."""
+    return (type((x)).__name__, type(_____).__name__)
+```
+
+```python solution
+def solve(x):
+    """(x) is just x; (x,) is a tuple holding it."""
+    return (type((x)).__name__, type((x,)).__name__)
+```
+
+### q745
+A table is a list whose items are lists.
+
+```python starter
+def solve(a, b, c, d):
+    """A table is a list whose items are lists."""
+    table = [_____, _____]
+    return (table, len(table))
+```
+
+```python solution
+def solve(a, b, c, d):
+    """A table is a list whose items are lists."""
+    table = [[a, b], [c, d]]
+    return (table, len(table))
+```
+
+### q746
+Wrap the whole list as one item, then measure both containers.
+
+```python starter
+def solve(items):
+    """A list holding one thing — which happens to be a list."""
+    outer = _____
+    return (len(items), len(outer))
+```
+
+```python solution
+def solve(items):
+    """A list holding one thing — which happens to be a list."""
+    outer = [items]
+    return (len(items), len(outer))
+```
+
+### q747
+Rehouse the items in a tuple; the count comes along unchanged.
+
+```python starter
+def solve(values):
+    """tuple() rehouses the items; the count comes along unchanged."""
+    t = _____(values)
+    return (t, len(t))
+```
+
+```python solution
+def solve(values):
+    """tuple() rehouses the items; the count comes along unchanged."""
+    t = tuple(values)
+    return (t, len(t))
+```
+
+### q748
+Thaw a tuple into a list, and prove it with the type name.
+
+```python starter
+def solve(pair):
+    """list() thaws a tuple into a list you could change."""
+    lst = _____(pair)
+    return (lst, type(lst).__name__)
+```
+
+```python solution
+def solve(pair):
+    """list() thaws a tuple into a list you could change."""
+    lst = list(pair)
+    return (lst, type(lst).__name__)
+```
+
+### q749
+Same size is a question for len, answered twice.
+
+```python starter
+def solve(a, b):
+    """Same size is a question for len, answered twice."""
+    return _____(a) == _____(b)
+```
+
+```python solution
+def solve(a, b):
+    """Same size is a question for len, answered twice."""
+    return len(a) == len(b)
+```
+
+### q750
+Same values, different brackets, different type.
+
+```python starter
+def solve(a, b):
+    """Same values, different brackets, different type."""
+    return (type(_____).__name__, type(_____).__name__)
+```
+
+```python solution
+def solve(a, b):
+    """Same values, different brackets, different type."""
+    return (type([a, b]).__name__, type((a, b)).__name__)
+```
+
+### q751
+Build as a list, hand back as a tuple.
+
+```python starter
+def solve(a, b, c):
+    """Build as a list, hand back as a tuple."""
+    built = [a, b, c]
+    frozen = _____(built)
+    return (frozen, len(frozen))
+```
+
+```python solution
+def solve(a, b, c):
+    """Build as a list, hand back as a tuple."""
+    built = [a, b, c]
+    frozen = tuple(built)
+    return (frozen, len(frozen))
+```
+
 ## Solo practice
 
 ### q582
@@ -158,6 +290,30 @@ print("the first row itself:", rows[0])
 ### q583
 A round trip: list to tuple and back, with the lengths compared.
 
+### q752
+Two levels, two measurements, one finished answer — and its kind.
+
+### q753
+Convert the tuple first; then equality compares item by item.
+
+### q754
+Rows of different lengths are still one item each.
+
+### q755
+One comma is the whole difference between a tuple and a bare value.
+
+### q756
+Three containers, one count: conversions never change how many.
+
+### q757
+A container does not convert its contents — each item keeps its kind.
+
+### q758
+An empty list is a no; a list HOLDING it is not empty.
+
+### q759
+Equal contents still need equal containers.
+
 ## Integrated practice
 
 ### q584
@@ -165,6 +321,12 @@ The same three values in both containers, reported with their sizes.
 
 ### q585
 Count the rows, measure every one of them, and say whether they agree.
+
+### q760
+Two rows, one measured pair — and whether the rows agree on length.
+
+### q761
+A report: the data, its total, its count — frozen together, with its kind named.
 
 ## Misconceptions
 

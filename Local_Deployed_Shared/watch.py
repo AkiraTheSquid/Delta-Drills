@@ -226,17 +226,44 @@ def check_invariants():
     )
     assert "data-placement-retake" in menu, (
         "the placement row lost data-placement-retake — account-menu.js reads "
-        "it to scroll the placement card into view and flash its button; "
-        "without it the row is a bare jump to the Learner Home"
+        "it to focus and flash the button on the placement card; without it "
+        "the row is a bare jump to a page with nothing highlighted"
     )
     # 🔴 IT ROUTES, IT DOES NOT START. `diagnostic.start()` CLEARS the probe log
     # and blanks completed_at, and this row sits one pixel from "Learner home".
     # The destructive click stays on the card, behind a second deliberate press.
+    #
+    # 🔴 AND IT ROUTES TO #page-placement (Seth, 2026-09-01: the placement
+    # interface "only gets displayed whenever you click on the drop-down one and
+    # you go to it specifically"). This row is the only standing entry point to
+    # that page from inside the app, so a row that went back to routing at
+    # "practice" would leave the page reachable by URL alone.
     _placement_row = menu.split("data-placement-retake")[0].rsplit("<button", 1)[1]
-    assert 'data-goto-tab="practice"' in _placement_row, (
-        "the placement row stopped routing to the Learner Home through app.js's "
-        "own [data-goto-tab] binding"
+    assert 'data-goto-tab="placement"' in _placement_row, (
+        "the placement row stopped routing to #page-placement through app.js's "
+        "own [data-goto-tab] binding — that page has no tab in the strip, so "
+        "this row is the only way a learner reaches it"
     )
+    # THE PAGE ITSELF, and the two things that have to be ON it. The 2026-08-24
+    # merge dissolved #page-diagnostic into the Learner Home and Seth asked for
+    # it back on 2026-09-01; without this the merge can happen again silently.
+    # The workspace host is asserted with it because a placement page without it
+    # renders the probe on the practice page under the practice page's name —
+    # the exact failure the old tab lock existed to prevent.
+    assert 'id="page-placement"' in index_html, (
+        "#page-placement is gone. The placement test is its own page again "
+        "(Seth, 2026-09-01) — the Learner Home carries the readiness dial and "
+        "the area bars, not the offer to sit a test"
+    )
+    _placement_page = index_html.split('id="page-placement"')[1].split("\n  </main>")[0]
+    for _id in ('id="diagnostic-overview"', 'id="diagnostic-workspace-host"',
+                'id="placement-skip-btn"'):
+        assert _id in _placement_page, (
+            f"{_id} is not inside #page-placement any more. The card, the probe "
+            "host and the way back out all belong to that page; on the Learner "
+            "Home the card is what Seth asked to remove, and the host is what "
+            "would show a probe under the practice page's name"
+        )
     # The instructor row (Seth, 2026-08-24) is the late door into the mode and
     # the only way out. Its label is REWRITTEN by instructor-mode.js
     # (Enter ↔ Exit), so assert the id it rewrites through, not the text.
@@ -251,9 +278,15 @@ def check_invariants():
     assert home_pos < menu.find('data-goto-tab="account"'), (
         "Learner home is no longer the first row of the account menu"
     )
-    # Every row carries an icon, home included.
-    assert menu.count("account-menu-icon") == 7, (
-        "an account-menu row is missing its icon — Seth asked for one on each"
+    # Every row carries an icon, home included. Counted against the rows rather
+    # than against a fixed number: the menu has grown three times (placement
+    # retake 2026-08-31, Course content 2026-09-01) and a hard-coded count fails
+    # the run for ADDING a row, which teaches the next person to raise the
+    # number rather than to look at what the check is for.
+    _rows = menu.count('class="account-menu-item')
+    assert _rows and menu.count("account-menu-icon") == _rows, (
+        "an account-menu row is missing its icon — Seth asked for one on each. "
+        f"{_rows} rows, {menu.count('account-menu-icon')} icons"
     )
     # The two explainer rows open a DISCLOSURE on the shared page, not a page
     # each. account-menu.js reads this attribute.

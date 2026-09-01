@@ -17,13 +17,13 @@
       "syntax.assign",
       "syntax.tuple"
      ],
-     "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```",
+     "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```\n\nEvery value has a **kind** \u2014 a whole number, a decimal, a piece of text, a\ntuple. `type(...)` reports it, and the answer is about the value, not about the\nname stuck to it.\n\n```python\ncount = 5\nlabel = \"five\"\nprint(type(count))\nprint(type(label))\n```\n\nRe-attaching a name to a different value can change the kind as well as the\nvalue, because the kind was never the name's to begin with.\n\n```python\nn = 5\nprint(type(n))\nn = (5, 5)\nprint(type(n))\n```",
      "worked_example_markdown": "Two values, named, then combined and handed back as a pair.\n\n```python\na = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n```\n\nWhy each step:\n\n1. `a` and `b` are names for the two inputs, so the arithmetic below reads as\n   words rather than as bare numbers.\n2. `total` and `difference` name the two results. Naming a result is what lets\n   the next line use it without recomputing it.\n3. The final `(total, difference)` is a tuple: one value that carries both\n   answers, which is exactly what a function returns when it has two things to\n   say.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```",
+       "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```\n\nEvery value has a **kind** \u2014 a whole number, a decimal, a piece of text, a\ntuple. `type(...)` reports it, and the answer is about the value, not about the\nname stuck to it.\n\n```python\ncount = 5\nlabel = \"five\"\nprint(type(count))\nprint(type(label))\n```\n\nRe-attaching a name to a different value can change the kind as well as the\nvalue, because the kind was never the name's to begin with.\n\n```python\nn = 5\nprint(type(n))\nn = (5, 5)\nprint(type(n))\n```",
        "watch_out_markdown": "- **`=` is not a comparison** \u2014 `x = 5` sets a name; `x == 5` asks a question and\n  produces `True` or `False`. Almost every early error message about assignment\n  is one of these two written where the other belonged.\n- **A quoted name is text, not the value** \u2014 `total` is the name; `\"total\"` is a\n  five-letter string that has nothing to do with it.\n- **Re-assigning does not change the old value** \u2014 it moves the label. Anything\n  else already holding that value keeps it.",
        "worked_example_markdown": "Two values, named, then combined and handed back as a pair.\n\n```python\na = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n```\n\nWhy each step:\n\n1. `a` and `b` are names for the two inputs, so the arithmetic below reads as\n   words rather than as bare numbers.\n2. `total` and `difference` name the two results. Naming a result is what lets\n   the next line use it without recomputing it.\n3. The final `(total, difference)` is a tuple: one value that carries both\n   answers, which is exactly what a function returns when it has two things to\n   say.",
        "worked_example_code": "a = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n",
@@ -39,6 +39,54 @@
          "prompt": "Swap two values by naming each one first.",
          "starter_code": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = _____\n    second = x\n    return (first, second)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
          "solution": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = y\n    second = x\n    return (first, second)\n"
+        },
+        {
+         "question_id": 718,
+         "prompt": "Name the first result, then build the second out of that name.",
+         "starter_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = _____ + fee\n    return total\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = subtotal + fee\n    return total\n"
+        },
+        {
+         "question_id": 719,
+         "prompt": "Build the new value out of the name's own old value.",
+         "starter_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = _____ + 5\n    return n\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (10,)\nprint(solve(*example))\n",
+         "solution": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = n + 5\n    return n\n"
+        },
+        {
+         "question_id": 720,
+         "prompt": "Put both inputs and their sum into one tuple.",
+         "starter_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (_____, _____, s)\n    return p\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+         "solution": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (first, second, s)\n    return p\n"
+        },
+        {
+         "question_id": 721,
+         "prompt": "Ask what KIND of value arrived, and hand the answer back.",
+         "starter_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = _____(value)\n    return kind\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+         "solution": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = type(value)\n    return kind\n"
+        },
+        {
+         "question_id": 722,
+         "prompt": "Stick a second label on the same value, then read both.",
+         "starter_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = _____\n    return (left, right, left + right)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+         "solution": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = base\n    return (left, right, left + right)\n"
+        },
+        {
+         "question_id": 723,
+         "prompt": "Re-attach the name to its own square.",
+         "starter_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = _____ * _____\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+         "solution": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = x * x\n    return x\n"
+        },
+        {
+         "question_id": 724,
+         "prompt": "Build a new string, name it, and report its kind.",
+         "starter_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + _____\n    kind = type(greeting)\n    return (greeting, kind)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hey',)\nprint(solve(*example))\n",
+         "solution": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + \"!\"\n    kind = type(greeting)\n    return (greeting, kind)\n"
+        },
+        {
+         "question_id": 725,
+         "prompt": "Two named results, handed back as one pair.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = _____ * _____\n    both = (diff, prod)\n    return both\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = a * b\n    both = (diff, prod)\n    return both\n"
         }
        ]
       }
@@ -55,6 +103,54 @@
        "prompt": "Swap two values by naming each one first.",
        "starter_code": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = _____\n    second = x\n    return (first, second)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
        "solution": "def solve(x, y):\n    \"\"\"Swap, via two names.\"\"\"\n    first = y\n    second = x\n    return (first, second)\n"
+      },
+      {
+       "question_id": 718,
+       "prompt": "Name the first result, then build the second out of that name.",
+       "starter_code": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = _____ + fee\n    return total\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(price, quantity, fee):\n    \"\"\"Name the first result, then read that name to build the second.\"\"\"\n    subtotal = price * quantity\n    total = subtotal + fee\n    return total\n"
+      },
+      {
+       "question_id": 719,
+       "prompt": "Build the new value out of the name's own old value.",
+       "starter_code": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = _____ + 5\n    return n\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (10,)\nprint(solve(*example))\n",
+       "solution": "def solve(n):\n    \"\"\"The right-hand side runs first, reading the OLD value.\"\"\"\n    n = n + 5\n    return n\n"
+      },
+      {
+       "question_id": 720,
+       "prompt": "Put both inputs and their sum into one tuple.",
+       "starter_code": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (_____, _____, s)\n    return p\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3)\nprint(solve(*example))\n",
+       "solution": "def solve(first, second):\n    \"\"\"Three values, one tuple.\"\"\"\n    s = first + second\n    p = (first, second, s)\n    return p\n"
+      },
+      {
+       "question_id": 721,
+       "prompt": "Ask what KIND of value arrived, and hand the answer back.",
+       "starter_code": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = _____(value)\n    return kind\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+       "solution": "def solve(value):\n    \"\"\"type(...) reports the kind of the VALUE.\"\"\"\n    kind = type(value)\n    return kind\n"
+      },
+      {
+       "question_id": 722,
+       "prompt": "Stick a second label on the same value, then read both.",
+       "starter_code": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = _____\n    return (left, right, left + right)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4,)\nprint(solve(*example))\n",
+       "solution": "def solve(base):\n    \"\"\"Two labels stuck to one value.\"\"\"\n    left = base\n    right = base\n    return (left, right, left + right)\n"
+      },
+      {
+       "question_id": 723,
+       "prompt": "Re-attach the name to its own square.",
+       "starter_code": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = _____ * _____\n    return x\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+       "solution": "def solve(a):\n    \"\"\"Re-attach the name to its own square.\"\"\"\n    x = a\n    x = x * x\n    return x\n"
+      },
+      {
+       "question_id": 724,
+       "prompt": "Build a new string, name it, and report its kind.",
+       "starter_code": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + _____\n    kind = type(greeting)\n    return (greeting, kind)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hey',)\nprint(solve(*example))\n",
+       "solution": "def solve(word):\n    \"\"\"A built string is a value like any other: name it, ask its kind.\"\"\"\n    greeting = word + \"!\"\n    kind = type(greeting)\n    return (greeting, kind)\n"
+      },
+      {
+       "question_id": 725,
+       "prompt": "Two named results, handed back as one pair.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = _____ * _____\n    both = (diff, prod)\n    return both\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Two named results, packed as one pair.\"\"\"\n    diff = a - b\n    prod = a * b\n    both = (diff, prod)\n    return both\n"
       }
      ],
      "guided_items": [],
@@ -69,6 +165,46 @@
        "question_id": 571,
        "prompt": "Add 3 to the same name twice, and report where it ends up.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 708,
+       "prompt": "Name each argument, then report what kind of value one of them is.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 709,
+       "prompt": "Re-attach one name twice and report the kind before and after.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 710,
+       "prompt": "Two names, one value: move one label and show the other did not follow.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 711,
+       "prompt": "Rotate three values by one place, keeping the one that would be overwritten.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 726,
+       "prompt": "A running total: name the first sum, read it to build the grand total.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 727,
+       "prompt": "A quoted word is a value too: pair a text label with a computed number.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 728,
+       "prompt": "Powers by reuse: square the square, never multiply four times.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 729,
+       "prompt": "Re-attach a name to a tuple built from its own old value, and report the new kind.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -79,13 +215,30 @@
       {
        "question_id": 573,
        "prompt": "A chain: each step is built from the name the step before it wrote."
+      },
+      {
+       "question_id": 712,
+       "prompt": "Name a result, build a second value out of it, then re-attach the first name \u2014\nand show that the value built earlier kept what it was given."
+      },
+      {
+       "question_id": 730,
+       "prompt": "Swap by naming, join by reading, and report the kind + made \u2014 for numbers and for text."
       }
      ],
      "independent_items": [
       570,
-      571
+      571,
+      708,
+      709,
+      710,
+      711,
+      726,
+      727,
+      728,
+      729
      ],
-     "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was."
+     "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was.",
+     "notes_markdown": "Root of the python course (ids 708\u2013712 filled it to the rung floors, 2026-09-01,\ncommit cf3eaadc's predecessor slice). Course order across the whole family is\nencoded in the question-id ranges: 568\u2013573 here, 574\u2013579 [[python.types-and-conversion]],\n\u2026 604\u2013609 python.dots-and-imports.\n\n## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only,\n  'use only the information in the problem'): solved q711 (last independent\n  drill) 4/4 cases on the real harness, no missing-information claim.\n  The page is SUFFICIENT for its hardest rung.\n- 2026-08-31: brought from 5 to 10 drills (Solo 6 / Integrated 3). No two drills\n  on a rung repeat a move; verified against `audit_symbol_coverage.py`.\n\n## Checks\n- `scripts/audit_symbol_coverage.py` \u2014 every declared symbol drilled \u22652\u00d7 on-node."
     },
     {
      "kc": "python.types-and-conversion",
@@ -99,15 +252,16 @@
       "builtin.int",
       "builtin.round",
       "builtin.str",
-      "python.type-name"
+      "python.type-name",
+      "syntax.equality"
      ],
-     "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```",
+     "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nAsking whether they are **equal** gives the same answer for the same reason.\n`==` compares values, and a value made of characters is never equal to a value\nmade of digits \u2014 no matter how alike they look on the page:\n\n```python\nprint(\"42\" == 42)\nprint(42 == 42)\n```\n\nComparing does not convert. If you want the question answered about the\n*number*, you have to do the converting yourself first:\n\n```python\nprint(int(\"42\") == 42)\n```\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```\n\n`bool(...)` is a conversion too, and the one that surprises people. It asks a\nsingle question of a value \u2014 *is there anything here?* \u2014 and almost everything\nanswers yes. Zero answers no, and so does empty text:\n\n```python\nprint(bool(7), bool(0))\nprint(bool(\"hi\"), bool(\"\"))\nprint(bool(0.0), bool(-3))\n```\n\nThe trap is the text `\"0\"`. It is one character long, so there **is** something\nthere and it converts to `True`. The zero only shows up once the digits have\nbeen read as a number:\n\n```python\nprint(bool(\"0\"))\nprint(bool(int(\"0\")))\n```",
      "worked_example_markdown": "One string, read three different ways, with the type named at each step.\n\n```python\ntext = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n```\n\nWhy each step:\n\n1. `int(text)` reads the digits as a whole number. The string itself is not\n   changed \u2014 conversion produces a new value.\n2. `float(text)` reads the same digits as a number with a fractional part. `12`\n   and `12.0` are equal in value and different in type.\n3. `str(as_int)` goes back the other way, which is how a number gets glued into\n   a message.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```",
+       "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nAsking whether they are **equal** gives the same answer for the same reason.\n`==` compares values, and a value made of characters is never equal to a value\nmade of digits \u2014 no matter how alike they look on the page:\n\n```python\nprint(\"42\" == 42)\nprint(42 == 42)\n```\n\nComparing does not convert. If you want the question answered about the\n*number*, you have to do the converting yourself first:\n\n```python\nprint(int(\"42\") == 42)\n```\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```\n\n`bool(...)` is a conversion too, and the one that surprises people. It asks a\nsingle question of a value \u2014 *is there anything here?* \u2014 and almost everything\nanswers yes. Zero answers no, and so does empty text:\n\n```python\nprint(bool(7), bool(0))\nprint(bool(\"hi\"), bool(\"\"))\nprint(bool(0.0), bool(-3))\n```\n\nThe trap is the text `\"0\"`. It is one character long, so there **is** something\nthere and it converts to `True`. The zero only shows up once the digits have\nbeen read as a number:\n\n```python\nprint(bool(\"0\"))\nprint(bool(int(\"0\")))\n```",
        "watch_out_markdown": "- **`int()` truncates, it does not round** \u2014 `int(3.9)` is `3`. If you wanted\n  `4`, `round` is the call you meant.\n- **`\"5\"` is not `5`** \u2014 a string of digits stays text until something converts\n  it, and comparing the two gives `False`.\n- **`bool` is its own type** \u2014 `True` behaves like `1` in arithmetic, but\n  `type(True).__name__` is `\"bool\"`, not `\"int\"`.",
        "worked_example_markdown": "One string, read three different ways, with the type named at each step.\n\n```python\ntext = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n```\n\nWhy each step:\n\n1. `int(text)` reads the digits as a whole number. The string itself is not\n   changed \u2014 conversion produces a new value.\n2. `float(text)` reads the same digits as a number with a fractional part. `12`\n   and `12.0` are equal in value and different in type.\n3. `str(as_int)` goes back the other way, which is how a number gets glued into\n   a message.",
        "worked_example_code": "text = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n",
@@ -123,6 +277,54 @@
          "prompt": "Text in, arithmetic out \u2014 the digits have to become a number first.",
          "starter_code": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return _____(digits) + 8\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
          "solution": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return int(digits) + 8\n"
+        },
+        {
+         "question_id": 731,
+         "prompt": "Convert first \u2014 then * means arithmetic, not repetition.",
+         "starter_code": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return _____(text) * 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.5',)\nprint(solve(*example))\n",
+         "solution": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return float(text) * 2\n"
+        },
+        {
+         "question_id": 732,
+         "prompt": "A number cannot be glued onto text until it IS text.",
+         "starter_code": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = _____(count)\n    return label + \" items\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+         "solution": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = str(count)\n    return label + \" items\"\n"
+        },
+        {
+         "question_id": 733,
+         "prompt": "Its truth, and the name of its kind.",
+         "starter_code": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (_____(value), type(value).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+         "solution": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (bool(value), type(value).__name__)\n"
+        },
+        {
+         "question_id": 734,
+         "prompt": "To the nearest whole number \u2014 not truncated.",
+         "starter_code": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return _____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.7,)\nprint(solve(*example))\n",
+         "solution": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return round(x)\n"
+        },
+        {
+         "question_id": 735,
+         "prompt": "Put both values on the same side of the type line, then compare.",
+         "starter_code": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == _____(number)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('7', 7)\nprint(solve(*example))\n",
+         "solution": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == str(number)\n"
+        },
+        {
+         "question_id": 736,
+         "prompt": "Truncate both \u2014 drop the fraction, do not round \u2014 then multiply.",
+         "starter_code": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return _____(x) * _____(y)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+         "solution": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return int(x) * int(y)\n"
+        },
+        {
+         "question_id": 737,
+         "prompt": "Text to number to text: the kind changes twice, the digits never do.",
+         "starter_code": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = _____(digits)\n    back = _____(n)\n    return (n, back)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
+         "solution": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = int(digits)\n    back = str(n)\n    return (n, back)\n"
+        },
+        {
+         "question_id": 738,
+         "prompt": "The truth of the NUMBER, not of the text holding it.",
+         "starter_code": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(_____(text))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+         "solution": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(int(text))\n"
         }
        ]
       }
@@ -139,6 +341,54 @@
        "prompt": "Text in, arithmetic out \u2014 the digits have to become a number first.",
        "starter_code": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return _____(digits) + 8\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
        "solution": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return int(digits) + 8\n"
+      },
+      {
+       "question_id": 731,
+       "prompt": "Convert first \u2014 then * means arithmetic, not repetition.",
+       "starter_code": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return _____(text) * 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.5',)\nprint(solve(*example))\n",
+       "solution": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return float(text) * 2\n"
+      },
+      {
+       "question_id": 732,
+       "prompt": "A number cannot be glued onto text until it IS text.",
+       "starter_code": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = _____(count)\n    return label + \" items\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+       "solution": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = str(count)\n    return label + \" items\"\n"
+      },
+      {
+       "question_id": 733,
+       "prompt": "Its truth, and the name of its kind.",
+       "starter_code": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (_____(value), type(value).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+       "solution": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (bool(value), type(value).__name__)\n"
+      },
+      {
+       "question_id": 734,
+       "prompt": "To the nearest whole number \u2014 not truncated.",
+       "starter_code": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return _____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.7,)\nprint(solve(*example))\n",
+       "solution": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return round(x)\n"
+      },
+      {
+       "question_id": 735,
+       "prompt": "Put both values on the same side of the type line, then compare.",
+       "starter_code": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == _____(number)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('7', 7)\nprint(solve(*example))\n",
+       "solution": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == str(number)\n"
+      },
+      {
+       "question_id": 736,
+       "prompt": "Truncate both \u2014 drop the fraction, do not round \u2014 then multiply.",
+       "starter_code": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return _____(x) * _____(y)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+       "solution": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return int(x) * int(y)\n"
+      },
+      {
+       "question_id": 737,
+       "prompt": "Text to number to text: the kind changes twice, the digits never do.",
+       "starter_code": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = _____(digits)\n    back = _____(n)\n    return (n, back)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
+       "solution": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = int(digits)\n    back = str(n)\n    return (n, back)\n"
+      },
+      {
+       "question_id": 738,
+       "prompt": "The truth of the NUMBER, not of the text holding it.",
+       "starter_code": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(_____(text))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+       "solution": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(int(text))\n"
       }
      ],
      "guided_items": [],
@@ -153,6 +403,46 @@
        "question_id": 577,
        "prompt": "Truncating and rounding, side by side, on the same number.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 713,
+       "prompt": "Ask two values whether they count as a yes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 714,
+       "prompt": "Round a number that arrives as text \u2014 which it cannot be until it is converted.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 715,
+       "prompt": "The same digits compared as text and as a number.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 716,
+       "prompt": "Ask before converting, and ask after, on a piece of text holding `0`.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 739,
+       "prompt": "Convert two digit strings, add as numbers, and carry the sum back as text too.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 740,
+       "prompt": "One float, three readings: truncated, rounded, and whether they agree.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 741,
+       "prompt": "Two values can share a truth without being equal.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 742,
+       "prompt": "Each conversion has a kind of its own \u2014 name both.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -163,13 +453,30 @@
       {
        "question_id": 579,
        "prompt": "The same `+` doing both of its jobs, in one function."
+      },
+      {
+       "question_id": 717,
+       "prompt": "Text in \u2014 round it, name the type of what you get, say whether it counts as a\nyes, and whether writing it back out spells what you started with."
+      },
+      {
+       "question_id": 743,
+       "prompt": "Parse a quantity, rebuild it into a label, and report its truth and the label's kind."
       }
      ],
      "independent_items": [
       576,
-      577
+      577,
+      713,
+      714,
+      715,
+      716,
+      739,
+      740,
+      741,
+      742
      ],
-     "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready."
+     "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready.",
+     "notes_markdown": "Second concept of the python course (ids 574\u2013579 + 713\u2013717). Supported by\n[[python.values-and-names]].\n\n## Findings\n- 2026-09-01: `python.type-name` sat at 0/2 coverage for a month and was\n  UNSATISFIABLE, not under-drilled \u2014 the symbol collector emitted\n  `syntax.attribute` for `type(x).__name__` because the receiver is a Call.\n  Fixed in `solution_symbols.py` (`_is_type_call`, narrowed after a codex\n  finding so `module.__name__` earns nothing). A coverage number stuck at 0\n  can be a DETECTOR gap, not a content gap.\n- 2026-09-01: `syntax.equality` was used by 42 questions and taught by NO\n  lesson. Declared here (the page already teaches `\"42\" == 42` as a named\n  misconception); resolved 38 recorded prereq violations for one coverage\n  obligation, met on arrival by q715/q717.\n- 2026-09-01: q713's wrong example printed the CORRECT output for its example\n  inputs (`(True, True)`); anchored to `solve(0, '')` where the misconception\n  diverges. This became `wrong_example_matches_correct` (blocking) in\n  `audit_question_bank.py` \u2014 a wrong example needs inputs where the\n  misconception and the right answer disagree.\n\n## Checks\n- `audit_question_bank.py::check_wrong_examples` \u2014 born from q713 here.\n- `scripts/audit_solution_prereqs.py` \u2014 `syntax.equality` ordering."
     },
     {
      "kc": "python.lists-and-tuples",
@@ -207,6 +514,54 @@
          "prompt": "Two values in a tuple \u2014 parentheses, not brackets.",
          "starter_code": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return _____a, b_____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
          "solution": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return (a, b)\n"
+        },
+        {
+         "question_id": 744,
+         "prompt": "The trailing comma is what makes the tuple.",
+         "starter_code": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+         "solution": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type((x,)).__name__)\n"
+        },
+        {
+         "question_id": 745,
+         "prompt": "A table is a list whose items are lists.",
+         "starter_code": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [_____, _____]\n    return (table, len(table))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [[a, b], [c, d]]\n    return (table, len(table))\n"
+        },
+        {
+         "question_id": 746,
+         "prompt": "Wrap the whole list as one item, then measure both containers.",
+         "starter_code": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = _____\n    return (len(items), len(outer))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = [items]\n    return (len(items), len(outer))\n"
+        },
+        {
+         "question_id": 747,
+         "prompt": "Rehouse the items in a tuple; the count comes along unchanged.",
+         "starter_code": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = _____(values)\n    return (t, len(t))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = tuple(values)\n    return (t, len(t))\n"
+        },
+        {
+         "question_id": 748,
+         "prompt": "Thaw a tuple into a list, and prove it with the type name.",
+         "starter_code": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = _____(pair)\n    return (lst, type(lst).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+         "solution": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = list(pair)\n    return (lst, type(lst).__name__)\n"
+        },
+        {
+         "question_id": 749,
+         "prompt": "Same size is a question for len, answered twice.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return _____(a) == _____(b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return len(a) == len(b)\n"
+        },
+        {
+         "question_id": 750,
+         "prompt": "Same values, different brackets, different type.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type([a, b]).__name__, type((a, b)).__name__)\n"
+        },
+        {
+         "question_id": 751,
+         "prompt": "Build as a list, hand back as a tuple.",
+         "starter_code": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = _____(built)\n    return (frozen, len(frozen))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = tuple(built)\n    return (frozen, len(frozen))\n"
         }
        ]
       }
@@ -223,6 +578,54 @@
        "prompt": "Two values in a tuple \u2014 parentheses, not brackets.",
        "starter_code": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return _____a, b_____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
        "solution": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return (a, b)\n"
+      },
+      {
+       "question_id": 744,
+       "prompt": "The trailing comma is what makes the tuple.",
+       "starter_code": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+       "solution": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type((x,)).__name__)\n"
+      },
+      {
+       "question_id": 745,
+       "prompt": "A table is a list whose items are lists.",
+       "starter_code": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [_____, _____]\n    return (table, len(table))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [[a, b], [c, d]]\n    return (table, len(table))\n"
+      },
+      {
+       "question_id": 746,
+       "prompt": "Wrap the whole list as one item, then measure both containers.",
+       "starter_code": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = _____\n    return (len(items), len(outer))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = [items]\n    return (len(items), len(outer))\n"
+      },
+      {
+       "question_id": 747,
+       "prompt": "Rehouse the items in a tuple; the count comes along unchanged.",
+       "starter_code": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = _____(values)\n    return (t, len(t))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = tuple(values)\n    return (t, len(t))\n"
+      },
+      {
+       "question_id": 748,
+       "prompt": "Thaw a tuple into a list, and prove it with the type name.",
+       "starter_code": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = _____(pair)\n    return (lst, type(lst).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+       "solution": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = list(pair)\n    return (lst, type(lst).__name__)\n"
+      },
+      {
+       "question_id": 749,
+       "prompt": "Same size is a question for len, answered twice.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return _____(a) == _____(b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return len(a) == len(b)\n"
+      },
+      {
+       "question_id": 750,
+       "prompt": "Same values, different brackets, different type.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type([a, b]).__name__, type((a, b)).__name__)\n"
+      },
+      {
+       "question_id": 751,
+       "prompt": "Build as a list, hand back as a tuple.",
+       "starter_code": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = _____(built)\n    return (frozen, len(frozen))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = tuple(built)\n    return (frozen, len(frozen))\n"
       }
      ],
      "guided_items": [],
@@ -237,6 +640,46 @@
        "question_id": 583,
        "prompt": "A round trip: list to tuple and back, with the lengths compared.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 752,
+       "prompt": "Two levels, two measurements, one finished answer \u2014 and its kind.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 753,
+       "prompt": "Convert the tuple first; then equality compares item by item.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 754,
+       "prompt": "Rows of different lengths are still one item each.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 755,
+       "prompt": "One comma is the whole difference between a tuple and a bare value.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 756,
+       "prompt": "Three containers, one count: conversions never change how many.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 757,
+       "prompt": "A container does not convert its contents \u2014 each item keeps its kind.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 758,
+       "prompt": "An empty list is a no; a list HOLDING it is not empty.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 759,
+       "prompt": "Equal contents still need equal containers.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -247,13 +690,30 @@
       {
        "question_id": 585,
        "prompt": "Count the rows, measure every one of them, and say whether they agree."
+      },
+      {
+       "question_id": 760,
+       "prompt": "Two rows, one measured pair \u2014 and whether the rows agree on length."
+      },
+      {
+       "question_id": 761,
+       "prompt": "A report: the data, its total, its count \u2014 frozen together, with its kind named."
       }
      ],
      "independent_items": [
       582,
-      583
+      583,
+      752,
+      753,
+      754,
+      755,
+      756,
+      757,
+      758,
+      759
      ],
-     "misconceptions_markdown": "- **\"A tuple is just a list that is written differently.\"** \u2014 It is a different\n  type, and it cannot be changed once built. A grader comparing a list against a\n  tuple reports them as unequal.\n- **\"`len` gives the total number of values.\"** \u2014 It gives the number of items at\n  the top level. For a list of lists that is the number of rows.\n- **\"Converting a list to a tuple changes the list.\"** \u2014 It builds a new\n  container. The original list is still there, unchanged."
+     "misconceptions_markdown": "- **\"A tuple is just a list that is written differently.\"** \u2014 It is a different\n  type, and it cannot be changed once built. A grader comparing a list against a\n  tuple reports them as unequal.\n- **\"`len` gives the total number of values.\"** \u2014 It gives the number of items at\n  the top level. For a list of lists that is the number of rows.\n- **\"Converting a list to a tuple changes the list.\"** \u2014 It builds a new\n  container. The original list is still there, unchanged.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.indexing",
@@ -288,6 +748,54 @@
          "prompt": "The last item, counted back from the end rather than measured.",
          "starter_code": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30],)\nprint(solve(*example))\n",
          "solution": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[-1]\n"
+        },
+        {
+         "question_id": 762,
+         "prompt": "Counting starts at zero \u2014 the second item is at position 1.",
+         "starter_code": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[_____], items[_____])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[1], items[2])\n"
+        },
+        {
+         "question_id": 763,
+         "prompt": "The last valid position is one LESS than the length.",
+         "starter_code": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - _____]\n    return last\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - 1]\n    return last\n"
+        },
+        {
+         "question_id": 764,
+         "prompt": "Read one end from zero, the other from minus one, and compare.",
+         "starter_code": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[_____] == items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[0] == items[-1]\n"
+        },
+        {
+         "question_id": 765,
+         "prompt": "The first bracket picks the row; the second reads inside it.",
+         "starter_code": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[_____]\n    return row[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+         "solution": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[0]\n    return row[-1]\n"
+        },
+        {
+         "question_id": 766,
+         "prompt": "Bottom-left: the last row first, then its first item.",
+         "starter_code": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[_____][_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+         "solution": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[-1][0]\n"
+        },
+        {
+         "question_id": 767,
+         "prompt": "Tuples index exactly like lists \u2014 and stay tuples.",
+         "starter_code": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[_____], point[_____], type(point).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+         "solution": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[0], point[1], type(point).__name__)\n"
+        },
+        {
+         "question_id": 768,
+         "prompt": "One step further back than len minus one.",
+         "starter_code": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - _____\n    return items[mid]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - 2\n    return items[mid]\n"
+        },
+        {
+         "question_id": 769,
+         "prompt": "-1 and len-1 are two roads to the same item.",
+         "starter_code": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[_____], items[len(items) - 1])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[-1], items[len(items) - 1])\n"
         }
        ]
       }
@@ -304,6 +812,54 @@
        "prompt": "The last item, counted back from the end rather than measured.",
        "starter_code": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30],)\nprint(solve(*example))\n",
        "solution": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[-1]\n"
+      },
+      {
+       "question_id": 762,
+       "prompt": "Counting starts at zero \u2014 the second item is at position 1.",
+       "starter_code": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[_____], items[_____])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[1], items[2])\n"
+      },
+      {
+       "question_id": 763,
+       "prompt": "The last valid position is one LESS than the length.",
+       "starter_code": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - _____]\n    return last\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - 1]\n    return last\n"
+      },
+      {
+       "question_id": 764,
+       "prompt": "Read one end from zero, the other from minus one, and compare.",
+       "starter_code": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[_____] == items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[0] == items[-1]\n"
+      },
+      {
+       "question_id": 765,
+       "prompt": "The first bracket picks the row; the second reads inside it.",
+       "starter_code": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[_____]\n    return row[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+       "solution": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[0]\n    return row[-1]\n"
+      },
+      {
+       "question_id": 766,
+       "prompt": "Bottom-left: the last row first, then its first item.",
+       "starter_code": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[_____][_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+       "solution": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[-1][0]\n"
+      },
+      {
+       "question_id": 767,
+       "prompt": "Tuples index exactly like lists \u2014 and stay tuples.",
+       "starter_code": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[_____], point[_____], type(point).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+       "solution": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[0], point[1], type(point).__name__)\n"
+      },
+      {
+       "question_id": 768,
+       "prompt": "One step further back than len minus one.",
+       "starter_code": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - _____\n    return items[mid]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - 2\n    return items[mid]\n"
+      },
+      {
+       "question_id": 769,
+       "prompt": "-1 and len-1 are two roads to the same item.",
+       "starter_code": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[_____], items[len(items) - 1])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[-1], items[len(items) - 1])\n"
       }
      ],
      "guided_items": [],
@@ -318,6 +874,46 @@
        "question_id": 589,
        "prompt": "Both ends of the same list, using a negative position for the back two.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 770,
+       "prompt": "Same column, opposite rows \u2014 the outer bracket is the one that changes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 771,
+       "prompt": "One step in from each end.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 772,
+       "prompt": "One pick, then both ends of what was picked.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 773,
+       "prompt": "Swapping the brackets reads a different cell.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 774,
+       "prompt": "Row zero, last item \u2014 and what kind of value lives there.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 775,
+       "prompt": "Flip a pair by indexing, then index what you built.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 776,
+       "prompt": "A position and the one before it \u2014 the arithmetic happens inside the brackets.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 777,
+       "prompt": "Three levels deep: three brackets each way.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -328,13 +924,30 @@
       {
        "question_id": 591,
        "prompt": "Two opposite corners of a table, plus the shape they sit in."
+      },
+      {
+       "question_id": 778,
+       "prompt": "Corners, count, and whether the edges are the same row."
+      },
+      {
+       "question_id": 779,
+       "prompt": "Pick, read, and report where the value came from."
       }
      ],
      "independent_items": [
       588,
-      589
+      589,
+      770,
+      771,
+      772,
+      773,
+      774,
+      775,
+      776,
+      777
      ],
-     "misconceptions_markdown": "- **\"`items[1]` is the first item.\"** \u2014 It is the second. Counting starts at 0.\n- **\"To get the last item I need the length.\"** \u2014 `items[-1]` does it with no\n  measurement, and cannot go one past the end.\n- **\"`rows[i][j]` and `rows[j][i]` are the same.\"** \u2014 Only on a square table, and\n  only by coincidence. The first index always picks the row."
+     "misconceptions_markdown": "- **\"`items[1]` is the first item.\"** \u2014 It is the second. Counting starts at 0.\n- **\"To get the last item I need the length.\"** \u2014 `items[-1]` does it with no\n  measurement, and cannot go one past the end.\n- **\"`rows[i][j]` and `rows[j][i]` are the same.\"** \u2014 Only on a square table, and\n  only by coincidence. The first index always picks the row.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.calling-functions",
@@ -374,6 +987,54 @@
          "prompt": "Two arguments, in the order the function expects them.",
          "starter_code": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.14159, 2)\nprint(solve(*example))\n",
          "solution": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, places)\n"
+        },
+        {
+         "question_id": 780,
+         "prompt": "The parentheses are what make the work happen.",
+         "starter_code": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return sum(numbers)\n"
+        },
+        {
+         "question_id": 781,
+         "prompt": "The two extremes, biggest first.",
+         "starter_code": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (_____(numbers), _____(numbers))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (max(numbers), min(numbers))\n"
+        },
+        {
+         "question_id": 782,
+         "prompt": "A new, ordered list comes back from one call.",
+         "starter_code": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return sorted(items)\n"
+        },
+        {
+         "question_id": 783,
+         "prompt": "The direction travels as a named argument.",
+         "starter_code": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, _____=flag)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2], True)\nprint(solve(*example))\n",
+         "solution": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, reverse=flag)\n"
+        },
+        {
+         "question_id": 784,
+         "prompt": "The distance between the two extremes.",
+         "starter_code": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return _____(items) - _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return max(items) - min(items)\n"
+        },
+        {
+         "question_id": 785,
+         "prompt": "The total over the count \u2014 each call runs first, then the division.",
+         "starter_code": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / len(numbers)\n"
+        },
+        {
+         "question_id": 786,
+         "prompt": "The function is a value; its answer is another.",
+         "starter_code": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(len).__name__, type(len(items)).__name__)\n"
+        },
+        {
+         "question_id": 787,
+         "prompt": "Three calls, one line: the mean, trimmed.",
+         "starter_code": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return _____(sum(numbers) / len(numbers), places)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 2], 2)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return round(sum(numbers) / len(numbers), places)\n"
         }
        ]
       }
@@ -390,6 +1051,54 @@
        "prompt": "Two arguments, in the order the function expects them.",
        "starter_code": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.14159, 2)\nprint(solve(*example))\n",
        "solution": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, places)\n"
+      },
+      {
+       "question_id": 780,
+       "prompt": "The parentheses are what make the work happen.",
+       "starter_code": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return sum(numbers)\n"
+      },
+      {
+       "question_id": 781,
+       "prompt": "The two extremes, biggest first.",
+       "starter_code": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (_____(numbers), _____(numbers))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (max(numbers), min(numbers))\n"
+      },
+      {
+       "question_id": 782,
+       "prompt": "A new, ordered list comes back from one call.",
+       "starter_code": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return sorted(items)\n"
+      },
+      {
+       "question_id": 783,
+       "prompt": "The direction travels as a named argument.",
+       "starter_code": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, _____=flag)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2], True)\nprint(solve(*example))\n",
+       "solution": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, reverse=flag)\n"
+      },
+      {
+       "question_id": 784,
+       "prompt": "The distance between the two extremes.",
+       "starter_code": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return _____(items) - _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return max(items) - min(items)\n"
+      },
+      {
+       "question_id": 785,
+       "prompt": "The total over the count \u2014 each call runs first, then the division.",
+       "starter_code": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / len(numbers)\n"
+      },
+      {
+       "question_id": 786,
+       "prompt": "The function is a value; its answer is another.",
+       "starter_code": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(len).__name__, type(len(items)).__name__)\n"
+      },
+      {
+       "question_id": 787,
+       "prompt": "Three calls, one line: the mean, trimmed.",
+       "starter_code": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return _____(sum(numbers) / len(numbers), places)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 2], 2)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return round(sum(numbers) / len(numbers), places)\n"
       }
      ],
      "guided_items": [],
@@ -404,6 +1113,46 @@
        "question_id": 595,
        "prompt": "Largest first \u2014 the direction is a named setting, not a different function.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 788,
+       "prompt": "A new list comes back; the original is untouched \u2014 return both and prove it.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 789,
+       "prompt": "Ascending and descending, from two calls of the same function.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 790,
+       "prompt": "Equal after trimming is a different question from equal.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 791,
+       "prompt": "A zero span means every value is the same.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 792,
+       "prompt": "min and max take bare arguments too \u2014 order a pair without a list.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 793,
+       "prompt": "Two sums over the edge rows, added.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 794,
+       "prompt": "Two roads to the smallest value.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 795,
+       "prompt": "round(x) is an int; round(x, 0) is still a float.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -414,13 +1163,30 @@
       {
        "question_id": 597,
        "prompt": "One sorted call, read from the front, plus the span between the extremes."
+      },
+      {
+       "question_id": 796,
+       "prompt": "The list in order, and four one-call facts about it."
+      },
+      {
+       "question_id": 797,
+       "prompt": "Round the mean, and say whether rounding changed it."
       }
      ],
      "independent_items": [
       594,
-      595
+      595,
+      788,
+      789,
+      790,
+      791,
+      792,
+      793,
+      794,
+      795
      ],
-     "misconceptions_markdown": "- **\"`len` gives the length.\"** \u2014 `len(items)` gives the length. `len` on its own\n  is the function object, and returning it is the most common way a drill fails\n  with no error message.\n- **\"Arguments can go in any order.\"** \u2014 Only keyword arguments can. Positional\n  arguments mean whatever their position means.\n- **\"`sorted` sorts the list.\"** \u2014 It returns a new one. The original is\n  unchanged, which is exactly why you have to keep the result."
+     "misconceptions_markdown": "- **\"`len` gives the length.\"** \u2014 `len(items)` gives the length. `len` on its own\n  is the function object, and returning it is the most common way a drill fails\n  with no error message.\n- **\"Arguments can go in any order.\"** \u2014 Only keyword arguments can. Positional\n  arguments mean whatever their position means.\n- **\"`sorted` sorts the list.\"** \u2014 It returns a new one. The original is\n  unchanged, which is exactly why you have to keep the result.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.defining-functions",
@@ -502,7 +1268,8 @@
       600,
       601
      ],
-     "misconceptions_markdown": "- **\"The function ran, so it returned something.\"** \u2014 Only `return` returns.\n  Without it every call hands back `None`.\n- **\"Two returns give two answers.\"** \u2014 The first one ends the call. A tuple is\n  how one return carries several values.\n- **\"Parameters are variables I set.\"** \u2014 They are named by the `def` line and\n  filled in by the caller, fresh on every call."
+     "misconceptions_markdown": "- **\"The function ran, so it returned something.\"** \u2014 Only `return` returns.\n  Without it every call hands back `None`.\n- **\"Two returns give two answers.\"** \u2014 The first one ends the call. A tuple is\n  how one return carries several values.\n- **\"Parameters are variables I set.\"** \u2014 They are named by the `def` line and\n  filled in by the caller, fresh on every call.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.dots-and-imports",
@@ -590,7 +1357,8 @@
       606,
       607
      ],
-     "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place."
+     "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -967,7 +1735,8 @@
       557,
       559
      ],
-     "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`."
+     "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`.",
+     "notes_markdown": "First concept of the numpy course, and the one the attempt log indicts.\n\n## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only):\n  solved q559 3/3 on the real harness, no missing-information claim. The\n  PAGE is sufficient \u2014 the 2026-08 stalls above were the DRILL POOL\n  (untaught `a.T`), not the lesson prose; consistent with both findings.\n- 2026-09-01: the log (2026-08-19\u219227) shows a 63-attempt `faded` rung stall at\n  16% accuracy, mean predicted_p 0.207 \u2014 the model predicted failure ~60\n  serves in a row and the selector complied. Dated a WEEK before the `a.T`\n  prerequisite bug (transpose needed here, taught four lessons later) was\n  found by hand. `/api/practice/kc-stats` now flags both patterns\n  (`rung_stall`, `served_while_predicting_failure`).\n\n## Edges\n- [[numpy.reshape-flatten]]: same stall pattern in the same logs (43 attempts,\n  14%) \u2014 the two failures share the untaught-transpose cause.\n\n## Checks\n- `app/kc_stats.py` flags \u2014 born from this concept's log.\n- `scripts/audit_solution_prereqs.py` \u2014 born from this concept's `a.T`."
     },
     {
      "kc": "numpy.transpose-axes",
@@ -1130,7 +1899,8 @@
       673,
       674
      ],
-     "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept."
+     "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.views-and-copies",
@@ -1257,7 +2027,8 @@
       553,
       523
      ],
-     "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it."
+     "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.constructors",
@@ -1484,7 +2255,8 @@
       644,
       645
      ],
-     "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything."
+     "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.slicing-views",
@@ -1552,7 +2324,8 @@
       74,
       189
      ],
-     "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns."
+     "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.ranges",
@@ -1651,7 +2424,8 @@
      "independent_items": [
       53
      ],
-     "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`)."
+     "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`).",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.dtype-astype",
@@ -1838,7 +2612,8 @@
       655,
       656
      ],
-     "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes."
+     "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.reshape-flatten",
@@ -2057,7 +2832,8 @@
       625,
       626
      ],
-     "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read."
+     "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read.",
+     "notes_markdown": "## Findings\n- 2026-09-01: 43-attempt `faded` stall at 14% accuracy in the 08-19\u219227 logs;\n  the low-p run inside it scored 1/26 (mean predicted_p 0.237). Same root\n  cause as [[numpy.ndarray-model]] (`a.T` untaught); kept as a separate note\n  because the stall metric reports per concept and both fired independently.\n\n## Checks\n- `app/kc_stats.py` flags."
     },
     {
      "kc": "numpy.elementwise-ufuncs",
@@ -2254,7 +3030,8 @@
       634,
       635
      ],
-     "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data."
+     "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.aggregations",
@@ -2365,7 +3142,8 @@
       497,
       498
      ],
-     "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`."
+     "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.sorting",
@@ -2562,7 +3340,8 @@
       664,
       665
      ],
-     "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP)."
+     "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP).",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-samplers",
@@ -2685,7 +3464,8 @@
       682,
       683
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-seeding",
@@ -2805,7 +3585,8 @@
       702,
       703
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-threading",
@@ -2912,7 +3693,8 @@
       692,
       693
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.linalg-basics",
@@ -3000,7 +3782,8 @@
       512,
       513
      ],
-     "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first."
+     "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3109,7 +3892,8 @@
       145,
       202
      ],
-     "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`."
+     "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.argmin-argmax",
@@ -3212,7 +3996,8 @@
       61,
       168
      ],
-     "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner."
+     "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3304,7 +4089,8 @@
       501,
       502
      ],
-     "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately."
+     "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.axis-reductions",
@@ -3390,7 +4176,8 @@
       505,
       174
      ],
-     "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely."
+     "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.dot-matmul-patterns",
@@ -3491,7 +4278,8 @@
       515,
       95
      ],
-     "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\"."
+     "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\".",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.stack-concat-interleave",
@@ -3556,7 +4344,8 @@
       238,
       159
      ],
-     "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead."
+     "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3622,7 +4411,8 @@
       327,
       344
      ],
-     "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon."
+     "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.merge-axes",
@@ -3695,7 +4485,8 @@
       392,
       400
      ],
-     "misconceptions_markdown": "- **\"`(h w)` and `(w h)` give the same flattening.\"** \u2014 Same length,\n  different order: left-slow/right-fast. The task's phrase \"row-major\" /\n  \"column by column\" / \"X's block first\" picks the order for you.\n- **\"Axes must be adjacent to merge.\"** \u2014 The pattern happily merges\n  distant axes ('b h w c -> h (b w) c'); einops inserts the implied\n  transpose. By hand you'd have to permute them together first \u2014 that\n  two-step is exactly what the pattern hides.\n- **\"Merging loses information.\"** \u2014 It's a pure relabeling; every element\n  keeps a unique address. The inverse operation (splitting, next KP)\n  recovers the original \u2014 provided you remember one of the factor sizes."
+     "misconceptions_markdown": "- **\"`(h w)` and `(w h)` give the same flattening.\"** \u2014 Same length,\n  different order: left-slow/right-fast. The task's phrase \"row-major\" /\n  \"column by column\" / \"X's block first\" picks the order for you.\n- **\"Axes must be adjacent to merge.\"** \u2014 The pattern happily merges\n  distant axes ('b h w c -> h (b w) c'); einops inserts the implied\n  transpose. By hand you'd have to permute them together first \u2014 that\n  two-step is exactly what the pattern hides.\n- **\"Merging loses information.\"** \u2014 It's a pure relabeling; every element\n  keeps a unique address. The inverse operation (splitting, next KP)\n  recovers the original \u2014 provided you remember one of the factor sizes.",
+     "notes_markdown": "## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson Concept +\n  worked example only, instructed to use nothing else and to say what is\n  missing rather than guess): solved q400 (last independent drill,\n  `'b c h w -> c h (w b)'` interleave) 4/4 cases on the real harness, no\n  missing-information claim. The page is sufficient for its hardest rung.\n- 2026-09-01: the graph-structure audit's 41 order-only dependencies\n  concentrate here and in the sibling einops KCs \u2014 drills lean on\n  numpy-taught fixtures (`torch.arange`) with no lattice path behind them.\n  See `scripts/graph_structure_baseline.json`, keys `edge-missing|einops.*`.\n\n## Checks\n- `scripts/audit_graph_structure.py` \u2014 edge-missing family."
     },
     {
      "kc": "einops.split-axes",
@@ -3748,7 +4539,8 @@
       320,
       331
      ],
-     "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work."
+     "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.singleton-and-lists",
@@ -3804,7 +4596,8 @@
       334,
       365
      ],
-     "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature."
+     "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.grids-montage",
@@ -3862,7 +4655,8 @@
       371,
       531
      ],
-     "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick."
+     "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.patches-space-depth",
@@ -3921,7 +4715,8 @@
       398,
       403
      ],
-     "misconceptions_markdown": "- **\"Patch extraction needs sliding-window machinery.\"** \u2014 NON-overlapping\n  patches are a pure reshape (split + merge); no windows, no copies of\n  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job \u2014 different\n  task, check the word \"non-overlapping\".\n- **\"Space-to-depth loses spatial information.\"** \u2014 It's a bijection: every\n  pixel gets a unique (channel, position) address, and depth-to-space\n  inverts it exactly. What changes is which axis \"sees\" the detail.\n- **\"The channel packing order after s2d doesn't matter.\"** \u2014 Downstream\n  code (or the grader) reads channels by index; (c p q) vs (p q c) are\n  different tensors with equal shapes. The paren order IS the file format \u2014\n  get it from the task, verify with a position-valued example."
+     "misconceptions_markdown": "- **\"Patch extraction needs sliding-window machinery.\"** \u2014 NON-overlapping\n  patches are a pure reshape (split + merge); no windows, no copies of\n  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job \u2014 different\n  task, check the word \"non-overlapping\".\n- **\"Space-to-depth loses spatial information.\"** \u2014 It's a bijection: every\n  pixel gets a unique (channel, position) address, and depth-to-space\n  inverts it exactly. What changes is which axis \"sees\" the detail.\n- **\"The channel packing order after s2d doesn't matter.\"** \u2014 Downstream\n  code (or the grader) reads channels by index; (c p q) vs (p q c) are\n  different tensors with equal shapes. The paren order IS the file format \u2014\n  get it from the task, verify with a position-valued example.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3989,7 +4784,8 @@
       340,
       370
      ],
-     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade."
+     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.pooling",
@@ -4044,7 +4840,8 @@
       336,
       377
      ],
-     "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form."
+     "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -4113,7 +4910,8 @@
       352,
       355
      ],
-     "misconceptions_markdown": "- **\"repeat is rearrange with bigger numbers.\"** \u2014 rearrange is a\n  bijection (every input element appears once); repeat COPIES. The\n  found-on-the-right-only names/factors are what license the copying.\n- **\"'(h 2)' and '(2 h)' both just double the axis.\"** \u2014 Same length,\n  different layout: h-slow keeps copies adjacent to their source row\n  (stretch); 2-slow lays whole blocks end to end (tile). Tasks say\n  \"consecutively\"/\"each row\" vs \"whole image again\" \u2014 map the words to\n  the order.\n- **\"Broadcasting makes repeat unnecessary.\"** \u2014 Broadcasting stretches\n  virtually within an operation; repeat materializes an actual tensor with\n  the new shape \u2014 which is what a drill's return-shape contract (and much\n  downstream code) requires. Know which one you're producing."
+     "misconceptions_markdown": "- **\"repeat is rearrange with bigger numbers.\"** \u2014 rearrange is a\n  bijection (every input element appears once); repeat COPIES. The\n  found-on-the-right-only names/factors are what license the copying.\n- **\"'(h 2)' and '(2 h)' both just double the axis.\"** \u2014 Same length,\n  different layout: h-slow keeps copies adjacent to their source row\n  (stretch); 2-slow lays whole blocks end to end (tile). Tasks say\n  \"consecutively\"/\"each row\" vs \"whole image again\" \u2014 map the words to\n  the order.\n- **\"Broadcasting makes repeat unnecessary.\"** \u2014 Broadcasting stretches\n  virtually within an operation; repeat materializes an actual tensor with\n  the new shape \u2014 which is what a drill's return-shape contract (and much\n  downstream code) requires. Know which one you're producing.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.dl-flatten-heads",
@@ -4167,7 +4965,8 @@
       394,
       349
      ],
-     "misconceptions_markdown": "- **\"Any flatten order works if shapes match.\"** \u2014 The linear layer's\n  weights were trained against ONE packing order. (c h w) vs (h w c)\n  flattens produce equal shapes and incompatible semantics. Follow the\n  framework convention the drill names.\n- **\"Head merge/split order is a style choice.\"** \u2014 nh-slow is the\n  transformer ecosystem's convention; violating it silently permutes\n  features. The einops pattern documents the choice \u2014 that's half its\n  value.\n- **\"These need reshape + transpose + reshape chains.\"** \u2014 Each is ONE\n  pattern. If your solution has intermediate .transpose calls around\n  reshapes, the pattern can absorb them (and check the shapes while it's\n  at it)."
+     "misconceptions_markdown": "- **\"Any flatten order works if shapes match.\"** \u2014 The linear layer's\n  weights were trained against ONE packing order. (c h w) vs (h w c)\n  flattens produce equal shapes and incompatible semantics. Follow the\n  framework convention the drill names.\n- **\"Head merge/split order is a style choice.\"** \u2014 nh-slow is the\n  transformer ecosystem's convention; violating it silently permutes\n  features. The einops pattern documents the choice \u2014 that's half its\n  value.\n- **\"These need reshape + transpose + reshape chains.\"** \u2014 Each is ONE\n  pattern. If your solution has intermediate .transpose calls around\n  reshapes, the pattern can absorb them (and check the shapes while it's\n  at it).",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.channel-groups-temporal",
@@ -4224,7 +5023,8 @@
       316,
       359
      ],
-     "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters."
+     "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters.",
+     "notes_markdown": ""
     }
    ]
   }

@@ -3,10 +3,10 @@ kc: python.calling-functions
 title: Calling a function — arguments in, one value out
 supporting: [python.types-and-conversion, python.lists-and-tuples]
 new_syntax: [builtin.max, builtin.min, builtin.round, builtin.sorted, builtin.sum, syntax.call, syntax.keyword-argument]
-faded: [592, 593]
+faded: [592, 593, 780, 781, 782, 783, 784, 785, 786, 787]
 guided: []
-independent: [594, 595]
-integrated: [596, 597]
+independent: [594, 595, 788, 789, 790, 791, 792, 793, 794, 795]
+integrated: [596, 597, 796, 797]
 ---
 
 ## Concept
@@ -141,6 +141,126 @@ def solve(x, places):
     return round(x, places)
 ```
 
+### q780
+The parentheses are what make the work happen.
+
+```python starter
+def solve(numbers):
+    """One call, one value back."""
+    return _____(numbers)
+```
+
+```python solution
+def solve(numbers):
+    """One call, one value back."""
+    return sum(numbers)
+```
+
+### q781
+The two extremes, biggest first.
+
+```python starter
+def solve(numbers):
+    """The two extremes, biggest first."""
+    return (_____(numbers), _____(numbers))
+```
+
+```python solution
+def solve(numbers):
+    """The two extremes, biggest first."""
+    return (max(numbers), min(numbers))
+```
+
+### q782
+A new, ordered list comes back from one call.
+
+```python starter
+def solve(items):
+    """sorted returns a new, ordered list."""
+    return _____(items)
+```
+
+```python solution
+def solve(items):
+    """sorted returns a new, ordered list."""
+    return sorted(items)
+```
+
+### q783
+The direction travels as a named argument.
+
+```python starter
+def solve(items, flag):
+    """The direction travels as a named argument."""
+    return sorted(items, _____=flag)
+```
+
+```python solution
+def solve(items, flag):
+    """The direction travels as a named argument."""
+    return sorted(items, reverse=flag)
+```
+
+### q784
+The distance between the two extremes.
+
+```python starter
+def solve(items):
+    """The distance between the two extremes."""
+    return _____(items) - _____(items)
+```
+
+```python solution
+def solve(items):
+    """The distance between the two extremes."""
+    return max(items) - min(items)
+```
+
+### q785
+The total over the count — each call runs first, then the division.
+
+```python starter
+def solve(numbers):
+    """sum over len — each call runs first, then the division."""
+    return sum(numbers) / _____(numbers)
+```
+
+```python solution
+def solve(numbers):
+    """sum over len — each call runs first, then the division."""
+    return sum(numbers) / len(numbers)
+```
+
+### q786
+The function is a value; its answer is another.
+
+```python starter
+def solve(items):
+    """The function is a value; its answer is another."""
+    return (type(_____).__name__, type(_____).__name__)
+```
+
+```python solution
+def solve(items):
+    """The function is a value; its answer is another."""
+    return (type(len).__name__, type(len(items)).__name__)
+```
+
+### q787
+Three calls, one line: the mean, trimmed.
+
+```python starter
+def solve(numbers, places):
+    """Three calls, one line: the mean, trimmed."""
+    return _____(sum(numbers) / len(numbers), places)
+```
+
+```python solution
+def solve(numbers, places):
+    """Three calls, one line: the mean, trimmed."""
+    return round(sum(numbers) / len(numbers), places)
+```
+
 ## Solo practice
 
 ### q594
@@ -161,6 +281,30 @@ print("as one answer:", (sum(numbers), max(numbers), min(numbers)))
 ### q595
 Largest first — the direction is a named setting, not a different function.
 
+### q788
+A new list comes back; the original is untouched — return both and prove it.
+
+### q789
+Ascending and descending, from two calls of the same function.
+
+### q790
+Equal after trimming is a different question from equal.
+
+### q791
+A zero span means every value is the same.
+
+### q792
+min and max take bare arguments too — order a pair without a list.
+
+### q793
+Two sums over the edge rows, added.
+
+### q794
+Two roads to the smallest value.
+
+### q795
+round(x) is an int; round(x, 0) is still a float.
+
 ## Integrated practice
 
 ### q596
@@ -168,6 +312,12 @@ Count, average and round, with each call feeding the next.
 
 ### q597
 One sorted call, read from the front, plus the span between the extremes.
+
+### q796
+The list in order, and four one-call facts about it.
+
+### q797
+Round the mean, and say whether rounding changed it.
 
 ## Misconceptions
 

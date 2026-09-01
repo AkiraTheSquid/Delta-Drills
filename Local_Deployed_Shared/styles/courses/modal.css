@@ -111,6 +111,17 @@ body.modal-open {
   background-clip: padding-box;
 }
 
+/* A ROW IS TWO LINKS (2026-09-01). The section opens in the app; "Colab ↗"
+   opens upstream. They are siblings rather than nested because an <a> may not
+   contain an <a> — see courses.js::buildSectionItem. The wrapper carries no
+   padding or background of its own: the section link keeps the full-width
+   hover it always had, and the Colab link sits in the gutter it leaves. */
+.section-row {
+  align-items: stretch;
+  display: flex;
+  gap: 4px;
+}
+
 .section-item {
   display: flex;
   align-items: flex-start;
@@ -118,7 +129,34 @@ body.modal-open {
   padding: 9px 12px;
   border-radius: 6px;
   cursor: default;
+  flex: 1;
+  min-width: 0;
   transition: background-color 0.15s ease;
+}
+
+/* Deliberately quiet: the in-app notebook is the route this app is for, and a
+   second link of equal weight on every row would read as a choice the learner
+   has to make thirty-one times. It comes forward on hover. */
+.section-colab {
+  align-self: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  flex-shrink: 0;
+  font-size: 11.5px;
+  padding: 4px 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-colab:hover {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.section-colab:focus-visible {
+  outline: 2px solid var(--section-number-color, var(--accent));
+  outline-offset: 2px;
 }
 
 .section-item:hover {

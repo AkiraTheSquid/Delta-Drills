@@ -247,30 +247,29 @@
    here" rather than "a placement exists" — the overview has to come back the
    moment the learner is between probes or looking at their results.
 
-   🔴 IT IS WRITTEN ON #page-practice NOW. There is no #page-diagnostic: the
-   Placement test and Practice were merged into one Learner Home tab on
-   2026-08-24 (Seth: "the diagnostic and practice should be combined into one
-   tab"), and the overview, the results card and the workspace host all moved
-   onto that page. The selector had to follow; the class did not change. */
-/* TAKEN ONCE, THEN OFF THE DAILY SCREEN (Seth, 2026-08-31: "don't put it on
-   the learner home tab ... remove it from there. It should show up there only
-   whenever the student hasn't taken the diagnostic before"). Written by
-   practice/diagnostic-page.js::syncOverviewVisibility on a COMPLETED placement
-   only — never on an unknown status, never mid-test — and lifted for the visit
-   in which the account menu's placement row asks for it (DiagnosticPage.reveal).
-   `#learner-areas` above it is NOT hidden by this: the area bars are the daily
-   readout, the card is the one-off offer. */
-#page-practice.placement-taken #diagnostic-overview { display: none; }
+   🔴 IT IS WRITTEN ON #page-placement. The Placement test was merged into the
+   Learner Home on 2026-08-24 and split back onto a page of its own on
+   2026-09-01 (Seth: keep the placement interface "separate ... it only gets
+   displayed whenever you click on the drop-down one and you go to it
+   specifically"), taking the overview, the results card and the workspace host
+   with it. The selector followed both times; the class never changed.
 
-#page-practice.diagnostic-running #diagnostic-overview { display: none; }
-#page-practice.diagnostic-running #learner-areas { display: none; }
-#page-practice.diagnostic-running { padding: 0; }
-/* .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
-   needs hiding when the workspace is hosted here.
+   🔴 THE `.placement-taken` HIDE IS DELETED, not moved (it lived here from
+   2026-08-31). It took a COMPLETED placement's card off the Learner Home, which
+   is a rule about a card parked on the daily screen — and the card is not on
+   that screen in any state any more. Re-pointed at this page it would hide the
+   only content of a page the learner opened on purpose, which is the "nothing
+   to click" dead end `DiagnosticPage.reveal()` existed to patch. Both are gone
+   together; practice/watch.py asserts neither comes back. */
+#page-placement.diagnostic-running #diagnostic-overview { display: none; }
+#page-placement.diagnostic-running { padding: 0; }
+/* 🔴 `#learner-areas` IS NOT LISTED HERE ANY MORE — it is on the Learner Home,
+   a different page, and a probe hosted here hides that page wholesale. The rule
+   below is what takes the dial and the bars off the screen for the duration of
+   a probe: the whole `.session-setup` travels with the workspace.
 
-   🔴 AND THE IDLE SURFACE IS INSIDE IT. `#diagnostic-overview` is a child of
-   `.session-setup` since the merge, so this one rule takes the dial, the areas
-   and the placement card off the screen together while a probe is up. */
+   .practice-mode-intro was deleted on 2026-08-23; only .session-setup still
+   needs hiding when the workspace is hosted here. */
 .diagnostic-workspace-host .session-setup { display: none; }
 /* 🔴 THE SAME ARITHMETIC AS THE PRACTICE TAB, and it has to stay that way.
    `#page-practice` is `calc(100vh - var(--dd-topbar-h))`; this was that minus
@@ -281,23 +280,30 @@
 .diagnostic-workspace-host .practice-container { height: calc(100vh - var(--dd-topbar-h)); }
 .diagnostic-workspace-host .practice-split { display: flex; }
 
-/* 🔴 THE SPECIFICITY FIGHT THE MERGE CREATED, and it is not cosmetic.
-   `#page-practice.session-idle` (styles/practice/timer.css) hides `.practice-split`
-   and shows `.session-setup` — and until 2026-08-24 that never collided with the
-   two rules above, because the host lived on a DIFFERENT page and the workspace
-   simply stopped being a descendant of #page-practice while it was hosted.
+/* 🔴 THE SPECIFICITY FIGHT THE MERGE CREATED, KEPT ON PURPOSE AFTER THE SPLIT.
+   `#page-practice.session-idle` (styles/practice/timer.css) hides
+   `.practice-split` and shows `.session-setup`. While the host lived on
+   #page-practice (2026-08-24 to 2026-09-01) the hosted workspace was a
+   descendant of that page, `#page-practice.session-idle .practice-split` (1,2,0)
+   beat `.diagnostic-workspace-host .practice-split` (0,2,0), and a probe
+   rendered as a blank idle screen. Two IDs settled it outright.
 
-   It is a descendant of it now, both ways round. `#page-practice.session-idle
-   .practice-split` is (1,2,0) and `.diagnostic-workspace-host .practice-split` is
-   (0,2,0), so the ID rule wins and a placement probe would render as a blank
-   idle screen. Two IDs settle it outright rather than leaving it to the order
-   two stylesheets happen to be linked in.
+   The host is on #page-placement again, so the workspace is NOT a descendant of
+   #page-practice while it is hosted and the collision cannot arise. These two
+   rules are kept anyway: they are exactly the pair that has to exist if the host
+   ever moves back under that page, they cost nothing while they match nothing,
+   and deleting them is how the blank-probe bug returns silently.
 
    The learner is not "idle" during a probe, so nothing here is a lie — but the
    class is timer.js's to write and a placement is not a session, so this is
    fixed where the conflict is rather than by teaching timer.js about placements. */
 #page-practice #diagnostic-workspace-host .practice-split { display: flex; }
 #page-practice #diagnostic-workspace-host .session-setup { display: none; }
+/* And the same pair for where the host actually is. `#page-placement` carries
+   no `.session-idle`, so nothing is being beaten here — this is the positive
+   statement that a hosted workspace shows its editor. */
+#page-placement #diagnostic-workspace-host .practice-split { display: flex; }
+#page-placement #diagnostic-workspace-host .session-setup { display: none; }
 /* 🪦 `#page-practice #diagnostic-workspace-host .stage-ladder { display: block }`
    lived here for a few hours on 2026-08-24 and was WRONG twice over. Nothing
    ever needed it — the host shows placement probes, which carry no `ladder_kc`,
@@ -383,3 +389,73 @@
 .learner-areas.is-empty {
   display: none;
 }
+
+/* ---- WEEKLY ACTIVITY BARS ----------------------------------------------
+   The problems-answered-per-day chart under the area list (Seth, 2026-09-01),
+   drawn by practice/activity-chart.js from /api/practice/activity-week. Same
+   card shell as .learner-areas, and the same .is-empty contract: signed out or
+   fetch failed → the whole box goes. Bars scale against the week's own best
+   day — the JS writes each .activity-day-bar height as a percentage of it. */
+.learner-activity {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 22px auto 0;
+  max-width: 560px;
+  padding: 18px 20px 16px;
+  text-align: left;
+  width: 100%;
+}
+.learner-activity.is-empty { display: none; }
+.learner-activity-head {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.activity-week-chart {
+  align-items: stretch;
+  display: flex;
+  gap: 10px;
+}
+.activity-day {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+}
+.activity-day-count {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  /* Reserve the line even when empty so all seven tracks stay level. */
+  min-height: 15px;
+}
+/* Fixed-height track with the bar growing up from the floor — same "every bar
+   shares the same two pixels" reasoning as .placement-area-bar, rotated
+   vertical. The hairline floor keeps a zero day visibly a day, not a gap. */
+.activity-day-track {
+  align-items: flex-end;
+  background: rgb(var(--well-rgb) / calc(0.12 * var(--well-k)));
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  height: 88px;
+}
+.activity-day-bar {
+  background: var(--info);
+  border-radius: 4px 4px 0 0;
+  display: block;
+  width: 100%;
+}
+.activity-day-letter {
+  color: var(--muted-dim);
+  font-size: 11px;
+  font-weight: 700;
+}
+/* Today reads a shade louder than the finished days — it is the bar that is
+   still being earned. */
+.activity-day.is-today .activity-day-letter,
+.activity-day.is-today .activity-day-count { color: var(--text); }

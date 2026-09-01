@@ -1,0 +1,121 @@
+/* ARENA notebook — a Courses section opened IN the app.
+   Markup built by practice/arena-notebook.js.
+
+   🔴 THIS SHEET IS AN EXTENSION, NOT A SECOND NOTEBOOK STYLE. The cells, the
+   toolbar, the banner, the Run gutter and the output block are all the `.nbv-*`
+   rules in notebook-view.css — Seth asked for "a view that is like our other
+   notebooks thing", and the way to keep that true a month from now is for the
+   two surfaces to share the rules rather than to look alike by coincidence.
+   So this file must be linked AFTER notebook-view.css, and holds only what the
+   ARENA surface has and the lesson notebooks do not:
+
+     - the section header (chapter / number / description / provenance)
+     - a Colab setup cell, which is read-only rather than runnable
+     - images, which upstream prose is full of and authored lessons never have
+*/
+
+.arena-notebooks-container {
+  margin: 0 auto;
+  max-width: 980px;
+  padding: 0 16px;
+}
+
+/* ---- the section header -------------------------------------------------- */
+
+.arena-nb-head {
+  border-bottom: 1px solid var(--border);
+  margin: 0 auto 18px;
+  max-width: 880px;
+  padding-bottom: 16px;
+}
+
+.arena-nb-chapter {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.arena-nb-title {
+  font-size: 26px;
+  line-height: 1.25;
+  margin: 6px 0 8px;
+}
+
+.arena-nb-desc {
+  color: var(--text);
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+/* Where the page came from, and what it is not. A learner who has been graded
+   on every other surface in this app has to be told, once and in plain words,
+   that this one is not scoring them. */
+.arena-nb-origin {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.arena-nb-origin code {
+  font-size: 11.5px;
+  word-break: break-all;
+}
+
+/* ---- disclosures --------------------------------------------------------- */
+
+/* ARENA writes both its hints and its solutions as <details>, and the summary
+   is the only thing saying which one you are about to open. It gets the weight
+   the lesson notebooks give a problem header for the same reason: it is what a
+   scrolling learner is aiming at. */
+.arena-nb-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+.arena-nb-details[open] > summary {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+/* ---- a Colab setup cell -------------------------------------------------- */
+
+/* No Run button, so no hover affordance either — a cell that cannot run must
+   not look like one that can. The mark replaces the ▶ in the gutter so the
+   column of buttons down the left edge stays a straight line. */
+.arena-nb-magic {
+  opacity: 0.85;
+}
+
+.arena-nb-magic-mark {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 0;
+}
+
+.arena-nb-magic .nbv-src code {
+  color: var(--muted);
+}
+
+/* ---- images -------------------------------------------------------------- */
+
+/* Upstream sizes its images with a `width` attribute for a 1200px Colab
+   column; the attribute is dropped at compile time and the column decides
+   here. `height: auto` is what keeps a wide diagram from being squashed
+   rather than scaled once max-width bites. */
+.nbv-md img {
+  border-radius: 6px;
+  display: block;
+  height: auto;
+  margin: 12px 0;
+  max-width: 100%;
+}
+
+/* A long URL in upstream prose (papers, Streamlit pages, raw GitHub) must wrap
+   rather than push the whole column sideways on a phone. */
+.nbv-md a {
+  overflow-wrap: anywhere;
+}

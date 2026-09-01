@@ -86,10 +86,15 @@ def check_public_api():
             # routes here: the CSS is the whole of the affordance, so a stylesheet
             # without it leaves the row landing on a page with nothing marked.
             ".placement-cta-flash",
-            # The rule that takes a COMPLETED placement off the Learner Home
-            # (Seth, 2026-08-31). Written by diagnostic-page.js; without the
-            # rule the class is inert and the card is back on the daily screen.
-            "#page-practice.placement-taken",
+            # 🔴 THE HIDE-WHEN-TAKEN RULE IS GONE (2026-09-01), and what
+            # replaced it is asserted instead. The placement card is on
+            # #page-placement now — a page reached on purpose from the account
+            # menu — so hiding it on a completed placement would empty the only
+            # screen it is on. `.diagnostic-running` is the one visibility rule
+            # left: it hides the card while a probe is hosted OVER it, and
+            # pointed at any other page it matches nothing and leaves the card
+            # showing underneath a running probe.
+            "#page-placement.diagnostic-running",
         ],
     }
     for fname, selectors in expected.items():
