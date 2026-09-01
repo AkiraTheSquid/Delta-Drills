@@ -84,6 +84,25 @@ Local_Deployed_Shared/archive/
 
 Local_Deployed_Shared/content/
 
+# Compiled ARENA notebooks — GENERATED, LOCAL ONLY (2026-09-01).
+#
+# `scripts/compile_arena_notebooks.py` turns the upstream .ipynb files in
+# Local_Deployed_Shared/content/ARENA_5.0-main/ into these 31 cell files plus
+# arena-index.json (5.4 MB). The source checkout is ignored two lines above, so
+# nothing here is reconstructible from a clone anyway — regenerate with
+#
+#     python3 scripts/compile_arena_notebooks.py
+#
+# 🔴 This rule is what keeps them OUT OF A DEPLOY. The deploy script runs
+# `git add -A`, so an untracked-but-unignored file is not "local" — it is one
+# deploy away from production. The in-app ARENA notebook viewer is a local-only
+# surface today; if it is ever meant to ship, the fix is to add the compiler to
+# the deploy (the way compile_web_notebooks.py already is) and NOT to commit
+# 5.4 MB of generated JSON, because a gitignored file under
+# Local_Deployed_Shared/ is silently absent from Vercel — the 2026-08-06
+# crosswalk incident, described in the concept-graph note just below.
+Local_Deployed_Shared/lessons/notebooks/arena-*.json
+
 # concept-graph/ holds SHIPPING code (index.html loads kc_interval.js,
 # kc_crosswalk_mastery.js, kc_lattice_read.js, lesson-graph.js, mastery-bar.js).
 # Ignoring the whole folder was a dead letter — 13 of its 16 files were already

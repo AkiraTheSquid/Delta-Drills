@@ -192,7 +192,17 @@ def main() -> int:
         # and the deploy mirrors this folder wholesale, so a leftover file is a
         # retired lesson still being served -- and nothing would ever say so.
         keep = {entry["file"] for entry in manifest} | {"manifest.json"}
+        # 🔴 THIS SWEEP OWNS THE LESSON NOTEBOOKS AND NOTHING ELSE. Since
+        # 2026-09-01 the folder also holds `arena-*.json` — the ARENA
+        # curriculum's notebooks, compiled from upstream .ipynb by
+        # scripts/compile_arena_notebooks.py and listed in their own index.
+        # They are not in this manifest and never will be, so a sweep over a
+        # bare `*.json` glob would DELETE all 31 of them on the next deploy,
+        # and the only symptom would be every Courses section saying "no
+        # notebook for …". Each compiler sweeps its own prefix.
         for stale in sorted(args.out.glob("*.json")):
+            if stale.name.startswith("arena-"):
+                continue
             if stale.name not in keep:
                 stale.unlink()
                 print(f"  removed stale notebook: {stale.name}")

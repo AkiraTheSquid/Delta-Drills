@@ -5,15 +5,26 @@
    "Include course for study?" toggle, and no "Back to courses" button.
    The tab IS the ARENA article: hero + source links + intro at the top,
    then the alternating chapter rows. Clicking a chapter opens the
-   sections modal, and each section row is a link out to Callum
-   McDougall's original Colab notebook.
+   sections modal, and each section row opens that section's notebook.
 
-   Colab routing reuses the app-wide fork convention from
-   `stats/predicted-links.js`: `colabUpstreamHref(path)` points at
-   `<account_github_username>/ARENA_3.0` when the student has saved a
-   GitHub username, and falls back to `callummcdougall/ARENA_3.0`
-   otherwise. The first time a student clicks a section link,
-   `courses-fork-gate.js` intercepts and offers to set that username.
+   🔴 A SECTION ROW STAYS IN THE APP (Seth, 2026-09-01: "it won't actually
+   take you to the Google Colab. It will instead stay inside of the app, and
+   it will have an app version of those arena notebooks"). The row is a link
+   to `?arena=<slug>` — a real href, so middle-click and "open in new tab"
+   still work — and a plain left-click is intercepted and handed to
+   `practice/arena-notebook.js`, which renders the upstream notebook on the
+   notebook surface without a page load. The notebooks come from
+   `scripts/compile_arena_notebooks.py`.
+
+   COLAB IS STILL THERE, AS THE SECONDARY ROUTE. Each row carries a small
+   "Colab ↗" link beside it, and that link is the one the fork convention from
+   `stats/predicted-links.js` applies to: `colabUpstreamHref(path)` points at
+   `<account_github_username>/ARENA_3.0` when the student has saved a GitHub
+   username and falls back to `callummcdougall/ARENA_3.0` otherwise, with
+   `courses-fork-gate.js` intercepting the first click to offer to set it.
+   Kept rather than deleted because a student with their own fork is working
+   in it — an in-app notebook cannot save to their repo, and taking the door
+   away would make the fork gate a feature with no way in.
    ================================================================ */
 
 const ARENA_LOGO = "https://learn.arena.education/static/images/arena-logo.png";
@@ -39,7 +50,7 @@ const ARENA_DETAIL = {
     { label: "Curriculum book ↗", href: "https://learn.arena.education/", title: "The ARENA curriculum, published" },
   ],
   intro:
-    "ARENA is a programme run by the London Initiative for Safe AI (LISA) that takes participants from coding fundamentals to the technical frontier of AI safety. The curriculum mixes coding exercises, paper replications, and an open-ended capstone project so you finish with both the skills and the artifacts to enter the field. All materials are open source and self-study friendly. Every section below opens Callum McDougall's original Colab notebook.",
+    "ARENA is a programme run by the London Initiative for Safe AI (LISA) that takes participants from coding fundamentals to the technical frontier of AI safety. The curriculum mixes coding exercises, paper replications, and an open-ended capstone project so you finish with both the skills and the artifacts to enter the field. All materials are open source and self-study friendly. Every section below opens Callum McDougall's notebook here in the app, against your own Python session — or in Colab, from the link beside it.",
   chapters: [
     {
       title: "Chapter 0 — Fundamentals",
@@ -151,6 +162,15 @@ const arenaColabHrefFor = (notebookPath) => {
   if (!notebookPath) return "";
   return typeof colabUpstreamHref === "function" ? colabUpstreamHref(notebookPath) : "";
 };
+
+/* The id the in-app notebook is filed under: `0.0` → `0-0`, `1.3.1` → `1-3-1`.
+   🔴 THIS MUST STAY IN STEP WITH `compile_arena_notebooks.py::_slug`, which
+   mints the filename from the very same section number. They are two sides of
+   one name, and the failure when they drift is a row that opens "that ARENA
+   notebook has not been compiled here" — which reads as a missing file rather
+   than as a renaming. `Local_Deployed_Shared/lessons/notebooks/watch.py`
+   checks that every section courses.js links has a compiled notebook. */
+const arenaSlugForSection = (section) => String(section.number || "").trim().replace(/\./g, "-");
 
 (function initCoursesTab() {
   const detailView = document.getElementById("courses-detail-view");
@@ -272,8 +292,35 @@ const arenaColabHrefFor = (notebookPath) => {
     }
   };
 
+  /* Which sections were actually compiled into this build — `null` until the
+     index has been read, a Set afterwards.
+
+     🔴 THE COMPILED NOTEBOOKS ARE NOT IN GIT. They are generated from
+     `Local_Deployed_Shared/content/`, which is gitignored, and they are
+     gitignored themselves, so a fresh clone — and any deploy — has this
+     Courses tab, these rows, and none of the notebooks behind them. The rows
+     must not become dead ends there: with no notebook to open, the Colab link
+     is still a real route to the same material, so the row uses it.
+
+     Primed when a chapter modal opens rather than at load, because a learner
+     who never opens Courses should not pay for the index. */
+  let compiledSlugs = null;
+  const primeArenaIndex = () => {
+    if (compiledSlugs || !window.ArenaNotebook) return;
+    Promise.resolve(window.ArenaNotebook.sections())
+      .then((list) => {
+        compiledSlugs = new Set((list || []).map((entry) => entry.id));
+      })
+      .catch(() => {
+        /* Leave it null. Unknown is not the same as empty: a click then tries
+           the in-app view and gets its own, more specific message, which is
+           the right answer for one failed fetch on an otherwise built tree. */
+      });
+  };
+
   const openChapterModal = (chapter) => {
     closeChapterModal();
+    primeArenaIndex();
     const backdrop = document.createElement("div");
     backdrop.className = "chapter-modal-backdrop";
     backdrop.addEventListener("click", (e) => {
@@ -315,21 +362,36 @@ const arenaColabHrefFor = (notebookPath) => {
     activeModal = backdrop;
   };
 
+  /* A row is a WRAPPER holding two links: the section itself, which opens in
+     the app, and a small "Colab ↗" beside it.
+
+     🔴 The wrapper exists because an `<a>` may not contain another `<a>`. The
+     row used to BE the anchor; putting the Colab link inside it would be
+     invalid markup, and browsers recover from it by closing the outer anchor
+     early — which silently makes the second half of the row unclickable. */
   const buildSectionItem = (section) => {
     const notebookPath = notebookPathForBookUrl(section.url);
-    const item = document.createElement(notebookPath ? "a" : "div");
-    item.className = notebookPath ? "section-item section-item-link" : "section-item";
-    item.setAttribute("role", "listitem");
-    if (notebookPath) {
-      item.dataset.notebookPath = notebookPath;
-      item.href = arenaColabHrefFor(notebookPath);
-      item.target = "_blank";
-      item.rel = "noreferrer";
+    const slug = arenaSlugForSection(section);
+    const row = document.createElement("div");
+    row.className = "section-row";
+    row.setAttribute("role", "listitem");
+
+    // No notebook path at all (the "Monthly Algorithmic Problems" entry, which
+    // has no upstream file) stays exactly what it was: a plain, inert row.
+    const item = document.createElement(slug ? "a" : "div");
+    item.className = slug ? "section-item section-item-link" : "section-item";
+    if (slug) {
+      item.dataset.arenaSlug = slug;
+      /* A REAL href, not a `#`: middle-click, ctrl-click and "open in new tab"
+         are how a reader queues up three sections at once, and a click handler
+         that calls preventDefault on a `#` takes all of that away. The
+         deep link is the one `arena-notebook.js` reads at load. */
+      item.href = `?arena=${encodeURIComponent(slug)}`;
       item.setAttribute(
         "aria-label",
-        `Open ${section.number ? section.number + " " : ""}${section.title} in Google Colab`,
+        `Open ${section.number ? section.number + " " : ""}${section.title} in the app`,
       );
-      item.addEventListener("click", (e) => onColabLinkClick(e, notebookPath));
+      item.addEventListener("click", (e) => onSectionClick(e, slug));
     }
 
     const num = document.createElement("span");
@@ -349,7 +411,59 @@ const arenaColabHrefFor = (notebookPath) => {
 
     item.appendChild(num);
     item.appendChild(info);
-    return item;
+    row.appendChild(item);
+
+    if (notebookPath) {
+      const colab = document.createElement("a");
+      colab.className = "section-colab";
+      colab.dataset.notebookPath = notebookPath;
+      colab.href = arenaColabHrefFor(notebookPath);
+      colab.target = "_blank";
+      colab.rel = "noreferrer";
+      colab.textContent = "Colab ↗";
+      colab.title = "Open the original notebook in Google Colab";
+      colab.setAttribute(
+        "aria-label",
+        `Open ${section.number ? section.number + " " : ""}${section.title} in Google Colab`,
+      );
+      colab.addEventListener("click", (e) => onColabLinkClick(e, notebookPath));
+      row.appendChild(colab);
+    }
+    return row;
+  };
+
+  /* The section itself: rendered in the app, no page load.
+
+     Modified clicks (new tab/window, middle-click) fall through to the href so
+     browser-native open-in-background still works — and because that href is a
+     real `?arena=` deep link, the new tab lands on the same notebook.
+
+     If the notebook is not there — the compiler has never run in this checkout
+     — `open()` returns false having already said so on screen, and the modal
+     is closed either way so the learner is looking at the message rather than
+     at the section list on top of it. */
+  const onSectionClick = (e, slug) => {
+    const modified = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
+    if (modified || !window.ArenaNotebook) return;
+
+    /* Not compiled in this build, but the same section has a Colab link on the
+       row: hand the click to it. The reader wanted this section, and being
+       told the app cannot show it is worse than being shown it somewhere the
+       app can. Only when the index says so — `null` means "not read yet", and
+       guessing "missing" there would send a working build to Colab. */
+    if (compiledSlugs && !compiledSlugs.has(slug)) {
+      const colab = e.currentTarget.parentElement?.querySelector("a.section-colab");
+      if (colab) {
+        e.preventDefault();
+        closeChapterModal();
+        colab.click();
+        return;
+      }
+    }
+
+    e.preventDefault();
+    closeChapterModal();
+    window.ArenaNotebook.open(slug);
   };
 
   // First plain left-click on any Colab link goes through the fork gate, which
@@ -368,7 +482,7 @@ const arenaColabHrefFor = (notebookPath) => {
   // every rendered href (including the ones inside an open modal) so a saved
   // username takes effect without a re-render.
   const refreshColabHrefs = () => {
-    document.querySelectorAll("a.section-item-link[data-notebook-path]").forEach((a) => {
+    document.querySelectorAll("a.section-colab[data-notebook-path]").forEach((a) => {
       a.href = arenaColabHrefFor(a.dataset.notebookPath);
     });
   };
