@@ -514,6 +514,54 @@
          "prompt": "Two values in a tuple \u2014 parentheses, not brackets.",
          "starter_code": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return _____a, b_____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
          "solution": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return (a, b)\n"
+        },
+        {
+         "question_id": 744,
+         "prompt": "The trailing comma is what makes the tuple.",
+         "starter_code": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+         "solution": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type((x,)).__name__)\n"
+        },
+        {
+         "question_id": 745,
+         "prompt": "A table is a list whose items are lists.",
+         "starter_code": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [_____, _____]\n    return (table, len(table))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [[a, b], [c, d]]\n    return (table, len(table))\n"
+        },
+        {
+         "question_id": 746,
+         "prompt": "Wrap the whole list as one item, then measure both containers.",
+         "starter_code": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = _____\n    return (len(items), len(outer))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = [items]\n    return (len(items), len(outer))\n"
+        },
+        {
+         "question_id": 747,
+         "prompt": "Rehouse the items in a tuple; the count comes along unchanged.",
+         "starter_code": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = _____(values)\n    return (t, len(t))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = tuple(values)\n    return (t, len(t))\n"
+        },
+        {
+         "question_id": 748,
+         "prompt": "Thaw a tuple into a list, and prove it with the type name.",
+         "starter_code": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = _____(pair)\n    return (lst, type(lst).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+         "solution": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = list(pair)\n    return (lst, type(lst).__name__)\n"
+        },
+        {
+         "question_id": 749,
+         "prompt": "Same size is a question for len, answered twice.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return _____(a) == _____(b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return len(a) == len(b)\n"
+        },
+        {
+         "question_id": 750,
+         "prompt": "Same values, different brackets, different type.",
+         "starter_code": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type([a, b]).__name__, type((a, b)).__name__)\n"
+        },
+        {
+         "question_id": 751,
+         "prompt": "Build as a list, hand back as a tuple.",
+         "starter_code": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = _____(built)\n    return (frozen, len(frozen))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+         "solution": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = tuple(built)\n    return (frozen, len(frozen))\n"
         }
        ]
       }
@@ -530,6 +578,54 @@
        "prompt": "Two values in a tuple \u2014 parentheses, not brackets.",
        "starter_code": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return _____a, b_____\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
        "solution": "def solve(a, b):\n    \"\"\"A tuple of the two values.\"\"\"\n    return (a, b)\n"
+      },
+      {
+       "question_id": 744,
+       "prompt": "The trailing comma is what makes the tuple.",
+       "starter_code": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+       "solution": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type((x,)).__name__)\n"
+      },
+      {
+       "question_id": 745,
+       "prompt": "A table is a list whose items are lists.",
+       "starter_code": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [_____, _____]\n    return (table, len(table))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [[a, b], [c, d]]\n    return (table, len(table))\n"
+      },
+      {
+       "question_id": 746,
+       "prompt": "Wrap the whole list as one item, then measure both containers.",
+       "starter_code": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = _____\n    return (len(items), len(outer))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"A list holding one thing \u2014 which happens to be a list.\"\"\"\n    outer = [items]\n    return (len(items), len(outer))\n"
+      },
+      {
+       "question_id": 747,
+       "prompt": "Rehouse the items in a tuple; the count comes along unchanged.",
+       "starter_code": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = _____(values)\n    return (t, len(t))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = tuple(values)\n    return (t, len(t))\n"
+      },
+      {
+       "question_id": 748,
+       "prompt": "Thaw a tuple into a list, and prove it with the type name.",
+       "starter_code": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = _____(pair)\n    return (lst, type(lst).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+       "solution": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = list(pair)\n    return (lst, type(lst).__name__)\n"
+      },
+      {
+       "question_id": 749,
+       "prompt": "Same size is a question for len, answered twice.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return _____(a) == _____(b)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return len(a) == len(b)\n"
+      },
+      {
+       "question_id": 750,
+       "prompt": "Same values, different brackets, different type.",
+       "starter_code": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type([a, b]).__name__, type((a, b)).__name__)\n"
+      },
+      {
+       "question_id": 751,
+       "prompt": "Build as a list, hand back as a tuple.",
+       "starter_code": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = _____(built)\n    return (frozen, len(frozen))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+       "solution": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = tuple(built)\n    return (frozen, len(frozen))\n"
       }
      ],
      "guided_items": [],
@@ -544,6 +640,46 @@
        "question_id": 583,
        "prompt": "A round trip: list to tuple and back, with the lengths compared.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 752,
+       "prompt": "Two levels, two measurements, one finished answer \u2014 and its kind.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 753,
+       "prompt": "Convert the tuple first; then equality compares item by item.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 754,
+       "prompt": "Rows of different lengths are still one item each.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 755,
+       "prompt": "One comma is the whole difference between a tuple and a bare value.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 756,
+       "prompt": "Three containers, one count: conversions never change how many.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 757,
+       "prompt": "A container does not convert its contents \u2014 each item keeps its kind.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 758,
+       "prompt": "An empty list is a no; a list HOLDING it is not empty.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 759,
+       "prompt": "Equal contents still need equal containers.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -554,11 +690,27 @@
       {
        "question_id": 585,
        "prompt": "Count the rows, measure every one of them, and say whether they agree."
+      },
+      {
+       "question_id": 760,
+       "prompt": "Two rows, one measured pair \u2014 and whether the rows agree on length."
+      },
+      {
+       "question_id": 761,
+       "prompt": "A report: the data, its total, its count \u2014 frozen together, with its kind named."
       }
      ],
      "independent_items": [
       582,
-      583
+      583,
+      752,
+      753,
+      754,
+      755,
+      756,
+      757,
+      758,
+      759
      ],
      "misconceptions_markdown": "- **\"A tuple is just a list that is written differently.\"** \u2014 It is a different\n  type, and it cannot be changed once built. A grader comparing a list against a\n  tuple reports them as unequal.\n- **\"`len` gives the total number of values.\"** \u2014 It gives the number of items at\n  the top level. For a list of lists that is the number of rows.\n- **\"Converting a list to a tuple changes the list.\"** \u2014 It builds a new\n  container. The original list is still there, unchanged.",
      "notes_markdown": ""

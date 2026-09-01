@@ -2897,3 +2897,166 @@ Python,Getting started,"Write a function solve(qty, item) that converts the digi
 example = ('3', 'pens')
 print(solve(*example))
 ",32,"('3 of pens', True, 'str')"
+Python,Getting started,"Write a function solve(x) that returns the tuple of two type names, as text: first the kind of (x) — just x with brackets around it — then the kind of a one-item tuple holding x. The trailing comma is what makes the tuple.","def solve(x):
+    """"""(x) is just x; (x,) is a tuple holding it.""""""
+    return (type((x)).__name__, type((x,)).__name__)
+
+
+example = (5,)
+print(solve(*example))
+",10,"('int', 'tuple')"
+Python,Getting started,"Write a function solve(a, b, c, d) that builds a table as a list of two lists — [a, b] as the first row, [c, d] as the second — names it `table`, and returns the tuple (table, len(table)).","def solve(a, b, c, d):
+    """"""A table is a list whose items are lists.""""""
+    table = [[a, b], [c, d]]
+    return (table, len(table))
+
+
+example = (1, 2, 3, 4)
+print(solve(*example))
+",12,"([[1, 2], [3, 4]], 2)"
+Python,Getting started,"Write a function solve(items) that wraps the whole list `items` in a NEW one-item list named `outer`, and returns the tuple (len(items), len(outer)). One container inside another.","def solve(items):
+    """"""A list holding one thing — which happens to be a list.""""""
+    outer = [items]
+    return (len(items), len(outer))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",12,"(3, 1)"
+Python,Getting started,"Write a function solve(values) that converts the list to a tuple named `t` and returns the tuple (t, len(t)). Converting changes the container, never the count.","def solve(values):
+    """"""tuple() rehouses the items; the count comes along unchanged.""""""
+    t = tuple(values)
+    return (t, len(t))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",13,"((1, 2, 3), 3)"
+Python,Getting started,"Write a function solve(pair) that converts the tuple to a list named `lst` and returns the tuple (lst, kind_name) where kind_name is the type name of lst as text.","def solve(pair):
+    """"""list() thaws a tuple into a list you could change.""""""
+    lst = list(pair)
+    return (lst, type(lst).__name__)
+
+
+example = ((3, 4),)
+print(solve(*example))
+",13,"([3, 4], 'list')"
+Python,Getting started,"Write a function solve(a, b) that returns whether the two containers hold the SAME NUMBER of items — compare their lengths with ==. Ask len; do not try to remember.","def solve(a, b):
+    """"""Same size is a question for len, answered twice.""""""
+    return len(a) == len(b)
+
+
+example = ([1, 2], [3, 4])
+print(solve(*example))
+",14,True
+Python,Getting started,"Write a function solve(a, b) that returns the tuple of type names, as text, of [a, b] and then (a, b) — the same two values in a list, then in a tuple. Brackets decide the type.","def solve(a, b):
+    """"""Same values, different brackets, different type.""""""
+    return (type([a, b]).__name__, type((a, b)).__name__)
+
+
+example = (1, 2)
+print(solve(*example))
+",14,"('list', 'tuple')"
+Python,Getting started,"Write a function solve(a, b, c) that builds the list [a, b, c] named `built`, freezes it into a tuple named `frozen`, and returns the tuple (frozen, len(frozen)). A finished answer travels as a tuple.","def solve(a, b, c):
+    """"""Build as a list, hand back as a tuple.""""""
+    built = [a, b, c]
+    frozen = tuple(built)
+    return (frozen, len(frozen))
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",15,"((1, 2, 3), 3)"
+Python,Getting started,"Write a function solve(rows) that measures a table: name the pair (len(rows), len(rows[0])) `shape` — outer count first, then the length of the first row — and return the tuple (shape, kind_name) where kind_name is shape's type name.","def solve(rows):
+    """"""Two levels, two measurements, one finished answer.""""""
+    shape = (len(rows), len(rows[0]))
+    return (shape, type(shape).__name__)
+
+
+example = ([[1, 2, 3], [4, 5, 6]],)
+print(solve(*example))
+",20,"((2, 3), 'tuple')"
+Python,Getting started,"Write a function solve(pair, items) that converts the tuple `pair` to a list and returns whether that converted list equals `items`, using ==.","def solve(pair, items):
+    """"""Convert first — then equality compares item by item.""""""
+    return list(pair) == items
+
+
+example = ((1, 2), [1, 2])
+print(solve(*example))
+",21,True
+Python,Getting started,"Write a function solve(a, b, c) that builds `short` as the one-item list [a], `long` as [a, b, c], nests them as `table = [short, long]`, and returns the tuple (table, (len(short), len(long))).","def solve(a, b, c):
+    """"""Rows of different lengths are still one item each.""""""
+    short = [a]
+    long = [a, b, c]
+    table = [short, long]
+    return (table, (len(short), len(long)))
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",22,"([[1], [1, 2, 3]], (1, 3))"
+Python,Getting started,"Write a function solve(n) that names (n,) `single` and (n) `plain`, and returns the tuple of three answers: single's type name, plain's type name, and len(single).","def solve(n):
+    """"""One comma is the whole difference.""""""
+    single = (n,)
+    plain = (n)
+    return (type(single).__name__, type(plain).__name__, len(single))
+
+
+example = (7,)
+print(solve(*example))
+",23,"('tuple', 'int', 1)"
+Python,Getting started,"Write a function solve(items) that returns the tuple of three counts: len(items), len(tuple(items)), len(list(items)) — the original, and both conversions. Converting rehouses the items; it never changes how many there are.","def solve(items):
+    """"""Three containers, one count.""""""
+    return (len(items), len(tuple(items)), len(list(items)))
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",24,"(3, 3, 3)"
+Python,Getting started,"Write a function solve(flag, text, number) that builds the list [flag, text, number] named `mixed`, and returns the tuple (len(mixed), kinds) where kinds is the tuple of the three items' type names, in the same order.","def solve(flag, text, number):
+    """"""A container does not convert its contents.""""""
+    mixed = [flag, text, number]
+    kinds = (type(flag).__name__, type(text).__name__, type(number).__name__)
+    return (len(mixed), kinds)
+
+
+example = (True, 'hi', 2.5)
+print(solve(*example))
+",25,"(3, ('bool', 'str', 'float'))"
+Python,Getting started,"Write a function solve(items) that returns the tuple (len(items), bool(items), len([items])): the count, whether the list counts as a yes, and the length of a new list holding items as its only element.","def solve(items):
+    """"""An empty list is a no; a list HOLDING it is not empty.""""""
+    return (len(items), bool(items), len([items]))
+
+
+example = ([],)
+print(solve(*example))
+",26,"(0, False, 1)"
+Python,Getting started,"Write a function solve(lst, t) that returns the tuple (list(t) == lst, tuple(lst) == t, lst == t): the two conversions compared, then the raw list-versus-tuple comparison. The container is part of the value.","def solve(lst, t):
+    """"""Equal contents still need equal containers.""""""
+    return (list(t) == lst, tuple(lst) == t, lst == t)
+
+
+example = ([1, 2], (1, 2))
+print(solve(*example))
+",27,"(True, True, False)"
+Python,Getting started,"Write a function solve(row_a, row_b) that builds `table = [row_a, row_b]`, names `shape` the pair (len(table), len(row_a)), and returns the tuple (shape, even) where even is whether len(row_a) == len(row_b).","def solve(row_a, row_b):
+    """"""Two rows, one shape — and whether the shape is honest.""""""
+    table = [row_a, row_b]
+    shape = (len(table), len(row_a))
+    return (shape, len(row_a) == len(row_b))
+
+
+example = ([1, 2], [3, 4])
+print(solve(*example))
+",30,"((2, 2), True)"
+Python,Getting started,"Write a function solve(a, b, c) that builds `values` as the list [a, b, c], names `total` their sum, builds `report` as the tuple (values, total, len(values)), and returns the tuple (report, kind_name) where kind_name is report's type name.","def solve(a, b, c):
+    """"""A report: the data, its total, its count — frozen together.""""""
+    values = [a, b, c]
+    total = a + b + c
+    report = (values, total, len(values))
+    return (report, type(report).__name__)
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",32,"(([1, 2, 3], 6, 3), 'tuple')"

@@ -25526,5 +25526,995 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 744,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 10,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(x) that returns the tuple of two type names, as text: first the kind of (x) — just x with brackets around it — then the kind of a one-item tuple holding x. The trailing comma is what makes the tuple.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(5)",
+          "expected_expr": "('int', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('hi')",
+          "expected_expr": "('str', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.5)",
+          "expected_expr": "('float', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0)",
+          "expected_expr": "('int', 'tuple')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('tuple', 'tuple')",
+          "why": "(5) was read as a tuple. Brackets alone are only grouping — (5) is the number 5. The trailing comma in (5,) is what builds a one-item tuple."
+        }
+      ],
+      "canonical_solution": "def solve(x):\n    \"\"\"(x) is just x; (x,) is a tuple holding it.\"\"\"\n    return (type((x)).__name__, type((x,)).__name__)\n\n\nexample = (5,)\nprint(solve(*example))\n",
+      "expected_output": "('int', 'tuple')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 745,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b, c, d) that builds a table as a list of two lists — [a, b] as the first row, [c, d] as the second — names it `table`, and returns the tuple (table, len(table)).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(1, 2, 3, 4)",
+          "expected_expr": "([[1, 2], [3, 4]], 2)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0, 0, 0)",
+          "expected_expr": "([[0, 0], [0, 0]], 2)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('a', 'b', 'c', 'd')",
+          "expected_expr": "([['a', 'b'], ['c', 'd']], 2)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(1.5, 2, 3, 4.5)",
+          "expected_expr": "([[1.5, 2], [3, 4.5]], 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[1, 2], [3, 4]], 4)",
+          "why": "len counted every value. It counts the OUTER level only: the table holds two items — the two rows — and what is inside them is a second question."
+        }
+      ],
+      "canonical_solution": "def solve(a, b, c, d):\n    \"\"\"A table is a list whose items are lists.\"\"\"\n    table = [[a, b], [c, d]]\n    return (table, len(table))\n\n\nexample = (1, 2, 3, 4)\nprint(solve(*example))\n",
+      "expected_output": "([[1, 2], [3, 4]], 2)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 746,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that wraps the whole list `items` in a NEW one-item list named `outer`, and returns the tuple (len(items), len(outer)). One container inside another.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"A list holding one thing — which happens to be a list.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3])",
+          "expected_expr": "(3, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([])",
+          "expected_expr": "(0, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5])",
+          "expected_expr": "(1, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b'])",
+          "expected_expr": "(2, 1)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 3)",
+          "why": "`outer` was built as a copy instead of a wrapper. [items] is a list holding ONE item — the whole inner list — so its length is 1 no matter how much the inner list holds."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"A list holding one thing — which happens to be a list.\"\"\"\n    outer = [items]\n    return (len(items), len(outer))\n\n\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "expected_output": "(3, 1)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 747,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 13,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(values) that converts the list to a tuple named `t` and returns the tuple (t, len(t)). Converting changes the container, never the count.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3])",
+          "expected_expr": "((1, 2, 3), 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([])",
+          "expected_expr": "((), 0)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['x'])",
+          "expected_expr": "(('x',), 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([2.5, 0])",
+          "expected_expr": "((2.5, 0), 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 2, 3], 3)",
+          "why": "The conversion never happened — the first slot still shows square brackets. tuple(values) hands back the same items in a tuple, and the printed parentheses are how you can tell."
+        }
+      ],
+      "canonical_solution": "def solve(values):\n    \"\"\"tuple() rehouses the items; the count comes along unchanged.\"\"\"\n    t = tuple(values)\n    return (t, len(t))\n\n\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "expected_output": "((1, 2, 3), 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 748,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 13,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(pair) that converts the tuple to a list named `lst` and returns the tuple (lst, kind_name) where kind_name is the type name of lst as text.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve((3, 4))",
+          "expected_expr": "([3, 4], 'list')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(())",
+          "expected_expr": "([], 'list')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((5,))",
+          "expected_expr": "([5], 'list')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(('a', 'b', 'c'))",
+          "expected_expr": "(['a', 'b', 'c'], 'list')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((3, 4), 'tuple')",
+          "why": "The tuple came back untouched. list(pair) builds a NEW list holding the same items — the type name in the second slot is how the drill checks the conversion really ran."
+        }
+      ],
+      "canonical_solution": "def solve(pair):\n    \"\"\"list() thaws a tuple into a list you could change.\"\"\"\n    lst = list(pair)\n    return (lst, type(lst).__name__)\n\n\nexample = ((3, 4),)\nprint(solve(*example))\n",
+      "expected_output": "([3, 4], 'list')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 749,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b) that returns whether the two containers hold the SAME NUMBER of items — compare their lengths with ==. Ask len; do not try to remember.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2], [3, 4])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1], [2, 3])",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([], [])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((1, 2, 3), [4, 5, 6])",
+          "expected_expr": "True"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "2",
+          "why": "Only one container was measured. The drill asks a yes/no question — whether the two counts AGREE — which takes two len calls and one ==."
+        }
+      ],
+      "canonical_solution": "def solve(a, b):\n    \"\"\"Same size is a question for len, answered twice.\"\"\"\n    return len(a) == len(b)\n\n\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+      "expected_output": "True",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 750,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b) that returns the tuple of type names, as text, of [a, b] and then (a, b) — the same two values in a list, then in a tuple. Brackets decide the type.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(1, 2)",
+          "expected_expr": "('list', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('x', 'y')",
+          "expected_expr": "('list', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0)",
+          "expected_expr": "('list', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(1.5, 2)",
+          "expected_expr": "('list', 'tuple')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('tuple', 'tuple')",
+          "why": "Both were written with parentheses. [a, b] with SQUARE brackets is a list — the values inside are identical, and the container type still differs."
+        }
+      ],
+      "canonical_solution": "def solve(a, b):\n    \"\"\"Same values, different brackets, different type.\"\"\"\n    return (type([a, b]).__name__, type((a, b)).__name__)\n\n\nexample = (1, 2)\nprint(solve(*example))\n",
+      "expected_output": "('list', 'tuple')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 751,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 15,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b, c) that builds the list [a, b, c] named `built`, freezes it into a tuple named `frozen`, and returns the tuple (frozen, len(frozen)). A finished answer travels as a tuple.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(1, 2, 3)",
+          "expected_expr": "((1, 2, 3), 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0, 0)",
+          "expected_expr": "((0, 0, 0), 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('a', 'b', 'c')",
+          "expected_expr": "(('a', 'b', 'c'), 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(1.5, 2, 2.5)",
+          "expected_expr": "((1.5, 2, 2.5), 3)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 2, 3], 3)",
+          "why": "The freeze was skipped — square brackets in the output mean the list itself came back. tuple(built) is the step that turns the working list into one fixed answer."
+        }
+      ],
+      "canonical_solution": "def solve(a, b, c):\n    \"\"\"Build as a list, hand back as a tuple.\"\"\"\n    built = [a, b, c]\n    frozen = tuple(built)\n    return (frozen, len(frozen))\n\n\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "expected_output": "((1, 2, 3), 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 752,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that measures a table: name the pair (len(rows), len(rows[0])) `shape` — outer count first, then the length of the first row — and return the tuple (shape, kind_name) where kind_name is shape's type name.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Two levels, two measurements, one finished answer.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2, 3], [4, 5, 6]])",
+          "expected_expr": "((2, 3), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1]])",
+          "expected_expr": "((1, 1), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b'], ['c', 'd'], ['e', 'f']])",
+          "expected_expr": "((3, 2), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[0, 0], [0, 0]])",
+          "expected_expr": "((2, 2), 'tuple')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((3, 2), 'tuple')",
+          "why": "The two measurements swapped places. len(rows) counts the rows — the OUTER level — and that number goes first; reaching into row 0 for its length is the second measurement."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Two levels, two measurements, one finished answer.\"\"\"\n    shape = (len(rows), len(rows[0]))\n    return (shape, type(shape).__name__)\n\n\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
+      "expected_output": "((2, 3), 'tuple')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 753,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 21,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(pair, items) that converts the tuple `pair` to a list and returns whether that converted list equals `items`, using ==.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(pair, items):\n    \"\"\"Convert first — then equality compares item by item.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((1, 2), [1, 2])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve((1, 2), [1, 2])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((1, 2), [2, 1])",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((), [])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((5,), [5])",
+          "expected_expr": "True"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "False",
+          "why": "pair == items compared a tuple to a list, and the container is part of the value — they are never equal directly. list(pair) puts both answers in the same kind of container first."
+        }
+      ],
+      "canonical_solution": "def solve(pair, items):\n    \"\"\"Convert first — then equality compares item by item.\"\"\"\n    return list(pair) == items\n\n\nexample = ((1, 2), [1, 2])\nprint(solve(*example))\n",
+      "expected_output": "True",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 754,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b, c) that builds `short` as the one-item list [a], `long` as [a, b, c], nests them as `table = [short, long]`, and returns the tuple (table, (len(short), len(long))).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b, c):\n    \"\"\"Rows of different lengths are still one item each.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(1, 2, 3)",
+          "expected_expr": "([[1], [1, 2, 3]], (1, 3))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0, 0)",
+          "expected_expr": "([[0], [0, 0, 0]], (1, 3))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('x', 'y', 'z')",
+          "expected_expr": "([['x'], ['x', 'y', 'z']], (1, 3))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(9, 8, 7)",
+          "expected_expr": "([[9], [9, 8, 7]], (1, 3))"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 1, 2, 3], (1, 3))",
+          "why": "Every value was poured into ONE flat list. Nesting keeps the rows separate: the table holds two items, and each item is a row that keeps its own length."
+        }
+      ],
+      "canonical_solution": "def solve(a, b, c):\n    \"\"\"Rows of different lengths are still one item each.\"\"\"\n    short = [a]\n    long = [a, b, c]\n    table = [short, long]\n    return (table, (len(short), len(long)))\n\n\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "expected_output": "([[1], [1, 2, 3]], (1, 3))",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 755,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 23,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(n) that names (n,) `single` and (n) `plain`, and returns the tuple of three answers: single's type name, plain's type name, and len(single).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(n):\n    \"\"\"One comma is the whole difference.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (7,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(7)",
+          "expected_expr": "('tuple', 'int', 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('hi')",
+          "expected_expr": "('tuple', 'str', 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0)",
+          "expected_expr": "('tuple', 'int', 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.5)",
+          "expected_expr": "('tuple', 'float', 1)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('tuple', 'tuple', 1)",
+          "why": "(n) was expected to be a tuple too. It is just n — the brackets only group. Without the comma no tuple is built, so plain keeps n's own type."
+        }
+      ],
+      "canonical_solution": "def solve(n):\n    \"\"\"One comma is the whole difference.\"\"\"\n    single = (n,)\n    plain = (n)\n    return (type(single).__name__, type(plain).__name__, len(single))\n\n\nexample = (7,)\nprint(solve(*example))\n",
+      "expected_output": "('tuple', 'int', 1)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 756,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns the tuple of three counts: len(items), len(tuple(items)), len(list(items)) — the original, and both conversions. Converting rehouses the items; it never changes how many there are.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"Three containers, one count.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3])",
+          "expected_expr": "(3, 3, 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([])",
+          "expected_expr": "(0, 0, 0)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5])",
+          "expected_expr": "(1, 1, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b'])",
+          "expected_expr": "(2, 2, 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 1, 3)",
+          "why": "tuple(items) was guessed to WRAP the list as one item. It unpacks the items into a new tuple of the same length — wrapping is what [items] with brackets does, not a conversion."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"Three containers, one count.\"\"\"\n    return (len(items), len(tuple(items)), len(list(items)))\n\n\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "expected_output": "(3, 3, 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 757,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(flag, text, number) that builds the list [flag, text, number] named `mixed`, and returns the tuple (len(mixed), kinds) where kinds is the tuple of the three items' type names, in the same order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(flag, text, number):\n    \"\"\"A container does not convert its contents.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (True, 'hi', 2.5)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(True, 'hi', 2.5)",
+          "expected_expr": "(3, ('bool', 'str', 'float'))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(False, '', 0)",
+          "expected_expr": "(3, ('bool', 'str', 'int'))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(True, 'x', 7)",
+          "expected_expr": "(3, ('bool', 'str', 'int'))"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(False, 'ok', 1.0)",
+          "expected_expr": "(3, ('bool', 'str', 'float'))"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, ('str', 'str', 'str'))",
+          "why": "Putting values in one list was expected to make them one type. Each item keeps its own kind — the list holds them side by side, it does not convert them."
+        }
+      ],
+      "canonical_solution": "def solve(flag, text, number):\n    \"\"\"A container does not convert its contents.\"\"\"\n    mixed = [flag, text, number]\n    kinds = (type(flag).__name__, type(text).__name__, type(number).__name__)\n    return (len(mixed), kinds)\n\n\nexample = (True, 'hi', 2.5)\nprint(solve(*example))\n",
+      "expected_output": "(3, ('bool', 'str', 'float'))",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 758,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns the tuple (len(items), bool(items), len([items])): the count, whether the list counts as a yes, and the length of a new list holding items as its only element.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"An empty list is a no; a list HOLDING it is not empty.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([])",
+          "expected_expr": "(0, False, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1, 2])",
+          "expected_expr": "(2, True, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([0])",
+          "expected_expr": "(1, True, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'c'])",
+          "expected_expr": "(3, True, 1)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(0, True, 1)",
+          "why": "Any list was assumed to count as a yes. An EMPTY list is one of the values that counts as a no — while [items], which holds one item (the empty list), is not empty at all."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"An empty list is a no; a list HOLDING it is not empty.\"\"\"\n    return (len(items), bool(items), len([items]))\n\n\nexample = ([],)\nprint(solve(*example))\n",
+      "expected_output": "(0, False, 1)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 759,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 27,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(lst, t) that returns the tuple (list(t) == lst, tuple(lst) == t, lst == t): the two conversions compared, then the raw list-versus-tuple comparison. The container is part of the value.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(lst, t):\n    \"\"\"Equal contents still need equal containers.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], (1, 2))\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2], (1, 2))",
+          "expected_expr": "(True, True, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1, 2], (2, 1))",
+          "expected_expr": "(False, False, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([], ())",
+          "expected_expr": "(True, True, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5], (5,))",
+          "expected_expr": "(True, True, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(True, True, True)",
+          "why": "The last slot assumed same items means equal. A list never equals a tuple — the container type is part of the value, so lst == t is False even when every item matches."
+        }
+      ],
+      "canonical_solution": "def solve(lst, t):\n    \"\"\"Equal contents still need equal containers.\"\"\"\n    return (list(t) == lst, tuple(lst) == t, lst == t)\n\n\nexample = ([1, 2], (1, 2))\nprint(solve(*example))\n",
+      "expected_output": "(True, True, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 760,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(row_a, row_b) that builds `table = [row_a, row_b]`, names `shape` the pair (len(table), len(row_a)), and returns the tuple (shape, even) where even is whether len(row_a) == len(row_b).",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(row_a, row_b):\n    \"\"\"Two rows, one shape — and whether the shape is honest.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2], [3, 4])",
+          "expected_expr": "((2, 2), True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1], [2, 3])",
+          "expected_expr": "((2, 1), False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([], [])",
+          "expected_expr": "((2, 0), True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a'], ['b'])",
+          "expected_expr": "((2, 1), True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((2, 2), False)",
+          "why": "The rows' CONTENTS were compared: [1, 2] == [3, 4] is False. The question asks whether their LENGTHS agree — measure both with len and compare the counts."
+        }
+      ],
+      "canonical_solution": "def solve(row_a, row_b):\n    \"\"\"Two rows, one shape — and whether the shape is honest.\"\"\"\n    table = [row_a, row_b]\n    shape = (len(table), len(row_a))\n    return (shape, len(row_a) == len(row_b))\n\n\nexample = ([1, 2], [3, 4])\nprint(solve(*example))\n",
+      "expected_output": "((2, 2), True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 761,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b, c) that builds `values` as the list [a, b, c], names `total` their sum, builds `report` as the tuple (values, total, len(values)), and returns the tuple (report, kind_name) where kind_name is report's type name.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b, c):\n    \"\"\"A report: the data, its total, its count — frozen together.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(1, 2, 3)",
+          "expected_expr": "(([1, 2, 3], 6, 3), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0, 0)",
+          "expected_expr": "(([0, 0, 0], 0, 3), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-1, 1, 0)",
+          "expected_expr": "(([-1, 1, 0], 0, 3), 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(1.5, 2, 2.5)",
+          "expected_expr": "(([1.5, 2, 2.5], 6.0, 3), 'tuple')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 2, 3, 6, 3], 'list')",
+          "why": "Everything was flattened into one list. The report is a TUPLE with three slots — the list of values stays whole inside it, next to the total and the count."
+        }
+      ],
+      "canonical_solution": "def solve(a, b, c):\n    \"\"\"A report: the data, its total, its count — frozen together.\"\"\"\n    values = [a, b, c]\n    total = a + b + c\n    report = (values, total, len(values))\n    return (report, type(report).__name__)\n\n\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+      "expected_output": "(([1, 2, 3], 6, 3), 'tuple')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]
