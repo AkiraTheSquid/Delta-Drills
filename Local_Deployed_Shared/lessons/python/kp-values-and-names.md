@@ -5,8 +5,8 @@ supporting: []
 new_syntax: [builtin.print, builtin.type, syntax.assign, syntax.tuple]
 faded: [568, 569]
 guided: []
-independent: [570, 571]
-integrated: [572, 573]
+independent: [570, 571, 708, 709, 710, 711]
+integrated: [572, 573, 712]
 ---
 
 ## Concept
@@ -65,6 +65,27 @@ is how a piece of code gives more than one answer at once.
 ```python
 pair = (1, 2)
 print(pair)
+```
+
+Every value has a **kind** — a whole number, a decimal, a piece of text, a
+tuple. `type(...)` reports it, and the answer is about the value, not about the
+name stuck to it.
+
+```python
+count = 5
+label = "five"
+print(type(count))
+print(type(label))
+```
+
+Re-attaching a name to a different value can change the kind as well as the
+value, because the kind was never the name's to begin with.
+
+```python
+n = 5
+print(type(n))
+n = (5, 5)
+print(type(n))
 ```
 
 ## Watch out
@@ -164,6 +185,18 @@ print("reused, not recomputed:", doubled)
 ### q571
 Add 3 to the same name twice, and report where it ends up.
 
+### q708
+Name each argument, then report what kind of value one of them is.
+
+### q709
+Re-attach one name twice and report the kind before and after.
+
+### q710
+Two names, one value: move one label and show the other did not follow.
+
+### q711
+Rotate three values by one place, keeping the one that would be overwritten.
+
 ## Integrated practice
 
 ### q572
@@ -171,6 +204,10 @@ Three named results — a sum, a difference, and a swapped pair — returned tog
 
 ### q573
 A chain: each step is built from the name the step before it wrote.
+
+### q712
+Name a result, build a second value out of it, then re-attach the first name —
+and show that the value built earlier kept what it was given.
 
 ## Misconceptions
 

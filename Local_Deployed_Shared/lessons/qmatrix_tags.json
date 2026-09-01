@@ -6051,5 +6051,70 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "708": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "709": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "710": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "711": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-independent"
+ },
+ "712": {
+  "target_kcs": [
+   "python.values-and-names"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "builtin.print",
+   "builtin.type",
+   "syntax.assign",
+   "syntax.tuple"
+  ],
+  "source": "kp-integrated"
  }
 }

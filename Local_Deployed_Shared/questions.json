@@ -20791,5 +20791,250 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 708,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(number, word) that gives each argument a name of its own — `amount` for the number, `label` for the word — and returns the tuple (amount, label, kind), where `kind` is what KIND of value `amount` is. Use `type` to get it. Naming a value does not change what kind of value it is.",
+    "answer_code": "def solve(number, word):\n    \"\"\"A name does not change the kind of the value behind it.\"\"\"\n    amount = number\n    label = word\n    kind = type(amount)\n    return (amount, label, kind)\n\n\nexample = (5, 'hi')\nprint(solve(*example))\n",
+    "difficulty_score": 18,
+    "difficulty_label": "easy",
+    "expected_output": "(5, 'hi', <class 'int'>)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(number, word):\n    \"\"\"A name does not change the kind of the value behind it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 'hi')\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(5, 'hi')",
+        "expected_expr": "(5, 'hi', int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5, 'ok')",
+        "expected_expr": "(2.5, 'ok', float)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, '')",
+        "expected_expr": "(0, '', int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(-3, 'x')",
+        "expected_expr": "(-3, 'x', int)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(5, 'hi', 'amount')",
+        "why": "That returns the NAME as text instead of the kind of the value. `amount` is the name; `\"amount\"` is a six-letter string that has nothing to do with the 5 behind it. `type(amount)` asks about the value."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 709,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(n) that stores n under the name `value`, records type(value) as `before`, then re-attaches that SAME name to the pair (value, value), records type(value) again as `after`, and returns (before, after). Re-attaching a name can change the kind of thing it holds, not just the amount.",
+    "answer_code": "def solve(n):\n    \"\"\"Re-attaching a name can change the KIND, not just the value.\"\"\"\n    value = n\n    before = type(value)\n    value = (value, value)\n    after = type(value)\n    return (before, after)\n\n\nexample = (5,)\nprint(solve(*example))\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "(<class 'int'>, <class 'tuple'>)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(n):\n    \"\"\"Re-attaching a name can change the KIND, not just the value.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5,)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(5)",
+        "expected_expr": "(int, tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2.5)",
+        "expected_expr": "(float, tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('hi')",
+        "expected_expr": "(str, tuple)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0)",
+        "expected_expr": "(int, tuple)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(<class 'tuple'>, <class 'tuple'>)",
+        "why": "Both readings were taken AFTER the name was re-attached. `before` has to be read while `value` still holds n — once the name moves, the old kind is no longer there to ask about."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 710,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(start, replacement) that names `start` as `original`, gives the SAME value a second name `copy`, then re-attaches `original` to `replacement`, and returns (original, copy). Re-assigning moves one label; it does not reach through to anything else holding that value.",
+    "answer_code": "def solve(start, replacement):\n    \"\"\"Two names on one value; moving one label leaves the other alone.\"\"\"\n    original = start\n    copy = original\n    original = replacement\n    return (original, copy)\n\n\nexample = (1, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 1)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(start, replacement):\n    \"\"\"Two names on one value; moving one label leaves the other alone.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(1, 2)",
+        "expected_expr": "(2, 1)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('a', 'b')",
+        "expected_expr": "('b', 'a')"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0)",
+        "expected_expr": "(0, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(7, -7)",
+        "expected_expr": "(-7, 7)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(2, 2)",
+        "why": "`copy` was read as if it followed `original` to the new value. It does not — `copy` was stuck to the ORIGINAL value, and re-attaching `original` moved only that one label."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 711,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(a, b, c) that rotates the three values one place to the left and returns them as a tuple: the answer for solve(1, 2, 3) is (2, 3, 1). Keep the first value under a temporary name before you overwrite it, or it is gone by the time you need it.",
+    "answer_code": "def solve(a, b, c):\n    \"\"\"A temporary name is what keeps the value about to be overwritten.\"\"\"\n    keep = a\n    a = b\n    b = c\n    c = keep\n    return (a, b, c)\n\n\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 26,
+    "difficulty_label": "easy",
+    "expected_output": "(2, 3, 1)",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(a, b, c):\n    \"\"\"A temporary name is what keeps the value about to be overwritten.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (1, 2, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(1, 2, 3)",
+        "expected_expr": "(2, 3, 1)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve('x', 'y', 'z')",
+        "expected_expr": "('y', 'z', 'x')"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 0, 1)",
+        "expected_expr": "(0, 1, 0)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(5, 5, 5)",
+        "expected_expr": "(5, 5, 5)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(2, 3, 2)",
+        "why": "`a` was overwritten before its value was kept anywhere, so the last slot got back whatever `b` had become instead of the original first value. That is what the temporary name is for."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 712,
+    "topic": "Python",
+    "subtopic": "Getting started",
+    "subtopic_key": "Python: Getting started",
+    "question_text": "Write a function solve(price, qty, bonus) that: names `total` as price times qty; builds `doubled` as that total added to itself; then re-attaches `total` to total plus bonus; and returns (doubled, total, kind), where `kind` is the type of the final total. `doubled` was built from the OLD total and must still hold that answer.",
+    "answer_code": "def solve(price, qty, bonus):\n    \"\"\"Name a result, reuse it, re-attach the name, hand several answers back.\"\"\"\n    total = price * qty\n    doubled = total + total\n    total = total + bonus\n    kind = type(total)\n    return (doubled, total, kind)\n\n\nexample = (3, 4, 5)\nprint(solve(*example))\n",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "(24, 17, <class 'int'>)",
+    "language": "python",
+    "primary_library": "python",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "def solve(price, qty, bonus):\n    \"\"\"Name a result, reuse it, re-attach the name, hand several answers back.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 4, 5)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "",
+        "call": "solve(3, 4, 5)",
+        "expected_expr": "(24, 17, int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(2, 2, 0)",
+        "expected_expr": "(8, 4, int)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(1.5, 2, 1)",
+        "expected_expr": "(6.0, 4.0, float)"
+      },
+      {
+        "setup_code": "",
+        "call": "solve(0, 9, 7)",
+        "expected_expr": "(0, 7, int)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "(34, 17, <class 'int'>)",
+        "why": "`doubled` was rebuilt after `total` had already been re-attached, so it doubled the NEW total. The right-hand side is worked out when the line runs; `doubled` keeps whatever it was given at that moment."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]

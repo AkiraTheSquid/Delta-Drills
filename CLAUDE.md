@@ -82,6 +82,19 @@ skill report the same thing from the other side.
   with no symbols of its own — a legitimate discipline node ("use the generator you
   were handed"), the same shape as the `einops.*` pattern nodes. ⚠️ The Colab concept
   maps were NOT regenerated; they still name the dead id. See `SPEC_NODE_SPLITTING.md`.
+- **The course ROOT is now at the floors** (2026-09-01): `python.values-and-names`,
+  5 new drills (ids 708–712) — Solo 2→6, Integrated 2→3. It was the ONLY live entry in
+  `content-gaps.json` (15 hits) and it is where the queue reaches when a numpy concept
+  is locked, so running out there stops practice everywhere. `builtin.type` was declared
+  in its `new_syntax` and drilled ZERO times on its own node while the page never showed
+  `type(...)` at all; the Concept section now teaches it and two drills use it. 🔴 The
+  other six `python.*` nodes are still 2/2/2 — this fixed the root, not the course.
+  ⚠️ Re-recorded `solution_prereq_baseline.json` (1318→1374): every function-mode drill
+  on the root needs `def`/`return`/`call`/`docstring`/`star-args`, and
+  `python.defining-functions` comes LATER in the course, so the root drills what it has
+  not taught. Zero NEW symbol families — the 56 entries are the same envelope already
+  recorded for 568–573. The real fix is course ORDER, not more drills.
+
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

@@ -17,13 +17,13 @@
       "syntax.assign",
       "syntax.tuple"
      ],
-     "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```",
+     "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```\n\nEvery value has a **kind** \u2014 a whole number, a decimal, a piece of text, a\ntuple. `type(...)` reports it, and the answer is about the value, not about the\nname stuck to it.\n\n```python\ncount = 5\nlabel = \"five\"\nprint(type(count))\nprint(type(label))\n```\n\nRe-attaching a name to a different value can change the kind as well as the\nvalue, because the kind was never the name's to begin with.\n\n```python\nn = 5\nprint(type(n))\nn = (5, 5)\nprint(type(n))\n```",
      "worked_example_markdown": "Two values, named, then combined and handed back as a pair.\n\n```python\na = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n```\n\nWhy each step:\n\n1. `a` and `b` are names for the two inputs, so the arithmetic below reads as\n   words rather than as bare numbers.\n2. `total` and `difference` name the two results. Naming a result is what lets\n   the next line use it without recomputing it.\n3. The final `(total, difference)` is a tuple: one value that carries both\n   answers, which is exactly what a function returns when it has two things to\n   say.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```",
+       "concept_markdown": "Everything in this course is built out of two moves: producing a **value**, and\ngiving that value a **name** so you can talk about it again later.\n\nA value is a thing \u2014 the number `5`, the text `\"hi\"`, a list of numbers. An\n**expression** is anything that produces one: `2 + 3` is an expression whose\nvalue is `5`.\n\n`print(...)` shows you a value. It is how a program says something out loud, and\nalmost every cell below ends with one.\n\n```python\nprint(2 + 3)\nprint(\"two\" + \"three\")\n```\n\nThe `=` sign is **not** a claim that two things are equal. It is an instruction:\n*work out the value on the right, then attach the name on the left to it.* The\nname is a label, and the value is what the label is stuck to.\n\n```python\ntotal = 2 + 3\nprint(total)\n```\n\nRead `total = 2 + 3` as \"let `total` be 5 from now on\". Once a name exists you\ncan use it anywhere the value would work, including in building the next one:\n\n```python\nprice = 4\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n```\n\nBecause the right-hand side is worked out **first**, a name can be built out of\nits own old value. This trips people up until they read it in the right order:\n\n```python\nn = 10\nn = n + 3\nprint(n)\n```\n\nThe second line does not say \"n equals n plus 3\", which would be nonsense. It\nsays: take what `n` is now (10), add 3 (13), then re-attach the name `n` to\nthat. The old value is simply let go.\n\nA name holds one value at a time, but you can hand several back together by\nputting them in **parentheses**, separated by commas. That is a *tuple*, and it\nis how a piece of code gives more than one answer at once.\n\n```python\npair = (1, 2)\nprint(pair)\n```\n\nEvery value has a **kind** \u2014 a whole number, a decimal, a piece of text, a\ntuple. `type(...)` reports it, and the answer is about the value, not about the\nname stuck to it.\n\n```python\ncount = 5\nlabel = \"five\"\nprint(type(count))\nprint(type(label))\n```\n\nRe-attaching a name to a different value can change the kind as well as the\nvalue, because the kind was never the name's to begin with.\n\n```python\nn = 5\nprint(type(n))\nn = (5, 5)\nprint(type(n))\n```",
        "watch_out_markdown": "- **`=` is not a comparison** \u2014 `x = 5` sets a name; `x == 5` asks a question and\n  produces `True` or `False`. Almost every early error message about assignment\n  is one of these two written where the other belonged.\n- **A quoted name is text, not the value** \u2014 `total` is the name; `\"total\"` is a\n  five-letter string that has nothing to do with it.\n- **Re-assigning does not change the old value** \u2014 it moves the label. Anything\n  else already holding that value keeps it.",
        "worked_example_markdown": "Two values, named, then combined and handed back as a pair.\n\n```python\na = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n```\n\nWhy each step:\n\n1. `a` and `b` are names for the two inputs, so the arithmetic below reads as\n   words rather than as bare numbers.\n2. `total` and `difference` name the two results. Naming a result is what lets\n   the next line use it without recomputing it.\n3. The final `(total, difference)` is a tuple: one value that carries both\n   answers, which is exactly what a function returns when it has two things to\n   say.",
        "worked_example_code": "a = 7\nb = 2\n\ntotal = a + b\ndifference = a - b\n\nprint(\"total is\", total)\nprint(\"difference is\", difference)\nprint(\"both together:\", (total, difference))\n",
@@ -69,6 +69,26 @@
        "question_id": 571,
        "prompt": "Add 3 to the same name twice, and report where it ends up.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 708,
+       "prompt": "Name each argument, then report what kind of value one of them is.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 709,
+       "prompt": "Re-attach one name twice and report the kind before and after.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 710,
+       "prompt": "Two names, one value: move one label and show the other did not follow.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 711,
+       "prompt": "Rotate three values by one place, keeping the one that would be overwritten.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -79,11 +99,19 @@
       {
        "question_id": 573,
        "prompt": "A chain: each step is built from the name the step before it wrote."
+      },
+      {
+       "question_id": 712,
+       "prompt": "Name a result, build a second value out of it, then re-attach the first name \u2014\nand show that the value built earlier kept what it was given."
       }
      ],
      "independent_items": [
       570,
-      571
+      571,
+      708,
+      709,
+      710,
+      711
      ],
      "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was."
     },

@@ -2546,3 +2546,61 @@ def solve(rng, n):
 example = (t.Generator().manual_seed(0), 3,)
 print(solve(*example))
 ",32,"([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], [2, 0, 1], True)"
+Python,Getting started,"Write a function solve(number, word) that gives each argument a name of its own — `amount` for the number, `label` for the word — and returns the tuple (amount, label, kind), where `kind` is what KIND of value `amount` is. Use `type` to get it. Naming a value does not change what kind of value it is.","def solve(number, word):
+    """"""A name does not change the kind of the value behind it.""""""
+    amount = number
+    label = word
+    kind = type(amount)
+    return (amount, label, kind)
+
+
+example = (5, 'hi')
+print(solve(*example))
+",18,"(5, 'hi', <class 'int'>)"
+Python,Getting started,"Write a function solve(n) that stores n under the name `value`, records type(value) as `before`, then re-attaches that SAME name to the pair (value, value), records type(value) again as `after`, and returns (before, after). Re-attaching a name can change the kind of thing it holds, not just the amount.","def solve(n):
+    """"""Re-attaching a name can change the KIND, not just the value.""""""
+    value = n
+    before = type(value)
+    value = (value, value)
+    after = type(value)
+    return (before, after)
+
+
+example = (5,)
+print(solve(*example))
+",22,"(<class 'int'>, <class 'tuple'>)"
+Python,Getting started,"Write a function solve(start, replacement) that names `start` as `original`, gives the SAME value a second name `copy`, then re-attaches `original` to `replacement`, and returns (original, copy). Re-assigning moves one label; it does not reach through to anything else holding that value.","def solve(start, replacement):
+    """"""Two names on one value; moving one label leaves the other alone.""""""
+    original = start
+    copy = original
+    original = replacement
+    return (original, copy)
+
+
+example = (1, 2)
+print(solve(*example))
+",24,"(2, 1)"
+Python,Getting started,"Write a function solve(a, b, c) that rotates the three values one place to the left and returns them as a tuple: the answer for solve(1, 2, 3) is (2, 3, 1). Keep the first value under a temporary name before you overwrite it, or it is gone by the time you need it.","def solve(a, b, c):
+    """"""A temporary name is what keeps the value about to be overwritten.""""""
+    keep = a
+    a = b
+    b = c
+    c = keep
+    return (a, b, c)
+
+
+example = (1, 2, 3)
+print(solve(*example))
+",26,"(2, 3, 1)"
+Python,Getting started,"Write a function solve(price, qty, bonus) that: names `total` as price times qty; builds `doubled` as that total added to itself; then re-attaches `total` to total plus bonus; and returns (doubled, total, kind), where `kind` is the type of the final total. `doubled` was built from the OLD total and must still hold that answer.","def solve(price, qty, bonus):
+    """"""Name a result, reuse it, re-attach the name, hand several answers back.""""""
+    total = price * qty
+    doubled = total + total
+    total = total + bonus
+    kind = type(total)
+    return (doubled, total, kind)
+
+
+example = (3, 4, 5)
+print(solve(*example))
+",30,"(24, 17, <class 'int'>)"

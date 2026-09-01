@@ -2,7 +2,7 @@
  "_": "Known symbol-coverage debt: symbols a concept declares in new_syntax but drills fewer than 2 times on its own node. The value is the drill count when the debt was recorded; the guard fails on a NEW key or on a count that has gone DOWN. Shrink it. Re-recording is admitting the debt, not fixing it, so say why in the commit.",
  "min_drills_per_symbol": 2,
  "surface": "solution",
- "count": 44,
+ "count": 43,
  "violations": {
   "einops.merge-axes|einops-axis-composition": 0,
   "numpy.aggregations|Tensor.any": 1,
@@ -46,7 +46,6 @@
   "python.types-and-conversion|builtin.bool": 0,
   "python.types-and-conversion|builtin.float": 1,
   "python.types-and-conversion|builtin.round": 1,
-  "python.types-and-conversion|python.type-name": 0,
-  "python.values-and-names|builtin.type": 0
+  "python.types-and-conversion|python.type-name": 0
  }
 }
