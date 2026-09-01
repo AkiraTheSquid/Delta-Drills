@@ -6921,5 +6921,257 @@
    "syntax.tuple"
   ],
   "source": "kp-integrated"
+ },
+ "762": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "763": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "764": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "765": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "766": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "767": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "768": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "769": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-faded"
+ },
+ "770": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "771": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "772": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "773": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "774": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "775": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "776": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "777": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-independent"
+ },
+ "778": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
+ },
+ "779": {
+  "target_kcs": [
+   "python.indexing"
+  ],
+  "supporting_kcs": [
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "syntax.index",
+   "syntax.negative-index",
+   "syntax.nested-index"
+  ],
+  "source": "kp-integrated"
  }
 }

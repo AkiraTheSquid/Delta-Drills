@@ -26516,5 +26516,995 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 762,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 10,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns the tuple of the SECOND and THIRD items — positions 1 and 2. Counting starts at zero, so the second item is items[1].",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([10, 20, 30, 40])",
+          "expected_expr": "(20, 30)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'c'])",
+          "expected_expr": "('b', 'c')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3])",
+          "expected_expr": "(2, 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5, 6, 7, 8, 9])",
+          "expected_expr": "(6, 7)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(10, 20)",
+          "why": "Counted from one. Positions start at ZERO, so items[0] is the first item and the second and third live at 1 and 2."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[1], items[2])\n\n\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+      "expected_output": "(20, 30)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 763,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 11,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that names the last item using the length — position len(items) - 1 — and returns it. The last valid position is one LESS than the length.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([5, 6, 7])",
+          "expected_expr": "7"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1])",
+          "expected_expr": "1"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b'])",
+          "expected_expr": "'b'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([9, 8, 7, 6])",
+          "expected_expr": "6"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "IndexError: list index out of range",
+          "why": "items[len(items)] asks for the position AT the length — one past the end. Three items live at 0, 1, 2; position 3 does not exist."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - 1]\n    return last\n\n\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+      "expected_output": "7",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 764,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns whether the FIRST and LAST items are equal — read one end with 0, the other with -1, and compare with ==.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([3, 1, 3])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1, 2])",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([7])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'a'])",
+          "expected_expr": "True"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "False",
+          "why": "The first TWO items were compared. The drill compares the two ENDS — items[0] against items[-1], which in [3, 1, 3] are both 3."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[0] == items[-1]\n\n\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+      "expected_output": "True",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 765,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 13,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that names the FIRST row `row`, then returns that row's LAST item. One index per level: the first bracket picks the row, the second reads inside it.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "2"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[5]])",
+          "expected_expr": "5"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b', 'c'], ['d']])",
+          "expected_expr": "'c'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[9, 8], [7, 6], [5, 4]])",
+          "expected_expr": "8"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[1, 2]",
+          "why": "Reading stopped after the first bracket. rows[0] is the whole first row — a list. The second bracket, row[-1], is what reaches the item inside it."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[0]\n    return row[-1]\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "2",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 766,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 13,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that returns the BOTTOM-LEFT corner of the table: the first item of the last row, in one chained expression.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "3"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[5]])",
+          "expected_expr": "5"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1], [2], [3]])",
+          "expected_expr": "3"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b'], ['c', 'd']])",
+          "expected_expr": "'c'"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "2",
+          "why": "The brackets ran in the wrong order: rows[0][-1] is the TOP-RIGHT corner. Bottom-left needs the last ROW first (rows[-1]) and then that row's first item."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[-1][0]\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "3",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 767,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(point) that indexes into the TUPLE point and returns (point[0], point[1], kind_name), where kind_name is point's type name. Indexing works the same on tuples — and does not convert them.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve((3, 4))",
+          "expected_expr": "(3, 4, 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(('x', 'y'))",
+          "expected_expr": "('x', 'y', 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((0, 0))",
+          "expected_expr": "(0, 0, 'tuple')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((2.5, 7))",
+          "expected_expr": "(2.5, 7, 'tuple')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 4, 'list')",
+          "why": "Indexing was assumed to turn the tuple into a list. Reading items never changes the container — point is still a tuple, and its type name says so."
+        }
+      ],
+      "canonical_solution": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[0], point[1], type(point).__name__)\n\n\nexample = ((3, 4),)\nprint(solve(*example))\n",
+      "expected_output": "(3, 4, 'tuple')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 768,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 15,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that names the SECOND-TO-LAST position `mid` using the length — len(items) - 2 — and returns the item there.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3, 4])",
+          "expected_expr": "3"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5, 6])",
+          "expected_expr": "5"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'c'])",
+          "expected_expr": "'b'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([9, 8, 7, 6, 5])",
+          "expected_expr": "6"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "4",
+          "why": "len(items) - 1 is the LAST position. Second-to-last is one more step back — len(items) - 2, which in a four-item list is position 2, holding 3."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - 2\n    return items[mid]\n\n\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+      "expected_output": "3",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 769,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns the last item read BOTH ways, as the tuple (items[-1], items[len(items) - 1]). Two roads, one item.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3])",
+          "expected_expr": "(3, 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([7])",
+          "expected_expr": "(7, 7)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b'])",
+          "expected_expr": "('b', 'b')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([4, 4, 4, 4])",
+          "expected_expr": "(4, 4)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 2)",
+          "why": "The second slot returned the POSITION — len(items) - 1 is 2 — instead of the item stored at it. The subtraction names where to look; the brackets do the looking."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[-1], items[len(items) - 1])\n\n\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+      "expected_output": "(3, 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 770,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that returns the tuple (rows[0][0], rows[-1][0]) — the first item of the first row, and the first item of the last row. The FIRST bracket decides which row.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Same column, opposite rows.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4], [5, 6]])",
+          "expected_expr": "(1, 5)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[9]])",
+          "expected_expr": "(9, 9)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a'], ['b']])",
+          "expected_expr": "('a', 'b')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[0, 1], [2, 3]])",
+          "expected_expr": "(0, 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(1, 2)",
+          "why": "The second read was rows[0][-1] — the END of the FIRST row. The drill wants the last ROW's first item: the outer bracket is the one that must change."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Same column, opposite rows.\"\"\"\n    return (rows[0][0], rows[-1][0])\n\n\nexample = ([[1, 2], [3, 4], [5, 6]],)\nprint(solve(*example))\n",
+      "expected_output": "(1, 5)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 771,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 21,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items) that returns the tuple (items[1], items[-2]) — the inner neighbours of the two ends: one step in from the front, one step in from the back.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(items):\n    \"\"\"One step in from each end.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([1, 2, 3, 4])",
+          "expected_expr": "(2, 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5, 6])",
+          "expected_expr": "(6, 5)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'c'])",
+          "expected_expr": "('b', 'b')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([9, 8, 7, 6, 5])",
+          "expected_expr": "(8, 6)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(1, 4)",
+          "why": "Those are the ends themselves. The drill steps one position INWARD from each: position 1 from the front, and -2 — the one before the last — from the back."
+        }
+      ],
+      "canonical_solution": "def solve(items):\n    \"\"\"One step in from each end.\"\"\"\n    return (items[1], items[-2])\n\n\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+      "expected_output": "(2, 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 772,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that names the LAST row `last_row` (pick it with -1), and returns the tuple (last_row, last_row[0], last_row[-1]) — the row itself, then its two ends.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"One pick, then both ends of what was picked.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "([3, 4], 3, 4)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[5]])",
+          "expected_expr": "([5], 5, 5)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b', 'c']])",
+          "expected_expr": "(['a', 'b', 'c'], 'a', 'c')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1], [2, 3, 4]])",
+          "expected_expr": "([2, 3, 4], 2, 4)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([3, 4], 4, 3)",
+          "why": "The two ends came back swapped. [0] is the first item and [-1] the last — the order in the answer follows the order of the reads, not the other way around."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"One pick, then both ends of what was picked.\"\"\"\n    last_row = rows[-1]\n    return (last_row, last_row[0], last_row[-1])\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "([3, 4], 3, 4)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 773,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 23,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that returns whether rows[0][1] equals rows[1][0], using ==. The two brackets are not interchangeable — these are different cells.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Swapping the brackets reads a different cell.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1, 5], [5, 1]])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[0, 0], [0, 0]])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b'], ['b', 'a']])",
+          "expected_expr": "True"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "True",
+          "why": "The two reads were assumed to land on the same cell. rows[0][1] is row zero's second item; rows[1][0] is row one's first — in [[1, 2], [3, 4]] that is 2 against 3."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Swapping the brackets reads a different cell.\"\"\"\n    return rows[0][1] == rows[1][0]\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 774,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that names the TOP-RIGHT corner `corner` — the first row's last item — and returns the tuple (corner, kind_name) with corner's type name.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Row zero, last item — and what kind of value lives there.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "(2, 'int')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a', 'b']])",
+          "expected_expr": "('b', 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[2.5]])",
+          "expected_expr": "(2.5, 'float')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1, 'x'], [2, 'y']])",
+          "expected_expr": "('x', 'str')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([3, 4], 'list')",
+          "why": "rows[-1] picked the bottom ROW. Top-right is inside row 0 — pick rows[0] first, then its last item with the second bracket."
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Row zero, last item — and what kind of value lives there.\"\"\"\n    corner = rows[0][-1]\n    return (corner, type(corner).__name__)\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "(2, 'int')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 775,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(pair) that builds `flipped` as the tuple (pair[-1], pair[0]) and returns the tuple (flipped, same) where same is whether flipped[0] equals pair[0] — true only when the two ends match.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(pair):\n    \"\"\"Flip by indexing, then index what you built.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((1, 2),)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve((1, 2))",
+          "expected_expr": "((2, 1), False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((5, 5))",
+          "expected_expr": "((5, 5), True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(('a', 'b'))",
+          "expected_expr": "(('b', 'a'), False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve((0, 1))",
+          "expected_expr": "((1, 0), False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((2, 1), True)",
+          "why": "flipped[0] is the pair's LAST value moved to the front. It equals pair[0] only when both ends hold the same value — (1, 2) flips to (2, 1), and 2 is not 1."
+        }
+      ],
+      "canonical_solution": "def solve(pair):\n    \"\"\"Flip by indexing, then index what you built.\"\"\"\n    flipped = (pair[-1], pair[0])\n    return (flipped, flipped[0] == pair[0])\n\n\nexample = ((1, 2),)\nprint(solve(*example))\n",
+      "expected_output": "((2, 1), False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 776,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(items, n) that returns the tuple (items[n], items[n - 1]) — the item at position n and its LEFT neighbour. Work the position out inside the brackets.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(items, n):\n    \"\"\"A position and the one before it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30], 2)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([10, 20, 30], 2)",
+          "expected_expr": "(30, 20)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([1, 2], 1)",
+          "expected_expr": "(2, 1)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(['a', 'b', 'c'], 1)",
+          "expected_expr": "('b', 'a')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([5, 6, 7, 8], 3)",
+          "expected_expr": "(8, 7)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(30, 29)",
+          "why": "The subtraction landed on the ITEM: items[n] - 1. Inside the brackets it names the neighbouring POSITION; outside them it does arithmetic on the value that came back."
+        }
+      ],
+      "canonical_solution": "def solve(items, n):\n    \"\"\"A position and the one before it.\"\"\"\n    return (items[n], items[n - 1])\n\n\nexample = ([10, 20, 30], 2)\nprint(solve(*example))\n",
+      "expected_output": "(30, 20)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 777,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(cube) that returns the tuple (cube[0][0][0], cube[-1][-1][-1]) — the very first value and the very last value of a three-level nest. One index per level, three levels deep.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(cube):\n    \"\"\"Three levels: three brackets each way.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2]], [[3, 4]]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[[1, 2]], [[3, 4]]])",
+          "expected_expr": "(1, 4)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[[5]]])",
+          "expected_expr": "(5, 5)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[[1], [2]], [[3], [4]]])",
+          "expected_expr": "(1, 4)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[['a']], [['b']], [['c']]])",
+          "expected_expr": "('a', 'c')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 2], [3, 4])",
+          "why": "Reading stopped one level short — two brackets into a three-level nest hands back the innermost LISTS. A third bracket reaches the values inside them."
+        }
+      ],
+      "canonical_solution": "def solve(cube):\n    \"\"\"Three levels: three brackets each way.\"\"\"\n    return (cube[0][0][0], cube[-1][-1][-1])\n\n\nexample = ([[[1, 2]], [[3, 4]]],)\nprint(solve(*example))\n",
+      "expected_output": "(1, 4)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 778,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 31,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows) that names `top` the first row and `bottom` the last row, and returns the tuple ((top[0], bottom[-1]), len(rows), same) where same is whether top equals bottom.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows):\n    \"\"\"Corners, count, and whether the edges are the same row.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]])",
+          "expected_expr": "((1, 4), 2, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[5], [5]])",
+          "expected_expr": "((5, 5), 2, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[7, 8]])",
+          "expected_expr": "((7, 8), 1, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1], [2], [3]])",
+          "expected_expr": "((1, 3), 3, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "((1, 4), 2, True)",
+          "why": "Rows in the same table were assumed equal. == compares them item by item: [1, 2] and [3, 4] share a table and nothing else. (A one-row table's top IS its bottom — that one is True.)"
+        }
+      ],
+      "canonical_solution": "def solve(rows):\n    \"\"\"Corners, count, and whether the edges are the same row.\"\"\"\n    top = rows[0]\n    bottom = rows[-1]\n    return ((top[0], bottom[-1]), len(rows), top == bottom)\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+      "expected_output": "((1, 4), 2, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 779,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 33,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(rows, i, j) that names the row `row = rows[i]`, the cell `item = row[j]`, and returns the tuple (item, (i, j), kind_name) where kind_name is item's type name.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(rows, i, j):\n    \"\"\"Pick, read, and report where the value came from.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], 1, 0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]], 1, 0)",
+          "expected_expr": "(3, (1, 0), 'int')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1, 2], [3, 4]], 0, 1)",
+          "expected_expr": "(2, (0, 1), 'int')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([['a']], 0, 0)",
+          "expected_expr": "('a', (0, 0), 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve([[1.5, 2], [3, 4]], 0, 0)",
+          "expected_expr": "(1.5, (0, 0), 'float')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(2, (0, 1), 'int')",
+          "why": "i and j swapped jobs. The FIRST bracket takes i and picks the row; j then reads inside it. Swapped, they read a different cell — or ask for a row that does not exist."
+        }
+      ],
+      "canonical_solution": "def solve(rows, i, j):\n    \"\"\"Pick, read, and report where the value came from.\"\"\"\n    row = rows[i]\n    item = row[j]\n    return (item, (i, j), type(item).__name__)\n\n\nexample = ([[1, 2], [3, 4]], 1, 0)\nprint(solve(*example))\n",
+      "expected_output": "(3, (1, 0), 'int')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

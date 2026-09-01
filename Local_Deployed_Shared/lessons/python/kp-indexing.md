@@ -3,10 +3,10 @@ kc: python.indexing
 title: Indexing — pulling one item out, counting from zero
 supporting: [python.lists-and-tuples]
 new_syntax: [syntax.index, syntax.negative-index, syntax.nested-index]
-faded: [586, 587]
+faded: [586, 587, 762, 763, 764, 765, 766, 767, 768, 769]
 guided: []
-independent: [588, 589]
-integrated: [590, 591]
+independent: [588, 589, 770, 771, 772, 773, 774, 775, 776, 777]
+integrated: [590, 591, 778, 779]
 ---
 
 ## Concept
@@ -142,6 +142,132 @@ def solve(items):
     return items[-1]
 ```
 
+### q762
+Counting starts at zero — the second item is at position 1.
+
+```python starter
+def solve(items):
+    """items[1] is the SECOND item."""
+    return (items[_____], items[_____])
+```
+
+```python solution
+def solve(items):
+    """items[1] is the SECOND item."""
+    return (items[1], items[2])
+```
+
+### q763
+The last valid position is one LESS than the length.
+
+```python starter
+def solve(items):
+    """The last position is len minus one."""
+    last = items[len(items) - _____]
+    return last
+```
+
+```python solution
+def solve(items):
+    """The last position is len minus one."""
+    last = items[len(items) - 1]
+    return last
+```
+
+### q764
+Read one end from zero, the other from minus one, and compare.
+
+```python starter
+def solve(items):
+    """Do the two ends match?"""
+    return items[_____] == items[_____]
+```
+
+```python solution
+def solve(items):
+    """Do the two ends match?"""
+    return items[0] == items[-1]
+```
+
+### q765
+The first bracket picks the row; the second reads inside it.
+
+```python starter
+def solve(rows):
+    """Pick the row, then read inside it."""
+    row = rows[_____]
+    return row[_____]
+```
+
+```python solution
+def solve(rows):
+    """Pick the row, then read inside it."""
+    row = rows[0]
+    return row[-1]
+```
+
+### q766
+Bottom-left: the last row first, then its first item.
+
+```python starter
+def solve(rows):
+    """Last row first, then its first item."""
+    return rows[_____][_____]
+```
+
+```python solution
+def solve(rows):
+    """Last row first, then its first item."""
+    return rows[-1][0]
+```
+
+### q767
+Tuples index exactly like lists — and stay tuples.
+
+```python starter
+def solve(point):
+    """Tuples index exactly like lists."""
+    return (point[_____], point[_____], type(point).__name__)
+```
+
+```python solution
+def solve(point):
+    """Tuples index exactly like lists."""
+    return (point[0], point[1], type(point).__name__)
+```
+
+### q768
+One step further back than len minus one.
+
+```python starter
+def solve(items):
+    """One step further back than len minus one."""
+    mid = len(items) - _____
+    return items[mid]
+```
+
+```python solution
+def solve(items):
+    """One step further back than len minus one."""
+    mid = len(items) - 2
+    return items[mid]
+```
+
+### q769
+-1 and len-1 are two roads to the same item.
+
+```python starter
+def solve(items):
+    """-1 and len-1 name the same position."""
+    return (items[_____], items[len(items) - 1])
+```
+
+```python solution
+def solve(items):
+    """-1 and len-1 name the same position."""
+    return (items[-1], items[len(items) - 1])
+```
+
 ## Solo practice
 
 ### q588
@@ -161,6 +287,30 @@ print("row 0, item 1:", rows[0][1])
 ### q589
 Both ends of the same list, using a negative position for the back two.
 
+### q770
+Same column, opposite rows — the outer bracket is the one that changes.
+
+### q771
+One step in from each end.
+
+### q772
+One pick, then both ends of what was picked.
+
+### q773
+Swapping the brackets reads a different cell.
+
+### q774
+Row zero, last item — and what kind of value lives there.
+
+### q775
+Flip a pair by indexing, then index what you built.
+
+### q776
+A position and the one before it — the arithmetic happens inside the brackets.
+
+### q777
+Three levels deep: three brackets each way.
+
 ## Integrated practice
 
 ### q590
@@ -168,6 +318,12 @@ Pull one row out, then measure it and read its last item.
 
 ### q591
 Two opposite corners of a table, plus the shape they sit in.
+
+### q778
+Corners, count, and whether the edges are the same row.
+
+### q779
+Pick, read, and report where the value came from.
 
 ## Misconceptions
 

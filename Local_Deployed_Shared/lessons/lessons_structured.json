@@ -748,6 +748,54 @@
          "prompt": "The last item, counted back from the end rather than measured.",
          "starter_code": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30],)\nprint(solve(*example))\n",
          "solution": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[-1]\n"
+        },
+        {
+         "question_id": 762,
+         "prompt": "Counting starts at zero \u2014 the second item is at position 1.",
+         "starter_code": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[_____], items[_____])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[1], items[2])\n"
+        },
+        {
+         "question_id": 763,
+         "prompt": "The last valid position is one LESS than the length.",
+         "starter_code": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - _____]\n    return last\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - 1]\n    return last\n"
+        },
+        {
+         "question_id": 764,
+         "prompt": "Read one end from zero, the other from minus one, and compare.",
+         "starter_code": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[_____] == items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[0] == items[-1]\n"
+        },
+        {
+         "question_id": 765,
+         "prompt": "The first bracket picks the row; the second reads inside it.",
+         "starter_code": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[_____]\n    return row[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+         "solution": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[0]\n    return row[-1]\n"
+        },
+        {
+         "question_id": 766,
+         "prompt": "Bottom-left: the last row first, then its first item.",
+         "starter_code": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[_____][_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+         "solution": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[-1][0]\n"
+        },
+        {
+         "question_id": 767,
+         "prompt": "Tuples index exactly like lists \u2014 and stay tuples.",
+         "starter_code": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[_____], point[_____], type(point).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+         "solution": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[0], point[1], type(point).__name__)\n"
+        },
+        {
+         "question_id": 768,
+         "prompt": "One step further back than len minus one.",
+         "starter_code": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - _____\n    return items[mid]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - 2\n    return items[mid]\n"
+        },
+        {
+         "question_id": 769,
+         "prompt": "-1 and len-1 are two roads to the same item.",
+         "starter_code": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[_____], items[len(items) - 1])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[-1], items[len(items) - 1])\n"
         }
        ]
       }
@@ -764,6 +812,54 @@
        "prompt": "The last item, counted back from the end rather than measured.",
        "starter_code": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30],)\nprint(solve(*example))\n",
        "solution": "def solve(items):\n    \"\"\"Last item \u2014 count back from the end.\"\"\"\n    return items[-1]\n"
+      },
+      {
+       "question_id": 762,
+       "prompt": "Counting starts at zero \u2014 the second item is at position 1.",
+       "starter_code": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[_____], items[_____])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([10, 20, 30, 40],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"items[1] is the SECOND item.\"\"\"\n    return (items[1], items[2])\n"
+      },
+      {
+       "question_id": 763,
+       "prompt": "The last valid position is one LESS than the length.",
+       "starter_code": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - _____]\n    return last\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([5, 6, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The last position is len minus one.\"\"\"\n    last = items[len(items) - 1]\n    return last\n"
+      },
+      {
+       "question_id": 764,
+       "prompt": "Read one end from zero, the other from minus one, and compare.",
+       "starter_code": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[_____] == items[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"Do the two ends match?\"\"\"\n    return items[0] == items[-1]\n"
+      },
+      {
+       "question_id": 765,
+       "prompt": "The first bracket picks the row; the second reads inside it.",
+       "starter_code": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[_____]\n    return row[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+       "solution": "def solve(rows):\n    \"\"\"Pick the row, then read inside it.\"\"\"\n    row = rows[0]\n    return row[-1]\n"
+      },
+      {
+       "question_id": 766,
+       "prompt": "Bottom-left: the last row first, then its first item.",
+       "starter_code": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[_____][_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+       "solution": "def solve(rows):\n    \"\"\"Last row first, then its first item.\"\"\"\n    return rows[-1][0]\n"
+      },
+      {
+       "question_id": 767,
+       "prompt": "Tuples index exactly like lists \u2014 and stay tuples.",
+       "starter_code": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[_____], point[_____], type(point).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ((3, 4),)\nprint(solve(*example))\n",
+       "solution": "def solve(point):\n    \"\"\"Tuples index exactly like lists.\"\"\"\n    return (point[0], point[1], type(point).__name__)\n"
+      },
+      {
+       "question_id": 768,
+       "prompt": "One step further back than len minus one.",
+       "starter_code": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - _____\n    return items[mid]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"One step further back than len minus one.\"\"\"\n    mid = len(items) - 2\n    return items[mid]\n"
+      },
+      {
+       "question_id": 769,
+       "prompt": "-1 and len-1 are two roads to the same item.",
+       "starter_code": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[_____], items[len(items) - 1])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"-1 and len-1 name the same position.\"\"\"\n    return (items[-1], items[len(items) - 1])\n"
       }
      ],
      "guided_items": [],
@@ -778,6 +874,46 @@
        "question_id": 589,
        "prompt": "Both ends of the same list, using a negative position for the back two.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 770,
+       "prompt": "Same column, opposite rows \u2014 the outer bracket is the one that changes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 771,
+       "prompt": "One step in from each end.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 772,
+       "prompt": "One pick, then both ends of what was picked.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 773,
+       "prompt": "Swapping the brackets reads a different cell.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 774,
+       "prompt": "Row zero, last item \u2014 and what kind of value lives there.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 775,
+       "prompt": "Flip a pair by indexing, then index what you built.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 776,
+       "prompt": "A position and the one before it \u2014 the arithmetic happens inside the brackets.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 777,
+       "prompt": "Three levels deep: three brackets each way.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -788,11 +924,27 @@
       {
        "question_id": 591,
        "prompt": "Two opposite corners of a table, plus the shape they sit in."
+      },
+      {
+       "question_id": 778,
+       "prompt": "Corners, count, and whether the edges are the same row."
+      },
+      {
+       "question_id": 779,
+       "prompt": "Pick, read, and report where the value came from."
       }
      ],
      "independent_items": [
       588,
-      589
+      589,
+      770,
+      771,
+      772,
+      773,
+      774,
+      775,
+      776,
+      777
      ],
      "misconceptions_markdown": "- **\"`items[1]` is the first item.\"** \u2014 It is the second. Counting starts at 0.\n- **\"To get the last item I need the length.\"** \u2014 `items[-1]` does it with no\n  measurement, and cannot go one past the end.\n- **\"`rows[i][j]` and `rows[j][i]` are the same.\"** \u2014 Only on a square table, and\n  only by coincidence. The first index always picks the row.",
      "notes_markdown": ""

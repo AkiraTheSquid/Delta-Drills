@@ -3060,3 +3060,157 @@ Python,Getting started,"Write a function solve(a, b, c) that builds `values` as 
 example = (1, 2, 3)
 print(solve(*example))
 ",32,"(([1, 2, 3], 6, 3), 'tuple')"
+Python,Getting started,"Write a function solve(items) that returns the tuple of the SECOND and THIRD items — positions 1 and 2. Counting starts at zero, so the second item is items[1].","def solve(items):
+    """"""items[1] is the SECOND item.""""""
+    return (items[1], items[2])
+
+
+example = ([10, 20, 30, 40],)
+print(solve(*example))
+",10,"(20, 30)"
+Python,Getting started,Write a function solve(items) that names the last item using the length — position len(items) - 1 — and returns it. The last valid position is one LESS than the length.,"def solve(items):
+    """"""The last position is len minus one.""""""
+    last = items[len(items) - 1]
+    return last
+
+
+example = ([5, 6, 7],)
+print(solve(*example))
+",11,7
+Python,Getting started,"Write a function solve(items) that returns whether the FIRST and LAST items are equal — read one end with 0, the other with -1, and compare with ==.","def solve(items):
+    """"""Do the two ends match?""""""
+    return items[0] == items[-1]
+
+
+example = ([3, 1, 3],)
+print(solve(*example))
+",12,True
+Python,Getting started,"Write a function solve(rows) that names the FIRST row `row`, then returns that row's LAST item. One index per level: the first bracket picks the row, the second reads inside it.","def solve(rows):
+    """"""Pick the row, then read inside it.""""""
+    row = rows[0]
+    return row[-1]
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",13,2
+Python,Getting started,"Write a function solve(rows) that returns the BOTTOM-LEFT corner of the table: the first item of the last row, in one chained expression.","def solve(rows):
+    """"""Last row first, then its first item.""""""
+    return rows[-1][0]
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",13,3
+Python,Getting started,"Write a function solve(point) that indexes into the TUPLE point and returns (point[0], point[1], kind_name), where kind_name is point's type name. Indexing works the same on tuples — and does not convert them.","def solve(point):
+    """"""Tuples index exactly like lists.""""""
+    return (point[0], point[1], type(point).__name__)
+
+
+example = ((3, 4),)
+print(solve(*example))
+",14,"(3, 4, 'tuple')"
+Python,Getting started,Write a function solve(items) that names the SECOND-TO-LAST position `mid` using the length — len(items) - 2 — and returns the item there.,"def solve(items):
+    """"""One step further back than len minus one.""""""
+    mid = len(items) - 2
+    return items[mid]
+
+
+example = ([1, 2, 3, 4],)
+print(solve(*example))
+",15,3
+Python,Getting started,"Write a function solve(items) that returns the last item read BOTH ways, as the tuple (items[-1], items[len(items) - 1]). Two roads, one item.","def solve(items):
+    """"""-1 and len-1 name the same position.""""""
+    return (items[-1], items[len(items) - 1])
+
+
+example = ([1, 2, 3],)
+print(solve(*example))
+",16,"(3, 3)"
+Python,Getting started,"Write a function solve(rows) that returns the tuple (rows[0][0], rows[-1][0]) — the first item of the first row, and the first item of the last row. The FIRST bracket decides which row.","def solve(rows):
+    """"""Same column, opposite rows.""""""
+    return (rows[0][0], rows[-1][0])
+
+
+example = ([[1, 2], [3, 4], [5, 6]],)
+print(solve(*example))
+",20,"(1, 5)"
+Python,Getting started,"Write a function solve(items) that returns the tuple (items[1], items[-2]) — the inner neighbours of the two ends: one step in from the front, one step in from the back.","def solve(items):
+    """"""One step in from each end.""""""
+    return (items[1], items[-2])
+
+
+example = ([1, 2, 3, 4],)
+print(solve(*example))
+",21,"(2, 3)"
+Python,Getting started,"Write a function solve(rows) that names the LAST row `last_row` (pick it with -1), and returns the tuple (last_row, last_row[0], last_row[-1]) — the row itself, then its two ends.","def solve(rows):
+    """"""One pick, then both ends of what was picked.""""""
+    last_row = rows[-1]
+    return (last_row, last_row[0], last_row[-1])
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",22,"([3, 4], 3, 4)"
+Python,Getting started,"Write a function solve(rows) that returns whether rows[0][1] equals rows[1][0], using ==. The two brackets are not interchangeable — these are different cells.","def solve(rows):
+    """"""Swapping the brackets reads a different cell.""""""
+    return rows[0][1] == rows[1][0]
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",23,False
+Python,Getting started,"Write a function solve(rows) that names the TOP-RIGHT corner `corner` — the first row's last item — and returns the tuple (corner, kind_name) with corner's type name.","def solve(rows):
+    """"""Row zero, last item — and what kind of value lives there.""""""
+    corner = rows[0][-1]
+    return (corner, type(corner).__name__)
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",24,"(2, 'int')"
+Python,Getting started,"Write a function solve(pair) that builds `flipped` as the tuple (pair[-1], pair[0]) and returns the tuple (flipped, same) where same is whether flipped[0] equals pair[0] — true only when the two ends match.","def solve(pair):
+    """"""Flip by indexing, then index what you built.""""""
+    flipped = (pair[-1], pair[0])
+    return (flipped, flipped[0] == pair[0])
+
+
+example = ((1, 2),)
+print(solve(*example))
+",25,"((2, 1), False)"
+Python,Getting started,"Write a function solve(items, n) that returns the tuple (items[n], items[n - 1]) — the item at position n and its LEFT neighbour. Work the position out inside the brackets.","def solve(items, n):
+    """"""A position and the one before it.""""""
+    return (items[n], items[n - 1])
+
+
+example = ([10, 20, 30], 2)
+print(solve(*example))
+",26,"(30, 20)"
+Python,Getting started,"Write a function solve(cube) that returns the tuple (cube[0][0][0], cube[-1][-1][-1]) — the very first value and the very last value of a three-level nest. One index per level, three levels deep.","def solve(cube):
+    """"""Three levels: three brackets each way.""""""
+    return (cube[0][0][0], cube[-1][-1][-1])
+
+
+example = ([[[1, 2]], [[3, 4]]],)
+print(solve(*example))
+",28,"(1, 4)"
+Python,Getting started,"Write a function solve(rows) that names `top` the first row and `bottom` the last row, and returns the tuple ((top[0], bottom[-1]), len(rows), same) where same is whether top equals bottom.","def solve(rows):
+    """"""Corners, count, and whether the edges are the same row.""""""
+    top = rows[0]
+    bottom = rows[-1]
+    return ((top[0], bottom[-1]), len(rows), top == bottom)
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",31,"((1, 4), 2, False)"
+Python,Getting started,"Write a function solve(rows, i, j) that names the row `row = rows[i]`, the cell `item = row[j]`, and returns the tuple (item, (i, j), kind_name) where kind_name is item's type name.","def solve(rows, i, j):
+    """"""Pick, read, and report where the value came from.""""""
+    row = rows[i]
+    item = row[j]
+    return (item, (i, j), type(item).__name__)
+
+
+example = ([[1, 2], [3, 4]], 1, 0)
+print(solve(*example))
+",33,"(3, (1, 0), 'int')"
