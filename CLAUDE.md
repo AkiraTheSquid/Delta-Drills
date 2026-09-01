@@ -95,6 +95,31 @@ skill report the same thing from the other side.
   not taught. Zero NEW symbol families — the 56 entries are the same envelope already
   recorded for 568–573. The real fix is course ORDER, not more drills.
 
+- **Second concept at the floors** (2026-09-01): `python.types-and-conversion`,
+  5 new drills (ids 713-717) — Solo 2->6, Integrated 2->3. Course order is encoded in
+  the id ranges (568-573 root, 574-579 here, ... 604-609 dots-and-imports); fill them
+  in that order. This node cleared ALL FOUR of its symbol-coverage violations:
+  `builtin.bool` 0->2, `builtin.float` 1->2, `builtin.round` 1->2, `python.type-name`
+  0->2. The page now actually calls `bool(...)` and shows `==`, because a drill may
+  not require a symbol the page never shows.
+- 🔴 **`python.type-name` was UNSATISFIABLE, not under-drilled** (2026-09-01): it is
+  declared in `kp-types-and-conversion.md` and appears NOWHERE else in the repo except
+  the baseline. `type(v).__name__` was collected as bare `syntax.attribute` (the
+  receiver is a Call, so `_callee` resolves nothing), so the two drills that DO teach
+  it could never be counted and no new drill could ever have fixed it. Fixed in
+  `solution_symbols.py`; credited ONLY for an inline `type(x).__name__`, because
+  matching every `__name__` would let `module.__name__` earn the coverage.
+  🔑 A coverage number stuck at 0 may be a DETECTOR gap, not a content gap — grep the
+  symbol before authoring drills against it.
+- ⚠️ **`syntax.equality` is taught by NO lesson** and 42 questions use it. Declaring it
+  on `types-and-conversion` (where `"42" == 42` is already a named misconception)
+  resolved 38 baseline violations at a cost of one coverage obligation, met by q715 and
+  q717. The other undeclared operators have not been checked — this was one symbol.
+- ⚠️ **Run the pipeline under `This-Directory-Only/backend/.venv/bin/python3`.** Bare
+  `python3` has no torch: `validate_lessons.py` reports every torch drill broken, and
+  `export_questions_json.py` prints "torch preload failed" and leaves 40 questions'
+  `expected_output` stale instead of recomputing them.
+
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

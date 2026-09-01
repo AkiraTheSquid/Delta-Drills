@@ -686,3 +686,8 @@
 {"question_id": 710, "atoms": [{"atom_id": "python-values-and-names", "confidence": 0.85}]}
 {"question_id": 711, "atoms": [{"atom_id": "python-values-and-names", "confidence": 0.85}]}
 {"question_id": 712, "atoms": [{"atom_id": "python-values-and-names", "confidence": 0.85}]}
+{"question_id": 713, "atoms": [{"atom_id": "python-types-and-conversion", "confidence": 0.85}]}
+{"question_id": 714, "atoms": [{"atom_id": "python-types-and-conversion", "confidence": 0.85}]}
+{"question_id": 715, "atoms": [{"atom_id": "python-types-and-conversion", "confidence": 0.85}]}
+{"question_id": 716, "atoms": [{"atom_id": "python-types-and-conversion", "confidence": 0.85}]}
+{"question_id": 717, "atoms": [{"atom_id": "python-types-and-conversion", "confidence": 0.85}]}

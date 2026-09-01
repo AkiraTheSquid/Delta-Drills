@@ -127,15 +127,16 @@
       "builtin.int",
       "builtin.round",
       "builtin.str",
-      "python.type-name"
+      "python.type-name",
+      "syntax.equality"
      ],
-     "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```",
+     "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nAsking whether they are **equal** gives the same answer for the same reason.\n`==` compares values, and a value made of characters is never equal to a value\nmade of digits \u2014 no matter how alike they look on the page:\n\n```python\nprint(\"42\" == 42)\nprint(42 == 42)\n```\n\nComparing does not convert. If you want the question answered about the\n*number*, you have to do the converting yourself first:\n\n```python\nprint(int(\"42\") == 42)\n```\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```\n\n`bool(...)` is a conversion too, and the one that surprises people. It asks a\nsingle question of a value \u2014 *is there anything here?* \u2014 and almost everything\nanswers yes. Zero answers no, and so does empty text:\n\n```python\nprint(bool(7), bool(0))\nprint(bool(\"hi\"), bool(\"\"))\nprint(bool(0.0), bool(-3))\n```\n\nThe trap is the text `\"0\"`. It is one character long, so there **is** something\nthere and it converts to `True`. The zero only shows up once the digits have\nbeen read as a number:\n\n```python\nprint(bool(\"0\"))\nprint(bool(int(\"0\")))\n```",
      "worked_example_markdown": "One string, read three different ways, with the type named at each step.\n\n```python\ntext = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n```\n\nWhy each step:\n\n1. `int(text)` reads the digits as a whole number. The string itself is not\n   changed \u2014 conversion produces a new value.\n2. `float(text)` reads the same digits as a number with a fractional part. `12`\n   and `12.0` are equal in value and different in type.\n3. `str(as_int)` goes back the other way, which is how a number gets glued into\n   a message.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```",
+       "concept_markdown": "Every value has a **type**, and the type decides what the value can do. Four of\nthem carry almost all of the early work:\n\n| Type | What it holds | Written as |\n|---|---|---|\n| `int` | a whole number | `5`, `-2`, `0` |\n| `float` | a number with a fractional part | `2.5`, `-0.75`, `4.0` |\n| `str` | text | `\"hi\"`, `'42'` |\n| `bool` | a yes/no answer | `True`, `False` |\n\n`type(value)` hands back the type itself. Its `__name__` is the readable word,\nwhich is usually what you actually want to look at:\n\n```python\nprint(type(5).__name__)\nprint(type(2.5).__name__)\nprint(type(\"42\").__name__)\nprint(type(True).__name__)\n```\n\nNotice that `42` and `\"42\"` are **not** the same value. One is a number; the\nother is two characters that happen to look like one. The difference shows up\nthe moment you use `+`, because `+` does a different job for each type:\n\n```python\nprint(4 + 2)\nprint(\"4\" + \"2\")\n```\n\nThat is not a quirk \u2014 it is the type deciding the meaning. Numbers add; text\njoins end to end.\n\nAsking whether they are **equal** gives the same answer for the same reason.\n`==` compares values, and a value made of characters is never equal to a value\nmade of digits \u2014 no matter how alike they look on the page:\n\n```python\nprint(\"42\" == 42)\nprint(42 == 42)\n```\n\nComparing does not convert. If you want the question answered about the\n*number*, you have to do the converting yourself first:\n\n```python\nprint(int(\"42\") == 42)\n```\n\nTo move between the two you **convert**, by calling the type's own name as a\nfunction. Each conversion produces a NEW value and leaves the original alone:\n\n```python\ntext = \"42\"\nnumber = int(text)\n\nprint(number + 8)\nprint(text)\n```\n\n`float(...)` and `str(...)` work the same way, and going number \u2192 text \u2192\nnumber again gets you back where you started:\n\n```python\nprint(float(\"2.5\"))\nprint(str(7) + \"!\")\nprint(int(str(7)))\n```\n\nTwo conversions that look similar and are not: `int(...)` throws the fractional\npart **away**, while `round(...)` goes to the nearest whole number.\n\n```python\nprint(int(3.9))\nprint(round(3.9))\nprint(int(-2.7), round(-2.7))\n```\n\n`bool(...)` is a conversion too, and the one that surprises people. It asks a\nsingle question of a value \u2014 *is there anything here?* \u2014 and almost everything\nanswers yes. Zero answers no, and so does empty text:\n\n```python\nprint(bool(7), bool(0))\nprint(bool(\"hi\"), bool(\"\"))\nprint(bool(0.0), bool(-3))\n```\n\nThe trap is the text `\"0\"`. It is one character long, so there **is** something\nthere and it converts to `True`. The zero only shows up once the digits have\nbeen read as a number:\n\n```python\nprint(bool(\"0\"))\nprint(bool(int(\"0\")))\n```",
        "watch_out_markdown": "- **`int()` truncates, it does not round** \u2014 `int(3.9)` is `3`. If you wanted\n  `4`, `round` is the call you meant.\n- **`\"5\"` is not `5`** \u2014 a string of digits stays text until something converts\n  it, and comparing the two gives `False`.\n- **`bool` is its own type** \u2014 `True` behaves like `1` in arithmetic, but\n  `type(True).__name__` is `\"bool\"`, not `\"int\"`.",
        "worked_example_markdown": "One string, read three different ways, with the type named at each step.\n\n```python\ntext = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n```\n\nWhy each step:\n\n1. `int(text)` reads the digits as a whole number. The string itself is not\n   changed \u2014 conversion produces a new value.\n2. `float(text)` reads the same digits as a number with a fractional part. `12`\n   and `12.0` are equal in value and different in type.\n3. `str(as_int)` goes back the other way, which is how a number gets glued into\n   a message.",
        "worked_example_code": "text = \"12\"\n\nas_int = int(text)\nas_float = float(text)\nback_to_text = str(as_int)\n\nprint(as_int, type(as_int).__name__)\nprint(as_float, type(as_float).__name__)\nprint(back_to_text, type(back_to_text).__name__)\nprint(\"the original is untouched:\", text, type(text).__name__)\n",
@@ -181,6 +182,26 @@
        "question_id": 577,
        "prompt": "Truncating and rounding, side by side, on the same number.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 713,
+       "prompt": "Ask two values whether they count as a yes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 714,
+       "prompt": "Round a number that arrives as text \u2014 which it cannot be until it is converted.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 715,
+       "prompt": "The same digits compared as text and as a number.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 716,
+       "prompt": "Ask before converting, and ask after, on a piece of text holding `0`.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -191,11 +212,19 @@
       {
        "question_id": 579,
        "prompt": "The same `+` doing both of its jobs, in one function."
+      },
+      {
+       "question_id": 717,
+       "prompt": "Text in \u2014 round it, name the type of what you get, say whether it counts as a\nyes, and whether writing it back out spells what you started with."
       }
      ],
      "independent_items": [
       576,
-      577
+      577,
+      713,
+      714,
+      715,
+      716
      ],
      "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready."
     },

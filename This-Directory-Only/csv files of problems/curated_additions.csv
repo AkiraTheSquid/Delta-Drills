@@ -2604,3 +2604,53 @@ Python,Getting started,"Write a function solve(price, qty, bonus) that: names `t
 example = (3, 4, 5)
 print(solve(*example))
 ",30,"(24, 17, <class 'int'>)"
+Python,Getting started,"Write a function solve(number, text) that returns the tuple (bool(number), bool(text)) — that is, whether each argument counts as a yes or a no. Zero and empty text are the only nos here; every other number and every non-empty piece of text is a yes.","def solve(number, text):
+    """"""Zero and empty text are the nos; everything else is a yes.""""""
+    return (bool(number), bool(text))
+
+
+example = (5, 'hi')
+print(solve(*example))
+",20,"(True, True)"
+Python,Getting started,"Write a function solve(text) that reads a piece of text such as '2.6' as a number with a fractional part, and returns the tuple (exact, nearest) where `exact` is that number and `nearest` is it rounded to the nearest whole number. The text has to become a number before it can be rounded at all.","def solve(text):
+    """"""Text cannot be rounded; the number it converts to can.""""""
+    exact = float(text)
+    nearest = round(exact)
+    return (exact, nearest)
+
+
+example = ('2.6',)
+print(solve(*example))
+",24,"(2.6, 3)"
+Python,Getting started,"Write a function solve(text, number) that returns the tuple (before, after), where `before` is whether the text is equal to the number as they were handed to you, and `after` is whether they are equal once the text has been converted to a whole number. Text that looks like a number is still text until something converts it.","def solve(text, number):
+    """"""A digit string is not the number it looks like — until it is converted.""""""
+    before = text == number
+    after = int(text) == number
+    return (before, after)
+
+
+example = ('42', 42)
+print(solve(*example))
+",22,"(False, True)"
+Python,Getting started,"Write a function solve(digits) that takes a piece of text holding digits and returns the tuple (as_text, as_number), where `as_text` is whether the text itself counts as a yes and `as_number` is whether the WHOLE NUMBER it converts to counts as a yes. The two answers disagree for '0': the text is not empty, and the number it holds is zero.","def solve(digits):
+    """"""Ask before converting and you are asking about the characters.""""""
+    as_text = bool(digits)
+    as_number = bool(int(digits))
+    return (as_text, as_number)
+
+
+example = ('0',)
+print(solve(*example))
+",28,"(True, False)"
+Python,Getting started,"Write a function solve(amount) that takes an amount written as text, converts it to a number with a fractional part, and rounds that to the nearest whole number. Return the tuple (nearest, kind, keeps_value, same_text), where `kind` is the name of the rounded value's type, `keeps_value` is whether the rounded number counts as a yes, and `same_text` is whether writing the rounded number back out as text gives you exactly the text you were handed. Going text -> number -> text does not always spell it the same way.","def solve(amount):
+    """"""Text in; a rounded number, its type name, its truth, and whether the text survived.""""""
+    exact = float(amount)
+    nearest = round(exact)
+    kind = type(nearest).__name__
+    same_text = str(nearest) == amount
+    return (nearest, kind, bool(nearest), same_text)
+
+
+example = ('2.6',)
+print(solve(*example))
+",32,"(3, 'int', True, False)"

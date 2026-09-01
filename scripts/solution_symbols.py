@@ -382,7 +382,33 @@ class StrictCollector(Collector):
 
     def visit_Attribute(self, node: ast.Attribute) -> None:  # noqa: N802
         self.symbols.add("syntax.attribute")
+        # `type(x).__name__` is the readable word for a type, and
+        # `python.types-and-conversion` declares it as `python.type-name`. The
+        # receiver is a Call, so `_callee` resolves nothing and the move landed
+        # as bare `syntax.attribute` — a name no page declares and every
+        # attribute access satisfies. Left that way the declared symbol sat at
+        # 0/2 coverage permanently: the two drills that DO teach it (q574,
+        # q578) could never be counted, and no new drill could ever fix it.
+        if node.attr == "__name__" and _is_type_call(node.value):
+            self.symbols.add("python.type-name")
         super().visit_Attribute(node)
+
+
+def _is_type_call(node: ast.AST) -> bool:
+    """True for `type(x)` written inline, which is the only spelling credited.
+
+    Matching every `__name__` would credit `module.__name__` and
+    `some_function.__name__` as evidence of the type-name move, so a drill
+    could satisfy the coverage floor without ever showing it. The two-step
+    spelling (`kind = type(x)` then `kind.__name__`) is deliberately not
+    credited either: missing credit surfaces as a coverage violation, which is
+    loud, while false credit is silent.
+    """
+    return (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "type"
+    )
 
 
 def aliases(symbol: str) -> set[str]:

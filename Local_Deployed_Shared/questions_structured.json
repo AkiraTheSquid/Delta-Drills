@@ -23820,5 +23820,280 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 713,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(number, text) that returns the tuple (bool(number), bool(text)) — that is, whether each argument counts as a yes or a no. Zero and empty text are the only nos here; every other number and every non-empty piece of text is a yes.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(number, text):\n    \"\"\"Zero and empty text are the nos; everything else is a yes.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 'hi')\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(5, 'hi')",
+          "expected_expr": "(True, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, '')",
+          "expected_expr": "(False, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-3, ' ')",
+          "expected_expr": "(True, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0.0, 'no')",
+          "expected_expr": "(False, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(True, True)",
+          "why": "That answers yes for every input, which means the conversion never happened — `bool(0)` is False and `bool('')` is False. A value that holds nothing is the no."
+        }
+      ],
+      "canonical_solution": "def solve(number, text):\n    \"\"\"Zero and empty text are the nos; everything else is a yes.\"\"\"\n    return (bool(number), bool(text))\n\n\nexample = (5, 'hi')\nprint(solve(*example))\n",
+      "expected_output": "(True, True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 714,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text) that reads a piece of text such as '2.6' as a number with a fractional part, and returns the tuple (exact, nearest) where `exact` is that number and `nearest` is it rounded to the nearest whole number. The text has to become a number before it can be rounded at all.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(text):\n    \"\"\"Text cannot be rounded; the number it converts to can.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.6',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('2.6')",
+          "expected_expr": "(2.6, 3)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('4.0')",
+          "expected_expr": "(4.0, 4)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1.5')",
+          "expected_expr": "(-1.5, -2)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0.25')",
+          "expected_expr": "(0.25, 0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('2.6', 3)",
+          "why": "The first slot is still the text you were handed, not the number it converts to. `'2.6'` is three characters; `float('2.6')` is a value you can do arithmetic with, and only that second thing can be rounded."
+        }
+      ],
+      "canonical_solution": "def solve(text):\n    \"\"\"Text cannot be rounded; the number it converts to can.\"\"\"\n    exact = float(text)\n    nearest = round(exact)\n    return (exact, nearest)\n\n\nexample = ('2.6',)\nprint(solve(*example))\n",
+      "expected_output": "(2.6, 3)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 715,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text, number) that returns the tuple (before, after), where `before` is whether the text is equal to the number as they were handed to you, and `after` is whether they are equal once the text has been converted to a whole number. Text that looks like a number is still text until something converts it.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(text, number):\n    \"\"\"A digit string is not the number it looks like — until it is converted.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42', 42)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('42', 42)",
+          "expected_expr": "(False, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('7', 8)",
+          "expected_expr": "(False, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0', 0)",
+          "expected_expr": "(False, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-5', -5)",
+          "expected_expr": "(False, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(True, True)",
+          "why": "`'42' == 42` is False, not True. Comparing text with a number does not convert either one — it answers that they are different kinds of value, so they are not equal."
+        }
+      ],
+      "canonical_solution": "def solve(text, number):\n    \"\"\"A digit string is not the number it looks like — until it is converted.\"\"\"\n    before = text == number\n    after = int(text) == number\n    return (before, after)\n\n\nexample = ('42', 42)\nprint(solve(*example))\n",
+      "expected_output": "(False, True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 716,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(digits) that takes a piece of text holding digits and returns the tuple (as_text, as_number), where `as_text` is whether the text itself counts as a yes and `as_number` is whether the WHOLE NUMBER it converts to counts as a yes. The two answers disagree for '0': the text is not empty, and the number it holds is zero.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(digits):\n    \"\"\"Ask before converting and you are asking about the characters.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('0')",
+          "expected_expr": "(True, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('7')",
+          "expected_expr": "(True, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('000')",
+          "expected_expr": "(True, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-4')",
+          "expected_expr": "(True, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(False, False)",
+          "why": "`bool('0')` is True. The text `'0'` is one character long, and a piece of text counts as a no only when it is empty. It is the number `int('0')` that is the no."
+        }
+      ],
+      "canonical_solution": "def solve(digits):\n    \"\"\"Ask before converting and you are asking about the characters.\"\"\"\n    as_text = bool(digits)\n    as_number = bool(int(digits))\n    return (as_text, as_number)\n\n\nexample = ('0',)\nprint(solve(*example))\n",
+      "expected_output": "(True, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 717,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(amount) that takes an amount written as text, converts it to a number with a fractional part, and rounds that to the nearest whole number. Return the tuple (nearest, kind, keeps_value, same_text), where `kind` is the name of the rounded value's type, `keeps_value` is whether the rounded number counts as a yes, and `same_text` is whether writing the rounded number back out as text gives you exactly the text you were handed. Going text -> number -> text does not always spell it the same way.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(amount):\n    \"\"\"Text in; a rounded number, its type name, its truth, and whether the text survived.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.6',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('2.6')",
+          "expected_expr": "(3, 'int', True, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0.4')",
+          "expected_expr": "(0, 'int', False, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('3')",
+          "expected_expr": "(3, 'int', True, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1.5')",
+          "expected_expr": "(-2, 'int', True, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 'int', True, True)",
+          "why": "The last slot is not always yes. `str(round(float('2.6')))` is `'3'`, and the text you were handed was `'2.6'` — those are different, so the answer is False. It is True only when the rounding and the conversion happen to spell the value the same way, as for `'3'`."
+        }
+      ],
+      "canonical_solution": "def solve(amount):\n    \"\"\"Text in; a rounded number, its type name, its truth, and whether the text survived.\"\"\"\n    exact = float(amount)\n    nearest = round(exact)\n    kind = type(nearest).__name__\n    same_text = str(nearest) == amount\n    return (nearest, kind, bool(nearest), same_text)\n\n\nexample = ('2.6',)\nprint(solve(*example))\n",
+      "expected_output": "(3, 'int', True, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

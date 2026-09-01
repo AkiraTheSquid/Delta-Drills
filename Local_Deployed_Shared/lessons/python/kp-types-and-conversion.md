@@ -2,11 +2,11 @@
 kc: python.types-and-conversion
 title: The everyday types, and converting between them
 supporting: [python.values-and-names]
-new_syntax: [builtin.bool, builtin.float, builtin.int, builtin.round, builtin.str, python.type-name]
+new_syntax: [builtin.bool, builtin.float, builtin.int, builtin.round, builtin.str, python.type-name, syntax.equality]
 faded: [574, 575]
 guided: []
-independent: [576, 577]
-integrated: [578, 579]
+independent: [576, 577, 713, 714, 715, 716]
+integrated: [578, 579, 717]
 ---
 
 ## Concept
@@ -43,6 +43,22 @@ print("4" + "2")
 That is not a quirk — it is the type deciding the meaning. Numbers add; text
 joins end to end.
 
+Asking whether they are **equal** gives the same answer for the same reason.
+`==` compares values, and a value made of characters is never equal to a value
+made of digits — no matter how alike they look on the page:
+
+```python
+print("42" == 42)
+print(42 == 42)
+```
+
+Comparing does not convert. If you want the question answered about the
+*number*, you have to do the converting yourself first:
+
+```python
+print(int("42") == 42)
+```
+
 To move between the two you **convert**, by calling the type's own name as a
 function. Each conversion produces a NEW value and leaves the original alone:
 
@@ -70,6 +86,25 @@ part **away**, while `round(...)` goes to the nearest whole number.
 print(int(3.9))
 print(round(3.9))
 print(int(-2.7), round(-2.7))
+```
+
+`bool(...)` is a conversion too, and the one that surprises people. It asks a
+single question of a value — *is there anything here?* — and almost everything
+answers yes. Zero answers no, and so does empty text:
+
+```python
+print(bool(7), bool(0))
+print(bool("hi"), bool(""))
+print(bool(0.0), bool(-3))
+```
+
+The trap is the text `"0"`. It is one character long, so there **is** something
+there and it converts to `True`. The zero only shows up once the digits have
+been read as a number:
+
+```python
+print(bool("0"))
+print(bool(int("0")))
 ```
 
 ## Watch out
@@ -158,6 +193,18 @@ print(str(int(text)), type(str(int(text))).__name__)
 ### q577
 Truncating and rounding, side by side, on the same number.
 
+### q713
+Ask two values whether they count as a yes.
+
+### q714
+Round a number that arrives as text — which it cannot be until it is converted.
+
+### q715
+The same digits compared as text and as a number.
+
+### q716
+Ask before converting, and ask after, on a piece of text holding `0`.
+
 ## Integrated practice
 
 ### q578
@@ -165,6 +212,10 @@ Name the type, show the text, and decide whether the value counts as a number.
 
 ### q579
 The same `+` doing both of its jobs, in one function.
+
+### q717
+Text in — round it, name the type of what you get, say whether it counts as a
+yes, and whether writing it back out spells what you started with.
 
 ## Misconceptions
 
