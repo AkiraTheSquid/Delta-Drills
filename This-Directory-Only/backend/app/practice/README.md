@@ -93,6 +93,15 @@
 
 ## Recent Changes
 
+- 2026-09-01 (**the week, as the learner lived it**): new `activity_router.py` —
+  `GET /activity-week` counts ANSWERED attempt rows (`kind == attempt`, outcome
+  recorded; looser than `is_graded` on purpose — the chart reports work done, not
+  what the estimator may refit from) out of the caller's own attempt log into the
+  current Monday–Sunday week. The client sends its `Date.getTimezoneOffset()` and
+  both "which week is current" and each row's bucket use it, so an evening
+  session in the Americas stays on today's bar. Feeds the Learner Home's weekly
+  bar chart (`practice/activity-chart.js`). `scripts/test_activity_week.py`
+  covers bucketing, both offset directions, and the row filters.
 - 2026-09-01 (**the log carries WHY**): `attempt_scoring.py` writes a `bkt_update` row per graded answer (which atom posteriors moved, FIRe credits included), and the logistic row now carries `feature_sources` via `engine_bridge` — whose own `feature_values` had been collapsing prereq/encompassed dicts to floats, so the attribution never existed to drop. `scripts/test_attempt_attribution.py` covers both, end-to-end through `finalize_attempt`.
 - 2026-09-01 (**first reader of the attempt log**): `stats_router.py` + `app/kc_stats.py` + `scripts/test_kc_stats.py`. `/kc-stats` aggregates every `*.attempts.jsonl` into per-KC global stats and two flag kinds: `rung_stall` (trailing same-stage run per learner; a demotion restarts it) and `served_while_predicting_failure` (maximal run with predicted_p < 0.35). On the 2026-09-01 prod logs it flags `numpy.ndarray-model` (stall 63 @ 16%, low-p run 55 @ mean p 0.157) and `numpy.reshape-flatten` — the a.T-era breakage, a week before it was found by hand. Design: docs/spec-graph-metadata-audit-layer.md §5.
 - 2026-08-19: **New `kernel_router.py` — the lesson notebook gets a live session.** Three endpoints (`/kernel/exec`, `/kernel/reset`, `/kernel/status`) over `app/kernel_runner.py`, so the default edition's notebook behaves like Colab: state carries between cells instead of the client re-running every cell above the one that was clicked. Auth is the only real policy here — a kernel is a scarce process, and the session key is derived from the signed-in user so one learner cannot attach to another's namespace. Codex review changed two things before it landed: `skip_on_fresh` (see the invariant above — the clicked cell was running twice on a kernel the server had just built) and scoping `/kernel/status` to the caller. Verified over real HTTP: state persists across calls, a context switch gets a clean namespace, `timeout: 9999` is a 422, an unauthenticated call is a 403, a fresh kernel with `skip_on_fresh` runs nothing and still answers the replay, and another learner's session never appears in status.

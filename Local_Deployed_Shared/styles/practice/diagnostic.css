@@ -389,3 +389,73 @@
 .learner-areas.is-empty {
   display: none;
 }
+
+/* ---- WEEKLY ACTIVITY BARS ----------------------------------------------
+   The problems-answered-per-day chart under the area list (Seth, 2026-09-01),
+   drawn by practice/activity-chart.js from /api/practice/activity-week. Same
+   card shell as .learner-areas, and the same .is-empty contract: signed out or
+   fetch failed → the whole box goes. Bars scale against the week's own best
+   day — the JS writes each .activity-day-bar height as a percentage of it. */
+.learner-activity {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 22px auto 0;
+  max-width: 560px;
+  padding: 18px 20px 16px;
+  text-align: left;
+  width: 100%;
+}
+.learner-activity.is-empty { display: none; }
+.learner-activity-head {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.activity-week-chart {
+  align-items: stretch;
+  display: flex;
+  gap: 10px;
+}
+.activity-day {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+}
+.activity-day-count {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  /* Reserve the line even when empty so all seven tracks stay level. */
+  min-height: 15px;
+}
+/* Fixed-height track with the bar growing up from the floor — same "every bar
+   shares the same two pixels" reasoning as .placement-area-bar, rotated
+   vertical. The hairline floor keeps a zero day visibly a day, not a gap. */
+.activity-day-track {
+  align-items: flex-end;
+  background: rgb(var(--well-rgb) / calc(0.12 * var(--well-k)));
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  height: 88px;
+}
+.activity-day-bar {
+  background: var(--info);
+  border-radius: 4px 4px 0 0;
+  display: block;
+  width: 100%;
+}
+.activity-day-letter {
+  color: var(--muted-dim);
+  font-size: 11px;
+  font-weight: 700;
+}
+/* Today reads a shade louder than the finished days — it is the bar that is
+   still being earned. */
+.activity-day.is-today .activity-day-letter,
+.activity-day.is-today .activity-day-count { color: var(--text); }

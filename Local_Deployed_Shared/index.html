@@ -92,7 +92,7 @@
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=13" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=14" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
        win the ties. Inert until app.js `applyModeVisibility` writes that class,
@@ -1456,6 +1456,29 @@
           <p class="learner-areas-note" id="learner-areas-note">Each bar is this area's estimated readiness. Take the placement test from Account and Settings to measure them instead of assuming them.</p>
         </section>
 
+        <!-- HOW MUCH YOU WORKED, day by day. Seth, 2026-09-01: "Below the
+             information regarding your strength in all the different areas is
+             the amount of problems that you've done across the different days
+             as like a bar chart ... Monday through Sunday ... for the current
+             week."
+
+             The bars are drawn by practice/activity-chart.js from
+             /api/practice/activity-week — answered attempts counted out of the
+             learner's own attempt log, bucketed into THEIR timezone's days.
+             Today's bar grows as they practice (redrawn on
+             delta:practice-state-changed).
+
+             🔴 `.is-empty` here means the same thing it means one section up
+             on #learner-areas: signed out, or the fetch failed — the whole box
+             goes rather than standing empty. The area bars above can render
+             from a status call a guest is allowed to make; this one cannot,
+             because a guest has no attempt log to count. -->
+        <section class="learner-activity is-empty" id="learner-activity">
+          <h2 class="learner-activity-head">How much you practiced this week</h2>
+          <div class="activity-week-chart" id="activity-week-chart" role="img"></div>
+          <p class="learner-activity-note">Problems answered each day, Monday through Sunday.</p>
+        </section>
+
 
         <!-- 🔴 LIVE, and deliberately off the screen. timer.js binds resume,
              discard and their state (`#session-resume-btn.disabled` is how a
@@ -2135,6 +2158,9 @@ t.manual_seed(0)
        button means, and after notch-menu.js for no reason but reading order. -->
   <script src="practice/readiness.js?v=4"></script>
   <script src="practice/session-idle.js?v=7"></script>
+  <!-- The weekly problems-done bars under the area list. After app.js (it
+       calls apiFetch at load) and beside the other idle-screen painters. -->
+  <script src="practice/activity-chart.js?v=1"></script>
   <script src="practice/lessons.js?v=34"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->

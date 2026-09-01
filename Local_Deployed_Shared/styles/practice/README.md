@@ -58,6 +58,13 @@
   - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
+- 2026-09-01 (**weekly activity bars**): `.learner-activity` block appended to
+  `diagnostic.css` (`?v=14`) — the problems-per-day chart under the area list on
+  the Learner Home, drawn by `practice/activity-chart.js`. Same card shell and
+  the same `.is-empty` display:none contract as `.learner-areas` one section up.
+  Bars grow up from a fixed 88px `.activity-day-track` (all seven share the same
+  floor pixel, same reasoning as `.placement-area-bar` horizontal); the JS
+  writes each `.activity-day-bar` height as a percentage of the week's best day.
 - 2026-08-28 (**input/output examples under every prompt**): new `question-examples.css` (`?v=1`), plus `.ladder-gap-callout` in `ladder.css`.
   - Two blocks, deliberately different colour: `--ok` left rule for the graded contract, `--danger` for the near miss. A rejected value is struck through as well as coloured — colour alone is not a signal for a learner who cannot see the difference.
   - 🔴 `.qex-row` is a three-column grid with `minmax(0, …)` on BOTH code cells. Without the `minmax(0, …)` a long literal grows the grid past the panel and the whole card scrolls sideways instead of the value wrapping. Collapses to a stack under 720px, arrow hidden.

@@ -37,6 +37,7 @@ from app.practice.arena_rating_router import router as arena_rating_router
 from app.practice.diagnostic_router import router as diagnostic_router
 from app.practice.feedback_router import router as feedback_router
 from app.practice.graph_feedback_router import router as graph_feedback_router
+from app.practice.activity_router import router as activity_router
 from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
@@ -56,5 +57,6 @@ router.include_router(problem_feedback_router)
 router.include_router(graph_feedback_router)
 router.include_router(lessons_router)
 router.include_router(kernel_router)
+router.include_router(activity_router)
 
 __all__ = ["router"]
