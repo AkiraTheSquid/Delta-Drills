@@ -71,9 +71,41 @@
   var _latticeReq = null;
   var _placementReq = null;
 
+  /* Both reads below are made by DEFERRED scripts (lesson-graph, why-graph),
+     which run as soon as the document is parsed — and that is BEFORE
+     practice/init.js has awaited DDGuest.ensure(). A signed-out visitor
+     therefore had no token yet, so these two went out with no Authorization
+     header at all and FastAPI's bearer dependency answered 403 (not 401 —
+     401 is a bad token, 403 is no header).
+
+     That was never only console noise. `_latticeReq` memoizes the FIRST
+     attempt, so one 403 at boot pinned the knowledge graph to its offline
+     client-side fallback for the rest of the page load, on exactly the
+     surfaces this module exists to keep on the server's number. The learner
+     saw the map disagree with the queue — the bug the comment at the top of
+     this file describes, arriving by a different road.
+
+     So wait for the session first. `DDGuest.ensure()` is memoized and is the
+     same promise init.js awaits, so this joins the existing round trip rather
+     than adding one; when it resolves false (backend unreachable) the fetch
+     still goes out and still falls back, exactly as before. Everything is
+     optional-chained: with guest-session.js absent this is the old behaviour. */
+  function _sessionReady() {
+    if (window.DDPracticeModeReady) return Promise.resolve();
+    var ensure = window.DDGuest && window.DDGuest.ensure;
+    if (typeof ensure !== "function") return Promise.resolve();
+    try {
+      return Promise.resolve(window.DDGuest.ensure()).catch(function () {});
+    } catch (_) {
+      return Promise.resolve();
+    }
+  }
+
   function _fetch(url) {
-    var fn = typeof window.apiFetch === "function" ? window.apiFetch : window.fetch;
-    return fn(url);
+    return _sessionReady().then(function () {
+      var fn = typeof window.apiFetch === "function" ? window.apiFetch : window.fetch;
+      return fn(url);
+    });
   }
 
   /* Fetch the report once and hand it to `kcLatticeNote`. Returns the lattice

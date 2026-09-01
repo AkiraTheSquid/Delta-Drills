@@ -41,6 +41,7 @@ from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
 from app.practice.questions_router import router as questions_router
+from app.practice.stats_router import router as stats_router
 from app.practice.subtopic_router import router as subtopic_router
 
 router = APIRouter(prefix="/api/practice", tags=["practice"])
@@ -48,6 +49,7 @@ router.include_router(questions_router)
 router.include_router(diagnostic_router)
 router.include_router(feedback_router)
 router.include_router(subtopic_router)
+router.include_router(stats_router)
 router.include_router(ai_router)
 router.include_router(arena_rating_router)
 router.include_router(problem_feedback_router)

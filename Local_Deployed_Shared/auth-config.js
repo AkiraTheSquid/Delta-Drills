@@ -9,7 +9,34 @@
    In that OAuth client, add these to "Authorized JavaScript origins":
        https://delta-drills.vercel.app
        https://delta-drills-colab.vercel.app   (the Colab edition — same client)
-       http://localhost:8770      (only if testing the static server locally)
+       http://localhost:5174      (local dev — what delta_drills_local serves)
+       http://localhost:5173
+       http://localhost              (no port — see below)
+
+   Those five are what is actually registered as of 2026-09-01. The two
+   localhost entries were added that day; before then the comment here named
+   :8770, which nothing has served for a long time, so the button had never
+   worked on localhost at all.
+
+   🔴 The host matters as much as the port: http://127.0.0.1:5174 is a
+   DIFFERENT origin to Google and is not registered, even though app.js treats
+   it as local and points API_BASE at the local backend. Serve from `localhost`.
+
+   ⏱️ A new origin is NOT live when the console says "Saved". Google's own note
+   on that page is "5 minutes to a few hours", and it took 12 minutes on
+   2026-09-01 — during which the button 403s exactly as if the origin were
+   never added. Worse, the rollout is not atomic: Google's edges disagreed
+   with each other for a while, so a single probe answering 403 after another
+   answered 200 is normal mid-rollout and is not evidence the save was lost.
+   Check with the request Google itself makes, rather than guessing:
+
+       curl -s -o /dev/null -w '%{http_code}\n' \
+         -H 'Origin: http://localhost:5174' \
+         "https://accounts.google.com/gsi/button?client_id=<id>&iframe_id=probe"
+
+   200 = it will draw the button here; 403 = it will not. It answers 200 for
+   the production origin and 403 for an unregistered one, so it is a real
+   oracle. delta_drills_local runs this at startup and warns.
 
    ⚠️ EVERY NEW ORIGIN IS A NEW REGISTRATION. Sign-in is
    `google.accounts.id.initialize`, an ID-token flow keyed on the JavaScript
