@@ -9,7 +9,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Python",
       "subtopic_key": "Python: Getting started",
       "file": "py-0-python-you-need-first.ipynb",
-      "problems": 28
+      "problems": 108
     },
     {
       "id": "np-1",
