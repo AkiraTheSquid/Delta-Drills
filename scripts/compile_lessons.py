@@ -21,6 +21,34 @@ from lesson_lib import (
 )
 
 
+NOTES_DIR = LESSONS_DIR / "notes"
+_NOTE_RE = re.compile(r"\A---\s*\nkc:\s*(\S+)\s*\n---\s*\n?(.*)\Z", re.S)
+
+
+def load_notes():
+    """The metadata layer: notes/<kc>.md bodies, keyed by KC id.
+
+    Filename and front matter must agree, and every note must name a concept
+    the registry knows — enforced with a hard exit in compile_lessons(),
+    because the failure this guards against is silent: a KC rename that
+    leaves its note behind would otherwise just stop showing the note, and
+    nobody reads what stopped being shown."""
+    notes = {}
+    if not NOTES_DIR.is_dir():
+        return notes
+    for path in sorted(NOTES_DIR.glob("*.md")):
+        if path.name == "README.md":
+            continue
+        m = _NOTE_RE.match(path.read_text())
+        if not m:
+            sys.exit(f"notes/{path.name}: missing `kc:` front matter — every note names its concept")
+        kc, body = m.group(1), m.group(2).strip()
+        if path.stem != kc:
+            sys.exit(f"notes/{path.name}: filename disagrees with its front matter kc ({kc})")
+        notes[kc] = body
+    return notes
+
+
 _ID_UNSAFE = re.compile(r"[^a-z0-9]+")
 
 
@@ -74,6 +102,7 @@ def _derived_faded(qid, new_syntax, bank):
 def compile_lessons():
     registry = load_registry()
     bank = load_bank()
+    notes = load_notes()
     kc_by_id = {kc["id"]: kc for kc in registry["kcs"]}
     lessons = {l["id"]: {**l, "kps": []} for l in registry["lessons"]}
 
@@ -208,12 +237,20 @@ def compile_lessons():
             "integrated_items": integrated_items,
             "independent_items": kp["independent"],
             "misconceptions_markdown": kp["sections"].get("Misconceptions", ""),
+            # The metadata layer (notes/<kc>.md) — global audit findings and
+            # decision records, rendered by the advanced-mode Metadata tab.
+            "notes_markdown": notes.get(kp["kc"], ""),
         })
 
     # Order KPs within each lesson by registry order (authoring source of truth).
     kc_order = {kc["id"]: i for i, kc in enumerate(registry["kcs"])}
     for lesson in lessons.values():
         lesson["kps"].sort(key=lambda kp: kc_order[kp["kc"]])
+
+    known = {kp["kc"] for lesson in lessons.values() for kp in lesson["kps"]}
+    orphans = sorted(set(notes) - known)
+    if orphans:
+        sys.exit(f"orphan notes for unknown KCs: {orphans} — a renamed concept must take its note with it")
 
     out = {
         "version": registry["version"],

@@ -324,3 +324,19 @@ Example skeleton:
   KP teaches that no existing item asks for, and vary the expected value
   across test cases so a constant-return answer cannot pass.
 - One KP introduces one target KC (research doc: one worked example ↔ one KC).
+
+## Notes — the metadata layer
+
+One optional Markdown file per concept in `notes/<kc-id>.md`, front matter
+`kc:` matching the filename. This is where audits and work sessions record
+what they FOUND about a concept — measurements, decisions, and the checks
+those findings gave rise to — kept beside the graph rather than buried in a
+changelog. Conventional sections: `## Findings` (dated), `## Edges` (about a
+specific prereq/encompassing edge, named by the far end), `## Checks`.
+`[[kc-id]]` wikilinks connect notes; the folder opens in Obsidian as-is.
+
+Compiled into `lessons_structured.json` as `notes_markdown` per KP. The
+compiler hard-fails on a note naming a KC the registry does not have, so a
+concept rename must move its note. A finding with no measurement, decision,
+or enforcing check behind it belongs in a commit message, not here. Global
+only — never a learner's data.

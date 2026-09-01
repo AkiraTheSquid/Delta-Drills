@@ -113,7 +113,8 @@
       710,
       711
      ],
-     "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was."
+     "misconceptions_markdown": "- **\"`x = x + 1` is a contradiction.\"** \u2014 It is an instruction, not a claim. The\n  right-hand side is worked out with the OLD value, and the name is then\n  re-attached to the result.\n- **\"Printing a value and returning it are the same thing.\"** \u2014 `print` shows\n  something to a human; `return` hands a value back to whatever called the\n  function. A drill that prints instead of returning gives the grader nothing.\n- **\"A name IS the value.\"** \u2014 A name is a label. Two names can be stuck to the\n  same value, and re-labelling one leaves the other where it was.",
+     "notes_markdown": "Root of the python course (ids 708\u2013712 filled it to the rung floors, 2026-09-01,\ncommit cf3eaadc's predecessor slice). Course order across the whole family is\nencoded in the question-id ranges: 568\u2013573 here, 574\u2013579 [[python.types-and-conversion]],\n\u2026 604\u2013609 python.dots-and-imports.\n\n## Findings\n- 2026-08-31: brought from 5 to 10 drills (Solo 6 / Integrated 3). No two drills\n  on a rung repeat a move; verified against `audit_symbol_coverage.py`.\n\n## Checks\n- `scripts/audit_symbol_coverage.py` \u2014 every declared symbol drilled \u22652\u00d7 on-node."
     },
     {
      "kc": "python.types-and-conversion",
@@ -226,7 +227,8 @@
       715,
       716
      ],
-     "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready."
+     "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready.",
+     "notes_markdown": "Second concept of the python course (ids 574\u2013579 + 713\u2013717). Supported by\n[[python.values-and-names]].\n\n## Findings\n- 2026-09-01: `python.type-name` sat at 0/2 coverage for a month and was\n  UNSATISFIABLE, not under-drilled \u2014 the symbol collector emitted\n  `syntax.attribute` for `type(x).__name__` because the receiver is a Call.\n  Fixed in `solution_symbols.py` (`_is_type_call`, narrowed after a codex\n  finding so `module.__name__` earns nothing). A coverage number stuck at 0\n  can be a DETECTOR gap, not a content gap.\n- 2026-09-01: `syntax.equality` was used by 42 questions and taught by NO\n  lesson. Declared here (the page already teaches `\"42\" == 42` as a named\n  misconception); resolved 38 recorded prereq violations for one coverage\n  obligation, met on arrival by q715/q717.\n- 2026-09-01: q713's wrong example printed the CORRECT output for its example\n  inputs (`(True, True)`); anchored to `solve(0, '')` where the misconception\n  diverges. This became `wrong_example_matches_correct` (blocking) in\n  `audit_question_bank.py` \u2014 a wrong example needs inputs where the\n  misconception and the right answer disagree.\n\n## Checks\n- `audit_question_bank.py::check_wrong_examples` \u2014 born from q713 here.\n- `scripts/audit_solution_prereqs.py` \u2014 `syntax.equality` ordering."
     },
     {
      "kc": "python.lists-and-tuples",
@@ -310,7 +312,8 @@
       582,
       583
      ],
-     "misconceptions_markdown": "- **\"A tuple is just a list that is written differently.\"** \u2014 It is a different\n  type, and it cannot be changed once built. A grader comparing a list against a\n  tuple reports them as unequal.\n- **\"`len` gives the total number of values.\"** \u2014 It gives the number of items at\n  the top level. For a list of lists that is the number of rows.\n- **\"Converting a list to a tuple changes the list.\"** \u2014 It builds a new\n  container. The original list is still there, unchanged."
+     "misconceptions_markdown": "- **\"A tuple is just a list that is written differently.\"** \u2014 It is a different\n  type, and it cannot be changed once built. A grader comparing a list against a\n  tuple reports them as unequal.\n- **\"`len` gives the total number of values.\"** \u2014 It gives the number of items at\n  the top level. For a list of lists that is the number of rows.\n- **\"Converting a list to a tuple changes the list.\"** \u2014 It builds a new\n  container. The original list is still there, unchanged.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.indexing",
@@ -391,7 +394,8 @@
       588,
       589
      ],
-     "misconceptions_markdown": "- **\"`items[1]` is the first item.\"** \u2014 It is the second. Counting starts at 0.\n- **\"To get the last item I need the length.\"** \u2014 `items[-1]` does it with no\n  measurement, and cannot go one past the end.\n- **\"`rows[i][j]` and `rows[j][i]` are the same.\"** \u2014 Only on a square table, and\n  only by coincidence. The first index always picks the row."
+     "misconceptions_markdown": "- **\"`items[1]` is the first item.\"** \u2014 It is the second. Counting starts at 0.\n- **\"To get the last item I need the length.\"** \u2014 `items[-1]` does it with no\n  measurement, and cannot go one past the end.\n- **\"`rows[i][j]` and `rows[j][i]` are the same.\"** \u2014 Only on a square table, and\n  only by coincidence. The first index always picks the row.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.calling-functions",
@@ -477,7 +481,8 @@
       594,
       595
      ],
-     "misconceptions_markdown": "- **\"`len` gives the length.\"** \u2014 `len(items)` gives the length. `len` on its own\n  is the function object, and returning it is the most common way a drill fails\n  with no error message.\n- **\"Arguments can go in any order.\"** \u2014 Only keyword arguments can. Positional\n  arguments mean whatever their position means.\n- **\"`sorted` sorts the list.\"** \u2014 It returns a new one. The original is\n  unchanged, which is exactly why you have to keep the result."
+     "misconceptions_markdown": "- **\"`len` gives the length.\"** \u2014 `len(items)` gives the length. `len` on its own\n  is the function object, and returning it is the most common way a drill fails\n  with no error message.\n- **\"Arguments can go in any order.\"** \u2014 Only keyword arguments can. Positional\n  arguments mean whatever their position means.\n- **\"`sorted` sorts the list.\"** \u2014 It returns a new one. The original is\n  unchanged, which is exactly why you have to keep the result.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.defining-functions",
@@ -559,7 +564,8 @@
       600,
       601
      ],
-     "misconceptions_markdown": "- **\"The function ran, so it returned something.\"** \u2014 Only `return` returns.\n  Without it every call hands back `None`.\n- **\"Two returns give two answers.\"** \u2014 The first one ends the call. A tuple is\n  how one return carries several values.\n- **\"Parameters are variables I set.\"** \u2014 They are named by the `def` line and\n  filled in by the caller, fresh on every call."
+     "misconceptions_markdown": "- **\"The function ran, so it returned something.\"** \u2014 Only `return` returns.\n  Without it every call hands back `None`.\n- **\"Two returns give two answers.\"** \u2014 The first one ends the call. A tuple is\n  how one return carries several values.\n- **\"Parameters are variables I set.\"** \u2014 They are named by the `def` line and\n  filled in by the caller, fresh on every call.",
+     "notes_markdown": ""
     },
     {
      "kc": "python.dots-and-imports",
@@ -647,7 +653,8 @@
       606,
       607
      ],
-     "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place."
+     "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -1024,7 +1031,8 @@
       557,
       559
      ],
-     "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`."
+     "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`.",
+     "notes_markdown": "First concept of the numpy course, and the one the attempt log indicts.\n\n## Findings\n- 2026-09-01: the log (2026-08-19\u219227) shows a 63-attempt `faded` rung stall at\n  16% accuracy, mean predicted_p 0.207 \u2014 the model predicted failure ~60\n  serves in a row and the selector complied. Dated a WEEK before the `a.T`\n  prerequisite bug (transpose needed here, taught four lessons later) was\n  found by hand. `/api/practice/kc-stats` now flags both patterns\n  (`rung_stall`, `served_while_predicting_failure`).\n\n## Edges\n- [[numpy.reshape-flatten]]: same stall pattern in the same logs (43 attempts,\n  14%) \u2014 the two failures share the untaught-transpose cause.\n\n## Checks\n- `app/kc_stats.py` flags \u2014 born from this concept's log.\n- `scripts/audit_solution_prereqs.py` \u2014 born from this concept's `a.T`."
     },
     {
      "kc": "numpy.transpose-axes",
@@ -1187,7 +1195,8 @@
       673,
       674
      ],
-     "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept."
+     "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.views-and-copies",
@@ -1314,7 +1323,8 @@
       553,
       523
      ],
-     "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it."
+     "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.constructors",
@@ -1541,7 +1551,8 @@
       644,
       645
      ],
-     "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything."
+     "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.slicing-views",
@@ -1609,7 +1620,8 @@
       74,
       189
      ],
-     "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns."
+     "misconceptions_markdown": "- **\"`x[::-1]` reverses a tensor.\"** \u2014 It raises `ValueError: step must be\n  greater than zero`. PyTorch supports no negative slice steps at all;\n  `t.flip(x, [0])` is the operation.\n- **\"A slice is a copy.\"** \u2014 It's a view of the same memory. Mutating a slice\n  mutates the original. When a task says \"return a new tensor\" or \"do not\n  modify the input\" and you plan to write into the result, `.clone()` first.\n- **\"`.copy()` makes the copy.\"** \u2014 That's the NumPy name. Tensors clone with\n  `.clone()`.\n- **\"2-D indexing is `z[i][j]`.\"** \u2014 That works but chains two operations;\n  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.\n  The chained form also breaks down for slice-then-assign patterns.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.ranges",
@@ -1708,7 +1720,8 @@
      "independent_items": [
       53
      ],
-     "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`)."
+     "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`).",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.dtype-astype",
@@ -1895,7 +1908,8 @@
       655,
       656
      ],
-     "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes."
+     "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.reshape-flatten",
@@ -2114,7 +2128,8 @@
       625,
       626
      ],
-     "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read."
+     "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read.",
+     "notes_markdown": "## Findings\n- 2026-09-01: 43-attempt `faded` stall at 14% accuracy in the 08-19\u219227 logs;\n  the low-p run inside it scored 1/26 (mean predicted_p 0.237). Same root\n  cause as [[numpy.ndarray-model]] (`a.T` untaught); kept as a separate note\n  because the stall metric reports per concept and both fired independently.\n\n## Checks\n- `app/kc_stats.py` flags."
     },
     {
      "kc": "numpy.elementwise-ufuncs",
@@ -2311,7 +2326,8 @@
       634,
       635
      ],
-     "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data."
+     "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.aggregations",
@@ -2422,7 +2438,8 @@
       497,
       498
      ],
-     "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`."
+     "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.sorting",
@@ -2619,7 +2636,8 @@
       664,
       665
      ],
-     "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP)."
+     "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP).",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-samplers",
@@ -2742,7 +2760,8 @@
       682,
       683
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-seeding",
@@ -2862,7 +2881,8 @@
       702,
       703
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.random-threading",
@@ -2969,7 +2989,8 @@
       692,
       693
      ],
-     "misconceptions_markdown": ""
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.linalg-basics",
@@ -3057,7 +3078,8 @@
       512,
       513
      ],
-     "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first."
+     "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3166,7 +3188,8 @@
       145,
       202
      ],
-     "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`."
+     "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.argmin-argmax",
@@ -3269,7 +3292,8 @@
       61,
       168
      ],
-     "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner."
+     "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3361,7 +3385,8 @@
       501,
       502
      ],
-     "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately."
+     "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.axis-reductions",
@@ -3447,7 +3472,8 @@
       505,
       174
      ],
-     "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely."
+     "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely.",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.dot-matmul-patterns",
@@ -3548,7 +3574,8 @@
       515,
       95
      ],
-     "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\"."
+     "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\".",
+     "notes_markdown": ""
     },
     {
      "kc": "numpy.stack-concat-interleave",
@@ -3613,7 +3640,8 @@
       238,
       159
      ],
-     "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead."
+     "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -3679,7 +3707,8 @@
       327,
       344
      ],
-     "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon."
+     "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.merge-axes",
@@ -3752,7 +3781,8 @@
       392,
       400
      ],
-     "misconceptions_markdown": "- **\"`(h w)` and `(w h)` give the same flattening.\"** \u2014 Same length,\n  different order: left-slow/right-fast. The task's phrase \"row-major\" /\n  \"column by column\" / \"X's block first\" picks the order for you.\n- **\"Axes must be adjacent to merge.\"** \u2014 The pattern happily merges\n  distant axes ('b h w c -> h (b w) c'); einops inserts the implied\n  transpose. By hand you'd have to permute them together first \u2014 that\n  two-step is exactly what the pattern hides.\n- **\"Merging loses information.\"** \u2014 It's a pure relabeling; every element\n  keeps a unique address. The inverse operation (splitting, next KP)\n  recovers the original \u2014 provided you remember one of the factor sizes."
+     "misconceptions_markdown": "- **\"`(h w)` and `(w h)` give the same flattening.\"** \u2014 Same length,\n  different order: left-slow/right-fast. The task's phrase \"row-major\" /\n  \"column by column\" / \"X's block first\" picks the order for you.\n- **\"Axes must be adjacent to merge.\"** \u2014 The pattern happily merges\n  distant axes ('b h w c -> h (b w) c'); einops inserts the implied\n  transpose. By hand you'd have to permute them together first \u2014 that\n  two-step is exactly what the pattern hides.\n- **\"Merging loses information.\"** \u2014 It's a pure relabeling; every element\n  keeps a unique address. The inverse operation (splitting, next KP)\n  recovers the original \u2014 provided you remember one of the factor sizes.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.split-axes",
@@ -3805,7 +3835,8 @@
       320,
       331
      ],
-     "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work."
+     "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.singleton-and-lists",
@@ -3861,7 +3892,8 @@
       334,
       365
      ],
-     "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature."
+     "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.grids-montage",
@@ -3919,7 +3951,8 @@
       371,
       531
      ],
-     "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick."
+     "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it's the SLOW\n  factor of the batch split AND merges with h. Rename freely; position does\n  the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.patches-space-depth",
@@ -3978,7 +4011,8 @@
       398,
       403
      ],
-     "misconceptions_markdown": "- **\"Patch extraction needs sliding-window machinery.\"** \u2014 NON-overlapping\n  patches are a pure reshape (split + merge); no windows, no copies of\n  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job \u2014 different\n  task, check the word \"non-overlapping\".\n- **\"Space-to-depth loses spatial information.\"** \u2014 It's a bijection: every\n  pixel gets a unique (channel, position) address, and depth-to-space\n  inverts it exactly. What changes is which axis \"sees\" the detail.\n- **\"The channel packing order after s2d doesn't matter.\"** \u2014 Downstream\n  code (or the grader) reads channels by index; (c p q) vs (p q c) are\n  different tensors with equal shapes. The paren order IS the file format \u2014\n  get it from the task, verify with a position-valued example."
+     "misconceptions_markdown": "- **\"Patch extraction needs sliding-window machinery.\"** \u2014 NON-overlapping\n  patches are a pure reshape (split + merge); no windows, no copies of\n  copies. Sliding (overlapping) windows are `x.unfold(...)`'s job \u2014 different\n  task, check the word \"non-overlapping\".\n- **\"Space-to-depth loses spatial information.\"** \u2014 It's a bijection: every\n  pixel gets a unique (channel, position) address, and depth-to-space\n  inverts it exactly. What changes is which axis \"sees\" the detail.\n- **\"The channel packing order after s2d doesn't matter.\"** \u2014 Downstream\n  code (or the grader) reads channels by index; (c p q) vs (p q c) are\n  different tensors with equal shapes. The paren order IS the file format \u2014\n  get it from the task, verify with a position-valued example.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -4046,7 +4080,8 @@
       340,
       370
      ],
-     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade."
+     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.pooling",
@@ -4101,7 +4136,8 @@
       336,
       377
      ],
-     "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form."
+     "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -4170,7 +4206,8 @@
       352,
       355
      ],
-     "misconceptions_markdown": "- **\"repeat is rearrange with bigger numbers.\"** \u2014 rearrange is a\n  bijection (every input element appears once); repeat COPIES. The\n  found-on-the-right-only names/factors are what license the copying.\n- **\"'(h 2)' and '(2 h)' both just double the axis.\"** \u2014 Same length,\n  different layout: h-slow keeps copies adjacent to their source row\n  (stretch); 2-slow lays whole blocks end to end (tile). Tasks say\n  \"consecutively\"/\"each row\" vs \"whole image again\" \u2014 map the words to\n  the order.\n- **\"Broadcasting makes repeat unnecessary.\"** \u2014 Broadcasting stretches\n  virtually within an operation; repeat materializes an actual tensor with\n  the new shape \u2014 which is what a drill's return-shape contract (and much\n  downstream code) requires. Know which one you're producing."
+     "misconceptions_markdown": "- **\"repeat is rearrange with bigger numbers.\"** \u2014 rearrange is a\n  bijection (every input element appears once); repeat COPIES. The\n  found-on-the-right-only names/factors are what license the copying.\n- **\"'(h 2)' and '(2 h)' both just double the axis.\"** \u2014 Same length,\n  different layout: h-slow keeps copies adjacent to their source row\n  (stretch); 2-slow lays whole blocks end to end (tile). Tasks say\n  \"consecutively\"/\"each row\" vs \"whole image again\" \u2014 map the words to\n  the order.\n- **\"Broadcasting makes repeat unnecessary.\"** \u2014 Broadcasting stretches\n  virtually within an operation; repeat materializes an actual tensor with\n  the new shape \u2014 which is what a drill's return-shape contract (and much\n  downstream code) requires. Know which one you're producing.",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.dl-flatten-heads",
@@ -4224,7 +4261,8 @@
       394,
       349
      ],
-     "misconceptions_markdown": "- **\"Any flatten order works if shapes match.\"** \u2014 The linear layer's\n  weights were trained against ONE packing order. (c h w) vs (h w c)\n  flattens produce equal shapes and incompatible semantics. Follow the\n  framework convention the drill names.\n- **\"Head merge/split order is a style choice.\"** \u2014 nh-slow is the\n  transformer ecosystem's convention; violating it silently permutes\n  features. The einops pattern documents the choice \u2014 that's half its\n  value.\n- **\"These need reshape + transpose + reshape chains.\"** \u2014 Each is ONE\n  pattern. If your solution has intermediate .transpose calls around\n  reshapes, the pattern can absorb them (and check the shapes while it's\n  at it)."
+     "misconceptions_markdown": "- **\"Any flatten order works if shapes match.\"** \u2014 The linear layer's\n  weights were trained against ONE packing order. (c h w) vs (h w c)\n  flattens produce equal shapes and incompatible semantics. Follow the\n  framework convention the drill names.\n- **\"Head merge/split order is a style choice.\"** \u2014 nh-slow is the\n  transformer ecosystem's convention; violating it silently permutes\n  features. The einops pattern documents the choice \u2014 that's half its\n  value.\n- **\"These need reshape + transpose + reshape chains.\"** \u2014 Each is ONE\n  pattern. If your solution has intermediate .transpose calls around\n  reshapes, the pattern can absorb them (and check the shapes while it's\n  at it).",
+     "notes_markdown": ""
     },
     {
      "kc": "einops.channel-groups-temporal",
@@ -4281,7 +4319,8 @@
       316,
       359
      ],
-     "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters."
+     "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters.",
+     "notes_markdown": ""
     }
    ]
   }
