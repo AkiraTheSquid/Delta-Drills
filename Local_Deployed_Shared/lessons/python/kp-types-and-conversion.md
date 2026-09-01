@@ -3,10 +3,10 @@ kc: python.types-and-conversion
 title: The everyday types, and converting between them
 supporting: [python.values-and-names]
 new_syntax: [builtin.bool, builtin.float, builtin.int, builtin.round, builtin.str, python.type-name, syntax.equality]
-faded: [574, 575]
+faded: [574, 575, 731, 732, 733, 734, 735, 736, 737, 738]
 guided: []
-independent: [576, 577, 713, 714, 715, 716]
-integrated: [578, 579, 717]
+independent: [576, 577, 713, 714, 715, 716, 739, 740, 741, 742]
+integrated: [578, 579, 717, 743]
 ---
 
 ## Concept
@@ -174,6 +174,132 @@ def solve(digits):
     return int(digits) + 8
 ```
 
+### q731
+Convert first — then * means arithmetic, not repetition.
+
+```python starter
+def solve(text):
+    """Convert first — then * means arithmetic."""
+    return _____(text) * 2
+```
+
+```python solution
+def solve(text):
+    """Convert first — then * means arithmetic."""
+    return float(text) * 2
+```
+
+### q732
+A number cannot be glued onto text until it IS text.
+
+```python starter
+def solve(count):
+    """str() makes a number gluable."""
+    label = _____(count)
+    return label + " items"
+```
+
+```python solution
+def solve(count):
+    """str() makes a number gluable."""
+    label = str(count)
+    return label + " items"
+```
+
+### q733
+Its truth, and the name of its kind.
+
+```python starter
+def solve(value):
+    """Its truth, and the name of its kind."""
+    return (_____(value), type(value).__name__)
+```
+
+```python solution
+def solve(value):
+    """Its truth, and the name of its kind."""
+    return (bool(value), type(value).__name__)
+```
+
+### q734
+To the nearest whole number — not truncated.
+
+```python starter
+def solve(x):
+    """round() goes to the nearest whole number."""
+    return _____(x)
+```
+
+```python solution
+def solve(x):
+    """round() goes to the nearest whole number."""
+    return round(x)
+```
+
+### q735
+Put both values on the same side of the type line, then compare.
+
+```python starter
+def solve(text, number):
+    """Convert to the SAME type, then compare."""
+    return text == _____(number)
+```
+
+```python solution
+def solve(text, number):
+    """Convert to the SAME type, then compare."""
+    return text == str(number)
+```
+
+### q736
+Truncate both — drop the fraction, do not round — then multiply.
+
+```python starter
+def solve(x, y):
+    """int() drops the fraction; it does not round."""
+    return _____(x) * _____(y)
+```
+
+```python solution
+def solve(x, y):
+    """int() drops the fraction; it does not round."""
+    return int(x) * int(y)
+```
+
+### q737
+Text to number to text: the kind changes twice, the digits never do.
+
+```python starter
+def solve(digits):
+    """Text to number to text: the kind changes, the digits do not."""
+    n = _____(digits)
+    back = _____(n)
+    return (n, back)
+```
+
+```python solution
+def solve(digits):
+    """Text to number to text: the kind changes, the digits do not."""
+    n = int(digits)
+    back = str(n)
+    return (n, back)
+```
+
+### q738
+The truth of the NUMBER, not of the text holding it.
+
+```python starter
+def solve(text):
+    """bool of the NUMBER, not of the text holding it."""
+    return bool(_____(text))
+```
+
+```python solution
+def solve(text):
+    """bool of the NUMBER, not of the text holding it."""
+    return bool(int(text))
+```
+
 ## Solo practice
 
 ### q576
@@ -205,6 +331,18 @@ The same digits compared as text and as a number.
 ### q716
 Ask before converting, and ask after, on a piece of text holding `0`.
 
+### q739
+Convert two digit strings, add as numbers, and carry the sum back as text too.
+
+### q740
+One float, three readings: truncated, rounded, and whether they agree.
+
+### q741
+Two values can share a truth without being equal.
+
+### q742
+Each conversion has a kind of its own — name both.
+
 ## Integrated practice
 
 ### q578
@@ -216,6 +354,9 @@ The same `+` doing both of its jobs, in one function.
 ### q717
 Text in — round it, name the type of what you get, say whether it counts as a
 yes, and whether writing it back out spells what you started with.
+
+### q743
+Parse a quantity, rebuild it into a label, and report its truth and the label's kind.
 
 ## Misconceptions
 

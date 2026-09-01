@@ -6381,5 +6381,239 @@
    "syntax.tuple"
   ],
   "source": "kp-integrated"
+ },
+ "731": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "732": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "733": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "734": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "735": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "736": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "737": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "738": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-faded"
+ },
+ "739": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "740": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "741": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "742": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-independent"
+ },
+ "743": {
+  "target_kcs": [
+   "python.types-and-conversion"
+  ],
+  "supporting_kcs": [
+   "python.values-and-names"
+  ],
+  "new_syntax": [
+   "builtin.bool",
+   "builtin.float",
+   "builtin.int",
+   "builtin.round",
+   "builtin.str",
+   "python.type-name",
+   "syntax.equality"
+  ],
+  "source": "kp-integrated"
  }
 }

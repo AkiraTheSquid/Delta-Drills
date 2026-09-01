@@ -24811,5 +24811,720 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 731,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 10,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text) that converts text to a float and returns that number doubled. Without the conversion, * 2 would repeat the characters instead of doubling a number.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(text):\n    \"\"\"Convert first — then * means arithmetic.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.5',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('2.5')",
+          "expected_expr": "5.0"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0')",
+          "expected_expr": "0.0"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1.5')",
+          "expected_expr": "-3.0"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('10')",
+          "expected_expr": "20.0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "'2.52.5'",
+          "why": "The conversion was skipped, so * 2 repeated the CHARACTERS: text times two is the text twice. float(text) turns it into a number first, and only then does * mean doubling."
+        }
+      ],
+      "canonical_solution": "def solve(text):\n    \"\"\"Convert first — then * means arithmetic.\"\"\"\n    return float(text) * 2\n\n\nexample = ('2.5',)\nprint(solve(*example))\n",
+      "expected_output": "5.0",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 732,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 10,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(count) that converts the number count to text, names it `label`, and returns label + \" items\" (with the leading space). A number cannot be glued onto text until it IS text.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(3)",
+          "expected_expr": "'3 items'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0)",
+          "expected_expr": "'0 items'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-2)",
+          "expected_expr": "'-2 items'"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.5)",
+          "expected_expr": "'2.5 items'"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "TypeError: unsupported operand type(s) for +: 'int' and 'str'",
+          "why": "count + \" items\" adds a number to text, and + refuses: it does not know whether you meant arithmetic or gluing. str(count) settles it — both sides are text, so + glues."
+        }
+      ],
+      "canonical_solution": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = str(count)\n    return label + \" items\"\n\n\nexample = (3,)\nprint(solve(*example))\n",
+      "expected_output": "'3 items'",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 733,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(value) that returns the tuple (truth, kind_name): whether the value counts as a yes — use bool — and the NAME of its type as text — use type(value).__name__. In that order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('hi')",
+          "expected_expr": "(True, 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0)",
+          "expected_expr": "(False, 'int')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('')",
+          "expected_expr": "(False, 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.5)",
+          "expected_expr": "(True, 'float')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(True, str)",
+          "why": "The second slot is the type ITSELF, not its name. type(value).__name__ reaches one step further and hands back the text 'str' — the name, which is what the drill asks for."
+        }
+      ],
+      "canonical_solution": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (bool(value), type(value).__name__)\n\n\nexample = ('hi',)\nprint(solve(*example))\n",
+      "expected_output": "(True, 'str')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 734,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 12,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(x) that returns x rounded to the NEAREST whole number, using round. Not truncated — rounded.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.7,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(2.7)",
+          "expected_expr": "3"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.2)",
+          "expected_expr": "2"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-1.6)",
+          "expected_expr": "-2"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(5.0)",
+          "expected_expr": "5"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "2",
+          "why": "That is int(2.7) — truncation, which just drops the .7. round() asks which whole number is CLOSEST, and 2.7 is closer to 3."
+        }
+      ],
+      "canonical_solution": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return round(x)\n\n\nexample = (2.7,)\nprint(solve(*example))\n",
+      "expected_output": "3",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 735,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text, number) that converts the number to text and returns whether the two pieces of text are equal, using ==. Comparing across types without converting is always False.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('7', 7)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('7', 7)",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('7', 8)",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('2.5', 2.5)",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('', 0)",
+          "expected_expr": "False"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "False",
+          "why": "text == number compared text to a number directly, and values of different types are never equal — '7' is a character, 7 is a number. str(number) puts both on the same side first."
+        }
+      ],
+      "canonical_solution": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == str(number)\n\n\nexample = ('7', 7)\nprint(solve(*example))\n",
+      "expected_output": "True",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 736,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(x, y) that truncates both numbers with int — dropping everything after the decimal point, not rounding — and returns the product of the two truncated values.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(3.9, 2.2)",
+          "expected_expr": "6"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(2.0, 2.0)",
+          "expected_expr": "4"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-3.9, 2.0)",
+          "expected_expr": "-6"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0.9, 9.9)",
+          "expected_expr": "0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "8",
+          "why": "Both numbers were ROUNDED: 3.9 became 4. int() truncates instead — 3.9 becomes 3, and toward zero, so -3.9 becomes -3, not -4."
+        }
+      ],
+      "canonical_solution": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return int(x) * int(y)\n\n\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+      "expected_output": "6",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 737,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 15,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(digits) that converts the digit text to an int named `n`, converts n back to text named `back`, and returns the tuple (n, back). The round trip changes the kind twice; the digits stay the same.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('42')",
+          "expected_expr": "(42, '42')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0')",
+          "expected_expr": "(0, '0')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-7')",
+          "expected_expr": "(-7, '-7')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('100')",
+          "expected_expr": "(100, '100')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(42, 42)",
+          "why": "Both slots came back as numbers — the trip back never happened. str(n) is the return leg, and the second slot should be the TEXT '42', quotes and all."
+        }
+      ],
+      "canonical_solution": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = int(digits)\n    back = str(n)\n    return (n, back)\n\n\nexample = ('42',)\nprint(solve(*example))\n",
+      "expected_output": "(42, '42')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 738,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text) that converts the digit text to an int and returns whether THAT NUMBER counts as a yes, using bool. Asking bool of the text itself answers a different question.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('0')",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('5')",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1')",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('000')",
+          "expected_expr": "False"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "True",
+          "why": "bool('0') asked about the TEXT, and any non-empty text is a yes — even the character 0. Convert first: int('0') is the number 0, and bool(0) is False."
+        }
+      ],
+      "canonical_solution": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(int(text))\n\n\nexample = ('0',)\nprint(solve(*example))\n",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 739,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b) that converts both digit strings to ints, names their sum `total`, and returns the tuple (total, total_text) where total_text is the sum converted back to text. In that order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b):\n    \"\"\"Convert, add as numbers, and carry the answer back as text too.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2', '3')\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('2', '3')",
+          "expected_expr": "(5, '5')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0', '0')",
+          "expected_expr": "(0, '0')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1', '5')",
+          "expected_expr": "(4, '4')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('10', '20')",
+          "expected_expr": "(30, '30')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('23', '23')",
+          "why": "The strings were glued, not added: '2' + '3' is '23'. Converting with int() first is what makes + mean arithmetic."
+        }
+      ],
+      "canonical_solution": "def solve(a, b):\n    \"\"\"Convert, add as numbers, and carry the answer back as text too.\"\"\"\n    total = int(a) + int(b)\n    return (total, str(total))\n\n\nexample = ('2', '3')\nprint(solve(*example))\n",
+      "expected_output": "(5, '5')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 740,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(text) that converts text to a float named `f` and returns the tuple (int(f), round(f), whole) — the truncation, the nearest whole number, and whether f == round(f), in that order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(text):\n    \"\"\"Truncated, rounded, and whether there was anything to drop.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.7',)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('2.7')",
+          "expected_expr": "(2, 3, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('2.2')",
+          "expected_expr": "(2, 2, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('4.0')",
+          "expected_expr": "(4, 4, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1.5')",
+          "expected_expr": "(-1, -2, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(3, 3, True)",
+          "why": "int() was treated as rounding. It truncates: int(2.7) is 2, so the first two slots differ — and that difference is exactly why the third slot is False."
+        }
+      ],
+      "canonical_solution": "def solve(text):\n    \"\"\"Truncated, rounded, and whether there was anything to drop.\"\"\"\n    f = float(text)\n    return (int(f), round(f), f == round(f))\n\n\nexample = ('2.7',)\nprint(solve(*example))\n",
+      "expected_output": "(2, 3, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 741,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(a, b) that returns the tuple (bool(a), bool(b), a == b): each value's truth, then whether the values themselves are equal. Two values can share a truth without being equal.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(a, b):\n    \"\"\"Same truth is not the same value.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('', 0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('', 0)",
+          "expected_expr": "(False, False, False)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(1, 1)",
+          "expected_expr": "(True, True, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0, 0)",
+          "expected_expr": "(False, False, True)"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('x', 5)",
+          "expected_expr": "(True, True, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(False, False, True)",
+          "why": "Empty text and zero are both nos, but they are not EQUAL — one is text, one is a number. bool answers 'does it count as a yes'; == answers 'are these the same value'. Different questions."
+        }
+      ],
+      "canonical_solution": "def solve(a, b):\n    \"\"\"Same truth is not the same value.\"\"\"\n    return (bool(a), bool(b), a == b)\n\n\nexample = ('', 0)\nprint(solve(*example))\n",
+      "expected_output": "(False, False, False)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 742,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(x) that returns the tuple of type NAMES (as text) of int(x) and str(x), in that order — what kind each conversion produced, via type(...).__name__.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(x):\n    \"\"\"Each conversion has a kind of its own.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.9,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve(2.9)",
+          "expected_expr": "('int', 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(0.1)",
+          "expected_expr": "('int', 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(-3.5)",
+          "expected_expr": "('int', 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve(7.0)",
+          "expected_expr": "('int', 'str')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('float', 'str')",
+          "why": "The first slot named the kind of x itself. The drill asks about int(x) — the CONVERTED value — and int(2.9) is an int, whatever 2.9 was before."
+        }
+      ],
+      "canonical_solution": "def solve(x):\n    \"\"\"Each conversion has a kind of its own.\"\"\"\n    return (type(int(x)).__name__, type(str(x)).__name__)\n\n\nexample = (2.9,)\nprint(solve(*example))\n",
+      "expected_output": "('int', 'str')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 743,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Python",
+      "subtopic": "Getting started",
+      "subtopic_key": "Python: Getting started",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write a function solve(qty, item) that converts the digit text qty to an int named `n`, builds `label` as str(n) + \" of \" + item, and returns the tuple (label, ok, kind_name) where ok is bool(n) and kind_name is type(label).__name__. In that order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "python",
+      "function_name": "solve",
+      "starter_code": "def solve(qty, item):\n    \"\"\"Parse, rebuild as text, and report truth and kind.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('3', 'pens')\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "",
+          "call": "solve('3', 'pens')",
+          "expected_expr": "('3 of pens', True, 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('0', 'cups')",
+          "expected_expr": "('0 of cups', False, 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('12', 'x')",
+          "expected_expr": "('12 of x', True, 'str')"
+        },
+        {
+          "setup_code": "",
+          "call": "solve('-1', 'ok')",
+          "expected_expr": "('-1 of ok', True, 'str')"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "('3 of pens', True, 'bool')",
+          "why": "The kind was read off `ok` instead of `label`. The tuple's last slot asks what the LABEL is — text — so type(label).__name__ is 'str' no matter what the middle slot held."
+        }
+      ],
+      "canonical_solution": "def solve(qty, item):\n    \"\"\"Parse, rebuild as text, and report truth and kind.\"\"\"\n    n = int(qty)\n    label = str(n) + \" of \" + item\n    ok = bool(n)\n    return (label, ok, type(label).__name__)\n\n\nexample = ('3', 'pens')\nprint(solve(*example))\n",
+      "expected_output": "('3 of pens', True, 'str')",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

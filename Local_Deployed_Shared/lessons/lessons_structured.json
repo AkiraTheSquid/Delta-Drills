@@ -277,6 +277,54 @@
          "prompt": "Text in, arithmetic out \u2014 the digits have to become a number first.",
          "starter_code": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return _____(digits) + 8\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
          "solution": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return int(digits) + 8\n"
+        },
+        {
+         "question_id": 731,
+         "prompt": "Convert first \u2014 then * means arithmetic, not repetition.",
+         "starter_code": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return _____(text) * 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.5',)\nprint(solve(*example))\n",
+         "solution": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return float(text) * 2\n"
+        },
+        {
+         "question_id": 732,
+         "prompt": "A number cannot be glued onto text until it IS text.",
+         "starter_code": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = _____(count)\n    return label + \" items\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+         "solution": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = str(count)\n    return label + \" items\"\n"
+        },
+        {
+         "question_id": 733,
+         "prompt": "Its truth, and the name of its kind.",
+         "starter_code": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (_____(value), type(value).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+         "solution": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (bool(value), type(value).__name__)\n"
+        },
+        {
+         "question_id": 734,
+         "prompt": "To the nearest whole number \u2014 not truncated.",
+         "starter_code": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return _____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.7,)\nprint(solve(*example))\n",
+         "solution": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return round(x)\n"
+        },
+        {
+         "question_id": 735,
+         "prompt": "Put both values on the same side of the type line, then compare.",
+         "starter_code": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == _____(number)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('7', 7)\nprint(solve(*example))\n",
+         "solution": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == str(number)\n"
+        },
+        {
+         "question_id": 736,
+         "prompt": "Truncate both \u2014 drop the fraction, do not round \u2014 then multiply.",
+         "starter_code": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return _____(x) * _____(y)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+         "solution": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return int(x) * int(y)\n"
+        },
+        {
+         "question_id": 737,
+         "prompt": "Text to number to text: the kind changes twice, the digits never do.",
+         "starter_code": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = _____(digits)\n    back = _____(n)\n    return (n, back)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
+         "solution": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = int(digits)\n    back = str(n)\n    return (n, back)\n"
+        },
+        {
+         "question_id": 738,
+         "prompt": "The truth of the NUMBER, not of the text holding it.",
+         "starter_code": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(_____(text))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+         "solution": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(int(text))\n"
         }
        ]
       }
@@ -293,6 +341,54 @@
        "prompt": "Text in, arithmetic out \u2014 the digits have to become a number first.",
        "starter_code": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return _____(digits) + 8\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
        "solution": "def solve(digits):\n    \"\"\"Text in, number out.\"\"\"\n    return int(digits) + 8\n"
+      },
+      {
+       "question_id": 731,
+       "prompt": "Convert first \u2014 then * means arithmetic, not repetition.",
+       "starter_code": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return _____(text) * 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('2.5',)\nprint(solve(*example))\n",
+       "solution": "def solve(text):\n    \"\"\"Convert first \u2014 then * means arithmetic.\"\"\"\n    return float(text) * 2\n"
+      },
+      {
+       "question_id": 732,
+       "prompt": "A number cannot be glued onto text until it IS text.",
+       "starter_code": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = _____(count)\n    return label + \" items\"\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+       "solution": "def solve(count):\n    \"\"\"str() makes a number gluable.\"\"\"\n    label = str(count)\n    return label + \" items\"\n"
+      },
+      {
+       "question_id": 733,
+       "prompt": "Its truth, and the name of its kind.",
+       "starter_code": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (_____(value), type(value).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('hi',)\nprint(solve(*example))\n",
+       "solution": "def solve(value):\n    \"\"\"Its truth, and the name of its kind.\"\"\"\n    return (bool(value), type(value).__name__)\n"
+      },
+      {
+       "question_id": 734,
+       "prompt": "To the nearest whole number \u2014 not truncated.",
+       "starter_code": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return _____(x)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2.7,)\nprint(solve(*example))\n",
+       "solution": "def solve(x):\n    \"\"\"round() goes to the nearest whole number.\"\"\"\n    return round(x)\n"
+      },
+      {
+       "question_id": 735,
+       "prompt": "Put both values on the same side of the type line, then compare.",
+       "starter_code": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == _____(number)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('7', 7)\nprint(solve(*example))\n",
+       "solution": "def solve(text, number):\n    \"\"\"Convert to the SAME type, then compare.\"\"\"\n    return text == str(number)\n"
+      },
+      {
+       "question_id": 736,
+       "prompt": "Truncate both \u2014 drop the fraction, do not round \u2014 then multiply.",
+       "starter_code": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return _____(x) * _____(y)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.9, 2.2)\nprint(solve(*example))\n",
+       "solution": "def solve(x, y):\n    \"\"\"int() drops the fraction; it does not round.\"\"\"\n    return int(x) * int(y)\n"
+      },
+      {
+       "question_id": 737,
+       "prompt": "Text to number to text: the kind changes twice, the digits never do.",
+       "starter_code": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = _____(digits)\n    back = _____(n)\n    return (n, back)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('42',)\nprint(solve(*example))\n",
+       "solution": "def solve(digits):\n    \"\"\"Text to number to text: the kind changes, the digits do not.\"\"\"\n    n = int(digits)\n    back = str(n)\n    return (n, back)\n"
+      },
+      {
+       "question_id": 738,
+       "prompt": "The truth of the NUMBER, not of the text holding it.",
+       "starter_code": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(_____(text))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ('0',)\nprint(solve(*example))\n",
+       "solution": "def solve(text):\n    \"\"\"bool of the NUMBER, not of the text holding it.\"\"\"\n    return bool(int(text))\n"
       }
      ],
      "guided_items": [],
@@ -327,6 +423,26 @@
        "question_id": 716,
        "prompt": "Ask before converting, and ask after, on a piece of text holding `0`.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 739,
+       "prompt": "Convert two digit strings, add as numbers, and carry the sum back as text too.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 740,
+       "prompt": "One float, three readings: truncated, rounded, and whether they agree.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 741,
+       "prompt": "Two values can share a truth without being equal.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 742,
+       "prompt": "Each conversion has a kind of its own \u2014 name both.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -341,6 +457,10 @@
       {
        "question_id": 717,
        "prompt": "Text in \u2014 round it, name the type of what you get, say whether it counts as a\nyes, and whether writing it back out spells what you started with."
+      },
+      {
+       "question_id": 743,
+       "prompt": "Parse a quantity, rebuild it into a label, and report its truth and the label's kind."
       }
      ],
      "independent_items": [
@@ -349,7 +469,11 @@
       713,
       714,
       715,
-      716
+      716,
+      739,
+      740,
+      741,
+      742
      ],
      "misconceptions_markdown": "- **\"Converting changes the value.\"** \u2014 It produces a new one. `int(text)` hands\n  back a number and leaves `text` exactly as it was.\n- **\"int() rounds.\"** \u2014 It truncates toward zero: `int(3.9)` is `3` and\n  `int(-2.7)` is `-2`.\n- **\"If it looks like a number it is one.\"** \u2014 `\"42\"` looks like a number to a\n  human and is text to Python. Only a conversion makes it arithmetic-ready.",
      "notes_markdown": "Second concept of the python course (ids 574\u2013579 + 713\u2013717). Supported by\n[[python.values-and-names]].\n\n## Findings\n- 2026-09-01: `python.type-name` sat at 0/2 coverage for a month and was\n  UNSATISFIABLE, not under-drilled \u2014 the symbol collector emitted\n  `syntax.attribute` for `type(x).__name__` because the receiver is a Call.\n  Fixed in `solution_symbols.py` (`_is_type_call`, narrowed after a codex\n  finding so `module.__name__` earns nothing). A coverage number stuck at 0\n  can be a DETECTOR gap, not a content gap.\n- 2026-09-01: `syntax.equality` was used by 42 questions and taught by NO\n  lesson. Declared here (the page already teaches `\"42\" == 42` as a named\n  misconception); resolved 38 recorded prereq violations for one coverage\n  obligation, met on arrival by q715/q717.\n- 2026-09-01: q713's wrong example printed the CORRECT output for its example\n  inputs (`(True, True)`); anchored to `solve(0, '')` where the misconception\n  diverges. This became `wrong_example_matches_correct` (blocking) in\n  `audit_question_bank.py` \u2014 a wrong example needs inputs where the\n  misconception and the right answer disagree.\n\n## Checks\n- `audit_question_bank.py::check_wrong_examples` \u2014 born from q713 here.\n- `scripts/audit_solution_prereqs.py` \u2014 `syntax.equality` ordering."
