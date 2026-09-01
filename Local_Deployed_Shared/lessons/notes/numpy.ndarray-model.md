@@ -4,6 +4,10 @@ kc: numpy.ndarray-model
 First concept of the numpy course, and the one the attempt log indicts.
 
 ## Findings
+- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only):
+  solved q559 3/3 on the real harness, no missing-information claim. The
+  PAGE is sufficient — the 2026-08 stalls above were the DRILL POOL
+  (untaught `a.T`), not the lesson prose; consistent with both findings.
 - 2026-09-01: the log (2026-08-19→27) shows a 63-attempt `faded` rung stall at
   16% accuracy, mean predicted_p 0.207 — the model predicted failure ~60
   serves in a row and the selector complied. Dated a WEEK before the `a.T`

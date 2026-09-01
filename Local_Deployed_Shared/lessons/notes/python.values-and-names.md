@@ -7,6 +7,10 @@ encoded in the question-id ranges: 568–573 here, 574–579 [[python.types-and-
 … 604–609 python.dots-and-imports.
 
 ## Findings
+- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only,
+  'use only the information in the problem'): solved q711 (last independent
+  drill) 4/4 cases on the real harness, no missing-information claim.
+  The page is SUFFICIENT for its hardest rung.
 - 2026-08-31: brought from 5 to 10 drills (Solo 6 / Integrated 3). No two drills
   on a rung repeat a move; verified against `audit_symbol_coverage.py`.
 
