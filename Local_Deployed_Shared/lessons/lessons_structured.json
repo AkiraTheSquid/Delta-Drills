@@ -987,6 +987,54 @@
          "prompt": "Two arguments, in the order the function expects them.",
          "starter_code": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.14159, 2)\nprint(solve(*example))\n",
          "solution": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, places)\n"
+        },
+        {
+         "question_id": 780,
+         "prompt": "The parentheses are what make the work happen.",
+         "starter_code": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return sum(numbers)\n"
+        },
+        {
+         "question_id": 781,
+         "prompt": "The two extremes, biggest first.",
+         "starter_code": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (_____(numbers), _____(numbers))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (max(numbers), min(numbers))\n"
+        },
+        {
+         "question_id": 782,
+         "prompt": "A new, ordered list comes back from one call.",
+         "starter_code": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return sorted(items)\n"
+        },
+        {
+         "question_id": 783,
+         "prompt": "The direction travels as a named argument.",
+         "starter_code": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, _____=flag)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2], True)\nprint(solve(*example))\n",
+         "solution": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, reverse=flag)\n"
+        },
+        {
+         "question_id": 784,
+         "prompt": "The distance between the two extremes.",
+         "starter_code": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return _____(items) - _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return max(items) - min(items)\n"
+        },
+        {
+         "question_id": 785,
+         "prompt": "The total over the count \u2014 each call runs first, then the division.",
+         "starter_code": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / len(numbers)\n"
+        },
+        {
+         "question_id": 786,
+         "prompt": "The function is a value; its answer is another.",
+         "starter_code": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2],)\nprint(solve(*example))\n",
+         "solution": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(len).__name__, type(len(items)).__name__)\n"
+        },
+        {
+         "question_id": 787,
+         "prompt": "Three calls, one line: the mean, trimmed.",
+         "starter_code": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return _____(sum(numbers) / len(numbers), places)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 2], 2)\nprint(solve(*example))\n",
+         "solution": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return round(sum(numbers) / len(numbers), places)\n"
         }
        ]
       }
@@ -1003,6 +1051,54 @@
        "prompt": "Two arguments, in the order the function expects them.",
        "starter_code": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3.14159, 2)\nprint(solve(*example))\n",
        "solution": "def solve(x, places):\n    \"\"\"round takes the value first, then how many places.\"\"\"\n    return round(x, places)\n"
+      },
+      {
+       "question_id": 780,
+       "prompt": "The parentheses are what make the work happen.",
+       "starter_code": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"One call, one value back.\"\"\"\n    return sum(numbers)\n"
+      },
+      {
+       "question_id": 781,
+       "prompt": "The two extremes, biggest first.",
+       "starter_code": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (_____(numbers), _____(numbers))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 1, 7],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"The two extremes, biggest first.\"\"\"\n    return (max(numbers), min(numbers))\n"
+      },
+      {
+       "question_id": 782,
+       "prompt": "A new, ordered list comes back from one call.",
+       "starter_code": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"sorted returns a new, ordered list.\"\"\"\n    return sorted(items)\n"
+      },
+      {
+       "question_id": 783,
+       "prompt": "The direction travels as a named argument.",
+       "starter_code": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, _____=flag)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 1, 2], True)\nprint(solve(*example))\n",
+       "solution": "def solve(items, flag):\n    \"\"\"The direction travels as a named argument.\"\"\"\n    return sorted(items, reverse=flag)\n"
+      },
+      {
+       "question_id": 784,
+       "prompt": "The distance between the two extremes.",
+       "starter_code": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return _____(items) - _____(items)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The distance between the two extremes.\"\"\"\n    return max(items) - min(items)\n"
+      },
+      {
+       "question_id": 785,
+       "prompt": "The total over the count \u2014 each call runs first, then the division.",
+       "starter_code": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / _____(numbers)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([4, 9, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers):\n    \"\"\"sum over len \u2014 each call runs first, then the division.\"\"\"\n    return sum(numbers) / len(numbers)\n"
+      },
+      {
+       "question_id": 786,
+       "prompt": "The function is a value; its answer is another.",
+       "starter_code": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(_____).__name__, type(_____).__name__)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2],)\nprint(solve(*example))\n",
+       "solution": "def solve(items):\n    \"\"\"The function is a value; its answer is another.\"\"\"\n    return (type(len).__name__, type(len(items)).__name__)\n"
+      },
+      {
+       "question_id": 787,
+       "prompt": "Three calls, one line: the mean, trimmed.",
+       "starter_code": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return _____(sum(numbers) / len(numbers), places)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 2], 2)\nprint(solve(*example))\n",
+       "solution": "def solve(numbers, places):\n    \"\"\"Three calls, one line: the mean, trimmed.\"\"\"\n    return round(sum(numbers) / len(numbers), places)\n"
       }
      ],
      "guided_items": [],
@@ -1017,6 +1113,46 @@
        "question_id": 595,
        "prompt": "Largest first \u2014 the direction is a named setting, not a different function.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 788,
+       "prompt": "A new list comes back; the original is untouched \u2014 return both and prove it.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 789,
+       "prompt": "Ascending and descending, from two calls of the same function.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 790,
+       "prompt": "Equal after trimming is a different question from equal.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 791,
+       "prompt": "A zero span means every value is the same.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 792,
+       "prompt": "min and max take bare arguments too \u2014 order a pair without a list.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 793,
+       "prompt": "Two sums over the edge rows, added.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 794,
+       "prompt": "Two roads to the smallest value.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 795,
+       "prompt": "round(x) is an int; round(x, 0) is still a float.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -1027,11 +1163,27 @@
       {
        "question_id": 597,
        "prompt": "One sorted call, read from the front, plus the span between the extremes."
+      },
+      {
+       "question_id": 796,
+       "prompt": "The list in order, and four one-call facts about it."
+      },
+      {
+       "question_id": 797,
+       "prompt": "Round the mean, and say whether rounding changed it."
       }
      ],
      "independent_items": [
       594,
-      595
+      595,
+      788,
+      789,
+      790,
+      791,
+      792,
+      793,
+      794,
+      795
      ],
      "misconceptions_markdown": "- **\"`len` gives the length.\"** \u2014 `len(items)` gives the length. `len` on its own\n  is the function object, and returning it is the most common way a drill fails\n  with no error message.\n- **\"Arguments can go in any order.\"** \u2014 Only keyword arguments can. Positional\n  arguments mean whatever their position means.\n- **\"`sorted` sorts the list.\"** \u2014 It returns a new one. The original is\n  unchanged, which is exactly why you have to keep the result.",
      "notes_markdown": ""

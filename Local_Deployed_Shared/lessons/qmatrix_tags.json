@@ -7173,5 +7173,347 @@
    "syntax.nested-index"
   ],
   "source": "kp-integrated"
+ },
+ "780": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "781": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "782": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "783": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "784": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "785": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "786": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "787": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-faded"
+ },
+ "788": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "789": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "790": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "791": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "792": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "793": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "794": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "795": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-independent"
+ },
+ "796": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-integrated"
+ },
+ "797": {
+  "target_kcs": [
+   "python.calling-functions"
+  ],
+  "supporting_kcs": [
+   "python.types-and-conversion",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "builtin.max",
+   "builtin.min",
+   "builtin.round",
+   "builtin.sorted",
+   "builtin.sum",
+   "syntax.call",
+   "syntax.keyword-argument"
+  ],
+  "source": "kp-integrated"
  }
 }

@@ -117,6 +117,15 @@ skill report the same thing from the other side.
   matching every `__name__` would let `module.__name__` earn the coverage.
   🔑 A coverage number stuck at 0 may be a DETECTOR gap, not a content gap — grep the
   symbol before authoring drills against it.
+- **Python floor expansion through `python.calling-functions`** (2026-09-01):
+  `values-and-names` (q718–733), `types-and-conversion` (q734–746),
+  `lists-and-tuples` (q747–761), `indexing` (q762–779), and `calling-functions`
+  (q780–797) now each carry about ten Faded and Solo drills plus four Integrated
+  drills. `calling-functions` added 18 drills: Faded 2→10, Solo 2→10,
+  Integrated 2→4. Its solution-prereq baseline growth is the same known course-order
+  debt as the earlier floor nodes: function-mode scaffolds require `def`, `return`,
+  docstrings, and `solve(*example)` before `python.defining-functions` teaches them.
+  Next expansion target in course order: `python.defining-functions`.
 - ⚠️ **`syntax.equality` is taught by NO lesson** and 42 questions use it. Declaring it
   on `types-and-conversion` (where `"42" == 42` is already a named misconception)
   resolved 38 baseline violations at a cost of one coverage obligation, met by q715 and

@@ -3214,3 +3214,155 @@ Python,Getting started,"Write a function solve(rows, i, j) that names the row `r
 example = ([[1, 2], [3, 4]], 1, 0)
 print(solve(*example))
 ",33,"(3, (1, 0), 'int')"
+Python,Getting started,"Write a function solve(numbers) that returns the total of the list, using sum. The parentheses are what make the work happen.","def solve(numbers):
+    """"""One call, one value back.""""""
+    return sum(numbers)
+
+
+example = ([4, 1, 7],)
+print(solve(*example))
+",10,12
+Python,Getting started,"Write a function solve(numbers) that returns the tuple (biggest, smallest) — max first, then min — of the list.","def solve(numbers):
+    """"""The two extremes, biggest first.""""""
+    return (max(numbers), min(numbers))
+
+
+example = ([4, 1, 7],)
+print(solve(*example))
+",11,"(7, 1)"
+Python,Getting started,"Write a function solve(items) that returns a NEW sorted list of the items, smallest first, using sorted.","def solve(items):
+    """"""sorted returns a new, ordered list.""""""
+    return sorted(items)
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",12,"[1, 2, 3]"
+Python,Getting started,"Write a function solve(items, flag) that returns sorted(items, reverse=flag) — the direction is a setting, passed by NAME.","def solve(items, flag):
+    """"""The direction travels as a named argument.""""""
+    return sorted(items, reverse=flag)
+
+
+example = ([3, 1, 2], True)
+print(solve(*example))
+",13,"[3, 2, 1]"
+Python,Getting started,Write a function solve(items) that returns the SPAN of the list: the biggest value minus the smallest. Two calls and one subtraction.,"def solve(items):
+    """"""The distance between the two extremes.""""""
+    return max(items) - min(items)
+
+
+example = ([4, 9, 2],)
+print(solve(*example))
+",13,7
+Python,Getting started,Write a function solve(numbers) that returns the MEAN of the list: the total divided by the count. Two calls feeding one division.,"def solve(numbers):
+    """"""sum over len — each call runs first, then the division.""""""
+    return sum(numbers) / len(numbers)
+
+
+example = ([4, 9, 2],)
+print(solve(*example))
+",14,5.0
+Python,Getting started,"Write a function solve(items) that returns the tuple of two type names, as text: the kind of len ITSELF (no parentheses), then the kind of len(items). Talking about a function and running it produce different kinds of value.","def solve(items):
+    """"""The function is a value; its answer is another.""""""
+    return (type(len).__name__, type(len(items)).__name__)
+
+
+example = ([1, 2],)
+print(solve(*example))
+",15,"('builtin_function_or_method', 'int')"
+Python,Getting started,"Write a function solve(numbers, places) that returns the mean of the list rounded to `places` decimal places: sum over len, fed straight into round.","def solve(numbers, places):
+    """"""Three calls, one line: the mean, trimmed.""""""
+    return round(sum(numbers) / len(numbers), places)
+
+
+example = ([1, 2, 2], 2)
+print(solve(*example))
+",16,1.67
+Python,Getting started,"Write a function solve(items) that names sorted(items) `ordered` and returns the tuple (ordered, items) — the new list AND the original, which sorted must have left alone.","def solve(items):
+    """"""A new list comes back; the original is untouched.""""""
+    ordered = sorted(items)
+    return (ordered, items)
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",20,"([1, 2, 3], [3, 1, 2])"
+Python,Getting started,"Write a function solve(items) that returns the tuple (sorted(items), sorted(items, reverse=True)) — both directions of the same list.","def solve(items):
+    """"""Ascending and descending, from two calls.""""""
+    return (sorted(items), sorted(items, reverse=True))
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",21,"([1, 2, 3], [3, 2, 1])"
+Python,Getting started,"Write a function solve(x, y) that returns whether the two numbers agree once both are rounded to 2 decimal places — round each, then compare with ==.","def solve(x, y):
+    """"""Equal after trimming is a different question from equal.""""""
+    return round(x, 2) == round(y, 2)
+
+
+example = (3.14159, 3.14162)
+print(solve(*example))
+",22,True
+Python,Getting started,"Write a function solve(items) that names the span max(items) - min(items) `span` and returns the tuple (span, flat) where flat is whether span == 0.","def solve(items):
+    """"""A zero span means every value is the same.""""""
+    span = max(items) - min(items)
+    return (span, span == 0)
+
+
+example = ([4, 9, 2],)
+print(solve(*example))
+",23,"(7, False)"
+Python,Getting started,"Write a function solve(a, b) that returns the two values as the ordered tuple (smaller, larger) — min and max called on the two arguments directly, no list needed.","def solve(a, b):
+    """"""min and max take bare arguments too.""""""
+    first = min(a, b)
+    second = max(a, b)
+    return (first, second)
+
+
+example = (9, 4)
+print(solve(*example))
+",24,"(4, 9)"
+Python,Getting started,"Write a function solve(rows) that returns the total of the FIRST row plus the total of the LAST row — sum called on rows[0] and on rows[-1], added together.","def solve(rows):
+    """"""Two sums, two picks, one addition.""""""
+    return sum(rows[0]) + sum(rows[-1])
+
+
+example = ([[1, 2], [3, 4], [5, 6]],)
+print(solve(*example))
+",25,14
+Python,Getting started,"Write a function solve(items) that returns the tuple (sorted(items)[0], min(items)) — the smallest value found two ways: the front of the sorted list, and min directly.","def solve(items):
+    """"""Two roads to the smallest value.""""""
+    return (sorted(items)[0], min(items))
+
+
+example = ([3, 1, 2],)
+print(solve(*example))
+",26,"(1, 1)"
+Python,Getting started,"Write a function solve(x) that returns the tuple (round(x), round(x, 0), round(x, 2)) — no places, zero places, two places. The second argument changes the KIND of the answer, not only its precision.","def solve(x):
+    """"""round(x) is an int; round(x, 0) is still a float.""""""
+    return (round(x), round(x, 0), round(x, 2))
+
+
+example = (3.456,)
+print(solve(*example))
+",27,"(3, 3.0, 3.46)"
+Python,Getting started,"Write a function solve(numbers) that names sorted(numbers) `ordered`, builds `stats` as the tuple (len(numbers), sum(numbers), min(numbers), max(numbers)), and returns the tuple (ordered, stats).","def solve(numbers):
+    """"""The list in order, and four one-call facts about it.""""""
+    ordered = sorted(numbers)
+    stats = (len(numbers), sum(numbers), min(numbers), max(numbers))
+    return (ordered, stats)
+
+
+example = ([4, 1, 7],)
+print(solve(*example))
+",31,"([1, 4, 7], (3, 12, 1, 7))"
+Python,Getting started,"Write a function solve(numbers, places) that names the mean sum(numbers) / len(numbers) `mean`, names round(mean, places) `trimmed`, and returns the tuple (trimmed, exact) where exact is whether trimmed == mean.","def solve(numbers, places):
+    """"""Round the mean, and say whether rounding changed it.""""""
+    mean = sum(numbers) / len(numbers)
+    trimmed = round(mean, places)
+    return (trimmed, trimmed == mean)
+
+
+example = ([1, 2, 2], 1)
+print(solve(*example))
+",33,"(1.7, False)"
