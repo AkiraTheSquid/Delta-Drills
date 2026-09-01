@@ -118,7 +118,7 @@
   <link rel="stylesheet" href="practice/bars.css?v=10" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
-  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=7" />
+  <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=8" />
   <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
   <link rel="stylesheet" href="styles/solo-route.css?v=1" />
   <link rel="stylesheet" href="styles/test-users.css?v=1" />
@@ -570,21 +570,28 @@
     </div>
   </aside>
 
-  <!-- GUEST BANNER — shown to anyone not signed in. A guest gets the whole
-       app, not a cut-down one: guest-session.js provisions an account for
-       this browser so the diagnostic, the lessons and the student model all
-       run. The progress that builds belongs to this browser and clearing
-       site data ends it, which is what the banner has to say. It must NOT
-       say signing in carries that progress with you: Google sign-in mints a
-       different backend account and there is no merge endpoint, so what the
-       guest did stays with the guest account. Toggled by
+  <!-- GUEST BANNER — shown to anyone not signed in. Toggled by
        app.js updateTabVisibility(), keyed on isSignedIn() — a guest holds a
-       token, so `authToken` would hide this from the people it is for. -->
+       token, so `authToken` would hide this from the people it is for.
+
+       🔴 2026-09-01: THE COPY HERE USED TO PROMISE A WORKING GUEST MODE AND
+       IT DOES NOT CURRENTLY WORK. The design is still the one below — a
+       guest gets the whole app, guest-session.js provisions an account for
+       this browser, and the diagnostic, the lessons and the student model
+       all run off it — but signed out the app does not actually work today,
+       so the banner now says so instead of telling people to try it. Seth is
+       fixing the guest path separately; when it works again, restore copy
+       that says no account is needed and drop the "doesn't work yet" line.
+
+       Two things the copy must keep saying whichever state we're in: guest
+       progress lives in THIS browser and clearing site data ends it, and
+       signing in does NOT carry that progress over — Google sign-in mints a
+       different backend account and there is no merge endpoint. -->
   <div class="guest-banner" id="guest-banner">
     <div class="guest-banner-inner">
       <span class="guest-banner-dot" aria-hidden="true"></span>
       <span class="guest-banner-label">Guest</span>
-      <span class="guest-banner-meta">No account needed — everything works, and your progress is saved in this browser. <strong>Continue with Google</strong> to start an account that works on any device; guest progress stays here.</span>
+      <span class="guest-banner-meta">Guest mode doesn't work yet — the app needs an account right now. <strong>Continue with Google</strong> to sign in; anything you did as a guest stays in this browser — it doesn't move to the account, and clearing site data ends it.</span>
       <!-- Google Identity Services renders the Continue-with-Google button here
            (app.js). One click signs in or signs up — no separate login page. -->
       <div id="google-signin-banner" class="guest-banner-google"></div>

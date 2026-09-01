@@ -79,10 +79,14 @@
   color: var(--info);
 }
 
+/* Basis, not `auto`: on `auto` the sentence asks for its full content width,
+   which alone overflows the row, so the button wrapped onto a line of its own
+   under the text. A shrinkable basis keeps both on one line and lets the text
+   take whatever the button doesn't. */
 .guest-banner-meta {
   font-size: 13px;
   color: var(--color-muted);
-  flex: 1 1 auto;
+  flex: 1 1 320px;
   min-width: 0;
 }
 .guest-banner-meta strong { color: var(--white); font-weight: 700; }
@@ -105,6 +109,8 @@
   align-items: center;
   min-height: 40px;
   width: fit-content;
+  /* Far right of the banner row — it is the one thing in here to act on. */
+  margin-left: auto;
   border-radius: 999px;
   overflow: hidden;
   /* Shadow only, no ring: the white card is already the highest-contrast
@@ -559,6 +565,9 @@
 }
 
 @media (max-width: 600px) {
+  /* Too narrow to hold the sentence and the button on one row, so the button
+     wraps under it — flush left with the text, not stranded on the right. */
+  .guest-banner-google { margin-left: 0; }
   .tp-card { padding: 16px 14px; }
   .tp-submit-row { justify-content: stretch; flex-direction: column; }
   .tp-submit-btn, .tp-back-btn { width: 100%; }
