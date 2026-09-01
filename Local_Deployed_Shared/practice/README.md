@@ -161,6 +161,17 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-09-01 (**how much you practiced this week**): new `activity-chart.js`
+  (`?v=1`) draws seven Monday–Sunday bars into `#activity-week-chart` under
+  `#learner-areas` on the Learner Home (Seth: "the amount of problems that
+  you've done across the different days as like a bar chart"). Data:
+  `/api/practice/activity-week` with the client's `getTimezoneOffset()`, so the
+  buckets are the learner's own days. Redraws on `delta:practice-mode-ready`
+  and (debounced, sequence-guarded against stale responses) on every
+  `delta:practice-state-changed`, so today's bar grows as they work. Signed out
+  or fetch failed → `.is-empty` hides the whole section, same contract as
+  `#learner-areas`. Bars scale against the week's own best day, with a 6%
+  visibility floor so a 1-problem day beside a 40-problem day is still a mark.
 - 2026-08-31 (**the bar draws the bound that can actually promote**):
   `stage-ladder.js` `_boundOf` reads `estimate.promote_lo` in preference to
   `estimate.ci[0]`, falling back to `ci[0]` for older payloads. The backend

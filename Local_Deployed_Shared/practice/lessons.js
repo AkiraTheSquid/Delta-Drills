@@ -174,14 +174,70 @@ const LessonGate = (() => {
 
   /* ---------- Markdown subset (mirrors lessons/viewer.html) ------------ */
 
+  /* 🔴 `"` IS ESCAPED, and that is not cosmetic. The output of this function
+     is dropped into HTML ATTRIBUTES in three places — the image `alt` below,
+     the fence name on `<pre data-fence>`, and the Colab `href` — and a quote
+     that survives ends the attribute and starts a new one. Without it,
+     `![x" onerror="…](https://…)` in an upstream ARENA cell renders as an
+     <img> carrying a live event handler (verified, 2026-09-01). `&quot;`
+     displays as `"` in element content, so nothing else changes shape. */
   const esc = (value) =>
-    String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
 
+  /* A URL that is safe to put in an href/src, or "" — which renders the link
+     as plain text rather than as a live one.
+
+     🔴 THE SCHEME IS A WHITELIST, not a blacklist. This renderer is handed
+     markdown from three sources, and only one of them is authored in this repo:
+     the ARENA notebooks are upstream's text (practice/arena-notebook.js) and
+     the question bank is generated. `javascript:` in a link is the obvious
+     thing to keep out, and "obvious things, listed" is the check that keeps
+     working when the next scheme is one nobody thought of. Protocol-relative
+     `//host` is out for the same reason — it is an absolute URL wearing the
+     costume of a relative one. */
+  const _url = (value) => {
+    const raw = String(value || "").trim();
+    if (!raw || raw.startsWith("//")) return "";
+    const scheme = raw.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):/);
+    if (scheme && !/^(https?|mailto)$/i.test(scheme[1])) return "";
+    // esc() has already turned & into &amp;, which is what an attribute wants.
+    // A quote would end the attribute, and there is no legal reason for one in
+    // a URL, so it goes to its percent-encoding rather than being dropped.
+    return raw.replace(/"/g, "%22");
+  };
+
+  /* Links and images are rendered, not printed.
+
+     Added 2026-09-01 for the ARENA notebooks, which are prose written for the
+     web: 274 images and every reference to a paper, a Streamlit page or
+     another section is a markdown link. Escaped, the whole corpus reads as
+     `[Attention is All You Need](https://…)` in raw brackets.
+
+     🔴 It is additive for everything else: at the time it went in, the entire
+     lessons/ tree contained ZERO markdown links, so no authored page changes
+     shape. Images come first because `![alt](src)` also matches the link
+     pattern, and a link whose text begins with `!` is not a thing. */
   const inline = (value) =>
     esc(value)
       .replace(/`([^`]+)`/g, "<code>$1</code>")
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+      .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+      .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (whole, alt, src) => {
+        const href = _url(src);
+        return href
+          ? `<img src="${href}" alt="${alt}" loading="lazy" referrerpolicy="no-referrer">`
+          : whole;
+      })
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (whole, text, target) => {
+        const href = _url(target);
+        return href
+          ? `<a href="${href}" target="_blank" rel="noreferrer">${text}</a>`
+          : whole;
+      });
 
   /* `headingLevels` keeps a heading's authored depth instead of flattening it.
 

@@ -112,14 +112,18 @@
      `diagnostic.start()`, which sets `probes = []` and `completed_at = None` —
      retaking THROWS AWAY the reading the learner already has. This row sits one
      pixel below "Learner home" in a menu that opens on a single click, so it
-     routes instead: `data-goto-tab="practice"` is app.js's binding (same
+     routes instead: `data-goto-tab="placement"` is app.js's binding (same
      division of labour as `data-lab-open` above — this file never re-implements
      the jump), and the destructive press stays on #placement-start-btn, on a
      card that says what the test is and how long it takes.
 
-     What this adds is the part a bare jump cannot do: the placement card is
-     below the readiness dial and the area bars, so on the Learner Home it is
-     usually off screen. Scroll it up, then focus and flash the button that acts.
+     🔴 IT ROUTES TO #page-placement (Seth, 2026-09-01). The placement is a page
+     of its own again, and this row is the only standing route to it from inside
+     the app — there is no tab for it in the strip, by design.
+
+     What this adds is the part a bare jump cannot do: the card has two controls
+     on it and which one is live depends on the state of the test. Focus and
+     flash whichever that is, so the row lands on an answer rather than a page.
 
      🔴 THE SCROLL AND THE FLASH ARE ON DIFFERENT CLOCKS. The card can be
      scrolled to on the next frame — `switchTab` un-hides the page in this same
@@ -137,30 +141,30 @@
   };
 
   const revealPlacement = () => {
-    /* 🔴 THE CARD IS USUALLY NOT ON THE PAGE WHEN THIS RUNS. Seth, 2026-08-31:
-       once a placement has been taken, #diagnostic-overview is off the Learner
-       Home entirely (#page-practice.placement-taken) — so for the learner this
-       row is FOR, routing to the page would land them on a screen with nothing
-       to press. `reveal()` lifts that for this visit; `leave()` puts it back on
-       the way out. Called BEFORE the scroll: an element with `display: none` has
-       no layout box, and scrollIntoView on one goes to the top of the document.
+    /* 🔴 THERE IS NOTHING TO UN-HIDE ANY MORE. Until 2026-09-01 the card sat on
+       the Learner Home and was hidden once the placement had been taken, so
+       this function opened with `DiagnosticPage.reveal()` — an override that
+       lifted the hide for the length of one visit — and called it a second time
+       after the refresh, because the render that refresh triggers re-decided
+       the card's visibility from a fresh "completed" status.
 
-       It is called AGAIN after the refresh below, because the render that
-       refresh triggers re-decides the card's visibility — reveal() only sets the
-       override, and the second call is what re-applies it to a card that a fresh
-       "completed" status would otherwise have hidden again. It is idempotent. */
-    window.DiagnosticPage?.reveal?.();
+       The card is the content of a page the learner navigates to now, and it
+       shows in every state. `reveal()` is deleted rather than left as a no-op,
+       here and in diagnostic-page.js's exports: a call that means nothing is
+       how the next reader concludes the visibility rule still exists.
+
+       The scroll stays. The card is short but the results section under it is
+       not, and a learner arriving from this row on a page scrolled where they
+       last left it should be looking at the control. */
     const card = document.getElementById("diagnostic-overview");
-    // Still hidden means a probe is on screen (#page-practice.diagnostic-running,
-    // which reveal() does not lift): the learner is mid-test, and the card they
-    // are asking for is the test.
+    // Hidden means a probe is on screen (#page-placement.diagnostic-running):
+    // the learner is mid-test, and the card they are asking for IS the test.
     if (card && card.offsetParent !== null) {
       requestAnimationFrame(() => {
         card.scrollIntoView({ block: "start", behavior: "smooth" });
       });
     }
     Promise.resolve(window.DiagnosticPage?.refresh?.()).catch(() => {}).then(() => {
-      window.DiagnosticPage?.reveal?.();
       /* Whichever of the two is on screen. Mid-test the start button is hidden
          and "Load next placement question" is the live control, so pointing at
          the start button unconditionally would focus nothing exactly when the

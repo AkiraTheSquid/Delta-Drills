@@ -55,6 +55,15 @@ def _glossary_terms(src):
     return terms
 
 
+def glossary_terms(src):
+    """Public face of the parser: (term, kc, aliases) triples from glossary.js.
+
+    `audit_prose_prereqs.py` builds its vocabulary from this — the glossary is
+    the single declaration of course terms, and that audit must not grow a
+    second parser that can drift from this one."""
+    return _glossary_terms(src)
+
+
 def check_jargon_links():
     glossary = _read(os.path.join(HERE, "lessons", "glossary.js"))
     engine = _read(os.path.join(HERE, "jargon.js"))
