@@ -11910,6 +11910,11 @@
           "call": "x = [[1, 2, 3], [4, 5, 6]]\nsolve(x)",
           "output": "(2, 2)",
           "why": "`len(rows)` is the outer length only. The total element count is `.numel()`."
+        },
+        {
+          "call": "x = [[1, 2, 3], [4, 5, 6]]\nsolve(x)",
+          "output": "(6, 2)",
+          "why": "Tuple positions are reversed. Return `(ndim, numel)`, in that order."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (number of axes, total element count) for the tensor from rows.\"\"\"\n    a = t.tensor(rows)\n    return (a.ndim, a.numel())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
