@@ -55,7 +55,8 @@ import math
 from datetime import datetime, timezone
 from typing import Dict, Mapping, Optional
 
-from app import attempt_log, bkt_mastery, kc_graph
+from app import attempt_log
+from app.engine_features import FeatureVector, bkt_mastery, kc_graph
 from app import logistic_engine as E
 
 # Attempts a concept's posterior needs before the difficulty aim will prefer it
@@ -186,14 +187,25 @@ def _days_since(last_seen: Optional[str]) -> float:
     return max(0.0, (datetime.now(timezone.utc) - when).total_seconds() / 86400.0)
 
 
-def _prereq_mastery(user_state, kc: str) -> float:
+def _prereq_mastery(user_state, kc: str) -> Dict[str, float]:
+    """Per-prerequisite mastery, keyed by KC id — the ATTRIBUTION, not the mean.
+
+    Returns the dict rather than the collapsed number so the caller can log
+    which prerequisite carried the credit; `E.centred_mastery(d.values())` is
+    the feature value, unchanged.
+    """
     node = kc_graph.registry_node(kc) or {}
     prereqs = node.get("prereqs") or ()
-    return E.centred_mastery(kc_graph.kc_mastery(user_state, p)[0] for p in prereqs)
+    return {p: kc_graph.kc_mastery(user_state, p)[0] for p in prereqs}
 
 
-def _encompassing_mastery(user_state, kc: str) -> float:
-    """Centred mean BKT posterior over the atoms this concept exercises.
+def _encompassing_mastery(user_state, kc: str) -> Dict[str, float]:
+    """Per-atom BKT posterior for the atoms this concept exercises.
+
+    Keyed by atom id for the same reason as `_prereq_mastery`: the mean is the
+    feature, the dict is the explanation, and the regression audit needs the
+    explanation. An empty dict (no crosswalk row) collapses to the same 0.0
+    feature the old float path returned.
 
     Borrowed strength, and the engine discounts it accordingly (the
     `encompassing` weight is deliberately below `prereq`). It is read from BKT
@@ -204,14 +216,14 @@ def _encompassing_mastery(user_state, kc: str) -> float:
     row = kc_graph.crosswalk_row(kc) or {}
     atoms = [a.get("a") for a in (row.get("atoms") or []) if a.get("a")]
     if not atoms:
-        return 0.0
+        return {}
     params = bkt_mastery.params_for_level(getattr(user_state, "self_reported_level", None))
-    return E.centred_mastery(
-        bkt_mastery.current_mastery(
+    return {
+        atom: bkt_mastery.current_mastery(
             user_state.atom_mastery, user_state.atom_last_ts, atom, params=params
         )
         for atom in atoms
-    )
+    }
 
 
 def feature_values(
@@ -237,15 +249,30 @@ def feature_values(
     if posteriors is None:
         posteriors = posteriors_for(user_state, kc)
     ability = posteriors.get(E.ABILITY.name)
-    return {
+    prereqs = _prereq_mastery(user_state, kc)
+    encompassed = _encompassing_mastery(user_state, kc)
+    days = _days_since(ability.last_seen if ability else None)
+    values = {
         E.ABILITY.name: 1.0,
         E.DIFFICULTY.name: E.difficulty_to_logits(difficulty_score),
         E.STAGE.name: E.stage_offset(stage),
         E.EXAMPLE.name: E.example_offset(example),
-        E.PREREQ.name: _prereq_mastery(user_state, kc),
-        E.ENCOMPASSING.name: _encompassing_mastery(user_state, kc),
-        E.RECENCY.name: E.recency_value(_days_since(ability.last_seen if ability else None)),
+        E.PREREQ.name: E.centred_mastery(prereqs.values()),
+        E.ENCOMPASSING.name: E.centred_mastery(encompassed.values()),
+        E.RECENCY.name: E.recency_value(days),
     }
+    # The same carrier engine_features uses: a dict for the engine, with the
+    # provenance riding on `.sources` for the log. Until 2026-09-01 this
+    # function collapsed both dicts to their means and the attribution was
+    # unrecoverable — the encompassing-regression audit could see THAT credit
+    # was given, never WHICH atom gave it.
+    return FeatureVector(values, sources={
+        "kc": kc,
+        "stage": E.normalize_stage(stage),
+        "prereqs": prereqs,
+        "encompassed": encompassed,
+        "days_since_kc": days,
+    })
 
 
 def predict(
@@ -350,6 +377,9 @@ def record(
             atoms=atoms or [],
             difficulty_score=int(difficulty_score) if difficulty_score is not None else None,
             grade=grade,
+            # the provenance dict feature_values built beside the numbers —
+            # per-atom encompassed mastery, per-kc prereqs. See AttemptRow.
+            sources=getattr(values, "sources", None),
             ts=now,
         )
     except Exception:  # pragma: no cover — logging must never break scoring

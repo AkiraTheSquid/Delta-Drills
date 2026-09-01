@@ -32,7 +32,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from app import bkt_mastery
+from app import attempt_log, bkt_mastery
 from app.adaptive import (
     UNRATED,
     AttemptRecord,
@@ -129,8 +129,9 @@ def finalize_attempt(
         # it) — one wrong answer still drops a "strong" prior fast.
         user_params = bkt_mastery.params_for_level(user_state.self_reported_level)
         aided = engine_bridge.answer_was_aided(user_state, attempt.question_id)
+        bkt_changed: dict = {}
         for tag in getattr(question, "atom_tags", []) or []:
-            bkt_mastery.apply_attempt(
+            changed = bkt_mastery.apply_attempt(
                 user_state.atom_mastery,
                 user_state.atom_last_ts,
                 tag["atom_id"],
@@ -139,6 +140,19 @@ def finalize_attempt(
                 confidence=float(tag.get("confidence", 1.0)),
                 aided=aided,
             )
+            if changed:
+                bkt_changed[tag["atom_id"]] = changed
+        # The BKT channel's own log row — the moved posteriors, FIRe credits
+        # included, beside the logistic row the bridge just wrote. Best-effort
+        # for the same reason that one is: a full disk must not cost the
+        # learner their answer.
+        if bkt_changed:
+            try:
+                attempt_log.record_bkt_update(
+                    user_state.user_id, attempt.question_id, bkt_changed,
+                )
+            except Exception:
+                pass
 
     # Snapshot the subtopic's BKT mastery into the legacy baseline/p fields the
     # Statistics panel reads (frontend unchanged): 0-1 mastery → 0-100 baseline.

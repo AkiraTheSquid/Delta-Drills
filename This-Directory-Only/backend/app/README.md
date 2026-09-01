@@ -25,6 +25,7 @@
 - Deployment scripts and Fly.io config — see `This-Directory-Only/backend/scripts/` and `fly.toml`.
 
 ## Key Files
+- `attempt_log.py` (2026-09-01): rows now carry `feature_sources` — the per-KC prereq and per-atom encompassed mastery behind the features — and a third kind, `bkt_update`, records the BKT channel's moved posteriors (FIRe credits included) beside each attempt. Additive; old rows read fine; `bkt_update` is never evidence.
 - `kc_stats.py`: the first READER of the attempt log — global per-KC aggregates (accuracy, Brier, per-stage counts) plus rung-stall and served-while-predicting-failure flags, over every learner's `*.attempts.jsonl`. Served by `practice/stats_router.py` at `/kc-stats`; no user ids in the payload.
 - `main.py`: thin assembly layer. Builds the `FastAPI` app, configures CORS, mounts every `*_router.py` module + the `practice/` package, and exposes `/health`. No endpoint logic lives here.
 - `auth_router.py`: `/auth/signup`, `/auth/login`. Owns the IntegrityError-on-duplicate flow.

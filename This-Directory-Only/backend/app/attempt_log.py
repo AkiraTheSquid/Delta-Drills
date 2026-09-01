@@ -77,7 +77,15 @@ LOG_SCHEMA_VERSION = 1
 # produced a concept marked as taught with zero worked-examples seen).
 KIND_ATTEMPT = "attempt"
 KIND_LESSON_VIEW = "lesson_view"
-KINDS = (KIND_ATTEMPT, KIND_LESSON_VIEW)
+# `bkt_update` records what the OTHER mastery channel did with the same answer:
+# the per-atom BKT posteriors that moved, including the FIRe credits that
+# trickled to encompassed atoms. Without it the encompassing-regression metric
+# (docs/spec-graph-metadata-audit-layer.md §3a) can see the logistic channel's
+# `encompassing` feature but not the BKT channel at all. Never evidence
+# (`is_graded` is kind-gated); an older build's reader drops the row whole,
+# which is the designed rollback behaviour.
+KIND_BKT_UPDATE = "bkt_update"
+KINDS = (KIND_ATTEMPT, KIND_LESSON_VIEW, KIND_BKT_UPDATE)
 
 
 def _now_iso() -> str:
@@ -138,6 +146,13 @@ class AttemptRow:
 
     # --- what the model saw and said ---------------------------------------
     features: Dict[str, float] = field(default_factory=dict)
+    # The provenance behind `features`, as `engine_features` computed it at
+    # serve time — notably `encompassed` ({atom: mastery}) and `prereqs`
+    # ({kc: mastery}). This is what turns "encompassing credit was positive
+    # and the learner failed" into "THIS edge's credit was wrong". Optional
+    # and additive: rows written before 2026-09-01 have none, and `from_dict`
+    # keeps old readers safe by dropping unknown fields, not this one.
+    feature_sources: Optional[Dict] = None
     predicted_p: Optional[float] = None
     predicted_logit_mean: Optional[float] = None
     predicted_logit_var: Optional[float] = None
@@ -249,6 +264,7 @@ def record_attempt(
     difficulty_score: Optional[int] = None,
     grade: Optional[float] = None,
     latency_ms: Optional[int] = None,
+    sources: Optional[Mapping] = None,
     config: E.EngineConfig = E.DEFAULT_CONFIG,
     base_dir: Optional[Path] = None,
     ts: Optional[str] = None,
@@ -265,6 +281,7 @@ def record_attempt(
         stage=E.normalize_stage(stage),
         difficulty_score=difficulty_score,
         features={k: float(v) for k, v in values.items()},
+        feature_sources=dict(sources) if sources else None,
         predicted_p=prediction.p,
         predicted_logit_mean=prediction.logit_mean,
         predicted_logit_var=prediction.logit_var,
@@ -308,6 +325,43 @@ def record_lesson_view(
 # ---------------------------------------------------------------------------
 # Read
 # ---------------------------------------------------------------------------
+
+
+def record_bkt_update(
+    user_id: str,
+    question_id: Optional[int],
+    changed_by_atom: Mapping[str, Mapping[str, float]],
+    *,
+    kc: Optional[str] = None,
+    base_dir: Optional[Path] = None,
+    ts: Optional[str] = None,
+) -> Optional[AttemptRow]:
+    """Log what BKT did with one answer: every posterior that moved, per tag.
+
+    `changed_by_atom` maps each directly-practiced atom to the full
+    {atom: new_L} dict `bkt_mastery.apply_attempt` returned — so the keys
+    OTHER than the practiced atom are the FIRe credits that trickled along
+    encompassing edges. Recorded from the scoring tail beside the logistic
+    row; returns None (and logs nothing) when nothing moved, because an empty
+    row would read as "an update happened" to exactly the audit this exists
+    to feed.
+    """
+    if not changed_by_atom:
+        return None
+    row = AttemptRow(
+        ts=ts or _now_iso(),
+        kind=KIND_BKT_UPDATE,
+        user_id=str(user_id),
+        kc=kc,
+        question_id=question_id,
+        atoms=sorted(changed_by_atom),
+        feature_sources={
+            "bkt_changed": {a: {k: round(float(v), 6) for k, v in ch.items()}
+                            for a, ch in changed_by_atom.items()}
+        },
+    )
+    append(row, base_dir)
+    return row
 
 
 def iter_rows(user_id: str, base_dir: Optional[Path] = None) -> Iterator[AttemptRow]:
