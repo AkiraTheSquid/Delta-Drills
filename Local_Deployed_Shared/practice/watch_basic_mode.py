@@ -139,7 +139,7 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
     Four ways that regresses without anyone noticing, so four assertions.
 
     1. The dock is MOVED markup, never a second copy. `difficulty-dock.js`
-       re-parents `#feedback-prompt` and `.feedback-buttons`, so the buttons
+       re-parents `#feedback-prompt`, `.feedback-buttons`, and `#override-row`, so the buttons
        on screen are the ones `events.js` bound and `ui.js` relabels. A dock
        that minted its own `data-feedback` buttons and forwarded the clicks
        would be a second copy of a list this folder has already watched drift
@@ -179,10 +179,30 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
         "events.js and the labels in ui.js::applyResult are bound to those "
         "exact nodes, and a forwarded copy drifts from them silently"
     )
-    for node in ("feedback-prompt", ".feedback-buttons"):
+    for node in ("feedback-prompt", ".feedback-buttons", "override-row"):
         assert node in dock, (
             f"difficulty-dock.js no longer re-parents {node} — the dock is "
             "empty and the rating is back in the left rail"
+        )
+
+    # 1a. On an incorrect grade, the correctness override is a fourth dock
+    #     option. It must use the existing handler: that POSTs the corrected
+    #     verdict, hides the override, and repaints the remaining choices as
+    #     harder without advancing before the learner chooses a step size.
+    assert "buttons.appendChild(override)" in dock, (
+        "#override-row is looked up but not moved into .feedback-buttons — "
+        "'I actually got it right' remains hidden back in the left rail"
+    )
+    assert "I actually got it right" in index, (
+        "the restored dock option lost its explicit correctness wording"
+    )
+    override_start = events.find('overrideCorrectBtn.addEventListener("click"')
+    assert override_start != -1, "the correctness override click handler is gone"
+    override_handler = events[override_start:events.find("feedbackButtons.forEach", override_start)]
+    for behavior in ("PracticeAPI.overrideCorrect", "paintDifficultyQuestion(true)", "overrideRow.classList.add"):
+        assert behavior in override_handler, (
+            f"the correctness override no longer performs {behavior}; clicking "
+            "it must flip the grade, remove itself, and turn easier choices into harder ones"
         )
 
     # 1a. The question and its ⓘ share one row. `#feedback-prompt` is a block

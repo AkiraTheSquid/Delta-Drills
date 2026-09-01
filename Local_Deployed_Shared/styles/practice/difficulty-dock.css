@@ -2,9 +2,9 @@
    styles/practice/difficulty-dock.css — the post-submit difficulty
    question, frozen to the bottom of the viewport.
 
-   Pairs with practice/difficulty-dock.js, which MOVES `#feedback-prompt`
-   and `.feedback-buttons` into `#difficulty-dock` (it does not mint copies
-   of them). Everything here therefore restyles nodes that were written for
+   Pairs with practice/difficulty-dock.js, which MOVES `#feedback-prompt`,
+   `.feedback-buttons`, and `#override-row` into `#difficulty-dock` (it does
+   not mint copies of them). Everything here therefore restyles nodes written for
    the left rail, and the rules that follow are mostly undoing rail-shaped
    assumptions: the row's bottom margin, the accent ring on the old default
    answer, and the helper paragraph that explained a question we no longer
@@ -70,6 +70,26 @@
   font-size: 14px;
 }
 
+/* On a miss, correctness override is fourth answer in same row. Its click
+   does not rate difficulty or advance: events.js flips verdict, hides this
+   row, and repaints three remaining choices from easier to harder. */
+.difficulty-dock .override-row {
+  flex: 1 1 0;
+  min-width: 130px;
+}
+
+.difficulty-dock .override-text {
+  display: none;
+}
+
+.difficulty-dock .override-btn {
+  align-self: stretch;
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  text-align: center;
+}
+
 /* 🔴 NO DEFAULT ANSWER ANY MORE. `.feedback-btn--default` still marks the
    first button — `timer.js::_forceAdvance` clicks it when review time runs
    out and needs a selector to find it by — but the accent ring around it
@@ -110,6 +130,10 @@ body.dd-dock-open {
     padding: 10px 12px 12px;
   }
   .difficulty-dock .feedback-btn {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+  .difficulty-dock .override-btn {
     padding: 10px 8px;
     font-size: 13px;
   }

@@ -9,7 +9,7 @@
    then below it it has the like three answer choices."
 
    🔴 THIS FILE MOVES NODES, IT DOES NOT MINT A SECOND COPY OF THEM.
-   `#feedback-prompt` and `.feedback-buttons` are re-parented out of
+   `#feedback-prompt`, `.feedback-buttons`, and `#override-row` are re-parented out of
    `#practice-feedback-area` and into the dock, so the three buttons the
    learner clicks down here are the SAME elements `events.js` bound its
    handler to and the SAME ones `ui.js::applyResult` relabels. A dock that
@@ -69,10 +69,14 @@
     page = document.getElementById("page-practice");
     const prompt = document.getElementById("feedback-prompt");
     const buttons = area && area.querySelector(".feedback-buttons");
-    // Every one of the three is required. A partial dock would strand the
+    const override = document.getElementById("override-row");
+    // Every one of the four is required. A partial dock would strand the
     // rating somewhere the learner cannot reach it, and there is no path out
-    // of a graded question that does not go through those buttons.
-    if (!area || !page || !prompt || !buttons) return;
+    // of a graded question that does not go through those buttons. The
+    // override belongs here too: on an incorrect grade it is a fourth answer,
+    // then its existing handler hides it and repaints the three size choices
+    // as harder once the learner says the verdict was wrong.
+    if (!area || !page || !prompt || !buttons || !override) return;
 
     dock = document.createElement("div");
     dock.id = "difficulty-dock";
@@ -111,6 +115,11 @@
       row.appendChild(infoIcon);
     }
     inner.appendChild(row);
+    // Move, do not copy. events.js already owns the override action, including
+    // the correctness POST and the repaint from easier -> harder. Keeping the
+    // real row means clicking this option changes the remaining answers but
+    // does not advance until the learner chooses a step size.
+    buttons.appendChild(override);
     inner.appendChild(buttons);
     dock.appendChild(inner);
     document.body.appendChild(dock);

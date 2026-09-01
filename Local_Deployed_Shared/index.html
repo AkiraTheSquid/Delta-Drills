@@ -106,7 +106,7 @@
        .feedback-btn--default (there is no safe default answer any more)
        and because basic-mode.css no longer hides these buttons at all —
        see the 2026-08-28 REVERSAL block in that file. -->
-  <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=3" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
        AFTER styles/practice/question.css, and this is the only thing about its
@@ -1696,7 +1696,7 @@
               <div class="override-row hidden" id="override-row">
                 <span class="override-text">Is this a mistake? Correct it with</span>
                 <button class="ghost override-btn" id="override-correct-btn" type="button">
-                  I got it right
+                  I actually got it right
                 </button>
               </div>
             </div>
@@ -2187,7 +2187,7 @@ t.manual_seed(0)
        position, so the order is not strictly load-bearing for the binding —
        but keeping the re-parent last means every earlier script sees the
        markup exactly where index.html declares it. -->
-  <script src="practice/difficulty-dock.js?v=2"></script>
+  <script src="practice/difficulty-dock.js?v=3"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
