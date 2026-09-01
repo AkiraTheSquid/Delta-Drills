@@ -232,6 +232,40 @@ const PracticeSession = (() => {
     else if (typeof draft === "string") codeEditor.value = draft;
   };
 
+  /* Snapshots written before `ladder` joined the paused-session record have
+     no concept/rung to restore. The static bank supplies prompt/tests, but the
+     server alone knows the learner's current rung and authored Faded starter.
+     Re-stage this exact id read-only; fetching the queue would consume another
+     question and reproduce the mismatch this recovery exists to prevent. */
+  const _recoverQuestionContext = async (question) => {
+    if (
+      !question ||
+      (question.ladder_kc && question.ladder_stage) ||
+      practiceMode !== "backend" ||
+      typeof apiFetch !== "function"
+    ) return question;
+    try {
+      const qid = Number(question.question_id ?? question.id);
+      if (!Number.isFinite(qid)) return question;
+      const res = await apiFetch(
+        `/api/practice/question-context?question_id=${encodeURIComponent(qid)}`,
+      );
+      if (!res.ok) return question;
+      const context = await res.json();
+      if (!context?.ladder_kc || !context?.ladder_stage) return question;
+      question.ladder_kc = context.ladder_kc;
+      question.ladder_stage = context.ladder_stage;
+      question.ladder_kc_title = context.ladder_kc_title || context.ladder_kc;
+      question.ladder_estimate = context.ladder_estimate || null;
+      question.ladder_support = context.ladder_support !== false;
+      question.ladder_integrated = !!context.ladder_integrated;
+      if (context.starter_code) question.starter_code = context.starter_code;
+    } catch (err) {
+      console.warn("[session] could not recover saved question context:", err);
+    }
+    return question;
+  };
+
   /* THE CONCEPT CONTEXT FOR THE QUESTION ON SCREEN, captured at pause.
 
      🔴 IT CANNOT BE READ BACK OFF `practiceProgress.currentQuestion`, and a fix
@@ -798,6 +832,7 @@ const PracticeSession = (() => {
           restored.ladder_estimate = ladder.estimate;
         }
       }
+      await _recoverQuestionContext(restored);
       PracticeAPI.currentQuestion = restored;
       practiceProgress.currentQuestion = restored;
       practiceProgress.currentQuestionId = restored.question_id;

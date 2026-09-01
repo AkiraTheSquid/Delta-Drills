@@ -107,6 +107,12 @@ def check_public_api():
     assert "Array.isArray(saved.draft.cells)" in timer, (
         "saved-session parser drops multi-cell notebook draft on reload"
     )
+    assert "/api/practice/question-context?question_id=" in timer, (
+        "legacy paused questions no longer recover server-only concept/rung context"
+    )
+    assert "await _recoverQuestionContext(restored)" in timer, (
+        "saved-question restore no longer waits for context recovery before render"
+    )
     assert "holdClock" in timer and "releaseClock" in timer
     assert 'holdClock("problem-feedback-note")' in events
     assert 'releaseClock("problem-feedback-note")' in events

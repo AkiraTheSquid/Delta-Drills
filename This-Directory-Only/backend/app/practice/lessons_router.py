@@ -36,10 +36,11 @@ from app.practice_schemas import (
     ExposureMarkRequest,
     ExposureResponse,
     KcEstimateResponse,
+    QuestionContextResponse,
     WorkedSeenRequest,
     WorkedSeenResponse,
 )
-from app.prioritization import ladder_starter
+from app.prioritization import ladder_fields, ladder_starter
 from app.questions import get_question_by_id
 
 router = APIRouter()
@@ -92,6 +93,44 @@ def get_kc_estimate(
         kc=kc,
         ladder_stage=kc_graph.kc_stage(user_state, kc),
         ladder_estimate=kc_graph.kc_estimate(user_state, kc),
+    )
+
+
+@router.get("/question-context", response_model=QuestionContextResponse)
+def get_question_context(
+    question_id: int,
+    user: User = Depends(get_current_user),
+) -> QuestionContextResponse:
+    """Re-stage an already-served question without consuming another.
+
+    Old paused-session snapshots predate persisted ladder metadata. Static bank
+    restores prompt/tests; server restores concept, rung, authored Faded starter.
+    This read changes no exposure, attempts, or queue state.
+    """
+    question = get_question_by_id(question_id)
+    if question is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Unknown question '{question_id}'",
+        )
+    user_state = get_user_state(str(user.id))
+    ladder = ladder_fields(user_state, question.id)
+    if not ladder.get("ladder_kc") or not ladder.get("ladder_stage"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Question '{question_id}' has no concept context",
+        )
+    scaffold = ladder_starter(question, ladder["ladder_stage"])
+    return QuestionContextResponse(
+        ladder_stage=ladder["ladder_stage"],
+        ladder_kc=ladder["ladder_kc"],
+        ladder_kc_title=ladder.get("ladder_kc_title"),
+        ladder_estimate=ladder["ladder_estimate"],
+        ladder_support=lessons.rung_support(
+            question.id, ladder["ladder_stage"], scaffold
+        ),
+        ladder_integrated=bool(ladder.get("ladder_integrated")),
+        starter_code=scaffold,
     )
 
 

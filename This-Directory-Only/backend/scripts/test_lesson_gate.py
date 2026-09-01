@@ -10,6 +10,7 @@ after exposure, and deterministic diagnostic-probe exclusion.
 Run: .venv/bin/python scripts/test_lesson_gate.py
 Exits non-zero on any failed assertion. No pytest dependency.
 """
+import copy
 import os
 import sys
 import tempfile
@@ -21,7 +22,7 @@ os.environ["USER_DATA_DIR"] = tempfile.mkdtemp(prefix="lesson_gate_test_")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from app import auth, diagnostic, lessons  # noqa: E402
+from app import auth, diagnostic, kc_graph, lessons  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
 from app.adaptive import get_user_state  # noqa: E402
@@ -146,6 +147,28 @@ try:
 finally:
     qr.select_next_subtopic = _orig_select
     diagnostic.should_run = _orig_should_run
+app.dependency_overrides.clear()
+
+# --- API: legacy paused-question context recovery --------------------------
+context_user = User(id=uuid.uuid4(), email="question-context-test@x.com", password_hash="x")
+app.dependency_overrides[auth.get_current_user] = lambda: context_user
+context_state = get_user_state(str(context_user.id))
+kc_graph.note_worked_seen(context_state, "numpy.ndarray-model")
+before_context_read = copy.deepcopy(vars(context_state))
+resp = client.get("/api/practice/question-context?question_id=482")
+context = resp.json()
+check("question context endpoint answers", resp.status_code == 200,
+      f"got HTTP {resp.status_code}: {context}")
+check("question context restores concept and faded rung",
+      context.get("ladder_kc") == "numpy.ndarray-model"
+      and context.get("ladder_stage") == "faded")
+check("question context restores authored faded scaffold",
+      "_____" in (context.get("starter_code") or ""))
+check("question context read does not mutate learner state",
+      vars(context_state) == before_context_read)
+resp = client.get("/api/practice/question-context?question_id=999999")
+check("unknown saved question is rejected", resp.status_code == 404,
+      f"got HTTP {resp.status_code}")
 app.dependency_overrides.clear()
 
 # --- diagnostic probes are never gated -------------------------------------

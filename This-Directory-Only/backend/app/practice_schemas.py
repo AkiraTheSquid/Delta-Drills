@@ -386,6 +386,18 @@ class KcEstimateResponse(BaseModel):
     ladder_estimate: dict
 
 
+class QuestionContextResponse(BaseModel):
+    """Server-only ladder fields needed to restore an old paused question."""
+
+    ladder_stage: str
+    ladder_kc: str
+    ladder_kc_title: str | None = None
+    ladder_estimate: dict
+    ladder_support: bool = True
+    ladder_integrated: bool = False
+    starter_code: str | None = None
+
+
 class WorkedSeenResponse(BaseModel):
     ladder_stage: str
     ladder_estimate: dict | None = None
