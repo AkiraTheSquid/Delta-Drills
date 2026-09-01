@@ -95,6 +95,12 @@ skill report the same thing from the other side.
   not taught. Zero NEW symbol families — the 56 entries are the same envelope already
   recorded for 568–573. The real fix is course ORDER, not more drills.
 
+- **Gameability pass over the whole bank** (2026-09-01): `audit_question_bank.py` gained
+  `wrong_example_matches_correct` (blocking) and `starter_passes_all_cases` (blocking) /
+  `starter_passes_some_cases` (info). First full-bank harness run ever: all 469 answers pass
+  their own cases, 0 starters fully pass, q550 partial (2/4 None-expected cases). q713's wrong
+  example was anchored to `solve(0, '')` — its output equalled the correct example output.
+  🔑 A wrong example needs inputs where the misconception DIVERGES from the right answer.
 - **Second concept at the floors** (2026-09-01): `python.types-and-conversion`,
   5 new drills (ids 713-717) — Solo 2->6, Integrated 2->3. Course order is encoded in
   the id ranges (568-573 root, 574-579 here, ... 604-609 dots-and-imports); fill them

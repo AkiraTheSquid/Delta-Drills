@@ -21078,7 +21078,8 @@
     "wrong_examples": [
       {
         "output": "(True, True)",
-        "why": "That answers yes for every input, which means the conversion never happened — `bool(0)` is False and `bool('')` is False. A value that holds nothing is the no."
+        "why": "That answers yes for every input, which means the conversion never happened — `bool(0)` is False and `bool('')` is False. A value that holds nothing is the no.",
+        "call": "solve(0, '')"
       }
     ],
     "expected_artifact_type": "stdout",
