@@ -93,6 +93,19 @@
 
 ## Recent Changes
 
+- 2026-09-01 (**a placement day rendered as an EMPTY day**): `activity_router.py`
+  now counts placement probes beside practice drills. Seth: "I did a lot more
+  than 3 problems by the way" — his prod record that day was 2 drills and 3
+  probes, and the chart said 2. 🔴 `diagnostic.py` appends probes to
+  `diagnostic["probes"]` in the STATE file and the submit path deliberately
+  creates no attempt during a live placement, so nothing in the attempt log ever
+  knew a 14-question test happened. `_probe_timestamps` reads them from beside
+  the log (derived from `attempt_log.log_path`, so a test's `base_dir` reaches
+  both stores); `dont_know` counts, because a day that drops the questions he
+  found hardest is the wrong readout. Days now carry `practice` / `placement`
+  beside `count` and the chart's hover says which. Every state read is
+  defensive — codex caught that `null`/`[]` are valid JSON whose `.get` is a 500
+  on the Learner Home.
 - 2026-09-01 (**the week, as the learner lived it**): new `activity_router.py` —
   `GET /activity-week` counts ANSWERED attempt rows (`kind == attempt`, outcome
   recorded; looser than `is_graded` on purpose — the chart reports work done, not
