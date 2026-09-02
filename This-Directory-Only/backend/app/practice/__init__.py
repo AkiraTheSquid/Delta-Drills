@@ -17,6 +17,15 @@ Endpoints:
   POST /api/practice/diagnostic/answer
   POST /api/practice/diagnostic/finish
   POST /api/practice/diagnostic/decline
+  GET  /api/practice/groups/mine
+  GET  /api/practice/groups/public
+  POST /api/practice/groups
+  POST /api/practice/groups/join
+  POST /api/practice/groups/join-public
+  POST /api/practice/groups/leave
+  POST /api/practice/groups/rotate-token
+  POST /api/practice/groups/visibility
+  POST /api/practice/groups/display-name
   GET  /api/practice/exposure
   POST /api/practice/exposure
   GET  /api/practice/state
@@ -37,6 +46,7 @@ from app.practice.arena_rating_router import router as arena_rating_router
 from app.practice.diagnostic_router import router as diagnostic_router
 from app.practice.feedback_router import router as feedback_router
 from app.practice.graph_feedback_router import router as graph_feedback_router
+from app.practice.groups_router import router as groups_router
 from app.practice.activity_router import router as activity_router
 from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
@@ -58,5 +68,6 @@ router.include_router(graph_feedback_router)
 router.include_router(lessons_router)
 router.include_router(kernel_router)
 router.include_router(activity_router)
+router.include_router(groups_router)
 
 __all__ = ["router"]

@@ -33,7 +33,7 @@
 - `chapters_router.py`: `/jobs/{job_id}/chapters` and `/jobs/{job_id}/chapters/{chapter_id}/download`.
 - `auth.py`: bcrypt password hashing, JWT encode/decode, `get_current_user` FastAPI dependency.
 - `db.py`: `SessionLocal`, `engine`, `get_db` dependency. Reads `DATABASE_URL` from `config.py`.
-- `models.py`: SQLAlchemy ORM — `User`, `Job`, `Chapter`, `JobArtifact`.
+- `models.py`: SQLAlchemy ORM — `User`, `Job`, `Chapter`, `JobArtifact`, and the Groups tables `StudyGroup` / `StudyGroupMember` / `StudyGroupDay`.
 - `schemas.py`: Pydantic shapes for the non-practice endpoints (jobs, chapters, auth tokens).
 - `practice_schemas.py`: Pydantic shapes for the practice endpoints. Kept here (not under `practice/`) so any non-practice consumer can import them without a circular dep through the router package.
 - `concept_graph.py`: Pydantic schema + JSON loader for the first explicit curriculum graph layer. This is the bridge between hand-seeded concept structure and later graph-aware scheduling.
@@ -50,6 +50,8 @@
 - `kernel_runner.py`: **the notebook's live session.** `code_runner` forks a hardened child that answers one block and exits — right for grading, wrong for a notebook, where cell 8 is entitled to the `a` that cell 6 bound. A kernel is that same child with the exit removed: a globals dict and a duplex pipe, serving one cell at a time until it is interrupted, evicted or idles out. Every fence the grading child raises per run is raised here ONCE, at kernel start (`os.setsid()`, environment scrubbed to `PATH`, the backend dir dropped from `sys.path`, `app.*` poisoned out of `sys.modules`) — persistence changes how LONG the child lives, not what it can reach. Caps: `DD_KERNEL_MAX` (4), `DD_KERNEL_IDLE_SECONDS` (1200), `DD_KERNEL_RSS_MB` (512). A timeout sends SIGINT first so the cell dies and the session survives, the way Colab's stop button behaves; `os.killpg(SIGKILL)` is the fallback and it costs the session.
 - `lifecycle.py`: `register_lifecycle(app)` — the startup/shutdown handlers `main.py` used to hold inline. Extracted because `main.py` is capped at 60 LOC, and shutdown now has real work to do (`kernel_runner.shutdown_all`).
 - `job_artifacts.py` + `storage.py` + `processing.py`: the PDF-job pipeline.
+- `study_groups.py` (2026-09-02): the roster store behind the Groups tab — create / join-by-token / join-out-of-the-directory, all through ONE `_add_member` gate, plus the invite token (a 128-bit capability), the initials-only public directory, and the ownership hand-over when the owner leaves. A port of Delta Note's accountability groups. Reads nobody's practice state: the mastery numbers on that page are `groups_router`'s job.
+- `study_group_days.py` (2026-09-02): the OTHER half of that page — one three-state checklist per person per day, stored as the opaque Tiptap `{v, doc}` string Delta Note's sub-goals use. 🔴 Keyed by `(user_id, day)` and never by group: a checklist is something a learner wrote, so it follows them between groups. 🔴 `day` is the LEARNER'S LOCAL DATE, parsed from what the browser sent and never derived here — a day written under the server's date reads back empty rather than failing.
 - `practice/`: see `practice/README.md` — every `/api/practice/*` endpoint lives there.
 - `config.py`: settings object (env-driven), incl. `openai_api_key`.
 
