@@ -63,6 +63,15 @@
       const col = document.createElement("div");
       col.className = "activity-day";
       if (day.date === payload.today) col.classList.add("is-today");
+      /* A placement day reads as impossibly high next to the drills the
+         learner remembers doing — the test is 14 questions that never appear
+         in their practice history. The hover says where the number came from
+         rather than leaving them to distrust the bar. */
+      const placement = Number(day.placement) || 0;
+      col.title =
+        placement > 0
+          ? `${day.date}: ${count} answered — ${Number(day.practice) || 0} practice, ${placement} placement`
+          : `${day.date}: ${count} answered`;
 
       const label = document.createElement("span");
       label.className = "activity-day-count";

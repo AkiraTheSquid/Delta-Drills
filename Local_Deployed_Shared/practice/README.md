@@ -161,6 +161,12 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-09-01 (**the bars were missing every placement question**): `activity-chart.js`
+  (`?v=2`) — the backend now returns `practice` / `placement` beside each day's
+  `count`, and each column carries a `title` saying which, because a placement
+  day otherwise reads as impossibly high next to the drills the learner
+  remembers. See the backend README: probes write no attempt row at all, so a
+  placement day used to draw as empty. No markup or CSS change.
 - 2026-09-01 (**how much you practiced this week**): new `activity-chart.js`
   (`?v=1`) draws seven Monday–Sunday bars into `#activity-week-chart` under
   `#learner-areas` on the Learner Home (Seth: "the amount of problems that
