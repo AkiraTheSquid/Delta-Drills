@@ -38,6 +38,25 @@ ALLOWED_ROOT_NAMES = {
                              # never served by Vercel. Added 2026-07-31.
     "instructions",          # written specs awaiting sign-off (dev-only, prose
                              # only, nothing importable). Added 2026-07-31.
+    "tools",                 # design/measurement harnesses run from THIS machine
+                             # (tools/visual-diff drives Chrome over CDP to diff
+                             # our ARENA notebook against LessWrong's). Dev-only,
+                             # never served — the deploy publishes
+                             # Local_Deployed_Shared/, not root. Added 2026-09-02.
+    "content-mcp",           # stdio MCP server + dd-content CLI for editing
+                             # lesson/graph/drill content from outside the app.
+                             # Runs on this machine against the repo; the backend
+                             # never imports it. Added 2026-09-02.
+    ".mcp.json",             # project-scoped MCP server registration read by the
+                             # `claude` CLI, not by anything we ship.
+                             # Added 2026-09-02.
+    ".content-mcp",          # content-mcp's machine-local state: its rolling
+                             # content snapshot and its session token. Gitignored
+                             # by nature — a snapshot is a rollback for THIS
+                             # checkout and a token is a credential. Added
+                             # 2026-09-02, after it aborted a deploy: this guard
+                             # walks the working tree, so .gitignore does not
+                             # hide a path from it.
     "ops",                   # operator tooling run from THIS machine, never by
                              # the app: the question-repair runner that drives
                              # the local `claude` CLI. Deliberately outside
