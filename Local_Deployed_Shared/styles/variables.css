@@ -233,7 +233,16 @@
 }
 
 /* ── LIGHT ──────────────────────────────────────────────────────────────── */
-:root[data-theme="light"] {
+/* 🔴 THE ARENA NOTEBOOK PAGE IS ALWAYS LIGHT, IN EVERY THEME. It is
+   LessWrong's reading surface (styles/practice/arena-notebook.css), and Seth
+   asked for their look copied exactly — which is a light page. It takes the
+   whole tested light palette from HERE rather than declaring a second one, so
+   a change to these values still reaches it and the two cannot drift apart.
+   An id outranks :root[data-theme="dark"], so this wins whatever theme the
+   rest of the app is in; arena-notebook.css then overrides the handful of
+   tokens where LessWrong differs from our light theme. */
+:root[data-theme="light"],
+#page-arena-notebook {
   /* --bg is the PAGE and also every recessed field (.text-input, .result-item
      and friends all say `background: var(--bg)`), so it is the off-white and
      --surface is the pure white the cards sit on. Inverting those two makes

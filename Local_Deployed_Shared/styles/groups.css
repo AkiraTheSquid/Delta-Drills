@@ -1,0 +1,808 @@
+/* ================================================================
+   GROUPS TAB — the roster, the bar above it, and the way in.
+
+   🔴 THE AREA BARS ARE NOT STYLED HERE. A member card's rows carry the
+   Learner Home's own `.placement-area*` classes and are painted by
+   styles/practice/diagnostic.css. That is the point of reusing the
+   markup: one set of rules decides what a readiness bar looks like, so
+   the Groups page cannot drift from the page it is quoting. Everything
+   below is the frame around them.
+
+   Every colour is a token from styles/variables.css — the app has three
+   themes and a literal here is a hole in two of them.
+   ================================================================ */
+
+.groups-page {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 28px 20px 64px;
+}
+
+.groups-page > h1 {
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+
+.groups-page-lede {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+  max-width: 68ch;
+}
+
+.dd-group-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dd-group-foot {
+  border-top: 1px solid var(--border);
+  margin-top: 26px;
+  padding-top: 16px;
+}
+
+/* ---- avatars ---------------------------------------------------- */
+
+.dd-group-avatars {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+/* The overlap is what makes a row of circles read as one group rather
+   than as a list of unrelated dots. The ring is the page behind them, so
+   the circles stay separable at any hue. */
+.dd-group-avatars .dd-group-avatar + .dd-group-avatar {
+  margin-left: -8px;
+}
+
+.dd-group-avatar {
+  align-items: center;
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  color: var(--white);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  height: 28px;
+  justify-content: center;
+  letter-spacing: .02em;
+  width: 28px;
+}
+
+.dd-group-avatar.is-lg {
+  font-size: 15px;
+  height: 40px;
+  width: 40px;
+}
+
+.dd-group-avatar.is-more {
+  background: var(--panel-deep) !important;
+  color: var(--muted);
+}
+
+/* ---- the bar above the roster ------------------------------------ */
+
+.dd-group-bar {
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+}
+
+.dd-group-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dd-group-count {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.dd-group-visibility {
+  background: rgb(var(--well-rgb) / calc(0.22 * var(--well-k)));
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 3px 9px;
+  text-transform: uppercase;
+}
+
+.dd-group-visibility.is-public {
+  background: rgb(var(--info-rgb) / 0.16);
+  color: var(--info);
+}
+
+/* Pushed right so the identity of the group reads left-to-right and the
+   controls are one block, not five things interleaved with facts. */
+.dd-group-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* The live region. Full width so a long sentence — the listing warning is
+   two lines — wraps under the bar instead of stretching it. */
+.dd-group-said {
+  color: var(--muted);
+  flex-basis: 100%;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.dd-group-said:empty {
+  display: none;
+}
+
+/* ---- the roster --------------------------------------------------- */
+
+/* 🔴 ONE MEMBER PER ROW, FULL WIDTH — not a wall of cards.
+   Seth, 2026-09-02: "each island ... is a row and it goes from left to right
+   and each row like each profile has ... two columns". The roster is therefore
+   a single column of rows, and the two columns live INSIDE a row. */
+/* 🔴 ONE ISLAND, NOT ONE PER PERSON (Seth, 2026-09-02). A card each turned
+   a roster into a stack of unrelated notes: twelve borders, twelve radii, and
+   no way for the eye to run a column down the page. The board is the panel;
+   a member is a ROW inside it, separated by a rule, and the day picker is the
+   first row rather than a floating control above the whole thing. */
+.dd-board {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  /* The rows are separated by borders that run to both edges; without this
+     the top and bottom ones square off the corners they sit in. */
+  overflow: hidden;
+}
+
+/* The day row. Same padding as a member row so the picker lines up with the
+   names underneath it. */
+.dd-board-day {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 18px;
+}
+
+.dd-member-grid {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+
+/* The two columns. The left one is sized by its content — the area bars need
+   about 300px before "12 probed" starts wrapping (see `.dd-member-areas`
+   below) — and the checklist takes whatever is left, because a line of a
+   checklist is a sentence and sentences want the room. `align-items: start`
+   so a member with two areas does not get a stretched, half-empty left column
+   beside somebody's twelve-line list. */
+.dd-member {
+  align-items: start;
+  display: grid;
+  gap: 0 22px;
+  grid-template-columns: minmax(272px, 340px) 1fr;
+  padding: 16px 18px 18px;
+}
+
+/* The rule between two people. The day row draws the first one, so a member
+   only ever draws the one above itself. */
+.dd-member + .dd-member {
+  border-top: 1px solid var(--border);
+}
+
+/* Your own row is marked, not moved — see the note in groups_view.js. A card
+   could say it with a border; a row inside a shared island cannot, so it is a
+   tinted band with a bar down the edge it starts at. */
+.dd-member.is-you {
+  background: rgb(var(--info-rgb) / 0.06);
+  box-shadow: inset 3px 0 0 rgb(var(--info-rgb) / 0.55);
+}
+
+.dd-member-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.dd-member-who {
+  min-width: 0;
+}
+
+.dd-member-name-row {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+}
+
+.dd-member-name {
+  font-size: 15px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd-member-you {
+  background: rgb(var(--info-rgb) / 0.16);
+  border-radius: 999px;
+  color: var(--info);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 2px 7px;
+  text-transform: uppercase;
+}
+
+.dd-member-meta {
+  color: var(--muted-dim);
+  display: block;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* The `.placement-areas` rule the Learner Home shares carries a 22px top
+   margin meant for the space under a results card. Inside a member card
+   the head is right above it, so the gap is halved here and nowhere else. */
+.dd-member-areas {
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+/* 🔴 THE TWO-ROW LAYOUT, AT EVERY WIDTH. `.placement-area`'s five-column
+   default (diagnostic.css) has a ~406px minimum once its gaps are counted,
+   and a member card is a 320px grid cell — so the wide template does not
+   overflow into a scrollbar, it silently paints "4 probed" OUTSIDE the card,
+   on top of the next member. Caught in the browser: nothing throws, and at
+   two members the clipped column simply hid behind the second card.
+
+   These are the same five grid-areas diagnostic.css assigns under its 620px
+   media query, applied here on the containing card rather than on the
+   viewport — a member card is narrow because it is a column of a roster, not
+   because the window is. Overriding the template only, so every colour, size
+   and unprobed rule still comes from the one sheet that owns them. */
+.dd-member-areas .placement-area {
+  grid-template-areas:
+    "name pct conf"
+    "bar bar probes";
+  /* The third column is sized by "12 probed", the widest thing that lands in
+     it — at 44px (diagnostic.css's phone width, where the probe count is
+     left-aligned under a full-width bar instead) it wraps onto two lines and
+     the row grows by 14px for one word. */
+  grid-template-columns: 1fr 44px 66px;
+  gap: 5px 10px;
+}
+
+.dd-member-areas .placement-area-name { grid-area: name; }
+.dd-member-areas .placement-area-bar { grid-area: bar; }
+.dd-member-areas .placement-area-pct { grid-area: pct; }
+.dd-member-areas .placement-area-conf { grid-area: conf; }
+.dd-member-areas .placement-area-probes { grid-area: probes; text-align: right; }
+
+/* ---- the day picker ------------------------------------------------ */
+
+.dd-day-bar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dd-day-caption {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dd-day-nav {
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+}
+
+/* ‹ and › are one glyph each, so `.ghost`'s form padding would make them two
+   fat rectangles either side of the field. Squared off to the size of the
+   thing they are. */
+.dd-day-step {
+  border-radius: 7px;
+  font-size: 17px;
+  line-height: 1;
+  margin: 0;
+  padding: 3px 9px 5px;
+  width: auto;
+}
+
+.dd-day-input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  padding: 3px 4px;
+}
+
+/* 🔴 The outline is dropped because the field sits INSIDE a bordered nav
+   and the native ring doubles it — but dropping it for the keyboard too
+   leaves a person tabbing through the page with no idea where they are.
+   `:focus-visible` fires only for the keyboard, so the ring comes back for
+   exactly the people who need it. */
+.dd-day-input:focus {
+  outline: none;
+}
+
+.dd-day-input:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Shown only after a failed read of the day, beside the picker that would
+   otherwise be the only way to try again. */
+.dd-day-retry {
+  margin: 0;
+  padding: 5px 12px;
+  width: auto;
+}
+
+/* 🔴 THE CALENDAR GLYPH IS DRAWN BY THE BROWSER, IN BLACK. `invert()` was
+   the old handle on it and it is the wrong one: it inverts whatever the
+   browser decided to draw, which on the blue theme left a black icon between
+   two white arrows. Masking replaces the art entirely, so the glyph takes
+   `--white` — the SAME token `.ghost` gives the ‹ and › either side of it —
+   and matches them in every theme by construction rather than by luck. */
+.dd-day-input::-webkit-calendar-picker-indicator {
+  background-color: var(--white);
+  cursor: pointer;
+  filter: none;
+  height: 15px;
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2v2H5.5A2.5 2.5 0 0 0 3 6.5v13A2.5 2.5 0 0 0 5.5 22h13a2.5 2.5 0 0 0 2.5-2.5v-13A2.5 2.5 0 0 0 18.5 4H17V2h-2v2H9V2H7zm12 8v9.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V10h14z"/></svg>');
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 15px 15px;
+  opacity: .75;
+  width: 15px;
+}
+
+.dd-day-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.dd-day-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.dd-day-today {
+  margin: 0;
+  padding: 5px 12px;
+  width: auto;
+}
+
+/* A save that did not land. Silent by design when everything is fine: the
+   element is always in the DOM so the column does not jump when it fills. */
+.dd-checklist-status {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 6px 0 0;
+  min-height: 0;
+}
+
+.dd-checklist-status.is-error {
+  color: var(--danger);
+}
+
+/* ---- the checklist column ------------------------------------------- */
+
+/* The separator between the two halves of a row. A border rather than a gap:
+   at twelve members the eye needs the columns to line up down the page. */
+.dd-member-day {
+  border-left: 1px solid var(--border);
+  min-width: 0;
+  padding-left: 22px;
+}
+
+.dd-member-day-head {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dd-member-day-title {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dd-member-day-count {
+  color: var(--muted-dim);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.dd-member-day-count:empty {
+  display: none;
+}
+
+.dd-checklist-blank {
+  color: var(--muted-dim);
+  font-size: 13px;
+  font-style: italic;
+  margin: 0;
+}
+
+.dd-checklist-broken {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* Your own column is a live editor and it needs to look like a field you may
+   type in, without a heavy box: a person opens this page to read four other
+   people and write one line. */
+.dd-checklist--mine {
+  background: rgb(var(--well-rgb) / calc(0.18 * var(--well-k)));
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  min-height: 74px;
+  padding: 9px 11px;
+}
+
+.dd-checklist--mine:focus-within {
+  border-color: var(--info);
+}
+
+/* ---- the checklist ITSELF ------------------------------------------- */
+
+/* 🔴 ONE SET OF RULES PAINTS BOTH SHAPES. The editor's DOM and the read-only
+   renderer's DOM are the same markup on purpose (see groups_checklist_doc.js),
+   so everything below is keyed on `.dd-checklist .ProseMirror` and neither
+   shape has a stylesheet of its own to drift in. Ported from Delta Note's
+   styles/subgoals.css, which owns the same list in that app. */
+
+.dd-checklist .ProseMirror {
+  caret-color: var(--info);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.5;
+  outline: none;
+}
+
+/* Reset the app's paragraph margin on EVERY p in here — a descendant selector,
+   not `li > p`. A bullet item's p sits directly under its li, but a TASK
+   item's p is nested (li > div > p); with `li > p` the task text keeps the
+   margins and renders a line below its own checkbox. */
+.dd-checklist .ProseMirror li,
+.dd-checklist .ProseMirror p {
+  margin: 0;
+}
+
+.dd-checklist .ProseMirror li + li {
+  margin-top: 2px;
+}
+
+.dd-checklist .ProseMirror ul:not([data-type="taskList"]) {
+  list-style: disc;
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li {
+  align-items: flex-start;
+  display: flex;
+  gap: 8px;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li > label {
+  flex: 0 0 auto;
+  line-height: 1;
+  margin: 0;
+  padding-top: 3px;
+  user-select: none;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 🔴 EVERY ICON KEYS ON `data-completion`, NEVER ON `:checked`. An X'd item's
+   input is UNCHECKED — that is the whole reason the third state needs an attr
+   of its own — so a `:checked` selector paints "won't do" as "not started".
+
+   🔴 AND THE COLOUR IS A TOKEN, NOT A LITERAL INSIDE THE SVG. Delta Note draws
+   these three as data-URI BACKGROUNDS with the fill written into the markup,
+   which works there and cannot work here: a background-image cannot see
+   `currentColor` or a `var()`, so the open circle had to be a hardcoded
+   translucent white — invisible on this app's light theme, and exactly the
+   light-on-dark literal styles/watch.py refuses. So the open state is a plain
+   CSS border, and the other two are the same glyphs used as a MASK over a
+   token background: a mask ignores the fill in the SVG entirely, which is what
+   lets --ok and --danger reach art that lives in a URL.
+
+   Same three shapes as Delta Note's goals_dashboard_completion.buildCompletionSvg. */
+.dd-checklist .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 1.5px solid var(--muted);
+  border-radius: 50%;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 15px;
+  margin: 0;
+  padding: 0;
+  width: 15px;
+}
+
+/* The mask replaces the ring: the glyphs are circles in their own right. */
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-completion="checked"] input[type="checkbox"],
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-completion="x"] input[type="checkbox"] {
+  border-color: transparent;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 15px 15px;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 15px 15px;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-completion="checked"] input[type="checkbox"] {
+  background-color: var(--ok);
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22,5.18L10.59,16.6l-4.24-4.24l1.41-1.41l2.83,2.83l10-10L22,5.18z M19.79,10.22C19.92,10.79,20,11.39,20,12c0,4.42-3.58,8-8,8s-8-3.58-8-8c0-4.42,3.58-8,8-8c1.58,0,3.04,0.46,4.28,1.25l1.44-1.44C16.1,2.67,14.13,2,12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10c0-1.19-0.22-2.33-0.6-3.39L19.79,10.22z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22,5.18L10.59,16.6l-4.24-4.24l1.41-1.41l2.83,2.83l10-10L22,5.18z M19.79,10.22C19.92,10.79,20,11.39,20,12c0,4.42-3.58,8-8,8s-8-3.58-8-8c0-4.42,3.58-8,8-8c1.58,0,3.04,0.46,4.28,1.25l1.44-1.44C16.1,2.67,14.13,2,12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10c0-1.19-0.22-2.33-0.6-3.39L19.79,10.22z"/></svg>');
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-completion="x"] input[type="checkbox"] {
+  background-color: var(--danger);
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>');
+}
+
+/* Done reads done. `[data-checked]` rather than `[data-completion]` so an item
+   from a document written before the third state existed strikes through too. */
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-checked="true"] > div {
+  opacity: .55;
+  text-decoration: line-through;
+}
+
+.dd-checklist .ProseMirror ul[data-type="taskList"] > li[data-completion="x"] > div {
+  opacity: .5;
+}
+
+/* Somebody else's boxes are `disabled`; the browser greys them, which reads as
+   "broken" rather than as "not yours". Full opacity, default cursor. */
+.dd-checklist--read .ProseMirror input[type="checkbox"] {
+  cursor: default;
+  opacity: 1;
+}
+
+/* ---- the discovery card ------------------------------------------- */
+
+.dd-group-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  max-width: 620px;
+  padding: 24px 26px 26px;
+}
+
+.dd-group-card h2 {
+  font-size: 20px;
+  margin: 0 0 8px;
+}
+
+.dd-group-lede {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+
+.dd-group-error {
+  background: rgb(var(--danger-rgb) / 0.12);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0 0 16px;
+  padding: 9px 12px;
+}
+
+.dd-group-invited {
+  align-items: center;
+  background: rgb(var(--info-rgb) / 0.1);
+  border-radius: 10px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+}
+
+.dd-group-invited p {
+  margin: 0;
+}
+
+.dd-group-block {
+  border-top: 1px solid var(--border);
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+/* 🔴 `.dd-group-block > label` would ALSO catch `.dd-group-tick`, the "let
+   anyone find it" checkbox, which is a sentence a person reads and not a
+   field caption — it came out as UPPERCASE LETTER-SPACED SHOUTING under the
+   Create button. `:not()` rather than a deeper selector because the tick is a
+   direct child on purpose: it belongs to the block above it, not to a row. */
+.dd-group-block > label:not(.dd-group-tick),
+.dd-group-block-head label {
+  color: var(--muted);
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.dd-group-block-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dd-group-block-head label {
+  margin-bottom: 0;
+}
+
+.dd-group-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* The FIELD grows, the button does not. `.primary` (components.css) is
+   `width: 100%; margin-top: 4px` because everywhere else in this app it is the
+   full-width button at the bottom of a form — inside a flex row that width
+   becomes the button's flex-basis, so Create took 566px of a 600px row and the
+   name input was squeezed to a 24px stub. `width: auto` is the actual fix;
+   `flex: 0 0 auto` on its own does nothing here. */
+.dd-group-row > button {
+  flex: 0 0 auto;
+  margin-top: 0;
+  width: auto;
+}
+
+.dd-group-input {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  flex: 1 1 auto;
+  font: inherit;
+  font-size: 13.5px;
+  min-width: 0;
+  padding: 8px 11px;
+}
+
+.dd-group-input:focus {
+  border-color: var(--info);
+  outline: none;
+}
+
+.dd-group-tick {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 12.5px;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.dd-public-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.dd-public-group {
+  align-items: center;
+  border-radius: 9px;
+  display: flex;
+  gap: 12px;
+  padding: 8px 10px;
+}
+
+.dd-public-group:hover {
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+}
+
+.dd-public-name {
+  flex: 1 1 auto;
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd-public-count {
+  color: var(--muted-dim);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---- the consent dialog -------------------------------------------- */
+
+.dd-group-consent {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  color: var(--text);
+  max-width: 520px;
+  padding: 24px 26px;
+}
+
+.dd-group-consent::backdrop {
+  background: var(--scrim-modal);
+}
+
+.dd-group-consent h3 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+
+.dd-group-consent p {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.dd-group-consent-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 820px) {
+  .dd-group-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+  /* The two columns stack. The separator has to move with them or it draws a
+     vertical rule down the left edge of the checklist with nothing beside it. */
+  .dd-member {
+    grid-template-columns: 1fr;
+  }
+  .dd-member-day {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+    padding: 14px 0 0;
+  }
+  .dd-day-bar {
+    flex-wrap: wrap;
+  }
+}

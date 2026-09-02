@@ -77,13 +77,18 @@ REQUIRED_TOKENS = (
     "--xp-from", "--xp-to", "--xp-glow-rgb",
 )
 
-# The three theme blocks in variables.css, by the selector that opens each.
+# The three theme blocks in variables.css, by the FULL selector list that opens
+# each — a block is matched by its whole list, not by one selector in it, which
+# is why two of these carry a comma.
 # ":root," is the blue block's first selector — blue is also the unstamped
-# default, which is why it and ':root[data-theme="blue"]' share a rule.
+# default, which is why it and ':root[data-theme="blue"]' share a rule. The
+# light block is shared the same way with '#page-arena-notebook', because the
+# ARENA notebook page is LessWrong's light reading surface in every theme and
+# takes this palette rather than declaring a second copy of it.
 THEME_BLOCKS = (
     ':root,\n:root[data-theme="blue"]',
     ':root[data-theme="dark"]',
-    ':root[data-theme="light"]',
+    ':root[data-theme="light"],\n#page-arena-notebook',
 )
 
 

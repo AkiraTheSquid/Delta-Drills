@@ -205,8 +205,10 @@ def check_invariants():
     # The ceiling is a TERMINATION check, not a row budget: the failure it
     # catches is a slice that ran past `</div>` and swallowed the rest of the
     # page (tens of KB), not a menu that grew a row. Raised 6000 -> 9000 on
-    # 2026-08-31 when the placement-retake row and its comment landed.
-    assert 0 < len(menu) < 9000, (
+    # 2026-08-31 when the placement-retake row and its comment landed, and
+    # 9000 -> 12000 on 2026-09-02 when the Groups row landed. A run-away slice
+    # is 20x over this, not 10% over, so the headroom costs the check nothing.
+    assert 0 < len(menu) < 12000, (
         "the #account-menu slice did not terminate where check_front_door "
         "expects it to — every row assertion below is now reading the wrong "
         "span of the document"

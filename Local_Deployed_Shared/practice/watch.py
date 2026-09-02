@@ -40,6 +40,8 @@ from watch_feedback import (
 from watch_example_gate import check_the_example_gate_runs_after_the_lesson_gates
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
+    check_the_arena_notebook_keeps_its_rail_and_its_place,
+    check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure,
     check_only_one_module_patches_a_code_editors_value,
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
@@ -601,6 +603,8 @@ if __name__ == '__main__':
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
               check_the_notebook_view_is_loaded_after_what_it_calls,
+              check_the_arena_notebook_keeps_its_rail_and_its_place,
+              check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure,
               check_the_example_gate_runs_after_the_lesson_gates,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
