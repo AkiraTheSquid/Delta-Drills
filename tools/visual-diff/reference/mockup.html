@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ARENA notebook · LessWrong design reference</title>
+    <!--
+      THE REFERENCE PAGE. Delta-Drills' own notebook content, laid out under the
+      design measured off a live LessWrong post (out/lw.json). It exists so the
+      diff has something fair to compare against: the same words, the same
+      headings, the same rail structure, and only the CSS different.
+
+      🔴 THE CLASS NAMES ARE OURS ON PURPOSE. .nbv-cell / .anb-toc-row are the
+      app's, so one role map in targets.json describes both this page and the
+      real one and the diff is measuring stylesheets rather than markup.
+
+      Nothing here is LessWrong code. Every number in mockup.css was measured
+      from the rendered page by probe.js; see README.md.
+    -->
+    <!-- 🔴 THE APP'S OWN RAIL STYLESHEET, NOT A COPY. mockup.css maps the app's
+         token names onto this page's light palette, so the same file paints
+         itself here. A second copy of these rules is what let this page go on
+         showing a design the app had already replaced. -->
+    <link rel="stylesheet" href="mockup.css" />
+    <link rel="stylesheet" href="../../../Local_Deployed_Shared/styles/practice/arena-notebook-nav.css" />
+  </head>
+  <body>
+    <main class="mock-column">
+      <div class="nbv-cells" id="cells"></div>
+    </main>
+
+    <!-- The app's own markdown renderer, so the prose is rendered by exactly
+         the code that renders it for real. config.js first: lessons.js reads
+         DEFAULT_EDITOR_CODE from it at load. If either fails to load standalone,
+         mockup.js falls back to its own small renderer and says so. -->
+    <script src="../../../Local_Deployed_Shared/practice/config.js"></script>
+    <script src="../../../Local_Deployed_Shared/practice/lessons.js"></script>
+    <!-- The rail itself, built by the app's module. mockup.js only mounts it. -->
+    <script src="../../../Local_Deployed_Shared/practice/arena-notebook-nav.js"></script>
+    <script src="mockup.js"></script>
+  </body>
+</html>

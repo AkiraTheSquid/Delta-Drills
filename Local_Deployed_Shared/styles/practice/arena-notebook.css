@@ -14,6 +14,47 @@
      - images, which upstream prose is full of and authored lessons never have
 */
 
+/* ---- the faces ----------------------------------------------------------- */
+
+/* 🔴 WE DO NOT SHIP LESSWRONG'S BODY FONT, AND CANNOT. Their prose face is
+   `warnock-pro`, a commercial Adobe face served from LessWrong's OWN Typekit
+   kit (themes/globalStyles/externalStyles.ts). It renders on their domain and
+   on localhost; pointing this app at that kit would be spending someone else's
+   font licence, and would 403 the day it left localhost anyway.
+
+   So the body takes THEIR OWN FALLBACK CHAIN instead — the list that sits
+   behind warnock-pro in themes/defaultPalette.ts `serifStackBody` — with URW
+   Palladio (P052) added, because that is the metric-compatible Palatino clone
+   Linux actually has and Palatino is the first thing they fall back to.
+
+   Headings get ET Book, which IS what they use for headings (`headerStack` =
+   ETBookRoman + that same chain) and which is MIT-licensed, so it is vendored
+   in fonts/ rather than hotlinked. Nothing in this file is their code. */
+
+@font-face {
+  font-family: "ETBookRoman";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/et-book-roman-line-figures.woff") format("woff");
+}
+
+@font-face {
+  font-family: "ETBookRoman";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  src: url("fonts/et-book-bold-line-figures.woff") format("woff");
+}
+
+@font-face {
+  font-family: "ETBookRoman";
+  font-display: swap;
+  font-style: italic;
+  font-weight: 400;
+  src: url("fonts/et-book-display-italic-old-style-figures.woff") format("woff");
+}
+
 .arena-notebooks-container {
   margin: 0 auto;
   max-width: 980px;
@@ -118,4 +159,182 @@
    rather than push the whole column sideways on a phone. */
 .nbv-md a {
   overflow-wrap: anywhere;
+}
+
+/* ---- the reading column -------------------------------------------------- */
+
+/* SETH: "I want the text size to be the same for the middle part ... I want
+   everything to be the same in terms of broad things, aside from obviously the
+   fact that my notebook can run code cells in it."
+
+   So the prose here is set to LessWrong's own measure, taken with
+   tools/visual-diff (`capture.py lw`, then `diff.py lw ours`) rather than
+   guessed: a 682px column of 18.2px text on a 26px line, headings at
+   36.4 / 26 / 20.8 with their tighter 1.21 leading. Ours was 16px on 880px —
+   about 110 characters a line, which is half again the measure anything is
+   meant to be read at.
+
+   🔴 THE CODE CELLS KEEP THE OLD WIDTH. They are the one thing this surface
+   has that a post does not: an 80-column line of PyTorch, a run gutter and an
+   output block do not fit in a 682px prose measure. So the prose narrows and
+   the runnable cells break back out to 880px, which is why the rules below are
+   scoped to `#page-arena-notebook` — the lesson notebooks share `.nbv-*` and
+   are not this document. */
+
+#page-arena-notebook .nbv-cells,
+#page-arena-notebook .arena-nb-head {
+  max-width: 682px;
+}
+
+/* ---- LessWrong's typography, measured ------------------------------------ */
+
+/* SETH, 2026-09-02, with our page and theirs open side by side: "I really like
+   the font that they use along with the text sizing and the headers and all
+   that other stuff. So, you could copy that exactly."
+
+   Every number below was READ OFF A RENDER, not guessed. ~/Applications/
+   lw-toc-local mounts their real FixedPositionToC / MultiToCLayout components
+   over one of our notebooks, and tools/visual-diff reads the computed styles
+   back out of it. What that comparison showed is worth writing down, because
+   it is not what the screenshots suggested: THE SIZES WERE ALREADY EXACT on
+   both sides — 36.4 / 26 / 20.8 / 18.2px, rail labels 15.1 / 14.3px, rail rows
+   at the same x. The three things that actually differed were the family, the
+   heading WEIGHT (we were bold, they are 400) and the palette.
+
+   🔴 THE LINE-HEIGHTS ARE PIXELS, NOT RATIOS. Theirs come out of a 13px rem
+   root; ours is 16px. A ratio copied across those two roots is a different
+   number of pixels, which is how this drifted the first time. */
+
+#page-arena-notebook {
+  --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
+    P052, "URW Palladio L", Georgia, serif;
+  --lw-header: "ETBookRoman", var(--lw-serif);
+
+  /* Their surface, over the light palette variables.css already handed this
+     page: a pure white page rather than our off-white --bg, their three greys,
+     and their hairline. --accent-text is the label hover in the rail, which
+     they take to full-strength text rather than to a brand colour. */
+  /* Their page is PURE white. Our light theme keeps pure white for --surface
+     and makes --bg a slightly recessed off-white, so the page background here
+     is --surface — a token, not a second copy of the literal. */
+  --bg: var(--surface);
+  --text: rgba(0, 0, 0, 0.87);
+  --muted: #616161;
+  --muted-dim: #757575;
+  --border: #e0e0e0;
+  --border-strong: #bdbdbd;
+  --accent-text: rgba(0, 0, 0, 0.87);
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+#page-arena-notebook .nbv-md {
+  color: var(--text);
+  font-family: var(--lw-serif);
+  font-size: 18.2px;
+  line-height: 26px;
+}
+
+#page-arena-notebook .nbv-md p {
+  margin: 18.2px 0;
+}
+
+/* Their list items are tighter than their paragraphs — 6.5px between rows
+   against 18.2px between paragraphs — which is most of why a bulleted section
+   of theirs reads as one block and ours read as a stack. */
+#page-arena-notebook .nbv-md li {
+  margin-bottom: 6.5px;
+}
+
+#page-arena-notebook .nbv-md h1,
+#page-arena-notebook .nbv-md h2,
+#page-arena-notebook .nbv-md h3,
+#page-arena-notebook .arena-nb-title {
+  font-family: var(--lw-header);
+  font-weight: 400;
+}
+
+#page-arena-notebook .nbv-md h1 {
+  color: #424242;
+  font-size: 36.4px;
+  line-height: 41.25px;
+  margin: -3px 0 24.4px;
+}
+
+#page-arena-notebook .nbv-md h2 {
+  color: #424242;
+  font-size: 26px;
+  line-height: 31.35px;
+  margin: 26px 0 21.6px;
+}
+
+#page-arena-notebook .nbv-md h3 {
+  color: #616161;
+  font-size: 20.8px;
+  line-height: 25.1px;
+  margin: 20.8px 0;
+}
+
+/* h4 is the one heading they do NOT set in the display face: it drops to the
+   body serif and carries its weight instead, which is what keeps a fourth
+   level from reading as another h3. */
+#page-arena-notebook .nbv-md h4 {
+  color: #616161;
+  font-family: var(--lw-serif);
+  font-size: 18.2px;
+  font-weight: 600;
+  line-height: 23px;
+  margin: 18.2px 0 12px;
+}
+
+#page-arena-notebook .nbv-md a {
+  color: #327e09;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#page-arena-notebook .nbv-md blockquote {
+  border-left: 3px solid var(--border);
+  color: var(--text);
+  margin: 18.2px 0;
+  padding-left: 18px;
+}
+
+/* 🔴 PROSE CODE ONLY. `.nbv-md code` is a span inside rendered markdown; the
+   runnable cell's source is `.nbv-src code`, a different element in a
+   different cell, and it must keep the editor's own metrics or the overlay in
+   code-highlight.css stops lining up with the textarea underneath it. Their
+   inline code is much smaller than their body text — 12.74px against 18.2px —
+   which only looks right because it is set on a grey chip. */
+#page-arena-notebook .nbv-md code {
+  background: #f5f5f5;
+  font-size: 12.74px;
+  line-height: 18.1px;
+  padding: 1px 3px;
+}
+
+/* The section header is this page's title block, so it follows the headings
+   rather than the app's sans chrome. */
+#page-arena-notebook .arena-nb-title {
+  font-size: 26px;
+  line-height: 31.35px;
+}
+
+#page-arena-notebook .arena-nb-desc {
+  font-family: var(--lw-serif);
+  font-size: 18.2px;
+  line-height: 26px;
+}
+
+/* Code, and only code, is allowed back out to the full 880px. The breakout is
+   99px of negative margin each side; below the width where that still fits
+   inside the container it simply does not apply and the cell sits in the
+   column like everything else. */
+@media (min-width: 1200px) {
+  #page-arena-notebook .nbv-cell.nbv-code,
+  #page-arena-notebook .nbv-cell.nbv-hints {
+    margin-left: -99px;
+    margin-right: -99px;
+  }
 }

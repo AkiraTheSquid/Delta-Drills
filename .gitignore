@@ -161,3 +161,12 @@ This-Directory-Only/scripts/questions_base*.json
 # token. Machine-local by nature: a snapshot is a rollback for THIS checkout,
 # and a session token is a credential.
 /.content-mcp/
+
+# Visual-diff captures: screenshots and measurement JSON written by
+# tools/visual-diff/capture.py. Machine- and moment-specific (they photograph a
+# live LessWrong page next to a local server), regenerate with `capture.py`.
+tools/visual-diff/out/*.png
+tools/visual-diff/out/*.json
+tools/visual-diff/__pycache__/
+tools/visual-diff/reference/*-toc.html
+tools/visual-diff/reference/*-toc.css
