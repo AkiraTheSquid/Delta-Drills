@@ -156,3 +156,8 @@ This-Directory-Only/scripts/questions_base.json
 
 # Scratch bank snapshots for the torchify generators (see scripts/README.md).
 This-Directory-Only/scripts/questions_base*.json
+
+# content MCP local state — the daily content snapshot and the editing session
+# token. Machine-local by nature: a snapshot is a rollback for THIS checkout,
+# and a session token is a credential.
+/.content-mcp/

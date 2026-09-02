@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# stdio MCP entry point. This is what an MCP client (Claude Code) launches.
+# 🔴 stdout is the JSON-RPC stream — nothing may print to it but the server.
+set -euo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PKG_ROOT="$(dirname "$HERE")"
+REPO="$(dirname "$PKG_ROOT")"
+
+PY="$REPO/This-Directory-Only/backend/.venv/bin/python3"
+[ -x "$PY" ] || PY="$(command -v python3)"
+
+exec env PYTHONPATH="$PKG_ROOT${PYTHONPATH:+:$PYTHONPATH}" \
+  "$PY" -m content_mcp.server

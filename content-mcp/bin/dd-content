@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Terminal entry point for the Delta Drills content tools.
+# Runs under the backend venv when it exists (torch is needed by the pipeline
+# steps), otherwise any python3 — the read and edit tools need neither.
+set -euo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PKG_ROOT="$(dirname "$HERE")"
+REPO="$(dirname "$PKG_ROOT")"
+
+PY="$REPO/This-Directory-Only/backend/.venv/bin/python3"
+[ -x "$PY" ] || PY="$(command -v python3)"
+
+exec env PYTHONPATH="$PKG_ROOT${PYTHONPATH:+:$PYTHONPATH}" \
+  "$PY" -m content_mcp.cli "$@"
