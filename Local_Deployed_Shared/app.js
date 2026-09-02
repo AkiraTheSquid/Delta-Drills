@@ -223,6 +223,20 @@ const switchTab = (tabName, opts) => {
     if (tabName === "practice" || tabName === "placement") window.DiagnosticPage.refresh();
     else window.DiagnosticPage.leave(tabName);
   }
+  /* The Groups roster is read on ARRIVAL and at no other time. Somebody
+     joining is the only thing that changes it, and a page that polled would
+     be a request per open tab per interval for a list that changes once a
+     week. The group is kept in memory, so the next arrival paints before its
+     read comes back.
+
+     🔴 LEAVING IS NOT A NO-OP ANY MORE. Since the member rows grew a live
+     three-state checklist, that tab holds a ProseMirror editor with a
+     half-second save debounce. `suspend()` tears it down, and the teardown is
+     what FLUSHES the debounce — without it, typing a line and immediately
+     clicking another tab loses the line, silently, because the page it was
+     typed on is gone by the time the timer fires. */
+  if (tabName === "groups") window.DDGroups?.refresh();
+  else window.DDGroups?.suspend?.();
 };
 
 tabs.forEach((t) => {
@@ -522,6 +536,23 @@ const apiFetch = async (path, options = {}, allowSessionRefresh = true) => {
    bound to this exact implementation. */
 window.apiFetch = apiFetch;
 
+/* 🔴 PUBLISHED FOR THE SAME REASON, and only these two facts.
+
+   `isSignedIn` and `authEmail` are top-level bindings in this classic script,
+   so groups/groups_store.js cannot see them — and it needs both: whether to
+   make the call at all (a guest's progress lives in this browser, so every
+   /api/practice/groups/* call would be a 401 per boot) and what to call the
+   person in a roster before they have said otherwise.
+
+   A FUNCTION for the email, not the value. `authEmail` is reassigned by
+   setAuthState on every sign-in and sign-out; a snapshot taken here would be
+   the address the page booted with, which for anyone who signed in without a
+   reload is the empty string. */
+window.DDIdentity = {
+  isSignedIn: () => isSignedIn(),
+  email: () => authEmail,
+};
+
 // Read through `window` rather than the binding: guest-session.js is loaded
 // AFTER this file, so `DDGuest` does not exist yet when apiFetch is defined —
 // only when it is called.
@@ -728,7 +759,18 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
 // argument for the app assumed the visitor wanted to read one. #page-welcome
 // offers that path and the other one, says which is optional, and shows
 // nothing else.
-switchTab(soloTab || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
+/* A group invite in the address bar is somebody who just clicked a link a
+   friend sent them, and every other landing rule would drop them on the
+   Learner Home with the token still in the URL and nothing saying what it
+   was for. It sits under `soloTab` because a pathname deep link is an
+   explicit request for one chromeless page, and above the rest because
+   nothing else here was asked for by the person arriving.
+
+   Reading it does NOT consume it: groups/groups_store.js clears the
+   parameter only once the join has actually happened, so a reload before
+   then still lands here. */
+const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "groups" : "";
+switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by
