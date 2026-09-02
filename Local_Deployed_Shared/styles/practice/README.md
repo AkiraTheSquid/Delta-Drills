@@ -23,6 +23,7 @@
 - `stage-ladder.css`: **the one progress readout on the practice page** (`#stage-ladder`, INSIDE the question's heading card in the left panel; behaviour in `../../practice/stage-ladder.js`). A column: the concept name, the rung you are on named in words (plus `.stage-ladder-flag`, the INTEGRATED chip — a property of the problem, never a rung), then the meter — Lesson · Faded · Worked example · Solo — and a text caption under it. 🔴 **The meter is ONE bar cut into four, not four bars in a row.** A single rounded `.stage-ladder-bar` carries a single `.stage-ladder-fill` across the whole ladder, and the rung boundaries are `.stage-ladder-seam` chevrons — sideways Vs pointing right, drawn in the panel's own `--surface-2` so they read as the bar being cut rather than as ticks laid over it. The rung names are INSIDE the track, and they are drawn **twice**: `.stage-ladder-track--base` is coloured for the empty track, `.stage-ladder-track--on` is coloured for the accent and clipped to `inset(0 calc(100% - var(--dd-ladder-pct)) 0 0)`, so every pixel of every glyph — and of the rung's ⓘ — is painted for the ground behind THAT pixel and the contrast flips exactly at the fill's edge, mid-word. 🔴 The two layers must stay pixel-identical: the clipped copy carries an inert `<span class="dd-info">` twin of each rung's button so both rows measure the same, which is why the dots are hand-written in the script instead of injected by `infotips.js`. 🔴 **THE READING IS A LINE OF TEXT UNDER THE TRACK, and there is no strip any more** — 2026-08-23, Seth: "the bar goes on the left as well right below the title of the concept ... it is part of a rectangle that holds both the bar and the concept right above it". The ladder is a block inside `.question-number-row` (see `question.css`, which owns the rectangle) and the `<h2>` in that same card names the concept, so `.stage-ladder-reading` states the percentage and carries the INTEGRATED chip, the lesson eyebrow and the withdrawn-scaffold note — nothing else. 🪦 `.stage-ladder-callout` is DELETED with `--dd-ladder-gap`, `--dd-callout-arrow-x`, the `padding-top` reserve above the bar and `stage-ladder.js`'s resize listener: it was an absolutely-positioned pop-up whose BOX was clamped by measurement to stay inside the strip and whose ARROW was aimed separately, in the box's own coordinates, because the moment that clamp bit the box's centre stopped being the position described. All five were one mechanism and they were removed together — putting any floating shape back here needs all five, and it can only float over the question now. 🔴 The bar's height still lives in ONE place, `--dd-ladder-bar-h` on `.stage-ladder-meter` (26px, 20px on the Colab rail, 24px on a phone). 🔴 **The ladder — not the card — is `display: none` in basic mode** (`body.dd-basic-mode .stage-ladder`, class written by `app.js::applyModeVisibility`): Seth's call, 2026-08-23. The heading card and its centred title stay in both modes; only the bar rides with Advanced. ⚠️ The empty track is tinted 0.13 and not 0.07: the seams are cut in the panel colour, so a fainter track hid every division the fill had not yet reached. ⚠️ The rung names now have to fit HALF a window rather than a whole one — `.stage-seg-label` ellipsises, and the Colab rail's overrides are worth reading before you widen anything. There is no difficulty clause: the ladder states one quantity. Replaces `concept-topbar.css` and `difficulty-bar.css`, both deleted.
 - `notebook-view.css`: **the Notebooks tab**, which is not the practice page at all — it lives here because it is a practice-surface stylesheet and shares the tokens. Styles the notebook list, the sticky toolbar (Back / title / jump-to / Restart session), the banner the view uses to say the session restarted or that the learner is signed out, and the cell: a `[n]` execution counter, an editable source block, its output, and the run/failed/stale borders. Solutions and hints are `<details>` — closed is the default and the styling must not make an open one look like an ordinary cell. Scoped under `.nbv-*`; nothing here is shared with `editor.css`, because a notebook cell and the practice editor look alike and are not the same thing.
 - `basic-mode.css`: **what the practice question is when Advanced mode is off**, which is the default. Nothing but `body.dd-basic-mode` overrides — the same class `app.js::applyModeVisibility` writes from the Account tab's checkbox and that `stage-ladder.css` already gated the ladder on. Seth, 2026-08-23: the tab "shows way too much information ... for now it just needs to show the title of the problem area, the question, and the examples if it's a faded or worked example problem", with "the feedback and all the other extra information for Advanced mode from the settings". Survives: `.question-number-row`, `#question-text` (and the `.ladder-example` `ladder.js` appends INSIDE it), `#question-visual`, `#torch-colab-notice`, `#practice-submit-area`, `.result-row`, `#next-problem-btn`. Hidden: imported helpers, the hint aids, the override row, the felt-difficulty rating, the failed-tests block, the missed-fact and problem-flag rows, the concept-understanding bar, the solution, the AI explanation and the tutor. 🔴 **Must stay LAST in `index.html`'s `<link>` order** — every rule in it overrides something declared in the sheets above, so a link moved earlier loses the ties and the screen quietly comes back. `watch.py` asserts the position against the whole of `CSS_FILES`, and asserts the keep-list is never hidden. 🔴 It hides the three `.feedback-btn`s **individually, never `.feedback-buttons`**: `#next-problem-btn` is their sibling in that row and carries none of their classes, so hiding the row takes the only way off a graded question with it. 🔴 It also hides `.dd-info[data-dd-info="feedback-rating"]` — `infotips.js` mints the dot as a SIBLING of its subject, so hiding `#feedback-prompt` alone leaves a bare "i" under the result badge (same trap the placement timer hit). ⚠️ Display-only by design: every element keeps its id and is still written to, so the AI explanation still loads and ticking Advanced reveals content that is already there. The ONE behavioural consequence — the hidden rating is the only backend mutation that commits an attempt to mastery — is handled in `../../practice/basic-mode.js`. 🔴 **Not on the Colab edition** — every selector is prefixed `html:not(.dd-colab-edition)`, and `practice/basic-mode.js::active()` states the same predicate. That deploy already cut this rail down differently and on purpose, and the two things it deliberately KEEPS are the two this sheet would have taken: the reference solution (its whole review step — *"after pressing submit… it should display the solution to the problem at the bottom"*) and the felt-difficulty rating with its help line, which `colab-edition.css` restyles into a stacked column because *"nothing advances until one is pressed"*. `body.dd-basic-mode` is written there too, and these rules out-specify `colab-edition.css`'s, which only sets border and padding on `.solution-section` — so unguarded, Basic mode silently deleted the solution that edition exists to show. ⚠️ The guard is the whole edition, not `:not(.dd-no-notebook)`, so Basic mode also stays off for the ~75 Colab questions with no published notebook; one predicate both halves can state identically was judged worth more than that corner.
+- `arena-notebook-nav.css`: **the ARENA notebook's contents rail** — the left-edge ToC built by `practice/arena-notebook-nav.js`. 🔴 The `<nav>` is 300px wide AT ALL TIMES and `pointer-events: none`, with a 54px gutter strip inside it taking the mouse: the labels have to lay out at their real width so opening the panel does not reflow every row, and an invisible label hanging over the notebook must not eat a click meant for a cell. 🔴 The open state is the `.is-hover` CLASS, set by JS, not `:hover` — once open, the transparent gaps between labels would read as leaving the rail and the panel would flicker. Below 1180px there is no gutter left to hover, so the ticks are hidden and a round toggle asks for the panel instead.
 - `colab-edition.css`: the Colab edition's tutor rail, and its review step (a verdict opens the solution; everything else in the feedback panel is hidden there). Everything is scoped under `html.dd-colab-edition` (set by `practice/colab_mode.js` on the `delta-drills-colab` deploy) and is inert on the normal app. Strips the prompt, the editor and the worked example — they are in the notebook beside the panel — and re-stacks the stage ladder for panel widths (its four sections wrap to a 2-column grid, which is what keeps "Worked example" from truncating at 300px). `html.dd-no-notebook` (set by `ui.js`) turns all of it back off for the ~75 questions with no published notebook, which would otherwise get an empty rail.
 
 ## Data & External Dependencies
@@ -58,6 +59,100 @@
   - Status: RESOLVED (2026-07-12) for `#practice-submit-area`; the rule stands for new code.
 
 ## Recent Changes
+- 2026-09-02 (**the ARENA notebook page is LessWrong's, and it is LIGHT**):
+  Seth, with our page and the reference open side by side: "I really like the
+  font that they use along with the text sizing and the headers and all that
+  other stuff. So, you could copy that exactly."
+
+  🔑 **The sizes were ALREADY exact.** `~/Applications/lw-toc-local` mounts
+  their real `FixedPositionToC` / `MultiToCLayout` over one of our notebooks, and
+  reading computed styles off both sides showed 36.4 / 26 / 20.8 / 18.2px prose
+  and 15.1 / 14.3px rail labels on OURS as well as theirs, with the rail rows at
+  the same x. Three things actually differed, and none of them was a dimension:
+  the FAMILY (Inter, not a serif), the heading WEIGHT (700, theirs is 400) and
+  the PALETTE. Two evenings had gone into re-measuring spacing that was already
+  right — measure the property that is wrong, not the one that is easy to measure.
+
+  🔴 **The page is light in every theme, and does not own a palette to say so.**
+  `variables.css`'s `:root[data-theme="light"]` block is now a selector LIST that
+  includes `#page-arena-notebook`, the way the blue block already shared a rule
+  with bare `:root`. An id outranks `:root[data-theme="dark"]`, so it wins
+  whatever the rest of the app is in, and there is no second copy of ~90 tokens
+  to drift. `arena-notebook.css` then overrides only where LessWrong differs
+  from our light theme. `styles/watch.py`'s `THEME_BLOCKS` had to learn the new
+  selector list — it matches a block by its WHOLE opening list, not by one
+  selector in it.
+
+  🔴 **We cannot ship their body font, and the failure mode is that it works.**
+  `warnock-pro` is commercial and served from LessWrong's OWN Typekit kit. It
+  renders on localhost, so hotlinking it would look correct on the machine you
+  test on and 403 in production — while spending someone else's licence either
+  way. The body takes THEIR fallback chain instead (`defaultPalette.ts`
+  `serifStackBody`: Palatino → Palatino Linotype → Book Antiqua → Georgia), plus
+  URW Palladio because that is the Palatino clone Linux actually has. Headings
+  get ET Book, which is what they use AND is MIT — vendored in
+  `practice/fonts/`, guarded by its own `watch.py`.
+
+  ⚠️ **Code cells were never touched and did not need to be.** They are
+  entirely token-driven (`--well-rgb`, `--border`, `--text`, `--code-*`), so
+  re-pointing the page at the light palette carried the runner, the gutter, the
+  output block and the syntax overlay with it. The one rule that names code is
+  `.nbv-md code` — prose code, 12.74px on a grey chip. `.nbv-src code` is a
+  different element in a different cell and keeps the editor's metrics, because
+  `code-highlight.css` slides a coloured `<pre>` behind a transparent textarea
+  and the two layers must agree on every one of them.
+- 2026-09-02 (**the rail is their TREE now, not just their numbers**): Seth,
+  looking at the result of the port below: "this still pretty much looks
+  terrible. Doesn't that other repository utilize HTML and CSS? Can't we just
+  duplicate the HTML and CSS." It does not — ForumMagnum is .tsx styled by a JS
+  object, so there is no stylesheet in it to copy — but the BROWSER renders one,
+  and `tools/visual-diff/dom_clone.py` now reads it back: every node of their
+  rendered rail with its computed style.
+
+  That found what comparing declarations could not. 🔴 **Their row is TWO
+  elements.** `rowWrapper` takes the section's share of the document;
+  `rowDotContainer` inside it keeps one line of content at the TOP of that
+  share. Ours was a single element being both, so every row came out exactly one
+  line tall and evenly spaced — the "horizontal lines" shape all over again,
+  just with dots on it. The rail now has `.anb-toc-line` inside `.anb-toc-row`,
+  plus `.anb-toc-fade` (their `rowOpacity`) and `.anb-toc-level` (their
+  `TableOfContentsRow-root`, which is where the indent and the per-level type
+  live, exactly as theirs does).
+
+  Also from the dump, all of it measured rather than chosen: the 9px min-height
+  squash is **gone** — theirs never compresses a row, rows are the same height
+  open and closed and the box scrolls instead, which is why their collapsed rail
+  is a proportional column of dots; the rule is `--border-strong`, because
+  `--border` on our background was the dark-theme equivalent of invisible; the
+  progress line is two siblings sharing a `flex-basis` rather than one absolute
+  fill, which is what gives the window marker a flex line to sit at the end of;
+  the dot's box is pinned to their 3.16px so Inter's wider bullet does not push
+  every label 2px right of theirs; the root carries their 17px inset and their
+  12px/12px container type; the title is a `<span>` inside the link, as their
+  `tocTitle` is. `dom_clone.py --diff` now reads **785 identical, 0 different**.
+- 2026-09-02 (**the rail is theirs now, and so is the reading column**): The
+  first port of the rail was measured off a screenshot of LessWrong and came out
+  the wrong shape — a stack of 3x2px dashes. Seth: "it's supposed to have ... the
+  DOTS in between ... I want you to copy it identically." Re-ported from
+  ForumMagnum's OWN SOURCE instead: `.anb-toc-dot` is their `rowDot`, a 9px
+  bullet carrying the page background so the rule appears to pass behind it;
+  rows carry their section's share of the document as `flex` (with shrink, so a
+  long notebook compresses to its dots); `.anb-toc-progress-fill::after` is
+  their scroll-window marker; `.anb-toc-rows` is a hidden-scrollbar scroller so
+  a 74-heading notebook can be scrolled on its own. `.anb-toc-hit` went from a
+  54px strip to the whole 264px margin — Seth: ours "only exposes if you hover
+  over the line itself ... which is not good". In `arena-notebook.css`, the
+  ARENA reading column is now their measure: 682px of 18.2px/26px text, headings
+  36.4 / 26 / 20.8, with runnable code cells breaking back out to 880px. Held by
+  `practice/watch_notebook.py::check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure`
+  and re-checked property-by-property against their source by
+  `tools/visual-diff/source_diff.py`.
+- 2026-09-02 (**contents rail**): New `arena-notebook-nav.css`, linked after
+  `arena-notebook.css` in `index.html`. Its own sheet rather than more of that
+  one: nothing in it is a `.nbv-*` override — it is a fixed-position surface
+  that happens to sit beside the notebook. Replaced the `.nbv-toc` dropdown on
+  the ARENA surface only; the lesson Notebooks tab still has its select, and
+  the `.nbv-toc` rules in `notebook-view.css` are still what styles it.
 - 2026-09-01 (**weekly activity bars**): `.learner-activity` block appended to
   `diagnostic.css` (`?v=14`) — the problems-per-day chart under the area list on
   the Learner Home, drawn by `practice/activity-chart.js`. Same card shell and

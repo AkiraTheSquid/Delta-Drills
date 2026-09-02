@@ -85,7 +85,12 @@
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=2" />
+  <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
+       rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
+       override, it is a fixed-position surface that happens to sit beside the
+       notebook. -->
+  <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=2" />
   <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
@@ -93,6 +98,12 @@
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=14" />
+  <!-- THE GROUPS TAB. AFTER diagnostic.css, and it has to be: a member card's
+       readiness rows carry that sheet's own `.placement-area*` classes (the
+       Learner Home's bars, quoted rather than copied), and the one rule in
+       groups.css that overrides them — `.dd-member-areas`'s tighter top
+       margin — is the same specificity, so source order is what settles it. -->
+  <link rel="stylesheet" href="styles/groups.css?v=1" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
        win the ties. Inert until app.js `applyModeVisibility` writes that class,
@@ -223,6 +234,7 @@
       <button class="tab" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="courses" type="button">Course content</button>
       <button class="tab auth-only" data-tab="practice" type="button">Learner Home</button>
+      <button class="tab auth-only" data-tab="groups" type="button">Groups</button>
       <button class="tab auth-only" data-tab="notebooks" type="button">Notebooks</button>
       <!-- HIDDEN 2026-08-23 (Seth, via @O): Targeted Practice is not being
            maintained. The HTML `hidden` ATTRIBUTE, the same idiom as split-tool
@@ -369,6 +381,29 @@
              learner already in the app, which is why the row has to survive
              every state the test can be in — see the three-state label in
              practice/diagnostic-page.js. -->
+        <!-- GROUPS (Seth, 2026-09-02). First after the separator because it is
+             the other place a learner GOES, as opposed to the four below it,
+             which are things you set up or read once.
+
+             🔴 THE MENU ROW IS THE REAL ENTRY POINT, not the `.tab` above.
+             Basic mode is the default and it hides the whole tab strip, so
+             for almost every learner the strip entry does not exist — the
+             same argument that moved Knowledge graph and Course content in
+             here. `groups` is deliberately NOT in `advancedOnlyTabs`
+             (app.js), or switchTab would refuse this row in basic mode and it
+             would read as a dead button. -->
+        <button class="account-menu-item" type="button" role="menuitem" data-goto-tab="groups">
+          <span class="account-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+              <circle cx="9" cy="8.2" r="3.1"></circle>
+              <path d="M3.4 19.4a5.9 5.9 0 0 1 11.2 0"></path>
+              <path d="M16.2 5.6a3 3 0 0 1 0 5.5"></path>
+              <path d="M17.4 14.2a5.2 5.2 0 0 1 3.2 4.4"></path>
+            </svg>
+          </span>
+          <span class="account-menu-label">Groups</span>
+        </button>
         <button class="account-menu-item" type="button" role="menuitem"
                 data-goto-tab="placement" data-placement-retake>
           <span class="account-menu-icon" aria-hidden="true">
@@ -1373,6 +1408,28 @@
   </main>
 
 
+  <!-- GROUPS — everybody's readiness, side by side (Seth, 2026-09-02).
+
+       ONE MOUNT POINT AND NOTHING ELSE. The whole surface is built by
+       groups/groups_view.js, because the page is two entirely different
+       screens — the discovery card while you are in no group, the roster once
+       you are — and markup authored here would be the third copy of whichever
+       one it was not.
+
+       🔴 A MEMBER'S BARS ARE THE LEARNER HOME'S BARS. groups_view.js emits the
+       same `.placement-area*` rows #placement-areas carries and scores them
+       with `PlacementResults.readiness`, which is a mirror of
+       `_mastery_from_theta` in app/diagnostic.py that practice/watch.py
+       already guards. That is the reason the Groups tab needs no arithmetic of
+       its own, and the reason nothing here may grow a second scale. -->
+  <main class="page hidden" id="page-groups">
+    <div class="groups-page">
+      <h1>Groups</h1>
+      <p class="groups-page-lede">A study group puts everyone's readiness beside your own — the same area bars your Learner Home draws, for every member. Start one, join a listed one, or paste an invite link.</p>
+      <div id="groups-root" aria-live="polite"></div>
+    </div>
+  </main>
+
   <main class="page hidden session-idle" id="page-practice">
     <div id="practice-workspace-home" hidden></div>
 
@@ -2014,7 +2071,30 @@ t.manual_seed(0)
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=2"></script>
   <script src="solo-route.js?v=6"></script>
-  <script src="app.js?v=33"></script>
+  <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
+       second column — a three-state Tiptap checklist per day, ported from
+       Delta Note's sub-goals). 🔴 BEFORE app.js, NOT AFTER IT. app.js runs its boot
+       `switchTab` as it parses, and that call asks `DDGroupStore` whether the
+       address bar carries an invite token (`?group=...`) so a person who
+       clicked an invite lands on this tab instead of on Practice. Loaded after
+       app.js the store does not exist yet, the question answers undefined, and
+       the invite link opens the Learner Home — silently, because every other
+       part of the feature works and the token is still in the URL. Caught in
+       the browser, not by a check.
+       Every one of them reads `apiFetch`, `DDIdentity`, `PlacementResults` and
+       each other off `window` at CALL time, never at load, so loading early
+       costs nothing and the order inside the group is for readability. The
+       400 KB Tiptap bundle these use is NOT loaded here: `groups_checklist.js`
+       imports it on the first mount, so nobody who never opens this tab pays
+       for it. -->
+  <script src="groups/groups_store.js?v=2"></script>
+  <script src="groups/groups_checklist_doc.js?v=1"></script>
+  <script src="groups/groups_checklist.js?v=1"></script>
+  <script src="groups/groups_day.js?v=1"></script>
+  <script src="groups/groups_join.js?v=1"></script>
+  <script src="groups/groups_lane.js?v=1"></script>
+  <script src="groups/groups_view.js?v=3"></script>
+  <script src="app.js?v=34"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -2172,7 +2252,14 @@ t.manual_seed(0)
        after it in the same document, so it shares that scope. courses.js loads
        later and calls window.ArenaNotebook.open() at CLICK time, so the order
        between the two does not matter. -->
-  <script src="practice/arena-notebook.js?v=1"></script>
+  <!-- BEFORE arena-notebook.js, which optional-chains both at render time.
+       The rail draws the notebook's headings; the state module remembers where
+       in the notebook you were when you switched tabs. Neither is required for
+       the notebook to render — a missing file costs the rail or the memory,
+       which is why they are separate scripts and not more of the view. -->
+  <script src="practice/arena-notebook-nav.js?v=1"></script>
+  <script src="practice/arena-notebook-state.js?v=1"></script>
+  <script src="practice/arena-notebook.js?v=2"></script>
   <script src="practice/ladder.js?v=9"></script>
   <script src="practice/example-gate.js?v=1"></script>
   <script src="practice/kc-practice.js?v=4"></script>

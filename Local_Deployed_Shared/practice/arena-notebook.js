@@ -283,24 +283,19 @@ const ArenaNotebookView = (() => {
 
   /* ---------- the notebook screen -------------------------------------- */
 
-  /* Jump targets: every heading a prose cell opens with. A 300-cell section
-     without one is a scrollbar and a hope — the same reason the lesson
-     notebooks carry one. */
-  const _tocOptions = (cells) =>
-    cells
-      .map((cell) => {
-        if (cell.t !== "md" || cell.role !== "prose") return null;
-        const heading = String(cell.src || "").match(/^(#{1,4})\s+(.+)$/m);
-        if (!heading) return null;
-        const depth = heading[1].length;
-        return {
-          id: cell.id,
-          label: `${"  ".repeat(Math.max(0, depth - 1))}${heading[2].replace(/[*`]/g, "")}`,
-        };
-      })
-      .filter(Boolean);
+  /* 🔴 THERE IS NO "JUMP TO…" DROPDOWN ANY MORE (Seth, 2026-09-02). The jump
+     list is `practice/arena-notebook-nav.js`: a rail down the left edge that
+     is ticks until you put the mouse in the gutter and titles when you do,
+     built from the headings in the RENDERED page rather than from the cell
+     source. Reading the DOM is what lets it carry every heading — the select
+     only ever listed the first heading of each prose cell, so a cell that
+     opened a section and then started a subsection contributed one row. */
 
   const _host = () => document.getElementById("arena-notebook-host");
+  /* The tab's page element, not the mount. The contents rail is parked here
+     rather than in the host so that `host.innerHTML = …` on the next notebook
+     does not take it with it, and so that hiding the page hides the rail. */
+  const _page = () => document.getElementById("page-arena-notebook");
 
   /* The route back. `switchTab` is a top-level `const` in app.js and therefore
      NOT a property of `window` — the trap this tree documents for `PracticeAPI`
@@ -312,14 +307,10 @@ const ArenaNotebookView = (() => {
     else if (typeof window.switchTab === "function") window.switchTab("courses");
   };
 
-  const _headerHtml = (nb, options) =>
+  const _headerHtml = (nb) =>
     '<div class="nbv-toolbar">' +
     '<button type="button" class="nbv-back">← The course</button>' +
     `<span class="nbv-title">${esc(nb.number ? `${nb.number} ${nb.title}` : nb.title)}</span>` +
-    '<select class="nbv-toc" aria-label="Jump to a section">' +
-    '<option value="">Jump to…</option>' +
-    options.map((o) => `<option value="${esc(o.id)}">${esc(o.label)}</option>`).join("") +
-    "</select>" +
     '<button type="button" class="nbv-restart" title="Throw the Python session away">' +
     "Restart session</button>" +
     "</div>" +
@@ -337,7 +328,7 @@ const ArenaNotebookView = (() => {
   const _render = (nb, host) => {
     const state = { id: nb.id, title: nb.title, host, runSeq: 0 };
     current = state;
-    host.innerHTML = _headerHtml(nb, _tocOptions(nb.cells));
+    host.innerHTML = _headerHtml(nb);
 
     const body = document.createElement("div");
     body.className = "nbv-cells";
@@ -367,11 +358,6 @@ const ArenaNotebookView = (() => {
     });
 
     host.querySelector(".nbv-back").onclick = () => _backToCourses();
-    host.querySelector(".nbv-toc").onchange = (event) => {
-      const target = event.target.value && document.getElementById(`arena-${event.target.value}`);
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-      event.target.value = "";
-    };
     host.querySelector(".nbv-restart").onclick = async () => {
       await window.DeltaKernel?.reset();
       state.runSeq = 0;
@@ -387,6 +373,13 @@ const ArenaNotebookView = (() => {
         state,
       );
     }
+
+    /* The contents rail and the scroll memory, in that order: the rail measures
+       heading offsets, and restoring the scroll position first would have it
+       measure them mid-jump. Both are optional-chained — a build without either
+       file is a notebook with no rail and no memory, not a blank page. */
+    window.ArenaNotebookNav?.mount(_page(), host, nb.number ? `${nb.number} ${nb.title}` : nb.title);
+    window.ArenaNotebookState?.bind(nb.id);
   };
 
   /* ---------- entry points --------------------------------------------- */
@@ -404,9 +397,33 @@ const ArenaNotebookView = (() => {
   const open = async (slug) => {
     const host = _host();
     if (!host || !slug) return false;
+
+    /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,
+       2026-09-02: "if you go back to that tab, it will stay at that location
+       that you were at before"). This used to re-fetch and re-render on every
+       click of the section row, which threw away the whole session: the cells
+       you had edited, the outputs you had run, the disclosures you had opened,
+       and the position you were reading at. The kernel is untouched by a
+       re-render — `CONTEXT(slug)` is the same session — so the page came back
+       LOOKING empty while your names were still bound, which is worse than
+       either honest answer. Nothing here is stale: the notebook JSON is a
+       compiled artifact of this build. */
+    if (current && current.id === slug && host.querySelector(".nbv-cells")) {
+      if (typeof switchTab === "function") switchTab("arena-notebook");
+      else if (typeof window.switchTab === "function") window.switchTab("arena-notebook");
+      window.ArenaNotebookNav?.refresh();
+      window.ArenaNotebookState?.restore();
+      return true;
+    }
+
+    // Leaving a different notebook: take its position with us AND let go of it,
+    // before the DOM that the reading is relative to is replaced by a loading
+    // paragraph. Found by codex, 2026-09-02.
+    window.ArenaNotebookState?.suspend();
     if (typeof switchTab === "function") switchTab("arena-notebook");
     else if (typeof window.switchTab === "function") window.switchTab("arena-notebook");
     current = null;
+    window.ArenaNotebookNav?.destroy();
     host.innerHTML = '<p class="nbv-loading">Loading the notebook…</p>';
     let nb;
     try {
@@ -426,7 +443,11 @@ const ArenaNotebookView = (() => {
       return false;
     }
     _render(nb, host);
+    /* Top of the notebook unless this browser remembers a position in it —
+       which it does after a reload, or a visit yesterday. `bind` in _render
+       has already named the slug this reads. */
     window.scrollTo({ top: 0 });
+    window.ArenaNotebookState?.restore();
     return true;
   };
 

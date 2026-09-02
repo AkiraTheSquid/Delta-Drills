@@ -86,6 +86,262 @@ def check_the_notebook_view_is_loaded_after_what_it_calls():
     )
 
 
+def check_the_arena_notebook_keeps_its_rail_and_its_place():
+    """The ARENA surface's contents rail and its scroll memory are still wired.
+
+    Both are optional-chained from `arena-notebook.js` on purpose — a build
+    missing one of them renders the notebook anyway — which is exactly why a
+    missing file cannot be noticed by using the app. What it costs is the rail
+    (the only jump list, since the `Jump to…` select was removed) or the
+    position you were reading at.
+    """
+    index_html = read(os.path.join(SHARED, "index.html"))
+    view = read(os.path.join(HERE, "arena-notebook.js"))
+
+    # 🔴 BOTH MODULES ON DISK, not just referenced. index.html naming a file
+    # that is not there is a 404 in the console and a notebook that silently
+    # loses its rail or its remembered position — the view optional-chains both
+    # precisely so that nothing throws. Found by codex, 2026-09-02: this check
+    # verified the script TAG for the state module and never the file.
+    for module in ("arena-notebook-nav.js", "arena-notebook-state.js"):
+        assert os.path.exists(os.path.join(HERE, module)), (
+            f"practice/{module} is referenced by index.html but is not on disk"
+        )
+    nav = read(os.path.join(HERE, "arena-notebook-nav.js"))
+    state = read(os.path.join(HERE, "arena-notebook-state.js"))
+
+    css = os.path.join(SHARED, "styles", "practice", "arena-notebook-nav.css")
+    assert os.path.exists(css), (
+        "styles/practice/arena-notebook-nav.css is gone — the rail renders as a "
+        "column of unstyled buttons over the notebook"
+    )
+    assert "styles/practice/arena-notebook-nav.css" in index_html, (
+        "index.html no longer links arena-notebook-nav.css"
+    )
+
+    view_pos = index_html.find('src="practice/arena-notebook.js')
+    assert view_pos != -1, 'index.html missing <script src="practice/arena-notebook.js">'
+    for dependency in ("practice/arena-notebook-nav.js", "practice/arena-notebook-state.js"):
+        pos = index_html.find(f'src="{dependency}')
+        assert pos != -1, f"index.html no longer loads {dependency}"
+        assert pos < view_pos, (
+            f"{dependency} must load BEFORE practice/arena-notebook.js — the view "
+            "reads it at render time and optional-chains it, so a wrong order is "
+            "a notebook with no rail and no remembered position, not an error"
+        )
+
+    # 🔴 The dropdown is REPLACED, not supplemented. Two jump lists on one
+    # toolbar is the state this change exists to leave.
+    assert "nbv-toc" not in view, (
+        "arena-notebook.js has a `nbv-toc` select again — the ARENA surface's "
+        "jump list is the rail in arena-notebook-nav.js (Seth, 2026-09-02)"
+    )
+
+    # The whole of the "it stays where I left it" ask: reopening the notebook
+    # already on screen must NOT re-render it. A rebuild keeps the kernel
+    # session and throws away every edited cell and every output, which reads
+    # as an empty notebook whose names are still bound.
+    assert "current.id === slug" in view, (
+        "arena-notebook.js::open no longer reuses the notebook already on "
+        "screen — reopening it rebuilds it and loses the session"
+    )
+
+    # A `position: fixed` element's offsetParent is null even when it is
+    # perfectly visible, so the usual display:none test switches the rail off
+    # entirely. Learned in the browser, not from a thrown error.
+    # Matched as a property ACCESS (`.offsetParent`), not as the word: the file
+    # names it in the comment that explains why it is the wrong test.
+    assert not re.search(r"\.offsetParent\b", nav), (
+        "arena-notebook-nav.js tests visibility with offsetParent — that is "
+        "always null for the fixed-position rail; use getClientRects().length"
+    )
+    assert "getClientRects" in nav, (
+        "arena-notebook-nav.js lost its on-screen test — it would measure "
+        "heading offsets while the tab is hidden, where every rect is 0"
+    )
+
+    # ARENA hints and solutions are <details> with headings of their own, and a
+    # closed one has no layout: measuring it answers 0 and puts a row out of
+    # document order, which breaks the "last heading above the mark" rule for
+    # every row after it.
+    assert 'closest("details")' in nav, (
+        "arena-notebook-nav.js no longer skips headings inside a <details> — "
+        "a closed disclosure measures 0 and corrupts the rail's order"
+    )
+
+    # The window between "open another section" and the new notebook rendering:
+    # the host is a loading paragraph, the page is still on screen, and the
+    # scroll clamp fires a scroll event that would be attributed to the
+    # notebook just left. The binding has to END there, not merely be saved.
+    # 🔴 THE CALL, NOT THE WORD. `"suspend" in view` stayed true after the call
+    # was deleted, because the comment explaining it also says "suspend" — a
+    # green watcher over a reintroduced bug. Found by codex, 2026-09-02.
+    assert re.search(r"\bsuspend\s*=", state) or re.search(r"suspend[,}]", state), (
+        "ArenaNotebookState no longer exposes suspend()"
+    )
+    assert re.search(r"ArenaNotebookState\??\.?\)?\.?suspend\s*\(", view) or re.search(
+        r"ArenaNotebookState[^\n]*\.suspend\(", view
+    ), (
+        "the notebook-switch path no longer CALLS suspend() — the loading "
+        "page's clamped scroll is written as the OUTGOING notebook's position, "
+        "and returning to it lands at the top"
+    )
+
+
+def check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure():
+    """The rail's design is LessWrong's, taken from their source, and the
+    notebook's reading column is their measure.
+
+    Seth, 2026-09-02, twice: "it's supposed to have the thing where the bar
+    scrolls through the table of contents and has the DOTS in between ... rather
+    than what you did with like horizontal lines. I want you to copy it
+    identically for the left area rather than trying to create your own", and
+    "I told you to create that tool, but I think you tried to do it by looking
+    at the website itself rather than utilizing the open source software."
+
+    So every value asserted here was read off their RENDERED rail with
+    `tools/visual-diff/dom_clone.py`, which walks the live page and dumps every
+    node's computed style — the only form in which their design exists as HTML
+    and CSS, their repo being .tsx components styled by a JS object. The reason
+    a watcher holds them is that each one reverts to something that still LOOKS
+    like a rail: dashes instead of dots, a strip instead of a margin, a list
+    that cannot scroll, a row that is one element instead of two.
+
+    `./dom_clone.py --diff` re-checks the whole rail against theirs property by
+    property (785 identical, 0 different, 2026-09-02); this is the subset that
+    cost a correction.
+    """
+    nav = read(os.path.join(HERE, "arena-notebook-nav.js"))
+    css = read(os.path.join(SHARED, "styles", "practice", "arena-notebook-nav.css"))
+    column = read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css"))
+
+    # 🔴 SCOPED TO THE RULE, NOT SEARCHED IN THE FILE. `background: var(--bg)`
+    # also appears in the narrow-screen `.anb-toc.is-open` rule, so a file-wide
+    # search stays green after the declaration is deleted from the dot. Found by
+    # codex, 2026-09-02 — it is the failure this whole watcher exists to avoid.
+    def rule(selector):
+        found = re.search(re.escape(selector) + r"\s*\{(.*?)\}", css, re.S)
+        assert found, f"{selector} is gone from arena-notebook-nav.css"
+        return found.group(1)
+
+    # THE DOTS. Their rowDot is a bullet CHARACTER carrying the page background,
+    # which is what makes the rule appear to pass behind it. A stack of
+    # horizontal rules reads as a list; a column of dots on a line reads as a
+    # map of the document, and the difference is the whole widget.
+    assert "\u2022" in nav, (
+        "the rail's dots are gone — each row must carry a bullet character "
+        "(their FixedPositionToC rowDot), not a rule"
+    )
+    assert "background: var(--bg)" in rule(".anb-toc-dot"), (
+        "the dot no longer carries the page background, so the progress line "
+        "crosses it instead of passing behind it"
+    )
+    # 🔴 A ROW IS TWO ELEMENTS. The outer row takes the section's share of the
+    # notebook; the inner line keeps its own content height at the top of it. A
+    # single element doing both jobs makes every row exactly one line tall and
+    # evenly spaced, which is the "horizontal lines" shape all over again — the
+    # rail stops carrying any information about the document.
+    assert "anb-toc-line" in nav and re.search(r"\.anb-toc-line\s*\{", css), (
+        "the row's inner line is gone — without it the row IS its content and "
+        "the rail's proportional spacing disappears"
+    )
+    assert "flex-direction: column" in rule(".anb-toc-row"), (
+        "the row is no longer a column, so its share of the notebook stretches "
+        "the label instead of leaving space under it"
+    )
+    # 🔴 AND THE ROW IS THE THING THAT SITS ABOVE THE HOVER STRIP. `.anb-toc-hit`
+    # is absolutely positioned across the whole column, and a positioned box
+    # paints over a static one whatever the document order — so if the row loses
+    # its own stacking context the strip eats every click meant for a heading and
+    # the rail becomes decoration. Theirs carries the same two declarations.
+    row_rule = rule(".anb-toc-row")
+    assert "position: relative" in row_rule and "z-index: 1" in row_rule, (
+        "the row lost its stacking context — .anb-toc-hit will swallow clicks "
+        "on the labels and the rail will open but never navigate"
+    )
+
+    # THE HOVER AREA IS THE WHOLE MARGIN. Measured on their page with
+    # tools/visual-diff: labels are already showing at x=300. Seth: ours "only
+    # exposes if you hover over the line itself that's on the far left which is
+    # not good."
+    hit = re.search(r"\.anb-toc-hit\s*\{[^}]*?width:\s*(\d+)px", css, re.S)
+    assert hit and int(hit.group(1)) >= 200, (
+        "the rail's hit area is back to a narrow strip — it has to be the whole "
+        "column beside the text, or the rail only opens if you find it"
+    )
+
+    # LONG NOTEBOOKS SCROLL, and the rows box is the thing that scrolls.
+    rows = re.search(r"\.anb-toc-rows\s*\{(.*?)\}", css, re.S)
+    assert rows and "overflow-y: auto" in rows.group(1), (
+        "the contents list can no longer scroll — an ARENA notebook with 70 "
+        "headings overflows the viewport and the tail becomes unreachable"
+    )
+    # 🔴 A ROW'S min-height IS ITS SHRINK FLOOR, AND IT IS `auto` IN BOTH
+    # STATES. Theirs never compresses a row: rows are the same height open and
+    # closed and the box scrolls instead, which is why their collapsed rail is a
+    # PROPORTIONAL column of dots. An earlier version here squashed closed rows
+    # to 9px to make them fit, and the result was an evenly-spaced list.
+    assert "min-height: auto" in rule(".anb-toc-row"), (
+        "a row can shrink below its label again — rows must keep their content "
+        "floor in both states and let the box scroll"
+    )
+    assert not re.search(r"min-height:\s*\d", rule(".anb-toc-row")), (
+        "a fixed min-height is back on the row: that is the squash that turned "
+        "the rail into an evenly-spaced list"
+    )
+
+    # Their scroll-window marker: the 2px block that rides the end of the fill
+    # and is as tall as the share of the notebook on screen.
+    assert "--anb-window" in rule(".anb-toc-progress-fill::after") and "--anb-window" in nav, (
+        "the progress line lost its window marker — the rail stops being a "
+        "scrollbar for the document"
+    )
+
+    # Their getCurrentSectionMark(): a FIFTH of the way down the window.
+    assert "innerHeight / 5" in nav, (
+        "the current-section mark has moved off their 1/5 viewport line"
+    )
+
+    # `flex`, not `flex-grow`: the shorthand also sets basis 0, so the share is
+    # the WHOLE of the row's height rather than an addition to its content.
+    # Their rowWrapper computes to exactly that.
+    assert re.search(r"\.style\.flex\s*=", nav), (
+        "rows are no longer sized with the `flex` shorthand — with a basis of "
+        "auto the share is added to the label instead of containing it"
+    )
+    # Their progress line is TWO siblings sharing a basis, not one absolutely
+    # positioned box: that is what gives the fill a flex line for its ::after —
+    # the window marker — to bottom-align inside.
+    assert "flexBasis" in nav and re.search(r"\.anb-toc-progress-rest\s*\{", css), (
+        "the progress line is back to a single absolute fill, which leaves the "
+        "window marker nothing to align to"
+    )
+
+    # Reading the contents hands the list over to the reader: a rescale that
+    # yanks it back to the current section while they are scrolling it is the
+    # bug this timer exists to prevent.
+    assert "handOffUntil" in nav, (
+        "the contents list no longer yields to the reader — scrolling it snaps "
+        "back to the current section"
+    )
+
+    # THE MIDDLE COLUMN. Seth: "I want the text size to be the same for the
+    # middle part." Measured off their post: 682px of 18.2px text on a 26px
+    # line. The code cells break back out, because they are the one thing this
+    # surface has that a post does not.
+    assert "max-width: 682px" in column, (
+        "the ARENA reading column is no longer their 682px measure"
+    )
+    assert "font-size: 18.2px" in column, (
+        "the ARENA prose is no longer their 18.2px — ours was 16px on an 880px "
+        "column, about 110 characters a line"
+    )
+    assert "#page-arena-notebook" in column, (
+        "the reading-column rules are no longer scoped to the ARENA page — the "
+        "lesson notebooks share .nbv-* and are not this document"
+    )
+
+
 def check_the_verdict_line_is_read_the_same_way_everywhere():
     """One grammar for "did this problem pass", in both readers.
 
