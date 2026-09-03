@@ -205,7 +205,15 @@
    root; ours is 16px. A ratio copied across those two roots is a different
    number of pixels, which is how this drifted the first time. */
 
-#page-arena-notebook {
+/* 🔴 :root, FOR THE SAME REASON variables.css IS. These are token
+   declarations, and a token only reaches an element at or BELOW the one that
+   declares it. `body` paints the page and the contents rail is
+   `position: fixed`, so both sit outside #page-arena-notebook — declaring
+   these on the page left the rail and the whole surround on the dark theme's
+   --bg while the reading column alone turned white. app.js sets the attribute
+   when this page opens and clears it when it closes, so nothing else in the
+   app sees these. */
+:root[data-arena-notebook] {
   --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
     P052, "URW Palladio L", Georgia, serif;
   --lw-header: "ETBookRoman", var(--lw-serif);
@@ -213,10 +221,10 @@
   /* Their surface, over the light palette variables.css already handed this
      page: a pure white page rather than our off-white --bg, their three greys,
      and their hairline. --accent-text is the label hover in the rail, which
-     they take to full-strength text rather than to a brand colour. */
-  /* Their page is PURE white. Our light theme keeps pure white for --surface
-     and makes --bg a slightly recessed off-white, so the page background here
-     is --surface — a token, not a second copy of the literal. */
+     they take to full-strength text rather than to a brand colour.
+
+     --bg becomes --surface, so the page and the topbar are the same white and
+     the bar reads as LessWrong's does: a hairline rule rather than a panel. */
   --bg: var(--surface);
   --text: rgba(0, 0, 0, 0.87);
   --muted: #616161;
@@ -224,7 +232,9 @@
   --border: #e0e0e0;
   --border-strong: #bdbdbd;
   --accent-text: rgba(0, 0, 0, 0.87);
+}
 
+#page-arena-notebook {
   background: var(--bg);
   color: var(--text);
 }
