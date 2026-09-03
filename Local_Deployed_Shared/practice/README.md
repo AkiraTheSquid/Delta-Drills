@@ -43,7 +43,7 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - `notebook.js`: mounts every runnable fence on a lesson page and owns the cell semantics (last-expression echo, `<cell N>` tracebacks, the bound-name summary, the `In [n]` counter). Runs cells on `kernel.js` when it can and falls back to the stateless `runner.runSnippet` prefix replay when it cannot.
 - `notebook-view.js`, `../styles/practice/notebook-view.css`: **the Notebooks tab — a whole compiled lesson on one kernel.** Fetches `../lessons/notebooks/manifest.json`, lists the nine lessons, and renders the one the learner opens: up to 656 cells, every code cell runnable, all of them sharing the single session `kernel.js` keeps on the server. This is the third surface that runs a learner's code (practice page, lesson gate, notebook) and the only one that renders a lesson end to end, so it is deliberately kernel-only: it calls `LessonNotebook.runSource` per cell and NEVER `LessonNotebook.mount`, whose stateless prefix replay would re-run 599 cells to run cell 600. Signed out it still READS, with a banner saying why the Run buttons cannot run. Solutions and hints are compiled in as ordinary cells and are wrapped in `<details>` here — the answer is one click away, never zero. 🔴 Two traps live in this file and are both asserted in `watch_notebook.py`: a cell's source is carried on the node (`_ddSource`), because `innerText` is layout-defined and returns `""` inside a collapsed `<details>` — reading the DOM ran the empty program and reported success; and a run captures the notebook it belongs to (`const state = current`) before its first await, because the learner can press Back or open another lesson while torch is still importing. Deep link: `?notebook=<lesson-id>`.
 - `watch_notebook.py`: the checks for the above — load order, the verdict grammar, once-per-visit recording, the carried source, kernel-only execution, closed disclosures, and the assets actually existing on disk.
-- `arena-notebook-nav.js`, `../styles/practice/arena-notebook-nav.css`: **the contents rail down the left edge of an ARENA notebook**, and what replaced the toolbar's `Jump to…` dropdown (Seth, 2026-09-02, pointing at LessWrong). Ticks when the mouse is elsewhere, titles when it is in the left gutter. Four behaviours, reimplemented clean-room — ForumMagnum is React/Next and GPL-3.0, so nothing was copied: each row's `flex-grow` is that section's share of the document height (a long section is a long gap, which is what makes the collapsed rail a MAP); the current section is the last heading above the 1/3-viewport mark, not the topmost visible one; a 1px progress line fills to the scroll position; hovering the gutter fades the titles in. Built from the RENDERED headings, so it carries every `h1`–`h4` rather than the select's one-per-prose-cell. 🔴 Headings inside a `<details>` are SKIPPED: ARENA hints and solutions carry their own, and a closed disclosure has no layout, so measuring one answers 0 and puts a row out of document order. 🔴 Over `railHeight / MIN_ROW` headings the rail cannot be to scale (arena-1-4-2 has 78) — `is-dense` gives the rows natural heights, scrolls the list, and keeps the current row in view.
+- `arena-notebook-nav.js`, `../styles/practice/arena-notebook-nav.css`: **the plain contents tree left of an ARENA notebook**, replacing both the toolbar dropdown and old proportional-dot rail. Hidden while reading; hovering anywhere between viewport edge and live prose-column edge reveals it. Rendered `h1`–`h4` become nested rows; headings inside closed disclosures stay excluded. Every row is a real `<button>` that scrolls the document to its heading. Current row is bold Colab blue — and nothing else: the ▶ marker it used to carry read as a control you could press. A section whose runnable cells all succeeded and remain live turns green with a check. Long trees scroll independently. 🔴 The reveal strip is measured to the LEFTMOST PAINTED CELL, not to `.nbv-cells`, and the panel is `position: relative` — see the two watcher checks in `watch_notebook_arena.py`, both of which pin bugs that were invisible on the page.
 - `arena-notebook-state.js`: **where you were in the notebook you left.** Per-slug scroll position in `localStorage` (`dd_arena_pos:<slug>`), restored when the tab comes back and after a reload. 🔴 The reading is taken while the page is VISIBLE and only PERSISTED on the way out: app.js hides a page with `display: none`, where every rect is 0 and `scrollY` is about to be clamped to the shorter page. 🔴 It stores an ANCHOR (which cell was at the fold, and by how much) with the pixel count as fallback, because an ARENA notebook's height moves with its images, its disclosures and the window width. It is only half the feature — the other half is `arena-notebook.js` not rebuilding the notebook you are already in.
 - `ai.js`: AI-judge submission path.
 - `tutor.js`: **the post-answer tutor chat** (`window.PracticeTutor`). A ChatGPT-shaped thread under the AI Explanation in the left panel — tutor turns left, learner turns right, Enter sends and Shift+Enter newlines. `open(ctx)` is called by `events.js` on the same signal that fetches the explanation (a graded attempt in backend/supabase mode), `setExplanation(text)` folds the finished explanation into the context so the tutor does not recite it back, and `reset()` is called by `ui.js` on every question render — one thread per drill, never persisted. The client is stateless: each turn POSTs the whole visible thread plus the problem context to `/api/practice/ai-tutor`, which owns the system prompt. Renders a deliberate three-construct subset of Markdown (fenced blocks, inline backticks, bold) over escaped text rather than pulling in a parser. Styles in `../styles/practice/tutor.css`.
@@ -163,6 +163,35 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-09-03 (**the rail became a plain tree, and the page is 1.4x**):
+  `arena-notebook-nav.js` rewritten (482 lines out) — the proportional
+  LessWrong rail with its dots, progress track and `flex-basis` sizing is gone,
+  and what replaces it is an ordinary nested list. New
+  `watch_notebook_arena.py` holds the three invariants; the 154-line
+  `_retired_lesswrong_rail_contract` in `watch_notebook.py` is deleted.
+
+  🔴 **Two of the bugs this shipped with were INVISIBLE, and both were found by
+  measuring the rendered page rather than by looking at it.** (1) The hover
+  strip was sized from `.nbv-cells` at 454px while code cells broke out to
+  start at 355px, so it lay on top of every Run button in the notebook —
+  `elementFromPoint` over a Run button answered `.anb-toc-hit` and not one cell
+  could be run. It is measured to the leftmost painted cell now, with no floor,
+  because a floor is the same bug at a narrower window. (2) `.anb-toc-panel`
+  was `position: static`, and a static element paints BELOW a positioned
+  sibling regardless of source order — so `.anb-toc-hit` (`inset: 0`) swallowed
+  every click on a row. Seth: "it's not clickable such that when you click on
+  one of the headings it takes you to that part of the page."
+
+  Also: `arena-notebook.js` gained double-click Markdown editing, six cell
+  actions, per-notebook persistence (`dd_arena_cells:<slug>`) and a KaTeX pass.
+  Three fixes on top of that — Escape now rolls back through storage rather
+  than only the node; editing a cell that has run marks it `is-stale` so the
+  section stops claiming green; and an untouched notebook is never written at
+  all (`state.dirty`), because `_backToCourses` persists on the way out and 32
+  notebooks of up to 656 cells each would have eaten the 5 MB origin quota.
+  `mount()` records its page/host ABOVE the two-heading return, or a notebook
+  edited down to one heading could never get its tree back.
+
 - 2026-09-02 (**the rail's markup is their markup**): `arena-notebook-nav.js`
   builds a row as `<li.anb-toc-row>` > `.anb-toc-line` > dot + `.anb-toc-fade` >
   `.anb-toc-level` > `.anb-toc-label`, which is ForumMagnum's rowWrapper /

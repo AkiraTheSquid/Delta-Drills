@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import watch_invariants
 import watch_lessons
 import watch_notebook
+import watch_notebook_arena
 import watch_basic_mode
 import watch_feedback
 import watch_placement
@@ -38,10 +39,14 @@ from watch_feedback import (
     check_feedback_that_never_left_the_browser_is_not_called_logged,
 )
 from watch_example_gate import check_the_example_gate_runs_after_the_lesson_gates
+from watch_notebook_arena import (
+    check_the_arena_contents_tree_is_a_plain_colab_tree,
+    check_the_contents_reveal_zone_never_covers_a_run_button,
+    check_a_contents_row_can_actually_be_clicked,
+)
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
     check_the_arena_notebook_keeps_its_rail_and_its_place,
-    check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure,
     check_only_one_module_patches_a_code_editors_value,
     check_a_slow_run_cannot_touch_another_notebook,
     check_a_collapsed_cell_still_knows_its_own_source,
@@ -575,8 +580,8 @@ def _every_check_is_registered(checks):
     function in another module cannot stand in for the one that was dropped."""
     registered = {id(fn) for fn in checks}
     for module in (sys.modules[__name__], watch_invariants, watch_lessons,
-                   watch_notebook, watch_basic_mode, watch_feedback,
-                   watch_placement):
+                   watch_notebook, watch_notebook_arena, watch_basic_mode,
+                   watch_feedback, watch_placement):
         for name in dir(module):
             fn = getattr(module, name)
             if name.startswith("check_") and callable(fn) and id(fn) not in registered:
@@ -604,7 +609,9 @@ if __name__ == '__main__':
               check_the_notebook_kernel_has_a_fallback,
               check_the_notebook_view_is_loaded_after_what_it_calls,
               check_the_arena_notebook_keeps_its_rail_and_its_place,
-              check_the_arena_rail_is_the_ported_one_and_the_column_is_their_measure,
+              check_the_arena_contents_tree_is_a_plain_colab_tree,
+              check_the_contents_reveal_zone_never_covers_a_run_button,
+              check_a_contents_row_can_actually_be_clicked,
               check_the_example_gate_runs_after_the_lesson_gates,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
