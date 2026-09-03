@@ -74,12 +74,43 @@
    left margin 340 px ... and the right margin about the same amount".
 
    The tree still has somewhere to go, because the margin centring creates IS
-   the gutter: at 1833px the column takes 955 and leaves 439 a side, which is
-   a wider panel than the reserve ever gave it. See `.anb-toc-panel` in
-   arena-notebook-nav.css for what happens when that gap is too narrow — the
-   panel stops shrinking and overlays instead, which is what an overlay is
-   for. 🔴 Do not reintroduce a left reserve to "make room"; it un-centres the
-   column, which is the one thing about this layout Seth asked for by name. */
+   the gutter. See `.anb-toc-panel` in arena-notebook-nav.css for what happens
+   when that gap is too narrow — the panel stops shrinking and overlays
+   instead, which is what an overlay is for. 🔴 Do not reintroduce a reserve
+   the size of the tree; that is the bug above, and it un-centres the column
+   entirely rather than nudging it. */
+
+/* 🔴 THE COLUMN CLEARS THE TREE BY THIS MUCH, AND THE TREE GIVES IT BACK.
+   Centred and with the panel taking the whole gutter, the tree's right edge
+   and the prose's left edge were the SAME pixel — 434 both, at 1833px. Seth,
+   2026-09-03: "move the text body slightly to the right so that it isn't
+   nudged up against the left sidebar. maybe about 100 px to the right".
+
+   🔴 MOVING THE COLUMN IS ONLY HALF OF IT. The panel is sized from the gutter
+   the column leaves, so on its own this nudge just fed the extra 100px
+   straight to the tree and the two edges met again 100px further right. The
+   other half is `calc(100% - var(--anb-nudge))` on `.anb-toc-panel`, which is
+   what actually holds the gap open. Change this token and the gap follows on
+   both sides; change it in one place only and the gap does not move at all.
+
+   The page pays TWICE what the column moves: `.arena-notebooks-container` is
+   `margin: 0 auto`, so it re-centres in whatever is left and takes half the
+   padding straight back. */
+:root[data-arena-notebook] {
+  --anb-nudge: 100px;
+}
+
+/* 🔴 ONLY WHERE THE TREE IS ACTUALLY IN THE MARGIN. Below 1500px the panel
+   is `display: none` and the ☰ toggle takes over (arena-notebook-nav.css), so
+   there is nothing for the column to clear — and the nudge, which costs the
+   page twice what it moves, was spending 200px to push a 1280px window's
+   reading down to 78px of right margin against 248 on the left. Same
+   breakpoint as the toggle, and it has to stay the same one. */
+@media (min-width: 1500px) {
+  #page-arena-notebook {
+    padding-left: calc(2 * var(--anb-nudge));
+  }
+}
 
 /* ---- the section header -------------------------------------------------- */
 
@@ -371,7 +402,7 @@
      value at all: --anb-zoom scales what you READ, and the tree's own rows
      already carry it. Still capped in vw so a narrow window cannot hand the
      panel a third of itself. */
-  --anb-toc-w: min(520px, 32vw);
+  --anb-toc-w: min(440px, 32vw);
 
   --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
     P052, "URW Palladio L", Georgia, serif;

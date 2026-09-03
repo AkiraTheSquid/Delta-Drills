@@ -54,8 +54,18 @@
      so at 1280px it obeyed a 162px gap and rendered a column of ellipses.
      `clamp` keeps the same behaviour where it worked and stops shrinking at
      320px, letting the panel overlay the text instead. Nothing is lost by
-     that: it is revealed on hover, it is opaque, and it leaves when you do. */
-  width: clamp(320px, 100%, var(--anb-toc-w, 340px));
+     that: it is revealed on hover, it is opaque, and it leaves when you do.
+
+     🔴 AND IT STOPS SHORT OF THE PROSE BY `--anb-nudge`. Taking the gutter
+     whole put the tree's right edge on the same pixel as the text's left
+     edge. Subtracting the nudge here is the half of that fix that actually
+     opens the gap — the column moving right without this just hands the extra
+     space to the tree. See the token in arena-notebook.css. */
+  width: clamp(
+    320px,
+    calc(100% - var(--anb-nudge, 100px)),
+    var(--anb-toc-w, 340px)
+  );
   z-index: 1;
 }
 
@@ -172,7 +182,28 @@
   width: 34px;
 }
 
-@media (max-width: 1180px) {
+/* 🔴 THE HOVER PANEL EXISTS ONLY WHERE THE MARGIN CAN HOLD IT. This was
+   1180px, which is where the panel stops FITTING ON SCREEN — but the number
+   that matters is where it stops fitting IN THE MARGIN. Below about 1410px
+   the 320px floor is wider than the margin, so the panel lay over the prose,
+   and because the Run button then sits INSIDE the open panel you cannot reach
+   it: moving toward it never fires mouseleave. That is the same bug the
+   `_measure` comment in arena-notebook-nav.js is about, arriving from the
+   other side, and measured at 1280px it covered the prose by 72px.
+
+   1500px leaves ~45px of gap at the breakpoint itself. Below it the ☰ toggle
+   takes over, which overlays too — but on a deliberate click with a visible
+   way back out, not on a mouse passing through.
+
+   🔴 `.98`, AND IT IS NOT DECORATION. This has to be the exact complement of
+   `min-width: 1500px` in arena-notebook.css, which is what moves the column
+   out of the way. Written `max-width: 1499px` the two leave a hole: at
+   1499.5px — an ordinary width under display scaling or browser zoom —
+   NEITHER matches, so the hover panel is live while the column has not moved,
+   which is precisely the overlap this breakpoint exists to prevent. Found by
+   codex, 2026-09-03. Change one of the two numbers and you must change the
+   other. */
+@media (max-width: 1499.98px) {
   .anb-toc { width: min(86vw, 360px); }
   .anb-toc-hit { display: none; }
   .anb-toc-toggle { display: block; }

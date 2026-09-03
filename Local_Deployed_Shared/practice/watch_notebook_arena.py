@@ -145,10 +145,27 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
         "again — that un-centres the reading column, which is the one thing "
         "about this layout Seth asked for by name"
     )
-    assert "clamp(320px, 100%, var(--anb-toc-w" in css, (
-        "the contents panel no longer takes the margin the centred column "
-        "leaves — `min()` there obeyed a 162px gap and rendered a column of "
-        "ellipses, and a flat width hangs the tree over the prose"
+    # The panel is sized from that margin, minus the gap the column was nudged
+    # over by. Whitespace-insensitive because the declaration is multi-line.
+    # 🔑 `(?<!-)` or this matches the tail of `max-width:`, which is declared
+    # first in the same block — the check then read a value it was not about.
+    panel_w = re.search(
+        r"\.anb-toc-panel\s*\{[^}]*?(?<![-\w])width:\s*([^;]+);", css, re.S
+    )
+    assert panel_w, ".anb-toc-panel no longer declares a width"
+    flat = re.sub(r"\s+", "", panel_w.group(1))
+    assert flat == "clamp(320px,calc(100%-var(--anb-nudge,100px)),var(--anb-toc-w,340px))", (
+        "the contents panel no longer takes the centred column's margin less "
+        f"the nudge (found {flat!r}). `min()` there obeyed a 162px gap and "
+        "rendered a column of ellipses; taking the gutter WHOLE put the tree's "
+        "right edge on the same pixel as the prose's left edge"
+    )
+
+    # 🔴 BOTH HALVES OF THE GAP, OR NEITHER. The column moving right without
+    # the panel giving the space back just feeds the nudge to the tree.
+    assert "--anb-nudge:" in column and "padding-left: calc(2 * var(--anb-nudge))" in column, (
+        "the reading column no longer clears the contents tree by --anb-nudge "
+        "— the two edges met on the same pixel before this"
     )
 
 
@@ -189,9 +206,37 @@ def check_the_contents_reveal_zone_never_covers_a_run_button():
     )
 
     css = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook-nav.css")), css=True)
-    assert "@media (max-width: 1180px)" in css and ".anb-toc-hit { display: none; }" in css, (
-        "the narrow-window fallback is gone: with no room for a safe gutter the "
-        "strip has to be dropped for the toggle button"
+    # 🔴 THE FALLBACK BREAKPOINT IS WHERE THE PANEL STOPS FITTING IN THE
+    # MARGIN, not where it stops fitting on screen. At 1180px the 320px floor
+    # was wider than the margin below ~1410px, so the panel lay over the prose
+    # — and a Run button inside an open hover panel is unreachable, because
+    # moving toward it never fires mouseleave.
+    fallback = re.search(
+        r"@media \(max-width:\s*([\d.]+)px\)\s*\{(.*?)\n\}", css, re.S
+    )
+    assert fallback, "the narrow-window fallback media block is gone"
+    # 🔑 Scoped to the block. Searching the whole sheet for the rule passes
+    # even after the rule is moved OUT of the media query, which is the one
+    # way this fallback silently stops being a fallback.
+    assert ".anb-toc-hit { display: none; }" in fallback.group(2), (
+        "the hover strip is no longer dropped inside the narrow-window "
+        "fallback — with no room for a safe gutter it has to give way to the "
+        "toggle button"
+    )
+    # 🔴 THE TWO BREAKPOINTS ARE ONE BREAKPOINT. `max-width: 1499px` beside
+    # `min-width: 1500px` leaves 1499.5px matching NEITHER, and a viewport
+    # lands there under display scaling — hover panel live, column not moved,
+    # which is the overlap the fallback exists to prevent.
+    column = _live(
+        read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True
+    )
+    nudge_at = re.search(r"@media \(min-width:\s*([\d.]+)px\)", column)
+    assert nudge_at, "the column's nudge is no longer bounded by a media query"
+    assert float(fallback.group(1)) < float(nudge_at.group(1)) <= float(fallback.group(1)) + 0.02, (
+        f"the contents fallback (max-width: {fallback.group(1)}px) and the "
+        f"column nudge (min-width: {nudge_at.group(1)}px) are not complements "
+        "— a fractional viewport between them matches neither, and there the "
+        "panel lies over the prose with the Run button underneath it"
     )
 
 
