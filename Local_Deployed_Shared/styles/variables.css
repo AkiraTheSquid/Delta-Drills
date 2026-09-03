@@ -238,11 +238,20 @@
    asked for their look copied exactly — which is a light page. It takes the
    whole tested light palette from HERE rather than declaring a second one, so
    a change to these values still reaches it and the two cannot drift apart.
-   An id outranks :root[data-theme="dark"], so this wins whatever theme the
-   rest of the app is in; arena-notebook.css then overrides the handful of
-   tokens where LessWrong differs from our light theme. */
+
+   🔴 THE SCOPE IS :root, NOT #page-arena-notebook, AND THAT IS NOT A STYLE
+   PREFERENCE — it is the difference between working and half-working. Custom
+   properties inherit DOWNWARDS only. The element that paints the page is
+   `body` (styles/base.css: `background: var(--bg)`), which is an ANCESTOR of
+   the page div, so tokens declared on the page could never reach it. Shipped
+   that way on 2026-09-02 and the result was a half-lit screen: the reading
+   column went white while the body stayed black, and the contents rail —
+   `position: fixed`, so out of the page's painted box entirely — hung on the
+   black. Anything portalled to body (modals, the topbar) has the same problem.
+   app.js's switchTab sets the attribute; Local_Deployed_Shared/watch.py pins
+   that wiring so it cannot be deleted silently. */
 :root[data-theme="light"],
-#page-arena-notebook {
+:root[data-arena-notebook] {
   /* --bg is the PAGE and also every recessed field (.text-input, .result-item
      and friends all say `background: var(--bg)`), so it is the off-white and
      --surface is the pure white the cards sit on. Inverting those two makes

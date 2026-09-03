@@ -175,6 +175,23 @@ const switchTab = (tabName, opts) => {
      screen (Seth, 2026-08-23) and the guest banner lives OUTSIDE every
      `.page`, so no page-scoped rule can reach it. styles/learn-about.css. */
   document.body.classList.toggle("dd-welcome", tabName === "welcome");
+  /* 🔴 THE ARENA NOTEBOOK IS A LIGHT PAGE IN EVERY THEME, and this attribute is
+     the whole of how. styles/variables.css hands `:root[data-arena-notebook]`
+     the light palette and styles/practice/arena-notebook.css layers
+     LessWrong's greys on top of it; both are declared at :root because a
+     custom property reaches an element only at or below the one that declares
+     it, and the two things that most need the light palette here are ABOVE the
+     page — `body`, which paints the page background, and the contents rail,
+     which is `position: fixed` and so hangs outside the page's box entirely.
+     Scoped to #page-arena-notebook (as it shipped on 2026-09-02) the reading
+     column went white and everything around it stayed black.
+
+     On :root rather than body so a modal portalled to documentElement is lit
+     too, and cleared on the way out so no other tab inherits it. */
+  document.documentElement.toggleAttribute(
+    "data-arena-notebook",
+    tabName === "arena-notebook",
+  );
   // Returning to Practice normally re-fetches the question so a preference
   // change takes effect. But that fetch is DESTRUCTIVE to a session in
   // progress: the timer's resume check is

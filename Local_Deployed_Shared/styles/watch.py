@@ -88,7 +88,7 @@ REQUIRED_TOKENS = (
 THEME_BLOCKS = (
     ':root,\n:root[data-theme="blue"]',
     ':root[data-theme="dark"]',
-    ':root[data-theme="light"],\n#page-arena-notebook',
+    ':root[data-theme="light"],\n:root[data-arena-notebook]',
 )
 
 
@@ -389,9 +389,64 @@ def check_invariants():
         )
 
 
+def check_the_light_page_scope_is_actually_set():
+    """`:root[data-arena-notebook]` is a dead selector unless app.js sets it.
+
+    This is the check for a bug that SHIPPED. The ARENA notebook page is meant
+    to be light in every theme, and the palette was first scoped to
+    `#page-arena-notebook`. Custom properties inherit downwards only, so the
+    two elements that most needed it never saw it: `body`, which paints the
+    page (base.css `background: var(--bg)`), is the page's ANCESTOR, and the
+    contents rail is `position: fixed` and so outside the page's box. The
+    result rendered as a white reading column on a black screen with the rail
+    hanging in the dark — no error, nothing failed, it just looked wrong.
+
+    The scope now lives at :root, which means a stylesheet alone cannot do it:
+    something has to put the attribute on documentElement. Deleting that one
+    line in app.js would silently restore the dark page, so assert the pair.
+    """
+    variables = _read(os.path.join(HERE, "variables.css"))
+    if "[data-arena-notebook]" not in variables:
+        return  # the light-page scope was removed on purpose; nothing to pin
+
+    # 🔴 COMMENTS FIRST, or this check passes on its own documentation. The
+    # wiring in app.js is explained by a comment that names the attribute, so
+    # scanning the raw text found the WARNING and read it as the thing it was
+    # warning about — the deletion this exists to catch went undetected on the
+    # first assert. Verified by deleting the line and watching it fail.
+    app_js = _read(os.path.normpath(os.path.join(HERE, "..", "app.js")))
+    app_js = re.sub(r"/\*.*?\*/", "", app_js, flags=re.DOTALL)
+    app_js = re.sub(r"(?m)^\s*//.*$", "", app_js)
+    # 🔴 ONE EXPRESSION, NOT THREE SUBSTRINGS. Asserting "documentElement",
+    # "data-arena-notebook" and the tab comparison separately passes as long as
+    # those three strings exist ANYWHERE in a 900-line file — they could sit in
+    # three unrelated statements while the attribute goes on the wrong element,
+    # or is set and never cleared. codex caught that on review; match the whole
+    # call so the element, the attribute and the predicate have to be the same
+    # call to satisfy it.
+    wiring = re.search(
+        r"document\.documentElement\.toggleAttribute\(\s*"
+        r"""(['"])data-arena-notebook\1\s*,\s*"""
+        r"""tabName\s*===\s*(['"])arena-notebook\2\s*,?\s*\)""",
+        app_js,
+    )
+    assert wiring, (
+        "app.js must set the ARENA notebook's light-page scope as ONE call —\n"
+        '  document.documentElement.toggleAttribute("data-arena-notebook", '
+        'tabName === "arena-notebook");\n'
+        "variables.css scopes the light palette to `:root[data-arena-notebook]`, "
+        "so without it the page renders dark and no stylesheet can fix it. It "
+        "has to be documentElement, because `body` paints the page background "
+        "and the contents rail is position:fixed — a token declared any lower "
+        "reaches neither. And it has to be a toggle off the tab name: set "
+        "without cleared leaves every other tab on the light palette."
+    )
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_the_light_page_scope_is_actually_set]
     for fn in checks:
         try:
             fn()
