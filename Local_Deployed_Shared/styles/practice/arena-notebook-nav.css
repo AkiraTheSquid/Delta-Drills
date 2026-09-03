@@ -47,7 +47,15 @@
   position: relative;
   transform: translateX(-8px);
   transition: opacity 100ms ease, transform 100ms ease;
-  width: min(100%, var(--anb-toc-w, 340px));
+  /* 🔴 THE GUTTER IS A PREFERENCE, NOT A CEILING. `100%` here is `.anb-toc`,
+     which is exactly the gap the reading column leaves (`_measure`). Taking
+     that gap is right while it is wide enough to read a tree in — the panel
+     then sits in the margin and covers no prose at all. But it was `min()`,
+     so at 1280px it obeyed a 162px gap and rendered a column of ellipses.
+     `clamp` keeps the same behaviour where it worked and stops shrinking at
+     320px, letting the panel overlay the text instead. Nothing is lost by
+     that: it is revealed on hover, it is opaque, and it leaves when you do. */
+  width: clamp(320px, 100%, var(--anb-toc-w, 340px));
   z-index: 1;
 }
 

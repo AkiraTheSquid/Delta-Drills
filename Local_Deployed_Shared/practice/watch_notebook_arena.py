@@ -133,6 +133,24 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
         "the same zoom the reading column uses"
     )
 
+    # 🔴 EQUAL MARGINS. The column is centred and the tree lives INSIDE the
+    # left one — Seth, 2026-09-03: "the left sidebar is part of what I counted
+    # as the margin". Reserving the tree's width as page padding is what broke
+    # this the first time: it shoved the reading against the right edge, ~440px
+    # of margin on one side and ~90px on the other. The panel takes the margin
+    # centring leaves (`clamp(320px, 100%, ...)`) rather than the page holding
+    # a strip open for it.
+    assert "padding-left: calc(20px + var(--anb-toc-w))" not in column, (
+        "the ARENA page reserves the contents tree's width as left padding "
+        "again — that un-centres the reading column, which is the one thing "
+        "about this layout Seth asked for by name"
+    )
+    assert "clamp(320px, 100%, var(--anb-toc-w" in css, (
+        "the contents panel no longer takes the margin the centred column "
+        "leaves — `min()` there obeyed a 162px gap and rendered a column of "
+        "ellipses, and a flat width hangs the tree over the prose"
+    )
+
 
 def check_the_contents_reveal_zone_never_covers_a_run_button():
     """🔴 THE HOVER STRIP IS MEASURED TO THE LEFTMOST CELL, NOT THE COLUMN.

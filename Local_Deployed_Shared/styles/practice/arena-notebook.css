@@ -61,22 +61,25 @@
   padding: 0 16px;
 }
 
-/* 🔴 THE READING SITS TO THE RIGHT OF THE TREE, NOT CENTRED ON THE WINDOW —
-   which is what LessWrong does and what Seth asked for: "the body text is
-   aligned with the code blocks to be right outside the left sidebar".
+/* 🔴 THE READING COLUMN IS CENTRED IN THE WINDOW. EQUAL MARGINS, BOTH SIDES.
+   `.arena-notebooks-container` above is the whole of how — `margin: 0 auto`
+   and nothing offsetting it.
 
-   The offset is PAGE PADDING, not a margin on the container, so the container
-   still centres itself in what is left. And it is reserved unconditionally
-   above the toggle breakpoint rather than at some wider width of its own:
-   the tree's panel is sized from the gap the content leaves (`_measure` in
-   arena-notebook-nav.js), so a width where the strip is revealed but no space
-   is held for it is a width where the tree opens 150px wide. The two rules
-   have to share one breakpoint, and 1180px is it. */
-@media (min-width: 1181px) {
-  #page-arena-notebook {
-    padding-left: calc(20px + var(--anb-toc-w));
-  }
-}
+   This page used to hold `padding-left: calc(20px + var(--anb-toc-w))` here,
+   reserving the tree's width unconditionally. That was wrong, and visibly so:
+   the tree is a HOVER OVERLAY, not a docked pane, so reserving room for it
+   permanently bought nothing and shoved the column hard against the right
+   edge — about 440px of margin on the left and 90px on the right. Seth,
+   2026-09-03, with LessWrong beside it: "the alignment is off ... make the
+   left margin 340 px ... and the right margin about the same amount".
+
+   The tree still has somewhere to go, because the margin centring creates IS
+   the gutter: at 1833px the column takes 955 and leaves 439 a side, which is
+   a wider panel than the reserve ever gave it. See `.anb-toc-panel` in
+   arena-notebook-nav.css for what happens when that gap is too narrow — the
+   panel stops shrinking and overlays instead, which is what an overlay is
+   for. 🔴 Do not reintroduce a left reserve to "make room"; it un-centres the
+   column, which is the one thing about this layout Seth asked for by name. */
 
 /* ---- the section header -------------------------------------------------- */
 
@@ -354,17 +357,21 @@
   /* One column for the whole document: prose and code share both edges. */
   --anb-measure: calc(682px * var(--anb-zoom, 1));
 
-  /* The contents tree's reserved strip. Their ToC is always on screen and the
-     post is laid out to the RIGHT of it; ours reveals on hover, so the space
-     has to be held open anyway or the tree opens over the reading.
+  /* 🔴 THE TREE'S CEILING, NOT ITS WIDTH. The width it actually takes is the
+     margin the centred column leaves — `clamp(320px, 100%, var(--anb-toc-w))`
+     in arena-notebook-nav.css, where `100%` is that margin. Seth counts the
+     tree as PART of the left margin, not as something beside it: "the left
+     sidebar is part of what I counted as the margin". So the panel fills the
+     margin and stops, and this number only stops it running away on a very
+     wide screen.
 
-     🔴 CAPPED IN vw, AND THAT CAP IS THE WHOLE REASON THIS WORKS. At 1.4x,
-     LessWrong's full layout — a 682px column beside a 340px rail — wants
-     about 1730 CSS px, and this machine's Chrome reports 1280 (a 1600px
-     window at dpr 1.25). Reserved flat, the strip ate so much that the tree
-     collapsed to 159px and every label ellipsised to nothing. So the strip
-     takes at most a third of the window and the column takes what is left. */
-  --anb-toc-w: min(calc(340px * var(--anb-zoom, 1)), 32vw);
+     It was `calc(340px * var(--anb-zoom))` = 476px, which is WIDER than the
+     margin centring leaves at 1833px (439px) — so the tree hung 37px over the
+     prose it was supposed to sit beside. The zoom does not belong on this
+     value at all: --anb-zoom scales what you READ, and the tree's own rows
+     already carry it. Still capped in vw so a narrow window cannot hand the
+     panel a third of itself. */
+  --anb-toc-w: min(520px, 32vw);
 
   --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
     P052, "URW Palladio L", Georgia, serif;
