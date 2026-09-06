@@ -105,7 +105,7 @@ window.DD_INFOTIPS = {
   },
   "kg-legend": {
     title: "Legend",
-    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Chapters</strong> is the notebook a concept comes from &mdash; the Python prerequisites, chapter 0.0, or chapter 0.1. <strong>Categories</strong> splits each chapter into its subjects (broadcasting, einops, einsum, ray tracing), tinted inside its chapter's colour.",
+    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Sections</strong> asks whether ARENA's own curriculum tests a concept: the vivid colours are section 0.0 and 0.1, where an exercise the ARENA authors wrote covers it, and the muted ones are our run-up to them &mdash; &minus;1.0 Python, &minus;1.1 arrays, einops and tensors. <strong>Categories</strong> is the subject instead: broadcasting, einops, einsum, ray tracing. A subject can straddle a section, so the two are separate readings rather than one nested inside the other.",
   },
   "kg-info": {
     title: "Concept detail",
