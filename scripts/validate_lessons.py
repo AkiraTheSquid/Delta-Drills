@@ -34,7 +34,7 @@ from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
 
-EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops")  # "Python" = lesson py-0, the prerequisite floor
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays)
 
 
 def run_code(code, ns):

@@ -3547,6 +3547,34 @@
    "tags": [
     "drill-atom"
    ]
+  },
+  {
+   "id": "broadcast-slice-assignment",
+   "title": "write a tensor into a multi-axis slice, broadcasting it (x[:, 1] = v, copy_)",
+   "topic": "PyTorch",
+   "subtopic": "PyTorch: Rays as tensors",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "broadcast-slice-assignment — ARENA 0.1 make_rays_1d prerequisite (2026-09-06): x[sel] = tensor broadcasts the right-hand side to the slice and writes in place; copy_ is the method spelling",
+   "tags": [
+    "drill-atom",
+    "part1"
+   ]
+  },
+  {
+   "id": "make-rays-1d",
+   "title": "make_rays_1d: zeros canvas, then write the two direction columns",
+   "topic": "PyTorch",
+   "subtopic": "PyTorch: Rays as tensors",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "make-rays-1d — ARENA 0.1 exercise 1 (2026-09-06): an (n, 2, 3) fan of rays built by allocating once and writing rays[:, 1, 0] = 1 and linspace into rays[:, 1, 1]",
+   "tags": [
+    "drill-atom",
+    "part1"
+   ]
   }
  ],
  "prerequisite_edges": [
@@ -7459,6 +7487,116 @@
    "is_encompassing": false,
    "propagation_weight": 0.0,
    "rationale": "[builds-on] a method is a call reached through a dot"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "broadcast-slice-assignment",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] writing through a view is the 1-D scalar case of a broadcast write"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "broadcast-slice-assignment",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the right-hand side broadcasts to the slice's shape"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "broadcast-slice-assignment",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the canvas being written into"
+  },
+  {
+   "prerequisite_id": "slice-view-mutation",
+   "dependent_id": "linspace-out-param",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the out= target is a slice view"
+  },
+  {
+   "prerequisite_id": "linspace-out-param",
+   "dependent_id": "make-rays-1d",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the y column is a linspace written with out="
+  },
+  {
+   "prerequisite_id": "broadcast-slice-assignment",
+   "dependent_id": "make-rays-1d",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] rays[:, 1, 0] = 1 is a broadcast write"
+  },
+  {
+   "prerequisite_id": "ray-parametric-form",
+   "dependent_id": "make-rays-1d",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] row 0 origin, row 1 direction is the ray layout"
+  },
+  {
+   "prerequisite_id": "torch-arange",
+   "dependent_id": "make-rays-1d",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] ranges of values along a column"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "ray-parametric-form",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] O + u[:, None] * D is a broadcast"
+  },
+  {
+   "prerequisite_id": "torch-arange",
+   "dependent_id": "broadcast-slice-assignment",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] arange is the tensor most often written into a slice"
+  },
+  {
+   "prerequisite_id": "torch-arange",
+   "dependent_id": "ray-parametric-form",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] integer steps of u along a ray"
   }
  ],
  "lessons": [],

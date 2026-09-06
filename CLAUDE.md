@@ -135,6 +135,20 @@ skill report the same thing from the other side.
   `export_questions_json.py` prints "torch preload failed" and leaves 40 questions'
   `expected_output` stale instead of recomputing them.
 
+- **ARENA 0.1 `make_rays_1d` lesson `tr-1` landed** (2026-09-06): four KCs under
+  `lessons/pytorch/` — `torch.out-argument`, `torch.slice-assignment`,
+  `raytracing.ray-parametrisation`, `raytracing.make-rays-1d` — 44 drills (ids 798–841,
+  topic `PyTorch`), every rung at the floors (Faded 2 / Solo 6 / Integrated 3), atoms
+  `broadcast-slice-assignment` + `make-rays-1d` added to `arena_drillable_v1.json`
+  (`linspace-out-param` and `ray-parametric-form` reused). "PyTorch" joined `EASY_TOPICS`
+  in `build_qmatrix.py` and `validate_lessons.py`. 🔴 `Tensor.fill_` and
+  `Tensor.repeat_interleave` appear in ZERO ARENA notebooks — the grounding ratchet
+  rejects them; the lesson uses `copy_` and broadcast + reshape instead. Both baselines
+  (`solution_prereq_baseline.json`, `graph_structure_baseline.json`) re-recorded for the
+  same function-scaffold debt and the audit's `integrated>independent` rung-order quirk
+  that `numpy.constructors` already carries. Next 0.1 exercises (`intersect_ray_1d`, …)
+  go under `tr-1` with `raytracing.make-rays-1d` as prerequisite.
+
 - **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

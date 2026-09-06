@@ -28501,5 +28501,2110 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 798,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Fill column `col` of an n×3 zero canvas with `n` evenly spaced values from `lo` to `hi`, writing straight into the canvas with `out=`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 1.0, 1)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, -1.0, 1.0, 0)",
+          "expected_expr": "[[-1.0, 0.0, 0.0], [-0.3333333134651184, 0.0, 0.0], [0.3333333134651184, 0.0, 0.0], [1.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 5.0, 6.0, 2)",
+          "expected_expr": "[[0.0, 0.0, 5.0], [0.0, 0.0, 6.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]",
+          "why": "Without out= the linspace result is allocated fresh and thrown away; nothing reaches the canvas."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.linspace(lo, hi, n, out=canvas[:, col])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 799,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Write `0, 1, …, n-1` into row `row` of a 2×n zero canvas using `arange` with `out=`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2×n canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0)",
+          "expected_expr": "[[0.0, 1.0, 2.0], [0.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1)",
+          "expected_expr": "[[0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 2.0, 3.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 1)",
+          "expected_expr": "[[0.0], [0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0, 1, 2]",
+          "why": "Rebinding the name replaces the canvas with the 1-D arange; the 2×n shape is gone."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2×n canvas.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[row])\n    return canvas.tolist()\n\n\nexample = (3, 0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 1.0, 2.0], [0.0, 0.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 800,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return an n×2 tensor as a nested list whose column 0 is `0..n-1` and whose column 1 runs from `lo` to `hi` in n steps. Build one zero canvas and fill both columns with `out=`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 = arange, column 1 = linspace(lo, hi), one canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 1.0)",
+          "expected_expr": "[[0.0, 0.0], [1.0, 0.5], [2.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, -2.0, 2.0)",
+          "expected_expr": "[[0.0, -2.0], [1.0, 2.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.0, 4.0)",
+          "expected_expr": "[[0.0, 1.0], [1.0, 2.0], [2.0, 3.0], [3.0, 4.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 1.0], [0.0, 0.5], [1.0, 0.0]]",
+          "why": "canvas[0] is ROW 0 (length 2), not column 0; the out= targets have the wrong shape, so PyTorch resizes them over the canvas's storage and the values land in the wrong slots."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 = arange, column 1 = linspace(lo, hi), one canvas.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0], [1.0, 0.5], [2.0, 1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 801,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return a tuple `(filled, canvas)`: fill `canvas[:, 1]` of an n×2 zero canvas with `linspace(0, 1, n, out=...)`, keep the RETURNED tensor as `filled`, and return both as lists. `filled` is the column view, so its list matches column 1 of the canvas.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"out= hands back the target view; the canvas shows the write.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3)",
+          "expected_expr": "([0.0, 0.5, 1.0], [[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2)",
+          "expected_expr": "([0.0, 1.0], [[0.0, 0.0], [0.0, 1.0]])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5)",
+          "expected_expr": "([0.0, 0.25, 0.5, 0.75, 1.0], [[0.0, 0.0], [0.0, 0.25], [0.0, 0.5], [0.0, 0.75], [0.0, 1.0]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([0.0, 0.5, 1.0], [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]])",
+          "why": "Without out= the values exist only in `filled`; the canvas is never written."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"out= hands back the target view; the canvas shows the write.\"\"\"\n    canvas = t.zeros((n, 2))\n    filled = t.linspace(0, 1, n, out=canvas[:, 1])\n    return (filled.tolist(), canvas.tolist())\n\n\nexample = (3,)\nprint(solve(*example))\n",
+      "expected_output": "([0.0, 0.5, 1.0], [[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 802,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Fill every column of an n×3 zero canvas: column 0 with `arange`, column 1 with `linspace(lo, hi)`, column 2 with `linspace(hi, lo)` (reversed). Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Three out= writes, three columns.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 1.0)",
+          "expected_expr": "[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 0.0, 4.0)",
+          "expected_expr": "[[0.0, 0.0, 4.0], [1.0, 4.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, -1.0, 2.0)",
+          "expected_expr": "[[0.0, -1.0, 2.0], [1.0, 0.0, 1.0], [2.0, 1.0, 0.0], [3.0, 2.0, -1.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Three out= writes, three columns.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    t.linspace(hi, lo, n, out=canvas[:, 2])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 803,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a canvas as a nested list, write `linspace(lo, hi, k)` into its first `k` rows of column `col` using `out=` on a slice, and return the whole canvas as a nested list. Rows after `k` stay as they were.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"linspace into the first k rows of one column of an existing canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)",
+          "expected_expr": "[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 1.0, 1.0]], 1, 5.0, 5.0, 2)",
+          "expected_expr": "[[1.0, 1.0, 5.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]], 3, 1.0, 3.0, 1)",
+          "expected_expr": "[[0.0, 1.0], [0.0, 2.0], [0.0, 3.0], [0.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 1.0], [9.0, 9.0], [9.0, 9.0]]",
+          "why": "The target is the whole column (len(canvas) slots) but the call produces k values: the shapes disagree, PyTorch resizes the view over the canvas's storage, and the values land in the wrong slots."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"linspace into the first k rows of one column of an existing canvas.\"\"\"\n    canvas = t.tensor(canvas, dtype=t.float32)\n    t.linspace(lo, hi, k, out=canvas[:k, col])\n    return canvas.tolist()\n\n\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 804,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return the integers `start..stop-1` written into row `row` of an m×(stop-start) canvas of zeros with dtype int64 (`t.zeros(..., dtype=t.int64)`), using `arange(start, stop, out=...)`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"arange(start, stop) into an integer canvas row.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 3, 6, 1)",
+          "expected_expr": "[[0, 0, 0], [3, 4, 5]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0, 2, 0)",
+          "expected_expr": "[[0, 1], [0, 0], [0, 0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 10, 11, 0)",
+          "expected_expr": "[[10]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"arange(start, stop) into an integer canvas row.\"\"\"\n    canvas = t.zeros((m, stop - start), dtype=t.int64)\n    t.arange(start, stop, out=canvas[row])\n    return canvas.tolist()\n\n\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
+      "expected_output": "[[0, 0, 0], [3, 4, 5]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 805,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A 3-D canvas of zeros shaped (n, 2, 3). Fill `canvas[:, 1, 1]` (the y of the second row of every slab) with `linspace(lo, hi, n)` via `out=`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"One column through a 3-D canvas, written with out=.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, -1.0, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 4.0, 4.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 4.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, 1.0, 0.0]]]",
+          "why": "canvas[1, 1] is a length-3 row of ONE slab, not the column through all n slabs: wrong slots, and the shape only matches by accident when n == 3."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"One column through a 3-D canvas, written with out=.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.linspace(lo, hi, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 806,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Fill only the EVEN rows of column 0 of an n×2 zero canvas with `linspace(lo, hi)` — a stepped slice as the `out=` target. `n` may be odd; the number of values is the number of even rows. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"linspace written into a stepped slice.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5, 0.0, 1.0)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 0.0, 1.0)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 7.0, 7.0)",
+          "expected_expr": "[[7.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.25], [0.5, 0.75], [1.0, 0.0], [0.0, 0.0], [0.0, 0.0]]",
+          "why": "n values do not fit the (n+1)//2 even rows, so PyTorch resizes the view over the canvas's storage and the values land in the wrong slots."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"linspace written into a stepped slice.\"\"\"\n    canvas = t.zeros((n, 2))\n    target = canvas[::2, 0]\n    t.linspace(lo, hi, target.shape[0], out=target)\n    return canvas.tolist()\n\n\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 807,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "One column, two targets: in an n×2 zero canvas write `arange(k)` into the FIRST k rows of column `col` and `linspace(lo, hi, n - k)` into the remaining rows of the same column, both with `out=`. Return the canvas as a nested list. (`n - k` may be 0; then the second write is skipped.)",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"A column partitioned between two out= writes.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5, 2, 0.0, 1.0, 1)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 3, 0.0, 1.0, 0)",
+          "expected_expr": "[[0.0, 0.0], [1.0, 0.0], [2.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1, 10.0, 20.0, 0)",
+          "expected_expr": "[[0.0, 0.0], [10.0, 0.0], [15.0, 0.0], [20.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.0], [0.0, 0.0], [0.5, 1.0], [0.0, 0.0], [0.0, 0.0]]",
+          "why": "Off by one on the second slice: n-k+1 slots for n-k values, so PyTorch resizes the view over the canvas's storage and the values land in the wrong slots."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"A column partitioned between two out= writes.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(k, out=canvas[:k, col])\n    if n - k > 0:\n        t.linspace(lo, hi, n - k, out=canvas[k:, col])\n    return canvas.tolist()\n\n\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 808,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Two writes into one (n, 2, 3) canvas: `linspace(y0, y1, n)` into `[:, 1, 1]` and the constant 1.0 into `[:, 1, 0]` using `t.ones(n, out=...)`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A ones-column and a linspace-column, both via out=.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, -1.0, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0.5, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A ones-column and a linspace-column, both via out=.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.ones(n, out=canvas[:, 1, 0])\n    t.linspace(y0, y1, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 809,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Set column `col` of an n×3 zero canvas to the constant `v` with one slice assignment. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, 0)",
+          "expected_expr": "[[1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, -2.5, 2)",
+          "expected_expr": "[[0.0, 0.0, -2.5], [0.0, 0.0, -2.5]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 9.0, 1)",
+          "expected_expr": "[[0.0, 9.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[1.0, 1.0, 1.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]",
+          "why": "canvas[col] is a ROW; the column was asked for."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[:, col] = v\n    return canvas.tolist()\n\n\nexample = (3, 1.0, 0)\nprint(solve(*example))\n",
+      "expected_output": "[[1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 810,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Copy the 1-D list `row_values` into row `row` of an m×len(row_values) zero canvas with `copy_`. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 1, [1.0, 2.0, 3.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 1, [1.0, 2.0, 3.0])",
+          "expected_expr": "[[0.0, 0.0, 0.0], [1.0, 2.0, 3.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0, [5.0])",
+          "expected_expr": "[[5.0], [0.0], [0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0, [0.5, -0.5])",
+          "expected_expr": "[[0.5, -0.5]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "TypeError: can't assign a list to a torch.FloatTensor",
+          "why": "A Python list cannot be written into a tensor slice — TypeError. Wrap it in t.tensor(...) first; copy_ takes a tensor too."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row].copy_(t.tensor(row_values))\n    return canvas.tolist()\n\n\nexample = (2, 1, [1.0, 2.0, 3.0])\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [1.0, 2.0, 3.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 811,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, built from `t.zeros` and two slice assignments.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, a, b):\n    \"\"\"Two scalar broadcasts into two columns.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, -1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, -1.0)",
+          "expected_expr": "[[1.0, -1.0], [1.0, -1.0], [1.0, -1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0.5, 0.25)",
+          "expected_expr": "[[0.5, 0.25]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 4.0, 4.0)",
+          "expected_expr": "[[4.0, 4.0], [4.0, 4.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[1.0, 1.0], [-1.0, -1.0], [0.0, 0.0]]",
+          "why": "Rows, not columns — and it crashes with IndexError when n == 1."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, a, b):\n    \"\"\"Two scalar broadcasts into two columns.\"\"\"\n    canvas = t.zeros((n, 2))\n    canvas[:, 0] = a\n    canvas[:, 1] = b\n    return canvas.tolist()\n\n\nexample = (3, 1.0, -1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[1.0, -1.0], [1.0, -1.0], [1.0, -1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 812,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return an n×3 canvas as a nested list whose column 1 holds `0..n-1` (assign `t.arange(n)` into the column slice) and whose other columns are zero.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"A 1-D tensor assigned into a column.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 2.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1)",
+          "expected_expr": "[[0.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 2.0, 0.0], [0.0, 3.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"A 1-D tensor assigned into a column.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[:, 1] = t.arange(n)\n    return canvas.tolist()\n\n\nexample = (3,)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 2.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 813,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Two views of one storage. Take `col = canvas[:, 0]` of an n×2 zero canvas, then assign `v` to `col[:]`. Return a tuple `(canvas.tolist(), col.tolist())` — both should show the write.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, v):\n    \"\"\"A write through one view shows in every view.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 3.0)",
+          "expected_expr": "([[3.0, 0.0], [3.0, 0.0]], [3.0, 3.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, -1.0)",
+          "expected_expr": "([[-1.0, 0.0], [-1.0, 0.0], [-1.0, 0.0]], [-1.0, -1.0, -1.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0.5)",
+          "expected_expr": "([[0.5, 0.0]], [0.5])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[0.0, 0.0], [0.0, 0.0]], [3.0, 3.0])",
+          "why": "`col = ...` rebinds the NAME to a new tensor; the canvas never sees the write."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, v):\n    \"\"\"A write through one view shows in every view.\"\"\"\n    canvas = t.zeros((n, 2))\n    col = canvas[:, 0]\n    col[:] = v\n    return (canvas.tolist(), col.tolist())\n\n\nexample = (2, 3.0)\nprint(solve(*example))\n",
+      "expected_output": "([[3.0, 0.0], [3.0, 0.0]], [3.0, 3.0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 814,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Set the lower-right `k×k` block of an n×n zero canvas to `v` with one slice assignment. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, v):\n    \"\"\"A block write via two slices.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 2, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 2, 1.0)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 1, 5.0)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 5.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 3, -1.0)",
+          "expected_expr": "[[-1.0, -1.0, -1.0], [-1.0, -1.0, -1.0], [-1.0, -1.0, -1.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, v):\n    \"\"\"A block write via two slices.\"\"\"\n    canvas = t.zeros((n, n))\n    canvas[n - k:, n - k:] = v\n    return canvas.tolist()\n\n\nexample = (3, 2, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 815,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Write into an existing canvas, given as a nested list of floats: row `row` becomes `value` everywhere (slice assignment), and column `col` becomes `0..n-1` via `copy_` of `t.arange(n)` (the column write happens LAST, so it wins at the crossing). Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(canvas, row, col, value):\n    \"\"\"Assign a row, then copy_ a column; order matters at the crossing.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0], [0.0, 0.0]], 0, 1, 7.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0], [0.0, 0.0]], 0, 1, 7.0)",
+          "expected_expr": "[[7.0, 0.0], [0.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]], 1, 0, 9.0)",
+          "expected_expr": "[[0.0, 1.0, 1.0], [1.0, 9.0, 9.0], [2.0, 1.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[5.0]], 0, 0, 2.0)",
+          "expected_expr": "[[0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[7.0, 7.0], [0.0, 1.0]]",
+          "why": "Same two writes in the other order: the row write now wins at the crossing cell."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(canvas, row, col, value):\n    \"\"\"Assign a row, then copy_ a column; order matters at the crossing.\"\"\"\n    canvas = t.tensor(canvas)\n    n = canvas.shape[0]\n    canvas[row] = value\n    canvas[:, col].copy_(t.arange(n))\n    return canvas.tolist()\n\n\nexample = ([[0.0, 0.0], [0.0, 0.0]], 0, 1, 7.0)\nprint(solve(*example))\n",
+      "expected_output": "[[7.0, 0.0], [0.0, 1.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 816,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return `(before, after)`: assign the float `2.7` into slot 0 of `t.zeros(n, dtype=t.int64)` and report the tensor as a list before and after. The dtype never changes on assignment.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"A float assigned into an int tensor is truncated, not upcast.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2,)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2)",
+          "expected_expr": "([0, 0], [2, 0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1)",
+          "expected_expr": "([0], [2])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3)",
+          "expected_expr": "([0, 0, 0], [2, 0, 0])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"A float assigned into an int tensor is truncated, not upcast.\"\"\"\n    canvas = t.zeros(n, dtype=t.int64)\n    before = canvas.tolist()\n    canvas[0] = 2.7\n    return (before, canvas.tolist())\n\n\nexample = (2,)\nprint(solve(*example))\n",
+      "expected_output": "([0, 0], [2, 0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 817,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Build an n×3 canvas as a nested list: column 0 is `1.0` everywhere, column 1 is `0..n-1` (assignment of `t.arange`), and column 2 equals column 1 times `scale` — written by reading the slice you just filled.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, scale):\n    \"\"\"Three column writes, the third built from the second.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 2.0)",
+          "expected_expr": "[[1.0, 0.0, 0.0], [1.0, 1.0, 2.0], [1.0, 2.0, 4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, -1.0)",
+          "expected_expr": "[[1.0, 0.0, -0.0], [1.0, 1.0, -1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0.5)",
+          "expected_expr": "[[1.0, 0.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, scale):\n    \"\"\"Three column writes, the third built from the second.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[:, 0] = 1.0\n    canvas[:, 1] = t.arange(n)\n    canvas[:, 2] = canvas[:, 1] * scale\n    return canvas.tolist()\n\n\nexample = (3, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[1.0, 0.0, 0.0], [1.0, 1.0, 2.0], [1.0, 2.0, 4.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 818,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Every other row: set rows `0, 2, 4, …` of an n×2 zero canvas to `[a, b]` with a single assignment through a stepped slice (the RHS broadcasts along the rows). Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, a, b):\n    \"\"\"A row-vector broadcast into a stepped row slice.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4, 1.0, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.0, 2.0)",
+          "expected_expr": "[[1.0, 2.0], [0.0, 0.0], [1.0, 2.0], [0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, -1.0, 1.0)",
+          "expected_expr": "[[-1.0, 1.0], [0.0, 0.0], [-1.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 5.0, 6.0)",
+          "expected_expr": "[[5.0, 6.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[1.0, 1.0], [0.0, 0.0], [2.0, 2.0], [0.0, 0.0]]",
+          "why": "A (2, 1) column against a (k, 2) slice: broadcasting needs k == 2, so it only works for n in {3, 4} and then writes a and b down the wrong axis."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, a, b):\n    \"\"\"A row-vector broadcast into a stepped row slice.\"\"\"\n    canvas = t.zeros((n, 2))\n    canvas[::2] = t.tensor([a, b])\n    return canvas.tolist()\n\n\nexample = (4, 1.0, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[1.0, 2.0], [0.0, 0.0], [1.0, 2.0], [0.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 819,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Copy the 2-D list `block` into the top-left corner of an m×m zero canvas with `copy_` on a block slice, then negate that block in place with a slice assignment that reads itself. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(m, block):\n    \"\"\"copy_ a block, then rewrite it from itself.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, [[1.0, 2.0], [3.0, 4.0]])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, [[1.0, 2.0], [3.0, 4.0]])",
+          "expected_expr": "[[-1.0, -2.0, 0.0], [-3.0, -4.0, 0.0], [0.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, [[5.0]])",
+          "expected_expr": "[[-5.0, 0.0], [0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, [[1.0, 0.0], [0.0, 1.0]])",
+          "expected_expr": "[[-1.0, -0.0], [-0.0, -1.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, block):\n    \"\"\"copy_ a block, then rewrite it from itself.\"\"\"\n    canvas = t.zeros((m, m))\n    k = len(block)\n    canvas[:k, :k].copy_(t.tensor(block))\n    canvas[:k, :k] = -canvas[:k, :k]\n    return canvas.tolist()\n\n\nexample = (3, [[1.0, 2.0], [3.0, 4.0]])\nprint(solve(*example))\n",
+      "expected_output": "[[-1.0, -2.0, 0.0], [-3.0, -4.0, 0.0], [0.0, 0.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 820,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a ray as a nested list `[[ox, oy, oz], [dx, dy, dz]]` and a scalar `u`, return the point `O + u·D` as a list of three floats.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)",
+          "expected_expr": "[2.0, 1.0, 0.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 1.0, 0.0], [0.0, 1.0, 0.0]], 3.0)",
+          "expected_expr": "[1.0, 4.0, 0.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, -1.0, 2.0]], 0.0)",
+          "expected_expr": "[0.0, 0.0, 0.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[1.0, 0.5, 0.0]",
+          "why": "Rows swapped: row 0 is the origin, row 1 the direction."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[0], ray[1]\n    return (origin + u * direction).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[2.0, 1.0, 0.0]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 821,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a ray `[[ox, oy, oz], [dx, dy, dz]]` and a list of parameters `us`, return one point per parameter as a nested list — a single broadcast, no loop.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])",
+          "expected_expr": "[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0], [2.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0]], [0.5])",
+          "expected_expr": "[[1.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 1.0], [1.0, 1.0, 1.0]], [1.0, 3.0])",
+          "expected_expr": "[[1.0, 1.0, 2.0], [3.0, 3.0, 4.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0.0, 0.5, 0.0]",
+          "why": "Without the added axis, (k,) * (3,) only broadcasts when k == 3 — and then multiplies u elementwise across x, y, z instead of scaling whole points."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[:, None] * ray[1]).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0], [2.0, 1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 822,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the parameter `u` at which the ray `[[ox, oy, oz], [dx, dy, dz]]` reaches x-coordinate `x`, as a float. Assume `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, x):\n    \"\"\"Solve O_x + u·D_x = x for u.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1.0, 0.0, 0.0], [2.0, 0.0, 0.0]], 5.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 0.0, 0.0], [2.0, 0.0, 0.0]], 5.0)",
+          "expected_expr": "2.0"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], 3.0)",
+          "expected_expr": "3.0"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 0.0)",
+          "expected_expr": "0.0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "2.5",
+          "why": "Forgets the origin's x; only right when the ray starts at x = 0."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, x):\n    \"\"\"Solve O_x + u·D_x = x for u.\"\"\"\n    ray = t.tensor(ray)\n    return float((x - ray[0, 0]) / ray[1, 0])\n\n\nexample = ([[1.0, 0.0, 0.0], [2.0, 0.0, 0.0]], 5.0)\nprint(solve(*example))\n",
+      "expected_output": "2.0",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 823,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return the y-coordinate (float) of the ray `[[ox, oy, oz], [dx, dy, dz]]` at the point where its x-coordinate equals `x`. Assume `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, x):\n    \"\"\"Solve for u from x, then read y.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], 3.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], 3.0)",
+          "expected_expr": "6.0"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 1.0, 0.0], [1.0, -1.0, 0.0]], 4.0)",
+          "expected_expr": "-3.0"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[2.0, 2.0, 0.0], [2.0, 1.0, 0.0]], 6.0)",
+          "expected_expr": "4.0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, x):\n    \"\"\"Solve for u from x, then read y.\"\"\"\n    ray = t.tensor(ray)\n    u = (x - ray[0, 0]) / ray[1, 0]\n    return float(ray[0, 1] + u * ray[1, 1])\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], 3.0)\nprint(solve(*example))\n",
+      "expected_output": "6.0",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 824,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return `True` if the point `p` (list of three floats) with x-coordinate `p[0]` lies on the FORWARD half of the ray `[[ox, oy, oz], [dx, dy, dz]]`, i.e. the `u` that reaches `p[0]` is ≥ 0 AND `O + u·D` equals `p` exactly. Assume `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, p):\n    \"\"\"Is p ahead of the camera on this ray?\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [-1.0, -2.0, 0.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [-1.0, -2.0, 0.0])",
+          "expected_expr": "False"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [2.0, 4.0, 0.0])",
+          "expected_expr": "True"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [2.0, 5.0, 0.0])",
+          "expected_expr": "False"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "True",
+          "why": "Checks the LINE, not the ray: a point behind the origin (u < 0) is accepted."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, p):\n    \"\"\"Is p ahead of the camera on this ray?\"\"\"\n    ray = t.tensor(ray)\n    u = (p[0] - ray[0, 0]) / ray[1, 0]\n    on_line = (ray[0] + u * ray[1]).tolist() == p\n    return bool(u >= 0) and on_line\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [-1.0, -2.0, 0.0])\nprint(solve(*example))\n",
+      "expected_output": "False",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 825,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return the point at parameter `u` on the ray `[[ox, oy, oz], [dx, dy, dz]]` and on the same ray with its direction doubled and `u` halved, as a tuple of two lists. They must agree — the parametrisation is not unique.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"Doubling D and halving u names the same point.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)",
+          "expected_expr": "([2.0, 1.0, 0.0], [2.0, 1.0, 0.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 1.0, 1.0], [0.0, 2.0, 0.0]], 1.0)",
+          "expected_expr": "([1.0, 3.0, 1.0], [1.0, 3.0, 1.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [3.0, -1.0, 2.0]], 4.0)",
+          "expected_expr": "([12.0, -4.0, 8.0], [12.0, -4.0, 8.0])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"Doubling D and halving u names the same point.\"\"\"\n    ray = t.tensor(ray)\n    a = ray[0] + u * ray[1]\n    b = ray[0] + (u / 2) * (2 * ray[1])\n    return (a.tolist(), b.tolist())\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+      "expected_output": "([2.0, 1.0, 0.0], [2.0, 1.0, 0.0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 826,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return the points at parameters `0, 1, …, n-1` on the ray `[[ox, oy, oz], [dx, dy, dz]]` as a nested list, using `t.arange(n)` and one broadcast.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, n):\n    \"\"\"n integer steps along one ray.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 3)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 3)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0], [2.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], 2)",
+          "expected_expr": "[[1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [2.0, 2.0, 2.0]], 1)",
+          "expected_expr": "[[0.0, 0.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, n):\n    \"\"\"n integer steps along one ray.\"\"\"\n    ray = t.tensor(ray)\n    u = t.arange(n)[:, None]\n    return (ray[0] + u * ray[1]).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 3)\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0], [2.0, 1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 827,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a stack of rays as a nested list of shape (n, 2, 3) and one scalar `u`, return the n points `O_i + u·D_i` as a nested list — index the origin rows and direction rows of every ray at once.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rays, u):\n    \"\"\"One u, many rays.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)",
+          "expected_expr": "[[2.0, 1.0, 0.0], [2.0, -1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[1.0, 1.0, 1.0], [0.0, 0.0, 1.0]]], 3.0)",
+          "expected_expr": "[[1.0, 1.0, 4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]], 1.0)",
+          "expected_expr": "[[1.0, 1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.0, 0.0], [3.0, -0.5, 0.0]]",
+          "why": "rays[0] is the whole FIRST RAY (a 2×3 slab), not the origins of every ray; the axis you index matters."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(rays, u):\n    \"\"\"One u, many rays.\"\"\"\n    rays = t.tensor(rays)\n    return (rays[:, 0] + u * rays[:, 1]).tolist()\n\n\nexample = ([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[2.0, 1.0, 0.0], [2.0, -1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 828,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a stack of rays (n, 2, 3) as a nested list and a target x-coordinate `x`, return the y-coordinate of every ray where it reaches `x`, as a list of n floats. All rays have `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rays, x):\n    \"\"\"Per-ray u from x, then per-ray y, vectorised.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)",
+          "expected_expr": "[1.0, -1.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 1.0, 0.0], [2.0, 1.0, 0.0]]], 4.0)",
+          "expected_expr": "[3.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[1.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [2.0, 2.0, 0.0]]], 3.0)",
+          "expected_expr": "[2.0, 3.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(rays, x):\n    \"\"\"Per-ray u from x, then per-ray y, vectorised.\"\"\"\n    rays = t.tensor(rays)\n    u = (x - rays[:, 0, 0]) / rays[:, 1, 0]\n    return (rays[:, 0, 1] + u * rays[:, 1, 1]).tolist()\n\n\nexample = ([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]]], 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[1.0, -1.0]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 829,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a ray `[[ox, oy, oz], [dx, dy, dz]]` and a list of x-coordinates `xs`, return a nested list of the full 3-D points where the ray has those x-coordinates. Assume `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, xs):\n    \"\"\"Many x's → many u's → many points, one broadcast.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [0.0, 1.0, 3.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [0.0, 1.0, 3.0])",
+          "expected_expr": "[[0.0, 0.0, 0.0], [1.0, 2.0, 0.0], [3.0, 6.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[1.0, 1.0, 0.0], [2.0, 0.0, 2.0]], [5.0])",
+          "expected_expr": "[[5.0, 1.0, 4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[0.0, 0.0, 0.0], [0.5, 1.0, 0.0]], [1.0, 2.0])",
+          "expected_expr": "[[1.0, 2.0, 0.0], [2.0, 4.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, xs):\n    \"\"\"Many x's → many u's → many points, one broadcast.\"\"\"\n    ray = t.tensor(ray)\n    u = (t.tensor(xs) - ray[0, 0]) / ray[1, 0]\n    return (ray[0] + u[:, None] * ray[1]).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [0.0, 1.0, 3.0])\nprint(solve(*example))\n",
+      "expected_output": "[[0.0, 0.0, 0.0], [1.0, 2.0, 0.0], [3.0, 6.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 830,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 58,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a stack of rays (n, 2, 3) as a nested list and a point `p`, return a list of n booleans: whether ray i passes through `p` on its forward half (u ≥ 0 and `O_i + u·D_i == p` exactly, with u solved from the x-coordinate). All rays have `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rays, p):\n    \"\"\"Which rays hit p ahead of the camera?\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, -1.0, 0.0]]], [2.0, 2.0, 0.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, -1.0, 0.0]]], [2.0, 2.0, 0.0])",
+          "expected_expr": "[True, False, False]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]], [4.0, 2.0, 0.0])",
+          "expected_expr": "[True]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve([[[1.0, 0.0, 0.0], [1.0, 0.0, 0.0]]], [3.0, 1.0, 0.0])",
+          "expected_expr": "[False]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(rays, p):\n    \"\"\"Which rays hit p ahead of the camera?\"\"\"\n    rays = t.tensor(rays)\n    u = (p[0] - rays[:, 0, 0]) / rays[:, 1, 0]\n    hit = rays[:, 0] + u[:, None] * rays[:, 1]\n    same = (hit == t.tensor(p)).all(dim=1)\n    return (same * (u >= 0)).tolist()\n\n\nexample = ([[[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, -1.0, 0.0]]], [2.0, 2.0, 0.0])\nprint(solve(*example))\n",
+      "expected_output": "[True, False, False]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 831,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Implement ARENA's `make_rays_1d(num_pixels, y_limit)`: return the `(num_pixels, 2, 3)` tensor as a nested list — origins at zero, direction x = 1, direction y evenly from `-y_limit` to `y_limit`, direction z = 0.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -2.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 5.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -5.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[1.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]",
+          "why": "Wrote x = 1 into the ORIGIN row (row 0) instead of the direction row (row 1)."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n\n\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 832,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "The same fan, but with the y-values written by slice ASSIGNMENT instead of `out=`: return `make_rays_1d(num_pixels, y_limit)` as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.5, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "The fan runs from -y_limit to +y_limit, not from 0."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 833,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return only the direction rows of `make_rays_1d(num_pixels, y_limit)` — a `(num_pixels, 3)` nested list of `[1, y, 0]` rows with `y` from `-y_limit` to `y_limit`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The direction rows of the fan.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0)",
+          "expected_expr": "[[1.0, -1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 4.0)",
+          "expected_expr": "[[1.0, -4.0, 0.0], [1.0, 4.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5, 2.0)",
+          "expected_expr": "[[1.0, -2.0, 0.0], [1.0, -1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The direction rows of the fan.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays[:, 1].tolist()\n\n\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[1.0, -1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 834,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A fan in the z direction instead of y: `(num_pixels, 2, 3)` rays with direction `[1, 0, z]`, `z` evenly from `-z_limit` to `z_limit`. Return as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, z_limit):\n    \"\"\"make_rays_1d rotated into the x–z plane.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -0.5]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.5]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 9.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -9.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "Column 1 is y; the z fan goes in column 2."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, z_limit):\n    \"\"\"make_rays_1d rotated into the x–z plane.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 2] = t.linspace(-z_limit, z_limit, num_pixels)\n    return rays.tolist()\n\n\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 835,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A fan whose rays all start at the point `origin` (list of three floats) instead of zero: build `make_rays_1d(num_pixels, y_limit)` and then write the origin row of every ray in one broadcast. Return as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, origin):\n    \"\"\"The fan, moved to a shared non-zero origin.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 1.0, [0.0, 0.0, 1.0])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 1.0, [0.0, 0.0, 1.0])",
+          "expected_expr": "[[[0.0, 0.0, 1.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 1.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, [1.0, 2.0, 3.0])",
+          "expected_expr": "[[[1.0, 2.0, 3.0], [1.0, -1.0, 0.0]], [[1.0, 2.0, 3.0], [1.0, 0.0, 0.0]], [[1.0, 2.0, 3.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 2.0, [-1.0, 0.0, 0.0])",
+          "expected_expr": "[[[-1.0, 0.0, 0.0], [1.0, -2.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 1.0], [1.0, -1.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "rays[0] is the whole first ray, not the origin rows: broadcasting the 3-vector into a (2, 3) slab sets BOTH rows of ray 0 and no other ray."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, origin):\n    \"\"\"The fan, moved to a shared non-zero origin.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 0] = t.tensor(origin)\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nexample = (2, 1.0, [0.0, 0.0, 1.0])\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 1.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 1.0], [1.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 836,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return `(shape, all_origins_zero, xs)` for `make_rays_1d(num_pixels, y_limit)`: its shape as a tuple, whether every origin entry is 0 (a bool), and the list of direction-x values.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"Three checks on a freshly built fan.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0)",
+          "expected_expr": "((3, 2, 3), True, [1.0, 1.0, 1.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 0.5)",
+          "expected_expr": "((1, 2, 3), True, [1.0])"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 2.0)",
+          "expected_expr": "((4, 2, 3), True, [1.0, 1.0, 1.0, 1.0])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"Three checks on a freshly built fan.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    origins_zero = bool((rays[:, 0] == 0).all())\n    return (tuple(rays.shape), origins_zero, rays[:, 1, 0].tolist())\n\n\nexample = (3, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "((3, 2, 3), True, [1.0, 1.0, 1.0])",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 837,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A fan where direction x is `x_dir` instead of 1 (the rays still fan from `-y_limit` to `y_limit` in y). Return `make_rays_1d`-shaped output as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x_dir):\n    \"\"\"The same fan with a different x speed.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [2.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [2.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 1.0, -1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [-1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 3.0, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.5, -3.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x_dir):\n    \"\"\"The same fan with a different x speed.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = x_dir\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [2.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [2.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 838,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Return the y-coordinate of every ray of `make_rays_1d(num_pixels, y_limit)` at x = `x` as a list of floats. Since every direction has x = 1 and every origin is 0, `u` at x is simply `x`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x):\n    \"\"\"Where the fan is at a given x.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, 2.0)",
+          "expected_expr": "[-2.0, 0.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 4.0, 0.5)",
+          "expected_expr": "[-2.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5, 2.0, 1.0)",
+          "expected_expr": "[-2.0, -1.0, 0.0, 1.0, 2.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x):\n    \"\"\"Where the fan is at a given x.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    points = rays[:, 0] + x * rays[:, 1]\n    return points[:, 1].tolist()\n\n\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[-2.0, 0.0, 2.0]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 839,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A 2-D fan: `(ny * nz, 2, 3)` rays with direction `[1, y, z]` for every pair of `y` in `linspace(-y_limit, y_limit, ny)` and `z` in `linspace(-z_limit, z_limit, nz)`, y varying slowest (ray index = iy * nz + iz). Return as a nested list. Build a `(ny, nz, 2, 3)` canvas, write the y column with a `(ny, 1)` broadcast and the z column with a `(1, nz)` broadcast, then reshape to `(ny * nz, 2, 3)`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ny, nz, y_limit, z_limit):\n    \"\"\"make_rays_2d: a grid of directions in one canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 2, 1.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 2, 1.0, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 3, 0.0, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -0.0, -2.0]], [[0.0, 0.0, 0.0], [1.0, -0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.0, 2.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1, 1.0, 5.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, -5.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, -5.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, -5.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]]",
+          "why": "Canvas axes swapped: z now varies slowest, so the ray order is transposed."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(ny, nz, y_limit, z_limit):\n    \"\"\"make_rays_2d: a grid of directions in one canvas.\"\"\"\n    rays = t.zeros((ny, nz, 2, 3))\n    rays[:, :, 1, 0] = 1\n    rays[:, :, 1, 1] = t.linspace(-y_limit, y_limit, ny)[:, None]\n    rays[:, :, 1, 2] = t.linspace(-z_limit, z_limit, nz)[None, :]\n    return rays.reshape(ny * nz, 2, 3).tolist()\n\n\nexample = (2, 2, 1.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 840,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 56,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Build `make_rays_1d(num_pixels, y_limit)` and return, as a list of floats, the y-coordinate where each ray crosses the vertical line x = `x`, followed by a bool saying whether the crossing is ahead of the camera (u ≥ 0). Return a tuple `(ys, ahead)`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x):\n    \"\"\"The fan against a vertical line.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, 2.0)",
+          "expected_expr": "([-2.0, 0.0, 2.0], True)"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 2.0, -1.0)",
+          "expected_expr": "([2.0, -2.0], False)"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.0, 0.0)",
+          "expected_expr": "([0.0, 0.0, 0.0, 0.0], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, x):\n    \"\"\"The fan against a vertical line.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    u = (x - rays[:, 0, 0]) / rays[:, 1, 0]\n    ys = rays[:, 0, 1] + u * rays[:, 1, 1]\n    return (ys.tolist(), bool((u >= 0).all()))\n\n\nexample = (3, 1.0, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "([-2.0, 0.0, 2.0], True)",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 841,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 58,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Build `make_rays_1d(num_pixels, y_limit)` and then rescale every direction so that its y-component's magnitude is at most 1 (divide row 1 of every ray by `max(1, y_limit)`). Return as a nested list. The points each ray passes through are unchanged — only the parametrisation.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"Reparametrising the fan without moving it.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 4.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.25, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.25, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.25, 1.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "Scaling only the y component changes the ray's direction; the whole direction row must be scaled to keep the same ray."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"Reparametrising the fan without moving it.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    rays[:, 1] = rays[:, 1] / max(1.0, y_limit)\n    return rays.tolist()\n\n\nexample = (3, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [0.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

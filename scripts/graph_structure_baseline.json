@@ -1,6 +1,6 @@
 {
  "_": "Known graph-structure findings. watch.py fails on anything NOT listed here. Shrink it; re-record only with a reason.",
- "count": 64,
+ "count": 68,
  "known": [
   "difficulty|einops.channel-groups-temporal|faded>guided",
   "difficulty|einops.dl-flatten-heads|guided>independent",
@@ -25,6 +25,10 @@
   "difficulty|python.lists-and-tuples|integrated>independent",
   "difficulty|python.types-and-conversion|integrated>independent",
   "difficulty|python.values-and-names|integrated>independent",
+  "difficulty|raytracing.make-rays-1d|integrated>independent",
+  "difficulty|raytracing.ray-parametrisation|integrated>independent",
+  "difficulty|torch.out-argument|integrated>independent",
+  "difficulty|torch.slice-assignment|integrated>independent",
   "edge-missing|einops.channel-groups-temporal|numpy.ranges",
   "edge-missing|einops.dl-flatten-heads|einops.reduce-model",
   "edge-missing|einops.dl-flatten-heads|numpy.constructors",
