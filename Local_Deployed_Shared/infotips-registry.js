@@ -105,7 +105,7 @@ window.DD_INFOTIPS = {
   },
   "kg-legend": {
     title: "Legend",
-    body: "What the node colours mean — mastered, unlocked and ready, or still locked behind a prerequisite.",
+    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Chapters</strong> is the notebook a concept comes from &mdash; the Python prerequisites, chapter 0.0, or chapter 0.1. <strong>Categories</strong> splits each chapter into its subjects (broadcasting, einops, einsum, ray tracing), tinted inside its chapter's colour.",
   },
   "kg-info": {
     title: "Concept detail",
