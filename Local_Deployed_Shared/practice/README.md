@@ -16,6 +16,31 @@ Practice-page frontend: loads ARENA-derived coding questions, runs the user's Py
 - AI grading prompts — system prompts live in `../function_mode_quality_*.txt` and `../chatgpt/`.
 - Auth, navigation, top-level shell — handled by the host app.
 
+## First attempts
+
+Before a new concept's lesson is shown, the learner can choose **Try the problem
+first** or **Review the lesson first**. The first choice uses the bank's unsolved
+starter, skips lesson/example rendering, and does not grant exposure, worked
+example credit, or lesson XP. The choice persists for the paused question;
+future questions still offer any unread lesson. Explicit lesson links still
+open their lesson directly.
+
+ARENA exercise setup offers a first-attempt option when the exercise has target
+variants. The planner spends one normal budget slot on a variant, ends on a
+correct answer, or resumes its adaptive policy after a miss. The preference is
+saved with setup and planner state. Exercises without variants keep their
+existing scoped drill flow.
+
+Q391's exact answer pattern was removed from the prompt and starter docstring.
+`pipeline/question_content_corrections.json` applies the reviewed content after
+runtime export layers. `repairKnownQuestionContent` uses the shipped prompt for
+old backend responses and removes the old starter docstring leak while retaining
+authored blanks. Existing learner drafts are not rewritten.
+
+Verification: `node --test Local_Deployed_Shared/practice/test-first-attempt.cjs`
+from the repo root (requires Playwright + Chromium), plus `python3
+Local_Deployed_Shared/practice/watch.py`.
+
 ## Key Files
 - `init.js`: bootstraps the practice page, wires DOM and event handlers.
 - `dom.js`: caches DOM element refs used across modules.

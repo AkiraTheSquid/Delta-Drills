@@ -6736,7 +6736,7 @@
     "topic": "Einops",
     "subtopic": "Rearrange",
     "subtopic_key": "Einops: Rearrange",
-    "question_text": "Write a function solve(img) that takes a channels-first image (c, h, w) and FLATTENS its spatial axes per channel: return shape (c, h*w) via 'c h w -> c (h w)'.",
+    "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
     "answer_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    return einops.rearrange(img, 'c h w -> c (h w)')\n\n\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
     "difficulty_score": 20,
     "difficulty_label": "easy",
@@ -6745,7 +6745,7 @@
     "primary_library": "torch",
     "task_type": "image_transform",
     "function_name": "solve",
-    "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return shape (c, h*w) via 'c h w -> c (h w)'.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
+    "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nimg = t.arange(8.0).reshape(2, 2, 2)",

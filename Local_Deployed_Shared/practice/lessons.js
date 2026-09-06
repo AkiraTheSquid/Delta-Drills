@@ -132,7 +132,7 @@ const LessonGate = (() => {
   });
 
   const _pendingSteps = async (question) => {
-    if (question?.diagnostic_active) return [];
+    if (question?.diagnostic_active || question?.attempt_first) return [];
     if (practiceMode === "backend") {
       /* 🔴 …MINUS ANYTHING THIS BROWSER HAS ALREADY SHOWN.
 
@@ -551,6 +551,7 @@ const LessonGate = (() => {
 
   const maybeShow = async (question, onDone, forceKcs = null) => {
     try {
+      if (question?.attempt_first) return false;
       // Content first: a local-mode step is read out of the KP's own segment
       // list, so `_pendingSteps` cannot answer before the lessons have loaded.
       await _ensureLessons();
@@ -732,7 +733,42 @@ const LessonGate = (() => {
         };
       };
 
-      showPage();
+      // Offer a cold attempt before mounting any lesson prose, examples, or
+      // runnable code. An explicit lesson preview without a question still
+      // opens the lesson directly.
+      if (question && typeof loadQuestionsBank === "function") await loadQuestionsBank();
+      const bankQuestion = question && typeof getQuestionFromBank === "function"
+        ? getQuestionFromBank(question.question_id) : null;
+      if (bankQuestion?.starter_code && !question.diagnostic_active) {
+        _cleanup();
+        document.body.classList.add("lesson-mode");
+        const page = pages[0];
+        if (questionNumber) questionNumber.textContent = "Choose a starting point";
+        questionText.innerHTML =
+          `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(page.seg.title || page.kp.title)}</h2>` +
+          '<p>Want to check what you already know before seeing the lesson?</p>' +
+          '<div class="lesson-actions">' +
+          '<button type="button" class="primary" id="lesson-attempt-btn">Try the problem first</button>' +
+          '<button type="button" class="ghost" id="lesson-review-btn">Review the lesson first</button></div>' +
+          '<p>Your attempt is graded normally. You can review the lesson on the next visit if you need it.</p>';
+        _showTopbar(page);
+        _el("lesson-attempt-btn").onclick = () => {
+          if (finished) return;
+          finished = true;
+          question.attempt_first = true;
+          question.starter_code = bankQuestion.starter_code;
+          question.ladder_support = false;
+          // No exposure, worked-example credit, or lesson XP for a skip.
+          _cleanup();
+          onDone();
+        };
+        _el("lesson-review-btn").onclick = () => {
+          if (!finished) showPage();
+        };
+        _el("lesson-title")?.focus();
+      } else {
+        showPage();
+      }
       return true;
     } catch (err) {
       console.warn("[lessons] gate error — continuing without lesson:", err);

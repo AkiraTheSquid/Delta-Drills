@@ -370,7 +370,7 @@ const KcPractice = (() => {
   /** Start a PLANNED block: `quota` questions at most, attempts drawn from
       `variants` (bank ids). Falls back to a plain scoped ladder when the
       planner script is missing or the exercise lists no variants. */
-  const startPlanned = async (kc, { quota, variants } = {}) => {
+  const startPlanned = async (kc, { quota, variants, attemptFirst = false } = {}) => {
     const ok = await startScoped(kc);
     if (!ok) return false;
     const P = window.ExercisePlanner;
@@ -397,7 +397,7 @@ const KcPractice = (() => {
         pools: _nodePools(pe.kp, pre), variants: [],
       });
     }
-    planner = new P.Planner({ quota, target, prereqs });
+    planner = new P.Planner({ quota, target, prereqs, attemptFirst });
     queue = [];
     served = 0;
     lastItem = null;

@@ -93,6 +93,7 @@ const ExampleGate = (() => {
      true when the screen was taken over (and `onDone` will be called from the
      button), false when the drill should render straight away. */
   const maybeShow = async (question, onDone) => {
+    if (question?.attempt_first) return false;
     try {
       const plan = question && question.ladder_example;
       const kc = question && question.ladder_kc;

@@ -202,7 +202,11 @@
   /* ---- mastery colouring (BKT posterior → red↔blue, gray = no estimate) ---- */
   const BKT_P_INIT = 0.10, BKT_HALF_LIFE_DAYS = 14.0;
   const UNKNOWN_COLOR = "#5b5b70";       // no estimate yet
+  const DISABLED_COLOR = "#94949d";      // deliberately neutral in every colour mode
+  const DIM_DISABLED_KEY = "dd_kg_dim_disabled";
   let colorMode = "mastery";             // "mastery" | "section" | "category"
+  let dimDisabled = true;
+  try { dimDisabled = localStorage.getItem(DIM_DISABLED_KEY) !== "false"; } catch (_) {}
 
   // Persisted engine state (guest: adaptive_state_guest) so the graph shows
   // mastery even before Practice has been opened this session.
@@ -1173,6 +1177,11 @@
         <span><strong>Practice this concept</strong>
         <small>Off = the queue skips it, and anything it unlocks is treated as if it were already learned.</small></span>
       </label>`;
+    html += `<label class="kg2-set-row kg2-set-toggle">
+        <input type="checkbox" id="kg-set-dim-disabled" ${dimDisabled ? "checked" : ""}>
+        <span><strong>Fade switched-off concepts on the graph</strong>
+        <small>Shows every disabled concept in neutral gray at low opacity. This display choice applies to the whole graph and stays in this browser.</small></span>
+      </label>`;
     html += `<div class="kg2-set-row kg2-set-weight ${pref.enabled ? "" : "is-off"}">
         <div class="kg2-set-head"><strong>Priority weight</strong>
           <output id="kg-set-out">${pref.weight.toFixed(2)} × — ${esc(_pctLabel(pref.weight))}</output></div>
@@ -1229,6 +1238,7 @@
     const box = document.querySelector(".kg2-set");
     if (!box) return;
     const enabled = $("kg-set-enabled");
+    const dimDisabledToggle = $("kg-set-dim-disabled");
     const range = $("kg-set-range");
     const out = $("kg-set-out");
     const weightRow = box.querySelector(".kg2-set-weight");
@@ -1249,6 +1259,12 @@
       paintEnabled(enabled.checked);
       const row = await _savePref(id, { enabled: enabled.checked });
       if (!row) rollback();
+    });
+    if (dimDisabledToggle) dimDisabledToggle.addEventListener("change", () => {
+      dimDisabled = dimDisabledToggle.checked;
+      try { localStorage.setItem(DIM_DISABLED_KEY, String(dimDisabled)); } catch (_) {}
+      buildLegend();
+      recolor();
     });
     const saveWeight = async (w) => {
       paint(w);
@@ -1532,6 +1548,9 @@
   // Whether the Category legend's family list is unfolded. Module-level
   // because buildLegend() rewrites the element it lives on.
   let legendFoldOpen = true;
+  const _disabledLegend = () => dimDisabled
+    ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>'
+    : "";
   const buildLegend = () => {
     const el = $("kg-legend");
     if (!el) return;
@@ -1541,7 +1560,7 @@
       el.innerHTML =
         '<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
         '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>' +
-        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
+        _disabledLegend() +
         '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
     } else {
       // The two non-mastery legends answer different questions, so they are
@@ -1560,7 +1579,7 @@
         ).join("");
         // With no exercise map every concept falls to prep, which looks like a
         // finished answer instead of a missing file. Say which it is.
-        el.innerHTML = rows + (arenaMapLoaded ? "" :
+        el.innerHTML = rows + _disabledLegend() + (arenaMapLoaded ? "" :
           '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>');
       } else {
         // Fourteen families is a legend tall enough to sit on top of the
@@ -1589,7 +1608,7 @@
           '<details class="kg2-legend-fold"' + (legendFoldOpen ? " open" : "") + ">" +
             '<summary>Colour = subject, grouped by area</summary>' +
             '<div class="kg2-legend-fold-body">' + body + "</div>" +
-          "</details>";
+          "</details>" + _disabledLegend();
         // The element is rebuilt on every legend build, so the listener is
         // fresh each time and nothing accumulates.
         const fold = el.querySelector(".kg2-legend-fold");
@@ -1609,9 +1628,11 @@
   const recolor = () => {
     if (!cy) return;
     cy.batch(() => cy.nodes().forEach((n) => {
-      const inferred = colorMode === "mastery" && !_isMeasured(n.id());
+      const row = lattice && lattice.kcs ? lattice.kcs[n.id()] : null;
+      const disabled = dimDisabled && row && row.state === "disabled";
+      const inferred = !disabled && colorMode === "mastery" && !_isMeasured(n.id());
       n.style({
-        "background-color": nodeColor(n.id()),
+        "background-color": disabled ? DISABLED_COLOR : nodeColor(n.id()),
         "background-opacity": inferred ? 0.42 : 1,
         "border-style": inferred ? "dashed" : "solid",
       });
@@ -1765,13 +1786,13 @@
     // between a diagram of the curriculum and a picture of the tutor: a locked
     // node is one the learner genuinely cannot be served yet.
     cy.nodes().removeClass("kc-locked kc-frontier kc-disabled");
-    if (lattice && colorMode === "mastery") {
+    if (lattice) {
       cy.nodes().forEach((n) => {
         const row = lattice.kcs[n.id()];
         if (!row) return;
-        if (row.state === "disabled") n.addClass("kc-disabled");
-        else if (row.state === "locked") n.addClass("kc-locked");
-        else if (row.state === "frontier") n.addClass("kc-frontier");
+        if (dimDisabled && row.state === "disabled") n.addClass("kc-disabled");
+        else if (colorMode === "mastery" && row.state === "locked") n.addClass("kc-locked");
+        else if (colorMode === "mastery" && row.state === "frontier") n.addClass("kc-frontier");
       });
     }
 
@@ -1903,7 +1924,7 @@
         // waiting on it — just out of the queue, so it fades harder than a
         // locked node and loses its border entirely.
         { selector: "node.kc-disabled", style: {
-            "opacity": 0.22, "border-width": 0, "z-index": 0,
+            "opacity": 0.18, "border-width": 0, "color": "#505058", "z-index": 0,
         }},
         { selector: "node.kc-frontier", style: {
             "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,

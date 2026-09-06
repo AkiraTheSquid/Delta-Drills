@@ -232,6 +232,7 @@ const PracticeSession = (() => {
           ? null
           : Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
         questionId: String(saved.questionId),
+        attemptFirst: saved.attemptFirst === true,
         ladder: _readLadder(saved.ladder),
         draft: typeof saved.draft === "string" || (
           saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
@@ -366,6 +367,7 @@ const PracticeSession = (() => {
          machine, and this field is optional in both directions: an older
          snapshot simply has no `ladder` and restores exactly as it did before.
          A silent data loss is not a fair price for a field that degrades. */
+      attemptFirst: PracticeAPI.currentQuestion?.attempt_first === true,
       ladder: _ladderContext(),
       config: _configRecord(),
       draft: _draft(),
@@ -908,6 +910,7 @@ const PracticeSession = (() => {
           restored.ladder_estimate = ladder.estimate;
         }
       }
+      if (pausedState.attemptFirst) restored.attempt_first = true;
       await _recoverQuestionContext(restored);
       PracticeAPI.currentQuestion = restored;
       practiceProgress.currentQuestion = restored;

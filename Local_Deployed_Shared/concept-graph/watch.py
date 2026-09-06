@@ -249,6 +249,34 @@ def check_a_placed_learner_is_not_told_they_answered_nothing():
     )
 
 
+def check_disabled_concepts_have_an_optional_graph_treatment():
+    """Disabled state must remain visible across every colour reading.
+
+    This is display-only: the per-concept API preference owns whether a concept
+    is disabled, while one browser preference owns whether that state is faded.
+    Keeping the state check outside the mastery-only branch prevents Sections
+    and Categories from repainting a disabled concept as active.
+    """
+    src = _read(os.path.join(HERE, 'lesson-graph.js'))
+    assert 'id="kg-set-dim-disabled"' in src, (
+        'Settings must expose the graph-wide disabled-concept fade toggle'
+    )
+    assert 'localStorage.setItem(DIM_DISABLED_KEY, String(dimDisabled))' in src, (
+        'the disabled-concept display choice must persist in this browser'
+    )
+    recolor = src[src.index('const recolor = () =>'):src.index('const _announceReadiness')]
+    assert 'disabled ? DISABLED_COLOR : nodeColor(n.id())' in recolor, (
+        'disabled concepts must replace every semantic colour with neutral gray'
+    )
+    gate = src[src.index('const markNextUp = () =>'):src.index('/* ---------------- build')]
+    assert 'if (dimDisabled && row.state === "disabled")' in gate, (
+        'disabled styling must not be limited to mastery colour mode'
+    )
+    assert '"opacity": 0.18' in src, (
+        'disabled concepts must stay mostly transparent relative to active ones'
+    )
+
+
 def _assert_every_check_is_listed(checks):
     """A check this module defines but never calls is worse than no check.
 
@@ -278,6 +306,7 @@ if __name__ == '__main__':
         check_the_topic_reading_sits_below_the_lesson_average,
         check_a_topic_reading_contributes_no_direct_evidence,
         check_a_placed_learner_is_not_told_they_answered_nothing,
+        check_disabled_concepts_have_an_optional_graph_treatment,
     ]
     try:
         _assert_every_check_is_listed(checks)
