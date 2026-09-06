@@ -94,6 +94,14 @@
 
 /* ── Accuracy bar ────────────────────────────────────────────── */
 
+/* This rule loads AFTER styles/components.css, so at equal specificity its
+   display:flex silently beat `.hidden` (2026-09-06: the box stayed on screen
+   with the previous concept's title). The compound selector below restores
+   the hide. */
+.ewma-accuracy.hidden {
+  display: none;
+}
+
 .ewma-accuracy {
   display: flex;
   flex-direction: column;
