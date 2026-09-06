@@ -274,3 +274,78 @@ def check_a_contents_row_can_actually_be_clicked():
     assert "window.scrollTo(" in nav and "JUMP_CLEARANCE" in nav, (
         "_jump no longer scrolls the document to the heading it names"
     )
+
+
+def check_the_notebook_editor_never_writes_text_the_learner_did_not_type():
+    """A code cell's own decoration must be invisible to every read of it.
+
+    `practice/notebook-code-edit.js` paints syntax colour INTO the
+    contenteditable and hangs two decorations off the same tree: the inline
+    completion ghost, and a span that holds a line box open on a trailing
+    newline. Both sit inside the element whose `innerText` IS the learner's
+    program — `arena-notebook.js` reads the cell back that way on every
+    keystroke, and `_persistCells` writes what it read into localStorage.
+
+    🔴 So neither decoration may be a real character. Drawn with `content:`
+    they are in neither `innerText` nor `textContent`; drawn as text, a ghost
+    the learner never accepted is spliced into their source, and the
+    zero-width space is a `SyntaxError: invalid non-printable character` the
+    moment the cell is run. There is nothing to see when this breaks until a
+    cell fails to run, so it is pinned here.
+    """
+    editor = _live(read(os.path.join(HERE, "notebook-code-edit.js")))
+    css = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True)
+
+    assert "​" not in editor, (
+        "notebook-code-edit.js emits a literal zero-width space — it will be "
+        "read back into the learner's source by arena-notebook.js and Python "
+        "will refuse to parse the cell"
+    )
+    assert 'content: attr(data-ghost)' in css, (
+        "the completion ghost is no longer generated content, so the "
+        "suggestion is now part of the cell's source"
+    )
+    assert 'content: "\\200B"' in css, (
+        "the trailing-newline line box is no longer generated content"
+    )
+    # Both decorations are marked, and both readers skip what is marked.
+    assert editor.count('data-nb-skip="1"') >= 2, (
+        "a decoration in the code cell is no longer marked data-nb-skip"
+    )
+    assert 'hasAttribute("data-nb-skip")' in editor, (
+        "the text walker no longer skips decorations — readText and the caret "
+        "walker must agree about what counts as a character"
+    )
+
+    # The cell's source is read from the DOM, never from layout.
+    assert ".innerText" not in editor, (
+        "notebook-code-edit.js reads a cell with innerText, which is empty "
+        "for a cell inside a closed <details> — and ARENA is full of them"
+    )
+
+
+def check_code_on_the_arena_page_is_set_at_the_prose_size():
+    """Seth, 2026-09-06: code text the same size as the paragraphs.
+
+    One token, `--anb-code-size`, and every kind of code on the page reads
+    from it — the runnable cells, the fenced blocks markdown renders, and the
+    output under a cell. Three separate sizes is how the surface drifted the
+    first time.
+    """
+    css = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True)
+
+    assert "--anb-code-size: calc(18.2px * var(--anb-zoom, 1))" in css, (
+        "--anb-code-size no longer matches .nbv-md's own font-size expression"
+    )
+    for consumer in (".nbv-src code", ".nbv-md pre > code", ".nbv-out"):
+        assert consumer in css, f"{consumer} no longer takes its size from the shared rule"
+
+    # 🔴 The grey chip is for INLINE code in a sentence. Applied to a fenced
+    # block it paints the majority of an ARENA section grey, which is the
+    # thing Seth asked to be rid of.
+    assert ".nbv-md :not(pre) > code" in css, (
+        "the grey inline-code chip is back on fenced blocks"
+    )
+    assert "#page-arena-notebook .nbv-md pre {" in css and "background" not in (
+        css.split("#page-arena-notebook .nbv-md pre {")[1].split("}")[0]
+    ), "a fenced code block is filled again rather than being a plain rectangle"

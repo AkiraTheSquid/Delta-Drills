@@ -752,21 +752,20 @@ const PracticeSession = (() => {
     if (!isActive() || state.phase !== "grading") return;
     state.review = review;
     _persist();
-    /* A miss inside an exercise session pulls the concept's prerequisites in
-       front of the queue (kc-practice.js::onMiss). Only ever additive to the
-       ORDER of what is served; the grade above is already recorded. The
-       snapshot is rewritten when it lands so a pause right after a miss
-       carries the drills that were just queued. */
-    if (sessionConfig?.exercise && review && !review.correct) {
-      const kc = PracticeAPI?.currentQuestion?.ladder_kc;
-      Promise.resolve(window.KcPractice?.onMiss?.(kc))
-        .then((n) => {
-          if (n) {
-            _persist();
-            window.ExerciseSession?.onPrereqsQueued?.(kc, n);
-          }
+    /* Every grade inside an exercise session goes back to the ladder
+       (kc-practice.js::onResult): a planned block re-weighs its next choice,
+       a plain scoped one pulls the prerequisites on a miss. Only ever about
+       the ORDER of what is served; the grade above is already recorded. The
+       snapshot is rewritten when it lands so a pause right after carries
+       what was just decided. */
+    if (sessionConfig?.exercise && review) {
+      const q = PracticeAPI?.currentQuestion;
+      Promise.resolve(window.KcPractice?.onResult?.(q?.ladder_kc, !!review.correct, q?.question_id))
+        .then((note) => {
+          _persist();
+          if (note) window.ExerciseSession?.onNote?.(note);
         })
-        .catch((err) => console.warn("[session] prerequisite pull failed:", err));
+        .catch((err) => console.warn("[session] ladder result hook failed:", err));
     }
   };
 
@@ -1022,7 +1021,11 @@ const PracticeSession = (() => {
      it would mean editing every call site to stop asking. Restoring a quota is
      one line here; finding all the callers again is not. */
   const shouldFinishInsteadOfAdvance = () =>
-    !!state && Number.isFinite(sessionConfig?.quota) && state.served >= sessionConfig.quota;
+    !!state &&
+    ((Number.isFinite(sessionConfig?.quota) && state.served >= sessionConfig.quota) ||
+      /* A planned exercise block ends the moment a variant is solved — the
+         count was a maximum (practice/exercise-planner.js). */
+      (!!sessionConfig?.exercise && !!window.KcPractice?.solved?.()));
 
   const hasSavedQuestion = (questionId) =>
     !!pausedState && String(questionId ?? "") === pausedState.questionId;
@@ -1050,6 +1053,8 @@ const PracticeSession = (() => {
     resumeReady = false;
     const config = sessionConfig;
     sessionConfig = null;
+    // Read before stop() clears the planner: did the block solve its problem?
+    const outcome = config ? window.KcPractice?.outcome?.() || null : null;
     if (config) window.KcPractice?.stop?.();
     _clearSaved();
     _showResumeOption();
@@ -1069,11 +1074,13 @@ const PracticeSession = (() => {
         ? "Could not load a question — check the connection and try again."
         : reason === "placement"
           ? "Placement test started — its questions are timed on their own clock, one at a time."
+          : reason === "complete" && outcome?.solved
+            ? `Solved on attempt ${outcome.attempts} — ${served} of ${config.quota} questions used. Recorded answers are kept.`
           : reason === "complete" && config?.quota
             ? `Done — ${served} of ${config.quota} questions. Recorded answers are kept.`
             : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`);
     sessionSummary.classList.remove("hidden");
-    if (config) window.ExerciseSession?.onEnd?.(reason, served, config);
+    if (config) window.ExerciseSession?.onEnd?.(reason, served, config, outcome);
   };
 
   /* Install the exercise session's numbers for the NEXT `start()`. `null`

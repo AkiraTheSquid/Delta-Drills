@@ -85,7 +85,7 @@
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=5" />
   <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
        rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
        override, it is a fixed-position surface that happens to sit beside the
@@ -2207,8 +2207,8 @@ t.manual_seed(0)
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=26"></script>
-  <script src="practice/timer.js?v=26"></script>
-  <script src="practice/kernel.js?v=5"></script>
+  <script src="practice/timer.js?v=27"></script>
+  <script src="practice/kernel.js?v=6"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
        chain it: missing, cells still print, figures are simply not drawn. -->
@@ -2223,6 +2223,12 @@ t.manual_seed(0)
        one without the other or the overlay drifts off its textarea. -->
   <script src="practice/code-highlight.js?v=1"></script>
   <script src="practice/code-complete.js?v=1"></script>
+  <!-- Colab-style ARENA code cells (session [J], 2026-09-06): no grey fill,
+       syntax colour + autocomplete, code at prose size. Self-wires off the
+       `arena-notebook:rendered` event, so it needs nothing from
+       arena-notebook.js — but it reuses code-highlight.js/code-complete.js and
+       must load after both. -->
+  <script src="practice/notebook-code-edit.js?v=1"></script>
   <script src="practice/runner.js?v=22"></script>
   <script src="practice/notebook.js?v=8"></script>
   <script src="practice/notebook-editor.js?v=4"></script>
@@ -2266,14 +2272,28 @@ t.manual_seed(0)
        which is why they are separate scripts and not more of the view. -->
   <script src="practice/arena-notebook-nav.js?v=2"></script>
   <script src="practice/arena-notebook-state.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=5"></script>
+  <!-- The other two halves of "leave it where I left it" (Seth, 2026-09-06:
+       "it remembers which notebook you were on and it also has like the saving
+       of which code cells you ran rather than having to run it every single
+       time"). -outputs.js stores what each cell answered and paints it back;
+       -resume.js sends the Courses tab straight to the section you were in.
+       Both are optional-chained by the view for the same reason the two above
+       are: a build without one of them is a notebook with less memory, not a
+       blank page. -resume.js watches #page-courses for itself, so it must load
+       after app.js (line ~2100) has defined `switchTab`. -->
+  <script src="practice/arena-notebook-outputs.js?v=1"></script>
+  <script src="practice/arena-notebook-resume.js?v=1"></script>
+  <script src="practice/arena-notebook.js?v=6"></script>
   <script src="practice/ladder.js?v=9"></script>
   <script src="practice/example-gate.js?v=1"></script>
-  <script src="practice/kc-practice.js?v=5"></script>
+  <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
+       kc-practice.js below it. -->
+  <script src="practice/exercise-planner.js?v=1"></script>
+  <script src="practice/kc-practice.js?v=6"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-session.js?v=1"></script>
+  <script src="practice/exercise-session.js?v=2"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

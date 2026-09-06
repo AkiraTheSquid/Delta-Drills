@@ -147,6 +147,11 @@ const ArenaNotebookView = (() => {
     return ((code && (code.innerText || code.textContent)) || "").replace(/ /g, " ");
   };
 
+  /* The id a cell is stored under — `_cellRecord`, the run harness's filename
+     and the saved-output store all key off this one expression, and they have
+     to agree or a restored output lands under the wrong cell. */
+  const _cellIdOf = (node) => node.dataset.cellId || node.id.replace(/^arena-/, "");
+
   const _codeCell = (cell) => {
     const el = document.createElement("section");
     el.className = "nbv-cell nbv-code";
@@ -358,6 +363,7 @@ const ArenaNotebookView = (() => {
     }
     if (action === "delete") {
       if (!window.confirm("Delete this cell? Reset edits restores the compiled notebook.")) return;
+      window.ArenaNotebookOutputs?.forget(state.id, _cellIdOf(node));
       node.remove();
       _afterCellChange(state);
     }
@@ -427,6 +433,11 @@ const ArenaNotebookView = (() => {
       });
       window.ArenaNotebookNav?.syncCompletion();
     }
+    /* 🔴 AND IN STORAGE, not only in the DOM. The saved outputs are still worth
+       reading — they are what the cell said last time it ran — but they no
+       longer describe a live session, and a reload that brought them back
+       un-stale would put the green checks back over names that are gone. */
+    window.ArenaNotebookOutputs?.markStale(state.id);
     _banner(
       "The Python session restarted — anything you had defined is gone. " +
         "Re-run the imports at the top.",
@@ -455,11 +466,23 @@ const ArenaNotebookView = (() => {
     button.disabled = true;
     node.classList.add("is-running");
     node.classList.remove("is-stale");
+    /* 🔴 THIS CELL IS NO LONGER A RESTORED ONE. `_reconcileKernel` is awaiting a
+       status round-trip, and a learner is entitled to press Run during it — a
+       cell that then ran successfully against a fresh kernel would be marked
+       stale by a reply about the session it replaced, and dropped from the
+       contents rail's completion. Found by codex, 2026-09-06. */
+    node._ddRestored = false;
     if (count) count.textContent = "[*]";
     out.classList.remove("hidden", "is-error");
     out.textContent = "";
 
     let failed = false;
+    /* 🔴 WHAT WAS PAINTED, CAPTURED HERE — never read back off the node. After
+       DeltaCellOutputs has appended its figures, `out.textContent` is this text
+       PLUS every bundle's plain-text twin, so persisting the node would grow
+       the stored record on every reload of the same cell. */
+    let shown = "";
+    let rich = [];
     try {
       let result = await window.LessonNotebook.runSource(_sourceOf(node), {
         context: CONTEXT(state.id),
@@ -474,13 +497,15 @@ const ArenaNotebookView = (() => {
         _onFresh(state);
       }
       failed = !!result.failed;
-      const rich = Array.isArray(result.outputs) ? result.outputs : [];
-      out.textContent = result.text || (failed || rich.length ? "" : "✓ ran successfully");
+      rich = Array.isArray(result.outputs) ? result.outputs : [];
+      shown = result.text || (failed || rich.length ? "" : "✓ ran successfully");
+      out.textContent = shown;
       out.classList.toggle("is-error", failed);
       window.DeltaCellOutputs?.render(out, rich);
     } catch (err) {
       failed = true;
-      out.textContent = `Error: ${err.message}`;
+      shown = `Error: ${err.message}`;
+      out.textContent = shown;
       out.classList.add("is-error");
     }
 
@@ -490,8 +515,53 @@ const ArenaNotebookView = (() => {
     node.classList.toggle("has-failed", failed);
     if (count) count.textContent = `[${state.runSeq}]`;
     button.disabled = false;
+    /* The other half of "don't make me run it again": what this cell answered
+       outlives the tab switch AND the reload. See arena-notebook-outputs.js —
+       it is a cache with a byte budget, so a write here can be dropped, and a
+       dropped output costs one re-run rather than the learner's edits. */
+    window.ArenaNotebookOutputs?.record(state.id, _cellIdOf(node), {
+      text: shown,
+      failed,
+      seq: state.runSeq,
+      outputs: rich,
+      // What it was produced FROM, so a recompile cannot pass it off as current.
+      source: _sourceOf(node),
+    });
     window.ArenaNotebookNav?.syncCompletion();
   };
+
+  /* ---------- coming back to a notebook you had run -------------------- */
+
+  /* Both halves live in arena-notebook-outputs.js — the loop that repaints and
+     the reconcile that decides whether those outputs may still call themselves
+     current. What stays here is what only the VIEW knows: which notebook is on
+     screen (`current`), where its banner is, and that the run numbering carries
+     on from the highest restored `[n]` rather than restarting at [1]. */
+  const _restoreOutputs = (state) => {
+    const done = window.ArenaNotebookOutputs?.restoreInto(
+      state.body,
+      state.id,
+      _cellIdOf,
+      _sourceOf,
+    );
+    if (!done) return [];
+    state.runSeq = done.highest;
+    return done.restored;
+  };
+
+  const _reconcileKernel = (state, restored) =>
+    window.ArenaNotebookOutputs?.reconcile({
+      slug: state.id,
+      context: CONTEXT(state.id),
+      restored,
+      cellIdOf: _cellIdOf,
+      // 🔴 Both guarded on `state === current`: this resolves after an await,
+      // by which time the learner may be in another section entirely, and
+      // `state.host` is ONE element that the next notebook has re-filled.
+      stillOpen: () => state === current,
+      banner: (message, kind) => _banner(message, kind, state),
+      onChanged: () => window.ArenaNotebookNav?.syncCompletion(),
+    });
 
   /* ---------- the notebook screen -------------------------------------- */
 
@@ -513,6 +583,12 @@ const ArenaNotebookView = (() => {
      app.js in the same document, so it shares that scope and calls it by name;
      the typeof guard is for a page that loads this without app.js. */
   const _backToCourses = () => {
+    /* 🔴 BEFORE switchTab, NEVER AFTER. arena-notebook-resume.js reacts to
+       #page-courses becoming visible, so suppressing afterwards races that
+       observer and bounces the learner straight back into the notebook they
+       just asked to leave — with the section list unreachable while it exists.
+       This button IS the learner saying "show me the list". */
+    window.ArenaNotebookResume?.suppress();
     if (typeof switchTab === "function") switchTab("courses");
     else if (typeof window.switchTab === "function") window.switchTab("courses");
   };
@@ -561,6 +637,10 @@ const ArenaNotebookView = (() => {
     });
     body.appendChild(fragment);
     host.appendChild(body);
+    /* Last visit's outputs, before any listener or the rail: `syncCompletion`
+       reads `has-run` on its first pass, and a cell restored after it would be
+       a green section the rail never counted. */
+    const restored = _restoreOutputs(state);
 
     // One listener for the whole notebook rather than one per Run button — a
     // 300-cell page should not pay for a handler per cell.
@@ -602,6 +682,8 @@ const ArenaNotebookView = (() => {
            2026-09-03. */
         if (node.classList.contains("has-run") && !node.classList.contains("is-stale")) {
           node.classList.add("is-stale");
+          // …and in the saved outputs, or a reload restores the green check.
+          window.ArenaNotebookOutputs?.markCellStale(state.id, _cellIdOf(node));
           window.ArenaNotebookNav?.syncCompletion();
         }
         _queuePersist(state);
@@ -635,6 +717,9 @@ const ArenaNotebookView = (() => {
       if (!window.confirm("Restore the compiled notebook and discard your cell edits?")) return;
       clearTimeout(state.persistTimer);
       _removeSavedCells(nb.id);
+      /* "Restore the compiled notebook" means the outputs too — leaving them
+         would paint last night's results under upstream's untouched cells. */
+      window.ArenaNotebookOutputs?.clear(nb.id);
       _render(nb, host);
       window.scrollTo({ top: 0 });
     };
@@ -642,6 +727,7 @@ const ArenaNotebookView = (() => {
       await window.DeltaKernel?.reset();
       state.runSeq = 0;
       host.querySelectorAll(".nbv-cell.has-run").forEach((cell) => cell.classList.add("is-stale"));
+      window.ArenaNotebookOutputs?.markStale(state.id);
       window.ArenaNotebookNav?.syncCompletion();
       _banner("Session thrown away. Re-run the imports before anything below them.", "warn", state);
     };
@@ -661,6 +747,13 @@ const ArenaNotebookView = (() => {
        file is a notebook with no rail and no memory, not a blank page. */
     window.ArenaNotebookNav?.mount(_page(), host, nb.number ? `${nb.number} ${nb.title}` : nb.title);
     window.ArenaNotebookState?.bind(nb.id);
+    /* This is the section the Courses tab will open next time. */
+    window.ArenaNotebookResume?.remember(nb.id, nb.number ? `${nb.number} ${nb.title}` : nb.title);
+    /* Asks the server whether the session those outputs came from is still the
+       one it is holding, and marks them stale if not. Deliberately NOT awaited:
+       the notebook is already on screen and readable, and a status round-trip
+       must not sit between the learner and their page. */
+    _reconcileKernel(state, restored);
     /* Last, so every listener sees the finished page: practice/exercise-
        session.js puts a "Practice this exercise" button under each exercise
        heading it has drills for. Nothing in this file knows which those are. */
@@ -698,6 +791,8 @@ const ArenaNotebookView = (() => {
       else if (typeof window.switchTab === "function") window.switchTab("arena-notebook");
       window.ArenaNotebookNav?.refresh();
       window.ArenaNotebookState?.restore();
+      // The re-entry path skips _render, so it has to say so for itself.
+      window.ArenaNotebookResume?.remember(current.id, current.title);
       return true;
     }
 
