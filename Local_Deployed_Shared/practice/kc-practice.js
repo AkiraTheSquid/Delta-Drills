@@ -45,6 +45,16 @@ const KcPractice = (() => {
      the submit response — all unchanged. This file only decides ORDER. */
   let scoped = null; // { target, inserted: [kc, …] }
 
+  /* PLANNED SESSION (2026-09-06, the greedy block). When the exercise block
+     carries a quota, the queue above is NOT pre-built: `planner`
+     (practice/exercise-planner.js) chooses each next item — prep on a rung
+     or an attempt at a variant — against the questions still left in the
+     block, and `onResult` feeds every grade back so the next choice moves.
+     `lastItem` is the item the current question was hydrated from, so a
+     result can be attributed to its concept and rung. Still ORDER ONLY. */
+  let planner = null;
+  let lastItem = null;
+
   /* This ladder's rung names, in the vocabulary the REST of the app already
      speaks. `item.kind` is this file's word for the authored bucket a drill
      came out of; `ladder_stage` is the backend's word for the rung it was
@@ -253,6 +263,9 @@ const KcPractice = (() => {
     queue = _buildQueue(entry.kp).map((it) => ({ ...it, kc, kcTitle }));
     served = 0;
     scoped = null;
+    // A plain start after a planned block must not inherit its plan.
+    planner = null;
+    lastItem = null;
     active = queue.length > 0;
 
     window.__kcFocusId = kc;
@@ -271,6 +284,24 @@ const KcPractice = (() => {
 
   /** Next ladder item, or null once the ladder is spent (queue takes over). */
   const nextQuestion = async () => {
+    if (planner) {
+      for (;;) {
+        const d = planner.peek();
+        if (!d) { active = false; return null; }
+        const q = _hydrate(d.item);
+        if (q) {
+          const item = planner.commit(d);
+          lastItem = item;
+          q.ladder_kind = item.kind;
+          _stamp(q, item);
+          if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);
+          return q;
+        }
+        // Not in the bank: drop it WITHOUT charging the slot, and choose again.
+        console.warn("[kc-practice] planned item missing from bank:", d.item.questionId);
+        planner.drop(d);
+      }
+    }
     while (served < queue.length) {
       const item = queue[served++];
       const q = _hydrate(item);
@@ -288,7 +319,7 @@ const KcPractice = (() => {
     return null;
   };
 
-  const isActive = () => active && !!queue.length;
+  const isActive = () => active && (!!planner || !!queue.length);
 
   /* ── exercise-scoped entry points (practice/exercise-session.js) ──── */
 
@@ -298,6 +329,99 @@ const KcPractice = (() => {
     scoped = { target: kc, inserted: [] };
     return true;
   };
+
+  /* One concept's pools for the planner: every rung item, tagged with the
+     concept's own kc/title so a served drill reads as that concept's rung. */
+  const _nodePools = (kp, kc) => {
+    const tag = (it) => ({ ...it, kc, kcTitle: (kp && kp.title) || kc });
+    return {
+      faded: (kp.faded_items || []).filter((it) => Number.isFinite(it?.question_id))
+        .map((it) => tag({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null })),
+      guided: (kp.guided_items || []).filter((it) => Number.isFinite(it?.question_id))
+        .map((it) => tag({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) })),
+      independent: (kp.independent_items || []).filter((id) => Number.isFinite(id))
+        .map((id) => tag({ kind: "independent", questionId: id, starter: null })),
+    };
+  };
+
+  /* The planner's seed for one concept: the server's interval when the
+     backend is reachable (Laplace-smoothed by the planner), else the local
+     BKT posterior for the concept's subtopic, else the prior. Any failure
+     is the prior — a plan must never fail to start over an estimate. */
+  const _estimateMastery = async (kc, lesson) => {
+    const P = window.ExercisePlanner;
+    try {
+      if (typeof practiceMode !== "undefined" && practiceMode === "backend" && typeof apiFetch === "function") {
+        const res = await apiFetch("/api/practice/kc-estimate?kc=" + encodeURIComponent(kc));
+        if (res.ok) {
+          const body = await res.json();
+          return P.masteryFromEstimate(body && body.ladder_estimate);
+        }
+      }
+    } catch (_err) { /* fall through */ }
+    try {
+      const key = lesson && lesson.subtopic_key;
+      const p = key ? getEwmaFromAdaptiveState(key) : null;
+      if (Number.isFinite(p)) return p;
+    } catch (_err) { /* prior */ }
+    return P.masteryFromEstimate(null);
+  };
+
+  /** Start a PLANNED block: `quota` questions at most, attempts drawn from
+      `variants` (bank ids). Falls back to a plain scoped ladder when the
+      planner script is missing or the exercise lists no variants. */
+  const startPlanned = async (kc, { quota, variants } = {}) => {
+    const ok = await startScoped(kc);
+    if (!ok) return false;
+    const P = window.ExercisePlanner;
+    const ids = (variants || []).filter(Number.isFinite);
+    if (!P || !ids.length || !Number.isFinite(quota)) return true;
+    const gate = window.LessonGate;
+    const entry = await gate.getKpEntry(kc);
+    const kp = entry.kp;
+    const target = {
+      kc, title: kcTitle, m: await _estimateMastery(kc, entry.lesson),
+      pools: _nodePools(kp, kc),
+      variants: ids.map((id) => ({ kind: "integrated", questionId: id, starter: null, kc, kcTitle })),
+    };
+    // Variants are attempts, never prep — take them out of the target's own rungs.
+    for (const k of Object.keys(target.pools)) {
+      target.pools[k] = target.pools[k].filter((it) => !ids.includes(it.questionId));
+    }
+    const prereqs = [];
+    for (const pre of kp.supporting_kcs || []) {
+      const pe = await gate.getKpEntry(pre);
+      if (!pe || !pe.kp) continue;
+      prereqs.push({
+        kc: pre, title: pe.kp.title || pre, m: await _estimateMastery(pre, pe.lesson),
+        pools: _nodePools(pe.kp, pre), variants: [],
+      });
+    }
+    planner = new P.Planner({ quota, target, prereqs });
+    queue = [];
+    served = 0;
+    lastItem = null;
+    active = true;
+    return true;
+  };
+
+  /* Every grade in an exercise block comes here (timer.js). Planned: the
+     planner re-weighs and returns a note for the phase label. Unplanned: a
+     miss pulls the prerequisites (onMiss) and the note says how many. */
+  const onResult = async (kc, correct, questionId) => {
+    if (planner) {
+      // `questionId` is a guard: a stale lastItem must not be credited to a
+      // question it was not hydrated from (a resume without its lastItem).
+      const item = lastItem && (!Number.isFinite(questionId) || lastItem.questionId === questionId) ? lastItem : null;
+      return planner.observe(item, !!correct);
+    }
+    if (correct) return "";
+    const n = await onMiss(kc);
+    return n ? `${n} prerequisite drill${n === 1 ? "" : "s"} queued` : "";
+  };
+
+  const solved = () => !!(planner && planner.solved);
+  const outcome = () => (planner ? planner.outcome() : null);
 
   /* A miss on `kc` (the ladder_kc of the question just graded wrong) queues
      that concept's direct prerequisites in front of whatever is left. Returns
@@ -342,6 +466,8 @@ const KcPractice = (() => {
       subtopicKeys: subtopicKeys.slice(),
       remaining: queue.slice(served),
       scoped: scoped ? { target: scoped.target, inserted: scoped.inserted.slice() } : null,
+      plan: planner ? planner.serialize() : null,
+      lastItem: planner ? lastItem : null,
     };
   };
 
@@ -357,7 +483,9 @@ const KcPractice = (() => {
     scoped = saved.scoped && saved.scoped.target
       ? { target: String(saved.scoped.target), inserted: Array.isArray(saved.scoped.inserted) ? saved.scoped.inserted.slice() : [] }
       : null;
-    active = queue.length > 0;
+    planner = saved.plan && window.ExercisePlanner ? window.ExercisePlanner.Planner.restore(saved.plan) : null;
+    lastItem = planner && saved.lastItem && Number.isFinite(saved.lastItem.questionId) ? saved.lastItem : null;
+    active = queue.length > 0 || !!planner;
     window.__kcFocusId = kcId;
     window.__kcFocusSubtopics = subtopicKeys;
     window.__kcFocusSubtopic = _compositeKey();
@@ -378,6 +506,8 @@ const KcPractice = (() => {
     queue = [];
     served = 0;
     scoped = null;
+    planner = null;
+    lastItem = null;
     kcId = null;
     kcTitle = null;
     subtopicKeys = [];
@@ -386,12 +516,16 @@ const KcPractice = (() => {
     window.__kcFocusSubtopic = null;
   };
 
-  const remaining = () => (active ? queue.length - served : 0);
+  const remaining = () => (active ? (planner ? planner.quota - planner.used : queue.length - served) : 0);
 
   return {
     start,
     startScoped,
+    startPlanned,
     onMiss,
+    onResult,
+    solved,
+    outcome,
     serialize,
     restore,
     stop,
