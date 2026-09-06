@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -640,9 +636,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="vaes-gans">
 <h1>[0.5] - VAEs &amp; GANs<a class="headerlink" href="#vaes-gans" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&amp;amp;_GANs_exercises.ipynb?t=20260303">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&amp;amp;_GANs_solutions.ipynb?t=20260303">solutions</a></strong></p>
+<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&amp;amp;_GANs_exercises.ipynb?t=20260529">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&amp;amp;_GANs_solutions.ipynb?t=20260529">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>If you want to change to dark mode, you can do this by clicking the three horizontal lines in the top-right, then navigating to Settings → Theme.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-05.png" width="350">
@@ -667,7 +663,7 @@
 <h3>1️⃣ Autoencoders &amp; VAEs<a class="headerlink" href="#autoencoders-vaes" title="Link to this heading">#</a></h3>
 <p>Autoencoders are a relatively simple architecture, at least compared to GANs: you learn a compressed representation of your data (mainly using linear layers and convolutions), then reconstruct it back into an image (with linear layers and transposed convolutions).</p>
 <p>Although autoencoders can learn some interesting low-dimensional representations, they are less good for generating images because their latent spaces aren’t generally meaningful. This leads to VAEs, which solve this problem by having their encoders map to a distribution over latent vectors, rather than a single latent vector. This incentivises the latent space to be more meaningful, and we can more easily generate images from sample vectors in this space.</p>
-<p>We start with some reading material on autoencoders and transposed convolutions (which are often used in parallel with convolutions, to take a latent space and map it back into a full-size image). Then, we actually implement and train VAEs to generate MNIST images, as well as a do a bit of exploring our our autoencoders’ latent spaces.</p>
+<p>We start with some reading material on autoencoders and transposed convolutions (which are often used in parallel with convolutions, to take a latent space and map it back into a full-size image). Then, we actually implement and train VAEs to generate MNIST images, as well as do a bit of exploring our autoencoders’ latent spaces.</p>
 <blockquote>
 <div><h5 class="rubric" id="learning-objectives">Learning Objectives</h5>
 <ul class="simple">
@@ -696,7 +692,7 @@
 </section>
 <section id="bonus-transposed-convolutions">
 <h3>3️⃣ Bonus - Transposed Convolutions<a class="headerlink" href="#bonus-transposed-convolutions" title="Link to this heading">#</a></h3>
-<p>In this section, you’ll implement the transposed convolution operation manually. This is similar to a regular convolution, but designed for upsampling rather than downsampling (i.e. producing an image from a latent vector rather producing output from an image). These are very important in many generative algorithms. Once you implement this, you’ll be able to build your own GANs and VAEs from scratch, without using any pre-built layers.</p>
+<p>In this section, you’ll implement the transposed convolution operation manually. This is similar to a regular convolution, but designed for upsampling rather than downsampling (i.e. producing an image from a latent vector rather than producing output from an image). These are very important in many generative algorithms. Once you implement this, you’ll be able to build your own GANs and VAEs from scratch, without using any pre-built layers.</p>
 <p><em>Note - the bonus section from the CNNs day is a prerequisite for these bonus exercises. If you haven’t completed that section, you’ll need to do so before attempting these.</em></p>
 <blockquote>
 <div><h5 class="rubric" id="id2">Learning Objectives</h5>
@@ -726,6 +722,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Subset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1"># Modules from previous exercises (you can swap in your own implementations if you&#39;ve completed them).</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">part2_cnns.solutions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatchNorm2d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">ReLU</span><span class="p">,</span> <span class="n">Sequential</span>
 
 <span class="c1"># Make sure exercises are in the path</span>
 <span class="n">chapter</span> <span class="o">=</span> <span class="s2">&quot;chapter0_fundamentals&quot;</span>
@@ -795,7 +794,7 @@
 <section id="loading-data">
 <h2>Loading data<a class="headerlink" href="#loading-data" title="Link to this heading">#</a></h2>
 <p>In these exercises, we’ll be using either the Celeb-A dataset or the MNIST dataset. For convenience, we’ll include a few functions here to load that data in.</p>
-<p>You should already be familiar with MNIST. You can read about the Celeb-A dataset <a class="reference external" href="https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">here</a> - essentially it’s a large-scale face attributes dataset with more than 200k celebrity images, but we’ll only be taking the images from this dataset rather the classifications. Run the code below to download the data from HuggingFace, and save it in your filesystem as images.</p>
+<p>You should already be familiar with MNIST. You can read about the Celeb-A dataset <a class="reference external" href="https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">here</a> - essentially it’s a large-scale face attributes dataset with more than 200k celebrity images, but we’ll only be taking the images from this dataset rather than the classifications. Run the code below to download the data from HuggingFace, and save it in your filesystem as images.</p>
 <p>The code should take 4-15 minutes to run in total, but feel free to move on if it’s taking longer (you’ll mostly be using MNIST in this section, and only using Celeb-A when you move on to GANs).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">celeb_data_dir</span> <span class="o">=</span> <span class="n">section_dir</span> <span class="o">/</span> <span class="s2">&quot;data/celeba&quot;</span>
 <span class="n">celeb_image_dir</span> <span class="o">=</span> <span class="n">celeb_data_dir</span> <span class="o">/</span> <span class="s2">&quot;img_align_celeba&quot;</span>
@@ -857,7 +856,7 @@
 </pre></div>
 </div>
 <p>We’ve also given you some code for visualising your data. You should run this code to make sure your data is correctly loaded in.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">display_data</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nrows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">display_data</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nrows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays a batch of data, using plotly.&quot;&quot;&quot;</span>
     <span class="n">ncols</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">nrows</span>
     <span class="c1"># Reshape into the right shape for plotting (make it 2D if image is monochrome)</span>
@@ -920,7 +919,7 @@
 </ul>
 <p>Below is an illustration of both for comparison, in the 1D case (where <span class="math notranslate nohighlight">\(*\)</span> stands for the 1D convolution operator, and <span class="math notranslate nohighlight">\(*^T\)</span> stands for the transposed convolution operator). Note the difference in size between the output in both cases. With standard convolutions, our output is smaller than our input, because we’re having to fit the kernel inside the input in order to produce the output. But in our transposed convolutions, the output is actually larger than the input, because we’re fitting the kernel inside the output.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/convtranspose-1.png" width="700">
-<p>We won’t actually have you implement the transposed convolution operation in these exercises; instead we’ve pushed it to the bonus section. For now, you can just use the <code class="docutils literal notranslate"><span class="pre">ConvTranspose2d</span></code> module which has already been imported for you from today’s solutions file, in place of your own implementation. You can use it exactly the same way you use normal convolutional layers: for instance <code class="docutils literal notranslate"><span class="pre">ConvTranspose2d(32,</span> <span class="pre">16,</span> <span class="pre">4,</span> <span class="pre">stride=2,</span> <span class="pre">padding=1)</span></code> will define a convolution layer that maps a tensor from <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">in_channels=32,</span> <span class="pre">height,</span> <span class="pre">width)</span></code> up to shape <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">out_channels=16,</span> <span class="pre">height</span> <span class="pre">*</span> <span class="pre">2,</span> <span class="pre">width</span> <span class="pre">*</span> <span class="pre">2)</span></code>.</p>
+<p>We won’t actually have you implement the transposed convolution operation in these exercises; instead we’ve pushed it to the bonus section. For now, you can just use PyTorch’s built-in <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html"><code class="docutils literal notranslate"><span class="pre">nn.ConvTranspose2d</span></code></a> module in place of your own implementation. You can use it exactly the same way you use normal convolutional layers: for instance <code class="docutils literal notranslate"><span class="pre">nn.ConvTranspose2d(32,</span> <span class="pre">16,</span> <span class="pre">4,</span> <span class="pre">stride=2,</span> <span class="pre">padding=1,</span> <span class="pre">bias=False)</span></code> will define a convolution layer that maps a tensor from <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">in_channels=32,</span> <span class="pre">height,</span> <span class="pre">width)</span></code> up to shape <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">out_channels=16,</span> <span class="pre">height</span> <span class="pre">*</span> <span class="pre">2,</span> <span class="pre">width</span> <span class="pre">*</span> <span class="pre">2)</span></code>.</p>
 <p><a class="reference external" href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md">These visualisations</a> (linked in the reading material) may also help build intuition for the transposed convolution module.</p>
 </section>
 <section id="autoencoders">
@@ -932,7 +931,7 @@
 </ul>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/gan_images/ae-diagram-l.png" width="700">
 <p>Our loss function is simply some metric of the distance between the input and the reconstructed input, e.g. the <span class="math notranslate nohighlight">\(l_2\)</span> loss.</p>
-<p>You’ll start by writing your own autoencoder. We’ve given some guidance on architecture below, although in general because we’re working with a fairly simple dataset (MNIST) and a fairly robust architecture (at least compared to GANs in the next section!), you model is still likely to work well even if it deviates slightly from the specification we’ll give below.</p>
+<p>You’ll start by writing your own autoencoder. We’ve given some guidance on architecture below, although in general because we’re working with a fairly simple dataset (MNIST) and a fairly robust architecture (at least compared to GANs in the next section!), your model is still likely to work well even if it deviates slightly from the specification we’ll give below.</p>
 <section id="exercise-implement-autoencoder">
 <h3>Exercise - implement autoencoder<a class="headerlink" href="#exercise-implement-autoencoder" title="Link to this heading">#</a></h3>
 <blockquote>
@@ -943,7 +942,6 @@
 </pre></div>
 </div>
 </div></blockquote>
-<p><em>Note - for the rest of this section (not including the bonus), we’ll assume we’re working with the MNIST dataset rather than Celeb-A.</em></p>
 <p>Your encoder should consist of two convolutional blocks (i.e. convolution plus ReLU), followed by two fully connected linear layers with a ReLU in between them. Both convolutions will have kernel size 4, stride 2, padding 1 (recall this halves the size of the image). We’ll have 16 and 32 output channels respectively.</p>
 <p>The decoder will be the exact mirror image of the encoder (with convolutions replaced by transposed convolutions).</p>
 <p>The only free parameters in your implementation will be <code class="docutils literal notranslate"><span class="pre">latent_dim_size</span></code> and <code class="docutils literal notranslate"><span class="pre">hidden_dim_size</span></code>. The former determines the size of the latent space (otherwise called the bottleneck dimension) between the encoder and decoder, and the latter determines the size of the final linear layer we insert just before the end / just after the start of the encoder / decoder’s architecture respectively.</p>
@@ -968,7 +966,7 @@
 <p>Now, implement your autoencoder below. We recommend you define <code class="docutils literal notranslate"><span class="pre">encoder</span></code> and <code class="docutils literal notranslate"><span class="pre">decoder</span></code> to help make your code run with the functions we’ve written for you later.</p>
 <!-- You can test your answer by comparing the architecture to the solution directly. As this course goes on, we won't always include test functions as the exercises get a bit more open-ended and solutions to them are likely to vary more; it's also good practice to find ways to test your answers when you don't have access to black-box tests that you can trust!
 
-from part5_vaes_and_gans.solutions import Autoencoder as SolutionAutoencoder
+from part5_vaes_and_gans.solutions_vaes import Autoencoder as SolutionAutoencoder
 
 if MAIN:
     soln_Autoencoder = SolutionAutoencoder(latent_dim_size=5, hidden_dim_size=128)
@@ -978,21 +976,16 @@ if MAIN:
     # print_param_count(my_Autoencoder, soln_Autoencoder, filename=str(section_dir / "0503.html"))
 
 <iframe src="https://info-arena.github.io/ARENA_img/misc/media-05/0503.html" width="920" height="470"></iframe> -->
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importing all modules you&#39;ll need, from previous solutions (you&#39;re encouraged to substitute your</span>
-<span class="c1"># own implementations instead, if you want to!)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">part2_cnns.solutions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatchNorm2d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">ReLU</span><span class="p">,</span> <span class="n">Sequential</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">part5_vaes_and_gans.solutions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvTranspose2d</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">Autoencoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Autoencoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latent_dim_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hidden_dim_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the encoder &amp; decoder modules.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="o">...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the reconstruction of the input, after mapping through encoder &amp; decoder.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
@@ -1023,12 +1016,14 @@ if MAIN:
             <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim_size</span><span class="p">,</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">32</span><span class="p">),</span>
             <span class="n">ReLU</span><span class="p">(),</span>
             <span class="n">Rearrange</span><span class="p">(</span><span class="s2">&quot;b (c h w) -&gt; b c h w&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
-            <span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">ReLU</span><span class="p">(),</span>
-            <span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the reconstruction of the input, after mapping through encoder &amp; decoder.&quot;&quot;&quot;</span>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x_prime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
@@ -1115,7 +1110,9 @@ if MAIN:
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs a training step on the batch of images in `img`. Returns the loss. Logs to wandb</span>
 <span class="sd">        if enabled.</span>
@@ -1168,7 +1165,9 @@ if MAIN:
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs a training step on the batch of images in `img`. Returns the loss. Logs to wandb</span>
 <span class="sd">        if enabled.</span>
@@ -1181,7 +1180,7 @@ if MAIN:
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
         <span class="c1"># Increment step counter and log to wandb if enabled</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">use_wandb</span><span class="p">:</span>
             <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">),</span> <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
 
@@ -1240,7 +1239,10 @@ if MAIN:
 <p>We’ll now return to the issue we mentioned briefly earlier - how to generate output? We might want to generate output by just producing random noise and passing it through our decoder, but this raises a question - how should we interpret the latent space between our encoder and decoder?</p>
 <p>We can try and plot the outputs produced by the decoder over a range. The code below does this (you might have to adjust it slightly depending on how you’ve implemented your autoencoder):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_grid_of_latents</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">,</span> <span class="n">interpolation_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+    <span class="n">interpolation_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">n_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="n">dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;rows_x_cols latent_dims&quot;</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tensor of zeros which varies along the 2 specified dimensions of the latent space.&quot;&quot;&quot;</span>
     <span class="n">grid_latent</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">n_points</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">latent_dim_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
@@ -1316,7 +1318,7 @@ z = \mu + \sigma \odot \epsilon
 <details>
 <summary>State in your own words why we need the reparameterization trick in order to train our network.</summary>
 <p>The following would work:</p>
-<p>We can’t backpropagate through random processes like <span class="math notranslate nohighlight">\(z_i \sim N(\mu_i(\boldsymbol{x}), \sigma_i(\boldsymbol{x})^2)\)</span>, but if we instead write <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span> as a deterministic function of <span class="math notranslate nohighlight">\(\mu_i(\boldsymbol{x})\)</span> and <span class="math notranslate nohighlight">\(\sigma_i(\boldsymbol{x})\)</span> with the randomness coming from some some auxiliary random variable <span class="math notranslate nohighlight">\(\epsilon\)</span>, then we can differentiate our loss function wrt the inputs, and train our network.</p>
+<p>We can’t backpropagate through random processes like <span class="math notranslate nohighlight">\(z_i \sim N(\mu_i(\boldsymbol{x}), \sigma_i(\boldsymbol{x})^2)\)</span>, but if we instead write <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span> as a deterministic function of <span class="math notranslate nohighlight">\(\mu_i(\boldsymbol{x})\)</span> and <span class="math notranslate nohighlight">\(\sigma_i(\boldsymbol{x})\)</span> with the randomness coming from some auxiliary random variable <span class="math notranslate nohighlight">\(\epsilon\)</span>, then we can differentiate our loss function wrt the inputs, and train our network.</p>
 <!-- Our encoder works by generating parameters and then using those parameters to sample latent vectors $\boldsymbol{z}$ (i.e. a **stochastic process**). Our decoder is deterministic; it just maps our latent vectors $\boldsymbol{z}$ to fixed outputs $x'$. The stochastic part is the problem; we can't backpropagate gradients through random functions. However, instead of just writing $\boldsymbol{z} \sim N(\mu_\theta(\boldsymbol{x}), \sigma_\theta(\boldsymbol{x})^2I)$, we can write $\boldsymbol{z}$ as a deterministic function of its inputs: $z = g(\theta, x, \epsilon)$, where $\theta$ are the parameters of the distribution, $\boldsymbol{x}$ is the input, and $\epsilon$ is a randomly sampled value. We can then backpropagate through the network. -->
 </details>
 <details>
@@ -1336,7 +1338,7 @@ z = \mu + \sigma \odot \epsilon
 <p>For your final exercise of this section, you’ll build a VAE and run it to produce the same kind of output you did in the previous section. Luckily, this won’t require much tweaking from your encoder architecture. The decoder can stay unchanged; there are just two big changes you’ll need to make:</p>
 <section id="probabilistic-encoder">
 <h3>Probabilistic encoder<a class="headerlink" href="#probabilistic-encoder" title="Link to this heading">#</a></h3>
-<p>Rather than your encode outputting a latent vector <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span>, it should output a mean <span class="math notranslate nohighlight">\(\mu\)</span> and standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span>; both vectors of dimension <code class="docutils literal notranslate"><span class="pre">latent_dim_size</span></code>. We then sample our latent vector <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span> using <span class="math notranslate nohighlight">\(z_i = \mu_i + \sigma_i \cdot \epsilon_i\)</span>. Note that this is equivalent to <span class="math notranslate nohighlight">\(z = \mu + \Sigma \epsilon\)</span> as shown in the diagram above, but where we assume <span class="math notranslate nohighlight">\(\Sigma\)</span> is a diagonal matrix (i.e. the auxiliary random variables <span class="math notranslate nohighlight">\(\epsilon\)</span> which we’re sampling are independent). This is the most common approach taken in situations like these.</p>
+<p>Rather than your encoder outputting a latent vector <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span>, it should output a mean <span class="math notranslate nohighlight">\(\mu\)</span> and standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span>; both vectors of dimension <code class="docutils literal notranslate"><span class="pre">latent_dim_size</span></code>. We then sample our latent vector <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span> using <span class="math notranslate nohighlight">\(z_i = \mu_i + \sigma_i \cdot \epsilon_i\)</span>. Note that this is equivalent to <span class="math notranslate nohighlight">\(z = \mu + \Sigma \epsilon\)</span> as shown in the diagram above, but where we assume <span class="math notranslate nohighlight">\(\Sigma\)</span> is a diagonal matrix (i.e. the auxiliary random variables <span class="math notranslate nohighlight">\(\epsilon\)</span> which we’re sampling are independent). This is the most common approach taken in situations like these.</p>
 <p>Note - we actually calculate <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">logsigma</span></code> rather than <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">sigma</span></code> - we get <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">logsigma.exp()</span></code> from this. This is a more numerically stable method.</p>
 <p>How exactly should this work in your model’s architecture? You can replace the final linear layer (which previously just gave you the latent vector) with two linear layers returning <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">logsigma</span></code>, then you calculate <code class="docutils literal notranslate"><span class="pre">z</span></code> from these (and from a randomly sampled <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>). If you want, you can combine the two linear layers into one linear layer with <code class="docutils literal notranslate"><span class="pre">out_channels=2*latent_dim_size</span></code>, then rearrange to split this up into <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">logsigma</span></code> (this is what we do in the solution, and in the diagram below).</p>
 <p>You should also return the parameters <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">logsigma</span></code> in your VAE’s forward function, as well as the final output - the reasons for this will become clear below.</p>
@@ -1364,7 +1366,13 @@ z = \mu + \sigma \odot \epsilon
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="o">...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample_latent_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_latent_vector</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Passes `x` through the encoder, returns tuple of (sampled latent vector, mean, log std dev).</span>
 <span class="sd">        This function can be used in `forward`, but also used on its own to generate samples for</span>
@@ -1372,7 +1380,13 @@ z = \mu + \sigma \odot \epsilon
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Passes `x` through the encoder and decoder. Returns the reconstructed input, as well as mu</span>
 <span class="sd">        and logsigma.</span>
@@ -1409,12 +1423,18 @@ z = \mu + \sigma \odot \epsilon
             <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim_size</span><span class="p">,</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">32</span><span class="p">),</span>
             <span class="n">ReLU</span><span class="p">(),</span>
             <span class="n">Rearrange</span><span class="p">(</span><span class="s2">&quot;b (c h w) -&gt; b c h w&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
-            <span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">ReLU</span><span class="p">(),</span>
-            <span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample_latent_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_latent_vector</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Passes `x` through the encoder, returns tuple of (sampled latent vector, mean, log std dev).</span>
 <span class="sd">        This function can be used in `forward`, but also used on its own to generate samples for</span>
@@ -1425,7 +1445,13 @@ z = \mu + \sigma \odot \epsilon
         <span class="n">z</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">logsigma</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+        <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">],</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Passes `x` through the encoder and decoder. Returns the reconstructed input, as well as mu</span>
 <span class="sd">        and logsigma.</span>
@@ -1499,7 +1525,9 @@ can be found <a class="reference external" href="https://mr-easy.github.io/2020-
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs a training step on the batch of images in `img`. Returns the loss. Logs to wandb</span>
 <span class="sd">        if enabled.</span>
@@ -1558,7 +1586,9 @@ can be found <a class="reference external" href="https://mr-easy.github.io/2020-
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch 1 height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs a training step on the batch of images in `img`. Returns the loss. Logs to wandb</span>
 <span class="sd">        if enabled.</span>
@@ -1631,7 +1661,7 @@ can be found <a class="reference external" href="https://mr-easy.github.io/2020-
 </pre></div>
 </div>
 </details>
-<p>You might be disappointed when comparing your VAE’s reconstruction to the autoencoder, since it’s likely to be worse. However, remember that the focus of VAEs is in better generation, not reconstruction. To test it’s generation, let’s produce some plots of latent space like we did for the autoencoder.</p>
+<p>You might be disappointed when comparing your VAE’s reconstruction to the autoencoder, since it’s likely to be worse. However, remember that the focus of VAEs is in better generation, not reconstruction. To test its generation, let’s produce some plots of latent space like we did for the autoencoder.</p>
 <p>First, we’ll visualize the latent space:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid_latent</span> <span class="o">=</span> <span class="n">create_grid_of_latents</span><span class="p">(</span><span class="n">vae</span><span class="p">,</span> <span class="n">interpolation_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">vae</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">grid_latent</span><span class="p">)</span>
@@ -1658,7 +1688,7 @@ can be found <a class="reference external" href="https://mr-easy.github.io/2020-
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-05/0507.html" width="720" height="720"></div>
 </details>
 <p>The range of the distribution looks much more like a standard normal distribution (most points are in <code class="docutils literal notranslate"><span class="pre">[-2,</span> <span class="pre">2]</span></code> whereas in the previous plot the range was closer to <code class="docutils literal notranslate"><span class="pre">[-10,</span> <span class="pre">10]</span></code>). There are also no longer any large gaps in the latent space that you wouldn’t find in the corresponding standard normal distribution.</p>
-<p>To emphasize - don’t be disheartened if your <em>reconstructions of the original MNIST images</em> don’t look as faithful for your VAE than they did for your encoder. Remember the goal of these architectures isn’t to reconstruct images faithfully, it’s to generate images from samples in the latent dimension. This is the basis on which you should compare your models to each other.</p>
+<p>To emphasize - don’t be disheartened if your <em>reconstructions of the original MNIST images</em> don’t look as faithful for your VAE as they did for your autoencoder. Remember the goal of these architectures isn’t to reconstruct images faithfully, it’s to generate images from samples in the latent dimension. This is the basis on which you should compare your models to each other.</p>
 </section>
 </section>
 <section id="a-deeper-dive-into-the-maths-of-vaes">
@@ -1676,7 +1706,7 @@ p(\boldsymbol{x})&amp;=\int_z p_\theta(\boldsymbol{x} \mid \boldsymbol{z}) p(\bo
 \end{aligned}
 \)</span><span class="math notranslate nohighlight">\(
 What if we estimate this value over random samples \)</span>x_i \sim \hat{p}(\boldsymbol{x})<span class="math notranslate nohighlight">\( from our dataset? We could perform gradient ascent on \)</span>\theta<span class="math notranslate nohighlight">\( using this estimate to find a decoder \)</span>p_\theta(\boldsymbol{x} \mid \boldsymbol{z})$ that makes this estimate high, in other words a factory line that is <em>likely to produce images like the ones in our dataset</em>. Then we’re done - right?</p>
-<p>Unfortunately, it’s not that easy. Evaluating this integral would be computationally intractible, because we would have to sample over all possible values for the latent vectors <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span>:
+<p>Unfortunately, it’s not that easy. Evaluating this integral would be computationally intractable, because we would have to sample over all possible values for the latent vectors <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span>:
 $<span class="math notranslate nohighlight">\(
 \theta^*=\underset{\theta}{\operatorname{argmax}}\; \mathbb{E}_{x \sim \hat{p}(\boldsymbol{x}),\, \boldsymbol{z} \sim p(\boldsymbol{z})}\big[p_\theta(\boldsymbol{x} \mid \boldsymbol{z})\big]
 \)</span><span class="math notranslate nohighlight">\(
@@ -1712,7 +1742,7 @@ $$ -->
 <p>which if you tilt your head a bit, is just like our VAE loss function! To see this:</p>
 <ul class="simple">
 <li><p><strong>The first term</strong> is playing the role of reconstruction loss, since it’s equivalent to the log probability that our image <span class="math notranslate nohighlight">\(x\)</span> is perfectly reconstructed via the series of maps <span class="math notranslate nohighlight">\(\boldsymbol{x} \xrightarrow{\text{encoder}} \boldsymbol{z} \xrightarrow{\text{decoder}} \boldsymbol{x}\)</span>. If we had perfect reconstruction then this value would be zero (which is its maximum value).</p></li>
-<li><p><strong>The second term</strong> is the KL divergence between <span class="math notranslate nohighlight">\(q_\phi(\boldsymbol{z} \mid \boldsymbol{x})\)</span> and <span class="math notranslate nohighlight">\(p_{\theta}(\boldsymbol{z})\)</span>. The former is your own encoder’s distribution of latent vectors which you may recall is <span class="math notranslate nohighlight">\(N(\mu(\boldsymbol{x}), \sigma(\boldsymbol{x})^2)\)</span>, and the latter was assumed to be the uniform distribution <span class="math notranslate nohighlight">\(N(0, I)\)</span>. This just reduces to our KL penalty term from earlier.</p></li>
+<li><p><strong>The second term</strong> is the KL divergence between <span class="math notranslate nohighlight">\(q_\phi(\boldsymbol{z} \mid \boldsymbol{x})\)</span> and <span class="math notranslate nohighlight">\(p(\boldsymbol{z})\)</span>. The former is your own encoder’s distribution of latent vectors which you may recall is <span class="math notranslate nohighlight">\(N(\mu(\boldsymbol{x}), \sigma(\boldsymbol{x})^2)\)</span>, and the latter was assumed to be the standard normal distribution <span class="math notranslate nohighlight">\(N(0, I)\)</span>. This just reduces to our KL penalty term from earlier.</p></li>
 </ul>
 <p>The decoder used in our VAE isn’t actually probabilistic <span class="math notranslate nohighlight">\(p_\theta(\cdot \mid \boldsymbol{z})\)</span>, it’s deterministic (i.e. it’s a map from latent vector <span class="math notranslate nohighlight">\(\boldsymbol{z}\)</span> to reconstructed input <span class="math notranslate nohighlight">\(\boldsymbol{x}'\)</span>). But we can pretend that the decoder output is actually the mean of a probability distribution, and we’re choosing this mean as the value of our reconstruction <span class="math notranslate nohighlight">\(\boldsymbol{x}'\)</span>. The reconstruction loss term in the formula above will be smallest when this mean is close to the original value <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> (because then <span class="math notranslate nohighlight">\(p_\theta(\cdot \mid \boldsymbol{z})\)</span> will be a probability distribution centered around <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>). And it turns out that we can just replace this reconstruction loss with something that fulfils basically the same purpose (the <span class="math notranslate nohighlight">\(L_2\)</span> penalty) - although we sometimes need to adjust these two terms (see <span class="math notranslate nohighlight">\(\beta\)</span>-VAEs above).</p>
 <p>And that’s the math of VAEs in a nutshell!</p>
@@ -1748,7 +1778,7 @@ $$ -->
     <span class="n">latent_vectors</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">imgs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">latent_vectors</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="n">latent_vectors</span> <span class="o">=</span> <span class="n">latent_vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># useful for VAEs; see later</span>
 
-    <span class="c1"># Perform PCA, to get the principle component directions (&amp; projections of data in these dirs)</span>
+    <span class="c1"># Perform PCA, to get the principal component directions (&amp; projections of data in these dirs)</span>
     <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">principal_components</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">latent_vectors</span><span class="p">)</span>
     <span class="n">pca_vectors</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span>
@@ -1837,7 +1867,7 @@ $$ -->
 </section>
 <section id="denoising-and-sparse-autoencoders">
 <h3>Denoising and sparse autoencoders<a class="headerlink" href="#denoising-and-sparse-autoencoders" title="Link to this heading">#</a></h3>
-<p>The reading material on VAEs talks about <a class="reference external" href="https://lilianweng.github.io/posts/2018-08-12-vae/#denoising-autoencoder">denoising</a> and <a class="reference external" href="https://lilianweng.github.io/posts/2018-08-12-vae/#sparse-autoencoder">sparse</a> autoencoders. Try changing the architecture of your autoencoder (not your VAE) to test out one of these two techniques. Do does your decoder output change? How about your encoder scatter plot?</p>
+<p>The reading material on VAEs talks about <a class="reference external" href="https://lilianweng.github.io/posts/2018-08-12-vae/#denoising-autoencoder">denoising</a> and <a class="reference external" href="https://lilianweng.github.io/posts/2018-08-12-vae/#sparse-autoencoder">sparse</a> autoencoders. Try changing the architecture of your autoencoder (not your VAE) to test out one of these two techniques. How does your decoder output change? How about your encoder scatter plot?</p>
 <p><em><strong>Note - sparse autoencoders will play an important role in some later sections of this course (when we study superposition in mechanistic interpretability).</strong></em></p>
 <p>If you’re mathematically confident and feeling like a challenge, you can also try to implement <a class="reference external" href="https://lilianweng.github.io/posts/2018-08-12-vae/#contractive-autoencoder">contractive autoencoders</a>!</p>
 <p>=== NEW CHAPTER ===</p>
@@ -1916,7 +1946,7 @@ $$ -->
 <p>You’ll also need to implement a few more modules, which have docstrings provided below (they should be fairly quick, and will just serve as a refresher for the structure of modules). They are:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Tanh.html"><code class="docutils literal notranslate"><span class="pre">Tanh</span></code></a> which is an activation function used by the DCGAN you’ll be implementing.</p></li>
-<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"><code class="docutils literal notranslate"><span class="pre">LeakyReLU</span></code></a> which is an activation function used by the DCGAN you’ll be implementing. This function is popular in tasks where we we may suffer from sparse gradients (GANs are a primary example of this).</p></li>
+<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"><code class="docutils literal notranslate"><span class="pre">LeakyReLU</span></code></a> which is an activation function used by the DCGAN you’ll be implementing. This function is popular in tasks where we may suffer from sparse gradients (GANs are a primary example of this).</p></li>
 <li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"><code class="docutils literal notranslate"><span class="pre">Sigmoid</span></code></a>, for converting the single logit output from the discriminator into a probability.</p></li>
 </ul>
 <p>They should all be relatively short. You can go back to day 2’s exercises to remind yourself of the basic syntax.</p>
@@ -1926,7 +1956,7 @@ $$ -->
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">LeakyReLU</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">negative_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">negative_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">negative_slope</span> <span class="o">=</span> <span class="n">negative_slope</span>
 
@@ -1954,7 +1984,7 @@ $$ -->
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">LeakyReLU</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">negative_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">negative_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">negative_slope</span> <span class="o">=</span> <span class="n">negative_slope</span>
 
@@ -2029,15 +2059,15 @@ $$ -->
 </div></blockquote>
 <p>You should implement your code below. We’ve provided one possible design choice and the corresponding forward functions:</p>
 <ul class="simple">
-<li><p>The generator is made of an initial <code class="docutils literal notranslate"><span class="pre">project_and_reshape</span></code> block that performs the first linear map, and then <code class="docutils literal notranslate"><span class="pre">hidden_layers</span></code> which are a stack of blocks each consisting of a (transponsed convolution, optional batchnorm, activation fn).</p></li>
+<li><p>The generator is made of an initial <code class="docutils literal notranslate"><span class="pre">project_and_reshape</span></code> block that performs the first linear map, and then <code class="docutils literal notranslate"><span class="pre">hidden_layers</span></code> which are a stack of blocks each consisting of a (transposed convolution, optional batchnorm, activation fn).</p></li>
 <li><p>The discriminator is made of <code class="docutils literal notranslate"><span class="pre">hidden_layers</span></code> which are a stack of (convolution, optional batchnorm, activation fn) blocks, and a final <code class="docutils literal notranslate"><span class="pre">classifier</span></code> block which flattens and maps to a single output (which represents the probability pre-sigmoid).</p></li>
 </ul>
-<p>We’ve also given you the <code class="docutils literal notranslate"><span class="pre">DCGAN</span></code> class - note that we’ve not included a <code class="docutils literal notranslate"><span class="pre">forward</span></code> method here, because you’ll usually be calling your discriminator and generators’ forward methods directly. You can think of the DCGAN class as essentially a wrapper for both.</p>
+<p>We’ve also given you the <code class="docutils literal notranslate"><span class="pre">DCGAN</span></code> class - note that we’ve not included a <code class="docutils literal notranslate"><span class="pre">forward</span></code> method here, because you’ll usually be calling your discriminator and generator’s forward methods directly. You can think of the DCGAN class as essentially a wrapper for both.</p>
 <p>If you’re stuck, you can import the generator and discriminator from the solutions, and compare it with yours. We’ve given you this option in place of test functions.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">part2_cnns.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_param_count</span>
 
-<span class="n">print_param_count</span><span class="p">(</span><span class="n">Generator</span><span class="p">(),</span> <span class="n">solutions</span><span class="o">.</span><span class="n">DCGAN</span><span class="p">()</span><span class="o">.</span><span class="n">netG</span><span class="p">)</span>
-<span class="n">print_param_count</span><span class="p">(</span><span class="n">Discriminator</span><span class="p">(),</span> <span class="n">solutions</span><span class="o">.</span><span class="n">DCGAN</span><span class="p">()</span><span class="o">.</span><span class="n">netD</span><span class="p">)</span>
+<span class="n">print_param_count</span><span class="p">(</span><span class="n">Generator</span><span class="p">(),</span> <span class="n">solutions_gans</span><span class="o">.</span><span class="n">DCGAN</span><span class="p">()</span><span class="o">.</span><span class="n">netG</span><span class="p">)</span>
+<span class="n">print_param_count</span><span class="p">(</span><span class="n">Discriminator</span><span class="p">(),</span> <span class="n">solutions_gans</span><span class="o">.</span><span class="n">DCGAN</span><span class="p">()</span><span class="o">.</span><span class="n">netD</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Lastly, remember that <code class="docutils literal notranslate"><span class="pre">torchinfo</span></code> is a useful library for inspecting the architecture of your model. Since it works by running input through your model, it provides another useful way to check your model’s architecture is correct (since errors like the wrong convolution size will often cause forward passes to fail).</p>
@@ -2047,7 +2077,7 @@ $$ -->
 <span class="nb">print</span><span class="p">(</span><span class="n">torchinfo</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">netD</span><span class="p">,</span> <span class="n">input_data</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">netG</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p>You can also check that the output of your model is the correct shape. <strong>Note - we’re using a 3-layer model rather than the 4-layer model shown in the diagram and described the paper.</strong></p>
+<p>You can also check that the output of your model is the correct shape. <strong>Note - we’re using a 3-layer model rather than the 4-layer model shown in the diagram and described in the paper.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Generator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2081,7 +2111,9 @@ $$ -->
         <span class="c1"># self.project_and_reshape = ...</span>
         <span class="c1"># self.hidden_layers = ...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch channels height width&quot;</span><span class="p">]:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_and_reshape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -2117,7 +2149,9 @@ $$ -->
         <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="o">...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch channels height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch&quot;</span><span class="p">]:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>  <span class="c1"># remove dummy `out_channels` dimension</span>
@@ -2196,7 +2230,7 @@ $$ -->
         <span class="c1"># Equivalent, but using conv rather than linear:</span>
         <span class="c1"># self.project_and_reshape = Sequential(</span>
         <span class="c1">#     Rearrange(&quot;b ic -&gt; b ic 1 1&quot;),</span>
-        <span class="c1">#     solutions.ConvTranspose2d(latent_dim_size, hidden_channels[0], first_height, 1, 0),</span>
+        <span class="c1">#     nn.ConvTranspose2d(latent_dim_size, hidden_channels[0], first_height, 1, 0, bias=False),</span>
         <span class="c1">#     BatchNorm2d(hidden_channels[0]),</span>
         <span class="c1">#     ReLU(),</span>
         <span class="c1"># )</span>
@@ -2209,7 +2243,7 @@ $$ -->
         <span class="n">conv_layer_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">c_out</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">)):</span>
             <span class="n">conv_layer</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">ConvTranspose2d</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">c_out</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="n">c_in</span><span class="p">,</span> <span class="n">c_out</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
                 <span class="n">ReLU</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_layers</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">Tanh</span><span class="p">(),</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
@@ -2218,7 +2252,9 @@ $$ -->
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">conv_layer_list</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch latent&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch channels height width&quot;</span><span class="p">]:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_and_reshape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -2287,7 +2323,9 @@ $$ -->
         <span class="c1">#     Sigmoid(),</span>
         <span class="c1"># )</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch channels height width&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch&quot;</span><span class="p">]:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>  <span class="c1"># remove dummy `out_channels` dimension</span>
@@ -2315,7 +2353,7 @@ $$ -->
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">tests</span><span class="o">.</span><span class="n">test_initialize_weights</span><span class="p">(</span><span class="n">initialize_weights</span><span class="p">,</span> <span class="n">ConvTranspose2d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">BatchNorm2d</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">test_initialize_weights</span><span class="p">(</span><span class="n">initialize_weights</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">BatchNorm2d</span><span class="p">)</span>
 </pre></div>
 </div>
 <details><summary>Solution</summary>
@@ -2325,7 +2363,11 @@ $$ -->
 <span class="sd">    paper), by modifying the weights of the model in place.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">ConvTranspose2d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">)):</span>
+        <span class="c1"># Match torch&#39;s `nn.ConvTranspose2d` (used by default in the VAE/GAN code) AND any class</span>
+        <span class="c1"># named `ConvTranspose2d` (so the bonus section&#39;s custom implementation is also picked up</span>
+        <span class="c1"># if a student swaps it in).</span>
+        <span class="n">is_conv_transpose</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">module</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;ConvTranspose2d&quot;</span>
+        <span class="k">if</span> <span class="n">is_conv_transpose</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="n">Conv2d</span><span class="p">,</span> <span class="n">Linear</span><span class="p">)):</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">BatchNorm2d</span><span class="p">):</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
@@ -2420,7 +2462,6 @@ where \)</span>D<span class="math notranslate nohighlight">\( is the discriminat
 <li><p>The generator <span class="math notranslate nohighlight">\(G\)</span> is searching for a strategy where, even if the discriminator <span class="math notranslate nohighlight">\(D\)</span> was optimal, it would still find it hard to distinguish between real and fake images with high confidence.</p></li>
 </ul>
 <p>Since we can’t know the true distribution of <span class="math notranslate nohighlight">\(x\)</span>, we instead estimate the expression above by calculating it over a batch of real images <span class="math notranslate nohighlight">\(x\)</span> (and some random noise <span class="math notranslate nohighlight">\(z\)</span>). This gives us a loss function to train against (since <span class="math notranslate nohighlight">\(D\)</span> wants to maximise this value, and <span class="math notranslate nohighlight">\(G\)</span> wants to minimise this value). For each batch, we perform gradient descent on the discriminator and then on the generator.</p>
-</details>
 <section id="training-the-discriminator">
 <h3>Training the discriminator<a class="headerlink" href="#training-the-discriminator" title="Link to this heading">#</a></h3>
 <p>We take the following steps:</p>
@@ -2452,7 +2493,7 @@ where \)</span>D<span class="math notranslate nohighlight">\( is the discriminat
 <li><p>Generate random noise <span class="math notranslate nohighlight">\(z\)</span>, and compute <span class="math notranslate nohighlight">\(D(G(z))\)</span>.</p></li>
 <li><p>We <strong>don’t</strong> use <span class="math notranslate nohighlight">\(\log(1 - D(G(z)))\)</span> to calculate our loss function, instead we use <span class="math notranslate nohighlight">\(\log(D(G(z)))\)</span> (and gradient ascent).</p></li>
 </ul>
-<p><strong>Question - can you explain why we use <span class="math notranslate nohighlight">\(\log(D(G(z))\)</span>? (The Google reading material mentions this but doesn’t really explain it.)</strong></p>
+<p><strong>Question - can you explain why we use <span class="math notranslate nohighlight">\(\log(D(G(z)))\)</span>? (The Google reading material mentions this but doesn’t really explain it.)</strong></p>
 <details>
 <summary>Answer</summary>
 <p>Early in learning, when the generator is really bad at producing realistic images, it will be easy for the discriminator to distinguish between them. So <span class="math notranslate nohighlight">\(\log(1 - D(G(z)))\)</span> will be very close to <span class="math notranslate nohighlight">\(\log(1) = 0\)</span>. The gradient of <span class="math notranslate nohighlight">\(\log\)</span> at this point is quite flat, so there won’t be a strong gradient with which to train <span class="math notranslate nohighlight">\(G\)</span>. To put it another way, a marginal improvement in <span class="math notranslate nohighlight">\(G\)</span> will have very little effect on the loss function. On the other hand, <span class="math notranslate nohighlight">\(\log(D(G(z)))\)</span> tends to negative infinity as <span class="math notranslate nohighlight">\(D(G(z))\)</span> gets very small. So the gradients here are very steep, and a small improvement in <span class="math notranslate nohighlight">\(G\)</span> goes a long way.</p>
@@ -2505,7 +2546,7 @@ where \)</span>D<span class="math notranslate nohighlight">\( is the discriminat
 </ul>
 </li>
 </ul>
-<p>Again, we recommend not using <code class="docutils literal notranslate"><span class="pre">wandb</span></code> until you’ve got your non-wandb based code working without errors. Once the generator loss is going down (or at least not exploding!) then you can enable it. However, an important note - <strong>generator loss going down is does not imply the model is working, and vice-versa!</strong> For training systems as unstable as GANs, the best you can do is often just inspecting the output. Although it varies depending on details of the hardware and dataset &amp; model you’re training with, at least for these exercises if your generator’s output doesn’t resemble anything like a face after the first epoch, then something’s probably going wrong in your code.</p>
+<p>Again, we recommend not using <code class="docutils literal notranslate"><span class="pre">wandb</span></code> until you’ve got your non-wandb based code working without errors. Once the generator loss is going down (or at least not exploding!) then you can enable it. However, an important note - <strong>generator loss going down does not imply the model is working, and vice-versa!</strong> For training systems as unstable as GANs, the best you can do is often just inspecting the output. Although it varies depending on details of the hardware and dataset &amp; model you’re training with, at least for these exercises if your generator’s output doesn’t resemble anything like a face after the first epoch, then something’s probably going wrong in your code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DCGANArgs</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2762,6 +2803,8 @@ where \)</span>D<span class="math notranslate nohighlight">\( is the discriminat
 <p>If you try training your GAN on MNIST, you might find that it eventually blows up (with close to zero discriminator loss, and spiking generator loss - possibly even gradients large enough to overflow and lead to <code class="docutils literal notranslate"><span class="pre">nan</span></code> values). This might also happen if you train on CelebA but your architecture is too big, or even if you train with a reasonably-sized architecture but for too long!</p>
 <p>This is a common problem with GANs, which are notoriously unstable to train. Essentially, the discriminator gets so good at its job that the generator can’t latch onto a good gradient for improving its performance. Although the theoretical formulation of GANs as a minimax game is elegant, there are quite a few assumptions that have to go into it in order for there to be one theoretical optimum involving the generator producing perfect images - and in practice this is rarely achieved, even in the limit.</p>
 <p>Different architectures like diffusion models and VAEs are generally more stable, although many of the most advanced image generation architectures do still take important conceptual ideas from the GAN framework.</p>
+<p>This is exactly the kind of task you could throw an LLM at! If you’re getting NaNs, try throwing the training code into a current frontier model (Opus 4.7/GPT 5.5 at time of writing)
+and ask it for possible modifications to prevent <code class="docutils literal notranslate"><span class="pre">nan</span></code> values. Suggestions include using <a class="reference external" href="https://docs.pytorch.org/docs/2.12/generated/torch.nn.BCELoss.html"><code class="docutils literal notranslate"><span class="pre">nn.BCELoss</span></code></a> as it clamps values to avoid this, or possibly playing with <a class="reference external" href="https://docs.pytorch.org/docs/2.12/generated/torch.nn.utils.clip_grad_norm_.html">clipping gradient norms</a>.</p>
 </section>
 <section id="bonus-smooth-interpolation">
 <h2>Bonus - Smooth interpolation<a class="headerlink" href="#bonus-smooth-interpolation" title="Link to this heading">#</a></h2>
@@ -3076,12 +3119,13 @@ If you create `input_mod` by padding `input` with exactly `kernel_size - 1` zero
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">conv_transpose2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Like torch&#39;s conv_transpose2d using bias=False</span>
-<span class="sd">    x: shape (batch, in_channels, height, width)</span>
-<span class="sd">    weights: shape (out_channels, in_channels, kernel_height, kernel_width)</span>
-<span class="sd">    Returns: shape (batch, out_channels, output_height, output_width)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">conv_transpose2d</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch in_channels height width&quot;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;in_channels out_channels kernel_height kernel_width&quot;</span><span class="p">],</span>
+    <span class="n">stride</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch out_channels output_height output_width&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Like torch&#39;s conv_transpose2d using bias=False.&quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
@@ -3109,12 +3153,13 @@ If you create `input_mod` by padding `input` with exactly `kernel_size - 1` zero
     <span class="k">return</span> <span class="n">x_new</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">conv_transpose2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Like torch&#39;s conv_transpose2d using bias=False</span>
-<span class="sd">    x: shape (batch, in_channels, height, width)</span>
-<span class="sd">    weights: shape (out_channels, in_channels, kernel_height, kernel_width)</span>
-<span class="sd">    Returns: shape (batch, out_channels, output_height, output_width)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">conv_transpose2d</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch in_channels height width&quot;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;in_channels out_channels kernel_height kernel_width&quot;</span><span class="p">],</span>
+    <span class="n">stride</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="n">IntOrPair</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch out_channels output_height output_width&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Like torch&#39;s conv_transpose2d using bias=False.&quot;&quot;&quot;</span>
     <span class="n">stride_h</span><span class="p">,</span> <span class="n">stride_w</span> <span class="o">=</span> <span class="n">force_pair</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
     <span class="n">padding_h</span><span class="p">,</span> <span class="n">padding_w</span> <span class="o">=</span> <span class="n">force_pair</span><span class="p">(</span><span class="n">padding</span><span class="p">)</span>
 
@@ -3405,7 +3450,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>

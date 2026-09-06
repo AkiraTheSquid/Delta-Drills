@@ -229,6 +229,51 @@
   color: var(--danger);
 }
 
+/* Rich output (practice/cell-outputs.js): figures and tables under the text.
+   Normal white-space inside — the parent .nbv-out is a pre-wrap <pre>, and a
+   plotly div or an HTML table must not inherit that. */
+.nbv-rich {
+  font-family: var(--font-body, system-ui, sans-serif);
+  white-space: normal;
+}
+
+.nbv-rich-item + .nbv-rich-item {
+  margin-top: 8px;
+}
+
+.nbv-rich img,
+.nbv-rich svg {
+  height: auto;
+  max-width: 100%;
+}
+
+.nbv-rich-plotly {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.nbv-rich table {
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.nbv-rich th,
+.nbv-rich td {
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+}
+
+.nbv-rich-plain {
+  font-size: 12.5px;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.nbv-rich-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .nbv-cell.is-running {
   border-color: var(--accent-text);
 }

@@ -70,7 +70,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -673,9 +669,9 @@
 <h1>[1.3.1] Linear Probes (exercises)<a class="headerlink" href="#linear-probes-exercises" title="Link to this heading">#</a></h1>
 <blockquote>
 <div><p><strong>ARENA <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/11_%5B1.3.1%5D_Linear_Probes">Streamlit Page</a></strong></p>
-<p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_exercises.ipynb?t=20260329">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_solutions.ipynb?t=20260329">solutions</a></strong></p>
+<p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_exercises.ipynb?t=20260824">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_solutions.ipynb?t=20260824">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>You can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/refs/heads/main/img/header-31.png" width="350"></section>
@@ -800,7 +796,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/saprm
 git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ApolloResearch/deception-detection.git
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Llama-2-13b-hf</span></code> is a gated model, so you’ll need a HuggingFace access token (as well as requesting access <a class="reference external" href="https://huggingface.co/meta-llama/Llama-2-13b-hf">here</a>). When you’ve got access and made a HuggingFace token, create a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in your <code class="docutils literal notranslate"><span class="pre">chapter1_transformer_interp/exercises</span></code> directory with:</p>
+<p><code class="docutils literal notranslate"><span class="pre">Llama-2-13b-hf</span></code> and is a gated model, so you’ll need a HuggingFace access token (as well as requesting access <a class="reference external" href="https://huggingface.co/meta-llama/Llama-2-13b-hf">here</a>, you might also want to request access to <a class="reference external" href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.1-8b-Instruct</a> and <a class="reference external" href="https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct">Llama-3.3-70b-Instruct</a> while you’re at it, since you’ll need those models later in the exercises). When you’ve got access and made a HuggingFace token with read access, create a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in your <code class="docutils literal notranslate"><span class="pre">chapter1_transformer_interp/exercises</span></code> directory with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HF_TOKEN</span><span class="o">=</span><span class="n">hf_your_token_here</span>
 </pre></div>
 </div>
@@ -1108,11 +1104,13 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract activations at the probe layer for all datasets</span>
 <span class="n">activations</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">statements_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">DATASET_NAMES</span><span class="p">:</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
     <span class="n">statements</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;statement&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">labs</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">statements_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">statements</span>
 
     <span class="n">acts</span> <span class="o">=</span> <span class="n">extract_activations</span><span class="p">(</span><span class="n">statements</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="p">[</span><span class="n">PROBE_LAYER</span><span class="p">])</span>
     <span class="n">activations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">acts</span><span class="p">[</span><span class="n">PROBE_LAYER</span><span class="p">]</span>
@@ -1222,7 +1220,8 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">DATASET_NAMES</span><span class="p">):</span>
     <span class="n">acts</span> <span class="o">=</span> <span class="n">activations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="n">labs</span> <span class="o">=</span> <span class="n">labels_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">label_text</span> <span class="o">=</span> <span class="n">labels_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">prompts</span> <span class="o">=</span> <span class="n">statements_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
     <span class="n">pcs</span> <span class="o">=</span> <span class="n">get_pca_components</span><span class="p">(</span><span class="n">acts</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">X_centered</span> <span class="o">=</span> <span class="n">acts</span> <span class="o">-</span> <span class="n">acts</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">projected</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_centered</span> <span class="o">@</span> <span class="n">pcs</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
@@ -1232,7 +1231,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
     <span class="n">pc_var</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">projected</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">pct_explained</span> <span class="o">=</span> <span class="p">(</span><span class="n">pc_var</span> <span class="o">/</span> <span class="n">total_var</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span> <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;red&quot;</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labs</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;blue&quot;</span> <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;red&quot;</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">label_text</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">projected</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
@@ -1241,6 +1240,15 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
             <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">hovertext</span><span class="o">=</span><span class="n">prompts</span><span class="p">,</span>
+            <span class="n">customdata</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">label_text</span><span class="p">)),</span>
+            <span class="n">hovertemplate</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">&quot;&lt;b&gt;%</span><span class="si">{customdata[1]}</span><span class="s2">&lt;/b&gt;&lt;br&gt;&quot;</span>
+                <span class="s2">&quot;%</span><span class="si">{customdata[0]}</span><span class="s2">&lt;br&gt;&quot;</span>
+                <span class="s2">&quot;PC1: %</span><span class="si">{x:.2f}</span><span class="s2">&lt;br&gt;&quot;</span>
+                <span class="s2">&quot;PC2: %</span><span class="si">{y:.2f}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;&lt;extra&gt;&lt;/extra&gt;&quot;</span>
+            <span class="p">),</span>
         <span class="p">),</span>
         <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">col</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
@@ -1477,11 +1485,13 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 <p>Implement the Mass-Mean (difference-of-means) probe as a PyTorch <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>. The key components:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">direction</span></code>: the vector <code class="docutils literal notranslate"><span class="pre">mean(true_acts)</span> <span class="pre">-</span> <span class="pre">mean(false_acts)</span></code>, stored as a non-trainable parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bias</span></code>: the vector <code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">*</span> <span class="pre">(mean(true_acts)</span> <span class="pre">+</span> <span class="pre">mean(false_acts))</span></code>, for centering around midpoint</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">covariance</span></code>: the pooled within-class covariance matrix (for optional IID-corrected evaluation)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">forward(x,</span> <span class="pre">iid=False)</span></code>: returns <code class="docutils literal notranslate"><span class="pre">sigmoid(x</span> <span class="pre">&#64;</span> <span class="pre">direction)</span></code>, or <code class="docutils literal notranslate"><span class="pre">sigmoid(x</span> <span class="pre">&#64;</span> <span class="pre">inv_cov</span> <span class="pre">&#64;</span> <span class="pre">direction)</span></code> if <code class="docutils literal notranslate"><span class="pre">iid=True</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward(x,</span> <span class="pre">iid=False)</span></code>: returns <code class="docutils literal notranslate"><span class="pre">sigmoid((x</span> <span class="pre">-</span> <span class="pre">bias)</span> <span class="pre">&#64;</span> <span class="pre">direction)</span></code>, or <code class="docutils literal notranslate"><span class="pre">sigmoid((x</span> <span class="pre">-</span> <span class="pre">bias)</span> <span class="pre">&#64;</span> <span class="pre">inv_cov</span> <span class="pre">&#64;</span> <span class="pre">direction)</span></code> if <code class="docutils literal notranslate"><span class="pre">iid=True</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pred(x,</span> <span class="pre">iid=False)</span></code>: returns binary predictions (round the probabilities)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">from_data(acts,</span> <span class="pre">labels)</span></code>: class method that constructs a probe from data</p></li>
 </ul>
+<p>Note: The GoT codebase centers each dataset’s activations before probing (<code class="docutils literal notranslate"><span class="pre">collect_acts(center=True)</span></code>), which makes a biasless probe valid there. This notebook probes raw activations, so the midpoint bias must be explicit - without it, the score includes the dataset’s offset along the direction, costing ~20 points of accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MMProbe</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -1490,9 +1500,10 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
         <span class="n">direction</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; d_model&quot;</span><span class="p">],</span>
         <span class="n">covariance</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;d_model d_model&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; d_model&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="c1"># Store direction and precompute inverse covariance</span>
+        <span class="c1"># Store direction and bias and precompute inverse covariance</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;n d_model&quot;</span><span class="p">],</span> <span class="n">iid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; n&quot;</span><span class="p">]:</span>
@@ -1506,6 +1517,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
         <span class="n">acts</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;n d_model&quot;</span><span class="p">],</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; n&quot;</span><span class="p">],</span>
         <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MMProbe&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
@@ -1519,7 +1531,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 <span class="c1"># Test accuracy</span>
 <span class="n">test_preds</span> <span class="o">=</span> <span class="n">mm_probe</span><span class="o">.</span><span class="n">pred</span><span class="p">(</span><span class="n">test_acts</span><span class="p">[</span><span class="s2">&quot;cities&quot;</span><span class="p">])</span>
 <span class="n">test_acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">test_preds</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">[</span><span class="s2">&quot;cities&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">test_acc</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">&quot;Expected at least 70</span><span class="si">% a</span><span class="s2">ccuracy&quot;</span>
+<span class="k">assert</span> <span class="n">test_acc</span> <span class="o">&gt;</span> <span class="mf">0.9</span><span class="p">,</span> <span class="s2">&quot;Expected at least 90</span><span class="si">% a</span><span class="s2">ccuracy&quot;</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MMProbe on cities:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Train accuracy: </span><span class="si">{</span><span class="n">train_acc</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1537,15 +1549,22 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
         <span class="n">direction</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; d_model&quot;</span><span class="p">],</span>
         <span class="n">covariance</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;d_model d_model&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; d_model&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">covariance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inv</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">covariance</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inv</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;n d_model&quot;</span><span class="p">],</span> <span class="n">iid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; n&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
         <span class="k">if</span> <span class="n">iid</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1559,6 +1578,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
         <span class="n">acts</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;n d_model&quot;</span><span class="p">],</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot; n&quot;</span><span class="p">],</span>
         <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MMProbe&quot;</span><span class="p">:</span>
         <span class="n">acts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">acts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="n">pos_acts</span> <span class="o">=</span> <span class="n">acts</span><span class="p">[</span><span class="n">labels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
@@ -1570,7 +1590,8 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
         <span class="n">centered</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_acts</span> <span class="o">-</span> <span class="n">pos_mean</span><span class="p">,</span> <span class="n">neg_acts</span> <span class="o">-</span> <span class="n">neg_mean</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">centered</span><span class="o">.</span><span class="n">t</span><span class="p">()</span> <span class="o">@</span> <span class="n">centered</span> <span class="o">/</span> <span class="n">acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">MMProbe</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">mu_mean</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos_mean</span> <span class="o">+</span> <span class="n">neg_mean</span><span class="p">)</span> <span class="k">if</span> <span class="n">bias</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">MMProbe</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="n">covariance</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">mu_mean</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
 </div>
 </details></section>
@@ -3046,7 +3067,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 
 <span class="n">tests</span><span class="o">.</span><span class="n">test_deception_steering_hook</span><span class="p">(</span><span class="n">DeceptionSteeringHook</span><span class="p">)</span>
 
-<span class="n">mms_normed</span> <span class="o">=</span> <span class="n">mm_probe</span><span class="o">.</span><span class="n">direction</span> <span class="o">/</span> <span class="p">(</span><span class="n">mm_probe</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+<span class="n">mms_direction</span> <span class="o">=</span> <span class="n">mm_probe</span><span class="o">.</span><span class="n">direction</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Causal Steering with Deception Probe Direction ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -3072,7 +3093,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Apoll
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Baseline] </span><span class="si">{</span><span class="n">baseline_text2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">coef</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]:</span>
-    <span class="n">hook</span> <span class="o">=</span> <span class="n">DeceptionSteeringHook</span><span class="p">(</span><span class="n">mms_normed</span><span class="p">,</span> <span class="n">mid_layer</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">apply_to_all_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">hook</span> <span class="o">=</span> <span class="n">DeceptionSteeringHook</span><span class="p">(</span><span class="n">mm_direction</span><span class="p">,</span> <span class="n">mid_layer</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">apply_to_all_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">hook</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">instruct_model</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">t</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
@@ -4479,7 +4500,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>

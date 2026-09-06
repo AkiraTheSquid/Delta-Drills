@@ -163,6 +163,15 @@ const LessonNotebook = (() => {
     "import io as _delta_io",
     "import sys as _delta_sys",
     "",
+    // On a real IPython kernel (the Modal sandbox) a cell may hold `%pip …`
+    // or `!wget …`. Those are not Python — `ast.parse` below rejects them —
+    // until IPython rewrites them into calls, which is what `transform_cell`
+    // does. Absent IPython (the fork kernel) the source is used as written.
+    "try:",
+    "    _delta_ip = get_ipython()",
+    "except NameError:",
+    "    _delta_ip = None",
+    "",
     "",
     // Top-level names a cell binds, in source order. Used only to say what a
     // silent cell did; nested and conditional bindings are deliberately not
@@ -194,6 +203,8 @@ const LessonNotebook = (() => {
     "",
     "",
     "def _delta_cell(_delta_src, _delta_name, _delta_echo):",
+    "    if _delta_ip is not None:",
+    "        _delta_src = _delta_ip.transform_cell(_delta_src)",
     "    _delta_tree = _delta_ast.parse(_delta_src, _delta_name)",
     "    _delta_ns = globals()",
     "    _delta_body = _delta_tree.body",
@@ -316,6 +327,9 @@ const LessonNotebook = (() => {
     const failed = reply.ok === false;
     const text = [stdout, stderr].filter(Boolean).join("\n");
     if (text) return { text, failed };
+    // A figure and no print is not "no output" — the caller draws the
+    // outputs under an empty text line.
+    if (!failed && Array.isArray(reply.outputs) && reply.outputs.length) return { text: "", failed };
     return { text: failed ? SILENT_FAILURE : NO_OUTPUT, failed };
   };
 
@@ -522,6 +536,7 @@ const LessonNotebook = (() => {
     }
     return {
       ..._kernelText(reply),
+      outputs: Array.isArray(reply.outputs) ? reply.outputs : [],
       fresh: !!reply.fresh,
       busy: false,
       execCount: reply.execCount || 0,

@@ -70,7 +70,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -621,7 +617,6 @@
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config">Config</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-layernorm">Exercise - implement <code class="docutils literal notranslate"><span class="pre">LayerNorm</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-embed">Exercise - implement <code class="docutils literal notranslate"><span class="pre">Embed</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-posembed">Exercise - implement <code class="docutils literal notranslate"><span class="pre">PosEmbed</span></code></a></li>
@@ -695,9 +690,9 @@
 <h1>[1.1] - Transformers from scratch (exercises)<a class="headerlink" href="#transformers-from-scratch-exercises" title="Link to this heading">#</a></h1>
 <blockquote>
 <div><p><strong>ARENA <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/01_%5B1.1%5D_Transformer_from_Scratch">Streamlit Page</a></strong></p>
-<p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises.ipynb?t=20260329">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_solutions.ipynb?t=20260329">solutions</a></strong></p>
+<p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises.ipynb?t=20260721">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_solutions.ipynb?t=20260721">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>You can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-11.png" width="350"></section>
@@ -707,7 +702,9 @@
 <p>The exercises are written to accompany Neel Nanda’s <a class="reference external" href="https://github.com/neelnanda-io/TransformerLens">TransformerLens library</a> for doing mechanistic interpretability research on GPT-2 style language models. We’ll be working with this library extensively in this chapter of the course.</p>
 <p>Each exercise will have a difficulty and importance rating out of 5, as well as an estimated maximum time you should spend on these exercises and sometimes a short annotation. You should interpret the ratings &amp; time estimates relatively (e.g. if you find yourself spending about 50% longer on the exercises than the time estimates, adjust accordingly). Please do skip exercises / look at solutions if you don’t feel like they’re important enough to be worth doing, and you’d rather get to the good stuff!</p>
 <p>For a lecture on the material today, which provides some high-level understanding before you dive into the material, watch the video below:</p>
-<iframe width="540" height="304" src="https://www.youtube.com/embed/11Z50mi8dSg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><section id="content-learning-objectives">
+<iframe width="540" height="304" src="https://www.youtube.com/embed/11Z50mi8dSg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>This content was based on a series of videos by <a class="reference external" href="https://www.youtube.com/playlist?list=PL7m7hLIqA0hoIUPhC26ASCVs_VrqcDpAz">Neel Nanda</a>.</p>
+<section id="content-learning-objectives">
 <h2>Content &amp; Learning Objectives<a class="headerlink" href="#content-learning-objectives" title="Link to this heading">#</a></h2>
 <section id="understanding-inputs-outputs-of-a-transformer">
 <h3>1️⃣ Understanding Inputs &amp; Outputs of a Transformer<a class="headerlink" href="#understanding-inputs-outputs-of-a-transformer" title="Link to this heading">#</a></h3>
@@ -716,7 +713,7 @@
 <div><h5 class="rubric" id="learning-objectives">Learning Objectives</h5>
 <ul class="simple">
 <li><p>Understand what a transformer is used for</p></li>
-<li><p>Understand causal attention, and what a transformer’s output represents - algebra operations on tensors</p></li>
+<li><p>Understand causal attention, and what a transformer’s output represents - algebraic operations on tensors</p></li>
 <li><p>Learn what tokenization is, and how models do it</p></li>
 <li><p>Understand what logits are, and how to use them to derive a probability distribution over the vocabulary</p></li>
 </ul>
@@ -877,7 +874,7 @@
 <div><h5 class="rubric" id="id5">Learning Objectives</h5>
 <ul class="simple">
 <li><p>Understand what a transformer is used for</p></li>
-<li><p>Understand causal attention, and what a transformer’s output represents - algebra operations on tensors</p></li>
+<li><p>Understand causal attention, and what a transformer’s output represents - algebraic operations on tensors</p></li>
 <li><p>Learn what tokenization is, and how models do it</p></li>
 <li><p>Understand what logits are, and how to use them to derive a probability distribution over the vocabulary</p></li>
 </ul>
@@ -901,7 +898,7 @@ p(x_1), \; p(x_2|x_1), \; p(x_3|x_1x_2), \; \ldots, \; p(x_n|x_1 \ldots x_{n-1})
 <p>Given an arbitrary vector <span class="math notranslate nohighlight">\(x\)</span>, we can turn it into a probability distribution via the <strong>softmax</strong> function: <span class="math notranslate nohighlight">\(x_i \to \frac{e^{x_i}}{\sum e^{x_j}}\)</span>. The exponential makes everything positive; the normalization makes it add to one.</p>
 <p>The model’s output is the vector <span class="math notranslate nohighlight">\(x\)</span> (one for each prediction it makes). We call this vector a logit because it represents a probability distribution, and it is related to the actual probabilities via the softmax function.</p>
 </details>
-<p>How do we stop the transformer by “cheating” by just looking at the tokens it’s trying to predict? Answer - we make the transformer have <em>causal attention</em> (as opposed to <em>bidirectional attention</em>). Causal attention only allows information to move forwards in the sequence, never backwards. The prediction of what comes after token 50 is only a function of the first 50 tokens, <em>not</em> of token 51. We say the transformer is <strong>autoregressive</strong>, because it only predicts future words based on past data.</p>
+<p>How do we stop the transformer by “cheating” by just looking at the tokens it’s trying to predict? Answer - we make the transformer have <em>causal attention</em> (as opposed to <em>bidirectional attention</em>). Causal attention only allows information to move forwards in the sequence, never backwards. The prediction of what comes after token 50 is only a function of the first 50 tokens, <em>not</em> of token 51. We say the transformer is <strong>causal</strong>, because each next token is generated conditioned on the current context, which includes the original input plus the tokens generated so far.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/transformer-overview-new.png" width="900"><p>Another way to view this is through the following analogy: we have a series of people standing in a line, each with one word or chunk of the sentence. Each person has the ability to look up information from the people behind them (we’ll explore how this works in later sections) but they can’t look at any information in front of them. Their goal is to guess what word the person in front of them is holding.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/intro-image-v2.png" width="600"></section>
 </section>
@@ -1225,7 +1222,7 @@ Run this code to find out:
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/transformer-attn-simple.png" width="600"></section>
 <section id="mlp">
 <h3>MLP<a class="headerlink" href="#mlp" title="Link to this heading">#</a></h3>
-<p>The MLP layers are just a standard neural network, with a singular hidden layer and a nonlinear activation function. The exact activation isn’t conceptually important (<a class="reference external" href="https://paperswithcode.com/method/gelu">GELU</a> seems to perform best).</p>
+<p>The MLP layers are just a standard neural network, with a singular hidden layer and a nonlinear activation function. The exact activation isn’t conceptually important (<a class="reference external" href="https://arxiv.org/abs/1606.08415">GELU</a> seems to perform best).</p>
 <p>Our hidden dimension is normally <code class="docutils literal notranslate"><span class="pre">d_mlp</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">d_model</span></code>. Exactly why the ratios are what they are isn’t super important (people basically cargo-cult what GPT did back in the day!).</p>
 <p>Importantly, <strong>the MLP operates on positions in the residual stream independently, and in exactly the same way</strong>. It doesn’t move information between positions.</p>
 <p>Once attention has moved relevant information to a single position in the residual stream, MLPs can actually do computation, reasoning, lookup information, etc. <em>What the hell is going on inside MLPs</em> is a pretty big open problem in transformer mechanistic interpretability - see the <a class="reference external" href="https://transformer-circuits.pub/2022/toy_model/index.html">Toy Model of Superposition Paper</a> for more on why this is hard.</p>
@@ -1439,58 +1436,6 @@ f(x^T W^{in})W^{out} &amp;= (f(x^T W^{in}_{[:, 1]})\,, \; ...\;,\; f(x^T W^{in}_
 </div>
 </div>
 </section>
-<section id="tests">
-<h3>Tests<a class="headerlink" href="#tests" title="Link to this heading">#</a></h3>
-<p>Tests are great, write lightweight ones to use as you go!</p>
-<p><strong>Naive test:</strong> Generate random inputs of the right shape, input to your model, check whether there’s an error and print the correct output.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">rand_float_test</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">random_input</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input shape:&quot;</span><span class="p">,</span> <span class="n">random_input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">random_input</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Output shape:&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">rand_int_test</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">random_input</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input shape:&quot;</span><span class="p">,</span> <span class="n">random_input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">random_input</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Output shape:&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">load_gpt2_test</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gpt2_layer</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">layer</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">layer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">gpt2_layer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input shape:&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">orig_input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">orig_input</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">t</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">orig_input</span><span class="p">),</span> <span class="s2">&quot;Input has been modified, make sure operations are not done in place&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Output shape:&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">reference_output</span> <span class="o">=</span> <span class="n">gpt2_layer</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="n">reference_output</span> <span class="o">=</span> <span class="n">gpt2_layer</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reference output shape:&quot;</span><span class="p">,</span> <span class="n">reference_output</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">comparison</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">reference_output</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">comparison</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">comparison</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> of the values are correct</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">comparison</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="s2">&quot;More than 0.01</span><span class="si">% o</span><span class="s2">f the values are incorrect&quot;</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 <section id="exercise-implement-layernorm">
 <h3>Exercise - implement <code class="docutils literal notranslate"><span class="pre">LayerNorm</span></code><a class="headerlink" href="#exercise-implement-layernorm" title="Link to this heading">#</a></h3>
 <blockquote>
@@ -1531,8 +1476,8 @@ f(x^T W^{in})W^{out} &amp;= (f(x^T W^{in}_{[:, 1]})\,, \; ...\;,\; f(x^T W^{in}_
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">ln_final</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_post&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">ln_final</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_post&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
 <span class="n">tests</span><span class="o">.</span><span class="n">test_layer_norm_epsilon</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_post&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -1580,8 +1525,9 @@ f(x^T W^{in})W^{out} &amp;= (f(x^T W^{in}_{[:, 1]})\,, \; ...\;,\; f(x^T W^{in}_
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_int_test</span><span class="p">(</span><span class="n">Embed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Embed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">test_embed</span><span class="p">(</span><span class="n">Embed</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_int_test</span><span class="p">(</span><span class="n">Embed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Embed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1629,8 +1575,9 @@ f(x^T W^{in})W^{out} &amp;= (f(x^T W^{in}_{[:, 1]})\,, \; ...\;,\; f(x^T W^{in}_
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_int_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">test_pos_embed</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_int_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1886,8 +1833,8 @@ To check exactly where this is getting saved, you can print your current working
 
 
 <span class="n">tests</span><span class="o">.</span><span class="n">test_causal_mask</span><span class="p">(</span><span class="n">Attention</span><span class="o">.</span><span class="n">apply_causal_mask</span><span class="p">)</span>
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attn</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln1&quot;</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attn</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln1&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -2039,8 +1986,8 @@ To check exactly where this is getting saved, you can print your current working
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">MLP</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">MLP</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mlp</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln2&quot;</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">MLP</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">MLP</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mlp</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln2&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -2101,8 +2048,8 @@ To check exactly where this is getting saved, you can print your current working
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_pre&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_pre&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -2147,7 +2094,7 @@ To check exactly where this is getting saved, you can print your current working
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">W_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">)))</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_U</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">init_range</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">normalized_resid_final</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch position d_model&quot;</span><span class="p">]</span>
@@ -2155,12 +2102,23 @@ To check exactly where this is getting saved, you can print your current working
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">Unembed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Unembed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">unembed</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;ln_final.hook_normalized&quot;</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">test_unembed</span><span class="p">(</span><span class="n">Unembed</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">Unembed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Unembed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">unembed</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;ln_final.hook_normalized&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
+<details>
+<summary>Why have `requires_grad=False` for the bias? </summary>
+<p>GPT-2 doesn’t have a bias in the unembedding layer, but the TransformerLens copy
+of GPT-2 that we’re loading in has a uniform format for the unembedding layer
+where the bias for GPT-2 is set to zero. We preserve the same structure here so
+we don’t get any mismatch when we load in the pre-trained weights.
+Neel Nanda explains this in the <a class="reference external" href="https://youtu.be/dsjUDacBw8o?si=pP31Srg9XzQ5A-yj&amp;amp;t=3437">original video</a> on which this material was based.</p>
+<p>For now, we will write the Unembed as if it has a bias, and the test will check
+that you added the bias, for full generality.</p>
+</details>
 <details><summary>Solution</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Unembed</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">):</span>
@@ -2168,7 +2126,7 @@ To check exactly where this is getting saved, you can print your current working
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">W_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">)))</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_U</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">init_range</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_U</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_vocab</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">normalized_resid_final</span><span class="p">:</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch position d_model&quot;</span><span class="p">]</span>
@@ -2210,8 +2168,8 @@ To check exactly where this is getting saved, you can print your current working
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">rand_int_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_int_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2343,6 +2301,7 @@ To check exactly where this is getting saved, you can print your current working
     <span class="n">weight_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span>
     <span class="n">wandb_project</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;day1-demotransformer&quot;</span>
     <span class="n">wandb_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">eval_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Once upon a time&quot;</span>
 
 
 <span class="n">args</span> <span class="o">=</span> <span class="n">TransformerTrainingArgs</span><span class="p">()</span>
@@ -2373,15 +2332,23 @@ To check exactly where this is getting saved, you can print your current working
     <span class="n">max_length</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">n_ctx</span><span class="p">,</span>
     <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
     <span class="n">add_bos_token</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_proc</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">dataset_dict</span> <span class="o">=</span> <span class="n">tokenized_dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> 
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> 
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+    <span class="c1">#num_workers=4, runs faster, but kills the kernel if interrupted</span>
+    <span class="c1">#pin_memory=False</span>
 <span class="p">)</span>
 <span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span> 
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> 
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+    <span class="c1">#num_workers=4, </span>
+    <span class="c1">#pin_memory=False</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -2401,7 +2368,7 @@ To check exactly where this is getting saved, you can print your current working
 </section>
 <section id="training-loop">
 <h2>Training Loop<a class="headerlink" href="#training-loop" title="Link to this heading">#</a></h2>
-<p>If you did the material on <a class="reference external" href="https://arena-ch0-fundamentals.streamlit.app/%5B0.3%5D_ResNets#training-loop">training loops</a> during the first week, this should all be familiar to you. If not, you can skim that section for an overview of the key concepts. The start of the <strong>Training loop</strong> section is most important, and the subsections on <a class="reference external" href="https://arena-ch0-fundamentals.streamlit.app/%5B0.3%5D_ResNets#modularisation">Modularisation</a> and <a class="reference external" href="https://arena-ch0-fundamentals.streamlit.app/%5B0.3%5D_ResNets#aside-dataclasses">dataclasses</a> are also very useful. Lastly, we’ll also be using Weights and Biases to train our model - you can read about how to use it <a class="reference external" href="https://arena-ch0-fundamentals.streamlit.app/%5B0.4%5D_Optimization#what-is-weights-and-biases">here</a>. Here are (roughly) all the things you should know for the following exercises:</p>
+<p>If you did the material on <a class="reference external" href="https://learn.arena.education/chapter0_fundamentals/02_cnns/#2-training-neural-networks">training loops</a> during the first week, this should all be familiar to you. If not, you can skim that section for an overview of the key concepts. The start of the <strong>Training loop</strong> section is most important, and the subsections on <a class="reference external" href="https://learn.arena.education/chapter0_fundamentals/02_cnns/#1-making-your-own-modules">Modularisation</a> and <a class="reference external" href="https://learn.arena.education/chapter0_fundamentals/02_cnns/#2-training-neural-networks">dataclasses</a> are also very useful. Lastly, we’ll also be using Weights and Biases to train our model - you can read about how to use it <a class="reference external" href="https://learn.arena.education/chapter0_fundamentals/03_optimization/#2-weights-and-biases">here</a>. Here are (roughly) all the things you should know for the following exercises:</p>
 <ul class="simple">
 <li><p>The key parts of a gradient update step are:</p>
 <ul>
@@ -2441,7 +2408,7 @@ To check exactly where this is getting saved, you can print your current working
 <li><p>You should use the optimizer <code class="docutils literal notranslate"><span class="pre">t.optim.AdamW</span></code> (Adam with weight decay), and with hyperparameters <code class="docutils literal notranslate"><span class="pre">lr</span></code> and <code class="docutils literal notranslate"><span class="pre">weight_decay</span></code> taken from your <code class="docutils literal notranslate"><span class="pre">TransformerTrainingArgs</span></code> dataclass instance.</p></li>
 <li><p>We’ve given you the argument <code class="docutils literal notranslate"><span class="pre">max_steps_per_epoch</span></code>, a hacky way of making sure the training phase in each epoch doesn’t go on for too long. You can terminate each training phase after this many steps. It’s set to a default value that should lead to a very short run demonstrating nontrivial model performance.</p></li>
 <li><p>Remember to move tokens to your device, via <code class="docutils literal notranslate"><span class="pre">tokens.to(device)</span></code> (this should be a global variable, defined at the top of your notebook).</p></li>
-<li><p>You can refer back to the training loops from the <a class="reference external" href="https://arena-ch0-fundamentals.streamlit.app/%5B0.3%5D_ResNets#training-loop">previous chapter of the course</a> if you’d like.</p></li>
+<li><p>You can refer back to the training loops from the <a class="reference external" href="https://learn.arena.education/chapter0_fundamentals/02_cnns/#2-training-neural-networks">previous chapter of the course</a> if you’d like.</p></li>
 <li><p>We’ve also provided an instance of the <code class="docutils literal notranslate"><span class="pre">TransformerSampler</span></code> class so you can generate text from your model during training to see how it’s doing. We will cover how sampling works in the next section.</p></li>
 </ul>
 <div class="cell docutils container">
@@ -2459,15 +2426,15 @@ To check exactly where this is getting saved, you can print your current working
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="c1">#num_workers=4, runs faster, but kills the kernel if interrupted</span>
+            <span class="c1">#pin_memory=False,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="c1">#num_workers=4,</span>
+            <span class="c1">#pin_memory=False,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Int</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch seq&quot;</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
@@ -2501,6 +2468,7 @@ To check exactly where this is getting saved, you can print your current working
 
         <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_steps_per_epoch</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">eval_prompt</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">):</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
@@ -2510,8 +2478,7 @@ To check exactly where this is getting saved, you can print your current working
                     <span class="k">break</span>
 
             <span class="n">accuracy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
-            <span class="n">sample_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;Once upon a time&quot;</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">sample_text</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">eval_prompt</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
 
         <span class="n">wandb</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
 
@@ -2539,15 +2506,15 @@ To check exactly where this is getting saved, you can print your current working
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="c1">#num_workers=4, runs faster, but kills the kernel if interrupted</span>
+            <span class="c1">#pin_memory=False,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="c1">#num_workers=4,</span>
+            <span class="c1">#pin_memory=False,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Int</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;batch seq&quot;</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
@@ -2596,6 +2563,7 @@ To check exactly where this is getting saved, you can print your current working
 
         <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_steps_per_epoch</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">eval_prompt</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_loader</span><span class="p">):</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
@@ -2605,8 +2573,7 @@ To check exactly where this is getting saved, you can print your current working
                     <span class="k">break</span>
 
             <span class="n">accuracy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
-            <span class="n">sample_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;Once upon a time&quot;</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">sample_text</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">eval_prompt</span><span class="p">,</span> <span class="n">max_tokens_generated</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
 
         <span class="n">wandb</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
 </pre></div>
@@ -2941,8 +2908,14 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <span class="sd">        Returns a string of autoregressively generated text, starting from the prompt.</span>
 
 <span class="sd">        Sampling terminates at max_tokens_generated, or when the model generates an end-of-sequence token. kwargs are</span>
-<span class="sd">        passed to sample_next_token, to give detailed instructions on how new tokens are chosen.</span>
+<span class="sd">        passed to sample_next_token, to give detailed instructions on how new tokens are chosen. </span>
+<span class="sd">        Pass `seed` to make generation reproducible.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
@@ -2953,18 +2926,13 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
         <span class="n">top_k</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">top_p</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">frequency_penalty</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;input_ids should be a 1D sequence of token ids&quot;</span>
+        <span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;logits should be a 1D tensor of shape (d_vocab,)&quot;</span>
         <span class="k">assert</span> <span class="n">temperature</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Temperature should be non-negative&quot;</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">top_p</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Top-p must be a probability&quot;</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">top_k</span><span class="p">,</span> <span class="s2">&quot;Top-k must be non-negative&quot;</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">top_p</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">top_k</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;At most one of top-p and top-k supported&quot;</span>
-
-        <span class="c1"># Set random seeds for reproducibility</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># Apply all the specialized sampling methods</span>
         <span class="k">if</span> <span class="n">temperature</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -3040,8 +3008,6 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-<span class="n">t</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># gradients are not necessary for sampling</span>
-
 <span class="n">model</span> <span class="o">=</span> <span class="n">DemoTransformer</span><span class="p">(</span><span class="n">Config</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">reference_gpt2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">tokenizer</span>
@@ -3069,9 +3035,14 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <span class="sd">    Returns a string of autoregressively generated text, starting from the prompt.</span>
 
 <span class="sd">    Sampling terminates at max_tokens_generated, or when the model generates an end-of-sequence token. kwargs are</span>
-<span class="sd">    passed to sample_next_token, to give detailed instructions on how new tokens are chosen.</span>
+<span class="sd">    passed to sample_next_token, to give detailed instructions on how new tokens are chosen. Pass `seed` to make</span>
+<span class="sd">    generation reproducible — it&#39;s set once before the loop here, not forwarded to sample_next_token.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">input_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_tokens_generated</span><span class="p">):</span>
@@ -3114,7 +3085,9 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <p>Implement basic sampling in the <code class="docutils literal notranslate"><span class="pre">TransformerSampler</span></code> class above (i.e. the <code class="docutils literal notranslate"><span class="pre">sample_basic</span></code> method), then run the code below to verify your solution works.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span><span class="o">.</span><span class="n">test_sample_basic</span><span class="p">(</span><span class="n">TransformerSampler</span><span class="o">.</span><span class="n">sample_basic</span><span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
 <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
@@ -3168,7 +3141,9 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <p>Temperature sounds fancy, but it’s literally just dividing the logits by the temperature. You should implement this in your <code class="docutils literal notranslate"><span class="pre">TransformerSampler</span></code> class now.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logits</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span><span class="o">.</span><span class="n">test_apply_temperature</span><span class="p">(</span><span class="n">TransformerSampler</span><span class="o">.</span><span class="n">apply_temperature</span><span class="p">)</span>
+
+<span class="n">logits</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
 
 <span class="n">cold_logits</span> <span class="o">=</span> <span class="n">TransformerSampler</span><span class="o">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;A low temperature &quot;sharpens&quot; or &quot;peaks&quot; the distribution: &#39;</span><span class="p">,</span> <span class="n">cold_logits</span><span class="p">)</span>
@@ -3211,7 +3186,9 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <p>Look at the documentation page for <code class="docutils literal notranslate"><span class="pre">t.bincount</span></code>. You might need to use the <code class="docutils literal notranslate"><span class="pre">minlength</span></code> argument - why?</p>
 </details><div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bieber_prompt</span> <span class="o">=</span> <span class="s2">&quot;And I was like Baby, baby, baby, oh Like, Baby, baby, baby, no Like, Baby, baby, baby, oh I thought you&#39;d always be mine, mine&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span><span class="o">.</span><span class="n">test_apply_frequency_penalty</span><span class="p">(</span><span class="n">TransformerSampler</span><span class="o">.</span><span class="n">apply_frequency_penalty</span><span class="p">)</span>
+
+<span class="n">bieber_prompt</span> <span class="o">=</span> <span class="s2">&quot;And I was like Baby, baby, baby, oh Like, Baby, baby, baby, no Like, Baby, baby, baby, oh I thought you&#39;d always be mine, mine&quot;</span>
 <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">bieber_prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
 <span class="n">logits</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>
 <span class="n">penalized_logits</span> <span class="o">=</span> <span class="n">TransformerSampler</span><span class="o">.</span><span class="n">apply_frequency_penalty</span><span class="p">(</span><span class="n">input_ids</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">logits</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
@@ -3293,7 +3270,9 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 <p>Implement the method <code class="docutils literal notranslate"><span class="pre">sample_top_k</span></code> now. Your implementation should stay in log-space throughout (don’t exponentiate to obtain probabilities). This means you don’t actually need to worry about normalizing, because <code class="docutils literal notranslate"><span class="pre">Categorical</span></code> accepts unnormalised logits.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span><span class="o">.</span><span class="n">test_sample_top_k</span><span class="p">(</span><span class="n">TransformerSampler</span><span class="o">.</span><span class="n">sample_top_k</span><span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
 <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
@@ -3379,7 +3358,9 @@ TLDR - it provides nice modularization and saving of code, but it abstracts away
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span><span class="o">.</span><span class="n">test_sample_top_p</span><span class="p">(</span><span class="n">TransformerSampler</span><span class="o">.</span><span class="n">sample_top_p</span><span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;John and Mary went to the&quot;</span>
 <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
@@ -3840,7 +3821,7 @@ l_i &amp;= \log p_i \\
 </section>
 <section id="kv-caching">
 <h2>KV Caching<a class="headerlink" href="#kv-caching" title="Link to this heading">#</a></h2>
-<p><em>This section is also designed to be challenging, and take quite some time. There are many different ways to solve it, and you’re expected to try and find your own way (you should think about this for a while before looking at the suggestions in the dropdowns). Additionally, you might not find it as interesting as some of the other sections. In this case, and if you have a lot of extra time, you might want to start on the “building BERT” exercises from this chapter.</em></p>
+<p><em>This section is also designed to be challenging, and take quite some time. There are many different ways to solve it, and you’re expected to try and find your own way (you should think about this for a while before looking at the suggestions in the dropdowns). Additionally, you might not find it as interesting as some of the other sections.</em></p>
 <section id="how-can-caching-help-us">
 <h3>How can caching help us?<a class="headerlink" href="#how-can-caching-help-us" title="Link to this heading">#</a></h3>
 <p>The text generation we’ve done so far is needlessly re-computing certain values, which is very noticeable when you try to generate longer sequences.</p>
@@ -4127,14 +4108,14 @@ l_i &amp;= \log p_i \\
 <span class="n">tokens</span> <span class="o">=</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">to_tokens</span><span class="p">(</span><span class="n">reference_text</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">logits</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">run_with_cache</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
 
-<span class="n">rand_int_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attn</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln1&quot;</span><span class="p">])</span>
-<span class="n">rand_float_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_pre&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">rand_int_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_int_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">PosEmbed</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">Attention</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attn</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ln1&quot;</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_float_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">TransformerBlock</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cache</span><span class="p">[</span><span class="s2">&quot;resid_pre&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">rand_int_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">load_gpt2_test</span><span class="p">(</span><span class="n">DemoTransformer</span><span class="p">,</span> <span class="n">reference_gpt2</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </pre></div>
 </div>
 </details>
@@ -4568,7 +4549,6 @@ l_i &amp;= \log p_i \\
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config">Config</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-layernorm">Exercise - implement <code class="docutils literal notranslate"><span class="pre">LayerNorm</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-embed">Exercise - implement <code class="docutils literal notranslate"><span class="pre">Embed</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-posembed">Exercise - implement <code class="docutils literal notranslate"><span class="pre">PosEmbed</span></code></a></li>
@@ -4653,7 +4633,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>

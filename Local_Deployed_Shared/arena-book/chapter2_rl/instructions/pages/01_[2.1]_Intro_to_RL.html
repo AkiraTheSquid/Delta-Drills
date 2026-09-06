@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -592,25 +588,25 @@
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-does-exploration-actually-matter">When does exploration actually matter?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eligibility-traces">Eligibility Traces</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-derivation-of-sarsa-eligibility-trace-update">Full Derivation of SARSA(λ) Eligibility Trace Update</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-return-and-partial-n-step-returns">1. The λ-return and partial n-step returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-derivation-of-sarsa-lambda-eligibility-trace-update">Full Derivation of SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) Eligibility Trace Update</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-lambda-return-and-partial-n-step-returns">1. The <span class="math notranslate nohighlight">\(\lambda\)</span>-return and partial n-step returns</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#express-the-n-step-returns-in-terms-of-1-step-td-errors">2. Express the n-step returns in terms of 1-step TD errors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-of-forward-view-updates-over-an-episode">3. Sum of forward-view updates over an episode</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recognize-the-eligibility-trace">4. Recognize the eligibility trace</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-backward-view-sarsa-algorithm">5. Practical backward-view SARSA(λ) algorithm</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-backward-view-sarsa-lambda-algorithm">5. Practical backward-view SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) algorithm</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-sarsa-lambda">Exercise - Implement SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-eligibility-traces-actually-help">When do eligibility traces actually help?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#q-learning-v-s-sarsa">Q-Learning v.s SARSA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#q-learning-v-s-sarsa">Q-Learning v.s SARSA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-reward-vs-the-final-greedy-policy">Online reward vs. the final greedy policy</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-q-lambda">Bonus - Q(<span class="math notranslate nohighlight">\(\lambda\)</span>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-build-your-own-cliffwalking-environment">Bonus - build your own CliffWalking environment</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#init"><code class="docutils literal notranslate"><span class="pre">__init__</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamics"><code class="docutils literal notranslate"><span class="pre">dynamics</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-other-suggestions">Bonus - other suggestions</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR scheduler</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-environments">Other environments</a></li>
@@ -636,7 +632,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-reward-averaging">Exercise - Implement reward averaging</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-cheater-agent">Exercise - implement cheater agent</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-authentic-rl-experience">The Authentic RL Experience</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-ucba-selection">Exercise - implement UCBA selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-ucb-selection">Exercise - implement UCB selection</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Bonus</a></li>
@@ -657,9 +653,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="intro-to-rl">
 <h1>[2.1] - Intro to RL<a class="headerlink" href="#intro-to-rl" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.ipynb?t=20260303">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_solutions.ipynb?t=20260303">solutions</a></strong></p>
+<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.ipynb?t=20260605">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_solutions.ipynb?t=20260605">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>If you want to change to dark mode, you can do this by clicking the three horizontal lines in the top-right, then navigating to Settings → Theme.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-21.png" width="350">
@@ -732,6 +728,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="n">Arr</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
@@ -751,6 +748,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">part1_intro_to_rl.tests</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tests</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">part1_intro_to_rl.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">utils</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">plotly_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">cliffwalk_imshow</span><span class="p">,</span> <span class="n">imshow</span><span class="p">,</span> <span class="n">line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">part1_intro_to_rl.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridWorld</span><span class="p">,</span> <span class="n">Environment</span>
 </pre></div>
 </div>
 <p>=== NEW CHAPTER ===</p>
@@ -986,7 +984,7 @@ V_{\pi^*}(s) = V^*(s), \quad \forall s \in \mathcal{S}
 </div></blockquote>
 <p>Consider the following environment: There are two actions <span class="math notranslate nohighlight">\(A = \{a_L, a_R\}\)</span>, three states <span class="math notranslate nohighlight">\(S = \{s_0, s_L, s_R\}\)</span> and three rewards <span class="math notranslate nohighlight">\(R = \{0,1,2\}\)</span>. The environment is deterministic, and can be represented by the following transition diagram:</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/markov-diagram.png" width="400">
-<p>The edges represent the state transitions given an action, as well as the reward received. For example, in state <span class="math notranslate nohighlight">\(s_0\)</span>, taking action <span class="math notranslate nohighlight">\(a_L\)</span> means the new state is <span class="math notranslate nohighlight">\(s_L\)</span>, and the reward received is <span class="math notranslate nohighlight">\(+1\)</span>. The transitions leading out from <span class="math notranslate nohighlight">\(s_L\)</span> and <span class="math notranslate nohighlight">\(s_R\)</span> are independant of action. This gives us effectively two choices of deterministic policies, <span class="math notranslate nohighlight">\(\pi_L(s_0) = s_L\)</span> and <span class="math notranslate nohighlight">\(\pi_R(s_0) = s_R\)</span> (it is irrelevant what those policies do in the other states.)</p>
+<p>The edges represent the state transitions given an action, as well as the reward received. For example, in state <span class="math notranslate nohighlight">\(s_0\)</span>, taking action <span class="math notranslate nohighlight">\(a_L\)</span> means the new state is <span class="math notranslate nohighlight">\(s_L\)</span>, and the reward received is <span class="math notranslate nohighlight">\(+1\)</span>. The transitions leading out from <span class="math notranslate nohighlight">\(s_L\)</span> and <span class="math notranslate nohighlight">\(s_R\)</span> are independent of action. This gives us effectively two choices of deterministic policies, <span class="math notranslate nohighlight">\(\pi_L(s_0) = s_L\)</span> and <span class="math notranslate nohighlight">\(\pi_R(s_0) = s_R\)</span> (it is irrelevant what those policies do in the other states.)</p>
 <p>Your task here is to compute the value <span class="math notranslate nohighlight">\(V_{\pi}(s_0)\)</span> for <span class="math notranslate nohighlight">\(\pi = \pi_L\)</span> and <span class="math notranslate nohighlight">\(\pi = \pi_R\)</span>. Which policy is better? Does the answer depend on the choice of discount factor <span class="math notranslate nohighlight">\(\gamma\)</span>? If so, how?</p>
 <details>
 <summary>Answer</summary>
@@ -1053,11 +1051,11 @@ anywhere close to it.</p>
 <p>We can guess that there is a certain threshold value <span class="math notranslate nohighlight">\(r^*\)</span> such that the optimal policy follows the short route for harsher penalty <span class="math notranslate nohighlight">\(r&lt;r^*\)</span> (as movement penalty is high, so it’s worth risking the short route), and the long route for milder penalty <span class="math notranslate nohighlight">\(r&gt;r^*\)</span>.</p>
 <p>You can test this out (and find the approximate value of <span class="math notranslate nohighlight">\(r^*\)</span>) when you run your RL agent!</p>
 </details>
-<p>Provided is a class that allows us to define environments with known dynamics. The only parts you should be concerned
-with are</p>
+<p>Provided is a class that allows us to define environments with known dynamics.</p>
+<p>The attributes you will need are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">.num_states</span> <span class="pre">:</span> <span class="pre">int</span></code>, which gives the number of states,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.num_actions</span> <span class="pre">:</span> <span class="pre">int</span></code>, which gives the number of actions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.num_states</span> <span class="pre">:</span> <span class="pre">int</span></code> which gives the number of states</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.num_actions</span> <span class="pre">:</span> <span class="pre">int</span></code> which gives the number of actions</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.T</span> <span class="pre">:</span> <span class="pre">Float[Tensor,</span> <span class="pre">&quot;num_states</span> <span class="pre">num_actions</span> <span class="pre">num_states&quot;]</span></code> which represents the transitional probability <span class="math notranslate nohighlight">\(T(s_{\text{new}} \mid s, a)\)</span> = <code class="docutils literal notranslate"><span class="pre">T[s,</span> <span class="pre">a,</span> <span class="pre">s_new]</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.R</span> <span class="pre">:</span> <span class="pre">Float[Tensor,</span> <span class="pre">&quot;num_states</span> <span class="pre">num_actions</span> <span class="pre">num_states&quot;]</span></code> which represents the reward function <span class="math notranslate nohighlight">\(R(s,a,s_{\text{new}})\)</span> = <code class="docutils literal notranslate"><span class="pre">R[s,a,s_new]</span></code> associated with entering state <span class="math notranslate nohighlight">\(s_{\text{new}}\)</span> from state <span class="math notranslate nohighlight">\(s\)</span> by taking action <span class="math notranslate nohighlight">\(a\)</span>.</p></li>
 </ul>
@@ -1066,34 +1064,29 @@ with are</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">.start</span></code>, the state with which interaction with the environment begins. By default, assumed to be state zero.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">.terminal</span></code>, a list of all the terminal states (with which interaction with the environment ends). By default, assumed that there are no terminal states.</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Environment</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># no need to copy in, already provided in utils.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Environment</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_states</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span> <span class="o">=</span> <span class="n">num_states</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span> <span class="o">=</span> <span class="n">num_actions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">terminal</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">terminal</span>
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build</span><span class="p">()</span>
+        <span class="c1"># self.T : (num_states, num_actions, num_states) transition probabilities</span>
+        <span class="c1"># self.R : (num_states, num_actions, num_states) reward function</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="n">pi</span><span class="p">:</span> <span class="n">Arr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructs the T and R tensors from the dynamics of the environment.</span>
+<span class="sd">        Takes a policy pi, and draws an image of the behavior of that policy, if applicable.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pi : (num_actions,) a policy</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            T : (num_states, num_actions, num_states) State transition probabilities</span>
-<span class="sd">            R : (num_states, num_actions, num_states) Reward function</span>
+<span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">num_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span>
-        <span class="n">num_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_states</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">,</span> <span class="n">num_states</span><span class="p">))</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_states</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">,</span> <span class="n">num_states</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_states</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_actions</span><span class="p">):</span>
-                <span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamics</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-                <span class="p">(</span><span class="n">all_s</span><span class="p">,</span> <span class="n">all_r</span><span class="p">,</span> <span class="n">all_p</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_pad</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
-                <span class="n">T</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">all_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_p</span>
-                <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">all_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_r</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
-
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        
     <span class="k">def</span><span class="w"> </span><span class="nf">dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the distribution over possible outcomes for a given state</span>
@@ -1109,39 +1102,6 @@ with are</p>
 <span class="sd">            probs   : (m,) likelihood of each state-reward pair</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="n">pi</span><span class="p">:</span> <span class="n">Arr</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes a policy pi, and draws an image of the behavior of that policy, if applicable.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            pi : (num_actions,) a policy</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">out_pad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">probs</span><span class="p">:</span> <span class="n">Arr</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            states  : (m,) all the possible next states</span>
-<span class="sd">            rewards : (m,) rewards for each next state transition</span>
-<span class="sd">            probs   : (m,) likelihood of each state-reward pair</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            states  : (num_states,) all the next states</span>
-<span class="sd">            rewards : (num_states,) rewards for each next state transition</span>
-<span class="sd">            probs   : (num_states,) likelihood of each state-reward pair (including zero-prob outcomes.)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">out_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
-        <span class="n">out_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
-        <span class="n">out_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)):</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">out_r</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">out_p</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">out_s</span><span class="p">,</span> <span class="n">out_r</span><span class="p">,</span> <span class="n">out_p</span>
 </pre></div>
 </div>
 <p>For example, here is the toy environment from the theory exercises earlier (the <strong>3-state environment</strong>) implemented in this format.</p>
@@ -1225,67 +1185,68 @@ with are</p>
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-21/2104-R.html" width="870" height="370"></div>
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-21/2104-T.html" width="870" height="370"></div>
 </details>
-<p>We also provide an implementation of the gridworld environment above.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">dynamics</span></code> function sets up the dynamics of the Gridworld environment: if the agent takes an action, there is a 70% chance the action is successful, and 10% chance the agent moves in one of the other 3 directions randomly. The rest of the code here deals with edge cases like hitting a wall or being in a terminal state. It’s not important to fully read through &amp; understand how this method works.</p>
-<p>We include a definition of <code class="docutils literal notranslate"><span class="pre">render</span></code>, which given a policy, prints out a grid showing the direction the policy will try to move in from each cell.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Norvig</span><span class="p">(</span><span class="n">Environment</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">]:</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">state_index</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-            <span class="n">pos</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">pos</span>
+<p>We provide a general <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code> class that builds an environment - its states, transitions and rewards - directly from an <strong>ASCII map</strong>, so a new layout is just a string rather than a bespoke <code class="docutils literal notranslate"><span class="pre">dynamics</span></code> method.</p>
+<p>You’ll only ever call its constructor and the two visualisation methods - here’s that interface (the full source, including <code class="docutils literal notranslate"><span class="pre">dynamics</span></code>, is in <code class="docutils literal notranslate"><span class="pre">utils.py</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GridWorld</span><span class="p">(</span><span class="n">Environment</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_map</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_reward</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">goal_reward</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">trap_reward</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">cliff_reward</span><span class="o">=-</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">slipperiness</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a gridworld from an ASCII map, e.g.</span>
 
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span> <span class="ow">or</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">walls</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">state</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="n">out_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
-        <span class="n">out_probs</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
-        <span class="n">out_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span>
-        <span class="n">out_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span>
-        <span class="n">new_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s_new</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_states</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">s_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">s_new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
-                <span class="k">continue</span>
-            <span class="n">new_state</span> <span class="o">=</span> <span class="n">state_index</span><span class="p">(</span><span class="n">s_new</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">walls</span><span class="p">:</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_state</span>
-            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">new_state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
-                    <span class="n">out_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_rewards</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">out_states</span><span class="p">,</span> <span class="n">out_rewards</span><span class="p">,</span> <span class="n">out_probs</span><span class="p">)</span>
+<span class="sd">            GridWorld(</span>
+<span class="sd">                &quot;S..\n&quot;</span>
+<span class="sd">                &quot;.#.\n&quot;</span>
+<span class="sd">                &quot;..G&quot;</span>
+<span class="sd">            )</span>
+
+<span class="sd">        Map characters: &#39;S&#39; start, &#39;G&#39; goal (+goal_reward, terminal), &#39;T&#39; trap (+trap_reward,</span>
+<span class="sd">        terminal), &#39;C&#39; cliff (+cliff_reward, teleports back to the start, NOT terminal), &#39;#&#39; wall</span>
+<span class="sd">        (impassable - moving into it leaves you in place), &#39;.&#39; empty floor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_reward:   reward for every non-terminal transition (0 -&gt; sparse; &lt; 0 -&gt; step penalty)</span>
+<span class="sd">            goal_reward:   reward for entering a &#39;G&#39; cell</span>
+<span class="sd">            trap_reward:   reward for entering a &#39;T&#39; cell</span>
+<span class="sd">            cliff_reward:  reward for stepping into a &#39;C&#39; cell (you&#39;re also sent back to the start)</span>
+<span class="sd">            slipperiness:  if &gt; 0, the chosen action succeeds w.p. (1 - slipperiness); otherwise a</span>
+<span class="sd">                           random other direction is taken (0.3 mimics Norvig; 0 is deterministic)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pi</span><span class="p">:</span> <span class="n">Arr</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span>
-        <span class="n">emoji</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;⬆️&quot;</span><span class="p">,</span> <span class="s2">&quot;➡️&quot;</span><span class="p">,</span> <span class="s2">&quot;⬇️&quot;</span><span class="p">,</span> <span class="s2">&quot;⬅️&quot;</span><span class="p">]</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="p">[</span><span class="n">emoji</span><span class="p">[</span><span class="n">act</span><span class="p">]</span> <span class="k">for</span> <span class="n">act</span> <span class="ow">in</span> <span class="n">pi</span><span class="p">]</span>
-        <span class="n">grid</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;🟩&quot;</span>
-        <span class="n">grid</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;🟥&quot;</span>
-        <span class="n">grid</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;⬛&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">8</span><span class="p">:]))</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the gridworld as rows of emoji tiles (terrain, or policy `pi`&#39;s arrows on the floor).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pi</span><span class="p">:</span> <span class="n">Arr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Gridworld map&quot;</span><span class="p">,</span> <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the gridworld as a grid of emoji tiles: 🏁 start, 🟩 goal, 🟥 trap, ⬛ wall, 🟫 cliff,</span>
+<span class="sd">        ⬜ floor. If a policy `pi` is passed, floor tiles instead show its action arrow (⬆️➡️⬇️⬅️).&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Apart from the constructor, <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code> inherits the <code class="docutils literal notranslate"><span class="pre">Environment</span></code> interface the planning code relies on - <code class="docutils literal notranslate"><span class="pre">.T</span></code>, <code class="docutils literal notranslate"><span class="pre">.R</span></code>, <code class="docutils literal notranslate"><span class="pre">.num_states</span></code>, <code class="docutils literal notranslate"><span class="pre">.num_actions</span></code>, <code class="docutils literal notranslate"><span class="pre">.start</span></code>, <code class="docutils literal notranslate"><span class="pre">.terminal</span></code> - all built from the ASCII map.</p>
+<p>The <strong>Norvig</strong> gridworld below is just this class with a specific map and <code class="docutils literal notranslate"><span class="pre">slipperiness=0.3</span></code> (so the chosen action succeeds 70% of the time).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Norvig</span><span class="p">(</span><span class="n">GridWorld</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The 3x4 Russell &amp; Norvig gridworld, expressed as a `GridWorld` map: a +1 goal in the top-right</span>
+<span class="sd">    with a -1 trap directly below it, a wall in the middle, a small step penalty everywhere else, and</span>
+<span class="sd">    `slipperiness=0.3` (the chosen action succeeds 70% of the time).&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=-</span><span class="mf">0.04</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">penalty</span>
-        <span class="n">num_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
-        <span class="n">num_actions</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-        <span class="n">terminal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">walls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_states</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="n">terminal</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            ...G</span>
+<span class="sd">            .#.T</span>
+<span class="sd">            S...</span>
+<span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="n">step_reward</span><span class="o">=</span><span class="n">penalty</span><span class="p">,</span>
+            <span class="n">goal_reward</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">trap_reward</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">slipperiness</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="p">)</span>
 
 
-<span class="c1"># Example use of `render`: print out a random policy</span>
 <span class="n">norvig</span> <span class="o">=</span> <span class="n">Norvig</span><span class="p">()</span>
-<span class="n">pi_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="mi">12</span><span class="p">,))</span>
-<span class="n">norvig</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">pi_random</span><span class="p">)</span>
+<span class="n">tests</span><span class="o">.</span><span class="n">test_norvig_gridworld_equivalence</span><span class="p">(</span><span class="n">Norvig</span><span class="p">)</span>
+
+<span class="c1"># `render` prints the grid; `show_map` plots it. Here we show a random policy:</span>
+<span class="n">pi_random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">norvig</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="p">(</span><span class="n">norvig</span><span class="o">.</span><span class="n">num_states</span><span class="p">,))</span>
+<span class="n">norvig</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1484,7 +1445,7 @@ Or in other words:</p>
 </div>
 </div></blockquote>
 <p>The <code class="docutils literal notranslate"><span class="pre">policy_improvement</span></code> function takes in a value function <span class="math notranslate nohighlight">\(V\)</span>, and transition and reward tensors <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(R\)</span>, and returns a new policy <span class="math notranslate nohighlight">\(\pi^\text{better}\)</span>.</p>
-<p>Recall, we’ve defined our objects as <code class="docutils literal notranslate"><span class="pre">env.T[s,</span> <span class="pre">a,</span> <span class="pre">s']</span></code> <span class="math notranslate nohighlight">\(= T(s' \,|\, a, s)\)</span>, and <code class="docutils literal notranslate"><span class="pre">env.R[s,</span> <span class="pre">a,</span> <span class="pre">s']</span></code> <span class="math notranslate nohighlight">\(= R(s, a, s')\)</span>.</p>
+<p>Recall, we’ve defined our objects as <code class="docutils literal notranslate"><span class="pre">env.T[s,</span> <span class="pre">a,</span> <span class="pre">s']</span></code> <span class="math notranslate nohighlight">\(= T(s' \,|\, s, a)\)</span>, and <code class="docutils literal notranslate"><span class="pre">env.R[s,</span> <span class="pre">a,</span> <span class="pre">s']</span></code> <span class="math notranslate nohighlight">\(= R(s, a, s')\)</span>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">policy_improvement</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Environment</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Arr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
@@ -1516,7 +1477,7 @@ Or in other words:</p>
     <span class="k">return</span> <span class="n">pi_better</span>
 </pre></div>
 </div>
-<p>Note, the reason our solution works is that computing <code class="docutils literal notranslate"><span class="pre">env.R</span> <span class="pre">+</span> <span class="pre">gamma</span> <span class="pre">&amp;</span> <span class="pre">V</span></code> correctly broadcasts <code class="docutils literal notranslate"><span class="pre">V</span></code>: it has dimensions <code class="docutils literal notranslate"><span class="pre">(s_next,)</span></code>, and <code class="docutils literal notranslate"><span class="pre">env.R</span></code> has dimensions <code class="docutils literal notranslate"><span class="pre">(s,</span> <span class="pre">a,</span> <span class="pre">s_next)</span></code>.</p>
+<p>Note, the reason our solution works is that computing <code class="docutils literal notranslate"><span class="pre">env.R</span> <span class="pre">+</span> <span class="pre">gamma</span> <span class="pre">*</span> <span class="pre">V</span></code> correctly broadcasts <code class="docutils literal notranslate"><span class="pre">V</span></code>: it has dimensions <code class="docutils literal notranslate"><span class="pre">(s_next,)</span></code>, and <code class="docutils literal notranslate"><span class="pre">env.R</span></code> has dimensions <code class="docutils literal notranslate"><span class="pre">(s,</span> <span class="pre">a,</span> <span class="pre">s_next)</span></code>.</p>
 </details>
 <p>Putting these together, we now have an algorithm to find the optimal policy for an environment.</p>
 <div class="math notranslate nohighlight">
@@ -1570,10 +1531,10 @@ V_{\pi^*}(s) = \sum_{s'} T(s' \mid s, \pi^*(s)) (R(s,\pi^*(s),s') + \gamma V_{\p
 
 <span class="n">tests</span><span class="o">.</span><span class="n">test_find_optimal_policy</span><span class="p">(</span><span class="n">find_optimal_policy</span><span class="p">)</span>
 
-<span class="n">penalty</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">penalty</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.04</span>
 <span class="n">norvig</span> <span class="o">=</span> <span class="n">Norvig</span><span class="p">(</span><span class="n">penalty</span><span class="p">)</span>
 <span class="n">pi_opt</span> <span class="o">=</span> <span class="n">find_optimal_policy</span><span class="p">(</span><span class="n">norvig</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
-<span class="n">norvig</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">pi_opt</span><span class="p">)</span>
+<span class="n">norvig</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">pi_opt</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Optimal Policy, penalty = -0.04&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <details><summary>Solution</summary>
@@ -1692,9 +1653,9 @@ If you want to transition to `gymnasium`, it is possible (most of the material h
 <p>We’re using NumPy for this section. PyTorch provides GPU support and autograd, neither of which is of any use to environment code or the code we’re writing today.</p>
 <section id="the-step-method">
 <h3>The <code class="docutils literal notranslate"><span class="pre">step</span></code> method<a class="headerlink" href="#the-step-method" title="Link to this heading">#</a></h3>
-<p>The environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> method takes the action selected by the agent and returns four values: <code class="docutils literal notranslate"><span class="pre">obs</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, <code class="docutils literal notranslate"><span class="pre">done</span></code>, and the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary.</p>
+<p>The environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> method takes the action selected by the agent and returns five values: <code class="docutils literal notranslate"><span class="pre">obs</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, <code class="docutils literal notranslate"><span class="pre">terminated</span></code>, <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, and the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary.</p>
 <p><code class="docutils literal notranslate"><span class="pre">obs</span></code> and <code class="docutils literal notranslate"><span class="pre">reward</span></code> is the next observation and reward that the agent receives based on the action chosen.</p>
-<p><code class="docutils literal notranslate"><span class="pre">done</span></code> indicates if the environment has entered a terminal state and ended. Here, both the goal-states (+1 and -1) are terminal. Early termination is equivalent to an infinite trajectory where the agent remains trapped for all future states, and always receives reward zero.</p>
+<p><code class="docutils literal notranslate"><span class="pre">terminated</span></code> indicates if the environment has entered a terminal state and ended. Here, both the goal-states (+1 and -1) are terminal. Early termination is equivalent to an infinite trajectory where the agent remains trapped for all future states, and always receives reward zero. <code class="docutils literal notranslate"><span class="pre">truncated</span></code> indicates the episode was instead cut short by the time limit; we often combine the two as <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">terminated</span> <span class="pre">or</span> <span class="pre">truncated</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> can contain anything extra that doesn’t fit into the uniform interface - it’s up to the environment what to put into it. A good use of this is for debugging information that the agent isn’t “supposed” to see, like the dynamics of the environment. Agents that cheat and peek at <code class="docutils literal notranslate"><span class="pre">info</span></code> are helpful because we know that they should obtain the maximum possible rewards; if they aren’t, then there’s a bug. We will throw the entire underlying environment into <code class="docutils literal notranslate"><span class="pre">info</span></code>, from which an agent could cheat by peeking at the values for <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">R</span></code>.</p>
 <details>
 <summary>Terminology note - observation vs. state</summary>
@@ -2041,7 +2002,7 @@ Q^*(s_t, a_t) \approx r_{t+1} + \gamma  Q^*(s_{t+1}, a_{t+1})
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(a_{t+1} = \pi^*(s_{t+1}) = \text{argmax}_a Q^*(s_{t+1}, a)\)</span>. Since this approximation is only valid on the assumption that future decisions are made optimally, it will not hold for non-optimal policies.</p>
 <p>Letting <span class="math notranslate nohighlight">\(\widehat{Q}^*\)</span> denote our best current estimate of <span class="math notranslate nohighlight">\(Q^*\)</span>, the error <span class="math notranslate nohighlight">\(\delta_t := r_{t+1} + \gamma \widehat{Q}^*(s_{t+1}, a_{t+1}) - \widehat{Q}^*(s_t,a_t)\)</span>  in this “guess” is called the <strong>TD error</strong>, and tells us in which direction we should bump our estimate of <span class="math notranslate nohighlight">\(Q^*\)</span>.
-Of course, this estimate might be wildly inaccurate (even for the same state-action pair!), due to the stochasticity of the environment, or poor estimates of <span class="math notranslate nohighlight">\(Q^*\)</span>. So, we update our estimate slightly in the direction of <span class="math notranslate nohighlight">\(\delta_t\)</span>, much like stochastic gradient descent does. The update rule for Q-learning (with learning rate <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>) is</p>
+Of course, this estimate might be wildly inaccurate (even for the same state-action pair!), due to the stochasticity of the environment, or poor estimates of <span class="math notranslate nohighlight">\(Q^*\)</span>. So, we update our estimate slightly in the direction of <span class="math notranslate nohighlight">\(\delta_t\)</span>, much like stochastic gradient descent does. The update rule (with learning rate <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>) is</p>
 <div class="math notranslate nohighlight">
 \[
 \widehat{Q}^*(s_t,a_t) \leftarrow \widehat{Q}^*(s_t,a_t) + \alpha \left( r_{t+1} + \gamma \widehat{Q}^*(s_{t+1}, a_{t+1}) - \widehat{Q}^*(s_t,a_t) \right)
@@ -2059,7 +2020,7 @@ Of course, this estimate might be wildly inaccurate (even for the same state-act
 \]</div>
 <p>Intuitively, if the SARSA update is “changing your <span class="math notranslate nohighlight">\(Q\)</span>-function based on the action you <em>actually</em> took, in a way which makes it more consistent with the current policy”, then this update is “changing your <span class="math notranslate nohighlight">\(Q\)</span>-function based on the best possible action you could have taken, in a way which makes it more consistent with the optimal policy”.</p>
 <p>Note that each Q-learning update depends on the information <span class="math notranslate nohighlight">\((s_t, a_t, r_{t+1}, s_{t+1})\)</span>. This means that <span class="math notranslate nohighlight">\(Q\)</span>-learning tries to estimate <span class="math notranslate nohighlight">\(Q^*\)</span> directly, regardless of what policy <span class="math notranslate nohighlight">\(\pi\)</span> generated the episode, and so Q-Learning learns <em>off-policy</em>.</p>
-<p>Q-Learning in fact can will eventually learn the optimal Q-value <span class="math notranslate nohighlight">\(Q^*\)</span> for <strong>any</strong> policy <span class="math notranslate nohighlight">\(\pi\)</span> such that every state-action pair gets visited infinitely often (plus some other conditions regarding the learning rate). This means Q-Learning will still work, even if the policy is completely random! (Learning will be <strong>very</strong> slow, however.)</p>
+<p>Q-Learning in fact can eventually learn the optimal Q-value <span class="math notranslate nohighlight">\(Q^*\)</span> for <strong>any</strong> policy <span class="math notranslate nohighlight">\(\pi\)</span> such that every state-action pair gets visited infinitely often (plus some other conditions regarding the learning rate). This means Q-Learning will still work, even if the policy is completely random! (Learning will be <strong>very</strong> slow, however.)</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/qlearn.png" width="700">
 </section>
 <section id="explore-vs-exploit">
@@ -2189,32 +2150,19 @@ Of course, this estimate might be wildly inaccurate (even for the same state-act
         <span class="k">return</span> <span class="n">rewards</span>
 
 
-<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">env_norvig</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;NorvigGrid-v0&quot;</span><span class="p">)</span>
-<span class="n">config_norvig</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">()</span>
-<span class="n">args_norvig</span> <span class="o">=</span> <span class="p">(</span><span class="n">env_norvig</span><span class="p">,</span> <span class="n">config_norvig</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
-<span class="n">agents_norvig</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Agent</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Cheater</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">QLearning</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">SARSA</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">Random</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">n_seeds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">norvig_specs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">Cheater</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Cheater&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">QLearning</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Q-Learning&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">SARSA</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;SARSA&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Random</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Random&quot;</span><span class="p">),</span>
 <span class="p">]</span>
-<span class="n">returns_dict</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents_norvig</span><span class="p">:</span>
-    <span class="n">returns</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">n_runs</span><span class="p">)</span>
-    <span class="n">returns_dict</span><span class="p">[</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">cummean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-
-<span class="n">line</span><span class="p">(</span>
-    <span class="nb">list</span><span class="p">(</span><span class="n">returns_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
-    <span class="n">names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">returns_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Avg. reward on </span><span class="si">{</span><span class="n">env_norvig</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Episode&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">},</span>
-    <span class="n">template</span><span class="o">=</span><span class="s2">&quot;simple_white&quot;</span><span class="p">,</span>
-    <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># average over a few seeds (tabular RL is noisy) and plot mean ± standard error</span>
+<span class="n">curves</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">seeded_curves</span><span class="p">(</span><span class="n">norvig_specs</span><span class="p">,</span> <span class="s2">&quot;NorvigGrid-v0&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">n_runs</span><span class="o">=</span><span class="n">n_runs</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="n">n_seeds</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Avg. reward on NorvigGrid-v0 (mean ± se, </span><span class="si">{</span><span class="n">n_seeds</span><span class="si">}</span><span class="s2"> seeds)&quot;</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">plot_learning_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <details><summary>Click to see the expected output</summary>
@@ -2285,6 +2233,51 @@ Of course, this estimate might be wildly inaccurate (even for the same state-act
 </ul>
 </section>
 </section>
+</section>
+<section id="when-does-exploration-actually-matter">
+<h2>When does exploration actually matter?<a class="headerlink" href="#when-does-exploration-actually-matter" title="Link to this heading">#</a></h2>
+<p>The Norvig gridworld above doesn’t motivate <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy exploration well, because the
+environment is so noisy we basically get random moves <em>for free</em>. A purely greedy agent (<span class="math notranslate nohighlight">\(\epsilon = 0\)</span>) gets knocked
+around enough that it explores sufficiently well.</p>
+<p>To see <em>why</em> we actually need <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span>, we want a <strong>deterministic</strong> environment, where the only way the agent ever visits a new state is by choosing to. Conveniently, the <code class="docutils literal notranslate"><span class="pre">GridWorld</span></code> maps we built the Norvig grid from are deterministic unless we pass <code class="docutils literal notranslate"><span class="pre">slipperiness</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> - so we just need a new map with no slip.</p>
+<p>Now consider this deterministic map. The start <code class="docutils literal notranslate"><span class="pre">S</span></code> is in the bottom-left, the goal <code class="docutils literal notranslate"><span class="pre">G</span></code> (reward <code class="docutils literal notranslate"><span class="pre">+1</span></code>) sits near the
+top-right, and there’s a trap <code class="docutils literal notranslate"><span class="pre">T</span></code> (reward <code class="docutils literal notranslate"><span class="pre">-1</span></code>) in the top-right corner; every other step gives reward <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">explore_grid</span> <span class="o">=</span> <span class="n">GridWorld</span><span class="p">(</span><span class="s2">&quot;....T</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;...G.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;.....</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;.....</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;S....&quot;</span><span class="p">)</span>
+<span class="n">explore_grid</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deterministic Exploration World&quot;</span><span class="p">)</span>
+
+<span class="n">gym</span><span class="o">.</span><span class="n">envs</span><span class="o">.</span><span class="n">registration</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;ExplorationGrid-v0&quot;</span><span class="p">,</span>
+    <span class="n">entry_point</span><span class="o">=</span><span class="n">DiscreteEnviroGym</span><span class="p">,</span>
+    <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">nondeterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="n">explore_grid</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Here’s the catch. We initialise <span class="math notranslate nohighlight">\(Q\)</span> to zeros, and <code class="docutils literal notranslate"><span class="pre">np.argmax</span></code> breaks ties by returning the <em>first</em> maximal entry - which is action <code class="docutils literal notranslate"><span class="pre">0</span></code>, “up”. So a strictly greedy agent (<span class="math notranslate nohighlight">\(\epsilon = 0\)</span>) starts by walking straight up into the top wall, where “up” keeps it in place. Every action looks equally good (all <span class="math notranslate nohighlight">\(Q\)</span>-values are still <code class="docutils literal notranslate"><span class="pre">0</span></code>), so it just keeps choosing “up” forever, never receives any reward, and never learns a thing. The only way to ever reach the goal is to <em>deliberately try a different action</em> - which is exactly what <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> provides.</p>
+<p>Run the cell below to sweep a range of exploration rates <span class="math notranslate nohighlight">\(\epsilon \in \{0, 0.1, 0.2, 0.5\}\)</span> on this environment. Tabular RL is noisy, so we average each learning curve over 5 seeds and shade a <span class="math notranslate nohighlight">\(\pm 1\)</span> standard-error envelope around it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_seeds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">epsilons</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+
+<span class="c1"># one Q-learning agent per epsilon, averaged over several seeds (tabular RL is noisy), plotted mean ± se</span>
+<span class="n">explore_specs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">QLearning</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">optimism</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;epsilon=</span><span class="si">{</span><span class="n">eps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">eps</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">]</span>
+<span class="n">curves</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">seeded_curves</span><span class="p">(</span><span class="n">explore_specs</span><span class="p">,</span> <span class="s2">&quot;ExplorationGrid-v0&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">n_runs</span><span class="o">=</span><span class="n">n_runs</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="n">n_seeds</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Q-learning on ExplorationGrid-v0 (mean ± se, </span><span class="si">{</span><span class="n">n_seeds</span><span class="si">}</span><span class="s2"> seeds)&quot;</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">plot_learning_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<details><summary>Click to see the expected output</summary>
+<div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-21/2106.html" width="720" height="420"></div>
+</details>
+<p>The <span class="math notranslate nohighlight">\(\epsilon = 0\)</span> agent flatlines at zero return, as it never tries to explore. Agents with any <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> should
+<em>eventually</em> learn to play optimally, though the speed at which they learn can vary with the exploration rate.</p>
+<p>The <span class="math notranslate nohighlight">\(\pm\)</span> se envelopes also show that the <em>amount</em> of exploration matters. With <span class="math notranslate nohighlight">\(\epsilon = 0\)</span> every seed follows the same deterministic path, so the envelope has zero width and the curve never leaves zero return. Once <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> the agents start reaching the goal and the curves climb - but there’s a trade-off at the top end: with <span class="math notranslate nohighlight">\(\epsilon = 0.5\)</span> the agent keeps taking random, suboptimal actions even after it has learned the way, which drags its average return below the more moderate <span class="math notranslate nohighlight">\(\epsilon = 0.1\)</span> and <span class="math notranslate nohighlight">\(0.2\)</span> runs.</p>
 </section>
 <section id="eligibility-traces">
 <h2>Eligibility Traces<a class="headerlink" href="#eligibility-traces" title="Link to this heading">#</a></h2>
@@ -2377,10 +2370,10 @@ e_t(s,a) &amp;:= \gamma \lambda e_{t-1}(s,a) + \mathbf{1}(s = s_t, a = a_t)
 for all states \)</span>s<span class="math notranslate nohighlight">\( and actions \)</span>a$.</p>
 <details>
 <summary>Derivation of the eligibility trace (very optional)</summary>
-<p>TODO: LLM generated proof that I haven’t inspected in perfect detail, but upon first pass seems correct.</p>
-<section id="full-derivation-of-sarsa-eligibility-trace-update">
-<h3>Full Derivation of SARSA(λ) Eligibility Trace Update<a class="headerlink" href="#full-derivation-of-sarsa-eligibility-trace-update" title="Link to this heading">#</a></h3>
-<p>We want to show that the <strong>forward-view λ-return update</strong>:</p>
+<p><strong>NOTE:</strong> This is a LLM generated proof, Checked by Claude Opus 4.8, but not checked by humans.</p>
+<section id="full-derivation-of-sarsa-lambda-eligibility-trace-update">
+<h3>Full Derivation of SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) Eligibility Trace Update<a class="headerlink" href="#full-derivation-of-sarsa-lambda-eligibility-trace-update" title="Link to this heading">#</a></h3>
+<p>We want to show that the <strong>forward-view <span class="math notranslate nohighlight">\(\lambda\)</span>-return update</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
 \Delta Q(s_t, a_t) = \alpha \left( G^\lambda_t - Q(s_t, a_t) \right)
@@ -2402,9 +2395,9 @@ e_0(s,a) = 0, \qquad e_t(s,a) = \gamma \lambda e_{t-1}(s,a) + \mathbf{1}\{(s,a) 
 \]</div>
 <p>is the standard 1-step TD error.</p>
 <hr class="docutils" />
-<section id="the-return-and-partial-n-step-returns">
-<h4>1. The λ-return and partial n-step returns<a class="headerlink" href="#the-return-and-partial-n-step-returns" title="Link to this heading">#</a></h4>
-<p>For an episode of length <span class="math notranslate nohighlight">\(T\)</span>, the λ-return is defined as a weighted combination of n-step returns:</p>
+<section id="the-lambda-return-and-partial-n-step-returns">
+<h4>1. The <span class="math notranslate nohighlight">\(\lambda\)</span>-return and partial n-step returns<a class="headerlink" href="#the-lambda-return-and-partial-n-step-returns" title="Link to this heading">#</a></h4>
+<p>For an episode of length <span class="math notranslate nohighlight">\(T\)</span>, the <span class="math notranslate nohighlight">\(\lambda\)</span>-return is defined as a weighted combination of n-step returns:</p>
 <div class="math notranslate nohighlight">
 \[
 G^\lambda_t = (1-\lambda) \sum_{n=1}^{T-t} \lambda^{\,n-1} G_{t:t+n} + \lambda^{T-t} G_t,
@@ -2433,7 +2426,7 @@ G_{t:t+n} = r_{t+1} + \gamma r_{t+2} + \cdots + \gamma^{n-1} r_{t+n} + \gamma^n 
 \[
 G_{t:t+n} - Q(s_t, a_t) = \sum_{k=0}^{n-1} \gamma^k \delta_{t+k}.
 \]</div>
-<p>Substituting into the λ-return:</p>
+<p>Substituting into the <span class="math notranslate nohighlight">\(\lambda\)</span>-return:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -2442,7 +2435,7 @@ G^\lambda_t - Q(s_t, a_t)
 &amp;= \sum_{k=0}^{T-t-1} (\gamma \lambda)^k \delta_{t+k}.
 \end{aligned}
 \end{split}\]</div>
-<p>This identity shows that the λ-return minus the current Q-value equals a <strong>geometrically-weighted sum of future 1-step TD errors</strong>.</p>
+<p>This identity shows that the <span class="math notranslate nohighlight">\(\lambda\)</span>-return minus the current Q-value equals a <strong>geometrically-weighted sum of future 1-step TD errors</strong>.</p>
 </section>
 <hr class="docutils" />
 <section id="sum-of-forward-view-updates-over-an-episode">
@@ -2480,8 +2473,8 @@ e_k(s,a) = \gamma\lambda e_{k-1}(s,a) + \mathbf{1}\{(s_k,a_k)=(s,a)\}.
 <p>which is exactly the backward-view incremental update.</p>
 </section>
 <hr class="docutils" />
-<section id="practical-backward-view-sarsa-algorithm">
-<h4>5. Practical backward-view SARSA(λ) algorithm<a class="headerlink" href="#practical-backward-view-sarsa-algorithm" title="Link to this heading">#</a></h4>
+<section id="practical-backward-view-sarsa-lambda-algorithm">
+<h4>5. Practical backward-view SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) algorithm<a class="headerlink" href="#practical-backward-view-sarsa-lambda-algorithm" title="Link to this heading">#</a></h4>
 <p>At each time step <span class="math notranslate nohighlight">\(t\)</span>:</p>
 <ol class="arabic simple">
 <li><p>Observe <span class="math notranslate nohighlight">\((s_t, a_t, r_{t+1}, s_{t+1}, a_{t+1})\)</span>.</p></li>
@@ -2505,7 +2498,7 @@ e_t(s,a) = \gamma \lambda e_{t-1}(s,a) + \mathbf{1}\{(s,a)=(s_t,a_t)\}
 \[
 Q(s,a) \leftarrow Q(s,a) + \alpha \, \delta_t \, e_t(s,a)
 \]</div>
-<p>This yields the <strong>online, incremental backward-view SARSA(λ) update</strong>, equivalent to the forward-view λ-return update.</p>
+<p>This yields the <strong>online, incremental backward-view SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) update</strong>, equivalent to the forward-view <span class="math notranslate nohighlight">\(\lambda\)</span>-return update.</p>
 </details>
 <p>This then gives the update rule for SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) on timestep <span class="math notranslate nohighlight">\(t\)</span> as
 $<span class="math notranslate nohighlight">\(
@@ -2565,38 +2558,25 @@ the eligibility trace <code class="docutils literal notranslate"><span class="pr
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n_runs</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">env_norvig</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;NorvigGrid-v0&quot;</span><span class="p">)</span>
-<span class="n">config_norvig</span> <span class="o">=</span> <span class="n">TD_LambdaConfig</span><span class="p">()</span>
-<span class="n">args_norvig</span> <span class="o">=</span> <span class="p">(</span><span class="n">env_norvig</span><span class="p">,</span> <span class="n">config_norvig</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
-<span class="n">agents_norvig</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Agent</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Cheater</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">QLearning</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">SARSA</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">SARSA_lambda</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
-    <span class="n">Random</span><span class="p">(</span><span class="o">*</span><span class="n">args_norvig</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">n_seeds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">norvig_lambda_specs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">Cheater</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Cheater&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">QLearning</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Q-Learning&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">SARSA</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;SARSA&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">SARSA_lambda</span><span class="p">,</span> <span class="n">TD_LambdaConfig</span><span class="p">(),</span> <span class="s2">&quot;SARSA(λ)&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Random</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(),</span> <span class="s2">&quot;Random&quot;</span><span class="p">),</span>
 <span class="p">]</span>
-<span class="n">returns_dict</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents_norvig</span><span class="p">:</span>
-    <span class="n">returns</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">n_runs</span><span class="p">)</span>
-    <span class="n">returns_dict</span><span class="p">[</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">cummean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-
-<span class="n">line</span><span class="p">(</span>
-    <span class="nb">list</span><span class="p">(</span><span class="n">returns_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
-    <span class="n">names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">returns_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Avg. reward on </span><span class="si">{</span><span class="n">env_norvig</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Episode&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">},</span>
-    <span class="n">template</span><span class="o">=</span><span class="s2">&quot;simple_white&quot;</span><span class="p">,</span>
-    <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># average over a few seeds (tabular RL is noisy) and plot mean ± standard error</span>
+<span class="n">curves</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">seeded_curves</span><span class="p">(</span><span class="n">norvig_lambda_specs</span><span class="p">,</span> <span class="s2">&quot;NorvigGrid-v0&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">n_runs</span><span class="o">=</span><span class="n">n_runs</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="n">n_seeds</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Avg. reward on NorvigGrid-v0 with SARSA(λ) (mean ± se, </span><span class="si">{</span><span class="n">n_seeds</span><span class="si">}</span><span class="s2"> seeds)&quot;</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">plot_learning_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <details><summary>Click to see the expected output</summary>
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-21/2105.html" width="720" height="420"></div>
-<p>You should find this makes quite an improvement over SARSA. In more complex environments, the use of eligibility traces is essential. We will use these for PPO later on.</p>
+<p>You should find this makes a small improvement over SARSA,though on this tiny grid it’s a modest one. Let’s look at <em>when</em> eligibility traces actually pay off.</p>
 </details>
 <details><summary>Solution</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
@@ -2618,7 +2598,7 @@ the eligibility trace <code class="docutils literal notranslate"><span class="pr
 
     <span class="k">def</span><span class="w"> </span><span class="nf">run_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_episode</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_episode</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp</span><span class="p">:</span> <span class="n">Experience</span><span class="p">):</span>
         <span class="n">s_t</span><span class="p">,</span> <span class="n">a_t</span><span class="p">,</span> <span class="n">r_t</span><span class="p">,</span> <span class="n">s_tp1</span><span class="p">,</span> <span class="n">a_tp1</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">obs</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">act</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">reward</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">new_obs</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">new_act</span>
@@ -2630,6 +2610,40 @@ the eligibility trace <code class="docutils literal notranslate"><span class="pr
 </pre></div>
 </div>
 </details>
+</section>
+<section id="when-do-eligibility-traces-actually-help">
+<h3>When do eligibility traces actually help?<a class="headerlink" href="#when-do-eligibility-traces-actually-help" title="Link to this heading">#</a></h3>
+<p>Eligibility traces speed up <strong>credit assignment</strong>: a 1-step method moves the reward signal only about <em>one step</em> closer to the start per episode, whereas SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) credits the whole recent trajectory in one update. On a tiny grid the reward only has to travel a few steps, so a 1-step method keeps up just fine. Eligibility traces really shine when <strong>rewards are delayed and paths are long</strong>.</p>
+<p>To see this, here’s a larger 8×8 gridworld with a <em>sparse</em> reward (+1 only at the goal in the top-right, 0 everywhere else), so an optimal path is 14 steps long and the reward has a long way to propagate to the starting state. We compare 1-step SARSA against SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>), averaging over a few seeds since tabular RL is noisy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gym</span><span class="o">.</span><span class="n">envs</span><span class="o">.</span><span class="n">registration</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;LargeGrid-v0&quot;</span><span class="p">,</span>
+    <span class="n">entry_point</span><span class="o">=</span><span class="n">DiscreteEnviroGym</span><span class="p">,</span>
+    <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">nondeterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="n">GridWorld</span><span class="p">(</span><span class="s2">&quot;.......G</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">........</span><span class="se">\n</span><span class="s2">S.......&quot;</span><span class="p">)},</span>
+<span class="p">)</span>
+
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">150</span>
+<span class="n">n_seeds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">agent_specs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">SARSA</span><span class="p">,</span> <span class="n">AgentConfig</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">),</span> <span class="s2">&quot;SARSA (1-step)&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">99</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">250</span><span class="p">)),</span>
+    <span class="p">(</span><span class="n">SARSA_lambda</span><span class="p">,</span> <span class="n">TD_LambdaConfig</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span> <span class="s2">&quot;SARSA($\lambda$=0.8)&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">239</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">59</span><span class="p">)),</span>
+<span class="p">]</span>
+
+
+<span class="c1"># average over several seeds (tabular RL is noisy) and plot mean ± se, reusing each spec&#39;s colour</span>
+<span class="n">curves</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">seeded_curves</span><span class="p">([(</span><span class="n">Cls</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">Cls</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">agent_specs</span><span class="p">],</span>
+                             <span class="s2">&quot;LargeGrid-v0&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">n_runs</span><span class="o">=</span><span class="n">n_runs</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="n">n_seeds</span><span class="p">)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Eligibility traces learn faster on a larger gridworld (8×8, sparse reward; mean ± se, </span><span class="si">{</span><span class="n">n_seeds</span><span class="si">}</span><span class="s2"> seeds)&quot;</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">plot_learning_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="n">color</span> <span class="k">for</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">agent_specs</span><span class="p">])</span>
+</pre></div>
+</div>
+<details><summary>Click to see the expected output</summary>
+<div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-21/2107.html" width="720" height="420"></div>
+</details>
+<p>SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) climbs noticeably faster: On the tiny Norvig grid this gap was negligible; but it grows with the length of the credit-assignment chain, which is why traces become important in environments with longer rollouts (and why we use their cousin, GAE, in PPO later on).</p>
+<p>A caveat worth knowing: the trace here is an <em>accumulating</em> trace, and with a large <span class="math notranslate nohighlight">\(\lambda\)</span> (say 0.95) and a high learning rate, the repeated updates along a long, meandering exploratory episode can become unstable and actually <em>hurt</em> performance. <span class="math notranslate nohighlight">\(\lambda\)</span> is a genuine bias-variance knob - <span class="math notranslate nohighlight">\(\lambda\)</span> = 0 recovers 1-step TD (low variance, slow propagation) and <span class="math notranslate nohighlight">\(\lambda\)</span> → 1 approaches Monte-Carlo (fast propagation, high variance) - and moderate values around 0.8–0.9 are usually a safe default.</p>
 </section>
 </section>
 <section id="q-learning-v-s-sarsa">
@@ -2656,35 +2670,39 @@ There exists no policy that can milk infinite reward out of the environment, and
 </details>
 -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span>
-
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">500</span>
 <span class="n">config_cliff</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">optimism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CliffWalking-v0&quot;</span><span class="p">)</span>
-<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">2500</span>
-<span class="n">args_cliff</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">config_cliff</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+<span class="n">cliff_specs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">QLearning</span><span class="p">,</span> <span class="n">config_cliff</span><span class="p">,</span> <span class="s2">&quot;Q-Learning&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">SARSA</span><span class="p">,</span> <span class="n">config_cliff</span><span class="p">,</span> <span class="s2">&quot;SARSA&quot;</span><span class="p">)]</span>
 
+<span class="c1"># train one agent of each type (kept in `agents` for the greedy-rollout section below), show its</span>
+<span class="c1"># learned policy, and collect its cumulative-mean return. The curves are near-identical across seeds</span>
+<span class="c1"># here, so a single run is plenty - no need to average.</span>
+<span class="n">agents</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">returns_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">agents</span> <span class="o">=</span> <span class="p">[</span><span class="n">QLearning</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">),</span> <span class="n">SARSA</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">)]</span>
-
-<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="p">(</span><span class="n">QLearning</span><span class="p">,</span> <span class="n">SARSA</span><span class="p">))</span>  <span class="c1"># for typechecker</span>
-    <span class="n">returns</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">n_runs</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="k">for</span> <span class="n">AgentCls</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cliff_specs</span><span class="p">:</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">AgentCls</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CliffWalking-v0&quot;</span><span class="p">),</span> <span class="n">config</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">returns</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">n_runs</span><span class="p">)</span>
+    <span class="n">agents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
     <span class="n">returns_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">cummean</span><span class="p">(</span><span class="n">returns</span><span class="p">))</span>
-    <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">V</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
     <span class="n">pi</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-    <span class="n">cliffwalk_imshow</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CliffWalking: </span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> Agent&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+    <span class="n">cliffwalk_imshow</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CliffWalking: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> Agent&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
 
-<span class="n">line</span><span class="p">(</span>
-    <span class="n">returns_list</span><span class="p">,</span>
-    <span class="n">names</span><span class="o">=</span><span class="n">name_list</span><span class="p">,</span>
+<span class="c1"># rewards are always negative; plot the magnitude on a reversed log y-axis with a &quot;-&quot; tick prefix,</span>
+<span class="c1"># so the axis reads as negative reward (closer to 0 = better = higher)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">line</span><span class="p">(</span>
+    <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">returns_list</span><span class="p">],</span>
+    <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cliff_specs</span><span class="p">],</span>
     <span class="n">template</span><span class="o">=</span><span class="s2">&quot;simple_white&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Q-Learning vs SARSA on CliffWalking-v0&quot;</span><span class="p">,</span>
     <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Episode&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">},</span>
+    <span class="n">log_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
     <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">return_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">autorange</span><span class="o">=</span><span class="s2">&quot;reversed&quot;</span><span class="p">,</span> <span class="n">tickprefix</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <details><summary>Click to see the expected output</summary>
@@ -2692,6 +2710,36 @@ There exists no policy that can milk infinite reward out of the environment, and
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-22/2203-S.html" width="820" height="420"></div>
 <div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-22/2203.html" width="720" height="420"></div>
 </details>
+<section id="online-reward-vs-the-final-greedy-policy">
+<h3>Online reward vs. the final greedy policy<a class="headerlink" href="#online-reward-vs-the-final-greedy-policy" title="Link to this heading">#</a></h3>
+<p>The plot above measures reward <strong>while the agents are still learning</strong> - i.e. while they’re still acting <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedily and so still occasionally stepping off the cliff. On that metric SARSA wins, and the reason is exactly that it’s <strong>on-policy</strong>: SARSA learns the value of the policy it is <em>actually following</em> (the <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy one), so it “knows” that walking along the cliff edge is dangerous <em>because exploration will sometimes push it off</em>, and it learns the safe detour.</p>
+<p>Q-learning is <strong>off-policy</strong>: it learns the value of the <em>optimal greedy</em> policy regardless of how it’s behaving, so it learns to hug the cliff edge - and then its own <span class="math notranslate nohighlight">\(\epsilon\)</span>-exploration keeps knocking it into the cliff (−100 each time), tanking its online reward.</p>
+<p>But objectively Q-learning has learned the optimal policy, whereas SARSA has not. We can see this by measuring the return when exploration is turned off.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">greedy_return</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Roll out the greedy (epsilon=0) policy implied by Q, and return its total reward.&quot;&quot;&quot;</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">total_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_steps</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()))</span>
+        <span class="n">total_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+        <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">total_reward</span>
+
+
+<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">greedy_return</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CliffWalking-v0&quot;</span><span class="p">),</span> <span class="n">agent</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2"> greedy-policy return = </span><span class="si">{</span><span class="n">ret</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now the ranking <strong>flips</strong>: Q-learning’s greedy policy takes the short optimal path along the cliff edge (return <span class="math notranslate nohighlight">\(\approx -13\)</span>), while SARSA’s greedy policy keeps to the longer safe detour (return <span class="math notranslate nohighlight">\(\approx -17\)</span>).</p>
+<p>So which is better? It depends what you care about.</p>
+<ul class="simple">
+<li><p>If you care about reward <strong>during learning</strong>, or you’ll keep exploring/acting <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedily at deployment (e.g. safety matters), <strong>SARSA</strong> is better - it accounts for the cost of its own exploration.</p></li>
+<li><p>If you only care about the <strong>final policy you’ll deploy greedily</strong>, <strong>Q-learning</strong> is better - it directly targets the optimal policy.</p></li>
+</ul>
+<p>This is the key difference between on- and off-policy control: SARSA is aware of the policy it is learning from and acts accordingly, whereas Q-learning is only trying to glean what the optimal policy is, with no concern for the performance of the policy while it is learning.</p>
+</section>
 </section>
 <section id="bonus-q-lambda">
 <h2>Bonus - Q(<span class="math notranslate nohighlight">\(\lambda\)</span>)<a class="headerlink" href="#bonus-q-lambda" title="Link to this heading">#</a></h2>
@@ -2711,192 +2759,6 @@ e_t(s,a) &amp;= \begin{cases}
 <p>This “cuts” the contribution if a exploratory action was taken instead of the greedy action. However, if the agent is very often taking exploratory actions,
 then rarely will TD-backups of more than a few steps will happen, defeating the entire point of using eligibility traces.</p>
 <p>We leave it to you to implement this if you wish.</p>
-</section>
-<section id="bonus-build-your-own-cliffwalking-environment">
-<h2>Bonus - build your own CliffWalking environment<a class="headerlink" href="#bonus-build-your-own-cliffwalking-environment" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Difficulty</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">🔴🔴🔴🔴🔴</span>
-<span class="nt">Importance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">🔵⚪⚪⚪⚪</span>
-
-<span class="l l-Scalar l-Scalar-Plain">You should spend up to 30-45 minutes on this exercise, if you choose to do it.</span>
-</pre></div>
-</div>
-</div></blockquote>
-<p>You should return to this exercise at the end if you want to, or continue with the bonus material below.</p>
-<p>You can modify the code used to define the <code class="docutils literal notranslate"><span class="pre">Norvig</span></code> class to define your own version of <code class="docutils literal notranslate"><span class="pre">CliffWalking-v0</span></code>. You can do this without guidance, or you can get some more guidance from the hint below.</p>
-<p>Some notes for this task:</p>
-<ul>
-<li><p>The random agent will take a <em>very</em> long time to accidentally stumble into the goal state, and will slow down learning. You should probably neglect it.</p></li>
-<li><p>As soon as you hit the cliff, you should immediately move back to the start square, i.e. in pseudocode:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">cliff</span><span class="p">:</span>
-    <span class="n">new_state</span> <span class="o">=</span> <span class="n">start_state</span>
-    <span class="n">reward</span> <span class="o">-=</span> <span class="mi">100</span>
-</pre></div>
-</div>
-<p>This means you’ll never calculate Q from the cliff, so your Q-values will always be zero here.</p>
-</li>
-</ul>
-<details>
-<summary>Hints (for both methods)</summary>
-<p>The main way in which the <code class="docutils literal notranslate"><span class="pre">CliffWalking</span></code> environment differs from the <code class="docutils literal notranslate"><span class="pre">Norvig</span></code> gridworld is that the former has cliffs while the latter has walls. Cliffs and walls have different behaviour; you can see how the cliffs affect the agent by visiting the documentation page for <code class="docutils literal notranslate"><span class="pre">CliffWalking-v0</span></code>.</p>
-<section id="init">
-<h3><code class="docutils literal notranslate"><span class="pre">__init__</span></code><a class="headerlink" href="#init" title="Link to this heading">#</a></h3>
-<p>This mainly just involves changing the dimensions of the space, position of the start and terminal states, and parameters like <code class="docutils literal notranslate"><span class="pre">penalty</span></code>. Also, rather than walls, you’ll need to define the position of the <strong>cliffs</strong> (which behave differently).</p>
-</section>
-<section id="dynamics">
-<h3><code class="docutils literal notranslate"><span class="pre">dynamics</span></code><a class="headerlink" href="#dynamics" title="Link to this heading">#</a></h3>
-<p>You’ll need to modify <code class="docutils literal notranslate"><span class="pre">dynamics</span></code> in the following two ways:</p>
-<ul class="simple">
-<li><p>Remove the slippage probability (although it would be interesting to experiment with this and see what effect it has!)</p></li>
-<li><p>Remove the “when you hit a wall, you get trapped forever” behaviour, and replace it with “when you hit a cliff, you get a reward of -100 and go back to the start state”.</p></li>
-</ul>
-</details>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CliffWalking</span><span class="p">(</span><span class="n">Environment</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">12</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">penalty</span>
-        <span class="n">num_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
-        <span class="n">num_actions</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>  <span class="c1"># up, right, down, left</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-
-        <span class="c1"># special states: tuples of state and reward</span>
-        <span class="c1"># all other states get penalty</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="mi">36</span>
-        <span class="n">terminal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">47</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cliff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">])</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_states</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="n">terminal</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns tuple of (out_states, out_rewards, out_probs) for this given (state, action) pair.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">V</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-        <span class="n">pi</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-        <span class="n">cliffwalk_imshow</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CliffWalking: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> Agent&quot;</span><span class="p">)</span>
-
-
-<span class="n">gym</span><span class="o">.</span><span class="n">envs</span><span class="o">.</span><span class="n">registration</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;CliffWalking-myversion&quot;</span><span class="p">,</span>
-    <span class="n">entry_point</span><span class="o">=</span><span class="n">DiscreteEnviroGym</span><span class="p">,</span>
-    <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-    <span class="n">nondeterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="n">CliffWalking</span><span class="p">(</span><span class="n">penalty</span><span class="o">=-</span><span class="mi">1</span><span class="p">)},</span>
-<span class="p">)</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.99</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">config_cliff</span> <span class="o">=</span> <span class="n">AgentConfig</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">optimism</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CliffWalking-myversion&quot;</span><span class="p">)</span>
-<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">500</span>
-<span class="n">args_cliff</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">config_cliff</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
-
-<span class="n">agents</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cheater</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">),</span> <span class="n">QLearning</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">),</span> <span class="n">SARSA</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">),</span> <span class="n">Random</span><span class="p">(</span><span class="o">*</span><span class="n">args_cliff</span><span class="p">)]</span>
-<span class="n">returns_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">name_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
-    <span class="n">returns</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">n_runs</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="n">returns_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">cummean</span><span class="p">(</span><span class="n">returns</span><span class="p">))</span>
-    <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-<span class="n">line</span><span class="p">(</span>
-    <span class="n">returns_list</span><span class="p">,</span>
-    <span class="n">names</span><span class="o">=</span><span class="n">name_list</span><span class="p">,</span>
-    <span class="n">template</span><span class="o">=</span><span class="s2">&quot;simple_white&quot;</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Q-Learning vs SARSA on CliffWalking-v0&quot;</span><span class="p">,</span>
-    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Episode&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Avg. reward&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">},</span>
-    <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<details><summary>Click to see the expected output</summary>
-<div style="text-align: left"><embed src="https://info-arena.github.io/ARENA_img/misc/media-22/2204.html" width="720" height="420"></div>
-</details>
-<details><summary>Solution</summary>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CliffWalking</span><span class="p">(</span><span class="n">Environment</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">12</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">penalty</span>
-        <span class="n">num_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
-        <span class="n">num_actions</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>  <span class="c1"># up, right, down, left</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-
-        <span class="c1"># special states: tuples of state and reward</span>
-        <span class="c1"># all other states get penalty</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="mi">36</span>
-        <span class="n">terminal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">47</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cliff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">])</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_states</span><span class="p">,</span> <span class="n">num_actions</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">terminal</span><span class="o">=</span><span class="n">terminal</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">Arr</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns tuple of (out_states, out_rewards, out_probs) for this given (state, action) pair.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">state_index</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-            <span class="n">pos</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">pos</span>
-
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">state</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
-
-        <span class="c1"># No slipping; each action is deterministic</span>
-        <span class="n">out_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span>
-        <span class="n">out_probs</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="n">out_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span>
-        <span class="n">out_rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span>
-        <span class="n">new_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s_new</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_states</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">s_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">s_new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
-                <span class="k">continue</span>
-
-            <span class="n">new_state</span> <span class="o">=</span> <span class="n">state_index</span><span class="p">(</span><span class="n">s_new</span><span class="p">)</span>
-
-            <span class="c1"># Check if would hit the cliff, if so then get -100 penalty and go back to start</span>
-            <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cliff</span><span class="p">:</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
-                <span class="n">out_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">100</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">out_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_state</span>
-
-            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">new_state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
-                    <span class="n">out_rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_rewards</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="n">out_states</span><span class="p">,</span> <span class="n">out_rewards</span><span class="p">,</span> <span class="n">out_probs</span><span class="p">)</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">Arr</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">V</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-        <span class="n">pi</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-        <span class="n">cliffwalk_imshow</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CliffWalking: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> Agent&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</details>
-</section>
 </section>
 <section id="bonus-other-suggestions">
 <h2>Bonus - other suggestions<a class="headerlink" href="#bonus-other-suggestions" title="Link to this heading">#</a></h2>
@@ -2939,7 +2801,7 @@ then rarely will TD-backups of more than a few steps will happen, defeating the 
 </ul>
 <section id="the-info-dictionary">
 <h3>The <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary<a class="headerlink" href="#the-info-dictionary" title="Link to this heading">#</a></h3>
-<p>The environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> method returns four values: <code class="docutils literal notranslate"><span class="pre">obs</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, <code class="docutils literal notranslate"><span class="pre">done</span></code>, and the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary.</p>
+<p>The environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> method returns five values: <code class="docutils literal notranslate"><span class="pre">obs</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, <code class="docutils literal notranslate"><span class="pre">terminated</span></code>, <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, and the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary.</p>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> can contain anything extra that doesn’t fit into the uniform interface - it’s up to the environment what to put into it. A good use of this is for debugging information that the agent isn’t “supposed” to see. In this case, we’ll return the index of the actual best arm. This would allow us to measure how often the agent chooses the best arm, but it would also allow us to build a “cheating” agent that peeks at this information to make its decision.</p>
 <p>Cheating agents are helpful because we know that they should obtain the maximum possible rewards; if they aren’t, then there’s a bug.</p>
 </section>
@@ -2990,7 +2852,7 @@ then rarely will TD-backups of more than a few steps will happen, defeating the 
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="n">num_arms</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arm</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arm</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes an action by choosing an arm and returns the result of the action.</span>
 
@@ -3420,8 +3282,8 @@ then rarely will TD-backups of more than a few steps will happen, defeating the 
 <p>Even in this single comparison, we trained 200 agents for each version. Is that a big number or a small number to estimate the effect size? Probably we should like, compute some statistics? And test with a different number of arms - maybe we need more exploration for more arms? The time needed for a rigorous evaluation is going to increase quickly.</p>
 <p>As we continue onward to more complicated algorithms, keep an eye out for small discrepancies or minor confusions. Look for opportunities to check and cross-check everything, and be humble with claims.</p>
 </section>
-<section id="exercise-implement-ucba-selection">
-<h3>Exercise - implement UCBA selection<a class="headerlink" href="#exercise-implement-ucba-selection" title="Link to this heading">#</a></h3>
+<section id="exercise-implement-ucb-selection">
+<h3>Exercise - implement UCB selection<a class="headerlink" href="#exercise-implement-ucb-selection" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Difficulty</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">🔴🔴🔴⚪⚪</span>
 <span class="nt">Importance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">🔵🔵⚪⚪⚪</span>
@@ -3626,25 +3488,25 @@ then rarely will TD-backups of more than a few steps will happen, defeating the 
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-does-exploration-actually-matter">When does exploration actually matter?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#eligibility-traces">Eligibility Traces</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-derivation-of-sarsa-eligibility-trace-update">Full Derivation of SARSA(λ) Eligibility Trace Update</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-return-and-partial-n-step-returns">1. The λ-return and partial n-step returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-derivation-of-sarsa-lambda-eligibility-trace-update">Full Derivation of SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) Eligibility Trace Update</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-lambda-return-and-partial-n-step-returns">1. The <span class="math notranslate nohighlight">\(\lambda\)</span>-return and partial n-step returns</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#express-the-n-step-returns-in-terms-of-1-step-td-errors">2. Express the n-step returns in terms of 1-step TD errors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-of-forward-view-updates-over-an-episode">3. Sum of forward-view updates over an episode</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recognize-the-eligibility-trace">4. Recognize the eligibility trace</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-backward-view-sarsa-algorithm">5. Practical backward-view SARSA(λ) algorithm</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-backward-view-sarsa-lambda-algorithm">5. Practical backward-view SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>) algorithm</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-sarsa-lambda">Exercise - Implement SARSA(<span class="math notranslate nohighlight">\(\lambda\)</span>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-eligibility-traces-actually-help">When do eligibility traces actually help?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#q-learning-v-s-sarsa">Q-Learning v.s SARSA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#q-learning-v-s-sarsa">Q-Learning v.s SARSA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-reward-vs-the-final-greedy-policy">Online reward vs. the final greedy policy</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-q-lambda">Bonus - Q(<span class="math notranslate nohighlight">\(\lambda\)</span>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-build-your-own-cliffwalking-environment">Bonus - build your own CliffWalking environment</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#init"><code class="docutils literal notranslate"><span class="pre">__init__</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamics"><code class="docutils literal notranslate"><span class="pre">dynamics</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-other-suggestions">Bonus - other suggestions</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lr-scheduler">LR scheduler</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-environments">Other environments</a></li>
@@ -3670,7 +3532,7 @@ then rarely will TD-backups of more than a few steps will happen, defeating the 
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-reward-averaging">Exercise - Implement reward averaging</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-cheater-agent">Exercise - implement cheater agent</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-authentic-rl-experience">The Authentic RL Experience</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-ucba-selection">Exercise - implement UCBA selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-implement-ucb-selection">Exercise - implement UCB selection</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Bonus</a></li>
@@ -3703,7 +3565,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>
