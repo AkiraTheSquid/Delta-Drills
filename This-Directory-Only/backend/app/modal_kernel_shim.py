@@ -25,12 +25,22 @@ nothing should be: this file is copied into the image by path.
 from __future__ import annotations
 
 import json
+import os
 import queue
 import re
 import sys
 import time
 
 from jupyter_client import KernelManager
+
+# The protocol channel is the process's ORIGINAL stdout, duplicated before the
+# kernel exists; fd 1 itself is then pointed at stderr. The kernel inherits
+# fd 1, and anything that bypasses IPython's stream capture — `os.system`,
+# a C library's printf, a subprocess with inherited stdout — would otherwise
+# land in the middle of a JSON reply and read as "unreadable reply" upstream.
+# 🔴 Must run before KernelManager.start_kernel().
+_PROTO = os.fdopen(os.dup(sys.stdout.fileno()), "w", buffering=1)
+os.dup2(sys.stderr.fileno(), sys.stdout.fileno())
 
 # Mimetypes worth sending back. Anything else (application/json, vnd.jupyter
 # widget state, …) is dropped rather than shipped to a client that cannot
@@ -166,8 +176,8 @@ class Shim:
                 return result
 
     def serve(self) -> None:
-        sys.stdout.write(json.dumps({"ready": True}) + "\n")
-        sys.stdout.flush()
+        _PROTO.write(json.dumps({"ready": True}) + "\n")
+        _PROTO.flush()
         for line in sys.stdin:
             line = line.strip()
             if not line:
@@ -180,8 +190,8 @@ class Shim:
                 break
             result = self._run(message.get("code") or "",
                                int(message.get("timeout") or 30))
-            sys.stdout.write(json.dumps(result) + "\n")
-            sys.stdout.flush()
+            _PROTO.write(json.dumps(result) + "\n")
+            _PROTO.flush()
             if result.get("dead"):
                 break
         self.km.shutdown_kernel(now=True)
