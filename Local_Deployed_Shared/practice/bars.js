@@ -23,7 +23,18 @@ function setConceptUnderstanding({ mastery, coverage, tier, title } = {}) {
   const host = document.getElementById("ewma-accuracy");
   if (!host) return;
   if (!Number.isFinite(mastery) || !Number.isFinite(coverage) || !tier) {
+    // Hide AND blank: the previous concept's reading must not survive here.
+    // A question with no estimate (a scoped/planned ladder item) used to
+    // leave the frontier concept's title and percentage in the box, and
+    // bars.css's own `display:flex` outranked `.hidden` — so the learner saw
+    // "Understanding of <some other concept>" under a Correct verdict.
     host.classList.add("hidden");
+    const label = document.getElementById("ewma-accuracy-label");
+    const meta = document.getElementById("ewma-accuracy-meta");
+    const value = document.getElementById("ewma-accuracy-value");
+    if (label) label.textContent = `Understanding of ${title || "this concept"}`;
+    if (meta) meta.textContent = "";
+    if (value) value.textContent = "";
     return;
   }
   const pct = Math.max(0, Math.min(100, mastery * 100));

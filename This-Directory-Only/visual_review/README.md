@@ -20,3 +20,6 @@ question from `This-Directory-Only/questions_full.json` into
 - `visual_malformed_flags.md`: human-readable flag log.
 
 Generated files and review state are intentionally local audit artifacts.
+
+## Recent Changes
+- 2026-09-06: `watch.py` filled (was a Modulario template): parses `server.py` for its six load-bearing functions and the `questions_full.json` read, validates `review_state.json` / `visual_malformed_flags.jsonl` as JSON, and WARNS (not fails) on reviewed ids no longer in the bank — 386/387/393 were already stale.

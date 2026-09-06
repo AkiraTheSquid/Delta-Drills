@@ -129,6 +129,129 @@ def check_invariants():
 
 
 
+# ── Coverage guards added 2026-09-06 ─────────────────────────────────────────
+# Each of these caught (or would have caught) a real silent gap while chapter
+# 0.0 landed: es-1 shipped with no notebook JSON, and nothing at all watched
+# arena_exercise_kcs.json — a mistyped KC or a fn key absent from the notebook
+# simply meant no Practice button, with no error anywhere.
+
+def _bank_ids():
+    with open(os.path.join(_DIR, '..', 'questions.json'), encoding='utf-8') as fh:
+        return {int(q['id']) for q in json.load(fh)}
+
+
+def check_the_exercise_map_is_servable():
+    """Every entry in arena_exercise_kcs.json must resolve end to end: the KC
+    exists, every variant/original is a bank question whose q-matrix targets
+    that KC, the notebook JSON exists, and the key (an ARENA `def fn` or a
+    `(N)` heading tag) is present in that notebook's cells — otherwise
+    exercise-session.js finds nothing to decorate and the button is silently
+    absent."""
+    import re
+    registry = _read('kc_registry.json')
+    qmatrix = _read('qmatrix_tags.json')
+    ids = {kc['id'] for kc in registry['kcs']}
+    bank = _bank_ids()
+    exmap = _read('arena_exercise_kcs.json')
+    problems = []
+    for nb, table in exmap.items():
+        if nb.startswith('_'):
+            continue
+        nb_path = os.path.join(_DIR, 'notebooks', f'arena-{nb}.json')
+        if not os.path.exists(nb_path):
+            problems.append(f'{nb}: notebooks/arena-{nb}.json missing')
+            continue
+        with open(nb_path, encoding='utf-8') as fh:
+            cells = json.load(fh)['cells']
+        src = '\n'.join(c.get('src', '') for c in cells)
+        defs = set(re.findall(r'^\s*def\s+([A-Za-z_]\w*)\s*\(', src, re.M))
+        tags = set(re.findall(r'^\s*(?:#+\s*)?(\(\w{1,3}\))\s', src, re.M))
+        for key, ex in table.items():
+            where = f'{nb}/{key}'
+            if ex.get('kc') not in ids:
+                problems.append(f'{where}: kc {ex.get("kc")!r} not in kc_registry.json')
+            if key not in defs and key not in tags:
+                problems.append(f'{where}: key not found as `def {key}(` or heading tag in arena-{nb}.json')
+            qids = list(ex.get('variants') or [])
+            if ex.get('original') is not None:
+                qids.append(ex['original'])
+            if not ex.get('variants'):
+                problems.append(f'{where}: no variants — the planner has nothing to serve')
+            for qid in qids:
+                if qid not in bank:
+                    problems.append(f'{where}: question {qid} not in questions.json')
+                    continue
+                targets = (qmatrix.get(str(qid)) or {}).get('target_kcs') or []
+                if ex.get('kc') not in targets:
+                    problems.append(f'{where}: q{qid} targets {targets} not {ex.get("kc")!r}')
+    assert not problems, 'arena_exercise_kcs.json is not servable:\n  ' + '\n  '.join(problems[:20])
+
+
+def check_the_glossary_points_at_live_kcs():
+    """glossary.js hovers link a term to a KC and a lesson; a stale kc id
+    renders a link that opens nothing."""
+    import re
+    ids = {kc['id'] for kc in _read('kc_registry.json')['kcs']}
+    with open(os.path.join(_DIR, 'glossary.js'), encoding='utf-8') as fh:
+        js = fh.read()
+    kcs = set(re.findall(r'\bkc:\s*"([^"]+)"', js))
+    lesson_keys = set(re.findall(r'^\s*"([a-z]+\.[a-z0-9-]+)":\s*\[', js, re.M))
+    unknown = sorted((kcs | lesson_keys) - ids)
+    assert kcs, 'glossary.js defines no kc: entries'
+    assert not unknown, f'glossary.js references KCs missing from kc_registry.json: {unknown}'
+
+
+def check_every_lesson_has_a_notebook():
+    """Every lesson in kc_registry.json must be in lessons/colab_notebooks.json
+    and have its web notebook under lessons/notebooks/ — es-1 shipped without
+    one on 2026-09-06 and the Colab link 404ed."""
+    registry = _read('kc_registry.json')
+    manifest = _read('colab_notebooks.json')
+    published = {l['id'] for l in manifest['lessons']}
+    missing = []
+    for lesson in registry['lessons']:
+        lid = lesson['id']
+        if lid not in published:
+            missing.append(f'{lid}: not in colab_notebooks.json (run scripts/generate_colab_notebooks.py)')
+        if not os.path.exists(os.path.join(_DIR, 'notebooks', f'{lid}.json')):
+            missing.append(f'{lid}: notebooks/{lid}.json missing (run scripts/compile_web_notebooks.py)')
+    assert not missing, 'lessons without a notebook:\n  ' + '\n  '.join(missing)
+
+
+def check_every_kc_is_teachable():
+    """Every KC needs a lesson it belongs to, at least one KP page compiled
+    into lessons_structured.json, and at least one bank question whose
+    q-matrix targets it. A KC failing any of these is a node the graph draws
+    and the ITS can never serve."""
+    registry = _read('kc_registry.json')
+    qmatrix = _read('qmatrix_tags.json')
+    lessons = {l['id'] for l in registry['lessons']}
+    bank = _bank_ids()
+    targeted = {}
+    for qid, tags in qmatrix.items():
+        if int(qid) in bank:
+            for kc in tags.get('target_kcs') or []:
+                targeted[kc] = targeted.get(kc, 0) + 1
+    # Walk the compiled KP records themselves — a KC id merely MENTIONED
+    # elsewhere (a supporting_kcs reference, a note) must not count as a page.
+    compiled = {
+        (kp.get('kc'), lesson.get('id'))
+        for lesson in _read('lessons_structured.json')['lessons']
+        for kp in lesson.get('kps') or []
+    }
+    problems = []
+    for kc in registry['kcs']:
+        kid = kc['id']
+        if kc.get('lesson') not in lessons:
+            problems.append(f'{kid}: lesson {kc.get("lesson")!r} not in registry lessons[]')
+        if (kid, kc.get('lesson')) not in compiled:
+            problems.append(f'{kid}: no KP compiled under lesson {kc.get("lesson")!r} in lessons_structured.json')
+        if not targeted.get(kid):
+            problems.append(f'{kid}: no bank question targets it — unservable')
+    assert not problems, 'KCs the tutor cannot teach:\n  ' + '\n  '.join(problems)
+
+
+
 # ── The three standing content guards ─────────
 # Filled 2026-08-29 on Seth's instruction: these must fire on the folder being
 # EDITED, not only from scripts/, so that adding a drill or a KP page here is
@@ -144,8 +267,11 @@ _spec.loader.exec_module(_guard)
 _CONTENT_GUARDS = _guard.run(None)
 
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api,
-              check_invariants] + _CONTENT_GUARDS
+    checks = [check_imports, check_public_api, check_invariants,
+              check_the_exercise_map_is_servable,
+              check_the_glossary_points_at_live_kcs,
+              check_every_lesson_has_a_notebook,
+              check_every_kc_is_teachable] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()
