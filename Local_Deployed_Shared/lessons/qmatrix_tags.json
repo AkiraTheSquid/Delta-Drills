@@ -7515,5 +7515,632 @@
    "syntax.keyword-argument"
   ],
   "source": "kp-integrated"
+ },
+ "798": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-faded"
+ },
+ "799": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-faded"
+ },
+ "800": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "801": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "802": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "803": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "804": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "805": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-independent"
+ },
+ "806": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "807": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "808": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "numpy.ranges",
+   "numpy.slicing-views",
+   "numpy.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "809": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-faded"
+ },
+ "810": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-faded"
+ },
+ "811": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "812": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "813": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "814": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "815": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "816": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-independent"
+ },
+ "817": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "818": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "819": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.broadcasting-rules",
+   "numpy.constructors",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "820": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "821": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "822": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "823": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "824": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "825": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "826": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "827": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "828": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "829": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "830": {
+  "target_kcs": [
+   "raytracing.ray-parametrisation"
+  ],
+  "supporting_kcs": [
+   "numpy.constructors",
+   "numpy.broadcasting-rules",
+   "numpy.slicing-views",
+   "numpy.ranges"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "831": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "832": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "833": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "834": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "835": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "836": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "837": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "838": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "839": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "840": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "841": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

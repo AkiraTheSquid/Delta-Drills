@@ -30,6 +30,21 @@ const KcPractice = (() => {
   let queue = [];
   let served = 0;
 
+  /* EXERCISE-SCOPED PRACTICE (2026-09-06). An ARENA exercise on the notebook
+     page ("Practice make_rays_1d") starts this ladder on ONE KC and, on a
+     miss, pulls that KC's PREREQUISITES in front of the remaining queue —
+     Seth: "if you get it wrong, then it utilizes the existing rung structure
+     but for the prerequisite problems". `scoped` is the record of that:
+     which KC was asked for and which prerequisites have already been pulled
+     in, so a second miss on the same concept does not queue the same drills
+     twice. Every item carries its OWN kc/title (`_stamp` reads them), because
+     a prerequisite drill served inside a make_rays_1d session is still a
+     drill on `torch.out-argument` and the ladder card must say so.
+
+     🔴 STILL NOT A SECOND SCORING SYSTEM. Grading, BKT, the rung estimate on
+     the submit response — all unchanged. This file only decides ORDER. */
+  let scoped = null; // { target, inserted: [kc, …] }
+
   /* This ladder's rung names, in the vocabulary the REST of the app already
      speaks. `item.kind` is this file's word for the authored bucket a drill
      came out of; `ladder_stage` is the backend's word for the rung it was
@@ -79,10 +94,11 @@ const KcPractice = (() => {
      setProgress), exactly as it does on the adaptive queue. */
   const _stamp = (q, item) => {
     const stage = STAGE_FOR_KIND[item.kind];
-    if (!q || !kcId || !stage) return q;
-    q.ladder_kc = kcId;
+    const kc = item.kc || kcId;
+    if (!q || !kc || !stage) return q;
+    q.ladder_kc = kc;
     q.ladder_stage = stage;
-    q.ladder_kc_title = kcTitle || kcId;
+    q.ladder_kc_title = item.kcTitle || (item.kc ? item.kc : kcTitle || kcId);
     q.ladder_support = SUPPORTED_KINDS.has(item.kind);
     q.ladder_integrated = item.kind === "integrated";
     return q;
@@ -179,6 +195,33 @@ const KcPractice = (() => {
     return null;
   };
 
+  /* The prerequisite ladder pulled in on a miss: one rung each of scaffolded
+     → unaided, never the whole-KP integrated problem — the learner just missed
+     the concept ABOVE this one; what they need is the supporting move, drilled
+     small. ONE drill per rung: the first miss on make_rays_1d has five
+     prerequisites, and their full ladders are 44 drills — more than any block
+     the learner just sized. Three per concept keeps the pull proportionate,
+     and a miss on one of THOSE pulls its own prerequisites the same way.
+     Tagged with the prerequisite's own kc/title so the served question reads
+     as that concept's rung. */
+  const PREREQ_PER_RUNG = 1;
+  const _prereqItems = (kp, kc) => {
+    const tag = (it) => ({ ...it, kc, kcTitle: (kp && kp.title) || kc });
+    const faded = (kp.faded_items || [])
+      .filter((it) => Number.isFinite(it?.question_id))
+      .slice(0, PREREQ_PER_RUNG)
+      .map((it) => tag({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null }));
+    const guided = (kp.guided_items || [])
+      .filter((it) => Number.isFinite(it?.question_id))
+      .slice(0, PREREQ_PER_RUNG)
+      .map((it) => tag({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) }));
+    const independent = (kp.independent_items || [])
+      .filter((id) => Number.isFinite(id))
+      .slice(0, PREREQ_PER_RUNG)
+      .map((id) => tag({ kind: "independent", questionId: id, starter: null }));
+    return [...faded, ...guided, ...independent];
+  };
+
   const _hydrate = (item) => {
     const bankQ = typeof getQuestionFromBank === "function" ? getQuestionFromBank(item.questionId) : null;
     if (!bankQ) return null;
@@ -207,8 +250,9 @@ const KcPractice = (() => {
     // Keys must be resolved BEFORE _buildQueue — the faded/independent
     // ordering reads mastery, which is looked up by those keys.
     subtopicKeys = _resolveSubtopicKeys(entry.lesson, _sampleBankQuestion(entry.kp));
-    queue = _buildQueue(entry.kp);
+    queue = _buildQueue(entry.kp).map((it) => ({ ...it, kc, kcTitle }));
     served = 0;
+    scoped = null;
     active = queue.length > 0;
 
     window.__kcFocusId = kc;
@@ -246,10 +290,115 @@ const KcPractice = (() => {
 
   const isActive = () => active && !!queue.length;
 
+  /* ── exercise-scoped entry points (practice/exercise-session.js) ──── */
+
+  const startScoped = async (kc) => {
+    const ok = await start(kc);
+    if (!ok) return false;
+    scoped = { target: kc, inserted: [] };
+    return true;
+  };
+
+  /* A miss on `kc` (the ladder_kc of the question just graded wrong) queues
+     that concept's direct prerequisites in front of whatever is left. Returns
+     how many drills were pulled in — 0 when nothing is scoped, the KC has no
+     prerequisites with lessons, or they were already pulled in. Async because
+     the KP entries come from lessons_structured.json through LessonGate. */
+  const onMiss = async (kc) => {
+    if (!scoped || !kc) return 0;
+    const gate = window.LessonGate;
+    if (!gate || typeof gate.getKpEntry !== "function") return 0;
+    const entry = await gate.getKpEntry(kc);
+    const prereqs = (entry && entry.kp && entry.kp.supporting_kcs) || [];
+    const pulled = [];
+    for (const pre of prereqs) {
+      if (scoped.inserted.includes(pre) || pre === scoped.target) continue;
+      /* Reserved BEFORE the await: two misses resolving together would both
+         pass the check above and queue the same drills twice. Released again
+         when the concept turns out to have nothing to pull. Codex, 2026-09-06. */
+      scoped.inserted.push(pre);
+      const preEntry = await gate.getKpEntry(pre);
+      const items = preEntry && preEntry.kp ? _prereqItems(preEntry.kp, pre) : [];
+      if (!items.length) {
+        scoped.inserted = scoped.inserted.filter((k) => k !== pre);
+        continue;
+      }
+      pulled.push(...items);
+    }
+    if (!pulled.length) return 0;
+    queue.splice(served, 0, ...pulled);
+    active = true;
+    return pulled.length;
+  };
+
+  /* What the pause snapshot carries (practice/timer.js): the UNSERVED items
+     and the scope record. `served` restarts at 0 over the remaining list —
+     the served count the learner sees is timer.js's, not this one. */
+  const serialize = () => {
+    if (!kcId) return null;
+    return {
+      kc: kcId,
+      title: kcTitle,
+      subtopicKeys: subtopicKeys.slice(),
+      remaining: queue.slice(served),
+      scoped: scoped ? { target: scoped.target, inserted: scoped.inserted.slice() } : null,
+    };
+  };
+
+  const restore = (saved) => {
+    if (!saved || typeof saved !== "object" || !saved.kc) return false;
+    kcId = String(saved.kc);
+    kcTitle = saved.title ? String(saved.title) : kcId;
+    subtopicKeys = Array.isArray(saved.subtopicKeys) ? saved.subtopicKeys.filter(Boolean) : [];
+    queue = Array.isArray(saved.remaining)
+      ? saved.remaining.filter((it) => it && Number.isFinite(it.questionId) && STAGE_FOR_KIND[it.kind])
+      : [];
+    served = 0;
+    scoped = saved.scoped && saved.scoped.target
+      ? { target: String(saved.scoped.target), inserted: Array.isArray(saved.scoped.inserted) ? saved.scoped.inserted.slice() : [] }
+      : null;
+    active = queue.length > 0;
+    window.__kcFocusId = kcId;
+    window.__kcFocusSubtopics = subtopicKeys;
+    window.__kcFocusSubtopic = _compositeKey();
+    window.__lessonDemoOnly = false;
+    if (window.CompetencyBar) {
+      window.CompetencyBar.init(subtopicKeys);
+      window.CompetencyBar.beginPractice();
+    }
+    return true;
+  };
+
+  /* The scoped session ended (quota reached, discarded, failed to load): let go
+     of the focus so the next plain block is the adaptive queue again. Only for
+     a scoped run — the ?lesson=<kc> flow keeps its pin. */
+  const stop = () => {
+    if (!scoped) return;
+    active = false;
+    queue = [];
+    served = 0;
+    scoped = null;
+    kcId = null;
+    kcTitle = null;
+    subtopicKeys = [];
+    window.__kcFocusId = null;
+    window.__kcFocusSubtopics = [];
+    window.__kcFocusSubtopic = null;
+  };
+
+  const remaining = () => (active ? queue.length - served : 0);
+
   return {
     start,
+    startScoped,
+    onMiss,
+    serialize,
+    restore,
+    stop,
+    remaining,
     nextQuestion,
     isActive,
+    get scoped() { return scoped ? { ...scoped, inserted: scoped.inserted.slice() } : null; },
     get kc() { return kcId; },
     get subtopicKeys() { return subtopicKeys.slice(); },
   };

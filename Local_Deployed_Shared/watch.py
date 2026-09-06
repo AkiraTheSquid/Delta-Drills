@@ -471,9 +471,12 @@ def check_invariants():
         "/rl.png",
         "evals.jpeg",
         "science+of+misalignment.png",
-        # Source links in the hero — the ARENA site and Callum's upstream repo.
+        # Source links in the hero — the ARENA site and the repo the notebooks
+        # are compiled from and the Colab links open: Seth's fork, since
+        # 2026-09-06 (the study group pulls it; it carries notebooks upstream
+        # does not).
         "https://www.arena.education/",
-        "https://github.com/callummcdougall/ARENA_3.0",
+        "https://github.com/AkiraTheSquid/ARENA_3.0",
         # Section rows link out to upstream Colab notebooks rather than the
         # local book mirror; the first click routes through the fork gate.
         "notebookPathForBookUrl",

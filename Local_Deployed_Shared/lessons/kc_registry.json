@@ -43,6 +43,12 @@
    "topic": "Einops",
    "title": "Repeat and deep-learning patterns",
    "subtopic_key": "Einops: Deep Learning"
+  },
+  {
+   "id": "tr-1",
+   "topic": "PyTorch",
+   "title": "Rays as tensors (ARENA 0.1)",
+   "subtopic_key": "PyTorch: Rays as tensors"
   }
  ],
  "kcs": [
@@ -403,6 +409,51 @@
    "prereqs": [
     "einops.dl-flatten-heads",
     "einops.pooling"
+   ]
+  },
+  {
+   "id": "torch.out-argument",
+   "lesson": "tr-1",
+   "title": "Filling a tensor in place with out=",
+   "syntax": true,
+   "prereqs": [
+    "numpy.ranges",
+    "numpy.slicing-views"
+   ]
+  },
+  {
+   "id": "torch.slice-assignment",
+   "lesson": "tr-1",
+   "title": "Writing tensors into slices: broadcasting on the left",
+   "syntax": true,
+   "prereqs": [
+    "numpy.slicing-views",
+    "numpy.broadcasting-rules",
+    "numpy.constructors",
+    "numpy.ranges"
+   ]
+  },
+  {
+   "id": "raytracing.ray-parametrisation",
+   "lesson": "tr-1",
+   "title": "A ray is an origin and a direction",
+   "syntax": false,
+   "prereqs": [
+    "numpy.constructors",
+    "numpy.broadcasting-rules",
+    "numpy.ranges"
+   ]
+  },
+  {
+   "id": "raytracing.make-rays-1d",
+   "lesson": "tr-1",
+   "title": "make_rays_1d: a fan of rays as one (n, 2, 3) tensor",
+   "syntax": false,
+   "prereqs": [
+    "torch.out-argument",
+    "torch.slice-assignment",
+    "raytracing.ray-parametrisation",
+    "numpy.ranges"
    ]
   }
  ]

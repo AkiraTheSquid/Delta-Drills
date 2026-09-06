@@ -4,7 +4,8 @@
  "title": "SAE Circuits",
  "desc": "Apply SAEs to circuit analysis, decomposing computations and tracing features through layers.",
  "chapter": "Chapter 1 — Transformer Interpretability",
- "edition": "ARENA_5.0-main",
+ "edition": "ARENA_3.0-fork",
+ "owner": "AkiraTheSquid",
  "notebook_path": "chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.ipynb",
  "book_url": "/arena-book/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.html",
  "cells": [
@@ -12,7 +13,7 @@
    "t": "md",
    "id": "1-4-2-c000",
    "role": "prose",
-   "src": "# [1.4.2] SAE Circuits (exercises)\n\n> **ARENA [Streamlit Page](https://arena-chapter1-transformer-interp.streamlit.app/22_[1.4.2]_SAE_Circuits)**\n>\n> **Colab: [exercises](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.ipynb?t=20260520) | [solutions](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_solutions.ipynb?t=20260520)**\n\nPlease send any problems / bugs on the `#errata` channel in the [Slack group](https://info-arena.github.io/ARENA_img/slack.html), and ask any questions on the dedicated channels for this chapter of material.\n\nYou can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.\n\nLinks to all other chapters: [(0) Fundamentals](https://arena-chapter0-fundamentals.streamlit.app/), [(1) Transformer Interpretability](https://arena-chapter1-transformer-interp.streamlit.app/), [(2) RL](https://arena-chapter2-rl.streamlit.app/)."
+   "src": "# [1.4.2] SAE Circuits (exercises)\n\n> **ARENA [Streamlit Page](https://arena-chapter1-transformer-interp.streamlit.app/22_[1.4.2]_SAE_Circuits)**\n>\n> **Colab: [exercises](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises.ipynb?t=20260329) | [solutions](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_solutions.ipynb?t=20260329)**\n\nPlease send any problems / bugs on the `#errata` channel in the [Slack group](https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA), and ask any questions on the dedicated channels for this chapter of material.\n\nYou can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.\n\nLinks to all other chapters: [(0) Fundamentals](https://arena-chapter0-fundamentals.streamlit.app/), [(1) Transformer Interpretability](https://arena-chapter1-transformer-interp.streamlit.app/), [(2) RL](https://arena-chapter2-rl.streamlit.app/)."
   },
   {
    "t": "md",

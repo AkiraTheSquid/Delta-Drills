@@ -24,11 +24,15 @@
 // `#` to `%23`, etc., without touching the `/` separators.
 const encodePathSegments = (path) => String(path).split("/").map(encodeURIComponent).join("/");
 
-// Upstream ARENA notebooks are hosted at callummcdougall/ARENA_3.0 (the
-// project kept the v3 repo name as the canonical home for all later
-// versions — see ARENA's README). The path inside their repo matches our
-// `content/ARENA_5.0-main/<rest>` layout once that prefix is stripped.
-const ARENA_UPSTREAM_OWNER = "callummcdougall";
+// ARENA notebooks are opened from Seth's fork, AkiraTheSquid/ARENA_3.0, not
+// from callummcdougall/ARENA_3.0 (the project kept the v3 repo name as the
+// canonical home for all later versions — see ARENA's README). 2026-09-06:
+// the fork carries notebooks upstream does not (0.1 with supplementary
+// practice), the study group pulls the fork, and the in-app notebooks are
+// compiled from it (scripts/compile_arena_notebooks.py) — the default owner
+// here is what keeps the Colab link on the same file as the other two. A
+// learner's own GitHub username still overrides it, as before.
+const ARENA_UPSTREAM_OWNER = "AkiraTheSquid";
 const ARENA_FORK_REPO = "ARENA_3.0";
 // Procedural drills live in OUR repo (Delta-Drills), not ARENA's. Students
 // fork Delta-Drills the same way they fork ARENA_3.0 — the same "GitHub

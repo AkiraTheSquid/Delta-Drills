@@ -296,6 +296,25 @@ window.DD_GLOSSARY = {
       kc: "einops.channel-groups-temporal",
       def: "A channel axis of size g x c that really means g groups of c channels. The single load-bearing question is which index is SLOW — groups or channels.",
     },
+    /* ---- tr-1: rays as tensors (ARENA 0.1) ------------------------ */
+    {
+      term: "ray",
+      aliases: ["rays", "half-line"],
+      kc: "raytracing.ray-parametrisation",
+      def: "A half-line: every point O + u·D for u ≥ 0, with O the origin and D the direction. Stored as a (2, 3) tensor — row 0 the origin, row 1 the direction.",
+    },
+    {
+      term: "out=",
+      aliases: ["out argument", "out keyword", "out= argument"],
+      kc: "torch.out-argument",
+      def: "A keyword that makes a tensor function write its result into storage you already own instead of allocating. The target's shape must match; the function returns the target.",
+    },
+    {
+      term: "broadcast write",
+      aliases: ["broadcast writes", "writing a tensor into a slice", "copy_"],
+      kc: "torch.slice-assignment",
+      def: "x[sel] = value where value is a whole tensor: it is broadcast to the slice's shape and written through the view into x. The in-place method spelling is copy_.",
+    },
   ],
 };
 
@@ -347,4 +366,8 @@ window.DD_GLOSSARY.kcLesson = {
     "einops.repeat-model": ["Repeat and deep-learning patterns", "einops.repeat — new axes and stretched axes"],
     "einops.dl-flatten-heads": ["Repeat and deep-learning patterns", "Deep-learning shapes — flattening and attention heads"],
     "einops.channel-groups-temporal": ["Repeat and deep-learning patterns", "Channel groups and temporal windows"],
+    "torch.out-argument": ["Rays as tensors (ARENA 0.1)", "Filling a tensor in place with out="],
+    "torch.slice-assignment": ["Rays as tensors (ARENA 0.1)", "Writing tensors into slices: broadcasting on the left"],
+    "raytracing.ray-parametrisation": ["Rays as tensors (ARENA 0.1)", "A ray is an origin and a direction"],
+    "raytracing.make-rays-1d": ["Rays as tensors (ARENA 0.1)", "make_rays_1d: a fan of rays as one (n, 2, 3) tensor"],
 };

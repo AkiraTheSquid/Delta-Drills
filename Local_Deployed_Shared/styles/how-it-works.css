@@ -771,3 +771,51 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-mastered-go:hover { filter: brightness(1.1); }
 .kg2-mastered-stay { background: transparent; color: var(--muted); }
 .kg2-mastered-stay:hover { color: var(--text); }
+
+/* ---- Right pane tabs: Lesson | Metadata | Settings (lesson-graph.js builds
+   the strip; 2026-09-06). Same control vocabulary as #kg-colormode. Hidden
+   with the head when nothing is selected. ---- */
+.kg2-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-deep);
+}
+.kg2-tabs button {
+  background: transparent; border: 0; border-bottom: 2px solid transparent;
+  color: var(--muted); font: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 8px 12px; cursor: pointer; margin-bottom: -1px;
+}
+.kg2-tabs button:hover { color: var(--text); }
+.kg2-tabs button[aria-selected="true"] { color: var(--accent-text); border-bottom-color: var(--accent); }
+.kg2-info:has(.kg2-placeholder) .kg2-tabs { display: none; }
+
+/* Metadata tab */
+.kg2-md-grid { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 13px; align-items: baseline; }
+.kg2-md-k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
+.kg2-md-v { color: var(--text); min-width: 0; overflow-wrap: anywhere; }
+.kg2-md-dim { color: var(--muted); font-size: 12px; }
+.kg2-md-notes { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.6; }
+.kg2-md-foot { margin-top: 20px; color: var(--muted); font-size: 12px; }
+
+/* Settings tab */
+.kg2-set { display: flex; flex-direction: column; gap: 18px; font-size: 14px; }
+.kg2-set-guest { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.kg2-set-guest strong { color: var(--text); }
+.kg2-set-row { display: block; }
+.kg2-set-row small { display: block; color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 4px; }
+.kg2-set-toggle { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.kg2-set-toggle input { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--accent); }
+.kg2-set-weight { padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+.kg2-set-weight.is-off { opacity: .45; pointer-events: none; }
+.kg2-set-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.kg2-set-head output { color: var(--muted); font-size: 12.5px; }
+.kg2-set-weight input[type="range"] { width: 100%; margin: 12px 0 8px; accent-color: var(--accent); }
+.kg2-set-presets { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+.kg2-set-presets button { background: transparent; color: var(--muted); border: 0; padding: 4px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+.kg2-set-presets button + button { border-left: 1px solid var(--border); }
+.kg2-set-presets button.active { background: var(--accent); color: var(--on-accent); }
+.kg2-set-status { color: var(--muted); font-size: 12px; min-height: 1.2em; }
+.kg2-li-off { /* graph-legend */ background: rgba(120, 120, 120, .22); border-style: solid; }
