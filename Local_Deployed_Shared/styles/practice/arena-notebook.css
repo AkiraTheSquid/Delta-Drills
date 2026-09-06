@@ -377,6 +377,22 @@
   /* One column for the whole document: prose and code share both edges. */
   --anb-measure: calc(682px * var(--anb-zoom, 1));
 
+  /* 🔴 CODE IS SET AT THE PARAGRAPH SIZE. Seth, 2026-09-06: "the text for the
+     code or whatever should be the same size as the text for the regular
+     paragraphs." So this is the SAME expression as `.nbv-md`'s font-size and
+     line-height, written once and shared by all three kinds of code on the
+     page — the runnable cells, the fenced blocks in prose, and the output
+     under a cell — so they cannot drift apart from the prose or from each
+     other. Change the number here, nowhere else.
+
+     What it costs, so the trade is visible: 25.5px monospace fits about 57
+     columns in this column, and upstream's lines run to ~88, so a long line
+     scrolls sideways inside its own cell rather than wrapping. That is the
+     price of matching the prose exactly; dropping this to ~0.8× the prose
+     size buys the whole line back. */
+  --anb-code-size: calc(18.2px * var(--anb-zoom, 1));
+  --anb-code-lh: calc(26px * var(--anb-zoom, 1));
+
   /* 🔴 THE TREE'S CEILING, NOT ITS WIDTH. The width it actually takes is the
      margin the centred column leaves — `clamp(320px, 100%, var(--anb-toc-w))`
      in arena-notebook-nav.css, where `100%` is that margin. Seth counts the
@@ -490,13 +506,15 @@
   padding-left: calc(18px * var(--anb-zoom, 1));
 }
 
-/* 🔴 PROSE CODE ONLY. `.nbv-md code` is a span inside rendered markdown; the
-   runnable cell's source is `.nbv-src code`, a different element in a
-   different cell, and it must keep the editor's own metrics or the overlay in
-   code-highlight.css stops lining up with the textarea underneath it. Their
-   inline code is much smaller than their body text — 12.74px against 18.2px —
-   which only looks right because it is set on a grey chip. */
-#page-arena-notebook .nbv-md code {
+/* 🔴 INLINE PROSE CODE ONLY — a `code` span sitting INSIDE a sentence. A
+   fenced block is also `.nbv-md code`, and it is not this: see the code-cell
+   section at the end of this sheet, which claims `pre > code` back off this
+   rule. The runnable cell's source is `.nbv-src code`, a third element again.
+
+   Their inline code is much smaller than their body text — 12.74px against
+   18.2px — which only looks right because it is set on a grey chip, so the
+   chip and the size travel together and neither survives on its own. */
+#page-arena-notebook .nbv-md :not(pre) > code {
   background: #f5f5f5;
   font-size: calc(12.74px * var(--anb-zoom, 1));
   line-height: calc(18.1px * var(--anb-zoom, 1));
@@ -516,4 +534,89 @@
   line-height: calc(26px * var(--anb-zoom, 1));
 }
 
+/* ---- code cells ---------------------------------------------------------- */
 
+/* 🔴 A CODE BLOCK IS A RECTANGLE, NOT A PANEL. Seth, 2026-09-06: "make it such
+   that the code cells don't have the gray background or whatever, but are just
+   the regular rectangles, kind of like Colab does."
+
+   The runnable cells were already unfilled (`background: transparent` further
+   up this sheet, 2026-09-03). What was still grey was everything markdown
+   renders: `.nbv-md code` chips a fenced ```python block the same way it chips
+   an inline `len(x)`, and an ARENA section is mostly fenced blocks — 406 of
+   them on 0.1 alone. So the chip rule is inline-only now and a fence gets the
+   same hairline rectangle a runnable cell has. Same border, same radius: the
+   two kinds of block differ by whether there is a Run button, and nothing
+   else. */
+#page-arena-notebook .nbv-md pre {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
+  overflow-x: auto;
+  padding: 10px 14px;
+}
+
+#page-arena-notebook .nbv-md pre > code {
+  background: none;
+  display: block;
+  padding: 0;
+  white-space: pre;
+}
+
+/* The one size rule for every kind of code on the page — see --anb-code-size.
+   `.nbv-out` is in it because output set at half the size of the code that
+   printed it reads as a footnote to the cell rather than as its answer. */
+#page-arena-notebook .nbv-src code,
+#page-arena-notebook .nbv-md pre > code,
+#page-arena-notebook .nbv-out,
+#page-arena-notebook .nbv-checker-note {
+  font-size: var(--anb-code-size);
+  line-height: var(--anb-code-lh);
+}
+
+/* The Run gutter is sized off the cell it sits beside, so it grows with the
+   code rather than floating at the top of a much taller box. */
+#page-arena-notebook .nbv-run {
+  font-size: calc(var(--anb-code-size) * 0.8);
+}
+
+#page-arena-notebook .nbv-count {
+  font-size: calc(var(--anb-code-size) * 0.62);
+}
+
+/* ---- the editor layer (practice/notebook-code-edit.js) ------------------- */
+
+/* 🔴 BOTH OF THESE ARE GENERATED CONTENT, AND THAT IS THE POINT. The cell's
+   source is read back out of the DOM with `innerText`, so a character drawn
+   here as real text would end up in the learner's program — a suggestion they
+   never accepted, or a zero-width space Python answers with a SyntaxError.
+   `content:` is in neither `innerText` nor `textContent`. See the header of
+   practice/notebook-code-edit.js.
+
+   The ghost is the inline completion: dimmed enough to read as "not yours
+   yet", solid enough to read. Same token the practice editor's ghost uses,
+   so the two surfaces suggest in the same colour. */
+.nb-code-ghost::after {
+  background: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k)));
+  border-radius: 2px;
+  color: var(--code-ghost);
+  content: attr(data-ghost);
+}
+
+/* Holds a line box open on a trailing newline, which a pre-formatted element
+   otherwise gives no height — the blank line you just made with Enter has to
+   be somewhere the caret can sit. */
+.nb-code-tail::after {
+  content: "\200B";
+}
+
+/* A cell being edited is the thing on screen. The colour comes from
+   styles/practice/code-highlight.css, which the notebook shares with the
+   practice editor — the `cm-*` classes are painted by the same tokeniser. */
+#page-arena-notebook .nbv-src code:focus {
+  outline: none;
+}
+
+#page-arena-notebook .nbv-cell.nbv-code:focus-within {
+  border-color: var(--border-strong);
+}
