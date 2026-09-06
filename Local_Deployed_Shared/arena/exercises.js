@@ -1238,11 +1238,11 @@ window.ARENA_EXERCISES_BY_NOTEBOOK = {
       "anchor": "exercise-implement-cheater-agent"
     },
     {
-      "title": "Exercise - implement UCBA selection",
-      "anchor": "exercise-implement-ucba-selection"
+      "title": "Exercise - implement UCB selection",
+      "anchor": "exercise-implement-ucb-selection"
     }
   ],
-  "content/ARENA_5.0-main/chapter2_rl/exercises/part21_dqn/2.2.1_Deep_Q_Networks_exercises.ipynb": [
+  "content/ARENA_5.0-main/chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises.ipynb": [
     {
       "title": "Exercise - implement `QNetwork`",
       "anchor": "exercise-implement-qnetwork"
@@ -1268,7 +1268,11 @@ window.ARENA_EXERCISES_BY_NOTEBOOK = {
       "anchor": "exercise-write-dqn-training-loop"
     }
   ],
-  "content/ARENA_5.0-main/chapter2_rl/exercises/part22_vpg/2.2.2_Policy_Gradient_exercises.ipynb": [
+  "content/ARENA_5.0-main/chapter2_rl/exercises/part22_vpg/2.2.2_VPG_exercises.ipynb": [
+    {
+      "title": "Exercise - implement `PolicyNetwork`",
+      "anchor": "exercise-implement-policynetwork"
+    },
     {
       "title": "Exercise - implement `Rollout Buffer`",
       "anchor": "exercise-implement-rollout-buffer"
@@ -1282,8 +1286,8 @@ window.ARENA_EXERCISES_BY_NOTEBOOK = {
       "anchor": "exercise-implement-compute-returns"
     },
     {
-      "title": "Exercise - implement `compute_logprobs_and_entropy`",
-      "anchor": "exercise-implement-compute-logprobs-and-entropy"
+      "title": "Exercise - implement `compute_logprobs`",
+      "anchor": "exercise-implement-compute-logprobs"
     },
     {
       "title": "Exercise - implement `compute_importance_weights`",
@@ -1354,6 +1358,10 @@ window.ARENA_EXERCISES_BY_NOTEBOOK = {
     {
       "title": "Exercise - additional rewrites",
       "anchor": "exercise-additional-rewrites"
+    },
+    {
+      "title": "Exercise - design a reward function for Pendulum",
+      "anchor": "exercise-design-a-reward-function-for-pendulum"
     }
   ],
   "content/ARENA_5.0-main/chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises.ipynb": [

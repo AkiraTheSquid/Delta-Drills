@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -654,9 +650,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="interpreting-reasoning-thought-anchors">
 <h1>[4.3] Interpreting Reasoning: Thought Anchors<a class="headerlink" href="#interpreting-reasoning-thought-anchors" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_exercises.ipynb?t=20260329">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_solutions.ipynb?t=20260329">solutions</a></strong></p>
+<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_exercises.ipynb?t=20260520">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_solutions.ipynb?t=20260520">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>If you want to change to dark mode, you can do this by clicking the three horizontal lines in the top-right, then navigating to Settings → Theme.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/refs/heads/main/img/header-64.png" width="350">
@@ -881,7 +877,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/inter
 </pre></div>
 </div>
 <details><summary>Click to see the expected output</summary>
-<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4301.html"></div>
+<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4301.png"></div>
 </details>
 <p>We can also load the dataset that the paper’s authors open-sourced. The dataset is very large, but the authors provide the structure on the <a class="reference external" href="https://huggingface.co/datasets/uzaymacar/math-rollouts">HuggingFace page</a>, so we can use <code class="docutils literal notranslate"><span class="pre">huggingface_hub</span></code> to load just the data we want. We’ll inspect it more shortly.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PROBLEM_ID</span> <span class="o">=</span> <span class="mi">4682</span>
@@ -4946,7 +4942,7 @@ Metric: different_trajectories_fraction (DTF)
   action_execution             0.594   0.037   18
   self_preservation            0.604   0.051   19
   plan_generation              0.610   0.024   20 ← highest: post-hoc</pre>
-<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4316.html"></div>
+<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4316.png"></div>
 </details>
 <details><summary>Solution</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compare_dtf_across_categories</span><span class="p">(</span>
@@ -5163,7 +5159,7 @@ Metric: different_trajectories_fraction (DTF)
 Most important transition: chunk 60 -> 61
   Importance score: +0.4400
   Chunk text: '<tool_use:email>...'</pre>
-<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4315.html"></div>
+<div style="text-align: left; overflow-x: auto; background-color: white;"><embed src="https://info-arena.github.io/ARENA_img/misc/media-43/4315.png"></div>
 </details>
 </section>
 <section id="note-replicating-figure-2-counterfactual-importance">
@@ -5413,7 +5409,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>

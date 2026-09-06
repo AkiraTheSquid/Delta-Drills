@@ -81,6 +81,9 @@ const DeltaKernel = (() => {
       ok: !!data.success,
       stdout: data.stdout || "",
       stderr: data.stderr || "",
+      // display_data mimebundles — see practice/cell-outputs.js. Empty on a
+      // backend that has no display channel.
+      outputs: Array.isArray(data.outputs) ? data.outputs : [],
       fresh: !!data.fresh,
       execCount: data.exec_count || 0,
     };

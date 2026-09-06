@@ -57,8 +57,59 @@
 
 .arena-notebooks-container {
   margin: 0 auto;
-  max-width: 980px;
+  max-width: calc(var(--anb-measure, 682px) + 32px);
   padding: 0 16px;
+}
+
+/* 🔴 THE READING COLUMN IS CENTRED IN THE WINDOW. EQUAL MARGINS, BOTH SIDES.
+   `.arena-notebooks-container` above is the whole of how — `margin: 0 auto`
+   and nothing offsetting it.
+
+   This page used to hold `padding-left: calc(20px + var(--anb-toc-w))` here,
+   reserving the tree's width unconditionally. That was wrong, and visibly so:
+   the tree is a HOVER OVERLAY, not a docked pane, so reserving room for it
+   permanently bought nothing and shoved the column hard against the right
+   edge — about 440px of margin on the left and 90px on the right. Seth,
+   2026-09-03, with LessWrong beside it: "the alignment is off ... make the
+   left margin 340 px ... and the right margin about the same amount".
+
+   The tree still has somewhere to go, because the margin centring creates IS
+   the gutter. See `.anb-toc-panel` in arena-notebook-nav.css for what happens
+   when that gap is too narrow — the panel stops shrinking and overlays
+   instead, which is what an overlay is for. 🔴 Do not reintroduce a reserve
+   the size of the tree; that is the bug above, and it un-centres the column
+   entirely rather than nudging it. */
+
+/* 🔴 THE COLUMN CLEARS THE TREE BY THIS MUCH, AND THE TREE GIVES IT BACK.
+   Centred and with the panel taking the whole gutter, the tree's right edge
+   and the prose's left edge were the SAME pixel — 434 both, at 1833px. Seth,
+   2026-09-03: "move the text body slightly to the right so that it isn't
+   nudged up against the left sidebar. maybe about 100 px to the right".
+
+   🔴 MOVING THE COLUMN IS ONLY HALF OF IT. The panel is sized from the gutter
+   the column leaves, so on its own this nudge just fed the extra 100px
+   straight to the tree and the two edges met again 100px further right. The
+   other half is `calc(100% - var(--anb-nudge))` on `.anb-toc-panel`, which is
+   what actually holds the gap open. Change this token and the gap follows on
+   both sides; change it in one place only and the gap does not move at all.
+
+   The page pays TWICE what the column moves: `.arena-notebooks-container` is
+   `margin: 0 auto`, so it re-centres in whatever is left and takes half the
+   padding straight back. */
+:root[data-arena-notebook] {
+  --anb-nudge: 100px;
+}
+
+/* 🔴 ONLY WHERE THE TREE IS ACTUALLY IN THE MARGIN. Below 1500px the panel
+   is `display: none` and the ☰ toggle takes over (arena-notebook-nav.css), so
+   there is nothing for the column to clear — and the nudge, which costs the
+   page twice what it moves, was spending 200px to push a 1280px window's
+   reading down to 78px of right margin against 248 on the left. Same
+   breakpoint as the toggle, and it has to stay the same one. */
+@media (min-width: 1500px) {
+  #page-arena-notebook {
+    padding-left: calc(2 * var(--anb-nudge));
+  }
 }
 
 /* ---- the section header -------------------------------------------------- */
@@ -66,7 +117,7 @@
 .arena-nb-head {
   border-bottom: 1px solid var(--border);
   margin: 0 auto 18px;
-  max-width: 880px;
+  max-width: var(--anb-measure, 682px);
   padding-bottom: 16px;
 }
 
@@ -123,20 +174,9 @@
 
 /* ---- a Colab setup cell -------------------------------------------------- */
 
-/* No Run button, so no hover affordance either — a cell that cannot run must
-   not look like one that can. The mark replaces the ▶ in the gutter so the
-   column of buttons down the left edge stays a straight line. */
-.arena-nb-magic {
-  opacity: 0.85;
-}
-
-.arena-nb-magic-mark {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1;
-  padding: 5px 0;
-}
-
+/* A magic cell runs like any other (the sandbox kernel is real IPython); the
+   note above its source is the only thing that marks it. Kept slightly muted
+   so the notebook still opens on prose, not on a setup block. */
 .arena-nb-magic .nbv-src code {
   color: var(--muted);
 }
@@ -161,6 +201,94 @@
   overflow-wrap: anywhere;
 }
 
+/* Text cells render normally until double-clicked, then become plain Markdown
+   editors. Ctrl/Cmd+Enter saves; Escape cancels; blur saves. */
+#page-arena-notebook .arena-nb-md-rendered {
+  cursor: text;
+  min-height: 20px;
+}
+
+#page-arena-notebook .arena-nb-md-editor {
+  background: var(--surface);
+  border: 1px solid #8ab4f8;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #202124;
+  /* 🔴 THE RAW SOURCE SCALES WITH WHAT IT RENDERS INTO. Left at a flat 14px
+     this editor opened as a speck under 25px prose — you would be reading the
+     Markdown for a heading at half the size of the heading. Same token as the
+     column: --anb-zoom in this file, and nowhere else. */
+  font: calc(14px * var(--anb-zoom, 1)) / 1.55 ui-monospace, SFMono-Regular,
+    Consolas, monospace;
+  min-height: 180px;
+  padding: 12px;
+  resize: vertical;
+  width: 100%;
+}
+
+#page-arena-notebook .arena-nb-md-editor:focus {
+  box-shadow: 0 0 0 2px rgb(66 133 244 / 0.18);
+  outline: none;
+}
+
+/* Cell controls stay quiet until needed. They cover only cell chrome, never
+   alter notebook prose or code metrics. */
+#page-arena-notebook .nbv-cell {
+  position: relative;
+}
+
+.arena-nb-cell-tools {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  padding: 2px;
+  pointer-events: none;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  transition: opacity 80ms ease;
+  z-index: 3;
+}
+
+.nbv-cell:hover > .arena-nb-cell-tools,
+.nbv-cell:focus-within > .arena-nb-cell-tools {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.arena-nb-cell-tools button {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  color: #5f6368;
+  cursor: pointer;
+  font: 500 calc(11px * var(--anb-zoom, 1)) / 1.2 Inter, ui-sans-serif,
+    system-ui, sans-serif;
+  padding: 4px 5px;
+}
+
+.arena-nb-cell-tools button:hover {
+  background: #e8f0fe;
+  color: #174ea6;
+}
+
+/* 🔴 A TOUCH SCREEN IS NOT A NARROW SCREEN. These controls were revealed by
+   `:hover`/`:focus-within` alone, with a `max-width: 700px` phone fallback —
+   so a 1024px tablet, which can do neither, got a cell it could not reorder,
+   convert or delete, and nothing on screen said why. `hover: none` asks the
+   real question. The width rule stays as well: a phone that reports hover
+   (some do, wrongly) still needs the controls out. Found by codex, 2026-09-03. */
+@media (hover: none), (max-width: 700px) {
+  .arena-nb-cell-tools {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 /* ---- the reading column -------------------------------------------------- */
 
 /* SETH: "I want the text size to be the same for the middle part ... I want
@@ -183,7 +311,22 @@
 
 #page-arena-notebook .nbv-cells,
 #page-arena-notebook .arena-nb-head {
-  max-width: 682px;
+  max-width: var(--anb-measure);
+}
+
+/* 🔴 CODE IS IN THE COLUMN NOW, NOT BESIDE IT. It used to break out by 99px
+   each side to 880px, and that is what put the runnable cells further left
+   than the prose above them — under the contents tree, and visibly unaligned.
+   Seth, 2026-09-03: "make it such that the body text is aligned with the code
+   blocks ... aligned on both the left and the right". At 1.4x the column is
+   ~955px, which is wider than the 880px the breakout was buying anyway.
+
+   The grey fill goes with it: on a white page a tinted block reads as an
+   inert quote, and their pages have no such panel. The border still says
+   where the cell starts and ends. */
+#page-arena-notebook .nbv-cell.nbv-code,
+#page-arena-notebook .nbv-cell.nbv-hints {
+  background: transparent;
 }
 
 /* ---- LessWrong's typography, measured ------------------------------------ */
@@ -214,6 +357,42 @@
    when this page opens and clears it when it closes, so nothing else in the
    app sees these. */
 :root[data-arena-notebook] {
+  /* 🔴 EVERY MEASUREMENT BELOW IS LESSWRONG'S REAL ONE, TIMES THIS.
+
+     Seth read their post at 140% browser zoom, liked it at that size, and
+     reported ours as "much smaller than what it actually is on the website".
+     Measuring both at a matched viewport settled it: their column really is
+     682px of 18.2px text on a 26px line and ours already matched it exactly —
+     the 40% was his zoom, not their design. So the LW numbers stay written in
+     the source as the numbers they measured to, and this multiplies them.
+     Seth, 2026-09-03: "make it 140% larger actually. I think that's better."
+
+     🔴 CHANGE THE SIZE HERE AND NOWHERE ELSE. Retuning by editing the pixel
+     values would destroy the provenance — every one of them was read off a
+     render, and a hand-scaled copy can no longer be checked against theirs.
+     The fallback is 1, so without this attribute the sheet is still their
+     measure. */
+  --anb-zoom: 1.4;
+
+  /* One column for the whole document: prose and code share both edges. */
+  --anb-measure: calc(682px * var(--anb-zoom, 1));
+
+  /* 🔴 THE TREE'S CEILING, NOT ITS WIDTH. The width it actually takes is the
+     margin the centred column leaves — `clamp(320px, 100%, var(--anb-toc-w))`
+     in arena-notebook-nav.css, where `100%` is that margin. Seth counts the
+     tree as PART of the left margin, not as something beside it: "the left
+     sidebar is part of what I counted as the margin". So the panel fills the
+     margin and stops, and this number only stops it running away on a very
+     wide screen.
+
+     It was `calc(340px * var(--anb-zoom))` = 476px, which is WIDER than the
+     margin centring leaves at 1833px (439px) — so the tree hung 37px over the
+     prose it was supposed to sit beside. The zoom does not belong on this
+     value at all: --anb-zoom scales what you READ, and the tree's own rows
+     already carry it. Still capped in vw so a narrow window cannot hand the
+     panel a third of itself. */
+  --anb-toc-w: min(440px, 32vw);
+
   --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
     P052, "URW Palladio L", Georgia, serif;
   --lw-header: "ETBookRoman", var(--lw-serif);
@@ -242,19 +421,19 @@
 #page-arena-notebook .nbv-md {
   color: var(--text);
   font-family: var(--lw-serif);
-  font-size: 18.2px;
-  line-height: 26px;
+  font-size: calc(18.2px * var(--anb-zoom, 1));
+  line-height: calc(26px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .nbv-md p {
-  margin: 18.2px 0;
+  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
 }
 
 /* Their list items are tighter than their paragraphs — 6.5px between rows
    against 18.2px between paragraphs — which is most of why a bulleted section
    of theirs reads as one block and ours read as a stack. */
 #page-arena-notebook .nbv-md li {
-  margin-bottom: 6.5px;
+  margin-bottom: calc(6.5px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .nbv-md h1,
@@ -267,23 +446,23 @@
 
 #page-arena-notebook .nbv-md h1 {
   color: #424242;
-  font-size: 36.4px;
-  line-height: 41.25px;
-  margin: -3px 0 24.4px;
+  font-size: calc(36.4px * var(--anb-zoom, 1));
+  line-height: calc(41.25px * var(--anb-zoom, 1));
+  margin: calc(-3px * var(--anb-zoom, 1)) 0 calc(24.4px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .nbv-md h2 {
   color: #424242;
-  font-size: 26px;
-  line-height: 31.35px;
-  margin: 26px 0 21.6px;
+  font-size: calc(26px * var(--anb-zoom, 1));
+  line-height: calc(31.35px * var(--anb-zoom, 1));
+  margin: calc(26px * var(--anb-zoom, 1)) 0 calc(21.6px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .nbv-md h3 {
   color: #616161;
-  font-size: 20.8px;
-  line-height: 25.1px;
-  margin: 20.8px 0;
+  font-size: calc(20.8px * var(--anb-zoom, 1));
+  line-height: calc(25.1px * var(--anb-zoom, 1));
+  margin: calc(20.8px * var(--anb-zoom, 1)) 0;
 }
 
 /* h4 is the one heading they do NOT set in the display face: it drops to the
@@ -292,10 +471,10 @@
 #page-arena-notebook .nbv-md h4 {
   color: #616161;
   font-family: var(--lw-serif);
-  font-size: 18.2px;
+  font-size: calc(18.2px * var(--anb-zoom, 1));
   font-weight: 600;
-  line-height: 23px;
-  margin: 18.2px 0 12px;
+  line-height: calc(23px * var(--anb-zoom, 1));
+  margin: calc(18.2px * var(--anb-zoom, 1)) 0 calc(12px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .nbv-md a {
@@ -307,8 +486,8 @@
 #page-arena-notebook .nbv-md blockquote {
   border-left: 3px solid var(--border);
   color: var(--text);
-  margin: 18.2px 0;
-  padding-left: 18px;
+  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
+  padding-left: calc(18px * var(--anb-zoom, 1));
 }
 
 /* 🔴 PROSE CODE ONLY. `.nbv-md code` is a span inside rendered markdown; the
@@ -319,32 +498,22 @@
    which only looks right because it is set on a grey chip. */
 #page-arena-notebook .nbv-md code {
   background: #f5f5f5;
-  font-size: 12.74px;
-  line-height: 18.1px;
+  font-size: calc(12.74px * var(--anb-zoom, 1));
+  line-height: calc(18.1px * var(--anb-zoom, 1));
   padding: 1px 3px;
 }
 
 /* The section header is this page's title block, so it follows the headings
    rather than the app's sans chrome. */
 #page-arena-notebook .arena-nb-title {
-  font-size: 26px;
-  line-height: 31.35px;
+  font-size: calc(26px * var(--anb-zoom, 1));
+  line-height: calc(31.35px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .arena-nb-desc {
   font-family: var(--lw-serif);
-  font-size: 18.2px;
-  line-height: 26px;
+  font-size: calc(18.2px * var(--anb-zoom, 1));
+  line-height: calc(26px * var(--anb-zoom, 1));
 }
 
-/* Code, and only code, is allowed back out to the full 880px. The breakout is
-   99px of negative margin each side; below the width where that still fits
-   inside the container it simply does not apply and the cell sits in the
-   column like everything else. */
-@media (min-width: 1200px) {
-  #page-arena-notebook .nbv-cell.nbv-code,
-  #page-arena-notebook .nbv-cell.nbv-hints {
-    margin-left: -99px;
-    margin-right: -99px;
-  }
-}
+

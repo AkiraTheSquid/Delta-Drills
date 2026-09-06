@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Jul 31, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2026"/>
   </head>
   
   
@@ -290,10 +290,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html">[2.1] - Intro to RL (exercises)</a></li>
 
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../../chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html">[2.2] - DQN &amp; VPG (exercises)</a></li>
 
 
 
@@ -689,9 +685,9 @@
   <section class="tex2jax_ignore mathjax_ignore" id="interpretability-with-saes">
 <h1>[1.3.3] Interpretability with SAEs<a class="headerlink" href="#interpretability-with-saes" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_exercises.ipynb?t=20260329">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_solutions.ipynb?t=20260329">solutions</a></strong></p>
+<div><p><strong>Colab: <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_exercises.ipynb?t=20260721">exercises</a> | <a class="reference external" href="https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_solutions.ipynb?t=20260721">solutions</a></strong></p>
 </div></blockquote>
-<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
+<p>Please send any problems / bugs on the <code class="docutils literal notranslate"><span class="pre">#errata</span></code> channel in the <a class="reference external" href="https://info-arena.github.io/ARENA_img/slack.html">Slack group</a>, and ask any questions on the dedicated channels for this chapter of material.</p>
 <p>If you want to change to dark mode, you can do this by clicking the three horizontal lines in the top-right, then navigating to Settings → Theme.</p>
 <p>Links to all other chapters: <a class="reference external" href="https://arena-chapter0-fundamentals.streamlit.app/">(0) Fundamentals</a>, <a class="reference external" href="https://arena-chapter1-transformer-interp.streamlit.app/">(1) Transformer Interpretability</a>, <a class="reference external" href="https://arena-chapter2-rl.streamlit.app/">(2) RL</a>.</p>
 <blockquote>
@@ -1079,7 +1075,7 @@ Free = 24.66</pre>
 └─────────────────────────────────────┴─────────────────────────────────────────────────────┴────────────────────────────────────────────────────────┴──────────┘</pre>
 <p>Any given SAE release may have multiple different mdoels. These might have been trained on different hookpoints or layers in the model, or with different hyperparameters, etc. You can see the data associated with each release as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">format_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s2">&quot;{{</span><span class="si">{0!r}</span><span class="s2">: </span><span class="si">{1!r}</span><span class="s2">, ...}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;{{</span><span class="si">{0!r}</span><span class="s2">: </span><span class="si">{1!r}</span><span class="s2">, ...}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span> <span class="k">else</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="n">release</span> <span class="o">=</span> <span class="n">get_pretrained_saes_directory</span><span class="p">()[</span><span class="s2">&quot;gpt2-small-res-jb&quot;</span><span class="p">]</span>
@@ -3727,13 +3723,23 @@ M_{\text{clean}} - M_{\text{corrupted}} \approx (\hat{x}_{\text{clean}} - \hat{x
 </div>
 <p>To help you easily understand the results of your UMAPs, we’ll also load in the autointerp descriptions for each SAE. Note that we’ve given you a function which drops duplicates, so we only get one description per latent.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_and_process_autointerp_dfs</span><span class="p">(</span><span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="c1"># Load in dataframe</span>
+    <span class="c1"># Load in dataframe, from the gzipped JSONL files which Neuronpedia publishes in a public S3 bucket (see</span>
+    <span class="c1"># https://neuronpedia-datasets.s3.us-east-1.amazonaws.com/index.html?prefix=v1/ - there&#39;s one file per ~1024</span>
+    <span class="c1"># latents, so we list all the files for this SAE then download &amp; concatenate them)</span>
     <span class="n">release</span> <span class="o">=</span> <span class="n">get_pretrained_saes_directory</span><span class="p">()[</span><span class="n">sae_release</span><span class="p">]</span>
-    <span class="n">neuronpedia_id</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">neuronpedia_id</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;blocks.8.hook_resid_pre_</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.neuronpedia.org/api/explanation/export?modelId=</span><span class="si">{}</span><span class="s2">&amp;saeId=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">neuronpedia_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">))</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">neuronpedia_id</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">neuronpedia_id</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;blocks.8.hook_resid_pre_</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>  <span class="c1"># e.g. &quot;gpt2-small/8-res_fs768-jb&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;list-type&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;v1/</span><span class="si">{</span><span class="n">neuronpedia_id</span><span class="si">}</span><span class="s2">/explanations/&quot;</span><span class="p">}</span>
+    <span class="n">listing</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://neuronpedia-datasets.s3.us-east-1.amazonaws.com&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">listing</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&lt;Key&gt;(.*?)&lt;/Key&gt;&quot;</span><span class="p">,</span> <span class="n">listing</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;No explanations found on Neuronpedia for </span><span class="si">{</span><span class="n">neuronpedia_id</span><span class="si">!r}</span><span class="s2">&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://neuronpedia-datasets.s3.us-east-1.amazonaws.com/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">)[[</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Downloading explanations for </span><span class="si">{</span><span class="n">width</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Drop duplicate latent descriptions</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -3965,7 +3971,7 @@ M_{\text{clean}} - M_{\text{corrupted}} \approx (\hat{x}_{\text{clean}} - \hat{x
         <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist_visual</span><span class="p">,</span>
         <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">visual_umap_embedding</span> <span class="o">=</span> <span class="n">visual_umap</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">W_dec</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+    <span class="n">visual_umap_embedding</span> <span class="o">=</span> <span class="n">visual_umap</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">W_dec</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
 
     <span class="n">feature_df</span><span class="p">[[</span><span class="s2">&quot;umap_x&quot;</span><span class="p">,</span> <span class="s2">&quot;umap_y&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">visual_umap_embedding</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
 
@@ -4060,7 +4066,7 @@ M_{\text{clean}} - M_{\text{corrupted}} \approx (\hat{x}_{\text{clean}} - \hat{x
     <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist_cluster</span><span class="p">,</span>
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">clustering_umap_embedding</span> <span class="o">=</span> <span class="n">clustering_umap</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">W_dec</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+<span class="n">clustering_umap_embedding</span> <span class="o">=</span> <span class="n">clustering_umap</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">W_dec</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
 <span class="n">clusterer</span> <span class="o">=</span> <span class="n">hdbscan</span><span class="o">.</span><span class="n">HDBSCAN</span><span class="p">(</span><span class="n">min_cluster_size</span><span class="o">=</span><span class="n">min_cluster_size</span><span class="p">)</span>
 <span class="n">clusterer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">clustering_umap_embedding</span><span class="p">)</span>
 
@@ -6341,7 +6347,7 @@ By Delta Drills
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 31, 2026.
+  Last updated on Sep 05, 2026.
   <br/>
 </p>
   </div>

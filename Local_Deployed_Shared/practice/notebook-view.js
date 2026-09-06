@@ -385,6 +385,7 @@ const LessonNotebookView = (() => {
           ? `✓ ${checks} check${checks === 1 ? "" : "s"} passed`
           : result.text;
       out.classList.toggle("is-error", failed);
+      window.DeltaCellOutputs?.render(out, result.outputs);
       if (node.dataset.role === "check" && !failed) await _beacon(state, node, result.text);
       if (node.dataset.role === "checker" && !failed) {
         state.checkerRan = true;

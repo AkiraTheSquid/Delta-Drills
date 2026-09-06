@@ -47,17 +47,19 @@
                OPEN, and that is right there for a reason that does not hold
                here: those solutions answer a problem the app itself set.)
      code      runnable.
-     magic     a Colab setup cell (`%pip install …`, `!git clone …`). A line
-               magic is a SyntaxError to `exec`, which is what the kernel runs,
-               so this is drawn read-only with the reason. 🔴 Without that, the
-               FIRST cell of every ARENA notebook is a Run button that answers
-               with a SyntaxError, which reads as a broken app.
+     magic     a Colab setup cell (`%pip install …`, `!git clone …`). Runnable
+               like any code cell: the kernel is a real IPython in a sandbox
+               (backend app/modal_kernel.py), so magics and shell lines mean
+               what they mean in Colab. The ⚙ note stays so the learner knows
+               why the cell exists. (Before the sandbox kernel this was drawn
+               read-only, because a line magic is a SyntaxError to `exec`.)
    ================================================================ */
 
 const ArenaNotebookView = (() => {
   const DIR = "lessons/notebooks/";
   const FILE = (slug) => `${DIR}arena-${encodeURIComponent(slug)}.json`;
   const INDEX = `${DIR}arena-index.json`;
+  const EDITS_KEY = (slug) => `dd_arena_cells:${slug}`;
   /* One Python session per section, and switching sections starts a new one.
      Same reasoning as the lesson notebooks: the cells below start from cell 1
      either way, so a name surviving from another notebook could only ever be a
@@ -78,6 +80,41 @@ const ArenaNotebookView = (() => {
     const render = window.LessonGate && window.LessonGate.renderMarkdown;
     if (!render) return `<pre>${esc(text)}</pre>`;
     return render(text, { headingLevels: true });
+  };
+
+  const _renderMath = (root) => {
+    if (!root || typeof window.renderMathInElement !== "function") return;
+    try {
+      window.renderMathInElement(root, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    } catch (_) {
+      // Malformed upstream math stays readable as source.
+    }
+  };
+
+  const _readSavedCells = (nb) => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(EDITS_KEY(nb.id)) || "null");
+      if (saved?.version !== 1 || !Array.isArray(saved.cells)) return nb.cells;
+      return saved.cells.filter(
+        (cell) => cell && cell.id && ["prose", "code", "magic", "details"].includes(cell.role),
+      );
+    } catch (_) {
+      return nb.cells;
+    }
+  };
+
+  const _removeSavedCells = (slug) => {
+    try {
+      localStorage.removeItem(EDITS_KEY(slug));
+    } catch (_) {}
   };
 
   const _fetchJson = async (path) => {
@@ -128,25 +165,23 @@ const ArenaNotebookView = (() => {
       "</code></pre>" +
       '<pre class="nbv-out hidden"></pre>' +
       "</div>";
+    _addCellTools(el);
     return el;
   };
 
   const _magicCell = (cell) => {
-    const el = document.createElement("section");
-    el.className = "nbv-cell nbv-code arena-nb-magic";
-    el.dataset.role = cell.role;
-    el.id = `arena-${cell.id}`;
-    el.innerHTML =
-      '<div class="nbv-gutter"><span class="arena-nb-magic-mark" aria-hidden="true">⚙</span></div>' +
-      '<div class="nbv-body">' +
-      '<p class="nbv-checker-note">⚙ <strong>Colab setup</strong> — this cell uses ' +
-      "notebook magics (<code>%pip</code>, <code>!</code>), which the app's Python " +
-      "session cannot run. It is here because it is part of the notebook; install " +
-      "what it names in your own environment.</p>" +
-      '<pre class="nbv-src"><code>' +
-      esc(String(cell.src || "").replace(/\s+$/, "")) +
-      "</code></pre>" +
-      "</div>";
+    const el = _codeCell(cell);
+    el.classList.add("arena-nb-magic");
+    const body = el.querySelector(".nbv-body");
+    if (body) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        '<p class="nbv-checker-note">⚙ <strong>Colab setup</strong> — installs and ' +
+          "downloads what the notebook needs. The session already has the ARENA " +
+          "exercises on disk, so this mostly finds its work done; run it anyway, " +
+          "the way you would in Colab.</p>",
+      );
+    }
     return el;
   };
 
@@ -154,8 +189,15 @@ const ArenaNotebookView = (() => {
     const el = document.createElement("section");
     el.className = "nbv-cell nbv-md";
     el.dataset.role = cell.role;
+    el.dataset.cellId = cell.id;
     el.id = `arena-${cell.id}`;
-    el.innerHTML = md(cell.src);
+    el._ddMarkdown = String(cell.src || "");
+    el.innerHTML =
+      '<div class="arena-nb-md-rendered" title="Double-click to edit this text"></div>' +
+      '<textarea class="arena-nb-md-editor hidden" spellcheck="true" ' +
+      'aria-label="Markdown cell source"></textarea>';
+    _paintMarkdown(el);
+    _addCellTools(el);
     return el;
   };
 
@@ -168,7 +210,9 @@ const ArenaNotebookView = (() => {
     const el = document.createElement("details");
     el.className = "nbv-cell nbv-hints arena-nb-details";
     el.dataset.role = cell.role;
+    el.dataset.cellId = cell.id;
     el.id = `arena-${cell.id}`;
+    el._ddMarkdown = String(cell.src || "");
     const head = document.createElement("summary");
     head.textContent = cell.summary || "Show";
     const body = document.createElement("div");
@@ -178,6 +222,30 @@ const ArenaNotebookView = (() => {
     el.appendChild(body);
     return el;
   };
+
+  function _paintMarkdown(node) {
+    const rendered = node.querySelector(".arena-nb-md-rendered");
+    const editor = node.querySelector(".arena-nb-md-editor");
+    if (!rendered || !editor) return;
+    rendered.innerHTML = md(node._ddMarkdown || "");
+    editor.value = node._ddMarkdown || "";
+    _renderMath(rendered);
+  }
+
+  function _addCellTools(node) {
+    const code = node.dataset.role === "code";
+    const tools = document.createElement("div");
+    tools.className = "arena-nb-cell-tools";
+    tools.setAttribute("aria-label", "Cell actions");
+    tools.innerHTML =
+      '<button type="button" data-cell-action="insert-code" title="Add code cell below">+ Code</button>' +
+      '<button type="button" data-cell-action="insert-prose" title="Add text cell below">+ Text</button>' +
+      '<button type="button" data-cell-action="up" title="Move cell up">↑</button>' +
+      '<button type="button" data-cell-action="down" title="Move cell down">↓</button>' +
+      `<button type="button" data-cell-action="convert" title="Change cell type">${code ? "Text" : "Code"}</button>` +
+      '<button type="button" data-cell-action="delete" title="Delete cell">×</button>';
+    node.appendChild(tools);
+  }
 
   const _cellNode = (cell) => {
     switch (cell.role) {
@@ -190,6 +258,146 @@ const ArenaNotebookView = (() => {
       default:
         return _mdCell(cell);
     }
+  };
+
+  const _cellRecord = (node) => ({
+    id: node.dataset.cellId || node.id.replace(/^arena-/, ""),
+    role: node.dataset.role || "prose",
+    src:
+      node.dataset.role === "prose" || node.dataset.role === "details"
+        ? node._ddMarkdown || ""
+        : _sourceOf(node),
+    ...(node.dataset.role === "details"
+      ? { summary: node.querySelector(":scope > summary")?.textContent || "Show" }
+      : {}),
+  });
+
+  /* 🔴 AN UNTOUCHED NOTEBOOK IS NEVER WRITTEN. `_backToCourses` persists on the
+     way out, so without this flag merely OPENING a section stored a full copy
+     of it — and an ARENA notebook is up to 656 cells. Read all 32 and the 5 MB
+     origin quota is gone, at which point `localStorage.setItem` throws and the
+     learner is told their edits could not be saved on a notebook they only
+     read. `dirty` is set by the two input handlers and by `_afterCellChange`,
+     which is every path that can actually change a cell. */
+  const _persistCells = (state = current) => {
+    if (!state?.body || !state.dirty) return;
+    clearTimeout(state.persistTimer);
+    state.persistTimer = 0;
+    const cells = Array.from(state.body.children)
+      .filter((node) => node.matches(".nbv-cell"))
+      .map(_cellRecord);
+    try {
+      localStorage.setItem(EDITS_KEY(state.id), JSON.stringify({ version: 1, cells }));
+    } catch (_) {
+      _banner("Notebook edits could not be saved in this browser.", "warn", state);
+    }
+  };
+
+  const _queuePersist = (state = current) => {
+    if (!state?.body) return;
+    state.dirty = true;
+    clearTimeout(state.persistTimer);
+    state.persistTimer = setTimeout(() => _persistCells(state), 250);
+  };
+
+  const _newCell = (role) => ({
+    id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    role,
+    src: role === "code" ? "# Write Python here\n" : "Double-click to edit this text.",
+  });
+
+  /* 🔴 OPENING AN EDITOR IS `_beginMarkdownEdit`, ALWAYS. This used to unhide
+     the textarea itself, which skipped the one line that matters —
+     `_ddEditBefore`. Escape then restored `node._ddEditBefore || ""`, so
+     cancelling out of a cell you had just inserted did not undo the edit, it
+     BLANKED the cell. */
+  const _focusCell = (node) => {
+    if (node.dataset.role === "code") {
+      node.querySelector(".nbv-src code")?.focus();
+      return;
+    }
+    _beginMarkdownEdit(node);
+    node.querySelector(".arena-nb-md-editor")?.select();
+  };
+
+  const _afterCellChange = (state, focusNode = null) => {
+    state.dirty = true;
+    _persistCells(state);
+    window.ArenaNotebookNav?.refresh({ rebuild: true });
+    if (focusNode) requestAnimationFrame(() => _focusCell(focusNode));
+  };
+
+  const _handleCellAction = (button, state) => {
+    const node = button.closest(".nbv-cell");
+    if (!node || state !== current) return;
+    const action = button.dataset.cellAction;
+    if (action === "insert-code" || action === "insert-prose") {
+      const fresh = _cellNode(_newCell(action === "insert-code" ? "code" : "prose"));
+      node.after(fresh);
+      _afterCellChange(state, fresh);
+      return;
+    }
+    if (action === "up" || action === "down") {
+      const sibling = action === "up" ? node.previousElementSibling : node.nextElementSibling;
+      if (!sibling?.matches(".nbv-cell")) return;
+      if (action === "up") sibling.before(node);
+      else sibling.after(node);
+      _afterCellChange(state);
+      return;
+    }
+    if (action === "convert") {
+      const role = node.dataset.role === "code" ? "prose" : "code";
+      const replacement = _cellNode({
+        id: node.dataset.cellId,
+        role,
+        src: node.dataset.role === "prose" ? node._ddMarkdown : _sourceOf(node),
+      });
+      node.replaceWith(replacement);
+      _afterCellChange(state, replacement);
+      return;
+    }
+    if (action === "delete") {
+      if (!window.confirm("Delete this cell? Reset edits restores the compiled notebook.")) return;
+      node.remove();
+      _afterCellChange(state);
+    }
+  };
+
+  const _beginMarkdownEdit = (node) => {
+    const editor = node.querySelector(".arena-nb-md-editor");
+    const rendered = node.querySelector(".arena-nb-md-rendered");
+    if (!editor || !rendered) return;
+    node._ddEditBefore = node._ddMarkdown || "";
+    editor.value = node._ddMarkdown || "";
+    node.classList.add("is-editing");
+    rendered.classList.add("hidden");
+    editor.classList.remove("hidden");
+    editor.focus();
+  };
+
+  const _finishMarkdownEdit = (node, state, save = true) => {
+    const editor = node.querySelector(".arena-nb-md-editor");
+    const rendered = node.querySelector(".arena-nb-md-rendered");
+    if (!editor || !rendered || !node.classList.contains("is-editing")) return;
+    if (save) node._ddMarkdown = editor.value;
+    else node._ddMarkdown = node._ddEditBefore || "";
+    delete node._ddEditBefore;
+    node.classList.remove("is-editing");
+    editor.classList.add("hidden");
+    rendered.classList.remove("hidden");
+    _paintMarkdown(node);
+    if (save) {
+      _afterCellChange(state);
+      return;
+    }
+    /* 🔴 ESCAPE HAS TO REACH STORAGE, NOT JUST THE NODE. Every keystroke runs
+       `_queuePersist`, so a cancel that arrives more than 250ms after the
+       first character is cancelling text that is ALREADY in localStorage —
+       restoring `_ddMarkdown` in memory and stopping there means the next
+       reload brings the abandoned edit back. `_persistCells` clears the
+       pending timer and writes the restored cells, and it still no-ops on a
+       notebook nothing has ever written. Found by codex, 2026-09-03. */
+    _persistCells(state);
   };
 
   /* ---------- running -------------------------------------------------- */
@@ -217,6 +425,7 @@ const ArenaNotebookView = (() => {
       state.host.querySelectorAll(".nbv-cell.has-run").forEach((cell) => {
         cell.classList.add("is-stale");
       });
+      window.ArenaNotebookNav?.syncCompletion();
     }
     _banner(
       "The Python session restarted — anything you had defined is gone. " +
@@ -265,8 +474,10 @@ const ArenaNotebookView = (() => {
         _onFresh(state);
       }
       failed = !!result.failed;
-      out.textContent = result.text || (failed ? "" : "✓ ran successfully");
+      const rich = Array.isArray(result.outputs) ? result.outputs : [];
+      out.textContent = result.text || (failed || rich.length ? "" : "✓ ran successfully");
       out.classList.toggle("is-error", failed);
+      window.DeltaCellOutputs?.render(out, rich);
     } catch (err) {
       failed = true;
       out.textContent = `Error: ${err.message}`;
@@ -279,20 +490,19 @@ const ArenaNotebookView = (() => {
     node.classList.toggle("has-failed", failed);
     if (count) count.textContent = `[${state.runSeq}]`;
     button.disabled = false;
+    window.ArenaNotebookNav?.syncCompletion();
   };
 
   /* ---------- the notebook screen -------------------------------------- */
 
-  /* 🔴 THERE IS NO "JUMP TO…" DROPDOWN ANY MORE (Seth, 2026-09-02). The jump
-     list is `practice/arena-notebook-nav.js`: a rail down the left edge that
-     is ticks until you put the mouse in the gutter and titles when you do,
-     built from the headings in the RENDERED page rather than from the cell
-     source. Reading the DOM is what lets it carry every heading — the select
-     only ever listed the first heading of each prose cell, so a cell that
-     opened a section and then started a subsection contributed one row. */
+  /* There is no "Jump to…" dropdown. `arena-notebook-nav.js` builds a plain
+     contents tree from every rendered h1-h4, reveals it across the full left
+     gutter, tracks the current heading, and derives completed sections from
+     successful code-cell runs. Reading rendered headings matters: one prose
+     cell can open several nested sections. */
 
   const _host = () => document.getElementById("arena-notebook-host");
-  /* The tab's page element, not the mount. The contents rail is parked here
+  /* The tab's page element, not the mount. The contents tree is parked here
      rather than in the host so that `host.innerHTML = …` on the next notebook
      does not take it with it, and so that hiding the page hides the rail. */
   const _page = () => document.getElementById("page-arena-notebook");
@@ -311,6 +521,8 @@ const ArenaNotebookView = (() => {
     '<div class="nbv-toolbar">' +
     '<button type="button" class="nbv-back">← The course</button>' +
     `<span class="nbv-title">${esc(nb.number ? `${nb.number} ${nb.title}` : nb.title)}</span>` +
+    '<button type="button" class="arena-nb-reset-edits" title="Restore compiled cells">' +
+    "Reset edits</button>" +
     '<button type="button" class="nbv-restart" title="Throw the Python session away">' +
     "Restart session</button>" +
     "</div>" +
@@ -326,14 +538,24 @@ const ArenaNotebookView = (() => {
     "</header>";
 
   const _render = (nb, host) => {
-    const state = { id: nb.id, title: nb.title, host, runSeq: 0 };
+    const state = {
+      id: nb.id,
+      title: nb.title,
+      host,
+      body: null,
+      nb,
+      persistTimer: 0,
+      dirty: false,
+      runSeq: 0,
+    };
     current = state;
     host.innerHTML = _headerHtml(nb);
 
     const body = document.createElement("div");
     body.className = "nbv-cells";
+    state.body = body;
     const fragment = document.createDocumentFragment();
-    nb.cells.forEach((cell) => {
+    _readSavedCells(nb).forEach((cell) => {
       const node = _cellNode(cell);
       if (node) fragment.appendChild(node);
     });
@@ -343,6 +565,11 @@ const ArenaNotebookView = (() => {
     // One listener for the whole notebook rather than one per Run button — a
     // 300-cell page should not pay for a handler per cell.
     body.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-cell-action]");
+      if (action) {
+        _handleCellAction(action, state);
+        return;
+      }
       const button = event.target.closest(".nbv-run");
       if (!button) return;
       const node = button.closest(".nbv-cell");
@@ -351,17 +578,71 @@ const ArenaNotebookView = (() => {
     // An edit updates the source the node carries. `innerText` is accurate here
     // because a cell being typed into is by definition on screen.
     body.addEventListener("input", (event) => {
+      const markdown = event.target.closest(".arena-nb-md-editor");
+      if (markdown) {
+        const node = markdown.closest(".nbv-cell");
+        if (node) {
+          node._ddMarkdown = markdown.value;
+          _queuePersist(state);
+        }
+        return;
+      }
       const code = event.target.closest(".nbv-src code");
       if (!code) return;
       const node = code.closest(".nbv-cell");
-      if (node) node._ddSource = (code.innerText || "").replace(/ /g, " ");
+      if (node) {
+        node._ddSource = (code.innerText || "").replace(/ /g, " ");
+        /* 🔴 A GREEN SECTION IS A CLAIM ABOUT THE CODE THAT IS THERE NOW.
+           Running a cell marks it `has-run` and the contents tree turns the
+           section green with a check; typing into it afterwards left the
+           check standing over code that had never been executed. `is-stale`
+           is the class the Restart-session path already uses for exactly this
+           — "ran once, no longer describes what you see" — and
+           `syncCompletion` refuses to count a stale cell. Found by codex,
+           2026-09-03. */
+        if (node.classList.contains("has-run") && !node.classList.contains("is-stale")) {
+          node.classList.add("is-stale");
+          window.ArenaNotebookNav?.syncCompletion();
+        }
+        _queuePersist(state);
+      }
+    });
+    body.addEventListener("dblclick", (event) => {
+      const rendered = event.target.closest(".arena-nb-md-rendered");
+      if (rendered) _beginMarkdownEdit(rendered.closest(".nbv-cell"));
+    });
+    body.addEventListener("focusout", (event) => {
+      const editor = event.target.closest(".arena-nb-md-editor");
+      if (editor) _finishMarkdownEdit(editor.closest(".nbv-cell"), state, true);
+      else if (event.target.closest(".nbv-src code")) _persistCells(state);
+    });
+    body.addEventListener("keydown", (event) => {
+      const editor = event.target.closest(".arena-nb-md-editor");
+      if (!editor) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        _finishMarkdownEdit(editor.closest(".nbv-cell"), state, false);
+      } else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        _finishMarkdownEdit(editor.closest(".nbv-cell"), state, true);
+      }
     });
 
+    _renderMath(body);
+
     host.querySelector(".nbv-back").onclick = () => _backToCourses();
+    host.querySelector(".arena-nb-reset-edits").onclick = () => {
+      if (!window.confirm("Restore the compiled notebook and discard your cell edits?")) return;
+      clearTimeout(state.persistTimer);
+      _removeSavedCells(nb.id);
+      _render(nb, host);
+      window.scrollTo({ top: 0 });
+    };
     host.querySelector(".nbv-restart").onclick = async () => {
       await window.DeltaKernel?.reset();
       state.runSeq = 0;
       host.querySelectorAll(".nbv-cell.has-run").forEach((cell) => cell.classList.add("is-stale"));
+      window.ArenaNotebookNav?.syncCompletion();
       _banner("Session thrown away. Re-run the imports before anything below them.", "warn", state);
     };
 
@@ -374,7 +655,7 @@ const ArenaNotebookView = (() => {
       );
     }
 
-    /* The contents rail and the scroll memory, in that order: the rail measures
+    /* The contents tree and scroll memory, in that order: the tree measures
        heading offsets, and restoring the scroll position first would have it
        measure them mid-jump. Both are optional-chained — a build without either
        file is a notebook with no rail and no memory, not a blank page. */
@@ -419,6 +700,7 @@ const ArenaNotebookView = (() => {
     // Leaving a different notebook: take its position with us AND let go of it,
     // before the DOM that the reading is relative to is replaced by a loading
     // paragraph. Found by codex, 2026-09-02.
+    _persistCells(current);
     window.ArenaNotebookState?.suspend();
     if (typeof switchTab === "function") switchTab("arena-notebook");
     else if (typeof window.switchTab === "function") window.switchTab("arena-notebook");

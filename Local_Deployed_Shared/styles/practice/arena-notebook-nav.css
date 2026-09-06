@@ -1,365 +1,170 @@
-/* ARENA notebook contents rail — the left-edge ToC.
-   Markup built by practice/arena-notebook-nav.js; that file's header explains
-   why it exists and what it replaced (the `.nbv-toc` dropdown).
+/* ARENA notebook contents — plain Colab-like tree.
+   Markup and state: practice/arena-notebook-nav.js. */
 
-   🔴 EVERY NUMBER IN THIS FILE WAS READ OFF THE RENDERED PAGE, NOT INVENTED.
-   `tools/visual-diff/dom_clone.py lw` walks LessWrong's rail and writes out
-   what the BROWSER computes for every node — which is the only place their
-   design exists as HTML and CSS at all, their repo being .tsx components whose
-   styling is a TypeScript object handed to JSS. Re-run it and
-   `./dom_clone.py --diff` to check this file against theirs property by
-   property; `reference/lw-toc.css` is the dump those numbers come from.
-
-   THE STRUCTURE IS THEIRS, and it has to be, because the spacing IS the
-   structure. Their tree, and the class here that plays each part:
-
-     FixedPositionToC-root              .anb-toc          flex column
-       FixedPositionToC-wrapper         .anb-toc-wrap     flex ROW, grows
-         progressBarContainer           .anb-toc-progress 1px column, mr -4
-           progressBar                  .anb-toc-progress-fill   basis = read %
-           unfilledProgressBar          .anb-toc-progress-rest   basis = the rest
-         FixedPositionToC-rows          .anb-toc-rows     flex column, scrolls
-           rowWrapper                   .anb-toc-row      flex column, flex = share
-             rowDotContainer            .anb-toc-line     flex, content height
-               rowDot                   .anb-toc-dot      the "•"
-               rowOpacity               .anb-toc-fade     what fades in
-                 TableOfContentsRow     .anb-toc-level    the level padding
-                   link                 .anb-toc-label
-
-   🔴 A ROW IS TWO ELEMENTS, AND THAT IS THE WHOLE TRICK. The outer row takes
-   the section's SHARE of the notebook as its flex; the inner line keeps its
-   own content height and sits at the TOP of it. So a long section is a label
-   followed by empty space, and the rail reads as a map. Collapsing the two
-   into one element — which is what this file did until 2026-09-02 — makes
-   every row exactly one line tall, evenly spaced, carrying no information
-   about the document at all.
-
-   🔴 AND NOTHING SHRINKS TO FIT. Theirs does not compress rows when a post has
-   more headings than the rail has room for; the rows box simply scrolls. Rows
-   are the same height open and closed — only the labels' opacity changes —
-   which is why their collapsed rail is a proportional column of dots rather
-   than an evenly-spaced one.
-
-   🔴 THE RAIL IS ALWAYS FULL WIDTH AND ALWAYS TRANSPARENT TO THE MOUSE.
-   Two things have to be true at once: the labels must lay out at their real
-   width so opening the panel does not reflow every row, and an invisible label
-   hanging over the notebook must not eat a click meant for a cell. So the
-   <nav> is `pointer-events: none`, the gutter strip inside it takes the mouse,
-   and `.is-hover` — set by JS, not by `:hover`; see the file header — is what
-   makes the panel visible AND clickable.
-
-   The rail lives INSIDE #page-arena-notebook so that hiding the page hides it.
-*/
-
-/* Their root: a flex column, 253px wide, 22px of air at the top, capped at the
-   window height. The 17px of padding is where their rule ends up sitting once
-   their centred grid has placed it — ours is `fixed`, so the inset has to be
-   asked for rather than inherited from a layout. */
 .anb-toc {
+  --anb-gutter: 300px;
   bottom: 0;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   left: 0;
-  padding: 22px 0 20px 17px;
   pointer-events: none;
-  /* Their root sets 12px/12px and every container under it inherits that. The
-     rail's own type is set explicitly on the labels, so this is not about
-     legibility — it is about the boxes: a container whose line-height is
-     `normal` reserves a line of the APP's 16px type it never draws. */
-  font-size: 12px;
-  line-height: 12px;
   position: fixed;
   top: var(--dd-topbar-h);
-  width: 270px;
-  /* Theirs, and it earns its place here: an ARENA heading can be a single
-     unbroken identifier (`intersect_rays_1d`) longer than the rail is wide,
-     and without this it pushes the label out over the notebook. */
-  word-break: break-word;
+  width: var(--anb-gutter);
   z-index: 40;
 }
 
-/* The gutter: the part of the collapsed rail the mouse can touch.
-
-   🔴 IT IS THE WHOLE MARGIN, NOT THE TICKS. Measured on LessWrong (tools/visual-diff,
-   `capture.py lw`): sweeping the pointer in from the left edge, their labels are
-   already showing at x=300 and stop at x=340 — the trigger is the entire column
-   beside the text, not the rule the dots sit on. A 54px strip means the rail
-   only opens if you find a 54px target, which is the same as saying it does
-   not open. */
+/* Whole empty margin opens tree. Learner need not find panel itself. */
 .anb-toc-hit {
-  bottom: 0;
-  left: 0;
+  inset: 0;
   pointer-events: auto;
   position: absolute;
-  top: 0;
-  width: 264px;
 }
 
-/* Open, the rail takes the mouse — but it gains no panel. Theirs sits in the
-   margin and simply fades its labels up; a background and a border made ours
-   read as a drawer sliding out. The narrow breakpoint below still paints one,
-   because there the labels really do lie over the text. */
-.anb-toc.is-hover,
-.anb-toc.is-open {
-  pointer-events: auto;
-}
-
-/* Their `wrapper`: the row that puts the line beside the list and takes all
-   the height the root has left. */
-.anb-toc-wrap {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
-
-/* ---- the progress line --------------------------------------------------- */
-
-/* THE LINE, AND THE WINDOW ON IT. A 1px rule in grey, split into a filled part
-   and an unfilled one whose flex-basis percentages are how far down the
-   notebook you are. The fill's `::after` is a 2px block as tall as the share of
-   the notebook your window is showing, aligned to the END of the fill. So the
-   rail is a scrollbar for the document: the line is the notebook, the darker
-   block is your screen. Both basis values and --anb-window are written by
-   _progress().
-
-   `margin-right: -4px` is theirs and is load-bearing: it pulls the rows column
-   back over the rule so the dots land ON the line rather than beside it. */
-.anb-toc-progress {
-  /* Their rule is #bdbdbd on white — a light grey that is quietly visible.
-     `--border` (#2a2a4a on #1a1a2e) is the dark-theme equivalent of INVISIBLE:
-     it disappeared entirely and left the dots floating. */
-  background: var(--border-strong, var(--border));
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  margin-right: -4px;
-  overflow-y: clip;
-  width: 1px;
-}
-
-.anb-toc-progress-fill {
-  display: flex;
-  flex-basis: 0%;
-  flex-grow: 1;
-  width: 1px;
-}
-
-.anb-toc-progress-rest {
-  flex-basis: 100%;
-  flex-grow: 1;
-  width: 1px;
-}
-
-/* The window marker: bottom-aligned inside the fill, which is what keeps it at
-   the leading edge of the read part rather than at the top of the rail. */
-.anb-toc-progress-fill::after {
-  align-self: end;
-  background: var(--muted);
+/* 🔴 `position` IS LOAD-BEARING, NOT COSMETIC. The panel was static, and a
+   static element paints BELOW a positioned sibling regardless of source order —
+   so `.anb-toc-hit` (position: absolute, inset: 0) covered the open panel and
+   swallowed every click on a row. The tree looked perfect and no heading was
+   reachable; Seth, 2026-09-03: "it's not clickable such that when you click on
+   one of the headings it takes you to that part of the page". Positioning the
+   panel puts it back on top of the strip that reveals it. */
+/* 🔴 THE ROW METRICS ARE LESSWRONG'S, MEASURED, TIMES --anb-zoom. Read off
+   their live post 2026-09-03: labels 15.08px on a 15.08px line, 27px rows,
+   #757575 until you are on one. `--anb-zoom` is declared in
+   arena-notebook.css on :root[data-arena-notebook] — the same token the
+   reading column uses, so the tree and the prose can never scale apart. */
+.anb-toc-panel {
+  background: var(--bg);
+  border-right: 1px solid var(--border);
   box-sizing: border-box;
-  content: "";
-  height: var(--anb-window, 10px);
-  margin-left: -0.5px;
-  width: 2px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: var(--anb-toc-w, 340px);
+  opacity: 0;
+  padding: 16px 12px 20px 20px;
+  pointer-events: none;
+  position: relative;
+  transform: translateX(-8px);
+  transition: opacity 100ms ease, transform 100ms ease;
+  /* 🔴 THE GUTTER IS A PREFERENCE, NOT A CEILING. `100%` here is `.anb-toc`,
+     which is exactly the gap the reading column leaves (`_measure`). Taking
+     that gap is right while it is wide enough to read a tree in — the panel
+     then sits in the margin and covers no prose at all. But it was `min()`,
+     so at 1280px it obeyed a 162px gap and rendered a column of ellipses.
+     `clamp` keeps the same behaviour where it worked and stops shrinking at
+     320px, letting the panel overlay the text instead. Nothing is lost by
+     that: it is revealed on hover, it is opaque, and it leaves when you do.
+
+     🔴 AND IT STOPS SHORT OF THE PROSE BY `--anb-nudge`. Taking the gutter
+     whole put the tree's right edge on the same pixel as the text's left
+     edge. Subtracting the nudge here is the half of that fix that actually
+     opens the gap — the column moving right without this just hands the extra
+     space to the tree. See the token in arena-notebook.css. */
+  width: clamp(
+    320px,
+    calc(100% - var(--anb-nudge, 100px)),
+    var(--anb-toc-w, 340px)
+  );
+  z-index: 1;
 }
 
-/* ---- rows ---------------------------------------------------------------- */
+.anb-toc.is-hover .anb-toc-panel,
+.anb-toc.is-open .anb-toc-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
 
-/* Their `rows`: 256px against the root's 253, which is the 3px the column
-   spills past the rule on the right. It scrolls when the headings outrun it —
-   the same handover their long posts make — with the scrollbar hidden, because
-   a visible one in a 253px margin reads as a second page. */
+.anb-toc-title {
+  color: var(--text);
+  font-size: calc(15.08px * var(--anb-zoom, 1));
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  padding: 2px 8px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .anb-toc-rows {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
   list-style: none;
   margin: 0;
   min-height: 0;
-  padding: 0;
-  width: 256px;
-
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: none;
+  padding: 0;
+  scrollbar-width: thin;
 }
 
-.anb-toc-rows::-webkit-scrollbar {
-  width: 0;
-}
+/* Their rows sit 4px apart; the irregular gaps further down their rail are
+   the PROPORTIONAL spacing we deliberately dropped, not a list rhythm. */
+.anb-toc-row { margin: 0 0 calc(4px * var(--anb-zoom, 1)); }
 
-/* A row is one section's SHARE of the notebook, and nothing else. The inline
-   `flex` _rescale writes is that section's height as a percentage of the
-   content; `min-height: auto` (the default for a column flex item, spelled out
-   here because it is the thing that must not be overridden) is what stops a
-   share smaller than one line from squashing the label.
-
-   🔴 `position: relative; z-index: 1` IS WHAT MAKES THE LABELS CLICKABLE, and
-   it is theirs (their rowWrapper carries both). `.anb-toc-hit` is an absolutely
-   positioned strip lying over this whole column, and a positioned box paints
-   above a static one whatever the document order — so without a stacking
-   context of its own here, the strip would swallow every click meant for a
-   heading and the rail would open, show its contents, and do nothing. Codex
-   raised exactly that as a high-severity bug on 2026-09-02; it does not happen,
-   and this line is the only reason why. Verified rather than argued:
-   elementFromPoint over a label returns the label, and a dispatched click jumps
-   the page. */
-.anb-toc-row {
-  display: flex;
-  flex-direction: column;
-  min-height: auto;
-  position: relative;
-  z-index: 1;
-}
-
-/* Their `rowDotContainer`: the line itself, at content height, pinned to the
-   top of the row's share. Everything below it inside the row is deliberate
-   empty space. */
-.anb-toc-line {
-  align-items: center;
-  display: flex;
-}
-
-/* The tick.
-
-   🔴 IT IS A BULLET CHARACTER SITTING ON THE RULE, NOT A MARK BESIDE IT. 3.16 x
-   9px of "•" at 9px, 2px in from the left of a column that has already been
-   pulled 4px left by the progress bar's negative margin — which lands the dot
-   centred on the 1px line. It carries the page background so the rule appears
-   to pass BEHIND it, and z-index 1 to stay above it. */
-.anb-toc-dot {
-  background: var(--bg);
-  color: var(--muted);
-  font-size: 9px;
-  height: 9px;
-  line-height: 9px;
-  /* Their dot is 3.16px because that is what a 9px "•" advances to in their
-     face. Inter's is 5.06px, which would push every label 2px right of theirs,
-     so the box is pinned to their measure and the glyph is allowed to sit a
-     little proud of it. */
-  width: 3.16px;
-  margin-left: 2px;
-  margin-right: 8px;
-  transition: color 0.15s ease;
-  z-index: 1;
-}
-
-/* The run-up before the first heading: space, and nothing else. */
-.anb-toc-row.is-spacer {
-  min-height: 0;
-  pointer-events: none;
-}
-
-/* Their `rowOpacity` span — the one element in the row that fades. Wrapping
-   the label rather than fading the label itself is what keeps the level
-   padding out of the transition. */
-.anb-toc-fade {
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-/* The title row carries no dot, so it borrows the dot's width to stay in line
-   with every row under it: 2 + 3.16 + 8. */
-.anb-toc-row.is-title .anb-toc-fade {
-  margin-left: 13px;
-}
-
-/* Their `TableOfContentsRow-root`: the element the heading LEVEL is expressed
-   on — indent, and the type size the link INHERITS. Kept separate from the
-   fader above it because that is where they put it, and because it keeps the
-   indent out of the opacity transition. Level 1 is the default here, the way
-   their level1 rule is. */
-.anb-toc-level {
-  display: flex;
-  flex-direction: column-reverse;
-  font-size: 15.1px;
-  position: relative;
-}
-
-/* Their `link`: a block with 6px of air above and below and a line box exactly
-   as tall as the type, so a row is 27px at level 1 and 26.3px below it. */
 .anb-toc-label {
-  background: none;
+  align-items: center;
+  background: transparent;
   border: 0;
-  color: var(--muted);
+  border-radius: 3px;
+  color: #757575;
   cursor: pointer;
-  display: block;
-  font: inherit;
-  font-weight: 400;
-  line-height: 1em;
-  /* `auto`, not the 0 a button reset leaves behind: theirs is an <a>, and a
-     min-size of 0 lets a long single-word heading collapse under its own text. */
-  min-height: auto;
-  min-width: auto;
-  padding: 6px 0;
+  display: flex;
+  font-family: inherit;
+  font-size: calc(15.08px * var(--anb-zoom, 1));
+  gap: calc(6px * var(--anb-zoom, 1));
+  line-height: calc(15.08px * var(--anb-zoom, 1));
+  min-height: calc(27px * var(--anb-zoom, 1));
+  padding: calc(6px * var(--anb-zoom, 1)) calc(6px * var(--anb-zoom, 1));
   text-align: left;
-  transition: color 0.15s ease;
-}
-
-/* The notebook's own name, in the small caps their post title uses. It is a
-   child of the link rather than the link itself, exactly as their `tocTitle` is
-   — which is what lets its line box stay at the level-1 measure while its type
-   is larger than that, inside a link that keeps the ordinary 6px row padding. */
-.anb-toc-title {
-  display: block;
-  font-size: 16.9px;
-  font-variant: small-caps;
-  line-height: 15.1px;
-}
-
-/* Indent per level, exactly theirs: 0 / 12 / 24 / 36, on the wrapper rather
-   than the link — their TableOfContentsRow-root carries it. */
-.anb-toc-row[data-level="2"] .anb-toc-level {
-  font-size: 14.3px;
-  padding-left: 12px;
-}
-
-/* 🔴 THE COLOUR HERE NEVER REACHES THE TEXT, AND IT DOES NOT IN THEIRS EITHER.
-   Their level3/level4 rules set a dimmer colour on this element, and the link
-   inside then sets its own — so every label on their page renders at the SAME
-   grey whatever its depth. Measured, not assumed: their level-1, level-2 and
-   level-3 links all compute to rgb(117, 117, 117). Ours dimmed levels 3 and 4
-   on the label itself, which was a difference from theirs that nothing had
-   asked for. Kept, faithfully inert, because dropping it would make the next
-   source_diff read as drift. */
-.anb-toc-row[data-level="3"] .anb-toc-level {
-  color: var(--muted-dim, var(--muted));
-  font-size: 14.3px;
-  padding-left: 24px;
-}
-
-.anb-toc-row[data-level="4"] .anb-toc-level {
-  color: var(--muted-dim, var(--muted));
-  font-size: 14.3px;
-  padding-left: 36px;
-}
-
-.anb-toc.is-hover .anb-toc-fade,
-.anb-toc.is-open .anb-toc-fade {
-  opacity: 1;
+  width: 100%;
 }
 
 .anb-toc-label:hover {
-  color: var(--accent-text);
+  background: rgb(66 133 244 / 0.08);
+  color: var(--text);
 }
 
-/* Where you are. Their `highlighted` takes the link to the full-strength text
-   colour and nudges the dot 3px right; the dot stays lit in both states, which
-   is the whole reason the collapsed rail is worth looking at. */
-.anb-toc-row.is-current .anb-toc-dot {
-  color: var(--text);
-  margin-left: 5px;
+.anb-toc-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 🪦 `.anb-toc-current` — a ▶ on the current row — is DELETED (Seth,
+   2026-09-03: "you can probably just remove the triangle thing, because it's
+   kind of confusing to the user"). The row's own blue-and-bold already says
+   where you are; a second marker read as a control you could press. The check
+   stays: it says something the row cannot say by itself. */
+.anb-toc-check {
+  display: none;
+  flex: none;
+  font-size: calc(11px * var(--anb-zoom, 1));
 }
 
 .anb-toc-row.is-current .anb-toc-label {
-  color: var(--text);
+  background: #e8f0fe;
+  color: #174ea6;
+  font-weight: 700;
 }
 
-/* ---- narrow screens ------------------------------------------------------ */
+.anb-toc-row.is-complete:not(.is-current) .anb-toc-label {
+  color: #188038;
+  font-weight: 600;
+}
 
-/* There is no gutter left to hover once the notebook column reaches the edge,
-   so the panel has to be asked for. The button is the only part of the rail
-   that shows, and it takes the mouse even though the <nav> around it does not. */
+.anb-toc-row.is-complete .anb-toc-check {
+  color: #188038;
+  display: inline;
+  font-size: calc(14px * var(--anb-zoom, 1));
+  font-weight: 700;
+}
+
+.anb-toc-row[data-level="2"] .anb-toc-label { padding-left: calc(18px * var(--anb-zoom, 1)); }
+.anb-toc-row[data-level="3"] .anb-toc-label { padding-left: calc(30px * var(--anb-zoom, 1)); }
+.anb-toc-row[data-level="4"] .anb-toc-label { padding-left: calc(42px * var(--anb-zoom, 1)); }
+
 .anb-toc-toggle {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -377,31 +182,35 @@
   width: 34px;
 }
 
-@media (max-width: 1180px) {
-  .anb-toc {
-    width: 280px;
-  }
+/* 🔴 THE HOVER PANEL EXISTS ONLY WHERE THE MARGIN CAN HOLD IT. This was
+   1180px, which is where the panel stops FITTING ON SCREEN — but the number
+   that matters is where it stops fitting IN THE MARGIN. Below about 1410px
+   the 320px floor is wider than the margin, so the panel lay over the prose,
+   and because the Run button then sits INSIDE the open panel you cannot reach
+   it: moving toward it never fires mouseleave. That is the same bug the
+   `_measure` comment in arena-notebook-nav.js is about, arriving from the
+   other side, and measured at 1280px it covered the prose by 72px.
 
-  /* Collapsed means GONE here, not a strip: at this width the dots would sit
-     on top of the first character of every line of prose. */
-  .anb-toc:not(.is-open) .anb-toc-wrap {
-    display: none;
-  }
+   1500px leaves ~45px of gap at the breakpoint itself. Below it the ☰ toggle
+   takes over, which overlays too — but on a deliberate click with a visible
+   way back out, not on a mouse passing through.
 
-  .anb-toc-hit {
-    display: none;
-  }
+   🔴 `.98`, AND IT IS NOT DECORATION. This has to be the exact complement of
+   `min-width: 1500px` in arena-notebook.css, which is what moves the column
+   out of the way. Written `max-width: 1499px` the two leave a hole: at
+   1499.5px — an ordinary width under display scaling or browser zoom —
+   NEITHER matches, so the hover panel is live while the column has not moved,
+   which is precisely the overlap this breakpoint exists to prevent. Found by
+   codex, 2026-09-03. Change one of the two numbers and you must change the
+   other. */
+@media (max-width: 1499.98px) {
+  .anb-toc { width: min(86vw, 360px); }
+  .anb-toc-hit { display: none; }
+  .anb-toc-toggle { display: block; }
+  .anb-toc-panel { display: none; width: 100%; }
+  .anb-toc.is-open .anb-toc-panel { display: flex; }
+}
 
-  .anb-toc-toggle {
-    display: block;
-  }
-
-  .anb-toc.is-open {
-    background: var(--bg);
-    border-right: 1px solid var(--border);
-  }
-
-  .anb-toc.is-open .anb-toc-fade {
-    opacity: 1;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .anb-toc-panel { transition: none; }
 }

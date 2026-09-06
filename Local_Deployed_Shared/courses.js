@@ -97,7 +97,10 @@ const ARENA_DETAIL = {
       color: "#059669",
       sections: [
         { number: "2.1", title: "Intro to RL", desc: "RL fundamentals: MDPs, policies, value functions, and multi-armed bandits.", url: "/arena-book/chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.html" },
-        { number: "2.2", title: "DQN & VPG", desc: "Implement DQN and Vanilla Policy Gradient for CartPole and beyond.", url: "/arena-book/chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_%26_VPG_exercises.html" },
+        // Upstream split 2.2 into two notebooks (ARENA 527f937, 2026-09-02); the
+        // old part2_q_learning_and_policy_gradient notebook no longer exists.
+        { number: "2.2.1", title: "DQN", desc: "Implement Deep Q-Networks and train an agent on CartPole.", url: "/arena-book/chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises.html" },
+        { number: "2.2.2", title: "VPG", desc: "Implement Vanilla Policy Gradient for CartPole and beyond.", url: "/arena-book/chapter2_rl/exercises/part22_vpg/2.2.2_VPG_exercises.html" },
         { number: "2.3", title: "PPO", desc: "Build a PPO agent from scratch and train it to master CartPole.", url: "/arena-book/chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises.html" },
         { number: "2.4", title: "RLHF", desc: "Implement RLHF end-to-end, applying PPO to language model finetuning.", url: "/arena-book/chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises.html" },
       ],

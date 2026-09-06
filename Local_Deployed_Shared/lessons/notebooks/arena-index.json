@@ -74,8 +74,8 @@
    "desc": "Build a transformer from scratch and load pretrained GPT-2 weights.",
    "chapter": "Chapter 1 — Transformer Interpretability",
    "file": "arena-1-1.json",
-   "cells": 220,
-   "code_cells": 56,
+   "cells": 219,
+   "code_cells": 55,
    "notebook_path": "chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises.ipynb"
   },
   {
@@ -206,20 +206,31 @@
    "desc": "RL fundamentals: MDPs, policies, value functions, and multi-armed bandits.",
    "chapter": "Chapter 2 — Reinforcement Learning",
    "file": "arena-2-1.json",
-   "cells": 138,
-   "code_cells": 26,
+   "cells": 145,
+   "code_cells": 28,
    "notebook_path": "chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises.ipynb"
   },
   {
-   "id": "2-2",
-   "number": "2.2",
-   "title": "DQN & VPG",
-   "desc": "Implement DQN and Vanilla Policy Gradient for CartPole and beyond.",
+   "id": "2-2-1",
+   "number": "2.2.1",
+   "title": "DQN",
+   "desc": "Implement Deep Q-Networks and train an agent on CartPole.",
    "chapter": "Chapter 2 — Reinforcement Learning",
-   "file": "arena-2-2.json",
-   "cells": 107,
-   "code_cells": 28,
-   "notebook_path": "chapter2_rl/exercises/part2_q_learning_and_policy_gradient/2.2_DQN_&_VPG_exercises.ipynb"
+   "file": "arena-2-2-1.json",
+   "cells": 66,
+   "code_cells": 14,
+   "notebook_path": "chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises.ipynb"
+  },
+  {
+   "id": "2-2-2",
+   "number": "2.2.2",
+   "title": "VPG",
+   "desc": "Implement Vanilla Policy Gradient for CartPole and beyond.",
+   "chapter": "Chapter 2 — Reinforcement Learning",
+   "file": "arena-2-2-2.json",
+   "cells": 59,
+   "code_cells": 14,
+   "notebook_path": "chapter2_rl/exercises/part22_vpg/2.2.2_VPG_exercises.ipynb"
   },
   {
    "id": "2-3",
@@ -228,8 +239,8 @@
    "desc": "Build a PPO agent from scratch and train it to master CartPole.",
    "chapter": "Chapter 2 — Reinforcement Learning",
    "file": "arena-2-3.json",
-   "cells": 164,
-   "code_cells": 30,
+   "cells": 181,
+   "code_cells": 37,
    "notebook_path": "chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises.ipynb"
   },
   {
