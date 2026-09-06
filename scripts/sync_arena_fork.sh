@@ -52,8 +52,8 @@ else
     echo "[arena-fork] fetch failed — remote unreachable; checkout left as it was" >&2
     exit 2
   fi
-  if [ -n "$(git -C "$FORK_DIR" status --porcelain)" ]; then
-    echo "[arena-fork] checkout has local modifications — it is read-only; discard them first" >&2
+  if [ -n "$(git -C "$FORK_DIR" status --porcelain --untracked-files=no)" ]; then
+    echo "[arena-fork] checkout has local modifications to TRACKED files — it is read-only; discard them first (untracked files such as Modulario README/watch.py templates are ignored)" >&2
     git -C "$FORK_DIR" status --short >&2
     exit 3
   fi
