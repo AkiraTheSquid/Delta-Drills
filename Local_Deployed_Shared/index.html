@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=33" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=34" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -2116,7 +2116,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=11"></script>
+  <script src="infotips-registry.js?v=12"></script>
   <script src="infotips.js?v=2"></script>
   <script src="lessons/glossary.js?v=2"></script>
   <script src="jargon.js?v=1"></script>
@@ -2164,7 +2164,7 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=28" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=29" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows

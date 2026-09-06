@@ -564,6 +564,9 @@
 .kg2-legend-grouped .kg2-li-head { flex: 0 0 100%; margin-top: 5px; color: var(--text); font-weight: 700; }
 .kg2-legend-grouped .kg2-li-head:first-child { margin-top: 0; }
 .kg2-legend-grouped .kg2-li-sub { margin-left: 15px; }
+/* Sections mode with no exercise map: every concept falls to prep, which reads
+   as a finished answer rather than a missing file. Flag it in the legend. */
+.kg2-legend-grouped .kg2-li-warn { flex: 0 0 100%; color: var(--warn); }
 /* Category mode folds, because its full list is tall enough to cover the
    prerequisite floor a BT layout puts in this exact corner. <details> holds
    the state, so a recolour cannot reset it. */
