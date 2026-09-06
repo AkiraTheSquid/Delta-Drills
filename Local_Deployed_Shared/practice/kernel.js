@@ -26,6 +26,7 @@
 const DeltaKernel = (() => {
   const EXEC_PATH = "/api/practice/kernel/exec";
   const RESET_PATH = "/api/practice/kernel/reset";
+  const STATUS_PATH = "/api/practice/kernel/status";
 
   /* Set only when the backend has told us it has no kernel endpoints. A
      network blip must NOT set this — see the header. */
@@ -101,7 +102,38 @@ const DeltaKernel = (() => {
     }
   };
 
-  return { available, runCell, reset };
+  /* What the server is holding for THIS learner, without running anything.
+
+     `sessions[]` carries the `context` each live kernel was last used for and
+     whether it is `alive`, which is the one question a notebook needs on the
+     way in: are the names my saved outputs came from still bound, or is this a
+     photograph of a session that idled out? (practice/arena-notebook-outputs.js
+     — a restored output over a dead kernel is the misleading state.)
+
+     Returns null for every unhappy answer — signed out, older backend, network
+     blip. 🔴 A 404 here does NOT set `unsupported`: a build that has exec but
+     not status must keep running cells. Only /exec may make that call. */
+  const status = async () => {
+    if (!available()) return null;
+    try {
+      const res = await apiFetch(STATUS_PATH);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (_err) {
+      return null;
+    }
+  };
+
+  /* Is there a live kernel bound to this context right now? `null` when the
+     question could not be asked at all — which is NOT the same as "no", and
+     the caller must not paint a warning on it. */
+  const contextAlive = async (context) => {
+    const info = await status();
+    if (!info || !Array.isArray(info.sessions)) return null;
+    return info.sessions.some((s) => s && s.alive && s.context === String(context || ""));
+  };
+
+  return { available, runCell, reset, status, contextAlive };
 })();
 
 window.DeltaKernel = DeltaKernel;

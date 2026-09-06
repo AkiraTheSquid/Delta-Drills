@@ -188,6 +188,147 @@ def check_the_arena_notebook_keeps_its_rail_and_its_place():
     )
 
 
+def _js_code_only(source):
+    """`source` with its comments removed.
+
+    Every check below matches on what the file DOES, and this surface documents
+    itself heavily — the words "suppress", "stale" and "record" all appear in
+    prose that explains why the calls exist. A substring check over the raw file
+    therefore stays green after the call it was written to pin is deleted, which
+    is the exact failure mode codex found here on 2026-09-02.
+
+    `//` preceded by `:` is left alone so a URL inside a string survives.
+    """
+    without_blocks = re.sub(r"/\*.*?\*/", "", source, flags=re.S)
+    return re.sub(r"(?<!:)//[^\n]*", "", without_blocks)
+
+
+def check_the_notebook_remembers_what_you_ran_and_where_you_were():
+    """The ARENA surface's session memory: last section, and last outputs.
+
+    Seth, 2026-09-06: "it remembers which notebook you were on and it also has
+    like the saving of which code cells you ran rather than having to run it
+    every single time ... so that you don't have to run them again."
+
+    Two modules, both optional-chained by the view — which is why nothing here
+    can be noticed by using the app. A missing file is a Courses tab that goes
+    back to the section list every time and a notebook that comes back blank,
+    and neither throws.
+    """
+    index_html = read(os.path.join(SHARED, "index.html"))
+    view = _js_code_only(read(os.path.join(HERE, "arena-notebook.js")))
+
+    for module in ("arena-notebook-outputs.js", "arena-notebook-resume.js"):
+        assert os.path.exists(os.path.join(HERE, module)), (
+            f"practice/{module} is gone — the ARENA notebook loses its saved "
+            "outputs or its resume, silently"
+        )
+
+    view_pos = index_html.find('src="practice/arena-notebook.js')
+    assert view_pos != -1, 'index.html missing <script src="practice/arena-notebook.js">'
+    for module in ("practice/arena-notebook-outputs.js", "practice/arena-notebook-resume.js"):
+        pos = index_html.find(f'src="{module}')
+        assert pos != -1, f"index.html no longer loads {module}"
+        assert pos < view_pos, (
+            f"{module} must load BEFORE practice/arena-notebook.js"
+        )
+
+    outputs = _js_code_only(read(os.path.join(HERE, "arena-notebook-outputs.js")))
+    resume = _js_code_only(read(os.path.join(HERE, "arena-notebook-resume.js")))
+
+    # 🔴 THE TEXT THAT IS STORED IS THE TEXT THAT WAS PAINTED, captured before
+    # DeltaCellOutputs appends its figures. Reading `out.textContent` back
+    # afterwards folds every bundle's plain-text twin into the record, so the
+    # stored output grows on every reload of the same cell until the notebook's
+    # whole storage budget is one cell's echo of itself.
+    assert re.search(r"record\(\s*state\.id\s*,\s*_cellIdOf\(node\)\s*,\s*\{\s*text:\s*shown\b", view), (
+        "arena-notebook.js no longer records the painted text — a record built "
+        "from out.textContent after the rich outputs are appended re-swallows "
+        "them on every reload"
+    )
+    assert re.search(r"shown\s*=\s*result\.text[^\n]*\n\s*out\.textContent\s*=\s*shown;", view), (
+        "the run path no longer paints the same string it stores — the cell on "
+        "screen and the cell you come back to would disagree"
+    )
+
+    # 🔴 SUPPRESS BEFORE switchTab. arena-notebook-resume.js resumes off
+    # #page-courses becoming visible, so a suppress that lands after the route
+    # is a learner bounced straight back into the notebook they left — with the
+    # section list unreachable for as long as that notebook exists.
+    back = re.search(r"_backToCourses\s*=\s*\(\)\s*=>\s*\{(.*?)\n  \};", view, flags=re.S)
+    assert back, "arena-notebook.js lost _backToCourses"
+    body = back.group(1)
+    suppress_at = body.find("ArenaNotebookResume?.suppress()")
+    switch_at = body.find("switchTab(")
+    assert suppress_at != -1, (
+        "the back button no longer suppresses the resume — Courses would jump "
+        'straight back into the notebook and "← The course" would do nothing'
+    )
+    assert switch_at != -1 and suppress_at < switch_at, (
+        "_backToCourses suppresses AFTER it routes — the visibility observer "
+        "fires first and reopens the notebook"
+    )
+
+    # 🔴 A RESTORED OUTPUT OVER A DEAD KERNEL MUST SAY SO, and only when the
+    # server actually said the session is gone. `alive` is null when the
+    # question could not be asked at all (signed out, older backend, one bad
+    # request); warning on that is a warning nobody can act on, and marking
+    # every cell stale on it throws away the rail's completion for no reason.
+    assert re.search(r"context:\s*CONTEXT\(state\.id\)", view), (
+        "arena-notebook.js no longer hands the reconcile this notebook's kernel "
+        "context — restored outputs would claim a live session"
+    )
+    assert re.search(r"contextAlive\?\.\(\s*context\s*\)", outputs), (
+        "the output store no longer asks whether the kernel still holds this "
+        "context — a photograph of a dead session would look current"
+    )
+    assert "alive !== false" in outputs, (
+        "the reconcile no longer distinguishes 'the kernel is gone' from 'I "
+        "could not ask' — a null answer must produce no banner and no stale marks"
+    )
+    # 🔴 The reconcile resolves after an await, and it may only touch the cells
+    # THIS render restored and only while they are still untouched. Sweeping
+    # `.has-run` marked a cell run mid-request — against a kernel that is by
+    # then alive — as stale, and persisted it. Codex, 2026-09-06.
+    assert "_ddRestored !== true" in outputs, (
+        "the reconcile no longer skips cells that have been re-run since the "
+        "restore — a successful fresh run gets marked stale by an answer about "
+        "the session it replaced"
+    )
+    assert not re.search(r'querySelectorAll\(\s*"\.nbv-cell\.has-run"\s*\)[^\n]*\n?[^\n]*is-stale', outputs), (
+        "the reconcile is sweeping every has-run cell again"
+    )
+
+    # The store is a cache in a 5 MB box: without a ceiling one matplotlib
+    # notebook fills the origin and every OTHER feature's setItem starts
+    # throwing — the cell edits on this same surface first.
+    for guard in ("MAX_STORE_CHARS", "MAX_BUNDLE_CHARS", "MAX_NOTEBOOKS"):
+        assert guard in outputs, (
+            f"arena-notebook-outputs.js lost {guard} — an unbounded output cache "
+            "evicts the learner's saved cell edits, not just its own figures"
+        )
+    assert re.search(r"for\s*\(const row of _others\(slug\)\)", outputs), (
+        "arena-notebook-outputs.js no longer makes room on a quota error — a "
+        "full localStorage would silently stop remembering anything"
+    )
+
+    # The resume has to be escapable, and the escape has to be remembered.
+    assert re.search(r"suppress\s*=\s*\(\)", resume), (
+        "ArenaNotebookResume no longer exposes suppress() — the section list "
+        "becomes unreachable once a notebook has been opened"
+    )
+    assert 'attributeFilter: ["class"]' in resume, (
+        "ArenaNotebookResume stopped watching #page-courses for visibility — "
+        "app.js fires no routing event, so this is the only signal every route "
+        "into the tab shares"
+    )
+    assert "opened === false" in resume, (
+        "the resume no longer handles a section that is not compiled in this "
+        "build — open() routes to the notebook page BEFORE it fetches, so the "
+        "learner is stranded on an error page they never asked for"
+    )
+
+
 def check_the_verdict_line_is_read_the_same_way_everywhere():
     """One grammar for "did this problem pass", in both readers.
 
