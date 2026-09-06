@@ -38,6 +38,10 @@ ALLOWED_ROOT_NAMES = {
                              # never served by Vercel. Added 2026-07-31.
     "instructions",          # written specs awaiting sign-off (dev-only, prose
                              # only, nothing importable). Added 2026-07-31.
+    "storage",               # the local backend's STORAGE_DIR (backend/.env points
+                             # it here; delta_drills_local.sh creates it). Gitignored,
+                             # never deployed — but it appears after every local run
+                             # and used to abort the deploy. Added 2026-09-05.
     "tools",                 # design/measurement harnesses run from THIS machine
                              # (tools/visual-diff drives Chrome over CDP to diff
                              # our ARENA notebook against LessWrong's). Dev-only,
