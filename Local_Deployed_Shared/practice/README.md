@@ -33,7 +33,8 @@ existing scoped drill flow.
 
 Q391's exact answer pattern was removed from the prompt and starter docstring.
 `pipeline/question_content_corrections.json` applies the reviewed content after
-runtime export layers. `repairKnownQuestionContent` uses the shipped prompt for
+runtime layers in both the exporter and backend; the Docker image includes this
+same file. `repairKnownQuestionContent` uses the shipped prompt for
 old backend responses and removes the old starter docstring leak while retaining
 authored blanks. Existing learner drafts are not rewritten.
 
