@@ -499,7 +499,9 @@ def check_invariants():
         "#D97706",
         # Chapter 2 — Reinforcement Learning (color #059669).
         "Intro to RL",
-        "DQN & VPG",
+        # 2.2 split upstream into 2.2.1 DQN + 2.2.2 VPG (ARENA 527f937).
+        "2.2.1",
+        "2.2.2",
         "RLHF",
         "#059669",
         # Chapter 3 — LLM Evaluations (color #2563EB).
