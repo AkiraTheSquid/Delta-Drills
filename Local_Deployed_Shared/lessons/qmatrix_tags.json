@@ -8142,5 +8142,75 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "842": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "843": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "844": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "845": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "846": {
+  "target_kcs": [
+   "raytracing.make-rays-1d"
+  ],
+  "supporting_kcs": [
+   "torch.out-argument",
+   "torch.slice-assignment",
+   "raytracing.ray-parametrisation",
+   "numpy.ranges",
+   "numpy.constructors"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

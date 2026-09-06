@@ -30606,5 +30606,255 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 842,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Variant of `make_rays_1d`: the fan spreads in **z** instead of y. Return the `(num_pixels, 2, 3)` tensor as a nested list — origins at zero, direction `[1, 0, z]` with `z` evenly from `-z_limit` to `z_limit` inclusive.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, z_limit):\n    \"\"\"make_rays_1d_z: the fan spreads in z, not y.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(5, 2.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -2.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 2.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -0.5]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.5]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 3.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -3.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -2.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]",
+          "why": "The spread went into column 1 (y). Columns are x, y, z — the z fan lives in `rays[:, 1, 2]`."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, z_limit):\n    \"\"\"make_rays_1d_z: the fan spreads in z, not y.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    t.linspace(-z_limit, z_limit, num_pixels, out=rays[:, 1, 2])\n    return rays.tolist()\n\n\nexample = (5, 2.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, 0.0, -2.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 2.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 843,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Variant of `make_rays_1d`: the camera sits at `origin` (a list of three floats) instead of `(0, 0, 0)`. Every ray's origin row equals `origin`; directions are still `[1, y, 0]` with `y` evenly from `-y_limit` to `y_limit`. Return the `(num_pixels, 2, 3)` tensor as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, origin):\n    \"\"\"make_rays_1d_from: the whole fan from a moved camera.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4, 1.5, [-3.0, 1.0, 0.5])\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.5, [-3.0, 1.0, 0.5])",
+          "expected_expr": "[[[-3.0, 1.0, 0.5], [1.0, -1.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, -0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 1.5, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 1.0, [0.0, 0.0, 2.0])",
+          "expected_expr": "[[[0.0, 0.0, 2.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 2.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, [1.0, 1.0, 1.0])",
+          "expected_expr": "[[[1.0, 1.0, 1.0], [1.0, 0.0, 0.0]], [[1.0, 1.0, 1.0], [1.0, 0.0, 0.0]], [[1.0, 1.0, 1.0], [1.0, 0.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[-3.0, 1.0, 0.5], [1.0, -1.5, 0.5]], [[-3.0, 1.0, 0.5], [1.0, -0.5, 0.5]], [[-3.0, 1.0, 0.5], [1.0, 0.5, 0.5]], [[-3.0, 1.0, 0.5], [1.0, 1.5, 0.5]]]",
+          "why": "Broadcasting `origin` over the whole slab also wrote it into the direction rows, so direction z is no longer 0."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, origin):\n    \"\"\"make_rays_1d_from: the whole fan from a moved camera.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 0] = t.tensor(origin)\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nexample = (4, 1.5, [-3.0, 1.0, 0.5])\nprint(solve(*example))\n",
+      "expected_output": "[[[-3.0, 1.0, 0.5], [1.0, -1.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, -0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 1.5, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 844,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Variant of `make_rays_1d`: the screen is the plane x = `screen_x` instead of x = 1. Directions must point AT the screen point, `[screen_x, y, 0]` with `y` evenly from `-y_limit` to `y_limit`, so `u = 1` still lands on the screen. Origins stay at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit, screen_x):\n    \"\"\"make_rays_1d_screen: the screen at x = screen_x.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 2.5)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 1.0, 2.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [2.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 2.0, 0.5)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.5, -2.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 2.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.0, -1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [-1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [-1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [-1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [-1.0, 1.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[2.5, 0.0, 0.0], [1.0, -1.0, 0.0]], [[2.5, 0.0, 0.0], [1.0, 0.0, 0.0]], [[2.5, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "`screen_x` went into the ORIGIN's x. The camera does not move; the direction's x-component is what reaches the screen at u = 1."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit, screen_x):\n    \"\"\"make_rays_1d_screen: the screen at x = screen_x.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = screen_x\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n\n\nexample = (3, 1.0, 2.5)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [2.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 845,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Variant of `make_rays_1d`: the screen `[-y_limit, y_limit]` is cut into `num_pixels` equal pixels and each ray passes through the CENTRE of its pixel, e.g. `(4, 1.0)` gives direction-y `[-0.75, -0.25, 0.25, 0.75]`. Directions `[1, y, 0]`, origins at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d_centres: one ray through each pixel centre.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (4, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(4, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -0.75, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.75, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(1, 3.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 3.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -2.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "Plain `linspace(-y_limit, y_limit, n)` puts rays on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d_centres: one ray through each pixel centre.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    half = y_limit / num_pixels\n    rays[:, 1, 1] = t.linspace(-y_limit + half, y_limit - half, num_pixels)\n    return rays.tolist()\n\n\nexample = (4, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -0.75, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.75, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 846,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Variant of `make_rays_1d`: the screen y runs from `y_min` to `y_max` (not necessarily symmetric), e.g. `(3, 0.0, 1.0)` gives direction-y `[0.0, 0.5, 1.0]`. Directions `[1, y, 0]`, origins at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list. `solve(n, -L, L)` must equal `make_rays_1d(n, L)`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_min, y_max):\n    \"\"\"make_rays_1d_range: an asymmetric screen.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, 0.0, 1.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(3, -10.0, 10.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -10.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 10.0, 0.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\n",
+          "call": "solve(2, 2.0, 5.0)",
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 5.0, 0.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "why": "Mirrored the top limit instead of using `y_min` — the fan is only symmetric when y_min == -y_max."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_min, y_max):\n    \"\"\"make_rays_1d_range: an asymmetric screen.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    t.linspace(y_min, y_max, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "expected_output": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

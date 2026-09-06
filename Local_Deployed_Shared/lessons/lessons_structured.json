@@ -5462,6 +5462,26 @@
       {
        "question_id": 841,
        "prompt": "Reparametrising the fan without moving it."
+      },
+      {
+       "question_id": 842,
+       "prompt": "make_rays_1d_z: the fan spreads in z, not y."
+      },
+      {
+       "question_id": 843,
+       "prompt": "make_rays_1d_from: the whole fan from a moved camera."
+      },
+      {
+       "question_id": 844,
+       "prompt": "make_rays_1d_screen: the screen at x = screen_x."
+      },
+      {
+       "question_id": 845,
+       "prompt": "make_rays_1d_centres: one ray through each pixel centre."
+      },
+      {
+       "question_id": 846,
+       "prompt": "make_rays_1d_range: an asymmetric screen."
       }
      ],
      "independent_items": [

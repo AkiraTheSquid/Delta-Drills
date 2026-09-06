@@ -7,7 +7,7 @@ previews: []
 faded: [831, 832]
 guided: []
 independent: [833, 834, 835, 836, 837, 838]
-integrated: [839, 840, 841]
+integrated: [839, 840, 841, 842, 843, 844, 845, 846]
 ---
 
 ## Concept: zeros, then write the two direction columns
@@ -141,6 +141,21 @@ The fan against a vertical line.
 
 ### q841
 Reparametrising the fan without moving it.
+
+### q842
+make_rays_1d_z: the fan spreads in z, not y.
+
+### q843
+make_rays_1d_from: the whole fan from a moved camera.
+
+### q844
+make_rays_1d_screen: the screen at x = screen_x.
+
+### q845
+make_rays_1d_centres: one ray through each pixel centre.
+
+### q846
+make_rays_1d_range: an asymmetric screen.
 
 ## Misconceptions
 
