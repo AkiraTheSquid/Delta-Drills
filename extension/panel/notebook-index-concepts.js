@@ -40,7 +40,12 @@ Object.assign(window.DD_NOTEBOOKS, {
     "einops.pooling": "eo-2",
     "einops.repeat-model": "eo-3",
     "einops.dl-flatten-heads": "eo-3",
-    "einops.channel-groups-temporal": "eo-3"
+    "einops.channel-groups-temporal": "eo-3",
+    "torch.out-argument": "tr-1",
+    "torch.slice-assignment": "tr-1",
+    "raytracing.ray-parametrisation": "tr-1",
+    "raytracing.make-rays-1d": "tr-1",
+    "einops.einsum": "es-1"
   },
   "kps": {
     "python.values-and-names": "dd-kp-python-values-and-names",
@@ -81,7 +86,12 @@ Object.assign(window.DD_NOTEBOOKS, {
     "einops.pooling": "dd-kp-einops-pooling",
     "einops.repeat-model": "dd-kp-einops-repeat-model",
     "einops.dl-flatten-heads": "dd-kp-einops-dl-flatten-heads",
-    "einops.channel-groups-temporal": "dd-kp-einops-channel-groups-temporal"
+    "einops.channel-groups-temporal": "dd-kp-einops-channel-groups-temporal",
+    "torch.out-argument": "dd-kp-torch-out-argument",
+    "torch.slice-assignment": "dd-kp-torch-slice-assignment",
+    "raytracing.ray-parametrisation": "dd-kp-raytracing-ray-parametrisation",
+    "raytracing.make-rays-1d": "dd-kp-raytracing-make-rays-1d",
+    "einops.einsum": "dd-kp-einops-einsum"
   },
   "segments": {
     "numpy.ndarray-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-numpy-ndarray-model-0",
@@ -128,6 +138,10 @@ Object.assign(window.DD_NOTEBOOKS, {
     "numpy.axis-reductions#s1-tuples-of-axes-and-keepdims": "dd-seg-numpy-axis-reductions-1",
     "numpy.dot-matmul-patterns#s0-the-dot-product-multiply-then-sum": "dd-seg-numpy-dot-matmul-patterns-0",
     "numpy.dot-matmul-patterns#s1-matrix-vector-one-dot-per-row": "dd-seg-numpy-dot-matmul-patterns-1",
-    "numpy.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-numpy-dot-matmul-patterns-2"
+    "numpy.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-numpy-dot-matmul-patterns-2",
+    "einops.einsum#one-operand": "dd-seg-einops-einsum-0",
+    "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
+    "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
+    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3"
   }
 });

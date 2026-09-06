@@ -4046,3 +4046,1170 @@ def solve(num_pixels, y_min, y_max):
 example = (3, 0.0, 1.0)
 print(solve(*example))
 ",50,"[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+Einops,Einsum,"Given a matrix as a nested list, return its **column sums** (one number per column) as a list, using `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mat):
+    """"""Column sums via einsum.""""""
+    a = t.tensor(mat)
+    return einops.einsum(a, ""i j -> j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]],)
+print(solve(*example))
+",30,"[3, 5, 7]"
+Einops,Einsum,"Given a 3-D tensor `(b, i, j)` as a nested list, sum over its LAST axis only and return the `(b, i)` result as a nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Sum the last axis of a 3-D tensor via einsum.""""""
+    a = t.tensor(x)
+    return einops.einsum(a, ""b i j -> b i"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)
+print(solve(*example))
+",34,"[[3, 7], [11, 15]]"
+Einops,Einsum,"Compute the **vector–matrix** product `v @ A` — the vector on the LEFT — with `einops.einsum`. `vec` has length m, `mat` is (m, n); return the length-n result as a list.","import torch as t
+import einops
+
+
+def solve(vec, mat):
+    """"""Vector times matrix via einsum.""""""
+    v, a = t.tensor(vec), t.tensor(mat)
+    return einops.einsum(v, a, ""i, i j -> j"").tolist()
+
+
+example = ([1, 0], [[0, 1, 2], [3, 4, 5]])
+print(solve(*example))
+",36,"[0, 1, 2]"
+Einops,Einsum,"Compute `A @ B.T` without transposing: `mat1` is (m, k) and `mat2` is (n, k). Return the (m, n) result as a nested list.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""A times B-transpose via einsum.""""""
+    a, b = t.tensor(mat1), t.tensor(mat2)
+    return einops.einsum(a, b, ""i k, j k -> i j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])
+print(solve(*example))
+",40,"[[0, 2], [3, 5]]"
+Einops,Einsum,"Return the **diagonal** of a square matrix (nested list) as a list, using `einops.einsum` — no `.diag()`, no loop.","import torch as t
+import einops
+
+
+def solve(mat):
+    """"""The diagonal via a repeated index.""""""
+    a = t.tensor(mat)
+    return einops.einsum(a, ""i i -> i"").tolist()
+
+
+example = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)
+print(solve(*example))
+",36,"[1, 5, 9]"
+Einops,Einsum,"Return the **matrix inner product** of two same-shape matrices — the sum of all elementwise products, one number — with `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""Sum of all pairwise products of two matrices.""""""
+    a, b = t.tensor(mat1), t.tensor(mat2)
+    return einops.einsum(a, b, ""i j, i j ->"").item()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])
+print(solve(*example))
+",38,145
+Einops,Einsum,"Batched matrix–vector product: `mats` is `(b, i, j)` and `vecs` is `(b, j)`, both nested lists. Return the `(b, i)` result — one `A @ v` per batch entry — as a nested list.","import torch as t
+import einops
+
+
+def solve(mats, vecs):
+    """"""One matrix-vector product per batch entry.""""""
+    a, v = t.tensor(mats), t.tensor(vecs)
+    return einops.einsum(a, v, ""b i j, b j -> b i"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])
+print(solve(*example))
+",42,"[[3, 7], [3, 2]]"
+Einops,Einsum,"Batched outer product: `u` and `v` are `(b, n)` and `(b, m)` nested lists. Return the `(b, n, m)` tensor of per-batch outer products as a nested list.","import torch as t
+import einops
+
+
+def solve(u, v):
+    """"""One outer product per batch entry.""""""
+    a, c = t.tensor(u), t.tensor(v)
+    return einops.einsum(a, c, ""b i, b j -> b i j"").tolist()
+
+
+example = ([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])
+print(solve(*example))
+",42,"[[[1, 0, 1], [2, 0, 2]], [[6, 6, 6], [8, 8, 8]]]"
+Einops,Einsum,"Sum a `(b, i, j)` nested list over its FIRST axis, returning the `(i, j)` total as a nested list, with `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Sum across the batch axis.""""""
+    a = t.tensor(x)
+    return einops.einsum(a, ""b i j -> i j"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)
+print(solve(*example))
+",34,"[[6, 8], [10, 12]]"
+Einops,Einsum,Return the **Gram matrix** `A @ A.T` of a matrix (nested list) with one `einops.einsum` call — no `.T`.,"import torch as t
+import einops
+
+
+def solve(mat):
+    """"""Gram matrix A A^T.""""""
+    a = t.tensor(mat)
+    return einops.einsum(a, a, ""i k, j k -> i j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]],)
+print(solve(*example))
+",40,"[[5, 14], [14, 50]]"
+Einops,Einsum,"Compute the bilinear form `x @ A @ y` — a single number — from `x` (length m), `A` (m, n) and `y` (length n), all lists, in ONE `einops.einsum` call with three operands.","import torch as t
+import einops
+
+
+def solve(x, mat, y):
+    """"""A three-operand contraction.""""""
+    xv, a, yv = t.tensor(x), t.tensor(mat), t.tensor(y)
+    return einops.einsum(xv, a, yv, ""i, i j, j ->"").item()
+
+
+example = ([1, 0], [[0, 1, 2], [3, 4, 5]], [0, 0, 1])
+print(solve(*example))
+",46,2
+Einops,Einsum,"Two same-shape matrices as nested lists: return the **row-wise dot products** — one number per row — as a list, via `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""Row-wise dot products.""""""
+    a, b = t.tensor(mat1), t.tensor(mat2)
+    return einops.einsum(a, b, ""i j, i j -> i"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 1, 1], [1, 0, -1]])
+print(solve(*example))
+",40,"[3, -2]"
+Einops,Einsum,"A batch of square matrices `(b, n, n)` as a nested list: return each matrix's **diagonal**, shape `(b, n)`, as a nested list, with `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mats):
+    """"""Diagonals of a batch.""""""
+    a = t.tensor(mats)
+    return einops.einsum(a, ""b i i -> b i"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)
+print(solve(*example))
+",42,"[[1, 4], [5, 8]]"
+Einops,Einsum,"Scale each ROW of a matrix by the matching entry of a vector (`mat` is (m, n), `w` has length m) using `einops.einsum`, returning the (m, n) nested list.","import torch as t
+import einops
+
+
+def solve(mat, w):
+    """"""Row scaling as an einsum.""""""
+    a, v = t.tensor(mat), t.tensor(w)
+    return einops.einsum(a, v, ""i j, i -> i j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [1, 10])
+print(solve(*example))
+",40,"[[0, 1, 2], [30, 40, 50]]"
+Einops,Einsum,"Return the **trace of `A @ B`** (a single number) with ONE `einops.einsum` call and without forming the product. `mat1` is (m, n), `mat2` is (n, m).","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""Trace of a product without the product.""""""
+    a, b = t.tensor(mat1), t.tensor(mat2)
+    return einops.einsum(a, b, ""i j, j i ->"").item()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])
+print(solve(*example))
+",50,11
+Einops,Einsum,"Batched Gram matrices: `x` is `(b, n, d)` as a nested list. Return `(b, n, n)` where entry `[b, i, j]` is the dot product of rows i and j of batch b, as a nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Per-batch Gram matrices.""""""
+    a = t.tensor(x)
+    return einops.einsum(a, a, ""b i d, b j d -> b i j"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[1, 0], [0, 1]]],)
+print(solve(*example))
+",52,"[[[5, 11], [11, 25]], [[1, 0], [0, 1]]]"
+Einops,Einsum,"Attention scores: `q` is `(nq, d)` and `k` is `(nk, d)`, nested lists. Return the `(nq, nk)` matrix of dot products between every query and every key, as a nested list, via `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(q, k):
+    """"""Query-key scores.""""""
+    qa, ka = t.tensor(q), t.tensor(k)
+    return einops.einsum(qa, ka, ""q d, k d -> q k"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0], [1, 1, 1]])
+print(solve(*example))
+",52,"[[0, 1, 3], [3, 4, 12]]"
+Einops,Einsum,`einsum_trace`: return the trace of a square matrix (nested list) with `einops.einsum`.,"import torch as t
+import einops
+
+
+def solve(mat):
+    """"""einsum_trace""""""
+    return einops.einsum(t.tensor(mat), ""i i ->"").item()
+
+
+example = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)
+print(solve(*example))
+",44,15
+Einops,Einsum,"Variant of `einsum_trace`: return the trace of `A @ A` (a number) in ONE `einops.einsum` call, without forming the product.","import torch as t
+import einops
+
+
+def solve(mat):
+    """"""trace of A squared""""""
+    a = t.tensor(mat)
+    return einops.einsum(a, a, ""i j, j i ->"").item()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",48,29
+Einops,Einsum,"Variant of `einsum_trace`: a batch of square matrices `(b, n, n)` — return the list of their traces.","import torch as t
+import einops
+
+
+def solve(mats):
+    """"""batch of traces""""""
+    return einops.einsum(t.tensor(mats), ""b i i -> b"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[1, 2], [3, 4]]],)
+print(solve(*example))
+",46,"[5, 5]"
+Einops,Einsum,Variant of `einsum_trace`: return the **sum of squares of the diagonal** of a square matrix (a number).,"import torch as t
+import einops
+
+
+def solve(mat):
+    """"""sum of squared diagonal""""""
+    a = t.tensor(mat)
+    return einops.einsum(a, a, ""i i, i i ->"").item()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",46,17
+Einops,Einsum,"Variant of `einsum_trace`: return the diagonal of a square matrix as a list, scaled by a scalar `s` (multiply each diagonal entry by `s`) — one `einops.einsum` call plus the scaling.","import torch as t
+import einops
+
+
+def solve(mat, s):
+    """"""scaled diagonal""""""
+    return (s * einops.einsum(t.tensor(mat), ""i i -> i"")).tolist()
+
+
+example = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 2)
+print(solve(*example))
+",44,"[2, 10, 18]"
+Einops,Einsum,"`einsum_mv`: matrix (m, n) times vector (n), both nested lists — return the length-m list via `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mat, vec):
+    """"""einsum_mv""""""
+    return einops.einsum(t.tensor(mat), t.tensor(vec), ""i j, j -> i"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [1, 1, 1])
+print(solve(*example))
+",42,"[3, 12]"
+Einops,Einsum,"Variant of `einsum_mv`: the vector on the LEFT, `v @ A` — `vec` has length m, `mat` is (m, n). Return the length-n list.","import torch as t
+import einops
+
+
+def solve(vec, mat):
+    """"""vector-matrix product""""""
+    return einops.einsum(t.tensor(vec), t.tensor(mat), ""i, i j -> j"").tolist()
+
+
+example = ([1, 0], [[0, 1, 2], [3, 4, 5]])
+print(solve(*example))
+",44,"[0, 1, 2]"
+Einops,Einsum,"Variant of `einsum_mv`: `A.T @ v` without transposing — `mat` is (m, n), `vec` has length m. Return the length-n list.","import torch as t
+import einops
+
+
+def solve(mat, vec):
+    """"""transpose-then-multiply""""""
+    return einops.einsum(t.tensor(mat), t.tensor(vec), ""j i, j -> i"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [1, 2])
+print(solve(*example))
+",46,"[6, 9, 12]"
+Einops,Einsum,"Variant of `einsum_mv`: one matrix (m, n), a BATCH of vectors `(b, n)` — return the `(b, m)` nested list of `A @ v` for every vector.","import torch as t
+import einops
+
+
+def solve(mat, vecs):
+    """"""one matrix, many vectors""""""
+    return einops.einsum(t.tensor(mat), t.tensor(vecs), ""i j, b j -> b i"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])
+print(solve(*example))
+",48,"[[0, 3], [2, 5]]"
+Einops,Einsum,"Variant of `einsum_mv`: a batch of matrices `(b, m, n)` and one vector of length n — return the `(b, m)` nested list.","import torch as t
+import einops
+
+
+def solve(mats, vec):
+    """"""many matrices, one vector""""""
+    return einops.einsum(t.tensor(mats), t.tensor(vec), ""b i j, j -> b i"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [1, 2])
+print(solve(*example))
+",48,"[[5, 11], [2, 1]]"
+Einops,Einsum,"`einsum_mm`: matrix product of `mat1` (m, n) and `mat2` (n, p), nested lists — return the (m, p) nested list via `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""einsum_mm""""""
+    return einops.einsum(t.tensor(mat1), t.tensor(mat2), ""i j, j k -> i k"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])
+print(solve(*example))
+",42,"[[2, 3], [8, 9]]"
+Einops,Einsum,"Variant of `einsum_mm`: `A @ B.T` — `mat1` is (m, k), `mat2` is (n, k). Return the (m, n) nested list without `.T`.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""A times B transpose""""""
+    return einops.einsum(t.tensor(mat1), t.tensor(mat2), ""i k, j k -> i j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [1, 1, 1]])
+print(solve(*example))
+",46,"[[0, 3], [3, 12]]"
+Einops,Einsum,"Variant of `einsum_mm`: `A.T @ B` — `mat1` is (k, m), `mat2` is (k, n). Return the (m, n) nested list.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""A transpose times B""""""
+    return einops.einsum(t.tensor(mat1), t.tensor(mat2), ""k i, k j -> i j"").tolist()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1]])
+print(solve(*example))
+",46,"[[0, 3], [1, 4], [2, 5]]"
+Einops,Einsum,"Variant of `einsum_mm`: batched — `mats1` is (b, m, n), `mats2` is (b, n, p). Return the (b, m, p) nested list.","import torch as t
+import einops
+
+
+def solve(mats1, mats2):
+    """"""batch matmul""""""
+    return einops.einsum(t.tensor(mats1), t.tensor(mats2), ""b i j, b j k -> b i k"").tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[[1, 2], [3, 4]], [[1, 2], [3, 4]]])
+print(solve(*example))
+",48,"[[[7, 10], [15, 22]], [[3, 4], [1, 2]]]"
+Einops,Einsum,"Variant of `einsum_mm`: a THREE-matrix chain `A @ B @ C` in one call — shapes (m, n), (n, p), (p, q). Return the (m, q) nested list.","import torch as t
+import einops
+
+
+def solve(a, b, c):
+    """"""three-matrix chain""""""
+    return einops.einsum(t.tensor(a), t.tensor(b), t.tensor(c), ""i j, j k, k l -> i l"").tolist()
+
+
+example = ([[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 0], [0, 1]])
+print(solve(*example))
+",50,"[[7, 10], [15, 22]]"
+Einops,Einsum,`einsum_inner`: dot product of two equal-length vectors (lists) — return a number via `einops.einsum`.,"import torch as t
+import einops
+
+
+def solve(vec1, vec2):
+    """"""einsum_inner""""""
+    return einops.einsum(t.tensor(vec1), t.tensor(vec2), ""i, i ->"").item()
+
+
+example = ([0, 1, 2], [3, 4, 5])
+print(solve(*example))
+",40,14
+Einops,Einsum,Variant of `einsum_inner`: the squared L2 norm of a vector (a number) — the vector with itself.,"import torch as t
+import einops
+
+
+def solve(vec):
+    """"""squared norm""""""
+    v = t.tensor(vec)
+    return einops.einsum(v, v, ""i, i ->"").item()
+
+
+example = ([3, 4],)
+print(solve(*example))
+",42,25
+Einops,Einsum,"Variant of `einsum_inner`: batched — `u` and `v` are `(b, n)` nested lists. Return the list of the b dot products.","import torch as t
+import einops
+
+
+def solve(u, v):
+    """"""batched dot products""""""
+    return einops.einsum(t.tensor(u), t.tensor(v), ""b i, b i -> b"").tolist()
+
+
+example = ([[1, 2], [3, 4]], [[1, 1], [0, 1]])
+print(solve(*example))
+",46,"[3, 4]"
+Einops,Einsum,"Variant of `einsum_inner`: a WEIGHTED dot product `sum_i w[i]*a[i]*b[i]` from three equal-length lists, one call.","import torch as t
+import einops
+
+
+def solve(w, a, b):
+    """"""weighted dot product""""""
+    return einops.einsum(t.tensor(w), t.tensor(a), t.tensor(b), ""i, i, i ->"").item()
+
+
+example = ([1, 0, 2], [1, 2, 3], [4, 5, 6])
+print(solve(*example))
+",46,40
+Einops,Einsum,"Variant of `einsum_inner`: the matrix inner product — sum of all elementwise products of two same-shape matrices (nested lists), a number.","import torch as t
+import einops
+
+
+def solve(mat1, mat2):
+    """"""matrix inner product""""""
+    return einops.einsum(t.tensor(mat1), t.tensor(mat2), ""i j, i j ->"").item()
+
+
+example = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0]])
+print(solve(*example))
+",44,4
+Einops,Einsum,"`einsum_outer`: outer product of two vectors (lists) of lengths m and n — return the (m, n) nested list via `einops.einsum`.","import torch as t
+import einops
+
+
+def solve(vec1, vec2):
+    """"""einsum_outer""""""
+    return einops.einsum(t.tensor(vec1), t.tensor(vec2), ""i, j -> i j"").tolist()
+
+
+example = ([0, 1, 2], [3, 4, 5, 6])
+print(solve(*example))
+",40,"[[0, 0, 0, 0], [3, 4, 5, 6], [6, 8, 10, 12]]"
+Einops,Einsum,"Variant of `einsum_outer`: the TRANSPOSED outer product — entry `[j, i]` is `vec1[i] * vec2[j]`, shape (n, m).","import torch as t
+import einops
+
+
+def solve(vec1, vec2):
+    """"""transposed outer product""""""
+    return einops.einsum(t.tensor(vec1), t.tensor(vec2), ""i, j -> j i"").tolist()
+
+
+example = ([0, 1, 2], [3, 4])
+print(solve(*example))
+",42,"[[0, 3, 6], [0, 4, 8]]"
+Einops,Einsum,"Variant of `einsum_outer`: batched — `u` is `(b, m)` and `v` is `(b, n)`. Return the `(b, m, n)` nested list of per-batch outer products.","import torch as t
+import einops
+
+
+def solve(u, v):
+    """"""batched outer products""""""
+    return einops.einsum(t.tensor(u), t.tensor(v), ""b i, b j -> b i j"").tolist()
+
+
+example = ([[1, 2], [0, 1]], [[1, 1, 1], [2, 3, 4]])
+print(solve(*example))
+",46,"[[[1, 1, 1], [2, 2, 2]], [[0, 0, 0], [2, 3, 4]]]"
+Einops,Einsum,"Variant of `einsum_outer`: a three-way outer product of three lists (lengths l, m, n) — return the (l, m, n) nested list.","import torch as t
+import einops
+
+
+def solve(a, b, c):
+    """"""three-way outer product""""""
+    return einops.einsum(t.tensor(a), t.tensor(b), t.tensor(c), ""i, j, k -> i j k"").tolist()
+
+
+example = ([1, 2], [1, 10], [1, 100, 1000])
+print(solve(*example))
+",46,"[[[1, 100, 1000], [10, 1000, 10000]], [[2, 200, 2000], [20, 2000, 20000]]]"
+Einops,Einsum,"Variant of `einsum_outer`: outer product of two lists MASKED by a (m, n) matrix — entry `[i, j]` is `vec1[i] * vec2[j] * mask[i][j]`, one call.","import torch as t
+import einops
+
+
+def solve(vec1, vec2, mask):
+    """"""masked outer product""""""
+    return einops.einsum(t.tensor(vec1), t.tensor(vec2), t.tensor(mask), ""i, j, i j -> i j"").tolist()
+
+
+example = ([1, 2], [3, 4, 5], [[1, 0, 1], [0, 1, 0]])
+print(solve(*example))
+",48,"[[3, 0, 5], [0, 8, 0]]"
+Einops,Rearrange,"Variant of exercise (1): a batch of images `(b, c, h, w)` as a nested list — lay them out **side by side** (batch into width), shape `(c, h, b·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""batch side by side""""""
+    return einops.rearrange(t.tensor(imgs), 'b c h w -> c h (b w)').tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",40,"[[[0, 1, 4, 5], [2, 3, 6, 7]]]"
+Einops,Rearrange,"Variant of exercise (1): the images are **channels-last**, `(b, h, w, c)`. Stack them vertically (batch into height) — shape `(b·h, w, c)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""vertical stack, channels-last""""""
+    return einops.rearrange(t.tensor(imgs), 'b h w c -> (b h) w c').tolist()
+
+
+example = ([[[[0], [1]], [[2], [3]]], [[[4], [5]], [[6], [7]]]],)
+print(solve(*example))
+",42,"[[[0], [1]], [[2], [3]], [[4], [5]], [[6], [7]]]"
+Einops,Rearrange,"Variant of exercise (1): stack the CHANNELS of one image `(c, h, w)` vertically — channel 0's rows, then channel 1's — shape `(c·h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""channels stacked vertically""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> (c h) w').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",38,"[[0, 1], [2, 3], [4, 5], [6, 7]]"
+Einops,Rearrange,"Variant of exercise (1): a batch `(b, c, h, w)` stacked vertically AND flattened per channel — shape `(c, b·h·w)`, reading each image row by row before the next image. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""batch and space into one axis""""""
+    return einops.rearrange(t.tensor(imgs), 'b c h w -> c (b h w)').tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",42,"[[0, 1, 2, 3, 4, 5, 6, 7]]"
+Einops,Deep Learning,"Variant of exercise (2): one image `(c, h, w)` — copy it side by side (twice along width), shape `(c, h, 2·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""copy along width""""""
+    return einops.repeat(t.tensor(img), 'c h w -> c h (2 w)').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",40,"[[[0, 1, 0, 1], [2, 3, 2, 3]], [[4, 5, 4, 5], [6, 7, 6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (2): copy one image `(c, h, w)` `n` times vertically — shape `(c, n·h, w)`, `n` an argument. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img, n):
+    """"""n copies stacked""""""
+    return einops.repeat(t.tensor(img), 'c h w -> c (n h) w', n=n).tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)
+print(solve(*example))
+",42,"[[[0, 1], [2, 3], [0, 1], [2, 3]], [[4, 5], [6, 7], [4, 5], [6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (2): a grayscale image `(h, w)` — tile it in a 2×2 arrangement, shape `(2·h, 2·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""2x2 tiling""""""
+    return einops.repeat(t.tensor(img), 'h w -> (2 h) (2 w)').tolist()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",42,"[[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]]"
+Einops,Deep Learning,"Variant of exercise (2): a grayscale image `(h, w)` — give it 3 identical colour channels, channels FIRST: shape `(3, h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""grayscale to RGB""""""
+    return einops.repeat(t.tensor(img), 'h w -> 3 h w').tolist()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",38,"[[[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 2], [3, 4]]]"
+Einops,Deep Learning,"Variant of exercise (3): a batch `(b, c, h, w)` — images side by side (batch into width) and each stretched? No: each image repeated twice vertically as a block — shape `(c, 2·h, b·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""side by side, doubled vertically""""""
+    return einops.repeat(t.tensor(imgs), 'b c h w -> c (2 h) (b w)').tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",46,"[[[0, 1, 4, 5], [2, 3, 6, 7], [0, 1, 4, 5], [2, 3, 6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (3): a batch `(b, c, h, w)` stacked vertically and copied `n` times along width — shape `(c, b·h, n·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs, n):
+    """"""vertical stack, n copies wide""""""
+    return einops.repeat(t.tensor(imgs), 'b c h w -> c (b h) (n w)', n=n).tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]], 2)
+print(solve(*example))
+",46,"[[[0, 1, 0, 1], [2, 3, 2, 3], [4, 5, 4, 5], [6, 7, 6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (3): a batch `(b, c, h, w)` where EACH image appears twice in a row vertically (image 0, image 0, image 1, image 1, …) — shape `(c, 2·b·h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""each image doubled in place""""""
+    return einops.repeat(t.tensor(imgs), 'b c h w -> c (b 2 h) w').tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",48,"[[[0, 1], [2, 3], [0, 1], [2, 3], [4, 5], [6, 7], [4, 5], [6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (3): grayscale batch `(b, h, w)` — stack vertically and copy twice along width: shape `(b·h, 2·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""grayscale stack + double""""""
+    return einops.repeat(t.tensor(imgs), 'b h w -> (b h) (2 w)').tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)
+print(solve(*example))
+",44,"[[1, 2, 1, 2], [3, 4, 3, 4], [5, 6, 5, 6], [7, 8, 7, 8]]"
+Einops,Deep Learning,"Variant of exercise (4): stretch one image `(c, h, w)` horizontally — every column doubled in place, shape `(c, h, 2·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""stretch width""""""
+    return einops.repeat(t.tensor(img), 'c h w -> c h (w 2)').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",40,"[[[0, 0, 1, 1], [2, 2, 3, 3]], [[4, 4, 5, 5], [6, 6, 7, 7]]]"
+Einops,Deep Learning,"Variant of exercise (4): stretch one image `(c, h, w)` vertically by a factor `k` (each row repeated k times in place), shape `(c, k·h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img, k):
+    """"""stretch height by k""""""
+    return einops.repeat(t.tensor(img), 'c h w -> c (h k) w', k=k).tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)
+print(solve(*example))
+",42,"[[[0, 1], [0, 1], [2, 3], [2, 3]], [[4, 5], [4, 5], [6, 7], [6, 7]]]"
+Einops,Deep Learning,"Variant of exercise (4): a grayscale image `(h, w)` — upscale it 2× in BOTH directions (nearest-neighbour), shape `(2·h, 2·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""2x nearest-neighbour upscale""""""
+    return einops.repeat(t.tensor(img), 'h w -> (h 2) (w 2)').tolist()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",44,"[[1, 1, 2, 2], [1, 1, 2, 2], [3, 3, 4, 4], [3, 3, 4, 4]]"
+Einops,Deep Learning,"Variant of exercise (4): stretch one image `(c, h, w)` by 2 vertically and 3 horizontally, shape `(c, 2·h, 3·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""anisotropic stretch""""""
+    return einops.repeat(t.tensor(img), 'c h w -> c (h 2) (w 3)').tolist()
+
+
+example = ([[[1, 2]]],)
+print(solve(*example))
+",44,"[[[1, 1, 1, 2, 2, 2], [1, 1, 1, 2, 2, 2]]]"
+Einops,Rearrange,"Variant of exercise (5): one image `(c, h, w)` — stack the channels vertically with their ROWS INTERLEAVED (row 0 of every channel, then row 1 of every channel, …), shape `(h·c, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""channels interleaved by row""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> (h c) w').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",44,"[[0, 1], [4, 5], [2, 3], [6, 7]]"
+Einops,Rearrange,"Variant of exercise (5): one image `(c, h, w)` — channels side by side but with the channel index INNERMOST (column 0 of every channel, then column 1 of every channel, …), shape `(h, w·c)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""channels interleaved by column""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> h (w c)').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",44,"[[0, 4, 1, 5], [2, 6, 3, 7]]"
+Einops,Rearrange,"Variant of exercise (5): a batch `(b, c, h, w)` — for EVERY image lay its channels side by side, shape `(b, h, c·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""channels side by side, per image""""""
+    return einops.rearrange(t.tensor(imgs), 'b c h w -> b h (c w)').tolist()
+
+
+example = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)
+print(solve(*example))
+",42,"[[[0, 1, 4, 5], [2, 3, 6, 7]], [[0, 1, 4, 5], [2, 3, 6, 7]]]"
+Einops,Rearrange,"Variant of exercise (5): one image `(c, h, w)` — transpose each channel AND lay them side by side: shape `(w, c·h)`, entry `[x, c·H + y] = img[c][y][x]`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""transposed channels side by side""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> w (c h)').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",46,"[[0, 2, 4, 6], [1, 3, 5, 7]]"
+Einops,Rearrange,"Variant of exercise (6): a batch `(b, c, h, w)` with `b = rows·cols` — arrange the images in a grid of `rows` rows (row-major: image 0 top-left, image 1 to its right), shape `(c, rows·h, cols·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs, rows):
+    """"""grid with a given row count""""""
+    return einops.rearrange(t.tensor(imgs), '(r q) c h w -> c (r h) (q w)', r=rows).tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)
+print(solve(*example))
+",48,"[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]"
+Einops,Rearrange,"Variant of exercise (6): same grid, but the number of COLUMNS is given, shape `(c, (b/cols)·h, cols·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs, cols):
+    """"""grid with a given column count""""""
+    return einops.rearrange(t.tensor(imgs), '(r q) c h w -> c (r h) (q w)', q=cols).tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)
+print(solve(*example))
+",48,"[[[0, 1, 4, 5, 8, 9, 12, 13], [2, 3, 6, 7, 10, 11, 14, 15]]]"
+Einops,Rearrange,"Variant of exercise (6): grayscale batch `(b, h, w)` into a grid with `rows` rows, shape `(rows·h, cols·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs, rows):
+    """"""grayscale grid""""""
+    return einops.rearrange(t.tensor(imgs), '(r q) h w -> (r h) (q w)', r=rows).tolist()
+
+
+example = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 9], [9, 9]], [[0, 0], [0, 0]]], 2)
+print(solve(*example))
+",46,"[[1, 2, 5, 6], [3, 4, 7, 8], [9, 9, 0, 0], [9, 9, 0, 0]]"
+Einops,Rearrange,"Variant of exercise (6): a grid filled COLUMN-major — image 0 top-left, image 1 BELOW it — with `rows` rows, from a batch `(b, c, h, w)`, shape `(c, rows·h, cols·w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs, rows):
+    """"""column-major grid""""""
+    return einops.rearrange(t.tensor(imgs), '(q r) c h w -> c (r h) (q w)', r=rows).tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)
+print(solve(*example))
+",50,"[[[0, 1, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13], [6, 7, 14, 15]]]"
+Einops,Rearrange,"Variant of exercise (7): transpose EVERY image of a batch `(b, c, h, w)` — shape `(b, c, w, h)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""batch transpose""""""
+    return einops.rearrange(t.tensor(imgs), 'b c h w -> b c w h').tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",36,"[[[[0, 2], [1, 3]]], [[[4, 6], [5, 7]]]]"
+Einops,Rearrange,"Variant of exercise (7): move the channel axis of one image from FIRST to LAST — `(c, h, w)` to `(h, w, c)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""channels first to last""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> h w c').tolist()
+
+
+example = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)
+print(solve(*example))
+",36,"[[[0, 4], [1, 5]], [[2, 6], [3, 7]]]"
+Einops,Rearrange,"Variant of exercise (7): a channels-LAST image `(h, w, c)` to channels-first `(c, h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""channels last to first""""""
+    return einops.rearrange(t.tensor(img), 'h w c -> c h w').tolist()
+
+
+example = ([[[0, 4], [1, 5]], [[2, 6], [3, 7]]],)
+print(solve(*example))
+",36,"[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]"
+Einops,Rearrange,"Variant of exercise (7): swap batch and channel of `(b, c, h, w)` — shape `(c, b, h, w)` — so each channel holds the whole batch. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""batch and channel swapped""""""
+    return einops.rearrange(t.tensor(imgs), 'b c h w -> c b h w').tolist()
+
+
+example = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)
+print(solve(*example))
+",38,"[[[[0, 1], [2, 3]], [[0, 1], [2, 3]]], [[[4, 5], [6, 7]], [[4, 5], [6, 7]]]]"
+Einops,Reduce,"Variant of exercise (8): 2×2 MAX-pool one image `(c, h, w)` (h, w even) — shape `(c, h/2, w/2)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""2x2 max pool""""""
+    return einops.reduce(t.tensor(img), 'c (h h2) (w w2) -> c h w', 'max', h2=2, w2=2).tolist()
+
+
+example = ([[[1, 2, 3, 4], [5, 6, 7, 8]]],)
+print(solve(*example))
+",44,"[[[6, 8]]]"
+Einops,Reduce,"Variant of exercise (8): 2×2 MEAN-pool one image `(c, h, w)` of floats — shape `(c, h/2, w/2)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""2x2 mean pool""""""
+    return einops.reduce(t.tensor(img), 'c (h h2) (w w2) -> c h w', 'mean', h2=2, w2=2).tolist()
+
+
+example = ([[[1.0, 3.0], [5.0, 7.0]]],)
+print(solve(*example))
+",44,[[[4.0]]]
+Einops,Reduce,"Variant of exercise (8): shrink a grayscale image `(h, w)` by a factor `k` in both directions taking the MIN of each k×k window, shape `(h/k, w/k)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(img, k):
+    """"""k x k min pool""""""
+    return einops.reduce(t.tensor(img), '(h k1) (w k2) -> h w', 'min', k1=k, k2=k).tolist()
+
+
+example = ([[4, 3, 2, 1], [8, 7, 6, 5]], 2)
+print(solve(*example))
+",46,"[[3, 1]]"
+Einops,Reduce,"Variant of exercise (8): a batch `(b, c, h, w)` — 2×2 max-pool every image AND lay the batch out side by side, shape `(c, h/2, b·w/2)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""pool then side by side""""""
+    return einops.reduce(t.tensor(imgs), 'b c (h h2) (w w2) -> c h (b w)', 'max', h2=2, w2=2).tolist()
+
+
+example = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)
+print(solve(*example))
+",50,"[[[3, 7]]]"
+Einops,Rearrange,Variant of (A1): build `t.arange(n)` and reshape it with `einops.rearrange` into `h` rows (row-major). Return the nested list.,"import torch as t
+import einops
+
+
+def solve(n, h):
+    """"""arange into h rows""""""
+    return einops.rearrange(t.arange(n), '(h w) -> h w', h=h).tolist()
+
+
+example = (6, 3)
+print(solve(*example))
+",36,"[[0, 1], [2, 3], [4, 5]]"
+Einops,Rearrange,"Variant of (A1): build `t.arange(n)` and fill a `(h, w)` grid COLUMN-major (consecutive numbers run down each column) with one `einops.rearrange` call, `h` given. Return the nested list.","import torch as t
+import einops
+
+
+def solve(n, h):
+    """"""column-major fill""""""
+    return einops.rearrange(t.arange(n), '(w h) -> h w', h=h).tolist()
+
+
+example = (6, 3)
+print(solve(*example))
+",42,"[[0, 3], [1, 4], [2, 5]]"
+Einops,Rearrange,"Variant of (A1): build `t.arange(n)` and split it into a 3-D `(a, b, c)` block with `a` and `b` given, row-major. Return the nested list.","import torch as t
+import einops
+
+
+def solve(n, a, b):
+    """"""three-way split""""""
+    return einops.rearrange(t.arange(n), '(a b c) -> a b c', a=a, b=b).tolist()
+
+
+example = (6, 1, 2)
+print(solve(*example))
+",42,"[[[0, 1, 2], [3, 4, 5]]]"
+Einops,Rearrange,"Variant of (A1): build `t.arange(start, stop)` and reshape it into `w` COLUMNS (row-major) with `einops.rearrange`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(start, stop, w):
+    """"""arange into w columns""""""
+    return einops.rearrange(t.arange(start, stop), '(h w) -> h w', w=w).tolist()
+
+
+example = (3, 9, 2)
+print(solve(*example))
+",38,"[[3, 4], [5, 6], [7, 8]]"
+Einops,Rearrange,Variant of (A2): a flat list of values — split it into `h` rows (row-major) with `einops.rearrange` on `t.tensor(vals)`. Return the nested list.,"import torch as t
+import einops
+
+
+def solve(vals, h):
+    """"""list into h rows""""""
+    return einops.rearrange(t.tensor(vals), '(h w) -> h w', h=h).tolist()
+
+
+example = ([1, 2, 3, 4, 5, 6], 2)
+print(solve(*example))
+",36,"[[1, 2, 3], [4, 5, 6]]"
+Einops,Rearrange,"Variant of (A2): a flat list — split into rows of length `w` and then TRANSPOSE, so the result is `(w, h)`, with one `einops.rearrange` call. Return the nested list.","import torch as t
+import einops
+
+
+def solve(vals, w):
+    """"""split and transpose""""""
+    return einops.rearrange(t.tensor(vals), '(h w) -> w h', w=w).tolist()
+
+
+example = ([1, 2, 3, 4, 5, 6], 3)
+print(solve(*example))
+",42,"[[1, 4], [2, 5], [3, 6]]"
+Einops,Rearrange,"Variant of (A2): a flat list of `b·h·w` values — split it into `b` matrices of `h` rows each, shape `(b, h, w)`. Return the nested list.","import torch as t
+import einops
+
+
+def solve(vals, b, h):
+    """"""list into a batch of matrices""""""
+    return einops.rearrange(t.tensor(vals), '(b h w) -> b h w', b=b, h=h).tolist()
+
+
+example = ([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)
+print(solve(*example))
+",42,"[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]"
+Einops,Rearrange,"Variant of (A2): a `(h, w)` nested list — FLATTEN it back to one row-major list with `einops.rearrange`. Return the list.","import torch as t
+import einops
+
+
+def solve(grid):
+    """"""grid back to a list""""""
+    return einops.rearrange(t.tensor(grid), 'h w -> (h w)').tolist()
+
+
+example = ([[1, 2], [3, 4]],)
+print(solve(*example))
+",34,"[1, 2, 3, 4]"
+Einops,Reduce,"Variant of (B1): `temps` is a flat list of daily readings, `7·weeks` long. Return the MAX of each week as a list, via `einops.reduce`.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""weekly maximum""""""
+    return einops.reduce(t.tensor(temps), '(h 7) -> h', 'max').tolist()
+
+
+example = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)
+print(solve(*example))
+",38,"[75.0, 75.0]"
+Einops,Reduce,Variant of (B1): readings come in blocks of `k` days (k given) instead of 7. Return the mean of each block as a list.,"import torch as t
+import einops
+
+
+def solve(temps, k):
+    """"""block means of length k""""""
+    return einops.reduce(t.tensor(temps), '(h k) -> h', 'mean', k=k).tolist()
+
+
+example = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)
+print(solve(*example))
+",40,"[4.0, 10.0]"
+Einops,Reduce,Variant of (B1): return the TOTAL (sum) of each week's readings as a list.,"import torch as t
+import einops
+
+
+def solve(temps):
+    """"""weekly totals""""""
+    return einops.reduce(t.tensor(temps), '(h 7) -> h', 'sum').tolist()
+
+
+example = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)
+print(solve(*example))
+",36,"[28.0, 70.0]"
+Einops,Reduce,"Variant of (B1): `temps` is `(weeks, 7)` as a nested list — return the mean of each DAY-OF-WEEK across all weeks (7 numbers) as a list.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""day-of-week means""""""
+    return einops.reduce(t.tensor(temps), 'w d -> d', 'mean').tolist()
+
+
+example = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],)
+print(solve(*example))
+",40,"[2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]"
+Einops,Deep Learning,"Variant of (B2): for each day return the difference from that week's MAXIMUM (a list the same length as `temps`) — reduce, repeat back, subtract.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""difference from weekly max""""""
+    x = t.tensor(temps)
+    mx = einops.reduce(x, '(h 7) -> h', 'max')
+    return (x - einops.repeat(mx, 'h -> (h 7)')).tolist()
+
+
+example = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)
+print(solve(*example))
+",44,"[-6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+Einops,Deep Learning,Variant of (B2): blocks are `k` days long (k given). Return each day's difference from its block's mean as a list.,"import torch as t
+import einops
+
+
+def solve(temps, k):
+    """"""difference from block mean, k days""""""
+    x = t.tensor(temps)
+    avg = einops.reduce(x, '(h k) -> h', 'mean', k=k)
+    return (x - einops.repeat(avg, 'h -> (h k)', k=k)).tolist()
+
+
+example = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)
+print(solve(*example))
+",46,"[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+Einops,Deep Learning,"Variant of (B2): return each day's reading as a RATIO to its week's mean (day / weekly mean), a list.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""ratio to weekly mean""""""
+    x = t.tensor(temps)
+    avg = einops.reduce(x, '(h 7) -> h', 'mean')
+    return (x / einops.repeat(avg, 'h -> (h 7)')).tolist()
+
+
+example = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)
+print(solve(*example))
+",44,"[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+Einops,Deep Learning,"Variant of (B2): `temps` is `(weeks, 7)` as a nested list. Return each day's difference from its week's mean, same shape, as a nested list — reduce over days and repeat back along the day axis.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""2-D weekly differences""""""
+    x = t.tensor(temps)
+    avg = einops.reduce(x, 'w d -> w', 'mean')
+    return (x - einops.repeat(avg, 'w -> w d', d=x.shape[1])).tolist()
+
+
+example = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0]],)
+print(solve(*example))
+",46,"[[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]"
+Einops,Deep Learning,"Variant of (B3): normalise each day within its week to `(day - week_min) / (week_max - week_min)` — a list the same length as `temps`, each value rounded to 4 decimals. Use `einops.reduce` for the min and max and `einops.repeat` to lay them back out.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""min-max normalisation per week""""""
+    x = t.tensor(temps)
+    lo = einops.repeat(einops.reduce(x, '(h 7) -> h', 'min'), 'h -> (h 7)')
+    hi = einops.repeat(einops.reduce(x, '(h 7) -> h', 'max'), 'h -> (h 7)')
+    return [round(v, 4) for v in ((x - lo) / (hi - lo)).tolist()]
+
+
+example = ([0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0],)
+print(solve(*example))
+",50,"[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]"
+Einops,Deep Learning,"Variant of (B3): z-score each day within blocks of `k` days (k given): `(day - block_mean) / block_std`, using `t.std` for the std (pass `t.std` as the reduction to `einops.reduce`). Return the list, each value rounded to 4 decimals.","import torch as t
+import einops
+
+
+def solve(temps, k):
+    """"""z-score within k-day blocks""""""
+    x = t.tensor(temps)
+    avg = einops.repeat(einops.reduce(x, '(h k) -> h', 'mean', k=k), 'h -> (h k)', k=k)
+    std = einops.repeat(einops.reduce(x, '(h k) -> h', t.std, k=k), 'h -> (h k)', k=k)
+    return [round(v, 4) for v in ((x - avg) / std).tolist()]
+
+
+example = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0], 7)
+print(solve(*example))
+",52,"[-0.4454, 0.1782, -1.069, 2.049, -0.4454, -0.4454, 0.1782, 1.7321, 0.0, 0.0, -1.7321, 0.0, 0.0, 0.0]"
+Einops,Deep Learning,"Variant of (B3): scale each day by its week's std WITHOUT centering — `day / week_std` — using `t.std` as the reduction. Return the list, each value rounded to 4 decimals.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""scale by weekly std""""""
+    x = t.tensor(temps)
+    std = einops.repeat(einops.reduce(x, '(h 7) -> h', t.std), 'h -> (h 7)')
+    return [round(v, 4) for v in (x / std).tolist()]
+
+
+example = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)
+print(solve(*example))
+",48,"[44.2763, 44.8999, 43.6527, 46.7707, 44.2763, 44.2763, 44.8999, 129.9038, 128.1718, 128.1718, 126.4397, 128.1718, 128.1718, 128.1718]"
+Einops,Deep Learning,"Variant of (B3): `temps` is `(weeks, 7)` as a nested list. Return the z-score of each day within its week, same shape (std via `t.std`), each value rounded to 4 decimals, as a nested list.","import torch as t
+import einops
+
+
+def solve(temps):
+    """"""2-D weekly z-scores""""""
+    x = t.tensor(temps)
+    avg = einops.repeat(einops.reduce(x, 'w d -> w', 'mean'), 'w -> w d', d=7)
+    std = einops.repeat(einops.reduce(x, 'w d -> w', t.std), 'w -> w d', d=7)
+    return [[round(v, 4) for v in row] for row in ((x - avg) / std).tolist()]
+
+
+example = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 12.0, 10.0, 12.0, 10.0, 12.0, 10.0]],)
+print(solve(*example))
+",52,"[[-1.3887, -0.9258, -0.4629, 0.0, 0.4629, 0.9258, 1.3887], [-0.8018, 1.069, -0.8018, 1.069, -0.8018, 1.069, -0.8018]]"

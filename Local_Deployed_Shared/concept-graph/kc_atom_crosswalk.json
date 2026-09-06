@@ -10,221 +10,278 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 523,
-  "kcs_covered": 43,
-  "kcs_total": 43,
-  "kcs_measured": 33,
+  "questions_joined": 617,
+  "kcs_covered": 44,
+  "kcs_total": 44,
+  "kcs_measured": 32,
   "atoms_used": 54,
-  "pairs": 85
+  "pairs": 93
  },
  "kcs": {
   "einops.channel-groups-temporal": {
    "n": 8,
-   "reliability": 0.149,
-   "shared_with": 5.7,
+   "reliability": 0.124,
+   "shared_with": 7.0,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "avgpool-reduce",
-     "w": 0.446,
+     "w": 0.533,
      "share": 0.136,
      "spec": 0.489,
      "n": 2
     },
     {
      "a": "einops-rearrange",
-     "w": 0.431,
+     "w": 0.378,
      "share": 0.652,
-     "spec": 0.098,
+     "spec": 0.072,
      "n": 6
     },
     {
      "a": "einops-reduce",
-     "w": 0.123,
+     "w": 0.089,
      "share": 0.212,
-     "spec": 0.086,
+     "spec": 0.052,
      "n": 2
     }
    ]
   },
   "einops.dl-flatten-heads": {
    "n": 5,
-   "reliability": 0.289,
-   "shared_with": 2.5,
+   "reliability": 0.04,
+   "shared_with": 24.2,
    "tier": "topic-proxy",
    "atoms": [
     {
-     "a": "einops-rearrange-flatten",
-     "w": 0.854,
-     "share": 0.247,
-     "spec": 1.0,
-     "n": 2
-    },
-    {
      "a": "einops-rearrange",
-     "w": 0.12,
+     "w": 0.642,
      "share": 0.588,
-     "spec": 0.059,
+     "spec": 0.043,
      "n": 4
     },
     {
+     "a": "einops-rearrange-flatten",
+     "w": 0.246,
+     "share": 0.247,
+     "spec": 0.04,
+     "n": 2
+    },
+    {
      "a": "einops-reduce",
-     "w": 0.025,
+     "w": 0.112,
      "share": 0.164,
-     "spec": 0.045,
+     "spec": 0.027,
      "n": 1
     }
    ]
   },
+  "einops.einsum": {
+   "n": 42,
+   "reliability": 0.964,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "einops-einsum",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.964,
+     "n": 42
+    }
+   ]
+  },
   "einops.grids-montage": {
-   "n": 9,
-   "reliability": 0.146,
-   "shared_with": 5.9,
+   "n": 13,
+   "reliability": 0.139,
+   "shared_with": 6.2,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
-     "w": 1.0,
-     "share": 1.0,
-     "spec": 0.146,
-     "n": 9
+     "w": 0.843,
+     "share": 0.773,
+     "spec": 0.151,
+     "n": 13
+    },
+    {
+     "a": "einops-rearrange-flatten",
+     "w": 0.157,
+     "share": 0.227,
+     "spec": 0.096,
+     "n": 4
     }
    ]
   },
   "einops.merge-axes": {
-   "n": 11,
-   "reliability": 0.181,
-   "shared_with": 4.5,
+   "n": 19,
+   "reliability": 0.213,
+   "shared_with": 3.7,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
-     "w": 1.0,
-     "share": 1.0,
-     "spec": 0.181,
-     "n": 11
+     "w": 0.743,
+     "share": 0.714,
+     "spec": 0.222,
+     "n": 19
+    },
+    {
+     "a": "einops-rearrange-flatten",
+     "w": 0.257,
+     "share": 0.286,
+     "spec": 0.192,
+     "n": 8
     }
    ]
   },
   "einops.patches-space-depth": {
    "n": 10,
-   "reliability": 0.163,
-   "shared_with": 5.1,
+   "reliability": 0.119,
+   "shared_with": 7.4,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.163,
+     "spec": 0.119,
      "n": 10
     }
    ]
   },
   "einops.pattern-language": {
-   "n": 8,
-   "reliability": 0.133,
-   "shared_with": 6.5,
+   "n": 12,
+   "reliability": 0.142,
+   "shared_with": 6.0,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.133,
-     "n": 8
+     "spec": 0.142,
+     "n": 12
     }
    ]
   },
   "einops.pooling": {
-   "n": 6,
-   "reliability": 0.364,
-   "shared_with": 1.7,
-   "tier": "measured",
+   "n": 10,
+   "reliability": 0.28,
+   "shared_with": 2.6,
+   "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-reduce",
-     "w": 0.433,
-     "share": 0.615,
-     "spec": 0.257,
-     "n": 6
+     "w": 0.512,
+     "share": 0.565,
+     "spec": 0.254,
+     "n": 10
     },
     {
      "a": "maxpool-reduce",
-     "w": 0.363,
-     "share": 0.132,
+     "w": 0.265,
+     "share": 0.074,
      "spec": 1.0,
      "n": 2
     },
     {
      "a": "avgpool-reduce",
-     "w": 0.193,
-     "share": 0.138,
+     "w": 0.141,
+     "share": 0.077,
      "spec": 0.511,
      "n": 2
     },
     {
+     "a": "einops-rearrange-flatten",
+     "w": 0.075,
+     "share": 0.219,
+     "spec": 0.096,
+     "n": 4
+    },
+    {
      "a": "broadcasting-rules",
-     "w": 0.009,
-     "share": 0.057,
+     "w": 0.007,
+     "share": 0.032,
      "spec": 0.06,
      "n": 1
     },
     {
      "a": "einops-rearrange",
      "w": 0.001,
-     "share": 0.057,
-     "spec": 0.009,
+     "share": 0.032,
+     "spec": 0.007,
      "n": 1
     }
    ]
   },
   "einops.reduce-model": {
-   "n": 9,
-   "reliability": 0.394,
-   "shared_with": 1.5,
-   "tier": "measured",
+   "n": 13,
+   "reliability": 0.296,
+   "shared_with": 2.4,
+   "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-reduce",
-     "w": 0.797,
-     "share": 0.8,
-     "spec": 0.393,
-     "n": 9
+     "w": 0.773,
+     "share": 0.68,
+     "spec": 0.337,
+     "n": 13
     },
     {
      "a": "global-average-pool",
-     "w": 0.136,
-     "share": 0.054,
+     "w": 0.109,
+     "share": 0.032,
      "spec": 1.0,
      "n": 1
     },
     {
+     "a": "einops-rearrange-flatten",
+     "w": 0.065,
+     "share": 0.2,
+     "spec": 0.096,
+     "n": 4
+    },
+    {
      "a": "broadcasting-rules",
-     "w": 0.067,
-     "share": 0.146,
+     "w": 0.054,
+     "share": 0.088,
      "spec": 0.18,
      "n": 3
     }
    ]
   },
   "einops.repeat-model": {
-   "n": 10,
-   "reliability": 0.966,
-   "shared_with": 0.0,
+   "n": 30,
+   "reliability": 0.702,
+   "shared_with": 0.4,
    "tier": "measured",
    "atoms": [
     {
      "a": "einops-repeat",
-     "w": 0.942,
-     "share": 0.944,
-     "spec": 0.964,
-     "n": 10
+     "w": 0.843,
+     "share": 0.6,
+     "spec": 0.987,
+     "n": 30
+    },
+    {
+     "a": "einops-rearrange-flatten",
+     "w": 0.095,
+     "share": 0.233,
+     "spec": 0.288,
+     "n": 12
+    },
+    {
+     "a": "einops-reduce",
+     "w": 0.044,
+     "share": 0.155,
+     "spec": 0.197,
+     "n": 8
     },
     {
      "a": "einops-repeat-broadcast",
-     "w": 0.058,
-     "share": 0.056,
+     "w": 0.018,
+     "share": 0.013,
      "spec": 1.0,
      "n": 1
     }
@@ -232,59 +289,66 @@
   },
   "einops.singleton-and-lists": {
    "n": 8,
-   "reliability": 0.129,
-   "shared_with": 6.7,
+   "reliability": 0.095,
+   "shared_with": 9.6,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.129,
+     "spec": 0.095,
      "n": 8
     }
    ]
   },
   "einops.split-axes": {
-   "n": 5,
-   "reliability": 0.082,
-   "shared_with": 11.2,
+   "n": 13,
+   "reliability": 0.165,
+   "shared_with": 5.1,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-rearrange",
-     "w": 1.0,
-     "share": 1.0,
-     "spec": 0.082,
-     "n": 5
+     "w": 0.565,
+     "share": 0.627,
+     "spec": 0.149,
+     "n": 13
+    },
+    {
+     "a": "einops-rearrange-flatten",
+     "w": 0.435,
+     "share": 0.373,
+     "spec": 0.192,
+     "n": 8
     }
    ]
   },
   "numpy.aggregations": {
    "n": 8,
-   "reliability": 0.332,
-   "shared_with": 2.0,
+   "reliability": 0.308,
+   "shared_with": 2.2,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "assert-shape-pattern",
-     "w": 0.595,
+     "w": 0.641,
      "share": 0.198,
      "spec": 1.0,
      "n": 2
     },
     {
      "a": "any-reduce-axis",
-     "w": 0.224,
+     "w": 0.241,
      "share": 0.247,
      "spec": 0.301,
      "n": 2
     },
     {
      "a": "einops-reduce",
-     "w": 0.181,
+     "w": 0.118,
      "share": 0.556,
-     "spec": 0.108,
+     "spec": 0.065,
      "n": 5
     }
    ]
@@ -313,36 +377,36 @@
   },
   "numpy.axis-reductions": {
    "n": 8,
-   "reliability": 0.678,
+   "reliability": 0.666,
    "shared_with": 0.5,
    "tier": "measured",
    "atoms": [
     {
      "a": "sum-back-expand-broadcast",
-     "w": 0.598,
+     "w": 0.61,
      "share": 0.406,
      "spec": 1.0,
      "n": 4
     },
     {
      "a": "softmax-from-logits",
-     "w": 0.218,
+     "w": 0.222,
      "share": 0.148,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "log-sum-exp-stability",
-     "w": 0.136,
+     "w": 0.139,
      "share": 0.092,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "einops-reduce",
-     "w": 0.048,
+     "w": 0.03,
      "share": 0.354,
-     "spec": 0.092,
+     "spec": 0.056,
      "n": 4
     }
    ]
@@ -378,13 +442,13 @@
   },
   "numpy.broadcasting-rules": {
    "n": 7,
-   "reliability": 0.594,
+   "reliability": 0.592,
    "shared_with": 0.7,
    "tier": "measured",
    "atoms": [
     {
      "a": "broadcasting-rules",
-     "w": 0.851,
+     "w": 0.853,
      "share": 0.853,
      "spec": 0.592,
      "n": 7
@@ -398,9 +462,9 @@
     },
     {
      "a": "einops-repeat",
-     "w": 0.004,
+     "w": 0.001,
      "share": 0.061,
-     "spec": 0.036,
+     "spec": 0.013,
      "n": 1
     }
    ]
@@ -429,63 +493,63 @@
   },
   "numpy.dot-matmul-patterns": {
    "n": 7,
-   "reliability": 0.899,
-   "shared_with": 0.1,
+   "reliability": 0.641,
+   "shared_with": 0.6,
    "tier": "measured",
    "atoms": [
     {
      "a": "matvec",
-     "w": 0.507,
+     "w": 0.71,
      "share": 0.455,
      "spec": 1.0,
      "n": 5
     },
     {
-     "a": "einops-einsum",
-     "w": 0.297,
-     "share": 0.267,
-     "spec": 1.0,
-     "n": 2
-    },
-    {
      "a": "vector-normalize-keepdim",
-     "w": 0.176,
+     "w": 0.247,
      "share": 0.158,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "matmul-2d",
-     "w": 0.02,
+     "w": 0.027,
      "share": 0.119,
      "spec": 0.148,
      "n": 1
+    },
+    {
+     "a": "einops-einsum",
+     "w": 0.015,
+     "share": 0.267,
+     "spec": 0.036,
+     "n": 2
     }
    ]
   },
   "numpy.dtype-astype": {
    "n": 16,
-   "reliability": 0.29,
+   "reliability": 0.289,
    "shared_with": 2.5,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "torch-arange",
-     "w": 0.285,
+     "w": 0.286,
      "share": 0.273,
      "spec": 0.303,
      "n": 3
     },
     {
      "a": "stride-zero-broadcast",
-     "w": 0.279,
+     "w": 0.28,
      "share": 0.081,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "tensor-unbind",
-     "w": 0.248,
+     "w": 0.249,
      "share": 0.072,
      "spec": 1.0,
      "n": 1
@@ -499,9 +563,9 @@
     },
     {
      "a": "einops-reduce",
-     "w": 0.005,
+     "w": 0.003,
      "share": 0.072,
-     "spec": 0.019,
+     "spec": 0.012,
      "n": 1
     }
    ]

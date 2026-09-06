@@ -123,8 +123,8 @@ COLUMN. But per the atom: multiply elementwise, then reduce each row:
 ```
 
 That multiply-then-reduce-an-axis maneuver covers the "batch of dots" tasks
-— and it is the exact pattern einsum notation will name concisely in the
-next course topic.
+— and a later course will name that whole move in one string, with the
+summed axis simply left off the output.
 
 ## Worked example
 

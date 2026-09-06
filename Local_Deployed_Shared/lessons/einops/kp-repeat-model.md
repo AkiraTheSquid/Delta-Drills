@@ -6,6 +6,7 @@ new_syntax: [einops.repeat]
 faded: [317]
 guided: [351]
 independent: [338, 348, 385, 341, 339, 383, 352, 355]
+integrated: [893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 933, 934, 935, 936, 937, 938, 939, 940]
 ---
 
 ## Concept
@@ -140,6 +141,68 @@ BLOCK r times — slow or fast?).
 Also from the bank: q352 (stretch vertically by duplicating each ROW in
 place — '(h k)', new index FASTEST), q355 (slice, stack two images
 vertically, then repeat the strip horizontally).
+
+## Integrated practice
+
+### q893
+copy along width
+
+### q894
+n copies stacked
+
+### q895
+2x2 tiling
+
+### q896
+grayscale to RGB
+
+### q897
+side by side, doubled vertically
+
+### q898
+vertical stack, n copies wide
+
+### q899
+each image doubled in place
+
+### q900
+grayscale stack + double
+
+### q901
+stretch width
+
+### q902
+stretch height by k
+
+### q903
+2x nearest-neighbour upscale
+
+### q904
+anisotropic stretch
+
+### q933
+difference from weekly max
+
+### q934
+difference from block mean, k days
+
+### q935
+ratio to weekly mean
+
+### q936
+2-D weekly differences
+
+### q937
+min-max normalisation per week
+
+### q938
+z-score within k-day blocks
+
+### q939
+scale by weekly std
+
+### q940
+2-D weekly z-scores
 
 ## Misconceptions
 

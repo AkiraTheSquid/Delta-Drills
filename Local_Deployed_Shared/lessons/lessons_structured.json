@@ -4190,7 +4190,7 @@
      "new_syntax": [
       "torch.dot"
      ],
-     "concept_markdown": "The **dot product** of two equal-length vectors \u2014 multiply corresponding\nentries, add them up \u2014 is the atom that all of linear algebra's products are\nbuilt from. PyTorch spells it three interchangeable ways:\n\n```python no-run\nt.dot(a, b)      ==  a @ b  ==  (a * b).sum()\n```\n\nThe third spelling is the important one conceptually: *dot = elementwise\nmultiply + reduction.* Holding the decomposition lets you build variants\n(weighted dots, masked dots, batch dots) instead of hunting for a function\nthat may not exist.\n\n**Matrix @ vector** (`z @ v`, shapes (n, m) @ (m,)): one dot per row of z \u2014\n\"each row dotted with v\" in a single call. Result shape (n,). (Matrix @\nmatrix is one dot per (row, column) pair \u2014 the previous KP.)\n\nCheck one output by hand and the shape rule follows: matmul = a dot per\nrow, so an (n, m) matrix against a length-m vector yields n dots.\n\nWhen the pattern you need is *not* one of the packaged shapes, the\ndecomposition rescues you. \"Dot each row of `a` with the CORRESPONDING row\nof `b`\" (same shapes) is not `a @ b` \u2014 matmul dots every row with every\nCOLUMN. But per the atom: multiply elementwise, then reduce each row:\n\n```python no-run\n(a * b).sum(dim=1)          # row-wise dots\n```\n\nThat multiply-then-reduce-an-axis maneuver covers the \"batch of dots\" tasks\n\u2014 and it is the exact pattern einsum notation will name concisely in the\nnext course topic.",
+     "concept_markdown": "The **dot product** of two equal-length vectors \u2014 multiply corresponding\nentries, add them up \u2014 is the atom that all of linear algebra's products are\nbuilt from. PyTorch spells it three interchangeable ways:\n\n```python no-run\nt.dot(a, b)      ==  a @ b  ==  (a * b).sum()\n```\n\nThe third spelling is the important one conceptually: *dot = elementwise\nmultiply + reduction.* Holding the decomposition lets you build variants\n(weighted dots, masked dots, batch dots) instead of hunting for a function\nthat may not exist.\n\n**Matrix @ vector** (`z @ v`, shapes (n, m) @ (m,)): one dot per row of z \u2014\n\"each row dotted with v\" in a single call. Result shape (n,). (Matrix @\nmatrix is one dot per (row, column) pair \u2014 the previous KP.)\n\nCheck one output by hand and the shape rule follows: matmul = a dot per\nrow, so an (n, m) matrix against a length-m vector yields n dots.\n\nWhen the pattern you need is *not* one of the packaged shapes, the\ndecomposition rescues you. \"Dot each row of `a` with the CORRESPONDING row\nof `b`\" (same shapes) is not `a @ b` \u2014 matmul dots every row with every\nCOLUMN. But per the atom: multiply elementwise, then reduce each row:\n\n```python no-run\n(a * b).sum(dim=1)          # row-wise dots\n```\n\nThat multiply-then-reduce-an-axis maneuver covers the \"batch of dots\" tasks\n\u2014 and a later course will name that whole move in one string, with the\nsummed axis simply left off the output.",
      "worked_example_markdown": "```python\nimport torch as t\n\na = t.tensor([1.0, 2.0, 3.0])\nb = t.tensor([4.0, -5.0, 6.0])\n\n# The atom, three spellings \u2014 same number.\nd = float(t.dot(a, b))\nassert d == float(a @ b) == float((a * b).sum()) == 12.0\nprint(\"a * b (no sum yet):\", a * b)\nprint(\"t.dot:\", d, \"| a @ b:\", float(a @ b), \"| (a*b).sum():\",\n      float((a * b).sum()))\n```\n\nWhy: verifying the three dot spellings agree once buys permanent fluency:\nwhen you see `(x * w).sum()` in someone's code, you now read \"dot\".\n\n```python\nimport torch as t\n\n# Matrix @ vector: row i of the result = (row i of z) . v\nz = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nv = t.tensor([10.0, 1.0])\nzv = z @ v\nassert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1\nprint(tuple(z.shape), \"@\", tuple(v.shape), \"->\", tuple(zv.shape), \":\", zv)\n```\n\nWhy: checking one output by hand (1\u00b710 + 2\u00b71 = 12) anchors \"matmul = a dot\nper row\" \u2014 and predicts the result's shape (n,) without memorizing another\nrule.\n\n```python\nimport torch as t\n\n# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.\np = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nq = t.tensor([[5.0, 6.0],\n              [7.0, 8.0]])\nrow_dots = (p * q).sum(dim=1)\nassert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8\nprint(\"row-wise dots\", row_dots)\nprint(\"p @ q would be something else entirely:\")\nprint(p @ q)\n```\n\nWhy: this case is deliberately a trap \u2014 `p @ q` runs on these square\nmatrices and returns the WRONG thing (full matrix product). Decomposing to\nmultiply+sum(axis=1) is the general escape whenever the packaged products\ndon't match the pairing you need.",
      "segments": [
       {
@@ -4228,7 +4228,7 @@
       {
        "concept_id": "s2-when-doesn-t-fit-multiply-then-reduce-an-axis",
        "title": "when @ doesn't fit \u2014 multiply, then reduce an axis",
-       "concept_markdown": "When the pattern you need is *not* one of the packaged shapes, the\ndecomposition rescues you. \"Dot each row of `a` with the CORRESPONDING row\nof `b`\" (same shapes) is not `a @ b` \u2014 matmul dots every row with every\nCOLUMN. But per the atom: multiply elementwise, then reduce each row:\n\n```python no-run\n(a * b).sum(dim=1)          # row-wise dots\n```\n\nThat multiply-then-reduce-an-axis maneuver covers the \"batch of dots\" tasks\n\u2014 and it is the exact pattern einsum notation will name concisely in the\nnext course topic.",
+       "concept_markdown": "When the pattern you need is *not* one of the packaged shapes, the\ndecomposition rescues you. \"Dot each row of `a` with the CORRESPONDING row\nof `b`\" (same shapes) is not `a @ b` \u2014 matmul dots every row with every\nCOLUMN. But per the atom: multiply elementwise, then reduce each row:\n\n```python no-run\n(a * b).sum(dim=1)          # row-wise dots\n```\n\nThat multiply-then-reduce-an-axis maneuver covers the \"batch of dots\" tasks\n\u2014 and a later course will name that whole move in one string, with the\nsummed axis simply left off the output.",
        "watch_out_markdown": "",
        "worked_example_markdown": "```python\nimport torch as t\n\n# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.\np = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nq = t.tensor([[5.0, 6.0],\n              [7.0, 8.0]])\nrow_dots = (p * q).sum(dim=1)\nassert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8\nprint(\"row-wise dots\", row_dots)\nprint(\"p @ q would be something else entirely:\")\nprint(p @ q)\n```\n\nWhy: this case is deliberately a trap \u2014 `p @ q` runs on these square\nmatrices and returns the WRONG thing (full matrix product). Decomposing to\nmultiply+sum(axis=1) is the general escape whenever the packaged products\ndon't match the pairing you need.",
        "worked_example_code": "import torch as t\n\n# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.\np = t.tensor([[1.0, 2.0],\n              [3.0, 4.0]])\nq = t.tensor([[5.0, 6.0],\n              [7.0, 8.0]])\nrow_dots = (p * q).sum(dim=1)\nassert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8\nprint(\"row-wise dots\", row_dots)\nprint(\"p @ q would be something else entirely:\")\nprint(p @ q)\n",
@@ -4364,15 +4364,15 @@
      "new_syntax": [
       "einops.rearrange"
      ],
-     "concept_markdown": "`einops.rearrange(tensor, 'PATTERN')` is reshape/transpose with the axes\nspelled out in words. The pattern is two axis lists around an arrow:\n\n> `'b h w c -> b c h w'`\n> \u2014 left side: name each input axis, in order. Right side: the same names,\n> in the output's order.\n\nUnlike einsum's one-letter subscripts, einops names are whole\nspace-separated WORDS (`batch`, `h`, `nh`), and \u2014 the big semantic\ndifference \u2014 **every name on the left must appear on the right** (rearrange\nnever sums; reducing is a different function, later KP). What rearrange\ndoes is exactly what the name-shuffle says:\n\n- `'b h w c -> b c h w'` \u2014 channels-last to channels-first: axis `c` moves\n  to position 1, values untouched.\n- `'b t d -> t b d'` \u2014 batch-first to time-first.\n- `'h w -> w h'` \u2014 a 2-D transpose.\n\nWhy this beats `x.permute(0, 3, 1, 2)`: the pattern is\nself-verifying documentation. It states what each axis MEANS, the library\nchecks that the input really has 4 axes, and six months later the intent is\nstill legible. In deep-learning code, layout bugs (bhwc vs bchw) are among\nthe most common and least visible \u2014 naming the axes at every hop is the\nantidote, which is why the ARENA curriculum drills einops before touching\nmodels.\n\nReading discipline (same ritual as einsum): identify each name's position\non the left (what it is) and on the right (where it goes). If a name\nappears exactly once per side, the operation is a pure permutation \u2014 data\nmoves, nothing merges, splits, or disappears. Merging and splitting add\nparentheses to this grammar \u2014 next two KPs.",
-     "worked_example_markdown": "Task: channels-last batch \u2192 channels-first, and batch-first sequence \u2192\ntime-first \u2014 with one-element verification.\n\n```python\nimport torch as t\nimport einops\n\narr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST\n\n# Name the four axes; emit them with c pulled to the front block.\nfirst = einops.rearrange(arr, 'b h w c -> b c h w')\nassert first.shape == (2, 3, 2, 2)\n# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).\nassert arr[1, 0, 1, 2] == first[1, 2, 0, 1]\n\n# Sequence layout swap: batch-first -> time-first.\nseq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)\ntfirst = einops.rearrange(seq, 'b t d -> t b d')\nassert tfirst.shape == (3, 2, 2)\nassert seq[1, 2, 0] == tfirst[2, 1, 0]\n\n# The pattern is checked against reality: wrong axis count = loud error.\ntry:\n    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern\n    raised = False\nexcept Exception as err:\n    raised = True\n    print(\"4-name pattern on 3-D data ->\", type(err).__name__)\nassert raised\n\nprint(\"channels-last\", tuple(arr.shape), \"-> channels-first\",\n      tuple(first.shape))\nprint(\"element (1,0,1,2) moved to (1,2,0,1):\",\n      arr[1, 0, 1, 2].item(), \"==\", first[1, 2, 0, 1].item())\nprint(\"batch-first\", tuple(seq.shape), \"-> time-first\", tuple(tfirst.shape))\n```\n\nWhy each step:\n\n1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same\n   verification you used for einsum relayouts \u2014 indices permute exactly as\n   the names did. One element proves the whole mapping.\n2. Note what the names buy in the sequence example: 'b t d -> t b d' READS\n   as \"time first\"; the transpose-tuple spelling `(1, 0, 2)` says the same\n   thing to the machine and nothing to the reader.\n3. The deliberate error shows einops as a shape CHECKER: patterns carry\n   expectations, and mismatches fail at the call \u2014 not three functions\n   later. This is a feature to lean on, not an annoyance.",
+     "concept_markdown": "`einops.rearrange(tensor, 'PATTERN')` is reshape/transpose with the axes\nspelled out in words. The pattern is two axis lists around an arrow:\n\n> `'b h w c -> b c h w'`\n> \u2014 left side: name each input axis, in order. Right side: the same names,\n> in the output's order.\n\neinops names are whole\nspace-separated WORDS (`batch`, `h`, `nh`), and \u2014 the big semantic\ndifference \u2014 **every name on the left must appear on the right** (rearrange\nnever sums; reducing is a different function, later KP). What rearrange\ndoes is exactly what the name-shuffle says:\n\n- `'b h w c -> b c h w'` \u2014 channels-last to channels-first: axis `c` moves\n  to position 1, values untouched.\n- `'b t d -> t b d'` \u2014 batch-first to time-first.\n- `'h w -> w h'` \u2014 a 2-D transpose.\n\nWhy this beats `x.permute(0, 3, 1, 2)`: the pattern is\nself-verifying documentation. It states what each axis MEANS, the library\nchecks that the input really has 4 axes, and six months later the intent is\nstill legible. In deep-learning code, layout bugs (bhwc vs bchw) are among\nthe most common and least visible \u2014 naming the axes at every hop is the\nantidote, which is why the ARENA curriculum drills einops before touching\nmodels.\n\nReading discipline: identify each name's position\non the left (what it is) and on the right (where it goes). If a name\nappears exactly once per side, the operation is a pure permutation \u2014 data\nmoves, nothing merges, splits, or disappears. Merging and splitting add\nparentheses to this grammar \u2014 next two KPs.",
+     "worked_example_markdown": "Task: channels-last batch \u2192 channels-first, and batch-first sequence \u2192\ntime-first \u2014 with one-element verification.\n\n```python\nimport torch as t\nimport einops\n\narr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST\n\n# Name the four axes; emit them with c pulled to the front block.\nfirst = einops.rearrange(arr, 'b h w c -> b c h w')\nassert first.shape == (2, 3, 2, 2)\n# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).\nassert arr[1, 0, 1, 2] == first[1, 2, 0, 1]\n\n# Sequence layout swap: batch-first -> time-first.\nseq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)\ntfirst = einops.rearrange(seq, 'b t d -> t b d')\nassert tfirst.shape == (3, 2, 2)\nassert seq[1, 2, 0] == tfirst[2, 1, 0]\n\n# The pattern is checked against reality: wrong axis count = loud error.\ntry:\n    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern\n    raised = False\nexcept Exception as err:\n    raised = True\n    print(\"4-name pattern on 3-D data ->\", type(err).__name__)\nassert raised\n\nprint(\"channels-last\", tuple(arr.shape), \"-> channels-first\",\n      tuple(first.shape))\nprint(\"element (1,0,1,2) moved to (1,2,0,1):\",\n      arr[1, 0, 1, 2].item(), \"==\", first[1, 2, 0, 1].item())\nprint(\"batch-first\", tuple(seq.shape), \"-> time-first\", tuple(tfirst.shape))\n```\n\nWhy each step:\n\n1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same\n   verification that works for every relayout \u2014 indices permute exactly as\n   the names did. One element proves the whole mapping.\n2. Note what the names buy in the sequence example: 'b t d -> t b d' READS\n   as \"time first\"; the transpose-tuple spelling `(1, 0, 2)` says the same\n   thing to the machine and nothing to the reader.\n3. The deliberate error shows einops as a shape CHECKER: patterns carry\n   expectations, and mismatches fail at the call \u2014 not three functions\n   later. This is a feature to lean on, not an annoyance.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "`einops.rearrange(tensor, 'PATTERN')` is reshape/transpose with the axes\nspelled out in words. The pattern is two axis lists around an arrow:\n\n> `'b h w c -> b c h w'`\n> \u2014 left side: name each input axis, in order. Right side: the same names,\n> in the output's order.\n\nUnlike einsum's one-letter subscripts, einops names are whole\nspace-separated WORDS (`batch`, `h`, `nh`), and \u2014 the big semantic\ndifference \u2014 **every name on the left must appear on the right** (rearrange\nnever sums; reducing is a different function, later KP). What rearrange\ndoes is exactly what the name-shuffle says:\n\n- `'b h w c -> b c h w'` \u2014 channels-last to channels-first: axis `c` moves\n  to position 1, values untouched.\n- `'b t d -> t b d'` \u2014 batch-first to time-first.\n- `'h w -> w h'` \u2014 a 2-D transpose.\n\nWhy this beats `x.permute(0, 3, 1, 2)`: the pattern is\nself-verifying documentation. It states what each axis MEANS, the library\nchecks that the input really has 4 axes, and six months later the intent is\nstill legible. In deep-learning code, layout bugs (bhwc vs bchw) are among\nthe most common and least visible \u2014 naming the axes at every hop is the\nantidote, which is why the ARENA curriculum drills einops before touching\nmodels.\n\nReading discipline (same ritual as einsum): identify each name's position\non the left (what it is) and on the right (where it goes). If a name\nappears exactly once per side, the operation is a pure permutation \u2014 data\nmoves, nothing merges, splits, or disappears. Merging and splitting add\nparentheses to this grammar \u2014 next two KPs.",
+       "concept_markdown": "`einops.rearrange(tensor, 'PATTERN')` is reshape/transpose with the axes\nspelled out in words. The pattern is two axis lists around an arrow:\n\n> `'b h w c -> b c h w'`\n> \u2014 left side: name each input axis, in order. Right side: the same names,\n> in the output's order.\n\neinops names are whole\nspace-separated WORDS (`batch`, `h`, `nh`), and \u2014 the big semantic\ndifference \u2014 **every name on the left must appear on the right** (rearrange\nnever sums; reducing is a different function, later KP). What rearrange\ndoes is exactly what the name-shuffle says:\n\n- `'b h w c -> b c h w'` \u2014 channels-last to channels-first: axis `c` moves\n  to position 1, values untouched.\n- `'b t d -> t b d'` \u2014 batch-first to time-first.\n- `'h w -> w h'` \u2014 a 2-D transpose.\n\nWhy this beats `x.permute(0, 3, 1, 2)`: the pattern is\nself-verifying documentation. It states what each axis MEANS, the library\nchecks that the input really has 4 axes, and six months later the intent is\nstill legible. In deep-learning code, layout bugs (bhwc vs bchw) are among\nthe most common and least visible \u2014 naming the axes at every hop is the\nantidote, which is why the ARENA curriculum drills einops before touching\nmodels.\n\nReading discipline: identify each name's position\non the left (what it is) and on the right (where it goes). If a name\nappears exactly once per side, the operation is a pure permutation \u2014 data\nmoves, nothing merges, splits, or disappears. Merging and splitting add\nparentheses to this grammar \u2014 next two KPs.",
        "watch_out_markdown": "",
-       "worked_example_markdown": "Task: channels-last batch \u2192 channels-first, and batch-first sequence \u2192\ntime-first \u2014 with one-element verification.\n\n```python\nimport torch as t\nimport einops\n\narr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST\n\n# Name the four axes; emit them with c pulled to the front block.\nfirst = einops.rearrange(arr, 'b h w c -> b c h w')\nassert first.shape == (2, 3, 2, 2)\n# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).\nassert arr[1, 0, 1, 2] == first[1, 2, 0, 1]\n\n# Sequence layout swap: batch-first -> time-first.\nseq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)\ntfirst = einops.rearrange(seq, 'b t d -> t b d')\nassert tfirst.shape == (3, 2, 2)\nassert seq[1, 2, 0] == tfirst[2, 1, 0]\n\n# The pattern is checked against reality: wrong axis count = loud error.\ntry:\n    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern\n    raised = False\nexcept Exception as err:\n    raised = True\n    print(\"4-name pattern on 3-D data ->\", type(err).__name__)\nassert raised\n\nprint(\"channels-last\", tuple(arr.shape), \"-> channels-first\",\n      tuple(first.shape))\nprint(\"element (1,0,1,2) moved to (1,2,0,1):\",\n      arr[1, 0, 1, 2].item(), \"==\", first[1, 2, 0, 1].item())\nprint(\"batch-first\", tuple(seq.shape), \"-> time-first\", tuple(tfirst.shape))\n```\n\nWhy each step:\n\n1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same\n   verification you used for einsum relayouts \u2014 indices permute exactly as\n   the names did. One element proves the whole mapping.\n2. Note what the names buy in the sequence example: 'b t d -> t b d' READS\n   as \"time first\"; the transpose-tuple spelling `(1, 0, 2)` says the same\n   thing to the machine and nothing to the reader.\n3. The deliberate error shows einops as a shape CHECKER: patterns carry\n   expectations, and mismatches fail at the call \u2014 not three functions\n   later. This is a feature to lean on, not an annoyance.",
+       "worked_example_markdown": "Task: channels-last batch \u2192 channels-first, and batch-first sequence \u2192\ntime-first \u2014 with one-element verification.\n\n```python\nimport torch as t\nimport einops\n\narr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST\n\n# Name the four axes; emit them with c pulled to the front block.\nfirst = einops.rearrange(arr, 'b h w c -> b c h w')\nassert first.shape == (2, 3, 2, 2)\n# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).\nassert arr[1, 0, 1, 2] == first[1, 2, 0, 1]\n\n# Sequence layout swap: batch-first -> time-first.\nseq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)\ntfirst = einops.rearrange(seq, 'b t d -> t b d')\nassert tfirst.shape == (3, 2, 2)\nassert seq[1, 2, 0] == tfirst[2, 1, 0]\n\n# The pattern is checked against reality: wrong axis count = loud error.\ntry:\n    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern\n    raised = False\nexcept Exception as err:\n    raised = True\n    print(\"4-name pattern on 3-D data ->\", type(err).__name__)\nassert raised\n\nprint(\"channels-last\", tuple(arr.shape), \"-> channels-first\",\n      tuple(first.shape))\nprint(\"element (1,0,1,2) moved to (1,2,0,1):\",\n      arr[1, 0, 1, 2].item(), \"==\", first[1, 2, 0, 1].item())\nprint(\"batch-first\", tuple(seq.shape), \"-> time-first\", tuple(tfirst.shape))\n```\n\nWhy each step:\n\n1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same\n   verification that works for every relayout \u2014 indices permute exactly as\n   the names did. One element proves the whole mapping.\n2. Note what the names buy in the sequence example: 'b t d -> t b d' READS\n   as \"time first\"; the transpose-tuple spelling `(1, 0, 2)` says the same\n   thing to the machine and nothing to the reader.\n3. The deliberate error shows einops as a shape CHECKER: patterns carry\n   expectations, and mismatches fail at the call \u2014 not three functions\n   later. This is a feature to lean on, not an annoyance.",
        "worked_example_code": "import torch as t\nimport einops\n\narr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST\n\n# Name the four axes; emit them with c pulled to the front block.\nfirst = einops.rearrange(arr, 'b h w c -> b c h w')\nassert first.shape == (2, 3, 2, 2)\n# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).\nassert arr[1, 0, 1, 2] == first[1, 2, 0, 1]\n\n# Sequence layout swap: batch-first -> time-first.\nseq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)\ntfirst = einops.rearrange(seq, 'b t d -> t b d')\nassert tfirst.shape == (3, 2, 2)\nassert seq[1, 2, 0] == tfirst[2, 1, 0]\n\n# The pattern is checked against reality: wrong axis count = loud error.\ntry:\n    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern\n    raised = False\nexcept Exception as err:\n    raised = True\n    print(\"4-name pattern on 3-D data ->\", type(err).__name__)\nassert raised\n\nprint(\"channels-last\", tuple(arr.shape), \"-> channels-first\",\n      tuple(first.shape))\nprint(\"element (1,0,1,2) moved to (1,2,0,1):\",\n      arr[1, 0, 1, 2].item(), \"==\", first[1, 2, 0, 1].item())\nprint(\"batch-first\", tuple(seq.shape), \"-> time-first\", tuple(tfirst.shape))\n",
        "faded_items": [
         {
@@ -4402,7 +4402,24 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 913,
+       "prompt": "batch transpose"
+      },
+      {
+       "question_id": 914,
+       "prompt": "channels first to last"
+      },
+      {
+       "question_id": 915,
+       "prompt": "channels last to first"
+      },
+      {
+       "question_id": 916,
+       "prompt": "batch and channel swapped"
+      }
+     ],
      "independent_items": [
       335,
       330,
@@ -4411,7 +4428,7 @@
       327,
       344
      ],
-     "misconceptions_markdown": "- **\"einops names are single characters like einsum.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon.",
+     "misconceptions_markdown": "- **\"einops names are single characters.\"** \u2014 They're\n  space-separated words: `'batch height width channels -> ...'` is legal and\n  sometimes clearest. The space is the separator; 'bhwc' would be ONE axis\n  named bhwc.\n- **\"rearrange can drop an axis I don't need.\"** \u2014 Every input name must\n  appear in the output; rearrange is lossless by design. Dropping = summing\n  or selecting, which are reduce (later KP) or plain indexing.\n- **\"It's just transpose with extra steps.\"** \u2014 It's transpose PLUS shape\n  verification PLUS documentation. The pattern fails loudly when the input\n  doesn't match the declared layout \u2014 the check you didn't know you needed\n  until a bhwc/bchw bug eats an afternoon.",
      "notes_markdown": ""
     },
     {
@@ -4474,7 +4491,40 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 889,
+       "prompt": "batch side by side"
+      },
+      {
+       "question_id": 890,
+       "prompt": "vertical stack, channels-last"
+      },
+      {
+       "question_id": 891,
+       "prompt": "channels stacked vertically"
+      },
+      {
+       "question_id": 892,
+       "prompt": "batch and space into one axis"
+      },
+      {
+       "question_id": 905,
+       "prompt": "channels interleaved by row"
+      },
+      {
+       "question_id": 906,
+       "prompt": "channels interleaved by column"
+      },
+      {
+       "question_id": 907,
+       "prompt": "channels side by side, per image"
+      },
+      {
+       "question_id": 908,
+       "prompt": "transposed channels side by side"
+      }
+     ],
      "independent_items": [
       342,
       314,
@@ -4533,7 +4583,40 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 921,
+       "prompt": "arange into h rows"
+      },
+      {
+       "question_id": 922,
+       "prompt": "column-major fill"
+      },
+      {
+       "question_id": 923,
+       "prompt": "three-way split"
+      },
+      {
+       "question_id": 924,
+       "prompt": "arange into w columns"
+      },
+      {
+       "question_id": 925,
+       "prompt": "list into h rows"
+      },
+      {
+       "question_id": 926,
+       "prompt": "split and transpose"
+      },
+      {
+       "question_id": 927,
+       "prompt": "list into a batch of matrices"
+      },
+      {
+       "question_id": 928,
+       "prompt": "grid back to a list"
+      }
+     ],
      "independent_items": [
       337,
       320,
@@ -4645,7 +4728,24 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 909,
+       "prompt": "grid with a given row count"
+      },
+      {
+       "question_id": 910,
+       "prompt": "grid with a given column count"
+      },
+      {
+       "question_id": 911,
+       "prompt": "grayscale grid"
+      },
+      {
+       "question_id": 912,
+       "prompt": "column-major grid"
+      }
+     ],
      "independent_items": [
       329,
       382,
@@ -4736,15 +4836,15 @@
      "new_syntax": [
       "einops.reduce"
      ],
-     "concept_markdown": "Where rearrange must keep every axis, **`einops.reduce` is allowed to drop\nthem \u2014 and you say HOW the dropped values collapse**:\n\n> `einops.reduce(x, 'b c h w -> b', 'mean')`\n> \u2014 c, h, w vanish from the pattern, so each output element is the mean\n> over everything that vanished. The third argument names the aggregation:\n> `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.\n\nThis is PyTorch's `dim=` reductions with the einsum-style deletion rule, in\neinops clothing \u2014 three notations, one concept:\n\n- `x.mean(dim=(1, 2, 3))` \u2014 axes by number.\n- `t.einsum('bchw->b', x) / (c*h*w)` \u2014 sum by deletion, mean by hand.\n- `reduce(x, 'b c h w -> b', 'mean')` \u2014 deletion by name, aggregation\n  declared. (Note: unlike einsum, reduce does means/maxes natively \u2014 no\n  divide-outside dance.)\n\nDetails that matter in the drills:\n\n- **Partial drops**: `'b h w c -> b h w'` maxes only over channels;\n  `'b c h w -> b c'` averages each channel map. Any subset of axes can go.\n- **Keep a singleton**: writing `1` (or `()` \u2014 same thing) in the output\n  where the dropped axis was \u2014 `'h w c -> 1 w c'` \u2014 keeps the result\n  broadcast-ready against the input, einops' keepdim. This is exactly the\n  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each\n  column's max\u2026) want the singleton kept.\n- **Reduce + rearrange compose**: the pattern can still permute the\n  survivors while reducing (`'b c h w -> c b'` is legal), and \u2014 the next\n  KP \u2014 parenthesized factors turn reduce into pooling.",
-     "worked_example_markdown": "Task: per-image scalar means; per-column max keeping a singleton row; and a\ngrayscale via mean-over-channels with the channel kept.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\nassert (img - colmax).shape == (2, 2)\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nassert gray.shape == (2, 2, 2, 1)\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape),\n      \"-> broadcasts back to\", tuple((img - colmax).shape))\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n```\n\nWhy each step:\n\n1. The `dim=` twin assert carries your existing axis intuition into the new\n   notation: names deleted \u2194 axis numbers listed. After a few reps the\n   named form usually reads faster \u2014 especially at rank 4+.\n2. In the singleton example, the follow-up subtraction is the POINT: the\n   kept `1` is what makes reduce-then-operate pipelines shape-safe, same as\n   keepdims in np-3.\n3. The grayscale line matches a drill's exact contract ('-> b h w 1');\n   note reduce handles mean natively \u2014 resist the einsum habit of dividing\n   afterwards.",
+     "concept_markdown": "Where rearrange must keep every axis, **`einops.reduce` is allowed to drop\nthem \u2014 and you say HOW the dropped values collapse**:\n\n> `einops.reduce(x, 'b c h w -> b', 'mean')`\n> \u2014 c, h, w vanish from the pattern, so each output element is the mean\n> over everything that vanished. The third argument names the aggregation:\n> `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.\n\nThis is PyTorch's `dim=` reductions with a deletion rule \u2014 an axis you leave\noff the right-hand side is the axis that collapses \u2014 in einops clothing.\nTwo notations, one concept:\n\n- `x.mean(dim=(1, 2, 3))` \u2014 axes by number.\n- `reduce(x, 'b c h w -> b', 'mean')` \u2014 deletion by name, aggregation\n  declared: means and maxes come out finished, nothing to divide afterwards.\n\nDetails that matter in the drills:\n\n- **Partial drops**: `'b h w c -> b h w'` maxes only over channels;\n  `'b c h w -> b c'` averages each channel map. Any subset of axes can go.\n- **Keep a singleton**: writing `1` (or `()` \u2014 same thing) in the output\n  where the dropped axis was \u2014 `'h w c -> 1 w c'` \u2014 keeps the result\n  broadcast-ready against the input, einops' keepdim. This is exactly the\n  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each\n  column's max\u2026) want the singleton kept.\n- **Reduce + rearrange compose**: the pattern can still permute the\n  survivors while reducing (`'b c h w -> c b'` is legal), and \u2014 the next\n  KP \u2014 parenthesized factors turn reduce into pooling.",
+     "worked_example_markdown": "Task: per-image scalar means; per-column max keeping a singleton row; and a\ngrayscale via mean-over-channels with the channel kept.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\nassert (img - colmax).shape == (2, 2)\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nassert gray.shape == (2, 2, 2, 1)\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape),\n      \"-> broadcasts back to\", tuple((img - colmax).shape))\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n```\n\nWhy each step:\n\n1. The `dim=` twin assert carries your existing axis intuition into the new\n   notation: names deleted \u2194 axis numbers listed. After a few reps the\n   named form usually reads faster \u2014 especially at rank 4+.\n2. In the singleton example, the follow-up subtraction is the POINT: the\n   kept `1` is what makes reduce-then-operate pipelines shape-safe, same as\n   keepdims in np-3.\n3. The grayscale line matches a drill's exact contract ('-> b h w 1');\n   note reduce handles mean natively \u2014 there is nothing to divide\n   afterwards.",
      "segments": [
       {
        "concept_id": "s0-",
        "title": "",
-       "concept_markdown": "Where rearrange must keep every axis, **`einops.reduce` is allowed to drop\nthem \u2014 and you say HOW the dropped values collapse**:\n\n> `einops.reduce(x, 'b c h w -> b', 'mean')`\n> \u2014 c, h, w vanish from the pattern, so each output element is the mean\n> over everything that vanished. The third argument names the aggregation:\n> `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.\n\nThis is PyTorch's `dim=` reductions with the einsum-style deletion rule, in\neinops clothing \u2014 three notations, one concept:\n\n- `x.mean(dim=(1, 2, 3))` \u2014 axes by number.\n- `t.einsum('bchw->b', x) / (c*h*w)` \u2014 sum by deletion, mean by hand.\n- `reduce(x, 'b c h w -> b', 'mean')` \u2014 deletion by name, aggregation\n  declared. (Note: unlike einsum, reduce does means/maxes natively \u2014 no\n  divide-outside dance.)\n\nDetails that matter in the drills:\n\n- **Partial drops**: `'b h w c -> b h w'` maxes only over channels;\n  `'b c h w -> b c'` averages each channel map. Any subset of axes can go.\n- **Keep a singleton**: writing `1` (or `()` \u2014 same thing) in the output\n  where the dropped axis was \u2014 `'h w c -> 1 w c'` \u2014 keeps the result\n  broadcast-ready against the input, einops' keepdim. This is exactly the\n  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each\n  column's max\u2026) want the singleton kept.\n- **Reduce + rearrange compose**: the pattern can still permute the\n  survivors while reducing (`'b c h w -> c b'` is legal), and \u2014 the next\n  KP \u2014 parenthesized factors turn reduce into pooling.",
+       "concept_markdown": "Where rearrange must keep every axis, **`einops.reduce` is allowed to drop\nthem \u2014 and you say HOW the dropped values collapse**:\n\n> `einops.reduce(x, 'b c h w -> b', 'mean')`\n> \u2014 c, h, w vanish from the pattern, so each output element is the mean\n> over everything that vanished. The third argument names the aggregation:\n> `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.\n\nThis is PyTorch's `dim=` reductions with a deletion rule \u2014 an axis you leave\noff the right-hand side is the axis that collapses \u2014 in einops clothing.\nTwo notations, one concept:\n\n- `x.mean(dim=(1, 2, 3))` \u2014 axes by number.\n- `reduce(x, 'b c h w -> b', 'mean')` \u2014 deletion by name, aggregation\n  declared: means and maxes come out finished, nothing to divide afterwards.\n\nDetails that matter in the drills:\n\n- **Partial drops**: `'b h w c -> b h w'` maxes only over channels;\n  `'b c h w -> b c'` averages each channel map. Any subset of axes can go.\n- **Keep a singleton**: writing `1` (or `()` \u2014 same thing) in the output\n  where the dropped axis was \u2014 `'h w c -> 1 w c'` \u2014 keeps the result\n  broadcast-ready against the input, einops' keepdim. This is exactly the\n  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each\n  column's max\u2026) want the singleton kept.\n- **Reduce + rearrange compose**: the pattern can still permute the\n  survivors while reducing (`'b c h w -> c b'` is legal), and \u2014 the next\n  KP \u2014 parenthesized factors turn reduce into pooling.",
        "watch_out_markdown": "",
-       "worked_example_markdown": "Task: per-image scalar means; per-column max keeping a singleton row; and a\ngrayscale via mean-over-channels with the channel kept.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\nassert (img - colmax).shape == (2, 2)\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nassert gray.shape == (2, 2, 2, 1)\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape),\n      \"-> broadcasts back to\", tuple((img - colmax).shape))\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n```\n\nWhy each step:\n\n1. The `dim=` twin assert carries your existing axis intuition into the new\n   notation: names deleted \u2194 axis numbers listed. After a few reps the\n   named form usually reads faster \u2014 especially at rank 4+.\n2. In the singleton example, the follow-up subtraction is the POINT: the\n   kept `1` is what makes reduce-then-operate pipelines shape-safe, same as\n   keepdims in np-3.\n3. The grayscale line matches a drill's exact contract ('-> b h w 1');\n   note reduce handles mean natively \u2014 resist the einsum habit of dividing\n   afterwards.",
+       "worked_example_markdown": "Task: per-image scalar means; per-column max keeping a singleton row; and a\ngrayscale via mean-over-channels with the channel kept.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\nassert (img - colmax).shape == (2, 2)\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nassert gray.shape == (2, 2, 2, 1)\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape),\n      \"-> broadcasts back to\", tuple((img - colmax).shape))\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n```\n\nWhy each step:\n\n1. The `dim=` twin assert carries your existing axis intuition into the new\n   notation: names deleted \u2194 axis numbers listed. After a few reps the\n   named form usually reads faster \u2014 especially at rank 4+.\n2. In the singleton example, the follow-up subtraction is the POINT: the\n   kept `1` is what makes reduce-then-operate pipelines shape-safe, same as\n   keepdims in np-3.\n3. The grayscale line matches a drill's exact contract ('-> b h w 1');\n   note reduce handles mean natively \u2014 there is nothing to divide\n   afterwards.",
        "worked_example_code": "import torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\nassert (img - colmax).shape == (2, 2)\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nassert gray.shape == (2, 2, 2, 1)\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape),\n      \"-> broadcasts back to\", tuple((img - colmax).shape))\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n",
        "faded_items": [
         {
@@ -4774,7 +4874,24 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 929,
+       "prompt": "weekly maximum"
+      },
+      {
+       "question_id": 930,
+       "prompt": "block means of length k"
+      },
+      {
+       "question_id": 931,
+       "prompt": "weekly totals"
+      },
+      {
+       "question_id": 932,
+       "prompt": "day-of-week means"
+      }
+     ],
      "independent_items": [
       326,
       367,
@@ -4784,7 +4901,7 @@
       340,
       370
      ],
-     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"Means still need dividing outside, like einsum.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively. The divide-outside habit\n  is einsum-specific.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade.",
+     "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce requires it (something must reduce). They share\n  the pattern grammar, not the contract.\n- **\"A mean is a sum you divide afterwards.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively; dividing a `'mean'` result\n  by the window size double-counts the normalisation.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade.",
      "notes_markdown": ""
     },
     {
@@ -4833,7 +4950,24 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 917,
+       "prompt": "2x2 max pool"
+      },
+      {
+       "question_id": 918,
+       "prompt": "2x2 mean pool"
+      },
+      {
+       "question_id": 919,
+       "prompt": "k x k min pool"
+      },
+      {
+       "question_id": 920,
+       "prompt": "pool then side by side"
+      }
+     ],
      "independent_items": [
       368,
       354,
@@ -4899,7 +5033,88 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 893,
+       "prompt": "copy along width"
+      },
+      {
+       "question_id": 894,
+       "prompt": "n copies stacked"
+      },
+      {
+       "question_id": 895,
+       "prompt": "2x2 tiling"
+      },
+      {
+       "question_id": 896,
+       "prompt": "grayscale to RGB"
+      },
+      {
+       "question_id": 897,
+       "prompt": "side by side, doubled vertically"
+      },
+      {
+       "question_id": 898,
+       "prompt": "vertical stack, n copies wide"
+      },
+      {
+       "question_id": 899,
+       "prompt": "each image doubled in place"
+      },
+      {
+       "question_id": 900,
+       "prompt": "grayscale stack + double"
+      },
+      {
+       "question_id": 901,
+       "prompt": "stretch width"
+      },
+      {
+       "question_id": 902,
+       "prompt": "stretch height by k"
+      },
+      {
+       "question_id": 903,
+       "prompt": "2x nearest-neighbour upscale"
+      },
+      {
+       "question_id": 904,
+       "prompt": "anisotropic stretch"
+      },
+      {
+       "question_id": 933,
+       "prompt": "difference from weekly max"
+      },
+      {
+       "question_id": 934,
+       "prompt": "difference from block mean, k days"
+      },
+      {
+       "question_id": 935,
+       "prompt": "ratio to weekly mean"
+      },
+      {
+       "question_id": 936,
+       "prompt": "2-D weekly differences"
+      },
+      {
+       "question_id": 937,
+       "prompt": "min-max normalisation per week"
+      },
+      {
+       "question_id": 938,
+       "prompt": "z-score within k-day blocks"
+      },
+      {
+       "question_id": 939,
+       "prompt": "scale by weekly std"
+      },
+      {
+       "question_id": 940,
+       "prompt": "2-D weekly z-scores"
+      }
+     ],
      "independent_items": [
       338,
       348,
@@ -5493,6 +5708,325 @@
       838
      ],
      "misconceptions_markdown": "- **\"Build each ray, then stack.\"** It gives the same numbers, but the\n  exercise is teaching the allocate-then-write habit that every later\n  chapter uses. One canvas, two column writes.\n- **\"Row 0 / row 1 are x / y.\"** Rows are origin and direction; the *columns*\n  are x, y, z. `rays[:, 1, 1]` is direction-y for every ray.\n- **\"`linspace(0, y_limit)`.\"** The fan is symmetric: from `-y_limit` to\n  `+y_limit`.",
+     "notes_markdown": ""
+    }
+   ]
+  },
+  {
+   "id": "es-1",
+   "topic": "Einops",
+   "title": "Einsum",
+   "subtopic_key": "Einops: Einsum",
+   "kps": [
+    {
+     "kc": "einops.einsum",
+     "title": "einops.einsum: name the axes, drop the ones to sum",
+     "supporting_kcs": [
+      "einops.pattern-language",
+      "numpy.axis-reductions"
+     ],
+     "new_syntax": [
+      "einops.einsum"
+     ],
+     "concept_markdown": "`einops.einsum` is the einops spelling of Einstein summation: the tensors come\nfirst, the pattern comes LAST, and the pattern names every axis of every\noperand on the left of `->` and lists the axes you want to KEEP on the right.\nWhatever name is missing from the right-hand side is summed away.\n\nWith a single operand that gives four classics in one notation (Rockt\u00e4schel\n\u00a72.1\u20132.4, `a = arange(6).reshape(2, 3)`):\n\n| pattern | result | what it is |\n|---|---|---|\n| `\"i j -> j i\"` | shape (3, 2) | transpose \u2014 same names, new order |\n| `\"i j ->\"` | `15` | sum of everything \u2014 no name kept |\n| `\"i j -> j\"` | `[3, 5, 7]` | column sums \u2014 `i` summed, `j` kept |\n| `\"i j -> i\"` | `[3, 12]` | row sums \u2014 `j` summed, `i` kept |\n\nTwo things carry over from `rearrange`: names are whole words separated by\nspaces (`\"batch seq -> seq batch\"` is fine), and the pattern is the whole\nderivation \u2014 no `dim=` to look up, no `.T`.\n\nWith two tensors, separate their axis lists with a comma. A name that appears\nin BOTH operands pairs the elements up: they are multiplied together, and if\nthe name is absent from the right-hand side the products are summed. That is\nall matrix multiplication is (Rockt\u00e4schel \u00a72.5\u20132.6):\n\n- `\"i j, j -> i\"` \u2014 matrix \u00d7 vector: `j` is shared and summed, `i` survives.\n- `\"i j, j k -> i k\"` \u2014 matrix \u00d7 matrix: `j` is the contracted middle axis.\n\nFor these matrix products, the shared name has the SAME length in both\noperands, matching the `(m, n) @ (n, p)` rule. More generally, einsum also\nallows a shared axis of length 1 to broadcast against the other operand.\n\nThree more moves fall out of the same two rules \u2014 shared names multiply,\nmissing names sum (Rockt\u00e4schel \u00a72.7\u20132.9, and the trace):\n\n- **Keep the shared name** and nothing is summed: `\"i j, i j -> i j\"` is the\n  elementwise (Hadamard) product.\n- **Share everything and keep nothing**: `\"i, i ->\"` is the dot product;\n  `\"i j, i j ->\"` is the matrix inner product (sum of all pairwise products).\n- **Share nothing**: `\"i, j -> i j\"` is the outer product \u2014 every `i` against\n  every `j`, no summation because no name is missing.\n- **Repeat a name INSIDE one operand**: `\"i i ->\"` walks the diagonal of a\n  square matrix and sums it \u2014 the trace; `\"i i -> i\"` is the diagonal itself.\n\nA name that appears in every operand AND on the right-hand side is neither\nmultiplied away nor summed: it is carried through, one independent\ncomputation per index. That is what \"batched\" means (Rockt\u00e4schel \u00a72.10):\n\n- `\"b i j, b j k -> b i k\"` \u2014 batch matrix multiply: for each `b`, an ordinary\n  `(i, j) @ (j, k)`.\n- `\"b i, b i -> b\"` \u2014 one dot product per row of a batch.\n\nCompare with `\"i j, j k -> i k\"`: adding `b` to every operand and to the\noutput is the whole change. No `torch.bmm`, no `unsqueeze`, no loop.",
+     "worked_example_markdown": "```python\nimport torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)          # (i, j)\n\nwhole = einops.einsum(a, \"i j ->\")       # nothing kept -> every element summed\ncols = einops.einsum(a, \"i j -> j\")      # i vanishes -> one number per column\nrows = einops.einsum(a, \"i j -> i\")      # j vanishes -> one number per row\nflip = einops.einsum(a, \"i j -> j i\")    # both kept, reordered -> transpose\n\nassert whole.item() == 15\nassert cols.tolist() == [3, 5, 7]\nassert rows.tolist() == [3, 12]\nassert flip.shape == (3, 2)\nprint(cols, rows, flip.shape)\n```\n\nWhy each step: the right-hand side is a LIST OF SURVIVORS. Read `\"i j -> j\"`\nas \"for each j, sum over i\" \u2014 the summed axis is the one that is not there.\n\n```python\nimport torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)      # (i, j)\nv = t.arange(3)                    # (j,)\nb = t.arange(15).reshape(3, 5)     # (j, k)\n\nmv = einops.einsum(a, v, \"i j, j -> i\")        # == a @ v\nmm = einops.einsum(a, b, \"i j, j k -> i k\")    # == a @ b\n\nassert mv.tolist() == [5, 14]\nassert mm.shape == (2, 5) and mm[0].tolist() == [25, 28, 31, 34, 37]\nprint(mv, mm.shape)\n```\n\nWhy each step: `j` is named in both operands and is missing on the right, so\nfor every `(i)` \u2014 or every `(i, k)` \u2014 the products over `j` are added up. The\nsurviving names are the output shape, in the order you wrote them.\n\n```python\nimport torch as t\nimport einops\n\na = t.arange(3)                    # [0, 1, 2]\nb = t.arange(3, 6)                 # [3, 4, 5]\nm = t.tensor([[1, 2], [3, 4]])\n\ndot = einops.einsum(a, b, \"i, i ->\")          # 0*3 + 1*4 + 2*5\nouter = einops.einsum(a, b, \"i, j -> i j\")     # (3, 3): a[i] * b[j]\nhad = einops.einsum(m, m, \"i j, i j -> i j\")   # m * m\ntr = einops.einsum(m, \"i i ->\")                # 1 + 4\n\nassert dot.item() == 14\nassert outer[1].tolist() == [3, 4, 5]\nassert had.tolist() == [[1, 4], [9, 16]]\nassert tr.item() == 5\nprint(dot, outer.shape, tr)\n```\n\nWhy each step: the SAME two rules decide every case \u2014 count which names are\nshared (those multiply) and which are missing on the right (those sum). The\nouter product shares none and drops none, so it is pure multiplication.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(8).reshape(2, 2, 2)     # (b, i, j): two 2x2 matrices\ny = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities\n\nbmm = einops.einsum(x, y, \"b i j, b j k -> b i k\")\nassert bmm.tolist() == x.tolist()             # times the identity, per batch\n\nrows = t.tensor([[1, 2], [3, 4]])\ndots = einops.einsum(rows, rows, \"b i, b i -> b\")\nassert dots.tolist() == [5, 25]               # 1*1+2*2, 3*3+4*4\nprint(bmm.shape, dots)\n```\n\nWhy each step: `b` is on the right, so nothing is summed over it; `j` (or\n`i` in the dot case) is missing from the right, so that is the contraction.",
+     "segments": [
+      {
+       "concept_id": "one-operand",
+       "title": "one operand \u2014 name every axis, drop the ones to sum",
+       "concept_markdown": "`einops.einsum` is the einops spelling of Einstein summation: the tensors come\nfirst, the pattern comes LAST, and the pattern names every axis of every\noperand on the left of `->` and lists the axes you want to KEEP on the right.\nWhatever name is missing from the right-hand side is summed away.\n\nWith a single operand that gives four classics in one notation (Rockt\u00e4schel\n\u00a72.1\u20132.4, `a = arange(6).reshape(2, 3)`):\n\n| pattern | result | what it is |\n|---|---|---|\n| `\"i j -> j i\"` | shape (3, 2) | transpose \u2014 same names, new order |\n| `\"i j ->\"` | `15` | sum of everything \u2014 no name kept |\n| `\"i j -> j\"` | `[3, 5, 7]` | column sums \u2014 `i` summed, `j` kept |\n| `\"i j -> i\"` | `[3, 12]` | row sums \u2014 `j` summed, `i` kept |\n\nTwo things carry over from `rearrange`: names are whole words separated by\nspaces (`\"batch seq -> seq batch\"` is fine), and the pattern is the whole\nderivation \u2014 no `dim=` to look up, no `.T`.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)          # (i, j)\n\nwhole = einops.einsum(a, \"i j ->\")       # nothing kept -> every element summed\ncols = einops.einsum(a, \"i j -> j\")      # i vanishes -> one number per column\nrows = einops.einsum(a, \"i j -> i\")      # j vanishes -> one number per row\nflip = einops.einsum(a, \"i j -> j i\")    # both kept, reordered -> transpose\n\nassert whole.item() == 15\nassert cols.tolist() == [3, 5, 7]\nassert rows.tolist() == [3, 12]\nassert flip.shape == (3, 2)\nprint(cols, rows, flip.shape)\n```\n\nWhy each step: the right-hand side is a LIST OF SURVIVORS. Read `\"i j -> j\"`\nas \"for each j, sum over i\" \u2014 the summed axis is the one that is not there.",
+       "worked_example_code": "import torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)          # (i, j)\n\nwhole = einops.einsum(a, \"i j ->\")       # nothing kept -> every element summed\ncols = einops.einsum(a, \"i j -> j\")      # i vanishes -> one number per column\nrows = einops.einsum(a, \"i j -> i\")      # j vanishes -> one number per row\nflip = einops.einsum(a, \"i j -> j i\")    # both kept, reordered -> transpose\n\nassert whole.item() == 15\nassert cols.tolist() == [3, 5, 7]\nassert rows.tolist() == [3, 12]\nassert flip.shape == (3, 2)\nprint(cols, rows, flip.shape)\n",
+       "faded_items": [
+        {
+         "question_id": 847,
+         "prompt": "Which axis disappears when you keep only `j`?",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    a = t.tensor(mat)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i j -> j\").tolist()\n"
+        },
+        {
+         "question_id": 848,
+         "prompt": "Three names on the left; two survive. The one to drop is the last.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    a = t.tensor(x)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    a = t.tensor(x)\n    return einops.einsum(a, \"b i j -> b i\").tolist()\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "two-operands",
+       "title": "two operands \u2014 a shared name multiplies, then sums",
+       "concept_markdown": "With two tensors, separate their axis lists with a comma. A name that appears\nin BOTH operands pairs the elements up: they are multiplied together, and if\nthe name is absent from the right-hand side the products are summed. That is\nall matrix multiplication is (Rockt\u00e4schel \u00a72.5\u20132.6):\n\n- `\"i j, j -> i\"` \u2014 matrix \u00d7 vector: `j` is shared and summed, `i` survives.\n- `\"i j, j k -> i k\"` \u2014 matrix \u00d7 matrix: `j` is the contracted middle axis.\n\nFor these matrix products, the shared name has the SAME length in both\noperands, matching the `(m, n) @ (n, p)` rule. More generally, einsum also\nallows a shared axis of length 1 to broadcast against the other operand.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)      # (i, j)\nv = t.arange(3)                    # (j,)\nb = t.arange(15).reshape(3, 5)     # (j, k)\n\nmv = einops.einsum(a, v, \"i j, j -> i\")        # == a @ v\nmm = einops.einsum(a, b, \"i j, j k -> i k\")    # == a @ b\n\nassert mv.tolist() == [5, 14]\nassert mm.shape == (2, 5) and mm[0].tolist() == [25, 28, 31, 34, 37]\nprint(mv, mm.shape)\n```\n\nWhy each step: `j` is named in both operands and is missing on the right, so\nfor every `(i)` \u2014 or every `(i, k)` \u2014 the products over `j` are added up. The\nsurviving names are the output shape, in the order you wrote them.",
+       "worked_example_code": "import torch as t\nimport einops\n\na = t.arange(6).reshape(2, 3)      # (i, j)\nv = t.arange(3)                    # (j,)\nb = t.arange(15).reshape(3, 5)     # (j, k)\n\nmv = einops.einsum(a, v, \"i j, j -> i\")        # == a @ v\nmm = einops.einsum(a, b, \"i j, j k -> i k\")    # == a @ b\n\nassert mv.tolist() == [5, 14]\nassert mm.shape == (2, 5) and mm[0].tolist() == [25, 28, 31, 34, 37]\nprint(mv, mm.shape)\n",
+       "faded_items": [
+        {
+         "question_id": 849,
+         "prompt": "The shared axis is the vector's ONLY axis, and it is the matrix's first one this time.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    v, a = t.tensor(vec), t.tensor(mat)\n    return einops._____(v, a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    v, a = t.tensor(vec), t.tensor(mat)\n    return einops.einsum(v, a, \"i, i j -> j\").tolist()\n"
+        },
+        {
+         "question_id": 850,
+         "prompt": "Both operands end in the same axis. Name it the same, and the transpose is free.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops._____(a, b, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i k, j k -> i j\").tolist()\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "repeated-names",
+       "title": "same name, kept or repeated \u2014 elementwise, dot, outer, trace",
+       "concept_markdown": "Three more moves fall out of the same two rules \u2014 shared names multiply,\nmissing names sum (Rockt\u00e4schel \u00a72.7\u20132.9, and the trace):\n\n- **Keep the shared name** and nothing is summed: `\"i j, i j -> i j\"` is the\n  elementwise (Hadamard) product.\n- **Share everything and keep nothing**: `\"i, i ->\"` is the dot product;\n  `\"i j, i j ->\"` is the matrix inner product (sum of all pairwise products).\n- **Share nothing**: `\"i, j -> i j\"` is the outer product \u2014 every `i` against\n  every `j`, no summation because no name is missing.\n- **Repeat a name INSIDE one operand**: `\"i i ->\"` walks the diagonal of a\n  square matrix and sums it \u2014 the trace; `\"i i -> i\"` is the diagonal itself.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\nimport einops\n\na = t.arange(3)                    # [0, 1, 2]\nb = t.arange(3, 6)                 # [3, 4, 5]\nm = t.tensor([[1, 2], [3, 4]])\n\ndot = einops.einsum(a, b, \"i, i ->\")          # 0*3 + 1*4 + 2*5\nouter = einops.einsum(a, b, \"i, j -> i j\")     # (3, 3): a[i] * b[j]\nhad = einops.einsum(m, m, \"i j, i j -> i j\")   # m * m\ntr = einops.einsum(m, \"i i ->\")                # 1 + 4\n\nassert dot.item() == 14\nassert outer[1].tolist() == [3, 4, 5]\nassert had.tolist() == [[1, 4], [9, 16]]\nassert tr.item() == 5\nprint(dot, outer.shape, tr)\n```\n\nWhy each step: the SAME two rules decide every case \u2014 count which names are\nshared (those multiply) and which are missing on the right (those sum). The\nouter product shares none and drops none, so it is pure multiplication.",
+       "worked_example_code": "import torch as t\nimport einops\n\na = t.arange(3)                    # [0, 1, 2]\nb = t.arange(3, 6)                 # [3, 4, 5]\nm = t.tensor([[1, 2], [3, 4]])\n\ndot = einops.einsum(a, b, \"i, i ->\")          # 0*3 + 1*4 + 2*5\nouter = einops.einsum(a, b, \"i, j -> i j\")     # (3, 3): a[i] * b[j]\nhad = einops.einsum(m, m, \"i j, i j -> i j\")   # m * m\ntr = einops.einsum(m, \"i i ->\")                # 1 + 4\n\nassert dot.item() == 14\nassert outer[1].tolist() == [3, 4, 5]\nassert had.tolist() == [[1, 4], [9, 16]]\nassert tr.item() == 5\nprint(dot, outer.shape, tr)\n",
+       "faded_items": [
+        {
+         "question_id": 851,
+         "prompt": "The trace repeats a name and keeps nothing. Keep it instead.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    a = t.tensor(mat)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i i -> i\").tolist()\n"
+        },
+        {
+         "question_id": 852,
+         "prompt": "Both names shared, both dropped.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops._____(a, b, \"_____\").item()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i j, i j ->\").item()\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "batch-axes",
+       "title": "a batch axis rides along",
+       "concept_markdown": "A name that appears in every operand AND on the right-hand side is neither\nmultiplied away nor summed: it is carried through, one independent\ncomputation per index. That is what \"batched\" means (Rockt\u00e4schel \u00a72.10):\n\n- `\"b i j, b j k -> b i k\"` \u2014 batch matrix multiply: for each `b`, an ordinary\n  `(i, j) @ (j, k)`.\n- `\"b i, b i -> b\"` \u2014 one dot product per row of a batch.\n\nCompare with `\"i j, j k -> i k\"`: adding `b` to every operand and to the\noutput is the whole change. No `torch.bmm`, no `unsqueeze`, no loop.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "```python\nimport torch as t\nimport einops\n\nx = t.arange(8).reshape(2, 2, 2)     # (b, i, j): two 2x2 matrices\ny = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities\n\nbmm = einops.einsum(x, y, \"b i j, b j k -> b i k\")\nassert bmm.tolist() == x.tolist()             # times the identity, per batch\n\nrows = t.tensor([[1, 2], [3, 4]])\ndots = einops.einsum(rows, rows, \"b i, b i -> b\")\nassert dots.tolist() == [5, 25]               # 1*1+2*2, 3*3+4*4\nprint(bmm.shape, dots)\n```\n\nWhy each step: `b` is on the right, so nothing is summed over it; `j` (or\n`i` in the dot case) is missing from the right, so that is the contraction.",
+       "worked_example_code": "import torch as t\nimport einops\n\nx = t.arange(8).reshape(2, 2, 2)     # (b, i, j): two 2x2 matrices\ny = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities\n\nbmm = einops.einsum(x, y, \"b i j, b j k -> b i k\")\nassert bmm.tolist() == x.tolist()             # times the identity, per batch\n\nrows = t.tensor([[1, 2], [3, 4]])\ndots = einops.einsum(rows, rows, \"b i, b i -> b\")\nassert dots.tolist() == [5, 25]               # 1*1+2*2, 3*3+4*4\nprint(bmm.shape, dots)\n",
+       "faded_items": [
+        {
+         "question_id": 853,
+         "prompt": "Matrix\u2013vector, with a `b` carried through both operands and the output.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    a, v = t.tensor(mats), t.tensor(vecs)\n    return einops._____(a, v, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    a, v = t.tensor(mats), t.tensor(vecs)\n    return einops.einsum(a, v, \"b i j, b j -> b i\").tolist()\n"
+        },
+        {
+         "question_id": 854,
+         "prompt": "Outer product shares no name \u2014 except the batch, which is carried through.",
+         "starter_code": "import torch as t\nimport einops\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    a, c = t.tensor(u), t.tensor(v)\n    return einops._____(a, c, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])\nprint(solve(*example))\n",
+         "solution": "import torch as t\nimport einops\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    a, c = t.tensor(u), t.tensor(v)\n    return einops.einsum(a, c, \"b i, b j -> b i j\").tolist()\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 847,
+       "prompt": "Which axis disappears when you keep only `j`?",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    a = t.tensor(mat)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i j -> j\").tolist()\n"
+      },
+      {
+       "question_id": 848,
+       "prompt": "Three names on the left; two survive. The one to drop is the last.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    a = t.tensor(x)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    a = t.tensor(x)\n    return einops.einsum(a, \"b i j -> b i\").tolist()\n"
+      },
+      {
+       "question_id": 849,
+       "prompt": "The shared axis is the vector's ONLY axis, and it is the matrix's first one this time.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    v, a = t.tensor(vec), t.tensor(mat)\n    return einops._____(v, a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    v, a = t.tensor(vec), t.tensor(mat)\n    return einops.einsum(v, a, \"i, i j -> j\").tolist()\n"
+      },
+      {
+       "question_id": 850,
+       "prompt": "Both operands end in the same axis. Name it the same, and the transpose is free.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops._____(a, b, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i k, j k -> i j\").tolist()\n"
+      },
+      {
+       "question_id": 851,
+       "prompt": "The trace repeats a name and keeps nothing. Keep it instead.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    a = t.tensor(mat)\n    return einops._____(a, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i i -> i\").tolist()\n"
+      },
+      {
+       "question_id": 852,
+       "prompt": "Both names shared, both dropped.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops._____(a, b, \"_____\").item()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i j, i j ->\").item()\n"
+      },
+      {
+       "question_id": 853,
+       "prompt": "Matrix\u2013vector, with a `b` carried through both operands and the output.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    a, v = t.tensor(mats), t.tensor(vecs)\n    return einops._____(a, v, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    a, v = t.tensor(mats), t.tensor(vecs)\n    return einops.einsum(a, v, \"b i j, b j -> b i\").tolist()\n"
+      },
+      {
+       "question_id": 854,
+       "prompt": "Outer product shares no name \u2014 except the batch, which is carried through.",
+       "starter_code": "import torch as t\nimport einops\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    a, c = t.tensor(u), t.tensor(v)\n    return einops._____(a, c, \"_____\").tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])\nprint(solve(*example))\n",
+       "solution": "import torch as t\nimport einops\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    a, c = t.tensor(u), t.tensor(v)\n    return einops.einsum(a, c, \"b i, b j -> b i j\").tolist()\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 855,
+       "prompt": "Sum across the batch axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 856,
+       "prompt": "Gram matrix A A^T.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 857,
+       "prompt": "A three-operand contraction.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 858,
+       "prompt": "Row-wise dot products.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 859,
+       "prompt": "Diagonals of a batch.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 860,
+       "prompt": "Row scaling as an einsum.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 861,
+       "prompt": "Trace of a product without the product."
+      },
+      {
+       "question_id": 862,
+       "prompt": "Per-batch Gram matrices."
+      },
+      {
+       "question_id": 863,
+       "prompt": "Query-key scores."
+      },
+      {
+       "question_id": 864,
+       "prompt": "einsum_trace"
+      },
+      {
+       "question_id": 869,
+       "prompt": "einsum_mv"
+      },
+      {
+       "question_id": 874,
+       "prompt": "einsum_mm"
+      },
+      {
+       "question_id": 879,
+       "prompt": "einsum_inner"
+      },
+      {
+       "question_id": 884,
+       "prompt": "einsum_outer"
+      },
+      {
+       "question_id": 865,
+       "prompt": "trace of A squared"
+      },
+      {
+       "question_id": 866,
+       "prompt": "batch of traces"
+      },
+      {
+       "question_id": 867,
+       "prompt": "sum of squared diagonal"
+      },
+      {
+       "question_id": 868,
+       "prompt": "scaled diagonal"
+      },
+      {
+       "question_id": 870,
+       "prompt": "vector-matrix product"
+      },
+      {
+       "question_id": 871,
+       "prompt": "transpose-then-multiply"
+      },
+      {
+       "question_id": 872,
+       "prompt": "one matrix, many vectors"
+      },
+      {
+       "question_id": 873,
+       "prompt": "many matrices, one vector"
+      },
+      {
+       "question_id": 875,
+       "prompt": "A times B transpose"
+      },
+      {
+       "question_id": 876,
+       "prompt": "A transpose times B"
+      },
+      {
+       "question_id": 877,
+       "prompt": "batch matmul"
+      },
+      {
+       "question_id": 878,
+       "prompt": "three-matrix chain"
+      },
+      {
+       "question_id": 880,
+       "prompt": "squared norm"
+      },
+      {
+       "question_id": 881,
+       "prompt": "batched dot products"
+      },
+      {
+       "question_id": 882,
+       "prompt": "weighted dot product"
+      },
+      {
+       "question_id": 883,
+       "prompt": "matrix inner product"
+      },
+      {
+       "question_id": 885,
+       "prompt": "transposed outer product"
+      },
+      {
+       "question_id": 886,
+       "prompt": "batched outer products"
+      },
+      {
+       "question_id": 887,
+       "prompt": "three-way outer product"
+      },
+      {
+       "question_id": 888,
+       "prompt": "masked outer product"
+      }
+     ],
+     "independent_items": [
+      855,
+      856,
+      857,
+      858,
+      859,
+      860
+     ],
+     "misconceptions_markdown": "- **\"The pattern goes first, like `rearrange`.\"** \u2014 In `einops.einsum` the\n  tensors come first and the pattern is the LAST argument.\n- **\"A name on the right is summed.\"** \u2014 Backwards: the right-hand side is the\n  list of SURVIVORS. Whatever is missing there is what gets summed.\n- **\"Shared names need `@` or `.T` as well.\"** \u2014 The pattern IS the derivation:\n  `\"i k, j k -> i j\"` is `A @ B.T`, transpose included, and a name repeated\n  inside one operand (`\"i i ->\"`) walks the diagonal.\n- **\"A batch axis needs `bmm`.\"** \u2014 Put the same batch name in every operand\n  and on the right; it rides along, one product per index.",
      "notes_markdown": ""
     }
    ]

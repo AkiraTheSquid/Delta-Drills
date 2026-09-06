@@ -5,7 +5,7 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 26.7,
+ "mean": 29.3,
  "kcs": {
   "einops.channel-groups-temporal": {
    "d": 45.9,
@@ -15,41 +15,45 @@
    "d": 36.8,
    "n": 5
   },
+  "einops.einsum": {
+   "d": 43.4,
+   "n": 42
+  },
   "einops.grids-montage": {
-   "d": 58.6,
-   "n": 9
+   "d": 55.3,
+   "n": 13
   },
   "einops.merge-axes": {
-   "d": 35.0,
-   "n": 11
+   "d": 38.1,
+   "n": 19
   },
   "einops.patches-space-depth": {
    "d": 59.5,
    "n": 10
   },
   "einops.pattern-language": {
-   "d": 21.0,
-   "n": 8
+   "d": 26.2,
+   "n": 12
   },
   "einops.pooling": {
-   "d": 54.3,
-   "n": 6
+   "d": 51.0,
+   "n": 10
   },
   "einops.reduce-model": {
-   "d": 32.8,
-   "n": 9
+   "d": 34.5,
+   "n": 13
   },
   "einops.repeat-model": {
-   "d": 32.6,
-   "n": 10
+   "d": 40.8,
+   "n": 30
   },
   "einops.singleton-and-lists": {
    "d": 28.0,
    "n": 8
   },
   "einops.split-axes": {
-   "d": 40.4,
-   "n": 5
+   "d": 39.5,
+   "n": 13
   },
   "numpy.aggregations": {
    "d": 18.8,
@@ -136,8 +140,8 @@
    "n": 9
   },
   "python.calling-functions": {
-   "d": 22.3,
-   "n": 6
+   "d": 20.4,
+   "n": 24
   },
   "python.defining-functions": {
    "d": 24.3,
@@ -148,20 +152,36 @@
    "n": 6
   },
   "python.indexing": {
-   "d": 22.3,
-   "n": 6
+   "d": 20.5,
+   "n": 24
   },
   "python.lists-and-tuples": {
-   "d": 22.3,
-   "n": 6
+   "d": 20.3,
+   "n": 24
   },
   "python.types-and-conversion": {
-   "d": 22.0,
-   "n": 6
+   "d": 20.2,
+   "n": 24
   },
   "python.values-and-names": {
-   "d": 20.3,
-   "n": 6
+   "d": 19.5,
+   "n": 24
+  },
+  "raytracing.make-rays-1d": {
+   "d": 44.5,
+   "n": 16
+  },
+  "raytracing.ray-parametrisation": {
+   "d": 40.1,
+   "n": 11
+  },
+  "torch.out-argument": {
+   "d": 39.4,
+   "n": 11
+  },
+  "torch.slice-assignment": {
+   "d": 38.6,
+   "n": 11
   }
  }
 }

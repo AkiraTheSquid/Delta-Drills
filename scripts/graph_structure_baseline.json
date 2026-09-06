@@ -1,9 +1,12 @@
 {
  "_": "Known graph-structure findings. watch.py fails on anything NOT listed here. Shrink it; re-record only with a reason.",
- "count": 68,
+ "count": 72,
  "known": [
   "difficulty|einops.channel-groups-temporal|faded>guided",
   "difficulty|einops.dl-flatten-heads|guided>independent",
+  "difficulty|einops.einsum|integrated>independent",
+  "difficulty|einops.pattern-language|integrated>independent",
+  "difficulty|einops.repeat-model|integrated>independent",
   "difficulty|numpy.axis-reductions|faded>guided",
   "difficulty|numpy.broadcasting-rules|faded>guided",
   "difficulty|numpy.constructors|integrated>independent",
@@ -44,6 +47,7 @@
   "edge-missing|einops.reduce-model|numpy.constructors",
   "edge-missing|einops.reduce-model|numpy.dtype-astype",
   "edge-missing|einops.reduce-model|numpy.ranges",
+  "edge-missing|einops.repeat-model|einops.reduce-model",
   "edge-missing|einops.repeat-model|numpy.ranges",
   "edge-missing|einops.singleton-and-lists|numpy.constructors",
   "edge-missing|einops.split-axes|numpy.ranges",

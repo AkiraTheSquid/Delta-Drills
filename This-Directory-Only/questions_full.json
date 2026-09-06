@@ -27268,5 +27268,3786 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 847,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Given a matrix as a nested list, return its **column sums** (one number per column) as a list, using `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i j -> j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "[3, 5, 7]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"Column sums via einsum.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]])",
+        "expected_expr": "[3, 5, 7]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "[12, 15, 18]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[2, 2], [2, 2], [2, 2]])",
+        "expected_expr": "[6, 6]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[3, 12]",
+        "why": "Keeping `i` sums over `j` — those are the ROW sums. The survivor on the right is the axis you get one number per."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 848,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Given a 3-D tensor `(b, i, j)` as a nested list, sum over its LAST axis only and return the `(b, i)` result as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    a = t.tensor(x)\n    return einops.einsum(a, \"b i j -> b i\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
+    "expected_output": "[[3, 7], [11, 15]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Sum the last axis of a 3-D tensor via einsum.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "[[3, 7], [11, 15]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 1, 1]], [[2, 3, 4]]])",
+        "expected_expr": "[[3], [9]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[6, 8], [10, 12]]",
+        "why": "Dropping `b` sums across the batch instead of across each row's last axis."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 849,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Compute the **vector–matrix** product `v @ A` — the vector on the LEFT — with `einops.einsum`. `vec` has length m, `mat` is (m, n); return the length-n result as a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    v, a = t.tensor(vec), t.tensor(mat)\n    return einops.einsum(v, a, \"i, i j -> j\").tolist()\n\n\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[0, 1, 2]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec, mat):\n    \"\"\"Vector times matrix via einsum.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 0], [[0, 1, 2], [3, 4, 5]])",
+        "expected_expr": "[0, 1, 2]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 1, 1], [[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "[12, 15, 18]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2, -1], [[1, 2], [3, 4]])",
+        "expected_expr": "[-1, 0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript a has size 3 for operand 1 which does not broadcast with previously seen size 2",
+        "why": "Pairing the vector with the matrix's SECOND axis is `A @ v`, and here it even fails on a (2, 3) matrix — the shared name must match a length."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 850,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Compute `A @ B.T` without transposing: `mat1` is (m, k) and `mat2` is (n, k). Return the (m, n) result as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i k, j k -> i j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 2], [3, 5]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A times B-transpose via einsum.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])",
+        "expected_expr": "[[0, 2], [3, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "[[5, 11], [11, 25]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3]], [[1, 1, 1], [0, 1, 0]])",
+        "expected_expr": "[[6, 2]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "That is plain `A @ B`, which needs B to be (k, n); the second operand's shared axis is its LAST one here."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 851,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Return the **diagonal** of a square matrix (nested list) as a list, using `einops.einsum` — no `.diag()`, no loop.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, \"i i -> i\").tolist()\n\n\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[1, 5, 9]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"The diagonal via a repeated index.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "[1, 5, 9]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[1, 4]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[7]])",
+        "expected_expr": "[7]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "15",
+        "why": "Keeping nothing sums the diagonal — that is the trace, one number, not the diagonal entries."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 852,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Return the **matrix inner product** of two same-shape matrices — the sum of all elementwise products, one number — with `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i j, i j ->\").item()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "145",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Sum of all pairwise products of two matrices.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]])",
+        "expected_expr": "145"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "30"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, -1]], [[1, 1]])",
+        "expected_expr": "0"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[23, 122]",
+        "why": "Keeping `i` leaves one number per row — the summation over `i` only happens when `i` is missing from the right."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 853,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Batched matrix–vector product: `mats` is `(b, i, j)` and `vecs` is `(b, j)`, both nested lists. Return the `(b, i)` result — one `A @ v` per batch entry — as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    a, v = t.tensor(mats), t.tensor(vecs)\n    return einops.einsum(a, v, \"b i j, b j -> b i\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[3, 7], [3, 2]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mats, vecs):\n    \"\"\"One matrix-vector product per batch entry.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[1, 1], [2, 3]])",
+        "expected_expr": "[[3, 7], [3, 2]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1, 2], [3, 4, 5]]], [[1, 0, 0]])",
+        "expected_expr": "[[0, 3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[11, 25], [4, 3]]",
+        "why": "Naming the vectors' batch axis `c` instead of `b` sums over ALL vectors for every matrix — the batch must share ONE name to pair up."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 854,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Batched outer product: `u` and `v` are `(b, n)` and `(b, m)` nested lists. Return the `(b, n, m)` tensor of per-batch outer products as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    a, c = t.tensor(u), t.tensor(v)\n    return einops.einsum(a, c, \"b i, b j -> b i j\").tolist()\n\n\nexample = ([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 0, 1], [2, 0, 2]], [[6, 6, 6], [8, 8, 8]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"One outer product per batch entry.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 0, 1], [2, 2, 2]])",
+        "expected_expr": "[[[1, 0, 1], [2, 0, 2]], [[6, 6, 6], [8, 8, 8]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1]], [[5, 6]])",
+        "expected_expr": "[[[5, 6]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[7, 6, 7], [10, 8, 10]]",
+        "why": "Dropping `b` from the right sums the outer products across the batch into one matrix."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 855,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Sum a `(b, i, j)` nested list over its FIRST axis, returning the `(i, j)` total as a nested list, with `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Sum across the batch axis.\"\"\"\n    a = t.tensor(x)\n    return einops.einsum(a, \"b i j -> i j\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
+    "expected_output": "[[6, 8], [10, 12]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Sum across the batch axis.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "[[6, 8], [10, 12]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1]], [[2]], [[3]]])",
+        "expected_expr": "[[6]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[4, 6], [12, 14]]",
+        "why": "That kept `b` and summed `i` — the wrong survivor."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 856,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Return the **Gram matrix** `A @ A.T` of a matrix (nested list) with one `einops.einsum` call — no `.T`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"Gram matrix A A^T.\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, a, \"i k, j k -> i j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[5, 14], [14, 50]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"Gram matrix A A^T.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]])",
+        "expected_expr": "[[5, 14], [14, 50]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[[5, 11], [11, 25]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 1, 1]])",
+        "expected_expr": "[[3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "`A @ A` needs a square matrix and is not the Gram matrix; the second operand's SECOND axis is the one to contract."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 857,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Compute the bilinear form `x @ A @ y` — a single number — from `x` (length m), `A` (m, n) and `y` (length n), all lists, in ONE `einops.einsum` call with three operands.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x, mat, y):\n    \"\"\"A three-operand contraction.\"\"\"\n    xv, a, yv = t.tensor(x), t.tensor(mat), t.tensor(y)\n    return einops.einsum(xv, a, yv, \"i, i j, j ->\").item()\n\n\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]], [0, 0, 1])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "2",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x, mat, y):\n    \"\"\"A three-operand contraction.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]], [0, 0, 1])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 0], [[0, 1, 2], [3, 4, 5]], [0, 0, 1])",
+        "expected_expr": "2"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 1], [[1, 2], [3, 4]], [1, 1])",
+        "expected_expr": "10"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2], [[3]], [4])",
+        "expected_expr": "24"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[0, 0, 2]",
+        "why": "Keeping `j` leaves a vector: `(x @ A) * y` elementwise, not summed."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 858,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Two same-shape matrices as nested lists: return the **row-wise dot products** — one number per row — as a list, via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Row-wise dot products.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i j, i j -> i\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 1, 1], [1, 0, -1]])\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[3, -2]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Row-wise dot products.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 1, 1], [1, 0, -1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 1, 1], [1, 0, -1]])",
+        "expected_expr": "[3, -2]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "[5, 25]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[3, 1, -3]",
+        "why": "Keeping `j` gives COLUMN-wise dot products."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 859,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "A batch of square matrices `(b, n, n)` as a nested list: return each matrix's **diagonal**, shape `(b, n)`, as a nested list, with `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mats):\n    \"\"\"Diagonals of a batch.\"\"\"\n    a = t.tensor(mats)\n    return einops.einsum(a, \"b i i -> b i\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 4], [5, 8]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mats):\n    \"\"\"Diagonals of a batch.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "[[1, 4], [5, 8]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])",
+        "expected_expr": "[[1, 5, 9]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[5, 13]",
+        "why": "Dropping `i` sums each diagonal — a batch of traces."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 860,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Scale each ROW of a matrix by the matching entry of a vector (`mat` is (m, n), `w` has length m) using `einops.einsum`, returning the (m, n) nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat, w):\n    \"\"\"Row scaling as an einsum.\"\"\"\n    a, v = t.tensor(mat), t.tensor(w)\n    return einops.einsum(a, v, \"i j, i -> i j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 10])\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1, 2], [30, 40, 50]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat, w):\n    \"\"\"Row scaling as an einsum.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 10])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [1, 10])",
+        "expected_expr": "[[0, 1, 2], [30, 40, 50]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [0, 1])",
+        "expected_expr": "[[0, 0], [3, 4]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3]], [3])",
+        "expected_expr": "[[3, 6, 9]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[30, 41, 52]",
+        "why": "Dropping `i` sums the scaled rows into one vector — a weighted vector–matrix product."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 861,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Return the **trace of `A @ B`** (a single number) with ONE `einops.einsum` call and without forming the product. `mat1` is (m, n), `mat2` is (n, m).",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Trace of a product without the product.\"\"\"\n    a, b = t.tensor(mat1), t.tensor(mat2)\n    return einops.einsum(a, b, \"i j, j i ->\").item()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "11",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"Trace of a product without the product.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])",
+        "expected_expr": "11"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "29"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[2, 3]], [[1], [1]])",
+        "expected_expr": "5"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript a has size 3 for operand 1 which does not broadcast with previously seen size 2",
+        "why": "That is the inner product with B (not B transposed) — it does not even run unless B is (m, n)."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 862,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Batched Gram matrices: `x` is `(b, n, d)` as a nested list. Return `(b, n, n)` where entry `[b, i, j]` is the dot product of rows i and j of batch b, as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Per-batch Gram matrices.\"\"\"\n    a = t.tensor(x)\n    return einops.einsum(a, a, \"b i d, b j d -> b i j\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[1, 0], [0, 1]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 52,
+    "difficulty_label": "medium",
+    "expected_output": "[[[5, 11], [11, 25]], [[1, 0], [0, 1]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Per-batch Gram matrices.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[1, 0], [0, 1]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[1, 0], [0, 1]]])",
+        "expected_expr": "[[[5, 11], [11, 25]], [[1, 0], [0, 1]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3]]])",
+        "expected_expr": "[[[14]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[6, 13], [14, 29]], [[2, 3], [2, 5]]]",
+        "why": "Two different batch names sum across batches: every Gram matrix gets every other batch's rows mixed in."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 863,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Attention scores: `q` is `(nq, d)` and `k` is `(nk, d)`, nested lists. Return the `(nq, nk)` matrix of dot products between every query and every key, as a nested list, via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(q, k):\n    \"\"\"Query-key scores.\"\"\"\n    qa, ka = t.tensor(q), t.tensor(k)\n    return einops.einsum(qa, ka, \"q d, k d -> q k\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0], [1, 1, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 52,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1, 3], [3, 4, 12]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(q, k):\n    \"\"\"Query-key scores.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0], [1, 1, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0], [1, 1, 1]])",
+        "expected_expr": "[[0, 1, 3], [3, 4, 12]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 1]], [[1, 2], [3, 4]])",
+        "expected_expr": "[[3, 7]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 3], [1, 4], [3, 12]]",
+        "why": "Right-hand order is the output order: `k q` is the transposed score matrix."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 864,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`einsum_trace`: return the trace of a square matrix (nested list) with `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"einsum_trace\"\"\"\n    return einops.einsum(t.tensor(mat), \"i i ->\").item()\n\n\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "15",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"einsum_trace\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "15"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "5"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[4]])",
+        "expected_expr": "4"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "45",
+        "why": "Two different names sum EVERY element, not just the diagonal."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 865,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_trace`: return the trace of `A @ A` (a number) in ONE `einops.einsum` call, without forming the product.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"trace of A squared\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, a, \"i j, j i ->\").item()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "29",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"trace of A squared\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "29"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "261"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "17",
+        "why": "That sums the SQUARED diagonal entries, not the trace of the product."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 866,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_trace`: a batch of square matrices `(b, n, n)` — return the list of their traces.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mats):\n    \"\"\"batch of traces\"\"\"\n    return einops.einsum(t.tensor(mats), \"b i i -> b\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[1, 2], [3, 4]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[5, 5]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mats):\n    \"\"\"batch of traces\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[1, 2], [3, 4]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[1, 2], [3, 4]]])",
+        "expected_expr": "[5, 5]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]])",
+        "expected_expr": "[15, 3]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "10",
+        "why": "Dropping `b` adds the traces together into one number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 867,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_trace`: return the **sum of squares of the diagonal** of a square matrix (a number).",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"sum of squared diagonal\"\"\"\n    a = t.tensor(mat)\n    return einops.einsum(a, a, \"i i, i i ->\").item()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "17",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat):\n    \"\"\"sum of squared diagonal\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "17"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+        "expected_expr": "107"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "30",
+        "why": "Two different names square EVERY entry — the Frobenius norm squared, not the diagonal's."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 868,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_trace`: return the diagonal of a square matrix as a list, scaled by a scalar `s` (multiply each diagonal entry by `s`) — one `einops.einsum` call plus the scaling.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat, s):\n    \"\"\"scaled diagonal\"\"\"\n    return (s * einops.einsum(t.tensor(mat), \"i i -> i\")).tolist()\n\n\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[2, 10, 18]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat, s):\n    \"\"\"scaled diagonal\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 2)",
+        "expected_expr": "[2, 10, 18]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], -1)",
+        "expected_expr": "[-1, -4]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "30",
+        "why": "Keeping nothing on the right is the trace, one number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 869,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`einsum_mv`: matrix (m, n) times vector (n), both nested lists — return the length-m list via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vec):\n    \"\"\"einsum_mv\"\"\"\n    return einops.einsum(t.tensor(mat), t.tensor(vec), \"i j, j -> i\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 1, 1])\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[3, 12]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vec):\n    \"\"\"einsum_mv\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 1, 1])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [1, 1, 1])",
+        "expected_expr": "[3, 12]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [1, 0])",
+        "expected_expr": "[1, 3]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[3, 5, 7]",
+        "why": "Keeping `j` is the elementwise scaling summed over rows — column sums of A scaled by v."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 870,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mv`: the vector on the LEFT, `v @ A` — `vec` has length m, `mat` is (m, n). Return the length-n list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec, mat):\n    \"\"\"vector-matrix product\"\"\"\n    return einops.einsum(t.tensor(vec), t.tensor(mat), \"i, i j -> j\").tolist()\n\n\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[0, 1, 2]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec, mat):\n    \"\"\"vector-matrix product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0], [[0, 1, 2], [3, 4, 5]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 0], [[0, 1, 2], [3, 4, 5]])",
+        "expected_expr": "[0, 1, 2]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 1], [[1, 2], [3, 4]])",
+        "expected_expr": "[4, 6]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript a has size 3 for operand 1 which does not broadcast with previously seen size 2",
+        "why": "That pairs v with the matrix's columns — `A @ v`, which fails on a non-square A."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 871,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mv`: `A.T @ v` without transposing — `mat` is (m, n), `vec` has length m. Return the length-n list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vec):\n    \"\"\"transpose-then-multiply\"\"\"\n    return einops.einsum(t.tensor(mat), t.tensor(vec), \"j i, j -> i\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 2])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[6, 9, 12]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vec):\n    \"\"\"transpose-then-multiply\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [1, 2])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [1, 2])",
+        "expected_expr": "[6, 9, 12]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [1, 0])",
+        "expected_expr": "[1, 2]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "Plain `A @ v` — contracts the matrix's second axis; here the vector matches the FIRST axis."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 872,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mv`: one matrix (m, n), a BATCH of vectors `(b, n)` — return the `(b, m)` nested list of `A @ v` for every vector.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vecs):\n    \"\"\"one matrix, many vectors\"\"\"\n    return einops.einsum(t.tensor(mat), t.tensor(vecs), \"i j, b j -> b i\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 3], [2, 5]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat, vecs):\n    \"\"\"one matrix, many vectors\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 0, 1]])",
+        "expected_expr": "[[0, 3], [2, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 1]])",
+        "expected_expr": "[[3, 7]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 2], [3, 5]]",
+        "why": "Output order follows the right-hand side: `i b` is the transposed result."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 873,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mv`: a batch of matrices `(b, m, n)` and one vector of length n — return the `(b, m)` nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mats, vec):\n    \"\"\"many matrices, one vector\"\"\"\n    return einops.einsum(t.tensor(mats), t.tensor(vec), \"b i j, j -> b i\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [1, 2])\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[5, 11], [2, 1]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mats, vec):\n    \"\"\"many matrices, one vector\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [1, 2])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [1, 2])",
+        "expected_expr": "[[5, 11], [2, 1]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1, 2], [3, 4, 5]]], [1, 1, 1])",
+        "expected_expr": "[[3, 12]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[7, 12]",
+        "why": "Dropping `b` sums the batch's results into one vector."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 874,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`einsum_mm`: matrix product of `mat1` (m, n) and `mat2` (n, p), nested lists — return the (m, p) nested list via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"einsum_mm\"\"\"\n    return einops.einsum(t.tensor(mat1), t.tensor(mat2), \"i j, j k -> i k\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[2, 3], [8, 9]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"einsum_mm\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1], [1, 1]])",
+        "expected_expr": "[[2, 3], [8, 9]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "[[7, 10], [15, 22]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 0], [0, 1], [2, 2]], [[3, 0], [0, 4], [5, 5]]]",
+        "why": "Keeping `j` skips the summation — a (m, n, p) block of products."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 875,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mm`: `A @ B.T` — `mat1` is (m, k), `mat2` is (n, k). Return the (m, n) nested list without `.T`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A times B transpose\"\"\"\n    return einops.einsum(t.tensor(mat1), t.tensor(mat2), \"i k, j k -> i j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [1, 1, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 3], [3, 12]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A times B transpose\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [1, 1, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [1, 1, 1]])",
+        "expected_expr": "[[0, 3], [3, 12]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "[[5, 11], [11, 25]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "Plain `A @ B` — needs B to be (k, n), and fails here."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 876,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mm`: `A.T @ B` — `mat1` is (k, m), `mat2` is (k, n). Return the (m, n) nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A transpose times B\"\"\"\n    return einops.einsum(t.tensor(mat1), t.tensor(mat2), \"k i, k j -> i j\").tolist()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 3], [1, 4], [2, 5]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"A transpose times B\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0], [0, 1]])",
+        "expected_expr": "[[0, 3], [1, 4], [2, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 1], [0, 1]])",
+        "expected_expr": "[[1, 4], [2, 6]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "Plain `A @ B` contracts A's second axis; here the shared axis is A's FIRST."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 877,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mm`: batched — `mats1` is (b, m, n), `mats2` is (b, n, p). Return the (b, m, p) nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mats1, mats2):\n    \"\"\"batch matmul\"\"\"\n    return einops.einsum(t.tensor(mats1), t.tensor(mats2), \"b i j, b j k -> b i k\").tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[[1, 2], [3, 4]], [[1, 2], [3, 4]]])\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[[7, 10], [15, 22]], [[3, 4], [1, 2]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mats1, mats2):\n    \"\"\"batch matmul\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[[1, 2], [3, 4]], [[1, 2], [3, 4]]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[0, 1], [1, 0]]], [[[1, 2], [3, 4]], [[1, 2], [3, 4]]])",
+        "expected_expr": "[[[7, 10], [15, 22]], [[3, 4], [1, 2]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1, 2], [3, 4, 5]]], [[[1], [1], [1]]])",
+        "expected_expr": "[[[3], [12]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[14, 20], [30, 44]], [[6, 8], [2, 4]]]",
+        "why": "Two batch names pair every matrix with every other and sum — no longer one product per batch entry."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 878,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_mm`: a THREE-matrix chain `A @ B @ C` in one call — shapes (m, n), (n, p), (p, q). Return the (m, q) nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(a, b, c):\n    \"\"\"three-matrix chain\"\"\"\n    return einops.einsum(t.tensor(a), t.tensor(b), t.tensor(c), \"i j, j k, k l -> i l\").tolist()\n\n\nexample = ([[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 0], [0, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "[[7, 10], [15, 22]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(a, b, c):\n    \"\"\"three-matrix chain\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 0], [0, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 0], [0, 1]])",
+        "expected_expr": "[[7, 10], [15, 22]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1], [0], [1]], [[2, 3]])",
+        "expected_expr": "[[4, 6], [16, 24]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[7, 0], [0, 10]], [[15, 0], [0, 22]]]",
+        "why": "Keeping `k` leaves the middle contraction undone."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 879,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`einsum_inner`: dot product of two equal-length vectors (lists) — return a number via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"einsum_inner\"\"\"\n    return einops.einsum(t.tensor(vec1), t.tensor(vec2), \"i, i ->\").item()\n\n\nexample = ([0, 1, 2], [3, 4, 5])\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "14",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"einsum_inner\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([0, 1, 2], [3, 4, 5])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([0, 1, 2], [3, 4, 5])",
+        "expected_expr": "14"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, -1], [1, 1])",
+        "expected_expr": "0"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "36",
+        "why": "Different names make an outer product and then sum ALL of it — (sum a)·(sum b), not the dot product."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 880,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_inner`: the squared L2 norm of a vector (a number) — the vector with itself.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec):\n    \"\"\"squared norm\"\"\"\n    v = t.tensor(vec)\n    return einops.einsum(v, v, \"i, i ->\").item()\n\n\nexample = ([3, 4],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "25",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec):\n    \"\"\"squared norm\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([3, 4],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([3, 4])",
+        "expected_expr": "25"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 1, 1])",
+        "expected_expr": "3"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "7",
+        "why": "One operand just sums the entries — no product."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 881,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_inner`: batched — `u` and `v` are `(b, n)` nested lists. Return the list of the b dot products.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"batched dot products\"\"\"\n    return einops.einsum(t.tensor(u), t.tensor(v), \"b i, b i -> b\").tolist()\n\n\nexample = ([[1, 2], [3, 4]], [[1, 1], [0, 1]])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[3, 4]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"batched dot products\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]], [[1, 1], [0, 1]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 1], [0, 1]])",
+        "expected_expr": "[3, 4]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 0, 0]], [[5, 6, 7]])",
+        "expected_expr": "[5]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "7",
+        "why": "Dropping `b` adds all the dot products into one number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 882,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_inner`: a WEIGHTED dot product `sum_i w[i]*a[i]*b[i]` from three equal-length lists, one call.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(w, a, b):\n    \"\"\"weighted dot product\"\"\"\n    return einops.einsum(t.tensor(w), t.tensor(a), t.tensor(b), \"i, i, i ->\").item()\n\n\nexample = ([1, 0, 2], [1, 2, 3], [4, 5, 6])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "40",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(w, a, b):\n    \"\"\"weighted dot product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 0, 2], [1, 2, 3], [4, 5, 6])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 0, 2], [1, 2, 3], [4, 5, 6])",
+        "expected_expr": "40"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2, 2], [1, 1], [1, -1])",
+        "expected_expr": "0"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "32",
+        "why": "The weights were left out."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 883,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_inner`: the matrix inner product — sum of all elementwise products of two same-shape matrices (nested lists), a number.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"matrix inner product\"\"\"\n    return einops.einsum(t.tensor(mat1), t.tensor(mat2), \"i j, i j ->\").item()\n\n\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0]])\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "4",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(mat1, mat2):\n    \"\"\"matrix inner product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0, 1, 2], [3, 4, 5]], [[1, 0, 0], [0, 1, 0]])",
+        "expected_expr": "4"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "expected_expr": "30"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: einsum(): subscript b has size 2 for operand 1 which does not broadcast with previously seen size 3",
+        "why": "Pairing against the transpose is the trace of A·B, not the elementwise inner product (and it fails on a non-square shape)."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 884,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`einsum_outer`: outer product of two vectors (lists) of lengths m and n — return the (m, n) nested list via `einops.einsum`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"einsum_outer\"\"\"\n    return einops.einsum(t.tensor(vec1), t.tensor(vec2), \"i, j -> i j\").tolist()\n\n\nexample = ([0, 1, 2], [3, 4, 5, 6])\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 0, 0, 0], [3, 4, 5, 6], [6, 8, 10, 12]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"einsum_outer\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([0, 1, 2], [3, 4, 5, 6])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([0, 1, 2], [3, 4, 5, 6])",
+        "expected_expr": "[[0, 0, 0, 0], [3, 4, 5, 6], [6, 8, 10, 12]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, -1], [2])",
+        "expected_expr": "[[2], [-2]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 3, 6], [0, 4, 8], [0, 5, 10], [0, 6, 12]]",
+        "why": "Right-hand order `j i` is the transposed outer product, (n, m)."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 885,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_outer`: the TRANSPOSED outer product — entry `[j, i]` is `vec1[i] * vec2[j]`, shape (n, m).",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"transposed outer product\"\"\"\n    return einops.einsum(t.tensor(vec1), t.tensor(vec2), \"i, j -> j i\").tolist()\n\n\nexample = ([0, 1, 2], [3, 4])\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 3, 6], [0, 4, 8]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2):\n    \"\"\"transposed outer product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([0, 1, 2], [3, 4])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([0, 1, 2], [3, 4])",
+        "expected_expr": "[[0, 3, 6], [0, 4, 8]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1], [2, 3])",
+        "expected_expr": "[[2], [3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 0], [3, 4], [6, 8]]",
+        "why": "That is the plain (m, n) outer product; the output order on the right decides the shape."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 886,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_outer`: batched — `u` is `(b, m)` and `v` is `(b, n)`. Return the `(b, m, n)` nested list of per-batch outer products.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"batched outer products\"\"\"\n    return einops.einsum(t.tensor(u), t.tensor(v), \"b i, b j -> b i j\").tolist()\n\n\nexample = ([[1, 2], [0, 1]], [[1, 1, 1], [2, 3, 4]])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 1, 1], [2, 2, 2]], [[0, 0, 0], [2, 3, 4]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(u, v):\n    \"\"\"batched outer products\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [0, 1]], [[1, 1, 1], [2, 3, 4]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [0, 1]], [[1, 1, 1], [2, 3, 4]])",
+        "expected_expr": "[[[1, 1, 1], [2, 2, 2]], [[0, 0, 0], [2, 3, 4]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[3]], [[1, 2]])",
+        "expected_expr": "[[[3, 6]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 1, 1], [4, 5, 6]]",
+        "why": "Dropping `b` sums the outer products across the batch."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 887,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_outer`: a three-way outer product of three lists (lengths l, m, n) — return the (l, m, n) nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(a, b, c):\n    \"\"\"three-way outer product\"\"\"\n    return einops.einsum(t.tensor(a), t.tensor(b), t.tensor(c), \"i, j, k -> i j k\").tolist()\n\n\nexample = ([1, 2], [1, 10], [1, 100, 1000])\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 100, 1000], [10, 1000, 10000]], [[2, 200, 2000], [20, 2000, 20000]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(a, b, c):\n    \"\"\"three-way outer product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [1, 10], [1, 100, 1000])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2], [1, 10], [1, 100, 1000])",
+        "expected_expr": "[[[1, 100, 1000], [10, 1000, 10000]], [[2, 200, 2000], [20, 2000, 20000]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2], [3], [4, 5])",
+        "expected_expr": "[[[24, 30]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1101, 11010], [2202, 22020]]",
+        "why": "Dropping `k` sums the last vector away."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 888,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Variant of `einsum_outer`: outer product of two lists MASKED by a (m, n) matrix — entry `[i, j]` is `vec1[i] * vec2[j] * mask[i][j]`, one call.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2, mask):\n    \"\"\"masked outer product\"\"\"\n    return einops.einsum(t.tensor(vec1), t.tensor(vec2), t.tensor(mask), \"i, j, i j -> i j\").tolist()\n\n\nexample = ([1, 2], [3, 4, 5], [[1, 0, 1], [0, 1, 0]])\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[3, 0, 5], [0, 8, 0]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vec1, vec2, mask):\n    \"\"\"masked outer product\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2], [3, 4, 5], [[1, 0, 1], [0, 1, 0]])\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2], [3, 4, 5], [[1, 0, 1], [0, 1, 0]])",
+        "expected_expr": "[[3, 0, 5], [0, 8, 0]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 1], [1, 1], [[0, 1], [1, 0]])",
+        "expected_expr": "[[0, 1], [1, 0]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "16",
+        "why": "Keeping nothing sums the masked products into one number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 889,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (1): a batch of images `(b, c, h, w)` as a nested list — lay them out **side by side** (batch into width), shape `(c, h, b·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch side by side\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b c h w -> c h (b w)').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 4, 5], [2, 3, 6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch side by side\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[0, 1, 4, 5], [2, 3, 6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1]]], [[[2]]], [[[3]]]])",
+        "expected_expr": "[[[1, 2, 3]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 4, 1, 5], [2, 6, 3, 7]]]",
+        "why": "`(w b)` puts b innermost: the images' columns interleave instead of sitting side by side."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 890,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (1): the images are **channels-last**, `(b, h, w, c)`. Stack them vertically (batch into height) — shape `(b·h, w, c)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"vertical stack, channels-last\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b h w c -> (b h) w c').tolist()\n\n\nexample = ([[[[0], [1]], [[2], [3]]], [[[4], [5]], [[6], [7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0], [1]], [[2], [3]], [[4], [5]], [[6], [7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"vertical stack, channels-last\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0], [1]], [[2], [3]]], [[[4], [5]], [[6], [7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0], [1]], [[2], [3]]], [[[4], [5]], [[6], [7]]]])",
+        "expected_expr": "[[[0], [1]], [[2], [3]], [[4], [5]], [[6], [7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]]], [[[3, 4]]]])",
+        "expected_expr": "[[[1, 2]], [[3, 4]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0], [1]], [[4], [5]], [[2], [3]], [[6], [7]]]",
+        "why": "`(h b)` interleaves rows from different images; `(b h)` keeps each image whole, one above the next."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 891,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (1): stack the CHANNELS of one image `(c, h, w)` vertically — channel 0's rows, then channel 1's — shape `(c·h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels stacked vertically\"\"\"\n    return einops.rearrange(t.tensor(img), 'c h w -> (c h) w').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1], [2, 3], [4, 5], [6, 7]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels stacked vertically\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[0, 1], [2, 3], [4, 5], [6, 7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3]], [[4, 5, 6]]])",
+        "expected_expr": "[[1, 2, 3], [4, 5, 6]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 1], [4, 5], [2, 3], [6, 7]]",
+        "why": "`(h c)` puts c innermost, so rows from the two channels alternate."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 892,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (1): a batch `(b, c, h, w)` stacked vertically AND flattened per channel — shape `(c, b·h·w)`, reading each image row by row before the next image. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch and space into one axis\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b c h w -> c (b h w)').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1, 2, 3, 4, 5, 6, 7]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch and space into one axis\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[0, 1, 2, 3, 4, 5, 6, 7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]]], [[[3, 4]]]])",
+        "expected_expr": "[[1, 2, 3, 4]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 4, 1, 5, 2, 6, 3, 7]]",
+        "why": "`(h w b)` walks b fastest: pixels of different images interleave instead of image after image."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 893,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (2): one image `(c, h, w)` — copy it side by side (twice along width), shape `(c, h, 2·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"copy along width\"\"\"\n    return einops.repeat(t.tensor(img), 'c h w -> c h (2 w)').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 0, 1], [2, 3, 2, 3]], [[4, 5, 4, 5], [6, 7, 6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"copy along width\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[[0, 1, 0, 1], [2, 3, 2, 3]], [[4, 5, 4, 5], [6, 7, 6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]])",
+        "expected_expr": "[[[1, 2, 1, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 0, 1, 1], [2, 2, 3, 3]], [[4, 4, 5, 5], [6, 6, 7, 7]]]",
+        "why": "`(w 2)` repeats each COLUMN twice in place (stretching); `(2 w)` puts a whole copy after the whole image."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 894,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (2): copy one image `(c, h, w)` `n` times vertically — shape `(c, n·h, w)`, `n` an argument. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img, n):\n    \"\"\"n copies stacked\"\"\"\n    return einops.repeat(t.tensor(img), 'c h w -> c (n h) w', n=n).tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1], [2, 3], [0, 1], [2, 3]], [[4, 5], [6, 7], [4, 5], [6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img, n):\n    \"\"\"n copies stacked\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)",
+        "expected_expr": "[[[0, 1], [2, 3], [0, 1], [2, 3]], [[4, 5], [6, 7], [4, 5], [6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]], 3)",
+        "expected_expr": "[[[1, 2], [1, 2], [1, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1], [0, 1], [2, 3], [2, 3]], [[4, 5], [4, 5], [6, 7], [6, 7]]]",
+        "why": "`(h n)` repeats each row n times in place — a stretch, not stacked copies."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 895,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (2): a grayscale image `(h, w)` — tile it in a 2×2 arrangement, shape `(2·h, 2·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 tiling\"\"\"\n    return einops.repeat(t.tensor(img), 'h w -> (2 h) (2 w)').tolist()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 tiling\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[5]])",
+        "expected_expr": "[[5, 5], [5, 5]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 1, 2, 2], [1, 1, 2, 2], [3, 3, 4, 4], [3, 3, 4, 4]]",
+        "why": "Factors on the RIGHT of the name stretch pixels; on the LEFT they lay whole copies."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 896,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (2): a grayscale image `(h, w)` — give it 3 identical colour channels, channels FIRST: shape `(3, h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"grayscale to RGB\"\"\"\n    return einops.repeat(t.tensor(img), 'h w -> 3 h w').tolist()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 2], [3, 4]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"grayscale to RGB\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[[[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 2], [3, 4]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[7]])",
+        "expected_expr": "[[[7]], [[7]], [[7]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[1, 1, 1], [2, 2, 2]], [[3, 3, 3], [4, 4, 4]]]",
+        "why": "That put the new channel axis LAST; the task asked channels first."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 897,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (3): a batch `(b, c, h, w)` — images side by side (batch into width) and each stretched? No: each image repeated twice vertically as a block — shape `(c, 2·h, b·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"side by side, doubled vertically\"\"\"\n    return einops.repeat(t.tensor(imgs), 'b c h w -> c (2 h) (b w)').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 4, 5], [2, 3, 6, 7], [0, 1, 4, 5], [2, 3, 6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"side by side, doubled vertically\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[0, 1, 4, 5], [2, 3, 6, 7], [0, 1, 4, 5], [2, 3, 6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1]]], [[[2]]]])",
+        "expected_expr": "[[[1, 2], [1, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1, 4, 5], [0, 1, 4, 5], [2, 3, 6, 7], [2, 3, 6, 7]]]",
+        "why": "`(h 2)` doubles each row in place (a stretch); `(2 h)` stacks a second full copy below."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 898,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (3): a batch `(b, c, h, w)` stacked vertically and copied `n` times along width — shape `(c, b·h, n·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, n):\n    \"\"\"vertical stack, n copies wide\"\"\"\n    return einops.repeat(t.tensor(imgs), 'b c h w -> c (b h) (n w)', n=n).tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 0, 1], [2, 3, 2, 3], [4, 5, 4, 5], [6, 7, 6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, n):\n    \"\"\"vertical stack, n copies wide\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]], 2)",
+        "expected_expr": "[[[0, 1, 0, 1], [2, 3, 2, 3], [4, 5, 4, 5], [6, 7, 6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]]]], 3)",
+        "expected_expr": "[[[1, 2, 1, 2, 1, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 0, 1, 1], [2, 2, 3, 3], [4, 4, 5, 5], [6, 6, 7, 7]]]",
+        "why": "`(w n)` stretches columns n times instead of laying n copies side by side."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 899,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (3): a batch `(b, c, h, w)` where EACH image appears twice in a row vertically (image 0, image 0, image 1, image 1, …) — shape `(c, 2·b·h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"each image doubled in place\"\"\"\n    return einops.repeat(t.tensor(imgs), 'b c h w -> c (b 2 h) w').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1], [2, 3], [0, 1], [2, 3], [4, 5], [6, 7], [4, 5], [6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"each image doubled in place\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[0, 1], [2, 3], [0, 1], [2, 3], [4, 5], [6, 7], [4, 5], [6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1]]], [[[2]]]])",
+        "expected_expr": "[[[1], [1], [2], [2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1], [2, 3], [4, 5], [6, 7], [0, 1], [2, 3], [4, 5], [6, 7]]]",
+        "why": "`(2 b h)` repeats the WHOLE stack twice (0, 1, 0, 1); `(b 2 h)` doubles each image before moving on."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 900,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (3): grayscale batch `(b, h, w)` — stack vertically and copy twice along width: shape `(b·h, 2·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"grayscale stack + double\"\"\"\n    return einops.repeat(t.tensor(imgs), 'b h w -> (b h) (2 w)').tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 2, 1, 2], [3, 4, 3, 4], [5, 6, 5, 6], [7, 8, 7, 8]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"grayscale stack + double\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "[[1, 2, 1, 2], [3, 4, 3, 4], [5, 6, 5, 6], [7, 8, 7, 8]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1]]])",
+        "expected_expr": "[[1, 1]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 2], [3, 4], [5, 6], [7, 8], [1, 2], [3, 4], [5, 6], [7, 8]]",
+        "why": "That doubled the stack vertically; the copy was asked for along WIDTH."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 901,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (4): stretch one image `(c, h, w)` horizontally — every column doubled in place, shape `(c, h, 2·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"stretch width\"\"\"\n    return einops.repeat(t.tensor(img), 'c h w -> c h (w 2)').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 0, 1, 1], [2, 2, 3, 3]], [[4, 4, 5, 5], [6, 6, 7, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"stretch width\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[[0, 0, 1, 1], [2, 2, 3, 3]], [[4, 4, 5, 5], [6, 6, 7, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]])",
+        "expected_expr": "[[[1, 1, 2, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1, 0, 1], [2, 3, 2, 3]], [[4, 5, 4, 5], [6, 7, 6, 7]]]",
+        "why": "`(2 w)` is a second copy after the first, not each column doubled."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 902,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (4): stretch one image `(c, h, w)` vertically by a factor `k` (each row repeated k times in place), shape `(c, k·h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img, k):\n    \"\"\"stretch height by k\"\"\"\n    return einops.repeat(t.tensor(img), 'c h w -> c (h k) w', k=k).tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1], [0, 1], [2, 3], [2, 3]], [[4, 5], [4, 5], [6, 7], [6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img, k):\n    \"\"\"stretch height by k\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]], 2)",
+        "expected_expr": "[[[0, 1], [0, 1], [2, 3], [2, 3]], [[4, 5], [4, 5], [6, 7], [6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]], 3)",
+        "expected_expr": "[[[1, 2], [1, 2], [1, 2]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1], [2, 3], [0, 1], [2, 3]], [[4, 5], [6, 7], [4, 5], [6, 7]]]",
+        "why": "`(k h)` stacks k whole copies; `(h k)` repeats each row k times where it stands."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 903,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (4): a grayscale image `(h, w)` — upscale it 2× in BOTH directions (nearest-neighbour), shape `(2·h, 2·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x nearest-neighbour upscale\"\"\"\n    return einops.repeat(t.tensor(img), 'h w -> (h 2) (w 2)').tolist()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 1, 2, 2], [1, 1, 2, 2], [3, 3, 4, 4], [3, 3, 4, 4]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x nearest-neighbour upscale\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[[1, 1, 2, 2], [1, 1, 2, 2], [3, 3, 4, 4], [3, 3, 4, 4]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[3]])",
+        "expected_expr": "[[3, 3], [3, 3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]]",
+        "why": "`(2 h) (2 w)` tiles four copies; a stretch keeps each pixel's copies TOGETHER, factor on the right."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 904,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of exercise (4): stretch one image `(c, h, w)` by 2 vertically and 3 horizontally, shape `(c, 2·h, 3·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"anisotropic stretch\"\"\"\n    return einops.repeat(t.tensor(img), 'c h w -> c (h 2) (w 3)').tolist()\n\n\nexample = ([[[1, 2]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 1, 1, 2, 2, 2], [1, 1, 1, 2, 2, 2]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"anisotropic stretch\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]])",
+        "expected_expr": "[[[1, 1, 1, 2, 2, 2], [1, 1, 1, 2, 2, 2]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[[0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1], [2, 2, 2, 3, 3, 3], [2, 2, 2, 3, 3, 3]], [[4, 4, 4, 5, 5, 5], [4, 4, 4, 5, 5, 5], [6, 6, 6, 7, 7, 7], [6, 6, 6, 7, 7, 7]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[1, 1, 2, 2], [1, 1, 2, 2], [1, 1, 2, 2]]]",
+        "why": "The factors were swapped: 2 belongs to height, 3 to width."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 905,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (5): one image `(c, h, w)` — stack the channels vertically with their ROWS INTERLEAVED (row 0 of every channel, then row 1 of every channel, …), shape `(h·c, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels interleaved by row\"\"\"\n    return einops.rearrange(t.tensor(img), 'c h w -> (h c) w').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1], [4, 5], [2, 3], [6, 7]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels interleaved by row\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[0, 1], [4, 5], [2, 3], [6, 7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "expected_expr": "[[1, 2], [5, 6], [3, 4], [7, 8]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 1], [2, 3], [4, 5], [6, 7]]",
+        "why": "`(c h)` keeps each channel's rows together (channel 0's image above channel 1's); `(h c)` alternates them row by row."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 906,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (5): one image `(c, h, w)` — channels side by side but with the channel index INNERMOST (column 0 of every channel, then column 1 of every channel, …), shape `(h, w·c)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels interleaved by column\"\"\"\n    return einops.rearrange(t.tensor(img), 'c h w -> h (w c)').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 4, 1, 5], [2, 6, 3, 7]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels interleaved by column\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[0, 4, 1, 5], [2, 6, 3, 7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]], [[3, 4]]])",
+        "expected_expr": "[[1, 3, 2, 4]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 1, 4, 5], [2, 3, 6, 7]]",
+        "why": "`(c w)` keeps each channel's columns together (side by side); `(w c)` interleaves them."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 907,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (5): a batch `(b, c, h, w)` — for EVERY image lay its channels side by side, shape `(b, h, c·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"channels side by side, per image\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b c h w -> b h (c w)').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 4, 5], [2, 3, 6, 7]], [[0, 1, 4, 5], [2, 3, 6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"channels side by side, per image\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[0, 1, 4, 5], [2, 3, 6, 7]], [[0, 1, 4, 5], [2, 3, 6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]], [[3, 4]]]])",
+        "expected_expr": "[[[1, 2, 3, 4]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 1, 4, 5, 0, 1, 4, 5], [2, 3, 6, 7, 2, 3, 6, 7]]",
+        "why": "Merging b in as well collapses the batch into one wide strip; the task keeps `b` as its own axis."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 908,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (5): one image `(c, h, w)` — transpose each channel AND lay them side by side: shape `(w, c·h)`, entry `[x, c·H + y] = img[c][y][x]`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"transposed channels side by side\"\"\"\n    return einops.rearrange(t.tensor(img), 'c h w -> w (c h)').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 2, 4, 6], [1, 3, 5, 7]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"transposed channels side by side\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[0, 2, 4, 6], [1, 3, 5, 7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3]], [[4, 5, 6]]])",
+        "expected_expr": "[[1, 4], [2, 5], [3, 6]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 4, 2, 6], [1, 5, 3, 7]]",
+        "why": "`(h c)` interleaves the channels' rows; the task wants each channel's block whole."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 909,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (6): a batch `(b, c, h, w)` with `b = rows·cols` — arrange the images in a grid of `rows` rows (row-major: image 0 top-left, image 1 to its right), shape `(c, rows·h, cols·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"grid with a given row count\"\"\"\n    return einops.rearrange(t.tensor(imgs), '(r q) c h w -> c (r h) (q w)', r=rows).tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"grid with a given row count\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)",
+        "expected_expr": "[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 1)",
+        "expected_expr": "[[[0, 1, 4, 5, 8, 9, 12, 13], [2, 3, 6, 7, 10, 11, 14, 15]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)",
+        "expected_expr": "[[[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 13], [14, 15]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13], [6, 7, 14, 15]]]",
+        "why": "Splitting as `(q r)` makes the ROW index the fast one — the images fill the grid column by column."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 910,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (6): same grid, but the number of COLUMNS is given, shape `(c, (b/cols)·h, cols·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, cols):\n    \"\"\"grid with a given column count\"\"\"\n    return einops.rearrange(t.tensor(imgs), '(r q) c h w -> c (r h) (q w)', q=cols).tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 4, 5, 8, 9, 12, 13], [2, 3, 6, 7, 10, 11, 14, 15]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, cols):\n    \"\"\"grid with a given column count\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)",
+        "expected_expr": "[[[0, 1, 4, 5, 8, 9, 12, 13], [2, 3, 6, 7, 10, 11, 14, 15]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)",
+        "expected_expr": "[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 1)",
+        "expected_expr": "[[[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 13], [14, 15]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 13], [14, 15]]]",
+        "why": "`cols` was handed to the ROW factor; with 4 images and cols=2 the shapes coincide but the layout is the transpose of what was asked."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 911,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (6): grayscale batch `(b, h, w)` into a grid with `rows` rows, shape `(rows·h, cols·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"grayscale grid\"\"\"\n    return einops.rearrange(t.tensor(imgs), '(r q) h w -> (r h) (q w)', r=rows).tolist()\n\n\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 9], [9, 9]], [[0, 0], [0, 0]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 2, 5, 6], [3, 4, 7, 8], [9, 9, 0, 0], [9, 9, 0, 0]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"grayscale grid\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 9], [9, 9]], [[0, 0], [0, 0]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 9], [9, 9]], [[0, 0], [0, 0]]], 2)",
+        "expected_expr": "[[1, 2, 5, 6], [3, 4, 7, 8], [9, 9, 0, 0], [9, 9, 0, 0]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1]], [[2]], [[3]]], 3)",
+        "expected_expr": "[[1], [2], [3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 3, 9, 9], [2, 4, 9, 9], [5, 7, 0, 0], [6, 8, 0, 0]]",
+        "why": "The output merged the wrong pairs: width goes with the COLUMN index, height with the ROW index."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 912,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (6): a grid filled COLUMN-major — image 0 top-left, image 1 BELOW it — with `rows` rows, from a batch `(b, c, h, w)`, shape `(c, rows·h, cols·w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"column-major grid\"\"\"\n    return einops.rearrange(t.tensor(imgs), '(q r) c h w -> c (r h) (q w)', r=rows).tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13], [6, 7, 14, 15]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs, rows):\n    \"\"\"column-major grid\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 2)",
+        "expected_expr": "[[[0, 1, 8, 9], [2, 3, 10, 11], [4, 5, 12, 13], [6, 7, 14, 15]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]], [[[8, 9], [10, 11]]], [[[12, 13], [14, 15]]]], 4)",
+        "expected_expr": "[[[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 13], [14, 15]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]",
+        "why": "That is the row-major fill from the notebook: image 1 lands to the RIGHT of image 0."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 913,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (7): transpose EVERY image of a batch `(b, c, h, w)` — shape `(b, c, w, h)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch transpose\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b c h w -> b c w h').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[[[[0, 2], [1, 3]]], [[[4, 6], [5, 7]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch transpose\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[[0, 2], [1, 3]]], [[[4, 6], [5, 7]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2, 3]]]])",
+        "expected_expr": "[[[[1], [2], [3]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[0, 2], [1, 3]], [[4, 6], [5, 7]]]]",
+        "why": "That also swapped batch and channel; only h and w were to trade places."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 914,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (7): move the channel axis of one image from FIRST to LAST — `(c, h, w)` to `(h, w, c)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels first to last\"\"\"\n    return einops.rearrange(t.tensor(img), 'c h w -> h w c').tolist()\n\n\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 4], [1, 5]], [[2, 6], [3, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels first to last\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 1], [2, 3]], [[4, 5], [6, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[[0, 4], [1, 5]], [[2, 6], [3, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]], [[3, 4]], [[5, 6]]])",
+        "expected_expr": "[[[1, 3, 5], [2, 4, 6]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 4], [2, 6]], [[1, 5], [3, 7]]]",
+        "why": "That transposed the image on the way; h stays before w."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 915,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (7): a channels-LAST image `(h, w, c)` to channels-first `(c, h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels last to first\"\"\"\n    return einops.rearrange(t.tensor(img), 'h w c -> c h w').tolist()\n\n\nexample = ([[[0, 4], [1, 5]], [[2, 6], [3, 7]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"channels last to first\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[0, 4], [1, 5]], [[2, 6], [3, 7]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 4], [1, 5]], [[2, 6], [3, 7]]])",
+        "expected_expr": "[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3]]])",
+        "expected_expr": "[[[1]], [[2]], [[3]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 2], [1, 3]], [[4, 6], [5, 7]]]",
+        "why": "The spatial axes were flipped as well; only the channel axis moves."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 916,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of exercise (7): swap batch and channel of `(b, c, h, w)` — shape `(c, b, h, w)` — so each channel holds the whole batch. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch and channel swapped\"\"\"\n    return einops.rearrange(t.tensor(imgs), 'b c h w -> c b h w').tolist()\n\n\nexample = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "[[[[0, 1], [2, 3]], [[0, 1], [2, 3]]], [[[4, 5], [6, 7]], [[4, 5], [6, 7]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"batch and channel swapped\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]], [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[[0, 1], [2, 3]], [[0, 1], [2, 3]]], [[[4, 5], [6, 7]], [[4, 5], [6, 7]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[0, 2], [1, 3]], [[0, 2], [1, 3]]], [[[4, 6], [5, 7]], [[4, 6], [5, 7]]]]",
+        "why": "h and w were swapped as well."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 917,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of exercise (8): 2×2 MAX-pool one image `(c, h, w)` (h, w even) — shape `(c, h/2, w/2)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 max pool\"\"\"\n    return einops.reduce(t.tensor(img), 'c (h h2) (w w2) -> c h w', 'max', h2=2, w2=2).tolist()\n\n\nexample = ([[[1, 2, 3, 4], [5, 6, 7, 8]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[[6, 8]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 max pool\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1, 2, 3, 4], [5, 6, 7, 8]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3, 4], [5, 6, 7, 8]]])",
+        "expected_expr": "[[[6, 8]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[9, 1], [1, 1]], [[0, 0], [0, 5]]])",
+        "expected_expr": "[[[9]], [[5]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[7, 8]]]",
+        "why": "`(h2 h)` pools rows that are h apart (top half against bottom half), not neighbouring rows."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 918,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of exercise (8): 2×2 MEAN-pool one image `(c, h, w)` of floats — shape `(c, h/2, w/2)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 mean pool\"\"\"\n    return einops.reduce(t.tensor(img), 'c (h h2) (w w2) -> c h w', 'mean', h2=2, w2=2).tolist()\n\n\nexample = ([[[1.0, 3.0], [5.0, 7.0]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[[[4.0]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img):\n    \"\"\"2x2 mean pool\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[1.0, 3.0], [5.0, 7.0]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1.0, 3.0], [5.0, 7.0]]])",
+        "expected_expr": "[[[4.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[2.0, 2.0, 4.0, 4.0], [2.0, 2.0, 4.0, 4.0]]])",
+        "expected_expr": "[[[2.0, 4.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[7.0]]]",
+        "why": "That is the max of each window; the task asked for the mean."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 919,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of exercise (8): shrink a grayscale image `(h, w)` by a factor `k` in both directions taking the MIN of each k×k window, shape `(h/k, w/k)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(img, k):\n    \"\"\"k x k min pool\"\"\"\n    return einops.reduce(t.tensor(img), '(h k1) (w k2) -> h w', 'min', k1=k, k2=k).tolist()\n\n\nexample = ([[4, 3, 2, 1], [8, 7, 6, 5]], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[3, 1]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(img, k):\n    \"\"\"k x k min pool\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[4, 3, 2, 1], [8, 7, 6, 5]], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[4, 3, 2, 1], [8, 7, 6, 5]], 2)",
+        "expected_expr": "[[3, 1]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]], 1)",
+        "expected_expr": "[[1, 2], [3, 4]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)",
+        "expected_expr": "[[1]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[8, 6]]",
+        "why": "Max instead of min."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 920,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of exercise (8): a batch `(b, c, h, w)` — 2×2 max-pool every image AND lay the batch out side by side, shape `(c, h/2, b·w/2)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"pool then side by side\"\"\"\n    return einops.reduce(t.tensor(imgs), 'b c (h h2) (w w2) -> c h (b w)', 'max', h2=2, w2=2).tolist()\n\n\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "[[[3, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"pool then side by side\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[3, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2], [3, 4]]], [[[8, 8], [8, 8]]]])",
+        "expected_expr": "[[[4, 8]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[3], [7]]]",
+        "why": "That stacked the pooled images vertically; side by side merges b into WIDTH."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 921,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A1): build `t.arange(n)` and reshape it with `einops.rearrange` into `h` rows (row-major). Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"arange into h rows\"\"\"\n    return einops.rearrange(t.arange(n), '(h w) -> h w', h=h).tolist()\n\n\nexample = (6, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 1], [2, 3], [4, 5]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"arange into h rows\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 3)",
+        "expected_expr": "[[0, 1], [2, 3], [4, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 2)",
+        "expected_expr": "[[0, 1, 2], [3, 4, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(4, 1)",
+        "expected_expr": "[[0, 1, 2, 3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 3], [1, 4], [2, 5]]",
+        "why": "`(w h)` fills column-major: consecutive numbers run DOWN a column."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 922,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A1): build `t.arange(n)` and fill a `(h, w)` grid COLUMN-major (consecutive numbers run down each column) with one `einops.rearrange` call, `h` given. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"column-major fill\"\"\"\n    return einops.rearrange(t.arange(n), '(w h) -> h w', h=h).tolist()\n\n\nexample = (6, 3)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[0, 3], [1, 4], [2, 5]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"column-major fill\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 3)",
+        "expected_expr": "[[0, 3], [1, 4], [2, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 2)",
+        "expected_expr": "[[0, 2, 4], [1, 3, 5]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(4, 4)",
+        "expected_expr": "[[0], [1], [2], [3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[0, 2, 4], [1, 3, 5]]",
+        "why": "That is the row-major grid transposed: a `(w, h)` shape, not `(h, w)` filled down the columns."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 923,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A1): build `t.arange(n)` and split it into a 3-D `(a, b, c)` block with `a` and `b` given, row-major. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(n, a, b):\n    \"\"\"three-way split\"\"\"\n    return einops.rearrange(t.arange(n), '(a b c) -> a b c', a=a, b=b).tolist()\n\n\nexample = (6, 1, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0, 1, 2], [3, 4, 5]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(n, a, b):\n    \"\"\"three-way split\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 1, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 1, 2)",
+        "expected_expr": "[[[0, 1, 2], [3, 4, 5]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(8, 2, 2)",
+        "expected_expr": "[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(6, 3, 2)",
+        "expected_expr": "[[[0], [1]], [[2], [3]], [[4], [5]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 1, 2]], [[3, 4, 5]]]",
+        "why": "The factor sizes were assigned to the wrong names; the shape comes out `(b, a, c)`."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 924,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A1): build `t.arange(start, stop)` and reshape it into `w` COLUMNS (row-major) with `einops.rearrange`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(start, stop, w):\n    \"\"\"arange into w columns\"\"\"\n    return einops.rearrange(t.arange(start, stop), '(h w) -> h w', w=w).tolist()\n\n\nexample = (3, 9, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "[[3, 4], [5, 6], [7, 8]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(start, stop, w):\n    \"\"\"arange into w columns\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 9, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(3, 9, 2)",
+        "expected_expr": "[[3, 4], [5, 6], [7, 8]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(1, 7, 3)",
+        "expected_expr": "[[1, 2, 3], [4, 5, 6]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve(0, 4, 4)",
+        "expected_expr": "[[0, 1, 2, 3]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[3, 4, 5], [6, 7, 8]]",
+        "why": "`w` was handed to the row factor: the grid has w ROWS instead of w columns."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 925,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A2): a flat list of values — split it into `h` rows (row-major) with `einops.rearrange` on `t.tensor(vals)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vals, h):\n    \"\"\"list into h rows\"\"\"\n    return einops.rearrange(t.tensor(vals), '(h w) -> h w', h=h).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6], 2)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 2, 3], [4, 5, 6]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, h):\n    \"\"\"list into h rows\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6], 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6], 2)",
+        "expected_expr": "[[1, 2, 3], [4, 5, 6]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6], 3)",
+        "expected_expr": "[[1, 2], [3, 4], [5, 6]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([7, 8], 1)",
+        "expected_expr": "[[7, 8]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 2], [3, 4], [5, 6]]",
+        "why": "`h` went to the column factor: the grid has h COLUMNS."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 926,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A2): a flat list — split into rows of length `w` and then TRANSPOSE, so the result is `(w, h)`, with one `einops.rearrange` call. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vals, w):\n    \"\"\"split and transpose\"\"\"\n    return einops.rearrange(t.tensor(vals), '(h w) -> w h', w=w).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6], 3)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[1, 4], [2, 5], [3, 6]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, w):\n    \"\"\"split and transpose\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6], 3)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6], 3)",
+        "expected_expr": "[[1, 4], [2, 5], [3, 6]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4], 2)",
+        "expected_expr": "[[1, 3], [2, 4]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([5], 1)",
+        "expected_expr": "[[5]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 2], [3, 4], [5, 6]]",
+        "why": "`(w h)` fills rows of length h — a different grouping of the numbers, not the transpose of the row-major grid."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 927,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A2): a flat list of `b·h·w` values — split it into `b` matrices of `h` rows each, shape `(b, h, w)`. Return the nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vals, b, h):\n    \"\"\"list into a batch of matrices\"\"\"\n    return einops.rearrange(t.tensor(vals), '(b h w) -> b h w', b=b, h=h).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)\nprint(solve(*example))\n",
+    "difficulty_score": 42,
+    "difficulty_label": "medium",
+    "expected_output": "[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, b, h):\n    \"\"\"list into a batch of matrices\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)",
+        "expected_expr": "[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6], 1, 2)",
+        "expected_expr": "[[[1, 2, 3], [4, 5, 6]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1, 2, 3, 4, 5, 6], 3, 1)",
+        "expected_expr": "[[[1, 2]], [[3, 4]], [[5, 6]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[1, 2], [5, 6]], [[3, 4], [7, 8]]]",
+        "why": "The split order `(h b w)` regroups the numbers differently — matrices no longer hold consecutive runs."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 928,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "Variant of (A2): a `(h, w)` nested list — FLATTEN it back to one row-major list with `einops.rearrange`. Return the list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(grid):\n    \"\"\"grid back to a list\"\"\"\n    return einops.rearrange(t.tensor(grid), 'h w -> (h w)').tolist()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
+    "expected_output": "[1, 2, 3, 4]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(grid):\n    \"\"\"grid back to a list\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2], [3, 4]])",
+        "expected_expr": "[1, 2, 3, 4]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "[1, 2, 3, 4, 5, 6]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[9]])",
+        "expected_expr": "[9]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[1, 3, 2, 4]",
+        "why": "`(w h)` reads DOWN the columns."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 929,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of (B1): `temps` is a flat list of daily readings, `7·weeks` long. Return the MAX of each week as a list, via `einops.reduce`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"weekly maximum\"\"\"\n    return einops.reduce(t.tensor(temps), '(h 7) -> h', 'max').tolist()\n\n\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 38,
+    "difficulty_label": "medium",
+    "expected_output": "[75.0, 75.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"weekly maximum\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0])",
+        "expected_expr": "[75.0, 75.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0])",
+        "expected_expr": "[7.0, 10.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0])",
+        "expected_expr": "[75.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[74.0, 75.0]",
+        "why": "`(7 h)` groups every h-th day together (all Mondays, all Tuesdays…), not consecutive weeks."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 930,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of (B1): readings come in blocks of `k` days (k given) instead of 7. Return the mean of each block as a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"block means of length k\"\"\"\n    return einops.reduce(t.tensor(temps), '(h k) -> h', 'mean', k=k).tolist()\n\n\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[4.0, 10.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"block means of length k\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)",
+        "expected_expr": "[4.0, 10.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 2)",
+        "expected_expr": "[1.5, 3.5, 5.5, 8.5, 10.0, 10.0, 10.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2.0, 4.0, 6.0], 3)",
+        "expected_expr": "[4.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[6.5714287757873535, 7.4285712242126465]",
+        "why": "`(k h)` averages every h-th reading across blocks instead of each block of k consecutive days."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 931,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of (B1): return the TOTAL (sum) of each week's readings as a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"weekly totals\"\"\"\n    return einops.reduce(t.tensor(temps), '(h 7) -> h', 'sum').tolist()\n\n\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "[28.0, 70.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"weekly totals\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0])",
+        "expected_expr": "[28.0, 70.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])",
+        "expected_expr": "[7.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[4.0, 10.0]",
+        "why": "That is the weekly mean; the task asked for the sum."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 932,
+    "topic": "Einops",
+    "subtopic": "Reduce",
+    "subtopic_key": "Einops: Reduce",
+    "question_text": "Variant of (B1): `temps` is `(weeks, 7)` as a nested list — return the mean of each DAY-OF-WEEK across all weeks (7 numbers) as a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"day-of-week means\"\"\"\n    return einops.reduce(t.tensor(temps), 'w d -> d', 'mean').tolist()\n\n\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],)\nprint(solve(*example))\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"day-of-week means\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])",
+        "expected_expr": "[2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]])",
+        "expected_expr": "[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[4.0, 6.0]",
+        "why": "Keeping `w` gives one mean per WEEK; the day-of-week mean keeps `d`."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 933,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B2): for each day return the difference from that week's MAXIMUM (a list the same length as `temps`) — reduce, repeat back, subtract.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"difference from weekly max\"\"\"\n    x = t.tensor(temps)\n    mx = einops.reduce(x, '(h 7) -> h', 'max')\n    return (x - einops.repeat(mx, 'h -> (h 7)')).tolist()\n\n\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[-6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"difference from weekly max\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0])",
+        "expected_expr": "[-6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0])",
+        "expected_expr": "[-4.0, -3.0, -5.0, 0.0, -4.0, -4.0, -3.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[-6.0, -8.0, -4.0, -6.0, -2.0, -4.0, 0.0, 0.0, 3.0, 0.0, 3.0, 0.0, 3.0, 0.0]",
+        "why": "`(7 h)` lays the week maxima out interleaved, so day 2 of week 1 is compared with week 2's maximum."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 934,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B2): blocks are `k` days long (k given). Return each day's difference from its block's mean as a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"difference from block mean, k days\"\"\"\n    x = t.tensor(temps)\n    avg = einops.reduce(x, '(h k) -> h', 'mean', k=k)\n    return (x - einops.repeat(avg, 'h -> (h k)', k=k)).tolist()\n\n\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"difference from block mean, k days\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], 7)",
+        "expected_expr": "[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 3.0, 5.0, 7.0], 2)",
+        "expected_expr": "[-1.0, 1.0, -1.0, 1.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "RuntimeError: The size of tensor a (14) must match the size of tensor b (2) at non-singleton dimension 0",
+        "why": "Without the repeat the shapes do not line up — broadcasting fails (or silently pairs the wrong days when the lengths coincide)."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 935,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B2): return each day's reading as a RATIO to its week's mean (day / weekly mean), a list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"ratio to weekly mean\"\"\"\n    x = t.tensor(temps)\n    avg = einops.reduce(x, '(h 7) -> h', 'mean')\n    return (x / einops.repeat(avg, 'h -> (h 7)')).tolist()\n\n\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 44,
+    "difficulty_label": "medium",
+    "expected_output": "[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"ratio to weekly mean\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0])",
+        "expected_expr": "[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0])",
+        "expected_expr": "[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[4.0, 2.0, 1.3333333730697632, 1.0, 0.800000011920929, 0.6666666865348816, 0.5714285969734192, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+        "why": "That is the reciprocal ratio: weekly mean over day."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 936,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B2): `temps` is `(weeks, 7)` as a nested list. Return each day's difference from its week's mean, same shape, as a nested list — reduce over days and repeat back along the day axis.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"2-D weekly differences\"\"\"\n    x = t.tensor(temps)\n    avg = einops.reduce(x, 'w d -> w', 'mean')\n    return (x - einops.repeat(avg, 'w -> w d', d=x.shape[1])).tolist()\n\n\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0]],)\nprint(solve(*example))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "[[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"2-D weekly differences\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0]])",
+        "expected_expr": "[[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[2.0, 4.0]])",
+        "expected_expr": "[[-1.0, 1.0]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[-4.5, -4.0, -3.5, -3.0, -2.5, -2.0, -1.5], [4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5]]",
+        "why": "That subtracted the DAY-OF-WEEK mean (across weeks) instead of each week's own mean."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 937,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B3): normalise each day within its week to `(day - week_min) / (week_max - week_min)` — a list the same length as `temps`, each value rounded to 4 decimals. Use `einops.reduce` for the min and max and `einops.repeat` to lay them back out.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"min-max normalisation per week\"\"\"\n    x = t.tensor(temps)\n    lo = einops.repeat(einops.reduce(x, '(h 7) -> h', 'min'), 'h -> (h 7)')\n    hi = einops.repeat(einops.reduce(x, '(h 7) -> h', 'max'), 'h -> (h 7)')\n    return [round(v, 4) for v in ((x - lo) / (hi - lo)).tolist()]\n\n\nexample = ([0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"min-max normalisation per week\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0])",
+        "expected_expr": "[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])",
+        "expected_expr": "[0.0, 0.1667, 0.3333, 0.5, 0.6667, 0.8333, 1.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1]",
+        "why": "That normalised against the GLOBAL min and max, not each week's own."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 938,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B3): z-score each day within blocks of `k` days (k given): `(day - block_mean) / block_std`, using `t.std` for the std (pass `t.std` as the reduction to `einops.reduce`). Return the list, each value rounded to 4 decimals.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"z-score within k-day blocks\"\"\"\n    x = t.tensor(temps)\n    avg = einops.repeat(einops.reduce(x, '(h k) -> h', 'mean', k=k), 'h -> (h k)', k=k)\n    std = einops.repeat(einops.reduce(x, '(h k) -> h', t.std, k=k), 'h -> (h k)', k=k)\n    return [round(v, 4) for v in ((x - avg) / std).tolist()]\n\n\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0], 7)\nprint(solve(*example))\n",
+    "difficulty_score": 52,
+    "difficulty_label": "medium",
+    "expected_output": "[-0.4454, 0.1782, -1.069, 2.049, -0.4454, -0.4454, 0.1782, 1.7321, 0.0, 0.0, -1.7321, 0.0, 0.0, 0.0]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps, k):\n    \"\"\"z-score within k-day blocks\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0], 7)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0], 7)",
+        "expected_expr": "[-0.4454, 0.1782, -1.069, 2.049, -0.4454, -0.4454, 0.1782, 1.7321, 0.0, 0.0, -1.7321, 0.0, 0.0, 0.0]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 3.0, 2.0, 4.0], 2)",
+        "expected_expr": "[-0.7071, 0.7071, -0.7071, 0.7071]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[-0.4309, 0.1724, -1.0343, 1.9824, -0.4309, -0.4309, 0.1724, 0.6033, 0.0, 0.0, -0.6033, 0.0, 0.0, 0.0]",
+        "why": "Divided by the std of the WHOLE series, not each block's."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 939,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B3): scale each day by its week's std WITHOUT centering — `day / week_std` — using `t.std` as the reduction. Return the list, each value rounded to 4 decimals.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"scale by weekly std\"\"\"\n    x = t.tensor(temps)\n    std = einops.repeat(einops.reduce(x, '(h 7) -> h', t.std), 'h -> (h 7)')\n    return [round(v, 4) for v in (x / std).tolist()]\n\n\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)\nprint(solve(*example))\n",
+    "difficulty_score": 48,
+    "difficulty_label": "medium",
+    "expected_output": "[44.2763, 44.8999, 43.6527, 46.7707, 44.2763, 44.2763, 44.8999, 129.9038, 128.1718, 128.1718, 126.4397, 128.1718, 128.1718, 128.1718]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"scale by weekly std\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([71.0, 72.0, 70.0, 75.0, 71.0, 71.0, 72.0, 75.0, 74.0, 74.0, 73.0, 74.0, 74.0, 74.0])",
+        "expected_expr": "[44.2763, 44.8999, 43.6527, 46.7707, 44.2763, 44.2763, 44.8999, 129.9038, 128.1718, 128.1718, 126.4397, 128.1718, 128.1718, 128.1718]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])",
+        "expected_expr": "[0.4629, 0.9258, 1.3887, 1.8516, 2.3146, 2.7775, 3.2404]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[44.2763, 124.7077, 43.6527, 129.9038, 44.2763, 122.9756, 44.8999, 129.9038, 46.1471, 128.1718, 45.5235, 128.1718, 46.1471, 128.1718]",
+        "why": "`(7 h)` interleaves the weekly stds so most days are scaled by another week's spread."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 940,
+    "topic": "Einops",
+    "subtopic": "Deep Learning",
+    "subtopic_key": "Einops: Deep Learning",
+    "question_text": "Variant of (B3): `temps` is `(weeks, 7)` as a nested list. Return the z-score of each day within its week, same shape (std via `t.std`), each value rounded to 4 decimals, as a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"2-D weekly z-scores\"\"\"\n    x = t.tensor(temps)\n    avg = einops.repeat(einops.reduce(x, 'w d -> w', 'mean'), 'w -> w d', d=7)\n    std = einops.repeat(einops.reduce(x, 'w d -> w', t.std), 'w -> w d', d=7)\n    return [[round(v, 4) for v in row] for row in ((x - avg) / std).tolist()]\n\n\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 12.0, 10.0, 12.0, 10.0, 12.0, 10.0]],)\nprint(solve(*example))\n",
+    "difficulty_score": 52,
+    "difficulty_label": "medium",
+    "expected_output": "[[-1.3887, -0.9258, -0.4629, 0.0, 0.4629, 0.9258, 1.3887], [-0.8018, 1.069, -0.8018, 1.069, -0.8018, 1.069, -0.8018]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(temps):\n    \"\"\"2-D weekly z-scores\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 12.0, 10.0, 12.0, 10.0, 12.0, 10.0]],)\nprint(solve(*example))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 12.0, 10.0, 12.0, 10.0, 12.0, 10.0]])",
+        "expected_expr": "[[-1.3887, -0.9258, -0.4629, 0.0, 0.4629, 0.9258, 1.3887], [-0.8018, 1.069, -0.8018, 1.069, -0.8018, 1.069, -0.8018]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0]])",
+        "expected_expr": "[[-1.3039, -0.889, -0.4742, -0.0593, 0.3556, 0.7705, 1.6003]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[-0.7071, -0.7071, -0.7071, -0.7071, -0.7071, -0.7071, -0.7071], [0.7071, 0.7071, 0.7071, 0.7071, 0.7071, 0.7071, 0.7071]]",
+        "why": "Reduced over WEEKS (per day-of-week) instead of over the days of each week."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]

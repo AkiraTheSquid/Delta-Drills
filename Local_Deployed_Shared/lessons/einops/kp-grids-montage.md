@@ -6,6 +6,7 @@ new_syntax: []
 faded: [389]
 guided: [364]
 independent: [329, 382, 318, 381, 322, 371, 531]
+integrated: [909, 910, 911, 912]
 ---
 
 ## Concept
@@ -126,6 +127,20 @@ subgrid indices moved OUT into the batch axis, subgrid-major), q371 (the
 inverse — subgrids packed in the batch axis, unpacked back into space),
 q531 (the same montage filled COLUMN-major — the misconception below, as a
 drill: the edit is on the input side).
+
+## Integrated practice
+
+### q909
+grid with a given row count
+
+### q910
+grid with a given column count
+
+### q911
+grayscale grid
+
+### q912
+column-major grid
 
 ## Misconceptions
 

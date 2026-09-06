@@ -49,6 +49,12 @@
    "topic": "PyTorch",
    "title": "Rays as tensors (ARENA 0.1)",
    "subtopic_key": "PyTorch: Rays as tensors"
+  },
+  {
+   "id": "es-1",
+   "topic": "Einops",
+   "title": "Einsum",
+   "subtopic_key": "Einops: Einsum"
   }
  ],
  "kcs": [
@@ -454,6 +460,15 @@
     "torch.slice-assignment",
     "raytracing.ray-parametrisation",
     "numpy.ranges"
+   ]
+  },
+  {
+   "id": "einops.einsum",
+   "lesson": "es-1",
+   "title": "einops.einsum: name the axes, drop the ones to sum",
+   "syntax": true,
+   "prereqs": [
+    "einops.pattern-language"
    ]
   }
  ]

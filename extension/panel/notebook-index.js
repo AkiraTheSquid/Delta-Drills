@@ -58,6 +58,22 @@ window.DD_NOTEBOOKS = {
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
       "problems": 23
+    },
+    {
+      "id": "tr-1",
+      "title": "Rays as tensors (ARENA 0.1)",
+      "topic": "PyTorch",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "file": "tr-1-rays-as-tensors--arena-0-1.ipynb",
+      "problems": 32
+    },
+    {
+      "id": "es-1",
+      "title": "Einsum",
+      "topic": "Einops",
+      "subtopic_key": "Einops: Einsum",
+      "file": "es-1-einsum.ipynb",
+      "problems": 14
     }
   ],
   "subtopics": {
@@ -67,6 +83,8 @@ window.DD_NOTEBOOKS = {
     "Numpy: Vectorization and broadcasting": "np-3",
     "Einops: Rearrange": "eo-1",
     "Einops: Reduce": "eo-2",
-    "Einops: Deep Learning": "eo-3"
+    "Einops: Deep Learning": "eo-3",
+    "PyTorch: Rays as tensors": "tr-1",
+    "Einops: Einsum": "es-1"
   }
 };

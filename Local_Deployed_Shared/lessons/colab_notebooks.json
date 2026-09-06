@@ -57,6 +57,22 @@
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
       "problems": 23
+    },
+    {
+      "id": "tr-1",
+      "title": "Rays as tensors (ARENA 0.1)",
+      "topic": "PyTorch",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "file": "tr-1-rays-as-tensors--arena-0-1.ipynb",
+      "problems": 32
+    },
+    {
+      "id": "es-1",
+      "title": "Einsum",
+      "topic": "Einops",
+      "subtopic_key": "Einops: Einsum",
+      "file": "es-1-einsum.ipynb",
+      "problems": 14
     }
   ],
   "questions": {
@@ -471,7 +487,53 @@
     "385": "eo-3",
     "394": "eo-3",
     "396": "eo-3",
-    "397": "eo-3"
+    "397": "eo-3",
+    "798": "tr-1",
+    "799": "tr-1",
+    "800": "tr-1",
+    "801": "tr-1",
+    "802": "tr-1",
+    "803": "tr-1",
+    "804": "tr-1",
+    "805": "tr-1",
+    "809": "tr-1",
+    "810": "tr-1",
+    "811": "tr-1",
+    "812": "tr-1",
+    "813": "tr-1",
+    "814": "tr-1",
+    "815": "tr-1",
+    "816": "tr-1",
+    "820": "tr-1",
+    "821": "tr-1",
+    "822": "tr-1",
+    "823": "tr-1",
+    "824": "tr-1",
+    "825": "tr-1",
+    "826": "tr-1",
+    "827": "tr-1",
+    "831": "tr-1",
+    "832": "tr-1",
+    "833": "tr-1",
+    "834": "tr-1",
+    "835": "tr-1",
+    "836": "tr-1",
+    "837": "tr-1",
+    "838": "tr-1",
+    "847": "es-1",
+    "848": "es-1",
+    "849": "es-1",
+    "850": "es-1",
+    "851": "es-1",
+    "852": "es-1",
+    "853": "es-1",
+    "854": "es-1",
+    "855": "es-1",
+    "856": "es-1",
+    "857": "es-1",
+    "858": "es-1",
+    "859": "es-1",
+    "860": "es-1"
   },
   "subtopics": {
     "Python: Getting started": "py-0",
@@ -480,7 +542,9 @@
     "Numpy: Vectorization and broadcasting": "np-3",
     "Einops: Rearrange": "eo-1",
     "Einops: Reduce": "eo-2",
-    "Einops: Deep Learning": "eo-3"
+    "Einops: Deep Learning": "eo-3",
+    "PyTorch: Rays as tensors": "tr-1",
+    "Einops: Einsum": "es-1"
   },
   "kcs": {
     "python.values-and-names": "py-0",
@@ -521,7 +585,12 @@
     "einops.pooling": "eo-2",
     "einops.repeat-model": "eo-3",
     "einops.dl-flatten-heads": "eo-3",
-    "einops.channel-groups-temporal": "eo-3"
+    "einops.channel-groups-temporal": "eo-3",
+    "torch.out-argument": "tr-1",
+    "torch.slice-assignment": "tr-1",
+    "raytracing.ray-parametrisation": "tr-1",
+    "raytracing.make-rays-1d": "tr-1",
+    "einops.einsum": "es-1"
   },
   "kps": {
     "python.values-and-names": "dd-kp-python-values-and-names",
@@ -562,7 +631,12 @@
     "einops.pooling": "dd-kp-einops-pooling",
     "einops.repeat-model": "dd-kp-einops-repeat-model",
     "einops.dl-flatten-heads": "dd-kp-einops-dl-flatten-heads",
-    "einops.channel-groups-temporal": "dd-kp-einops-channel-groups-temporal"
+    "einops.channel-groups-temporal": "dd-kp-einops-channel-groups-temporal",
+    "torch.out-argument": "dd-kp-torch-out-argument",
+    "torch.slice-assignment": "dd-kp-torch-slice-assignment",
+    "raytracing.ray-parametrisation": "dd-kp-raytracing-ray-parametrisation",
+    "raytracing.make-rays-1d": "dd-kp-raytracing-make-rays-1d",
+    "einops.einsum": "dd-kp-einops-einsum"
   },
   "segments": {
     "numpy.ndarray-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-numpy-ndarray-model-0",
@@ -609,6 +683,10 @@
     "numpy.axis-reductions#s1-tuples-of-axes-and-keepdims": "dd-seg-numpy-axis-reductions-1",
     "numpy.dot-matmul-patterns#s0-the-dot-product-multiply-then-sum": "dd-seg-numpy-dot-matmul-patterns-0",
     "numpy.dot-matmul-patterns#s1-matrix-vector-one-dot-per-row": "dd-seg-numpy-dot-matmul-patterns-1",
-    "numpy.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-numpy-dot-matmul-patterns-2"
+    "numpy.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-numpy-dot-matmul-patterns-2",
+    "einops.einsum#one-operand": "dd-seg-einops-einsum-0",
+    "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
+    "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
+    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3"
   }
 }

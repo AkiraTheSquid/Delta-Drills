@@ -18,7 +18,7 @@
      • starting the block: kc-practice.js `startScoped(kc)` builds the
        ladder, timer.js `configure({answer, review, quota, exercise})`
        installs the numbers, then the normal `PracticeSession.start()`
-     • resuming: a paused block whose `exercise.kc` is this exercise turns
+     • resuming: a paused block for this notebook and exercise turns
        the button into "Resume", and pressing it is timer.js's own resume
      • the "Related drills" list: every drill on the KC and its
        prerequisites, grouped by concept and rung — read-only
@@ -127,11 +127,13 @@
   };
 
   /* ── which paused block, if any, is this exercise's ────────────── */
-  const _pausedFor = (kc) => {
+  const _pausedFor = (exercise) => {
     const s = _session();
     if (!s || !s.hasPausedSession?.()) return null;
     const cfg = s.pausedConfig?.();
-    if (!cfg || !cfg.exercise || cfg.exercise.kc !== kc) return null;
+    const ex = typeof exercise === "string" ? { kc: exercise } : exercise;
+    if (!cfg?.exercise || !ex || cfg.exercise.kc !== ex.kc) return null;
+    if (ex.fn && (cfg.exercise.fn !== ex.fn || cfg.exercise.nb !== ex.nb)) return null;
     return { config: cfg, served: s.pausedServed?.() || 0 };
   };
 
@@ -224,7 +226,7 @@
     m.querySelector(".dd-ex-title").textContent = `Practice ${ex.title}`;
     m.querySelector(".dd-ex-sub").textContent =
       `Drills on ${ex.kcTitle || ex.kc}. Get one wrong and its prerequisite drills come next, on the same clock.`;
-    const paused = _pausedFor(ex.kc);
+    const paused = _pausedFor(ex);
     const resumeBox = m.querySelector(".dd-ex-resume");
     const form = m.querySelector(".dd-ex-form");
     resumeBox.classList.toggle("hidden", !paused);
@@ -335,18 +337,39 @@
   };
 
   /* ── the button on the notebook page ───────────────────────────── */
-  const _headingFn = (cell) => {
-    const h = cell.querySelector("h1, h2, h3, h4");
-    const text = (h ? h.textContent : cell.textContent || "").trim();
-    const m = HEADING_RE.exec(text);
-    return m ? m[1] : null;
+  /* Three spellings of "this cell is an exercise", in the order ARENA uses
+     them (0.1 first, then the two 0.0 shapes):
+       • `### Exercise - implement `make_rays_1d``  → key "make_rays_1d"
+       • `#### (1) Column-stacking` (0.0 image ops, no def) → key "(1)"
+       • a CODE cell holding `def rearrange_1(` / the five `def einsum_*(`
+         (0.0 sections A–I and the einsum block) → one key per def
+     A markdown cell yields at most one key; a code cell may yield several
+     — the 0.0 einsum exercises share ONE cell — and each gets its own block. */
+  const TAG_RE = /^\((\w{1,3})\)\s/;
+  /* The run button (▶) is glued to the first line of a code cell's
+     textContent, so a def may follow it instead of a newline. */
+  const DEF_RE = /(?:^|[\n▶])\s*def\s+([A-Za-z_]\w*)\s*\(/g;
+  const _cellKeys = (cell) => {
+    if (cell.classList.contains("nbv-md")) {
+      const h = cell.querySelector("h1, h2, h3, h4");
+      const text = (h ? h.textContent : cell.textContent || "").trim();
+      const m = HEADING_RE.exec(text);
+      if (m) return [m[1]];
+      const tag = TAG_RE.exec(text);
+      return tag ? [`(${tag[1]})`] : [];
+    }
+    if (cell.classList.contains("nbv-code")) {
+      const src = cell.querySelector("textarea")?.value ?? cell.querySelector("pre, code")?.textContent ?? cell.textContent ?? "";
+      return Array.from(src.matchAll(DEF_RE), (m) => m[1]);
+    }
+    return [];
   };
 
   const _syncButton = (block) => {
     const btn = block.querySelector(".dd-ex-btn");
     const note = block.querySelector(".dd-ex-note");
     const ex = block._exercise;
-    const paused = _pausedFor(ex.kc);
+    const paused = _pausedFor(ex);
     btn.textContent = paused ? `Resume practice · ${ex.title}` : `Practice ${ex.title}`;
     note.textContent = paused
       ? `Paused at question ${paused.served}${paused.config.quota ? ` of ${paused.config.quota}` : ""}.`
@@ -357,11 +380,14 @@
     const m = await _loadMap();
     const table = { ...(m["*"] || {}), ...(m[nbId] || {}) };
     if (!Object.keys(table).length) return;
-    host.querySelectorAll(".nbv-cell.nbv-md").forEach((cell) => {
+    const seen = new Set(Array.from(host.querySelectorAll(".dd-ex-block"),
+      (block) => block._exercise?.fn).filter(Boolean));
+    host.querySelectorAll(".nbv-cell.nbv-md, .nbv-cell.nbv-code").forEach((cell) => {
       if (cell.nextElementSibling?.classList?.contains("dd-ex-block")) return;
-      const fn = _headingFn(cell);
-      const entry = fn && table[fn];
-      if (!entry || !entry.kc) return;
+      // Blocks go after the cell in reverse so several defs in one cell read top-down.
+      _cellKeys(cell).filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
+      seen.add(fn);
+      const entry = table[fn];
       const ex = {
         kc: entry.kc, fn, title: entry.title || fn, kcTitle: null, nb: nbId, cell: cell.dataset.cellId,
         // The attempt pool: variants of THIS exercise at its own difficulty
@@ -387,6 +413,7 @@
       window.LessonGate?.getKpEntry?.(ex.kc).then((entry) => {
         if (entry && entry.kp && entry.kp.title) ex.kcTitle = entry.kp.title;
       }).catch(() => {});
+      });
     });
   };
 

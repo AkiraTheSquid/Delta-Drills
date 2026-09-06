@@ -149,17 +149,32 @@ skill report the same thing from the other side.
   that `numpy.constructors` already carries. Next 0.1 exercises (`intersect_ray_1d`, …)
   go under `tr-1` with `raytracing.make-rays-1d` as prerequisite.
 
-- **`einops` has NOT had it.** Its KPs still carry the pre-2026-08-28 content:
+- **Chapter 0.0 einops/einsum coverage landed** (2026-09-06): the `einops.einsum` node
+  exists — lesson `es-1`, `lessons/einops/kp-einsum.md`, four single-idea segments
+  (one operand / two operands / repeated names / batch axis) built from the einops
+  basics tutorial and Rocktäschel "einsum is all you need" §2.1–2.10, Faded 8 / Solo 6 /
+  Integrated 3 + the five 0.0 `einsum_*` exercises with 4 variants each (q847–888, atom
+  `einops-einsum`). Every einops exercise on the 0.0 page — (1)–(8), A1/A2, B1–B3 —
+  has 4 variants (q889–940) on its own KC, which gave `merge-axes`, `repeat-model`,
+  `grids-montage`, `pattern-language`, `pooling`, `split-axes`, `reduce-model` their
+  first `integrated:` rung. `lessons/arena_exercise_kcs.json` "0-0" maps each exercise
+  (keys `(1)`…`(8)` for the image ops, the `def` name otherwise) to KC + variants, and
+  `practice/exercise-session.js` now finds exercises by `(N)` heading tags and by
+  `def name(` inside code cells (the five einsum defs share ONE cell). Both baselines
+  re-recorded (function-scaffold debt + the `integrated>independent` rung-order quirk).
+  🔴 Still NOT covered on 0.0: sections C (normalise rows / cosine matrix), D (sampling),
+  E (argmax accuracy), F/G/I (indexing + gather), H (logsumexp / softmax / cross-entropy)
+  — they need new KCs (graph atoms exist: `vector-normalize-keepdim`, `index-by-tensor`,
+  `logsumexp-cross-entropy`, `argmax-accuracy-eval`…); the graph AI owns new atoms/edges.
+- **`einops` rearrange/reduce/repeat KPs have NOT had the full treatment.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same
   full-ladder treatment. Keep moving forward rather than circling back over numpy.
 - **The einsum course is RETIRED (2026-08-30).** ARENA writes `einops.einsum` in
   61 of its 458 notebooks and `torch.einsum` in zero, and all ten einsum KPs were
   written in `torch.einsum`. The pages are in
-  `This-Directory-Only/archive/retired-content-2026-08-30/`. The replacement is
-  ONE `einops.einsum` node inside the einops course — the highest-frequency
-  einops operation ARENA has, and nothing currently teaches it. That is the
-  single most valuable concept left to author.
+  `This-Directory-Only/archive/retired-content-2026-08-30/`. The replacement — ONE
+  `einops.einsum` node inside the einops course — landed 2026-09-06 (see above).
 
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.

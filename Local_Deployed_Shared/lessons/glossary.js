@@ -263,6 +263,14 @@ window.DD_GLOSSARY = {
       def: "Trading SPACE for DEPTH: split each spatial axis into blocks and within-block position, then move the block coordinates wherever you need them — tokens, channels, or back again.",
     },
 
+    /* ---- es-1: einsum -------------------------------------------- */
+    {
+      term: "einops.einsum",
+      aliases: ["einsum", "einstein summation", "einsum pattern"],
+      kc: "einops.einsum",
+      def: "Tensors first, pattern LAST: name every axis of every operand on the left of ->, list the survivors on the right. A name shared by two operands multiplies them; a name missing from the right is summed away.",
+    },
+
     /* ---- eo-2: reduce -------------------------------------------- */
     {
       term: "einops.reduce",
@@ -363,6 +371,7 @@ window.DD_GLOSSARY.kcLesson = {
     "einops.patches-space-depth": ["Rearrange", "Patches, space-to-depth, depth-to-space"],
     "einops.reduce-model": ["Reduce", "einops.reduce — dropping axes with an aggregation"],
     "einops.pooling": ["Reduce", "Pooling with factored axes"],
+    "einops.einsum": ["Einsum", "einops.einsum: name the axes, drop the ones to sum"],
     "einops.repeat-model": ["Repeat and deep-learning patterns", "einops.repeat — new axes and stretched axes"],
     "einops.dl-flatten-heads": ["Repeat and deep-learning patterns", "Deep-learning shapes — flattening and attention heads"],
     "einops.channel-groups-temporal": ["Repeat and deep-learning patterns", "Channel groups and temporal windows"],
