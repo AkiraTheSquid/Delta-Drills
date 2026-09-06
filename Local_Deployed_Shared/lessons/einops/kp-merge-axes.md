@@ -6,6 +6,7 @@ new_syntax: [einops-axis-composition]
 faded: [391, 347]
 guided: [357]
 independent: [342, 314, 346, 353, 373, 380, 392, 400]
+integrated: [889, 890, 891, 892, 905, 906, 907, 908]
 ---
 
 ## Concept
@@ -153,6 +154,32 @@ singleton — '(c h) w ()'), q380 (batch into height AND channels-last in
 the same pattern), q392 (stack vertically in channels-first — 'c (b h)
 w'), q400 (batch merged into width with the batch index INNERMOST, so
 columns interleave instead of images concatenating).
+
+## Integrated practice
+
+### q889
+batch side by side
+
+### q890
+vertical stack, channels-last
+
+### q891
+channels stacked vertically
+
+### q892
+batch and space into one axis
+
+### q905
+channels interleaved by row
+
+### q906
+channels interleaved by column
+
+### q907
+channels side by side, per image
+
+### q908
+transposed channels side by side
 
 ## Misconceptions
 

@@ -6,6 +6,7 @@ new_syntax: [einops.rearrange]
 faded: [345]
 guided: [388]
 independent: [335, 330, 379, 319, 327, 344]
+integrated: [913, 914, 915, 916]
 ---
 
 ## Concept
@@ -17,7 +18,7 @@ spelled out in words. The pattern is two axis lists around an arrow:
 > — left side: name each input axis, in order. Right side: the same names,
 > in the output's order.
 
-Unlike einsum's one-letter subscripts, einops names are whole
+einops names are whole
 space-separated WORDS (`batch`, `h`, `nh`), and — the big semantic
 difference — **every name on the left must appear on the right** (rearrange
 never sums; reducing is a different function, later KP). What rearrange
@@ -36,7 +37,7 @@ the most common and least visible — naming the axes at every hop is the
 antidote, which is why the ARENA curriculum drills einops before touching
 models.
 
-Reading discipline (same ritual as einsum): identify each name's position
+Reading discipline: identify each name's position
 on the left (what it is) and on the right (where it goes). If a name
 appears exactly once per side, the operation is a pure permutation — data
 moves, nothing merges, splits, or disappears. Merging and splitting add
@@ -84,7 +85,7 @@ print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
 Why each step:
 
 1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same
-   verification you used for einsum relayouts — indices permute exactly as
+   verification that works for every relayout — indices permute exactly as
    the names did. One element proves the whole mapping.
 2. Note what the names buy in the sequence example: 'b t d -> t b d' READS
    as "time first"; the transpose-tuple spelling `(1, 0, 2)` says the same
@@ -135,9 +136,23 @@ single most common layout flip), q327 ((h, w, c) to (h, c, w) — colour
 lands between height and width), q344 (transpose H and W WITHIN each
 channel).
 
+## Integrated practice
+
+### q913
+batch transpose
+
+### q914
+channels first to last
+
+### q915
+channels last to first
+
+### q916
+batch and channel swapped
+
 ## Misconceptions
 
-- **"einops names are single characters like einsum."** — They're
+- **"einops names are single characters."** — They're
   space-separated words: `'batch height width channels -> ...'` is legal and
   sometimes clearest. The space is the separator; 'bhwc' would be ONE axis
   named bhwc.

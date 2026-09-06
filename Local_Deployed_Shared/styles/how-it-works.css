@@ -552,6 +552,26 @@
 }
 .kg2-li { display: flex; align-items: center; gap: 6px; color: var(--muted); }
 .kg2-li-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
+/* Chapter / Category legend. The two modes are the same list at two grains,
+   so the fine families are NESTED under the chapter they belong to rather than
+   listed flat: a flat list of fourteen chips is a lookup table, a nested one
+   says which notebook each subject sits in, which is half the thing the colour
+   is encoding. The head takes a whole row (flex-basis 100%) so each chapter's
+   families wrap under it and not beside the previous chapter's.
+   Capped and scrollable because Category mode is 4 heads + 14 families: at
+   full height it would cover the bottom third of the canvas it is explaining. */
+.kg2-legend-grouped { max-width: 78%; max-height: 44%; overflow: hidden auto; row-gap: 2px; }
+.kg2-legend-grouped .kg2-li-head { flex: 0 0 100%; margin-top: 5px; color: var(--text); font-weight: 700; }
+.kg2-legend-grouped .kg2-li-head:first-child { margin-top: 0; }
+.kg2-legend-grouped .kg2-li-sub { margin-left: 15px; }
+/* Category mode folds, because its full list is tall enough to cover the
+   prerequisite floor a BT layout puts in this exact corner. <details> holds
+   the state, so a recolour cannot reset it. */
+.kg2-legend-fold { flex: 0 0 100%; }
+.kg2-legend-fold > summary { cursor: pointer; color: var(--muted); font-weight: 600; list-style-position: inside; }
+.kg2-legend-fold > summary:hover { color: var(--text); }
+.kg2-legend-fold[open] > summary { margin-bottom: 5px; }
+.kg2-legend-fold-body { display: flex; flex-wrap: wrap; gap: 2px 14px; }
 /* Matches the washed-out, dashed bubbles used for projected (unmeasured) concepts. */
 .kg2-li-projected { /* graph-legend */ background: rgba(138, 101, 151, .42); border-style: dashed; border-color: rgb(var(--tint-rgb) / calc(.55 * var(--tint-k))); }
 .kg2-status { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: var(--muted); font-size: 14px; }

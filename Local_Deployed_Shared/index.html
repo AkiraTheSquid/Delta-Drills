@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=32" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=33" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -134,7 +134,7 @@
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
-  <link rel="stylesheet" href="practice/bars.css?v=10" />
+  <link rel="stylesheet" href="practice/bars.css?v=11" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=8" />
@@ -2116,9 +2116,9 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=10"></script>
+  <script src="infotips-registry.js?v=11"></script>
   <script src="infotips.js?v=2"></script>
-  <script src="lessons/glossary.js?v=1"></script>
+  <script src="lessons/glossary.js?v=2"></script>
   <script src="jargon.js?v=1"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -2164,7 +2164,7 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=27" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=28" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2185,7 +2185,7 @@ t.manual_seed(0)
        getPracticeStorageKey() is what makes the choice per-account. -->
   <script src="practice/session-clock.js?v=1"></script>
   <script src="practice/dom.js?v=20"></script>
-  <script src="practice/bars.js?v=11"></script>
+  <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
   <script src="practice/visuals.js?v=16"></script>
   <script src="practice/graph-jump.js?v=2"></script>
@@ -2253,7 +2253,7 @@ t.manual_seed(0)
   <script src="practice/session-idle.js?v=7"></script>
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
-  <script src="practice/activity-chart.js?v=2"></script>
+  <script src="practice/activity-chart.js?v=3"></script>
   <script src="practice/lessons.js?v=34"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
@@ -2293,7 +2293,7 @@ t.manual_seed(0)
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-session.js?v=2"></script>
+  <script src="practice/exercise-session.js?v=3"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

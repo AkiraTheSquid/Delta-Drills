@@ -13,5 +13,205 @@
    ],
    "original": 831
   }
+ },
+ "0-0": {
+  "einsum_trace": {
+   "kc": "einops.einsum",
+   "title": "einsum_trace",
+   "variants": [
+    865,
+    866,
+    867,
+    868
+   ],
+   "original": 864
+  },
+  "einsum_mv": {
+   "kc": "einops.einsum",
+   "title": "einsum_mv",
+   "variants": [
+    870,
+    871,
+    872,
+    873
+   ],
+   "original": 869
+  },
+  "einsum_mm": {
+   "kc": "einops.einsum",
+   "title": "einsum_mm",
+   "variants": [
+    875,
+    876,
+    877,
+    878
+   ],
+   "original": 874
+  },
+  "einsum_inner": {
+   "kc": "einops.einsum",
+   "title": "einsum_inner",
+   "variants": [
+    880,
+    881,
+    882,
+    883
+   ],
+   "original": 879
+  },
+  "einsum_outer": {
+   "kc": "einops.einsum",
+   "title": "einsum_outer",
+   "variants": [
+    885,
+    886,
+    887,
+    888
+   ],
+   "original": 884
+  },
+  "(1)": {
+   "kc": "einops.merge-axes",
+   "title": "(1) column-stacking",
+   "variants": [
+    889,
+    890,
+    891,
+    892
+   ],
+   "original": null
+  },
+  "(2)": {
+   "kc": "einops.repeat-model",
+   "title": "(2) column-stacking and copying",
+   "variants": [
+    893,
+    894,
+    895,
+    896
+   ],
+   "original": null
+  },
+  "(3)": {
+   "kc": "einops.repeat-model",
+   "title": "(3) row-stacking and double-copying",
+   "variants": [
+    897,
+    898,
+    899,
+    900
+   ],
+   "original": null
+  },
+  "(4)": {
+   "kc": "einops.repeat-model",
+   "title": "(4) stretching",
+   "variants": [
+    901,
+    902,
+    903,
+    904
+   ],
+   "original": null
+  },
+  "(5)": {
+   "kc": "einops.merge-axes",
+   "title": "(5) split channels",
+   "variants": [
+    905,
+    906,
+    907,
+    908
+   ],
+   "original": null
+  },
+  "(6)": {
+   "kc": "einops.grids-montage",
+   "title": "(6) stack into rows & cols",
+   "variants": [
+    909,
+    910,
+    911,
+    912
+   ],
+   "original": null
+  },
+  "(7)": {
+   "kc": "einops.pattern-language",
+   "title": "(7) transpose",
+   "variants": [
+    913,
+    914,
+    915,
+    916
+   ],
+   "original": null
+  },
+  "(8)": {
+   "kc": "einops.pooling",
+   "title": "(8) shrinking",
+   "variants": [
+    917,
+    918,
+    919,
+    920
+   ],
+   "original": null
+  },
+  "rearrange_1": {
+   "kc": "einops.split-axes",
+   "title": "(A1) rearrange",
+   "variants": [
+    921,
+    922,
+    923,
+    924
+   ],
+   "original": null
+  },
+  "rearrange_2": {
+   "kc": "einops.split-axes",
+   "title": "(A2) rearrange",
+   "variants": [
+    925,
+    926,
+    927,
+    928
+   ],
+   "original": null
+  },
+  "temperatures_average": {
+   "kc": "einops.reduce-model",
+   "title": "(B1) temperature average",
+   "variants": [
+    929,
+    930,
+    931,
+    932
+   ],
+   "original": null
+  },
+  "temperatures_differences": {
+   "kc": "einops.repeat-model",
+   "title": "(B2) temperature difference",
+   "variants": [
+    933,
+    934,
+    935,
+    936
+   ],
+   "original": null
+  },
+  "temperatures_normalized": {
+   "kc": "einops.repeat-model",
+   "title": "(B3) temperature normalized",
+   "variants": [
+    937,
+    938,
+    939,
+    940
+   ],
+   "original": null
+  }
  }
 }

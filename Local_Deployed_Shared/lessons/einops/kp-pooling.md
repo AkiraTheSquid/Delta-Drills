@@ -6,6 +6,7 @@ new_syntax: []
 faded: [324]
 guided: [363]
 independent: [368, 354, 336, 377]
+integrated: [917, 918, 919, 920]
 ---
 
 ## Concept
@@ -130,6 +131,20 @@ not a pooling; recognize the difference).
 Also from the bank: q336 (max-pool AND tile the batch into a grid in ONE
 reduce), q377 (max-pool then flatten everything but the batch, also in one
 reduce).
+
+## Integrated practice
+
+### q917
+2x2 max pool
+
+### q918
+2x2 mean pool
+
+### q919
+k x k min pool
+
+### q920
+pool then side by side
 
 ## Misconceptions
 
