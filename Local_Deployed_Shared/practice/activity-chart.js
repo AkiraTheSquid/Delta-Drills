@@ -25,7 +25,7 @@
    🔴 SIGNED OUT (or any fetch failure) HIDES THE WHOLE SECTION via
    `.is-empty` — same contract as #learner-areas: an empty bordered box
    that says nothing is worse than no box. A guest has no attempt log to
-   read and the endpoint answers 401.
+   read; skip the authenticated endpoint until a signed-in session exists.
    ================================================================ */
 
 (function () {
@@ -107,6 +107,12 @@
   async function refresh() {
     const section = host();
     if (!section) return;
+    // Invalidate any older response even when signing out skips the fetch.
+    const seq = ++fetchSeq;
+    if (typeof isSignedIn !== "function" || !isSignedIn()) {
+      section.classList.add("is-empty");
+      return;
+    }
     // apiFetch is app.js's top-level const (a global lexical binding, not
     // a window property in every build) — same guarded read the other
     // practice modules use.
@@ -115,7 +121,6 @@
       section.classList.add("is-empty");
       return;
     }
-    const seq = ++fetchSeq;
     try {
       const tz = new Date().getTimezoneOffset();
       const res = await _fetch(`/api/practice/activity-week?tz_offset=${tz}`);
