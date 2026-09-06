@@ -519,6 +519,10 @@ def load_function_overrides() -> dict[int, dict]:
         merged = dict(base.get(qid, {}))
         merged.update(record)
         base[qid] = merged
+    # Reviewed content corrections win over generated/runtime layers.
+    corrections = json.loads((Path(__file__).with_name("question_content_corrections.json")).read_text())
+    for qid, fields in corrections.items():
+        base[int(qid)] = {**base.get(int(qid), {}), **fields}
     return base
 
 

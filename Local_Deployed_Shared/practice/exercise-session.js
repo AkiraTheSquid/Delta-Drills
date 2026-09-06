@@ -86,7 +86,7 @@
       const quota = raw && Number.isFinite(raw.quota)
         ? Math.min(QUOTA_MAX, Math.max(QUOTA_MIN, Math.round(raw.quota)))
         : DEFAULTS.quota;
-      return { answer, review, quota };
+      return { answer, review, quota, attemptFirst: raw?.attemptFirst !== false };
     } catch (_) {
       return { ...DEFAULTS };
     }
@@ -173,10 +173,16 @@
       '<div class="dd-ex-field dd-ex-count"><label>3. How many problems ' +
       `<input type="number" name="quota" min="${QUOTA_MIN}" max="${QUOTA_MAX}" step="1" inputmode="numeric"></label>` +
       '<span class="dd-ex-hint">A maximum, not a target: each slot goes to prep or to a variant of this problem, whichever most raises the chance of solving one within what is left — fewer questions, greedier. The block ends when you solve one; a miss re-plans. The maximum time holds.</span></div>' +
+      '<fieldset class="dd-ex-field dd-ex-start-choice"><legend>4. How do you want to start?</legend>' +
+      '<div class="dd-ex-opts"><label class="dd-ex-opt"><input type="radio" name="startMode" value="attempt" checked>' +
+      '<span>Try the problem first</span></label>' +
+      '<label class="dd-ex-opt"><input type="radio" name="startMode" value="adaptive">' +
+      '<span>Let the app choose prep or an attempt</span></label></div>' +
+      '<p class="dd-ex-hint">Test what you already know before any prep. This uses one question from your maximum; after a miss, the app plans the remaining questions.</p></fieldset>' +
       '<p class="dd-ex-max" aria-live="polite"></p>' +
       '<p class="dd-ex-error hidden" role="alert"></p>' +
       '<div class="dd-ex-actions">' +
-      '<button type="submit" class="primary dd-ex-start-btn">4. Start</button>' +
+      '<button type="submit" class="primary dd-ex-start-btn">Start</button>' +
       '<button type="button" class="ghost dd-ex-cancel-btn">Cancel</button>' +
       "</div></form></div>";
     document.body.appendChild(modal);
@@ -217,7 +223,7 @@
     const review = _option(pick("review")) ? pick("review") : DEFAULTS.review;
     const raw = Number(form.querySelector('input[name="quota"]').value);
     const quota = Number.isFinite(raw) ? Math.min(QUOTA_MAX, Math.max(QUOTA_MIN, Math.round(raw))) : DEFAULTS.quota;
-    return { answer, review, quota };
+    return { answer, review, quota, attemptFirst: pick("startMode") === "attempt" };
   };
 
   const _open = (ex) => {
@@ -242,6 +248,9 @@
       form.querySelector('[data-for="answer"]').innerHTML = _radios("answer", cfg.answer);
       form.querySelector('[data-for="review"]').innerHTML = _radios("review", cfg.review);
       form.querySelector('input[name="quota"]').value = String(cfg.quota);
+      const canAttempt = Array.isArray(ex.variants) && ex.variants.length > 0;
+      form.querySelector(".dd-ex-start-choice").hidden = !canAttempt;
+      form.querySelector(`input[name="startMode"][value="${canAttempt && cfg.attemptFirst !== false ? "attempt" : "adaptive"}"]`).checked = true;
       m.querySelector(".dd-ex-error").classList.add("hidden");
       m._paint();
     }
@@ -297,7 +306,7 @@
       if (s.hasPausedSession?.()) s.discard?.();
       const kp = window.KcPractice;
       const ok = kp && typeof kp.startPlanned === "function"
-        ? await kp.startPlanned(ex.kc, { quota: cfg.quota, variants: ex.variants })
+        ? await kp.startPlanned(ex.kc, { quota: cfg.quota, variants: ex.variants, attemptFirst: cfg.attemptFirst })
         : await kp?.startScoped?.(ex.kc);
       if (!ok) {
         rollback();

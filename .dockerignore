@@ -55,3 +55,8 @@ This-Directory-Only/mathpix processor/pdf_path_convert.txt
 # lattice reports a learner who has answered hundreds of questions as having
 # shown nothing, and says so only in a log line nobody reads.
 !Local_Deployed_Shared/concept-graph/kc_atom_crosswalk.json
+
+# Shared final question-content correction layer
+!Local_Deployed_Shared/pipeline/
+Local_Deployed_Shared/pipeline/*
+!Local_Deployed_Shared/pipeline/question_content_corrections.json

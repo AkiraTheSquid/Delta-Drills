@@ -100,17 +100,15 @@ auto_commit_if_dirty() {
   local repo_dir="$1"
   local message="$2"
 
-  # Stage everything in one call. `git add -A` respects .gitignore, so the
-  # logs/ dir is already excluded via .gitignore line 18 and we don't need
-  # an explicit pathspec. core.quotePath=false avoids octal-escaping of
-  # non-ASCII filenames (the previous per-line loop choked on emoji-bearing
-  # ARENA notebook filenames and explicit-pathspec attempts hit
-  # 'ignored-files' warnings that exited non-zero under set -e).
-  #
-  # ONLY safe for the deploy worktree, which is a machine-owned mirror that no
-  # human edits. It must never run against the main repo — see
-  # commit_generated_artifacts / require_clean_worktree below.
-  git -C "$repo_dir" -c core.quotePath=false add -A
+  # Stage named changed paths only. Untracked files inside nested content
+  # repos remain owned by those repos and are never swept into this commit.
+  local -a changed_paths=()
+  mapfile -d '' -t changed_paths < <(
+    git -C "$repo_dir" ls-files --modified --deleted --others --exclude-standard -z
+  )
+  if [ "${#changed_paths[@]}" -gt 0 ]; then
+    git -C "$repo_dir" add -- "${changed_paths[@]}"
+  fi
 
   if ! git -C "$repo_dir" diff --cached --quiet; then
     warn "Auto-committing dirty changes in $repo_dir"

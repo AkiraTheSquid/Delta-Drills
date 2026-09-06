@@ -79,7 +79,7 @@
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=8" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=9" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
@@ -2164,7 +2164,7 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=29" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=30" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2176,7 +2176,7 @@ t.manual_seed(0)
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
   <script src="practice/mode.js?v=10"></script>
-  <script src="practice/questions.js?v=24"></script>
+  <script src="practice/questions.js?v=25"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=6"></script>
@@ -2200,14 +2200,14 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=39"></script>
+  <script src="practice/ui.js?v=40"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=26"></script>
-  <script src="practice/timer.js?v=27"></script>
+  <script src="practice/timer.js?v=28"></script>
   <script src="practice/kernel.js?v=6"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2254,7 +2254,7 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=3"></script>
-  <script src="practice/lessons.js?v=34"></script>
+  <script src="practice/lessons.js?v=35"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=3"></script>
@@ -2284,16 +2284,16 @@ t.manual_seed(0)
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
   <script src="practice/arena-notebook-resume.js?v=1"></script>
   <script src="practice/arena-notebook.js?v=6"></script>
-  <script src="practice/ladder.js?v=9"></script>
-  <script src="practice/example-gate.js?v=1"></script>
+  <script src="practice/ladder.js?v=10"></script>
+  <script src="practice/example-gate.js?v=2"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
-  <script src="practice/exercise-planner.js?v=1"></script>
-  <script src="practice/kc-practice.js?v=6"></script>
+  <script src="practice/exercise-planner.js?v=2"></script>
+  <script src="practice/kc-practice.js?v=7"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-session.js?v=3"></script>
+  <script src="practice/exercise-session.js?v=4"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

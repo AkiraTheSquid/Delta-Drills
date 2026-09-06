@@ -36,7 +36,11 @@ LOG_FILE="$LOG_DIR/deploy_delta_drills_colab-$TIMESTAMP.txt"
 BRANCH="deploy-colab"
 VERCEL_URL="https://delta-drills-colab.vercel.app"
 VERCEL_PROJECT="delta-drills-colab"
-VERCEL_SCOPE="seth-gibsons-projects"
+if [ -z "${VERCEL_TOKEN:-}" ] && [ -f "$HOME/.config/vercel/token.env" ]; then
+  # shellcheck disable=SC1091
+  . "$HOME/.config/vercel/token.env"
+fi
+VERCEL_SCOPE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["orgId"])' "$COLAB_SHARED_DIR/.vercel/project.json")"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
 info()  { echo -e "${GREEN}[colab-deploy]${NC} $*"; }
@@ -88,7 +92,13 @@ mkdir -p "$COLAB_SHARED_DIR"
 rsync -a --delete --exclude '.vercel/' "$REPO_SHARED_DIR"/ "$COLAB_SHARED_DIR"/
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$COLAB_DIR"
 
-git -C "$COLAB_DIR" -c core.quotePath=false add -A
+changed_paths=()
+mapfile -d '' -t changed_paths < <(
+  git -C "$COLAB_DIR" ls-files --modified --deleted --others --exclude-standard -z
+)
+if [ "${#changed_paths[@]}" -gt 0 ]; then
+  git -C "$COLAB_DIR" add -- "${changed_paths[@]}"
+fi
 if git -C "$COLAB_DIR" diff --cached --quiet; then
   info "No frontend changes to commit."
 else

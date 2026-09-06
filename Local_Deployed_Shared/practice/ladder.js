@@ -210,7 +210,7 @@ const LadderUI = (() => {
     const kc = _kcOf(question);
     if (_stageOf(question) !== "worked" || !kc) return false;
     if (!window.LessonGate || typeof window.LessonGate.showLesson !== "function") return false;
-    if (question.diagnostic_active) return false;
+    if (question.diagnostic_active || question.attempt_first) return false;
 
     const shown = await window.LessonGate.showLesson(kc, onDone, question);
     if (!shown) {
@@ -342,6 +342,9 @@ const LadderUI = (() => {
        that attach no example at all (which, on the faded and integrated rungs,
        is all of them). Putting it below either guard is how it would end up
        shown on a minority of the cards it applies to. */
+    if (question.attempt_first) {
+      host.insertAdjacentHTML("beforeend", '<p class="ladder-stage-callout">First attempt — lesson not yet reviewed.</p>');
+    }
     const gapHtml = _gapHtml(question.ladder_gap);
     if (gapHtml) host.insertAdjacentHTML("beforeend", gapHtml);
 

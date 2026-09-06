@@ -94,6 +94,7 @@ const ExercisePlanner = (() => {
      * Items are kc-practice.js ladder items ({kind, questionId, kc, kcTitle, …}).
      */
     constructor(cfg) {
+      this.attemptFirst = cfg.attemptFirst === true;
       this.quota = Math.max(1, Number(cfg.quota) || 1);
       this.used = Number(cfg.used) || 0;
       this.solved = !!cfg.solved;
@@ -174,6 +175,9 @@ const ExercisePlanner = (() => {
       const R = this.quota - this.used;
       if (R <= 0) return null;
       const p = this.pTarget();
+      if (this.attemptFirst && this.used === 0 && this.target.variants.length) {
+        return { choice: "attempt", item: this._pickVariant(), p, R };
+      }
       const cands = this._candidates();
       const best = cands[0] || null;
       // The same decay the look-ahead assumes, applied to the preps already
@@ -274,7 +278,7 @@ const ExercisePlanner = (() => {
     serialize() {
       const node = (n) => ({ kc: n.kc, title: n.title, m: n.m, pools: n.pools, variants: n.variants || [] });
       return {
-        quota: this.quota, used: this.used, solved: this.solved, attempts: this.attempts, preps: this.preps,
+        attemptFirst: this.attemptFirst, quota: this.quota, used: this.used, solved: this.solved, attempts: this.attempts, preps: this.preps,
         attempted: this.attempted.slice(), target: node(this.target), prereqs: this.prereqs.map(node),
       };
     }

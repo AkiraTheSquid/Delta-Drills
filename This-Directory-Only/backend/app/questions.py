@@ -179,6 +179,12 @@ def _load_function_overrides() -> Dict[int, dict]:
         merged = dict(base.get(qid, {}))
         merged.update(record)
         base[qid] = merged
+    # Same reviewed final layer as the static exporter. Fail visibly if the
+    # release omitted it instead of serving stale prompts from runtime layers.
+    corrections_path = _THIS_DIR_ONLY.parent / "Local_Deployed_Shared" / "pipeline" / "question_content_corrections.json"
+    corrections = json.loads(corrections_path.read_text(encoding="utf-8"))
+    for qid, fields in corrections.items():
+        base[int(qid)] = {**base.get(int(qid), {}), **fields}
     return base
 
 

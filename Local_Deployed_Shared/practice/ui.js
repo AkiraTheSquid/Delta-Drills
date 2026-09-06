@@ -254,6 +254,7 @@ function renderQuestionIdChip(q) {
 }
 
 function renderQuestion(q, count) {
+  repairKnownQuestionContent(q);
   // Single-lesson demo (?lesson=): keep the previewed lesson on screen — a
   // late session-resume render must not clobber it.
   if (window.__lessonDemoOnly) return;
