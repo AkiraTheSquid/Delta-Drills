@@ -10,7 +10,7 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 518,
+  "questions_joined": 523,
   "kcs_covered": 43,
   "kcs_total": 43,
   "kcs_measured": 33,
@@ -898,7 +898,7 @@
    ]
   },
   "raytracing.make-rays-1d": {
-   "n": 11,
+   "n": 16,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -908,7 +908,7 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 11
+     "n": 16
     }
    ]
   },

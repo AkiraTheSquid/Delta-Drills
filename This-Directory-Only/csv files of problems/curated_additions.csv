@@ -3974,3 +3974,75 @@ def solve(num_pixels, y_limit):
 example = (3, 2.0)
 print(solve(*example))
 ",58,"[[[0.0, 0.0, 0.0], [0.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.5, 1.0, 0.0]]]"
+PyTorch,Rays as tensors,"Variant of `make_rays_1d`: the fan spreads in **z** instead of y. Return the `(num_pixels, 2, 3)` tensor as a nested list — origins at zero, direction `[1, 0, z]` with `z` evenly from `-z_limit` to `z_limit` inclusive.","import torch as t
+
+
+def solve(num_pixels, z_limit):
+    """"""make_rays_1d_z: the fan spreads in z, not y.""""""
+    rays = t.zeros((num_pixels, 2, 3))
+    rays[:, 1, 0] = 1
+    t.linspace(-z_limit, z_limit, num_pixels, out=rays[:, 1, 2])
+    return rays.tolist()
+
+
+example = (5, 2.0)
+print(solve(*example))
+",50,"[[[0.0, 0.0, 0.0], [1.0, 0.0, -2.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, -1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0]], [[0.0, 0.0, 0.0], [1.0, 0.0, 2.0]]]"
+PyTorch,Rays as tensors,"Variant of `make_rays_1d`: the camera sits at `origin` (a list of three floats) instead of `(0, 0, 0)`. Every ray's origin row equals `origin`; directions are still `[1, y, 0]` with `y` evenly from `-y_limit` to `y_limit`. Return the `(num_pixels, 2, 3)` tensor as a nested list.","import torch as t
+
+
+def solve(num_pixels, y_limit, origin):
+    """"""make_rays_1d_from: the whole fan from a moved camera.""""""
+    rays = t.zeros((num_pixels, 2, 3))
+    rays[:, 0] = t.tensor(origin)
+    rays[:, 1, 0] = 1
+    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)
+    return rays.tolist()
+
+
+example = (4, 1.5, [-3.0, 1.0, 0.5])
+print(solve(*example))
+",52,"[[[-3.0, 1.0, 0.5], [1.0, -1.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, -0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 0.5, 0.0]], [[-3.0, 1.0, 0.5], [1.0, 1.5, 0.0]]]"
+PyTorch,Rays as tensors,"Variant of `make_rays_1d`: the screen is the plane x = `screen_x` instead of x = 1. Directions must point AT the screen point, `[screen_x, y, 0]` with `y` evenly from `-y_limit` to `y_limit`, so `u = 1` still lands on the screen. Origins stay at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list.","import torch as t
+
+
+def solve(num_pixels, y_limit, screen_x):
+    """"""make_rays_1d_screen: the screen at x = screen_x.""""""
+    rays = t.zeros((num_pixels, 2, 3))
+    rays[:, 1, 0] = screen_x
+    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])
+    return rays.tolist()
+
+
+example = (3, 1.0, 2.5)
+print(solve(*example))
+",50,"[[[0.0, 0.0, 0.0], [2.5, -1.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 0.0, 0.0]], [[0.0, 0.0, 0.0], [2.5, 1.0, 0.0]]]"
+PyTorch,Rays as tensors,"Variant of `make_rays_1d`: the screen `[-y_limit, y_limit]` is cut into `num_pixels` equal pixels and each ray passes through the CENTRE of its pixel, e.g. `(4, 1.0)` gives direction-y `[-0.75, -0.25, 0.25, 0.75]`. Directions `[1, y, 0]`, origins at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list.","import torch as t
+
+
+def solve(num_pixels, y_limit):
+    """"""make_rays_1d_centres: one ray through each pixel centre.""""""
+    rays = t.zeros((num_pixels, 2, 3))
+    rays[:, 1, 0] = 1
+    half = y_limit / num_pixels
+    rays[:, 1, 1] = t.linspace(-y_limit + half, y_limit - half, num_pixels)
+    return rays.tolist()
+
+
+example = (4, 1.0)
+print(solve(*example))
+",54,"[[[0.0, 0.0, 0.0], [1.0, -0.75, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.25, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.75, 0.0]]]"
+PyTorch,Rays as tensors,"Variant of `make_rays_1d`: the screen y runs from `y_min` to `y_max` (not necessarily symmetric), e.g. `(3, 0.0, 1.0)` gives direction-y `[0.0, 0.5, 1.0]`. Directions `[1, y, 0]`, origins at zero. Return the `(num_pixels, 2, 3)` tensor as a nested list. `solve(n, -L, L)` must equal `make_rays_1d(n, L)`.","import torch as t
+
+
+def solve(num_pixels, y_min, y_max):
+    """"""make_rays_1d_range: an asymmetric screen.""""""
+    rays = t.zeros((num_pixels, 2, 3))
+    rays[:, 1, 0] = 1
+    t.linspace(y_min, y_max, num_pixels, out=rays[:, 1, 1])
+    return rays.tolist()
+
+
+example = (3, 0.0, 1.0)
+print(solve(*example))
+",50,"[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
