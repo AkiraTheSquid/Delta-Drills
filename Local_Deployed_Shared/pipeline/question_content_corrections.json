@@ -1,0 +1,6 @@
+{
+  "391": {
+    "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
+    "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
+  }
+}

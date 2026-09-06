@@ -87,6 +87,24 @@ async function loadQuestionsSourceIndex() {
   return questionsSourceIndex;
 }
 
+// Q391's old API payload disclosed the exact answer in its prompt/docstring.
+// Read the corrected prompt from the shipped bank while the backend catches up.
+function repairKnownQuestionContent(question) {
+  if (Number(question?.question_id) !== 391) return question;
+  const authored = getQuestionSourceRecord(391)?.exercise;
+  if (authored) question.question_text = authored.question_text;
+  else if (question.question_text) {
+    question.question_text = question.question_text.replace(" via 'c h w -> c (h w)'", "");
+  }
+  if (question.starter_code) {
+    question.starter_code = question.starter_code.replace(
+      "Return shape (c, h*w) via 'c h w -> c (h w)'.",
+      "Return one flattened pixel row per channel.",
+    );
+  }
+  return question;
+}
+
 function buildArenaNotebookUrl(sourcePath) {
   if (!sourcePath || typeof sourcePath !== "string") return null;
   const match = sourcePath.match(/(?:^|\/)ARENA_[^/]+-main\/(.+)\.ipynb$/);

@@ -159,9 +159,28 @@ def check_invariants():
     )
 
 
+def check_reviewed_corrections_ship_to_both_banks():
+    """The final content layer must agree in live API and static exports."""
+    import json
+    filename = 'question_content_corrections.json'
+    corrections = json.loads(_source(os.path.join(_DIR, filename)))
+    assert corrections and all(str(int(qid)) == qid for qid in corrections)
+    for source_path, loader in [(_EXPORTER, 'load_function_overrides'),
+                                (_BACKEND_QUESTIONS, '_load_function_overrides')]:
+        tree = ast.parse(_source(source_path))
+        fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == loader)
+        text = ast.get_source_segment(_source(source_path), fn)
+        assert filename in text, f'{loader} lost the shared final corrections'
+        assert text.index(filename) > text.index('feedback_ai'), f'{loader} applies corrections too early'
+    dockerfile = _source(os.path.join(_REPO_ROOT, 'This-Directory-Only', 'Dockerfile'))
+    assert f'COPY Local_Deployed_Shared/pipeline/{filename}' in dockerfile
+    assert f'!Local_Deployed_Shared/pipeline/{filename}' in _source(os.path.join(_REPO_ROOT, '.dockerignore'))
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants,
+              check_reviewed_corrections_ship_to_both_banks]
     for fn in checks:
         try:
             fn()
