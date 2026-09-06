@@ -25,85 +25,135 @@
 (() => {
   "use strict";
 
-  /* ---- category taxonomy: chapter (broad) -> family (fine) --------------
-     Two nested readings of the same map; the switch under "Fit" picks which
-     one is painted.
+  /* ---- the two colour axes: SECTION (broad) and FAMILY (fine) ----------
+     The switch under "Fit" picks which one is painted. They are INDEPENDENT
+     readings of the same map, not a nesting — that is the whole change from
+     the first cut of this, which made family a subdivision of chapter and so
+     could not express the fact below.
 
-       CHAPTER  - which ARENA notebook a concept belongs to. Three answers and
-                  three far-apart hue bands: the prerequisite floor is warm,
-                  chapter 0.0 is cool (blue -> green -> teal), chapter 0.1 is
-                  violet. Three colours is the whole point of the mode: it has
-                  to be readable across a 43-node map at a glance.
-       CATEGORY - the fine family inside that chapter: broadcasting vs einops
-                  vs einsum, ray tracing vs the tensor-writing ops under it.
-                  Every family's colour is drawn from ITS CHAPTER'S hue band,
-                  so the broad grouping still reads while the fine one is
-                  painted, and the legend nests the families under their
-                  chapter to say so in words.
+       SECTION - which ARENA section a concept belongs to, and the only
+                 question it answers is: does ARENA's OWN curriculum test this
+                 yet? A concept is 0.0 or 0.1 ONLY if an exercise the ARENA
+                 authors wrote covers it. Everything else is OUR preparation
+                 for those sections and sits below them: -1.0 for the Python
+                 floor, -1.1 for the arrays / einops / tensor work.
+                 So the prep tiers are muted and the two ARENA sections are
+                 vivid: what pops out of the map is the part ARENA grades.
+       FAMILY  - the subject: broadcasting vs einops vs einsum vs ray tracing.
+                 Grouped in the legend by SUBJECT AREA, because a subject
+                 straddles the section boundary — `einops.merge-axes` is
+                 exercised by ARENA 0.0 while `einops.singleton-and-lists`,
+                 the same subject and the same lesson, is ours.
 
-     Membership is keyed on the KC id, NOT the lesson id, because a lesson is a
-     teaching unit and a family is a subject: np-3 holds broadcasting AND
-     stacking, `einops.*` spans three lessons but is one thing to a learner,
-     and einsum will arrive as `einops.einsum` under a lesson of its own. The
-     first matching rule wins, so specific tests sit above the catch-alls.
+     Section membership is DATA, read from `lessons/arena_exercise_kcs.json` —
+     the same file `practice/exercise-session.js` uses to decide which ARENA
+     notebook headings get a Practice button. It is not inferred from lesson
+     or KC ids, because "ARENA wrote a problem for this" is not a fact any id
+     encodes, and it changes every time an exercise is mapped. Reading the map
+     means the colour stays true with no edit here.
+
+     Family membership IS keyed on the KC id, because a lesson is a teaching
+     unit and a family is a subject and the two do not line up: np-3 holds
+     broadcasting AND stacking, and `einops.*` spans four lessons but is one
+     thing to a learner. First matching rule wins, so specific tests sit above
+     the catch-alls.
 
      Node labels are painted #15151f, so every colour here is light enough to
      keep dark text legible on it - the reason these are tints rather than the
      saturated hues a legend alone could afford. */
-  const CHAPTERS = [
-    { id: "prereq", label: "Prerequisites \u2014 Python", color: "#efa63a" },
-    { id: "ch00",   label: "Chapter 0.0 \u2014 Arrays, einops, einsum", color: "#4f9fe0" },
-    { id: "ch01",   label: "Chapter 0.1 \u2014 Ray tracing", color: "#bb7de8" },
-    { id: "other",  label: "Not yet in a chapter", color: "#c9c9d2" },
-  ];
-  const CHAPTER_BY_ID = {};
-  CHAPTERS.forEach((c) => { CHAPTER_BY_ID[c.id] = c; });
+
+  // Notebook slug (the key in arena_exercise_kcs.json) -> the section it is.
+  // A slug with no entry here still counts as ARENA-tested; it just lands in
+  // ARENA_LATER, so mapping notebook 0-2 colours its concepts correctly on the
+  // day it appears rather than silently demoting them to prep.
+  const ARENA_SECTIONS = {
+    "0-0": { id: "s00", label: "Section 0.0 — ARENA's own problems", color: "#4f9fe0" },
+    "0-1": { id: "s01", label: "Section 0.1 — ARENA's ray tracing", color: "#bb7de8" },
+  };
+  const ARENA_LATER = { id: "sNN", label: "Later ARENA sections", color: "#e0709a" };
+  // Prep: ours, not ARENA's. Muted on purpose — see the SECTION note above.
+  // Amber and NEUTRAL grey, not two tints of a hue ARENA also uses: -1.1 was a
+  // steel blue and sat close enough to 0.0's blue that the one fact this mode
+  // exists to show — which bubbles ARENA itself tests — came down to reading a
+  // saturation difference across 44 nodes. Hue now carries it: grey and amber
+  // are ours, blue and violet are theirs.
+  const PREP_PYTHON = { id: "sm10", label: "Section −1.0 — Python", color: "#dfae74" };
+  const PREP_ARRAYS = { id: "sm11", label: "Section −1.1 — arrays, einops, tensors (our prep)", color: "#b0b4c0" };
+  // Legend order: the two prep tiers, then ARENA's sections in notebook order.
+  const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS]
+    .concat(Object.keys(ARENA_SECTIONS).sort().map((k) => ARENA_SECTIONS[k]))
+    .concat([ARENA_LATER]);
+
+  // kc id -> section, built from the exercise map once it has loaded. Empty
+  // until then, and empty forever if the fetch failed — which is why
+  // `arenaMapLoaded` is tracked separately: with no map EVERY concept looks
+  // like prep, and a legend that says so without saying why would be a quiet
+  // lie about what ARENA covers.
+  let arenaSectionByKc = {};
+  let arenaMapLoaded = false;
+  const _buildArenaSections = (map) => {
+    arenaSectionByKc = {};
+    if (!map || typeof map !== "object") return;
+    // Sorted so a concept exercised in two notebooks is filed under the
+    // EARLIEST one — where the learner first meets it under ARENA's own name.
+    Object.keys(map).sort().forEach((slug) => {
+      if (slug.charAt(0) === "_") return;          // "_comment"
+      const exercises = map[slug];
+      if (!exercises || typeof exercises !== "object") return;
+      const section = ARENA_SECTIONS[slug] || ARENA_LATER;
+      Object.keys(exercises).forEach((fn) => {
+        const kc = exercises[fn] && exercises[fn].kc;
+        if (kc && !arenaSectionByKc[kc]) arenaSectionByKc[kc] = section;
+      });
+    });
+    arenaMapLoaded = true;
+  };
 
   const FAMILIES = [
-    /* --- prerequisite floor: warm ambers ------------------------------ */
-    { id: "py.data", chapter: "prereq", label: "Values, types & sequences", color: "#f8dda6",
+    /* --- Python: warm ambers ------------------------------------------ */
+    { id: "py.data", group: "Python", label: "Values, types & sequences", color: "#f8dda6",
       test: (id) => /^python\.(values-and-names|types-and-conversion|lists-and-tuples|indexing)$/.test(id) },
-    { id: "py.funcs", chapter: "prereq", label: "Functions & imports", color: "#eeb257",
+    { id: "py.funcs", group: "Python", label: "Functions & imports", color: "#eeb257",
       test: (id) => id.startsWith("python.") },
 
-    /* --- chapter 0.0, numpy: blues ------------------------------------ */
-    { id: "np.random", chapter: "ch00", label: "Randomness", color: "#b6c8dc",
+    /* --- numpy: blues -------------------------------------------------- */
+    { id: "np.random", group: "NumPy", label: "Randomness", color: "#b6c8dc",
       test: (id) => /^numpy\.random-/.test(id) },
-    { id: "np.linalg", chapter: "ch00", label: "Matmul & linear algebra", color: "#7d8ce4",
+    { id: "np.linalg", group: "NumPy", label: "Matmul & linear algebra", color: "#7d8ce4",
       test: (id) => /^numpy\.(linalg-basics|dot-matmul-patterns)$/.test(id) },
-    { id: "np.broadcasting", chapter: "ch00", label: "Broadcasting & shape ops", color: "#4f97dd",
+    { id: "np.broadcasting", group: "NumPy", label: "Broadcasting & shape ops", color: "#4f97dd",
       test: (id) => /^numpy\.(broadcasting-rules|axis-reductions|stack-concat-interleave)$/.test(id) },
-    { id: "np.indexing", chapter: "ch00", label: "Indexing & selection", color: "#9fadf0",
+    { id: "np.indexing", group: "NumPy", label: "Indexing & selection", color: "#9fadf0",
       test: (id) => /^numpy\.(boolean-masking|argmin-argmax)$/.test(id) },
-    { id: "np.elementwise", chapter: "ch00", label: "Elementwise math & aggregation", color: "#8ec7ef",
+    { id: "np.elementwise", group: "NumPy", label: "Elementwise math & aggregation", color: "#8ec7ef",
       test: (id) => /^numpy\.(elementwise-ufuncs|aggregations|sorting)$/.test(id) },
-    { id: "np.foundations", chapter: "ch00", label: "Array foundations", color: "#c2e0f7",
+    { id: "np.foundations", group: "NumPy", label: "Array foundations", color: "#c2e0f7",
       test: (id) => id.startsWith("numpy.") },
 
-    /* --- chapter 0.0, einsum: teal ------------------------------------
+    /* --- einsum: teal --------------------------------------------------
        Above the einops rules on purpose: the concept lands as
        `einops.einsum`, so a plain `^einops\.` catch-all would swallow it and
        einsum would lose the separate colour it is asked for. */
-    { id: "es.einsum", chapter: "ch00", label: "Einsum", color: "#57cfca",
+    { id: "es.einsum", group: "Einops & einsum", label: "Einsum", color: "#57cfca",
       test: (id) => id.includes("einsum") },
 
-    /* --- chapter 0.0, einops: greens ---------------------------------- */
-    { id: "eo.reduce", chapter: "ch00", label: "Einops: reduce & pooling", color: "#85d79c",
+    /* --- einops: greens ------------------------------------------------ */
+    { id: "eo.reduce", group: "Einops & einsum", label: "Einops: reduce & pooling", color: "#85d79c",
       test: (id) => /^einops\.(reduce-model|pooling)$/.test(id) },
-    { id: "eo.repeat", chapter: "ch00", label: "Einops: repeat & DL patterns", color: "#4cbe82",
+    { id: "eo.repeat", group: "Einops & einsum", label: "Einops: repeat & DL patterns", color: "#4cbe82",
       test: (id) => /^einops\.(repeat-model|dl-flatten-heads|channel-groups-temporal)$/.test(id) },
-    { id: "eo.rearrange", chapter: "ch00", label: "Einops: rearrange", color: "#c3ebcb",
+    { id: "eo.rearrange", group: "Einops & einsum", label: "Einops: rearrange", color: "#c3ebcb",
       test: (id) => id.startsWith("einops.") },
 
-    /* --- chapter 0.1: violets ----------------------------------------- */
-    { id: "tr.raytracing", chapter: "ch01", label: "Ray tracing", color: "#e79ad9",
+    /* --- tensors & ray tracing: violets -------------------------------- */
+    { id: "tr.raytracing", group: "PyTorch & ray tracing", label: "Ray tracing", color: "#e79ad9",
       test: (id) => id.startsWith("raytracing.") },
-    { id: "tr.tensors", chapter: "ch01", label: "Tensor writes (PyTorch)", color: "#d8b6f6",
+    { id: "tr.tensors", group: "PyTorch & ray tracing", label: "Tensor writes (PyTorch)", color: "#d8b6f6",
       test: (id) => id.startsWith("torch.") },
   ];
-  const FAMILY_BY_ID = {};
-  FAMILIES.forEach((f) => { FAMILY_BY_ID[f.id] = f; });
-  const UNFILED = { id: "other", chapter: "other", label: "Uncategorised", color: "#dddddd" };
+  const FAMILY_GROUPS = [];
+  FAMILIES.forEach((f) => { if (FAMILY_GROUPS.indexOf(f.group) < 0) FAMILY_GROUPS.push(f.group); });
+  const UNFILED = { id: "other", group: "Other", label: "Uncategorised", color: "#dddddd" };
 
   const FALLBACK = "#dddddd";
   const ACCENT = "#ffd23f"; // prerequisite-path highlight
@@ -114,30 +164,26 @@
   const NEXT_UP = ACCENT;
 
   const $ = (id) => document.getElementById(id);
-  /* A concept's fine family, and the chapter that family belongs to. The
-     chapter falls back to the LESSON id prefix so a lesson added before its
-     concepts are filed here still lands in the right band rather than in
-     "not yet in a chapter" - the fine colour degrades, the broad one does
-     not. */
   const _familyOf = (kc) => {
     const id = typeof kc === "string" ? kc : "";
     for (let i = 0; i < FAMILIES.length; i++) if (FAMILIES[i].test(id)) return FAMILIES[i];
     return UNFILED;
   };
-  const _chapterByLesson = (lid) => {
-    if (!lid) return "other";
-    if (/^py-/.test(lid)) return "prereq";
-    if (/^(np|eo|es)-/.test(lid)) return "ch00";
-    if (/^(tr|rt)-/.test(lid)) return "ch01";
-    return "other";
-  };
-  const _chapterOf = (kc) => {
-    const fam = _familyOf(kc);
-    if (fam.chapter !== "other") return fam.chapter;
-    return _chapterByLesson((kcById[kc] || {}).lesson);
+  /* Which ARENA section a concept sits in. The exercise map is the ONLY thing
+     that can promote a concept out of prep — an id tells you the subject, not
+     who wrote a problem for it. Which is also why Python is separated by id
+     here and nothing else is: -1.0 vs -1.1 is a split of OUR material, and
+     `python.*` is the whole of it. */
+  const _sectionOf = (kc) => {
+    const arena = arenaSectionByKc[kc];
+    if (arena) return arena;
+    const id = typeof kc === "string" ? kc : "";
+    const lid = (kcById[kc] || {}).lesson || "";
+    if (id.startsWith("python.") || /^py-/.test(lid)) return PREP_PYTHON;
+    return PREP_ARRAYS;
   };
   const familyColor = (kc) => _familyOf(kc).color;
-  const chapterColor = (kc) => (CHAPTER_BY_ID[_chapterOf(kc)] || CHAPTER_BY_ID.other).color;
+  const sectionColor = (kc) => _sectionOf(kc).color;
 
   /* The concept's topic ("Numpy", "Einops", "Einsum").
      `lessons/kc_registry.json` does NOT carry one — 0 of its 63 entries have a
@@ -156,7 +202,7 @@
   /* ---- mastery colouring (BKT posterior → red↔blue, gray = no estimate) ---- */
   const BKT_P_INIT = 0.10, BKT_HALF_LIFE_DAYS = 14.0;
   const UNKNOWN_COLOR = "#5b5b70";       // no estimate yet
-  let colorMode = "mastery";             // "mastery" | "chapter" | "category"
+  let colorMode = "mastery";             // "mastery" | "section" | "category"
 
   // Persisted engine state (guest: adaptive_state_guest) so the graph shows
   // mastery even before Practice has been opened this session.
@@ -279,7 +325,7 @@
     return `rgb(${c[0]},${c[1]},${c[2]})`;
   };
   const nodeColor = (kc) => {
-    if (colorMode === "chapter") return chapterColor(kc);
+    if (colorMode === "section") return sectionColor(kc);
     if (colorMode === "category") return familyColor(kc);
     return masteryColor(kcReadiness(kc));
   };
@@ -1498,53 +1544,50 @@
         '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
         '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
     } else {
-      // Chapter and Category legends are the same list at two grains, so they
-      // are built by the same walk: only chapters that actually have concepts
-      // on the map are listed, and in Category mode each chapter's families
-      // are nested under it. Listing a family with no nodes would invite the
-      // reading that the map is missing something it never had.
+      // The two non-mastery legends answer different questions, so they are
+      // built separately rather than as one list at two grains. Either way a
+      // colour is listed only where it is actually painted: a legend entry
+      // with no bubble invites the reading that the map is missing something
+      // it never had.
       el.classList.remove("kg2-legend-mastery");
       el.classList.add("kg2-legend-grouped");
-      // Family presence is tracked PER CHAPTER, not globally. A concept no
-      // rule matches keeps UNFILED's grey but still inherits a real chapter
-      // from its lesson prefix — so a global "is anything unfiled?" flag would
-      // hang the grey chip off whichever chapter happened to be listed first,
-      // or off none at all once that chapter had a recognised family too.
       const ids = Object.keys(kcById);
-      const chapterHas = {};
-      const famByChapter = {};
-      ids.forEach((id) => {
-        const ch = _chapterOf(id);
-        chapterHas[ch] = true;
-        (famByChapter[ch] = famByChapter[ch] || {})[_familyOf(id).id] = true;
-      });
-      const chapters = CHAPTERS.filter((c) => chapterHas[c.id]);
-      if (colorMode === "chapter") {
-        el.innerHTML = chapters.map((c) =>
-          `<span class="kg2-li"><span class="kg2-li-dot" style="background:${c.color}"></span>${esc(c.label)}</span>`
+      if (colorMode === "section") {
+        const has = {};
+        ids.forEach((id) => { has[_sectionOf(id).id] = true; });
+        const rows = SECTION_ORDER.filter((sec) => has[sec.id]).map((sec) =>
+          `<span class="kg2-li"><span class="kg2-li-dot" style="background:${sec.color}"></span>${esc(sec.label)}</span>`
         ).join("");
+        // With no exercise map every concept falls to prep, which looks like a
+        // finished answer instead of a missing file. Say which it is.
+        el.innerHTML = rows + (arenaMapLoaded ? "" :
+          '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>');
       } else {
         // Fourteen families is a legend tall enough to sit on top of the
         // bubbles it is explaining — the prerequisite floor lands in exactly
         // that corner of a BT layout. So it folds, and the fold is REMEMBERED:
         // this whole element is replaced on every legend build, so a plain
         // `open` attribute would silently reopen — and re-cover the map — the
-        // moment the learner flipped to Chapters and back.
-        const body = chapters.map((c) => {
-          const has = famByChapter[c.id] || {};
-          const rows = FAMILIES.filter((f) => f.chapter === c.id && has[f.id]);
-          // Grey goes last and only where it is actually painted: a chapter
-          // carrying an unfiled concept must name that colour, or the map has
-          // a bubble the legend does not account for.
-          if (has[UNFILED.id]) rows.push(UNFILED);
-          return `<span class="kg2-li kg2-li-head"><span class="kg2-li-dot" style="background:${c.color}"></span>${esc(c.label)}</span>` +
+        // moment the learner flipped to Sections and back.
+        //
+        // Families are grouped by SUBJECT AREA, not by section, because a
+        // subject straddles the boundary: einops.merge-axes is ARENA 0.0 and
+        // einops.singleton-and-lists is ours, same lesson, same colour family.
+        const famHas = {};
+        ids.forEach((id) => { famHas[_familyOf(id).id] = true; });
+        const groups = FAMILY_GROUPS.concat(famHas[UNFILED.id] ? [UNFILED.group] : []);
+        const body = groups.map((g) => {
+          const rows = FAMILIES.filter((f) => f.group === g && famHas[f.id]);
+          if (g === UNFILED.group) rows.push(UNFILED);
+          if (!rows.length) return "";
+          return `<span class="kg2-li kg2-li-head">${esc(g)}</span>` +
             rows.map((f) =>
               `<span class="kg2-li kg2-li-sub"><span class="kg2-li-dot" style="background:${f.color}"></span>${esc(f.label)}</span>`
             ).join("");
         }).join("");
         el.innerHTML =
           '<details class="kg2-legend-fold"' + (legendFoldOpen ? " open" : "") + ">" +
-            '<summary>Colour = subject, grouped by chapter</summary>' +
+            '<summary>Colour = subject, grouped by area</summary>' +
             '<div class="kg2-legend-fold-body">' + body + "</div>" +
           "</details>";
         // The element is rebuilt on every legend build, so the listener is
@@ -1772,6 +1815,16 @@
       );
     } catch (_) { kcDifficulty = null; }
 
+    // Which concepts ARENA's OWN exercises cover — the whole of the section
+    // axis. Optional like the difficulty table: a missing map costs the broad
+    // colouring, not the graph, and the legend says so rather than presenting
+    // an all-prep map as fact.
+    try {
+      const arenaMap = await fetch("lessons/arena_exercise_kcs.json", { cache: "no-cache" })
+        .then((r) => (r.ok ? r.json() : null));
+      if (arenaMap) _buildArenaSections(arenaMap);
+    } catch (_) { arenaMapLoaded = false; }
+
     // The KC->atom join, so the 20 measurable concepts can read the mastery the
     // backend already holds instead of falling through to a lesson average.
     // Optional for the same reason as kc_difficulty: a missing file costs
@@ -1883,11 +1936,11 @@
       // Three readings, not two. "Lessons" used to be the only alternative to
       // Mastery and it painted one pastel per lesson id — eleven near-identical
       // tints that answered a question nobody asked (which teaching unit is
-      // this?) while hiding the two that get asked: which notebook is this,
-      // and which subject inside it. Chapters and Categories replace it.
+      // this?) while hiding the two that get asked: is this ARENA's own
+      // material or our run-up to it, and what subject is it.
       seg.innerHTML =
         '<button type="button" data-mode="mastery" class="active">Mastery</button>' +
-        '<button type="button" data-mode="chapter">Chapters</button>' +
+        '<button type="button" data-mode="section">Sections</button>' +
         '<button type="button" data-mode="category">Categories</button>';
       controls.insertBefore(seg, controls.firstChild);
       seg.querySelectorAll("button").forEach((b) =>
