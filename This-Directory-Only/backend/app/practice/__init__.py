@@ -48,6 +48,7 @@ from app.practice.feedback_router import router as feedback_router
 from app.practice.graph_feedback_router import router as graph_feedback_router
 from app.practice.groups_router import router as groups_router
 from app.practice.activity_router import router as activity_router
+from app.practice.kc_prefs_router import router as kc_prefs_router
 from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
@@ -69,5 +70,6 @@ router.include_router(lessons_router)
 router.include_router(kernel_router)
 router.include_router(activity_router)
 router.include_router(groups_router)
+router.include_router(kc_prefs_router)
 
 __all__ = ["router"]

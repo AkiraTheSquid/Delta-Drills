@@ -64,6 +64,7 @@ from app import lessons
 from app import example_schedule
 
 from app import bkt_mastery
+from app import kc_prefs
 
 logger = logging.getLogger(__name__)
 
@@ -345,7 +346,12 @@ def kc_is_unlocked(user_state, kc: str) -> bool:
         # A KC nothing in the registry knows about cannot be gated on. Serving
         # it is the lesser evil versus locking content out of reach entirely.
         return True
-    return all(kc_is_learned(user_state, p) for p in node["prereqs"])
+    # A prerequisite the learner disabled is skipped, not blocking: "turn this
+    # off" must not lock everything downstream out of reach.
+    return all(
+        kc_prefs.is_disabled(user_state, p) or kc_is_learned(user_state, p)
+        for p in node["prereqs"]
+    )
 
 
 def question_kcs(qid: int) -> List[str]:
@@ -361,6 +367,11 @@ def question_kc_gate(user_state, qid: int) -> bool:
     kcs = question_kcs(qid)
     if not kcs:
         return True
+    # A drill on a concept the learner switched off is not servable at all —
+    # this is what keeps the weakest-first fallback from serving what the
+    # frontier skipped.
+    if any(kc_prefs.is_disabled(user_state, k) for k in kcs):
+        return False
     return all(kc_is_unlocked(user_state, k) for k in kcs)
 
 
@@ -387,6 +398,10 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
 
     out: List[str] = []
     for kc in reg:
+        # The learner switched this concept off (graph Settings tab). It is
+        # not learned and not locked — it is simply not served.
+        if kc_prefs.is_disabled(user_state, kc):
+            continue
         if kc_is_learned(user_state, kc):
             continue
         if not kc_is_unlocked(user_state, kc):
@@ -394,7 +409,12 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
         if require_questions and not by_kc.get(kc):
             continue
         out.append(kc)
-    out.sort(key=lambda k: (-descendants.get(k, 0), depth.get(k, 0), k))
+    # The learner's weight scales the coreness term: 1.5 sorts a node as if it
+    # had 50% more dependents, 0.75 as if it had 25% fewer. `+1` so a leaf
+    # (zero descendants) can still be pushed ahead of another leaf.
+    out.sort(key=lambda k: (
+        -(descendants.get(k, 0) + 1) * kc_prefs.weight_for(user_state, k),
+        depth.get(k, 0), k))
     return out
 
 
@@ -1086,7 +1106,11 @@ def kc_report(user_state, eligible=None) -> dict:
             "covered_w": round(covered, 3),
             "tier": tier,
             "evidenced": covered >= MIN_COVERED_W,
-            "state": "learned" if learned else ("frontier" if unlocked else "locked"),
+            "state": ("disabled" if kc_prefs.is_disabled(user_state, kc)
+                      else "learned" if learned
+                      else "frontier" if unlocked else "locked"),
+            # The learner's own controls for this concept (graph Settings tab).
+            "pref": kc_prefs.pref_row(user_state, kc),
             "coreness": descendants.get(kc, 0),
             "depth": depth.get(kc, 0),
             "n_questions": len(by_kc.get(kc, ())),

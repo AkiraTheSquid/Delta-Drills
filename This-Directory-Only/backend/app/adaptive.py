@@ -223,6 +223,12 @@ class UserPracticeState:
     # objects so this file stays unaware of the engine's types and an older
     # build can read a newer one's save.
     kc_posteriors: Dict[str, dict] = field(default_factory=dict)
+    # Learner's own per-concept controls, from the graph's Settings tab:
+    #   {kc: {"enabled": bool, "weight": float}}
+    # Read only through kc_prefs.py. A disabled concept leaves the frontier and
+    # counts as satisfied for unlocking; the weight scales frontier priority.
+    # Absent entry == enabled at 1.0.
+    kc_prefs: Dict[str, dict] = field(default_factory=dict)
 
     def get_subtopic_state(self, subtopic: str) -> SubtopicState:
         if subtopic not in self.subtopic_states:
@@ -265,6 +271,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "kc_exposure": state.kc_exposure,
         "kc_ladder": state.kc_ladder,
         "kc_posteriors": state.kc_posteriors,
+        "kc_prefs": state.kc_prefs,
         "subtopic_states": {},
     }
     for sub_name, sub_state in state.subtopic_states.items():
@@ -309,6 +316,8 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         # engine is built to run on zero data and `mastery()` withholds a number
         # until a concept has real attempts behind it.
         state.kc_posteriors = data.get("kc_posteriors") or {}
+        # Additive: a save without preferences is a learner who changed none.
+        state.kc_prefs = data.get("kc_prefs") or {}
         if data.get("pending_attempt"):
             pa = data["pending_attempt"]
             state.pending_attempt = AttemptRecord(
