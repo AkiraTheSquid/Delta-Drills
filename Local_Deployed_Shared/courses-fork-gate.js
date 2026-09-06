@@ -1,9 +1,9 @@
 /* ================================================================
    COURSES-FORK-GATE.JS — first-click gate on the Courses tab's Colab links.
 
-   The section links on the Courses tab point at Callum McDougall's original
-   notebooks in `callummcdougall/ARENA_3.0`, which are read-only to everyone
-   else — edits made there cannot be saved back. The fix is the same one the
+   The section links on the Courses tab point at the notebooks in Seth's fork
+   `AkiraTheSquid/ARENA_3.0` (which carries practice notebooks upstream does
+   not), read-only to everyone else — edits made there cannot be saved back. The fix is the same one the
    Account tab already documents: the student forks ARENA_3.0 once, tells us
    their GitHub username, and every Colab link on the page swaps the owner to
    their fork. Colab's `File → Save a copy in GitHub` then writes their work
@@ -21,7 +21,9 @@
 (function initCoursesForkGate() {
   const USERNAME_KEY = "account_github_username";
   const PROMPTED_KEY = "delta_drills_courses_fork_prompted";
-  const FORK_URL = "https://github.com/callummcdougall/ARENA_3.0/fork";
+  // Fork SETH'S repo, not Callum's: it is the one with the supplementary
+  // practice notebooks, and the one the app compiles its notebooks from.
+  const FORK_URL = "https://github.com/AkiraTheSquid/ARENA_3.0/fork";
   // GitHub logins: alphanumeric plus internal single hyphens, max 39 chars.
   const USERNAME_RE = /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/;
   const CHECK_TIMEOUT_MS = 4000;
@@ -134,7 +136,7 @@
     step1.appendChild(el("span", "fork-gate-step-num", "1"));
     const step1Body = el("div", "fork-gate-step-body");
     step1Body.appendChild(el("p", "fork-gate-step-text", "Fork the ARENA repository (one time, opens GitHub)."));
-    const forkLink = el("a", "fork-gate-fork-btn", "Fork callummcdougall/ARENA_3.0 ↗");
+    const forkLink = el("a", "fork-gate-fork-btn", "Fork AkiraTheSquid/ARENA_3.0 ↗");
     forkLink.href = FORK_URL;
     forkLink.target = "_blank";
     forkLink.rel = "noreferrer";

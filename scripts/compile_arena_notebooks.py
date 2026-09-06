@@ -34,7 +34,18 @@ WHERE THE SECTION LIST COMES FROM
 
 INPUTS (read-only)
     Local_Deployed_Shared/courses.js                      the section list
-    Local_Deployed_Shared/content/ARENA_5.0-main/**.ipynb the notebooks
+    Local_Deployed_Shared/content/ARENA_3.0-fork/**.ipynb Seth's fork — FIRST
+    Local_Deployed_Shared/content/ARENA_5.0-main/**.ipynb upstream — fallback
+
+    THE FORK WINS. Seth, 2026-09-06: "make it such that it still mirrors the
+    github along with the colab ... I'm working through this content with a
+    group, and they are pulling the directory on their end." So a section
+    whose notebook exists in `github.com/AkiraTheSquid/ARENA_3.0` is compiled
+    from THAT file — the same file the Colab link opens and the group pulls —
+    and only a section the fork does not carry falls back to the upstream 5.0
+    cut. `scripts/sync_arena_fork.sh` keeps the checkout current; the deploy
+    runs it before this compile. Each section records which edition it came
+    from (`edition`, `owner`) so the view can say so.
 
     🔴 `Local_Deployed_Shared/content/` is gitignored — 89 MB of upstream
     course repos that live on this machine and are not part of this repo. A
@@ -80,6 +91,15 @@ PREFIX = "arena-"
 # folder would put the learner on a different version of the exercise than the
 # one the Courses tab describes.
 ARENA_EDITION = "ARENA_5.0-main"
+
+# Seth's fork of the curriculum, checked out by scripts/sync_arena_fork.sh.
+# Read BEFORE the upstream edition: what is pushed there is what the study
+# group pulls and what the Colab links open (stats/predicted-links.js
+# `ARENA_UPSTREAM_OWNER`), so the app has to render the same file or the
+# three surfaces disagree about what the exercise says.
+FORK_EDITION = "ARENA_3.0-fork"
+FORK_OWNER = "AkiraTheSquid"
+UPSTREAM_OWNER = "callummcdougall"
 
 # courses.js writes book URLs, not notebook paths: `/arena-book/<rest>.html` is
 # the Jupyter Book page, and `<rest>.ipynb` is the notebook it was built from.
@@ -324,6 +344,14 @@ def main() -> int:
             "lives on this machine only. Restore it before recompiling."
         )
 
+    fork = SHARED / "content" / FORK_EDITION
+    if not fork.is_dir():
+        # Not fatal: the upstream cut still compiles every section. But a build
+        # without the fork silently drops every notebook that exists ONLY there
+        # (0.1's supplementary edition, for one), so say it loudly.
+        print(f"  ⚠ no fork checkout at {fork} — run scripts/sync_arena_fork.sh; "
+              f"compiling from {ARENA_EDITION} only")
+
     sections = _sections(COURSES_JS.read_text(encoding="utf-8"))
     # --dry-run writes nothing, and that includes not creating the folder it
     # would have written into.
@@ -333,9 +361,15 @@ def main() -> int:
     index = []
     total_cells = 0
     missing = []
+    from_fork = 0
     for section in sections:
         rel = _notebook_path(section["url"])
-        source = arena / rel
+        # The fork first, upstream second — see INPUTS in the header.
+        if (fork / rel).exists():
+            source, edition, owner = fork / rel, FORK_EDITION, FORK_OWNER
+            from_fork += 1
+        else:
+            source, edition, owner = arena / rel, ARENA_EDITION, UPSTREAM_OWNER
         if not source.exists():
             print(f"  ⚠ {section['number'] or section['title']}: no notebook at {rel}")
             missing.append(section["number"] or section["title"])
@@ -353,7 +387,8 @@ def main() -> int:
             "chapter": section["chapter"],
             # Where this came from, carried into the notebook itself so the
             # view can offer the upstream original without a second lookup.
-            "edition": ARENA_EDITION,
+            "edition": edition,
+            "owner": owner,
             "notebook_path": rel,
             "book_url": section["url"],
             "cells": cells,
@@ -372,12 +407,16 @@ def main() -> int:
             "cells": len(cells),
             "code_cells": sum(1 for c in cells if c["t"] == "code"),
             "notebook_path": rel,
+            "edition": edition,
+            "owner": owner,
         })
-        print(f"  {slug:<8} {len(cells):>4} cells  {section['title']}")
+        tag = "fork" if edition == FORK_EDITION else "    "
+        print(f"  {slug:<8} {len(cells):>4} cells  {tag}  {section['title']}")
 
     if not args.dry_run:
         (args.out / f"{PREFIX}index.json").write_text(
-            json.dumps({"edition": ARENA_EDITION, "sections": index},
+            json.dumps({"edition": ARENA_EDITION, "fork": FORK_EDITION,
+                        "fork_owner": FORK_OWNER, "sections": index},
                        ensure_ascii=False, indent=1) + "\n",
             encoding="utf-8",
         )
@@ -391,7 +430,8 @@ def main() -> int:
                 stale.unlink()
                 print(f"  removed stale notebook: {stale.name}")
 
-    print(f"\n{len(index)} ARENA notebooks · {total_cells} cells")
+    print(f"\n{len(index)} ARENA notebooks · {total_cells} cells · "
+          f"{from_fork} from {FORK_OWNER}'s fork, {len(index) - from_fork} from {ARENA_EDITION}")
 
     # 🔴 A PARTIAL BUILD MUST NOT EXIT 0. Every section above still wrote what
     # it could, which is the right thing for a local rebuild — but the rows for

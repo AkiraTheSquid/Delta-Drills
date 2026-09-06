@@ -260,6 +260,38 @@ python3 "$REFRESH_SPLIT_SCRIPT" --root "$REPO_DIR"
 info "Compiling web notebooks for the in-app Notebooks tab..."
 python3 "$REPO_DIR/scripts/compile_web_notebooks.py"
 
+# The in-app ARENA notebooks (Course content → section opens in the app) are
+# compiled from Seth's fork of ARENA_3.0 FIRST, upstream second, so that what
+# the app renders is the file the study group pulls and the Colab link opens
+# (2026-09-06). Pull the fork, then recompile. The sync script's exit code says
+# what happened (see its header): 2 = remote unreachable, checkout untouched —
+# warn and compile from what is on disk, IF there is a checkout (a missing one
+# would compile from upstream only and silently drop every fork-only notebook,
+# so that is fatal); 3 = the checkout is not a fast-forward of the remote (hand
+# edits, diverged history) — ABORT, it is read-only and a hand edit there is a
+# notebook nobody pushed; anything else — abort.
+info "Syncing the ARENA fork and compiling the in-app ARENA notebooks..."
+set +e
+bash "$REPO_DIR/scripts/sync_arena_fork.sh"
+fork_rc=$?
+set -e
+case "$fork_rc" in
+  0) ;;
+  2)
+    if [ -d "$REPO_SHARED_DIR/content/ARENA_3.0-fork/.git" ]; then
+      warn "ARENA fork remote unreachable — compiling from the checkout already on disk."
+    else
+      error "No ARENA fork checkout on disk and the clone failed. See scripts/sync_arena_fork.sh."
+      exit 1
+    fi
+    ;;
+  *)
+    error "ARENA fork checkout is not a clean fast-forward of the remote (exit $fork_rc). Fix it, then re-deploy."
+    exit 1
+    ;;
+esac
+python3 "$REPO_DIR/scripts/compile_arena_notebooks.py"
+
 # --- Step 2b: Hardened bank audit gate ---
 # Blocks the deploy on gameable grading (bare-fixture cheats passing), broken
 # starters, and degenerate expected values. See pipeline/audit_question_bank.py.
