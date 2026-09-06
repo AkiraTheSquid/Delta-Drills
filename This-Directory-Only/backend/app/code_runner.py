@@ -19,7 +19,7 @@ import signal
 import subprocess
 import sys
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -127,6 +127,10 @@ class ExecutionResult:
     stdout: str
     stderr: str
     success: bool
+    # Rich output: display_data mimebundles ({mime: data}) in display order.
+    # Only a kernel that runs real IPython (modal_kernel) fills this; the fork
+    # runner and the grader have no display channel and leave it empty.
+    outputs: list = field(default_factory=list)
 
 
 def _forked_child_main(code: str, conn) -> None:

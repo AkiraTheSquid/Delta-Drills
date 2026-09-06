@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     # Fly secret. Must match the OAuth 2.0 Web Client ID the frontend renders.
     google_client_id: str = ""
     user_data_dir: str = ""  # Override for deployed envs (e.g. /data/user_data on Fly.io)
+    # Notebook kernels on Modal (app/modal_kernel.py). Set MODAL_TOKEN_ID +
+    # MODAL_TOKEN_SECRET (Fly secrets / .env) and the kernel backend switches
+    # from the in-process fork to one sandbox per learner. KERNEL_BACKEND
+    # forces it: auto | modal | fork.
+    modal_token_id: str | None = None
+    modal_token_secret: str | None = None
+    kernel_backend: str = "auto"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

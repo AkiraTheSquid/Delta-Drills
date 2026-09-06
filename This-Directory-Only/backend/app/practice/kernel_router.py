@@ -23,7 +23,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.auth import get_current_user
-from app.kernel_runner import (
+from app.kernel_backend import (
     DEFAULT_TIMEOUT_SECONDS,
     kernel_status,
     reset_kernel,
@@ -62,6 +62,10 @@ class KernelExecResponse(BaseModel):
     stdout: str
     stderr: str
     success: bool
+    # display_data mimebundles, {mime: data}, in display order — a plotly
+    # figure, a PNG, an HTML table. Empty on the fork backend, which has no
+    # display channel.
+    outputs: list[dict] = []
     # True when this call had to create the kernel. The client's cue that
     # whatever state it thought it had is gone — it was evicted, idled out, or
     # the box was redeployed — and that earlier cells need re-running.
@@ -96,6 +100,7 @@ def kernel_exec(payload: KernelExecRequest,
         stdout=run.result.stdout,
         stderr=run.result.stderr,
         success=run.result.success,
+        outputs=list(getattr(run.result, "outputs", None) or []),
         fresh=run.fresh,
         exec_count=run.exec_count,
     )

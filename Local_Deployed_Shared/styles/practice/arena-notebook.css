@@ -174,20 +174,9 @@
 
 /* ---- a Colab setup cell -------------------------------------------------- */
 
-/* No Run button, so no hover affordance either — a cell that cannot run must
-   not look like one that can. The mark replaces the ▶ in the gutter so the
-   column of buttons down the left edge stays a straight line. */
-.arena-nb-magic {
-  opacity: 0.85;
-}
-
-.arena-nb-magic-mark {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1;
-  padding: 5px 0;
-}
-
+/* A magic cell runs like any other (the sandbox kernel is real IPython); the
+   note above its source is the only thing that marks it. Kept slightly muted
+   so the notebook still opens on prose, not on a setup block. */
 .arena-nb-magic .nbv-src code {
   color: var(--muted);
 }

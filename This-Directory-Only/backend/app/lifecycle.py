@@ -42,10 +42,23 @@ def register_lifecycle(app: FastAPI) -> None:
         from app.code_runner import preload_torch
         preload_torch()
 
+    @app.on_event("startup")
+    async def _start_notebook_kernels() -> None:
+        """Backend housekeeping: on Modal, terminate sandboxes a previous
+        process left running — they still bill, and nothing can reach them.
+
+        Awaited, in a worker thread: the Modal calls block, so they stay off
+        the loop, but serving must not begin until the sweep is done — a
+        sandbox created by the first request would otherwise be indistinguish-
+        able from an orphan and terminated under that learner."""
+        import asyncio
+        from app.kernel_backend import startup
+        await asyncio.to_thread(startup)
+
     @app.on_event("shutdown")
     def _shutdown_notebook_kernels() -> None:
-        """Stop every live notebook kernel. They are forked children of THIS
+        """Stop every live notebook kernel. Forked kernels are children of THIS
         process, so a worker that exits without killing them leaves orphans
-        holding a share of a 2gb box."""
-        from app.kernel_runner import shutdown_all
+        holding a share of a 2gb box; Modal sandboxes keep billing."""
+        from app.kernel_backend import shutdown_all
         shutdown_all()

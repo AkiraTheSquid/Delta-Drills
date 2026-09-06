@@ -47,11 +47,12 @@
                OPEN, and that is right there for a reason that does not hold
                here: those solutions answer a problem the app itself set.)
      code      runnable.
-     magic     a Colab setup cell (`%pip install …`, `!git clone …`). A line
-               magic is a SyntaxError to `exec`, which is what the kernel runs,
-               so this is drawn read-only with the reason. 🔴 Without that, the
-               FIRST cell of every ARENA notebook is a Run button that answers
-               with a SyntaxError, which reads as a broken app.
+     magic     a Colab setup cell (`%pip install …`, `!git clone …`). Runnable
+               like any code cell: the kernel is a real IPython in a sandbox
+               (backend app/modal_kernel.py), so magics and shell lines mean
+               what they mean in Colab. The ⚙ note stays so the learner knows
+               why the cell exists. (Before the sandbox kernel this was drawn
+               read-only, because a line magic is a SyntaxError to `exec`.)
    ================================================================ */
 
 const ArenaNotebookView = (() => {
@@ -169,23 +170,18 @@ const ArenaNotebookView = (() => {
   };
 
   const _magicCell = (cell) => {
-    const el = document.createElement("section");
-    el.className = "nbv-cell nbv-code arena-nb-magic";
-    el.dataset.role = cell.role;
-    el.dataset.cellId = cell.id;
-    el.id = `arena-${cell.id}`;
-    el._ddSource = String(cell.src || "").replace(/\s+$/, "");
-    el.innerHTML =
-      '<div class="nbv-gutter"><span class="arena-nb-magic-mark" aria-hidden="true">⚙</span></div>' +
-      '<div class="nbv-body">' +
-      '<p class="nbv-checker-note">⚙ <strong>Colab setup</strong> — this cell uses ' +
-      "notebook magics (<code>%pip</code>, <code>!</code>), which the app's Python " +
-      "session cannot run. It is here because it is part of the notebook; install " +
-      "what it names in your own environment.</p>" +
-      '<pre class="nbv-src"><code>' +
-      esc(String(cell.src || "").replace(/\s+$/, "")) +
-      "</code></pre>" +
-      "</div>";
+    const el = _codeCell(cell);
+    el.classList.add("arena-nb-magic");
+    const body = el.querySelector(".nbv-body");
+    if (body) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        '<p class="nbv-checker-note">⚙ <strong>Colab setup</strong> — installs and ' +
+          "downloads what the notebook needs. The session already has the ARENA " +
+          "exercises on disk, so this mostly finds its work done; run it anyway, " +
+          "the way you would in Colab.</p>",
+      );
+    }
     return el;
   };
 
@@ -478,8 +474,10 @@ const ArenaNotebookView = (() => {
         _onFresh(state);
       }
       failed = !!result.failed;
-      out.textContent = result.text || (failed ? "" : "✓ ran successfully");
+      const rich = Array.isArray(result.outputs) ? result.outputs : [];
+      out.textContent = result.text || (failed || rich.length ? "" : "✓ ran successfully");
       out.classList.toggle("is-error", failed);
+      window.DeltaCellOutputs?.render(out, rich);
     } catch (err) {
       failed = true;
       out.textContent = `Error: ${err.message}`;

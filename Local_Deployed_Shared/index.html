@@ -2205,7 +2205,11 @@ t.manual_seed(0)
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=26"></script>
   <script src="practice/timer.js?v=25"></script>
-  <script src="practice/kernel.js?v=4"></script>
+  <script src="practice/kernel.js?v=5"></script>
+  <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
+       kernel). Before notebook.js and both notebook views, which optional-
+       chain it: missing, cells still print, figures are simply not drawn. -->
+  <script src="practice/cell-outputs.js?v=1"></script>
   <!-- Colab-style code cells (@M, 2026-08-23): a tokenised <pre> overlay
        behind a transparent-text textarea, plus name-only ghost autocomplete.
        BEFORE runner.js, whose installCodeEditorKeys hangs both attaches off
@@ -2217,7 +2221,7 @@ t.manual_seed(0)
   <script src="practice/code-highlight.js?v=1"></script>
   <script src="practice/code-complete.js?v=1"></script>
   <script src="practice/runner.js?v=22"></script>
-  <script src="practice/notebook.js?v=7"></script>
+  <script src="practice/notebook.js?v=8"></script>
   <script src="practice/notebook-editor.js?v=4"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
@@ -2244,7 +2248,7 @@ t.manual_seed(0)
   <script src="practice/lessons.js?v=34"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
-  <script src="practice/notebook-view.js?v=2"></script>
+  <script src="practice/notebook-view.js?v=3"></script>
   <!-- The ARENA sections, opened in the app rather than in Colab. Same two
        dependencies as the view above (LessonGate.renderMarkdown for prose,
        LessonNotebook.runSource for a cell) plus app.js's `switchTab`, which is
@@ -2259,7 +2263,7 @@ t.manual_seed(0)
        which is why they are separate scripts and not more of the view. -->
   <script src="practice/arena-notebook-nav.js?v=2"></script>
   <script src="practice/arena-notebook-state.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=3"></script>
+  <script src="practice/arena-notebook.js?v=4"></script>
   <script src="practice/ladder.js?v=9"></script>
   <script src="practice/example-gate.js?v=1"></script>
   <script src="practice/kc-practice.js?v=4"></script>
