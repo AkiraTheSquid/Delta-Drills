@@ -347,11 +347,15 @@ def check_promotion_threshold_matches_the_backend():
     2026-08-03. Until then, this.
     """
     ladder_js = read(os.path.join(HERE, "stage-ladder.js"))
-    graph = os.path.join(
-        HERE, "..", "..", "This-Directory-Only", "backend", "app", "kc_graph.py")
-    if not os.path.exists(graph):
+    # 48630c50 (2026-09-06) moved the ladder arithmetic — PROMOTE_LO,
+    # _PROMOTE_STREAK, _streak_toward — into kc_ladder_math.py; the estimate
+    # dict that reports `streak_needed` stayed in kc_graph.py. Both are read
+    # as ONE text so every assertion below keeps its meaning.
+    app_dir = os.path.join(HERE, "..", "..", "This-Directory-Only", "backend", "app")
+    parts = [os.path.join(app_dir, "kc_ladder_math.py"), os.path.join(app_dir, "kc_graph.py")]
+    if not all(os.path.exists(part) for part in parts):
         return  # backend not checked out beside the frontend — nothing to compare
-    backend = read(graph)
+    backend = "\n".join(read(part) for part in parts)
 
     def _floats(src, name):
         block = re.search(rf"{name}\s*=\s*\{{(.*?)\}}", src, re.S)

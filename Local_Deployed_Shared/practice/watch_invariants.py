@@ -150,9 +150,25 @@ eq(C.currentId(), "5m", "a refused set must not reset the choice");
             f"block has no length; a snapshot carrying either resumes under "
             f"rules this build does not enforce"
         )
-    assert "const shouldFinishInsteadOfAdvance = () => false;" in timer, (
-        "a session quota is back — `shouldFinishInsteadOfAdvance` compares "
-        "again, so a block can end on its own instead of being paused"
+    # 2026-09-06: a quota EXISTS again, but only for a block an exercise page
+    # configured (practice/exercise-session.js — Seth: "3. how many problems").
+    # The rule this guards is now narrower: the PLAIN block still has no
+    # length. The comparison may read `sessionConfig.quota` and nothing else,
+    # and the idle Start button must drop any installed config before it
+    # starts — otherwise a count set on a notebook page leaks into the
+    # adaptive queue and ends a block nobody asked to end.
+    quota = re.search(r"const shouldFinishInsteadOfAdvance = \(\) =>\s*(.*?);", timer, re.S)
+    assert quota, "timer.js lost shouldFinishInsteadOfAdvance"
+    assert "sessionConfig?.quota" in quota.group(1) and "state.served" in quota.group(1), (
+        "`shouldFinishInsteadOfAdvance` compares something other than the "
+        "exercise session's own quota — a plain block must never end on its own"
+    )
+    assert re.search(
+        r"sessionStartBtn\.addEventListener\(\"click\", \(\) => \{\s*sessionConfig = null;\s*start\(\);",
+        timer,
+    ), (
+        "the idle Start button no longer clears sessionConfig — a quota set on "
+        "an exercise page would end the next plain block"
     )
 
     index_html = read(os.path.join(SHARED, "index.html"))

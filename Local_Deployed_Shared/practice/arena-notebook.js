@@ -661,6 +661,10 @@ const ArenaNotebookView = (() => {
        file is a notebook with no rail and no memory, not a blank page. */
     window.ArenaNotebookNav?.mount(_page(), host, nb.number ? `${nb.number} ${nb.title}` : nb.title);
     window.ArenaNotebookState?.bind(nb.id);
+    /* Last, so every listener sees the finished page: practice/exercise-
+       session.js puts a "Practice this exercise" button under each exercise
+       heading it has drills for. Nothing in this file knows which those are. */
+    document.dispatchEvent(new CustomEvent("arena-notebook:rendered", { detail: { id: nb.id, host } }));
   };
 
   /* ---------- entry points --------------------------------------------- */
