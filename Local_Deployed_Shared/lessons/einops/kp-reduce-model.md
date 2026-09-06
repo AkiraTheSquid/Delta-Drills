@@ -6,6 +6,7 @@ new_syntax: [einops.reduce]
 faded: [325]
 guided: [328]
 independent: [326, 367, 399, 402, 332, 340, 370]
+integrated: [929, 930, 931, 932]
 ---
 
 ## Concept
@@ -18,14 +19,13 @@ them — and you say HOW the dropped values collapse**:
 > over everything that vanished. The third argument names the aggregation:
 > `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.
 
-This is PyTorch's `dim=` reductions with the einsum-style deletion rule, in
-einops clothing — three notations, one concept:
+This is PyTorch's `dim=` reductions with a deletion rule — an axis you leave
+off the right-hand side is the axis that collapses — in einops clothing.
+Two notations, one concept:
 
 - `x.mean(dim=(1, 2, 3))` — axes by number.
-- `t.einsum('bchw->b', x) / (c*h*w)` — sum by deletion, mean by hand.
 - `reduce(x, 'b c h w -> b', 'mean')` — deletion by name, aggregation
-  declared. (Note: unlike einsum, reduce does means/maxes natively — no
-  divide-outside dance.)
+  declared: means and maxes come out finished, nothing to divide afterwards.
 
 Details that matter in the drills:
 
@@ -91,7 +91,7 @@ Why each step:
    kept `1` is what makes reduce-then-operate pipelines shape-safe, same as
    keepdims in np-3.
 3. The grayscale line matches a drill's exact contract ('-> b h w 1');
-   note reduce handles mean natively — resist the einsum habit of dividing
+   note reduce handles mean natively — there is nothing to divide
    afterwards.
 
 ## Faded practice
@@ -136,14 +136,28 @@ Also from the bank: q340 (centre each (batch, channel) map by its OWN mean
 — reduce to 'b c 1 1' so it broadcasts back), q370 (centre each channel
 across the WHOLE batch — '1 c 1 1', BatchNorm-style; contrast with q340).
 
+## Integrated practice
+
+### q929
+weekly maximum
+
+### q930
+block means of length k
+
+### q931
+weekly totals
+
+### q932
+day-of-week means
+
 ## Misconceptions
 
 - **"reduce is rearrange with a mode argument."** — rearrange forbids
   dropping names; reduce requires it (something must reduce). They share
   the pattern grammar, not the contract.
-- **"Means still need dividing outside, like einsum."** — reduce's third
-  argument does real means/maxes/mins natively. The divide-outside habit
-  is einsum-specific.
+- **"A mean is a sum you divide afterwards."** — reduce's third
+  argument does real means/maxes/mins natively; dividing a `'mean'` result
+  by the window size double-counts the normalisation.
 - **"'h w -> w' and 'h w -> 1 w' are the same reduction."** — Same numbers,
   different SHAPE: (w,) vs (1, w). The singleton version survives
   broadcasting against the original; the bare version may misalign

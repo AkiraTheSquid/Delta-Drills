@@ -8212,5 +8212,1183 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "847": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "848": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "849": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "850": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "851": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "852": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "853": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "854": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-faded"
+ },
+ "855": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "856": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "857": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "858": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "859": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "860": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-independent"
+ },
+ "861": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "862": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "863": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "864": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "865": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "866": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "867": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "868": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "869": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "870": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "871": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "872": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "873": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "874": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "875": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "876": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "877": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "878": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "879": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "880": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "881": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "882": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "883": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "884": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "885": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "886": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "887": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "888": {
+  "target_kcs": [
+   "einops.einsum"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.einsum"
+  ],
+  "source": "kp-integrated"
+ },
+ "889": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "890": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "891": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "892": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "893": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "894": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "895": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "896": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "897": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "898": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "899": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "900": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "901": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "902": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "903": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "904": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "905": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "906": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "907": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "908": {
+  "target_kcs": [
+   "einops.merge-axes"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops-axis-composition"
+  ],
+  "source": "kp-integrated"
+ },
+ "909": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "910": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "911": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "912": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "913": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "914": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "915": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "916": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "917": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "918": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "919": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "920": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "921": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "922": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "923": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "924": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "925": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "926": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "927": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "928": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "929": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-integrated"
+ },
+ "930": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-integrated"
+ },
+ "931": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-integrated"
+ },
+ "932": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "numpy.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce"
+  ],
+  "source": "kp-integrated"
+ },
+ "933": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "934": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "935": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "936": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "937": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "938": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "939": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "940": {
+  "target_kcs": [
+   "einops.repeat-model"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "einops.repeat"
+  ],
+  "source": "kp-integrated"
  }
 }

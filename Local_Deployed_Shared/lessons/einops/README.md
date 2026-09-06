@@ -119,6 +119,15 @@
   - Status: permanent authoring risk.
 
 ## Recent Changes
+- 2026-09-06: `kp-einsum.md` (KC `einops.einsum`, lesson `es-1`) — the ONE einsum
+  node the retired einsum course was replaced by: four segments (one operand /
+  two operands / repeated names / batch axis) built from the einops basics
+  tutorial and Rocktäschel §2.1–2.10, 8 faded + 6 solo + 3 integrated drills, the
+  five 0.0 `einsum_*` exercises plus 4 variants each (q847–888). The seven KPs the
+  0.0 einops exercises map to gained an `integrated:` rung holding 4 variants per
+  exercise (q889–940); `lessons/arena_exercise_kcs.json` "0-0" lists them for
+  the Practice buttons. Stale "like einsum" comparisons on `kp-pattern-language`
+  and `kp-reduce-model` reworded: einsum now comes AFTER einops in the course.
 - 2026-08-30: einops is now the END of the course, not the middle. The einsum lessons that used to sit before eo-1 are retired (ARENA writes `einops.einsum` in 61 notebooks and `torch.einsum` in none), so three pages lost a `supporting:` entry that no longer resolves: kp-pattern-language dropped `einsum.notation-model`, kp-dl-flatten-heads dropped `einsum.attention-patterns`, kp-repeat-model dropped `numpy.tile-repeat-meshgrid`. Two drills were retired with the cut because their solutions used symbols only a retired page taught: q386 (`Tensor.flip`) off kp-pooling and q393 (`torch.repeat_interleave`, 0 notebooks) off kp-split-axes. 🔴 The open gap this leaves is worth naming: `einops.einsum` is the single highest-frequency einops operation in ARENA (61 notebooks, ahead of `rearrange` at 42) and **no concept teaches it**. The next content to author here is one `einops.einsum` node, not a return of the ten torch.einsum ones — the retired drills convert mechanically, since einops spells the same pattern with spaces and full axis names.
 - 2026-08-29: `watch.py` gained the two standing content guards (prerequisite order and ARENA grounding), scoped to `einops.`. Editing anything here now runs them, so a drill reaching for an untaught or ungrounded function is refused at the point it is written rather than found later. 🔴 The ARENA figures published on 2026-08-28 are superseded: the corpus scan was reading only code cells and ARENA keeps its worked solutions in markdown fences. For this folder that moved a real conclusion: `einops.repeat` is in 15 notebooks and `einops.reduce` in 14, not 2 and 5 — the earlier suggestion to collapse them into one node is withdrawn.
 

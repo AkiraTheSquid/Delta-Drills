@@ -638,6 +638,39 @@
     "raytracing.make-rays-1d"
    ],
    "segments": {}
+  },
+  {
+   "id": "es-1",
+   "title": "Einsum",
+   "topic": "Einops",
+   "subtopic_key": "Einops: Einsum",
+   "file": "es-1.json",
+   "cells": 85,
+   "questions": [
+    847,
+    848,
+    849,
+    850,
+    851,
+    852,
+    853,
+    854,
+    855,
+    856,
+    857,
+    858,
+    859,
+    860
+   ],
+   "kcs": [
+    "einops.einsum"
+   ],
+   "segments": {
+    "einops.einsum#one-operand": "dd-seg-einops-einsum-0",
+    "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
+    "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
+    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3"
+   }
   }
  ]
 }

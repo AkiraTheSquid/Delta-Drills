@@ -6,6 +6,7 @@ new_syntax: []
 faded: [390]
 guided: [315]
 independent: [337, 320, 331]
+integrated: [921, 922, 923, 924, 925, 926, 927, 928]
 ---
 
 ## Concept
@@ -126,6 +127,32 @@ even channel axis into pairs, pair-member axis to the front).
 
 Also from the bank: q331 (slice to the even-indexed images, then tile them
 into an r-row grid).
+
+## Integrated practice
+
+### q921
+arange into h rows
+
+### q922
+column-major fill
+
+### q923
+three-way split
+
+### q924
+arange into w columns
+
+### q925
+list into h rows
+
+### q926
+split and transpose
+
+### q927
+list into a batch of matrices
+
+### q928
+grid back to a list
 
 ## Misconceptions
 
