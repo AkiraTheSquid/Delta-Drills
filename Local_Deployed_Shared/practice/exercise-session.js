@@ -170,7 +170,7 @@
       '<fieldset class="dd-ex-field"><legend>2. Review time per problem</legend><div class="dd-ex-opts" data-for="review"></div></fieldset>' +
       '<div class="dd-ex-field dd-ex-count"><label>3. How many problems ' +
       `<input type="number" name="quota" min="${QUOTA_MIN}" max="${QUOTA_MAX}" step="1" inputmode="numeric"></label>` +
-      '<span class="dd-ex-hint">A miss puts that concept\'s prerequisite drills next, within this count — the maximum time holds.</span></div>' +
+      '<span class="dd-ex-hint">A maximum, not a target: each slot goes to prep or to a variant of this problem, whichever most raises the chance of solving one within what is left — fewer questions, greedier. The block ends when you solve one; a miss re-plans. The maximum time holds.</span></div>' +
       '<p class="dd-ex-max" aria-live="polite"></p>' +
       '<p class="dd-ex-error hidden" role="alert"></p>' +
       '<div class="dd-ex-actions">' +
@@ -293,7 +293,10 @@
          `KcPractice.stop()`, which would clear the ladder just built.
          Codex, 2026-09-06. */
       if (s.hasPausedSession?.()) s.discard?.();
-      const ok = await window.KcPractice?.startScoped?.(ex.kc);
+      const kp = window.KcPractice;
+      const ok = kp && typeof kp.startPlanned === "function"
+        ? await kp.startPlanned(ex.kc, { quota: cfg.quota, variants: ex.variants })
+        : await kp?.startScoped?.(ex.kc);
       if (!ok) {
         rollback();
         _fail("No drills are attached to this exercise's concept yet.");
@@ -359,7 +362,12 @@
       const fn = _headingFn(cell);
       const entry = fn && table[fn];
       if (!entry || !entry.kc) return;
-      const ex = { kc: entry.kc, fn, title: entry.title || fn, kcTitle: null, nb: nbId, cell: cell.dataset.cellId };
+      const ex = {
+        kc: entry.kc, fn, title: entry.title || fn, kcTitle: null, nb: nbId, cell: cell.dataset.cellId,
+        // The attempt pool: variants of THIS exercise at its own difficulty
+        // (practice/exercise-planner.js). Empty ⇒ the plain scoped ladder.
+        variants: Array.isArray(entry.variants) ? entry.variants.filter(Number.isFinite) : [],
+      };
       const block = document.createElement("div");
       block.className = "dd-ex-block";
       block._exercise = ex;
@@ -445,14 +453,19 @@
     return ` <a class="dd-ex-back" href="${_esc(href)}">Back to ${_esc(ex.title || "the notebook")} ↩</a>`;
   };
 
-  const onEnd = (reason, served, config) => {
+  const onEnd = (reason, served, config, outcome) => {
     document.getElementById("page-practice")?.classList.remove("dd-exercise-session");
     document.querySelectorAll(".dd-ex-block").forEach(_syncButton);
     const el = _summaryEl();
     if (!el || !config?.exercise) return;
-    if (reason === "complete") {
+    if (reason === "complete" && outcome?.solved) {
       el.innerHTML =
-        `<b>${_esc(config.exercise.title || "Exercise")}</b> — done, ${served} of ${config.quota} questions. Recorded answers are kept.` +
+        `<b>${_esc(config.exercise.title || "Exercise")}</b> — solved on attempt ${outcome.attempts}, ${served} of ${config.quota} questions used. Recorded answers are kept.` +
+        _backLink(config);
+    } else if (reason === "complete") {
+      const tried = outcome && outcome.attempts ? ` ${outcome.attempts} attempt${outcome.attempts === 1 ? "" : "s"} at a variant, none solved yet.` : "";
+      el.innerHTML =
+        `<b>${_esc(config.exercise.title || "Exercise")}</b> — done, ${served} of ${config.quota} questions.${tried} Recorded answers are kept.` +
         _backLink(config);
     } else if (reason === "discarded") {
       el.textContent = `Saved ${config.exercise.title || "exercise"} session discarded.`;
@@ -467,11 +480,14 @@
     document.querySelectorAll(".dd-ex-block").forEach(_syncButton);
   };
 
-  const onPrereqsQueued = (kc, n) => {
+  /* A one-line note from the ladder after a grade ("3 prerequisite drills
+     queued", "Miss — re-planning; torch.slice-assignment looks weakest"),
+     shown on the phase label for a moment. */
+  const onNote = (note) => {
     const el = document.getElementById("session-phase");
-    if (!el) return;
+    if (!el || !note) return;
     const label = el.textContent;
-    el.textContent = `Reviewing · ${n} prerequisite drill${n === 1 ? "" : "s"} queued`;
+    el.textContent = `Reviewing · ${note}`;
     setTimeout(() => {
       if (el.textContent.startsWith("Reviewing ·")) el.textContent = label;
     }, 4000);
@@ -487,5 +503,5 @@
     _decorate(window.ArenaNotebook.current.id, late.parentElement).catch(() => {});
   }
 
-  window.ExerciseSession = { open: _open, onEnd, onResume, onPrereqsQueued, pausedFor: _pausedFor };
+  window.ExerciseSession = { open: _open, onEnd, onResume, onNote, pausedFor: _pausedFor };
 })();
