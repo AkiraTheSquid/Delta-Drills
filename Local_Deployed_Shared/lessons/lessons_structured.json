@@ -5027,6 +5027,455 @@
      "notes_markdown": ""
     }
    ]
+  },
+  {
+   "id": "tr-1",
+   "topic": "PyTorch",
+   "title": "Rays as tensors (ARENA 0.1)",
+   "subtopic_key": "PyTorch: Rays as tensors",
+   "kps": [
+    {
+     "kc": "torch.out-argument",
+     "title": "Filling a tensor in place with out=",
+     "supporting_kcs": [
+      "numpy.ranges",
+      "numpy.slicing-views",
+      "numpy.constructors"
+     ],
+     "new_syntax": [
+      "torch.arange#out",
+      "torch.linspace#out"
+     ],
+     "concept_markdown": "Every constructor you know so far **allocates** a fresh tensor and hands it\nback. `t.linspace(0, 1, 5)` makes five new floats somewhere in memory. Often\nthat is exactly right. But when you have already built the tensor that will\nhold the result \u2014 a canvas of zeros with the right shape \u2014 a fresh allocation\nis one extra step: make the values, then copy them into place.\n\n`out=` removes that step. Pass the **target** as `out=` and the function writes\nits result **directly into that tensor's storage** instead of allocating:\n\n```python\nimport torch as t\n\ncanvas = t.zeros((5, 3))\nt.linspace(0, 1, 5, out=canvas[:, 1])\nprint(canvas)\n```\n\nThree things to notice.\n\n- The target was a **slice**, `canvas[:, 1]`. A slice is a view of the\n  canvas, so writing into the view wrote into the canvas \u2014 column 1 is\n  filled and the other columns are untouched.\n- The **return value is the target itself**, not a new tensor. Catching it in\n  a name gives you the same view back:\n\n```python\nimport torch as t\n\ncanvas = t.zeros(4)\nview = canvas[1:3]\nfilled = t.arange(2, out=view)\nprint(filled is view)\nprint(canvas)\n```\n\n- The target's **shape must already match** what the call would produce.\n  `t.linspace(0, 1, 5)` is five values, so the target must hold five. If it\n  does not, PyTorch does **not** raise: it warns, **resizes the target** to a\n  flat run of the canvas's own storage, and writes the values there \u2014 which\n  is *not* the column you named. The numbers land in the wrong slots of the\n  canvas, silently. Count the slots of the slice before you call:\n\n```python\nimport torch as t\n\ncanvas = t.zeros((5, 3))\nt.linspace(0, 1, 4, out=canvas[:, 1])   # 4 values into a 5-slot column\nprint(canvas)                            # the values sit across row 0..1, not down column 1\n```\n\n`out=` works the same on `t.arange`, `t.linspace`, and most other tensor\nproducing functions. The dtype follows the target: `t.arange(3, out=floats)`\nwrites `0., 1., 2.` because the target is float.",
+     "worked_example_markdown": "Build five y-coordinates as one column of a zero canvas, in one call:\n\n```python\nimport torch as t\n\npoints = t.zeros((5, 3))\nt.linspace(-1.0, 1.0, 5, out=points[:, 1])   # column 1 = y\nprint(points)\nassert points[0, 1] == -1.0 and points[-1, 1] == 1.0\nassert points[:, 0].sum() == 0.0            # other columns untouched\n```\n\nInput \u2192 output of the same idea, on a shorter canvas:\n\n| call | canvas afterwards |\n| --- | --- |\n| `t.linspace(0, 1, 3, out=c[:, 0])` on `c = t.zeros((3, 2))` | `[[0, 0], [0.5, 0], [1, 0]]` |\n| `t.arange(3, out=c[:, 1])` on the same `c` | `[[0, 0], [0.5, 1], [1, 2]]` |",
+     "segments": [
+      {
+       "concept_id": "s0-out-writes-into-storage-you-already-own",
+       "title": "out= writes into storage you already own",
+       "concept_markdown": "Every constructor you know so far **allocates** a fresh tensor and hands it\nback. `t.linspace(0, 1, 5)` makes five new floats somewhere in memory. Often\nthat is exactly right. But when you have already built the tensor that will\nhold the result \u2014 a canvas of zeros with the right shape \u2014 a fresh allocation\nis one extra step: make the values, then copy them into place.\n\n`out=` removes that step. Pass the **target** as `out=` and the function writes\nits result **directly into that tensor's storage** instead of allocating:\n\n```python\nimport torch as t\n\ncanvas = t.zeros((5, 3))\nt.linspace(0, 1, 5, out=canvas[:, 1])\nprint(canvas)\n```\n\nThree things to notice.\n\n- The target was a **slice**, `canvas[:, 1]`. A slice is a view of the\n  canvas, so writing into the view wrote into the canvas \u2014 column 1 is\n  filled and the other columns are untouched.\n- The **return value is the target itself**, not a new tensor. Catching it in\n  a name gives you the same view back:\n\n```python\nimport torch as t\n\ncanvas = t.zeros(4)\nview = canvas[1:3]\nfilled = t.arange(2, out=view)\nprint(filled is view)\nprint(canvas)\n```\n\n- The target's **shape must already match** what the call would produce.\n  `t.linspace(0, 1, 5)` is five values, so the target must hold five. If it\n  does not, PyTorch does **not** raise: it warns, **resizes the target** to a\n  flat run of the canvas's own storage, and writes the values there \u2014 which\n  is *not* the column you named. The numbers land in the wrong slots of the\n  canvas, silently. Count the slots of the slice before you call:\n\n```python\nimport torch as t\n\ncanvas = t.zeros((5, 3))\nt.linspace(0, 1, 4, out=canvas[:, 1])   # 4 values into a 5-slot column\nprint(canvas)                            # the values sit across row 0..1, not down column 1\n```\n\n`out=` works the same on `t.arange`, `t.linspace`, and most other tensor\nproducing functions. The dtype follows the target: `t.arange(3, out=floats)`\nwrites `0., 1., 2.` because the target is float.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Build five y-coordinates as one column of a zero canvas, in one call:\n\n```python\nimport torch as t\n\npoints = t.zeros((5, 3))\nt.linspace(-1.0, 1.0, 5, out=points[:, 1])   # column 1 = y\nprint(points)\nassert points[0, 1] == -1.0 and points[-1, 1] == 1.0\nassert points[:, 0].sum() == 0.0            # other columns untouched\n```\n\nInput \u2192 output of the same idea, on a shorter canvas:\n\n| call | canvas afterwards |\n| --- | --- |\n| `t.linspace(0, 1, 3, out=c[:, 0])` on `c = t.zeros((3, 2))` | `[[0, 0], [0.5, 0], [1, 0]]` |\n| `t.arange(3, out=c[:, 1])` on the same `c` | `[[0, 0], [0.5, 1], [1, 2]]` |",
+       "worked_example_code": "import torch as t\n\npoints = t.zeros((5, 3))\nt.linspace(-1.0, 1.0, 5, out=points[:, 1])   # column 1 = y\nprint(points)\nassert points[0, 1] == -1.0 and points[-1, 1] == 1.0\nassert points[:, 0].sum() == 0.0            # other columns untouched\n",
+       "faded_items": [
+        {
+         "question_id": 798,
+         "prompt": "One call writes the column; the canvas is the thing you return.",
+         "starter_code": "def solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    canvas = t.zeros((n, 3))\n    t._____(lo, hi, n, _____=canvas[:, col])\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+         "solution": "def solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.linspace(lo, hi, n, out=canvas[:, col])\n    return canvas.tolist()\n"
+        },
+        {
+         "question_id": 799,
+         "prompt": "The target is float, so the integers land as 0., 1., 2.",
+         "starter_code": "def solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2\u00d7n canvas.\"\"\"\n    canvas = t.zeros((2, n))\n    t._____(n, _____=canvas[row])\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0)\nprint(solve(*example))\n",
+         "solution": "def solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2\u00d7n canvas.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[row])\n    return canvas.tolist()\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 798,
+       "prompt": "One call writes the column; the canvas is the thing you return.",
+       "starter_code": "def solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    canvas = t.zeros((n, 3))\n    t._____(lo, hi, n, _____=canvas[:, col])\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+       "solution": "def solve(n, lo, hi, col):\n    \"\"\"n evenly spaced values from lo to hi, written into column col.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.linspace(lo, hi, n, out=canvas[:, col])\n    return canvas.tolist()\n"
+      },
+      {
+       "question_id": 799,
+       "prompt": "The target is float, so the integers land as 0., 1., 2.",
+       "starter_code": "def solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2\u00d7n canvas.\"\"\"\n    canvas = t.zeros((2, n))\n    t._____(n, _____=canvas[row])\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0)\nprint(solve(*example))\n",
+       "solution": "def solve(n, row):\n    \"\"\"The integers 0..n-1 written into row `row` of a 2\u00d7n canvas.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[row])\n    return canvas.tolist()\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 800,
+       "prompt": "Column 0 = arange, column 1 = linspace(lo, hi), one canvas.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 801,
+       "prompt": "out= hands back the target view; the canvas shows the write.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 802,
+       "prompt": "Three out= writes, three columns.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 803,
+       "prompt": "linspace into the first k rows of one column of an existing canvas.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 804,
+       "prompt": "arange(start, stop) into an integer canvas row.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 805,
+       "prompt": "One column through a 3-D canvas, written with out=.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 806,
+       "prompt": "linspace written into a stepped slice."
+      },
+      {
+       "question_id": 807,
+       "prompt": "A column partitioned between two out= writes."
+      },
+      {
+       "question_id": 808,
+       "prompt": "A ones-column and a linspace-column, both via out=."
+      }
+     ],
+     "independent_items": [
+      800,
+      801,
+      802,
+      803,
+      804,
+      805
+     ],
+     "misconceptions_markdown": "- **\"`out=` is just a faster way to get a return value.\"** The return value\n  is the *target*. What changes is that the target's storage is written. If\n  you throw the return value away, the write still happened.\n- **\"A shape mismatch raises.\"** It does not. PyTorch warns, resizes the\n  target over the canvas's storage and writes the values into the wrong\n  slots \u2014 a corrupted canvas, not an error. Check the slice's slot count\n  against the number of values you pass.\n- **\"Row 0 is column 0.\"** `canvas[0]` is a row; `canvas[:, 0]` is a column.\n  Both are valid `out=` targets and both are the wrong one half the time.",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "torch.slice-assignment",
+     "title": "Writing tensors into slices: broadcasting on the left",
+     "supporting_kcs": [
+      "numpy.slicing-views",
+      "numpy.broadcasting-rules",
+      "numpy.constructors",
+      "numpy.ranges"
+     ],
+     "new_syntax": [
+      "Tensor.copy_"
+     ],
+     "concept_markdown": "You have met `x[2:5] = 0.0`: assigning to a slice writes through the view into\n`x`. That page used a scalar. Here the right-hand side becomes a **tensor**,\nthe slice becomes **multi-axis**, and two rules make this the workhorse of\ntensor building:\n\n1. **The right-hand side broadcasts to the slice.** A scalar fills every slot;\n   a 1-D tensor of the right length fills a column or a row; a full tensor of\n   the slice's shape is copied element by element. Ordinary broadcasting\n   rules, applied to the *slice's* shape.\n2. **The write is in place.** Every other view of the same storage sees it,\n   and the tensor's shape and dtype never change (a float written into an int\n   tensor is truncated, not upcast).\n\n```python\nimport torch as t\n\nx = t.zeros((3, 4))\nx[:, 1] = 3.0                 # scalar \u2192 whole column\nx[0] = t.arange(4)            # 1-D of length 4 \u2192 one row\nx[1:, 2:] = t.ones((2, 2))    # block of matching shape\nprint(x)\n```\n\nThe same write has a **method spelling** you will see in library code:\n`x[0].copy_(src)` is `x[0] = src`, with `src` broadcast to the slice. The\ntrailing underscore is PyTorch's mark for *in place* \u2014 it acts on the view,\nso it writes into `x`:\n\n```python\nimport torch as t\n\nx = t.zeros((2, 3))\nx[1].copy_(t.tensor([1.0, 2.0, 3.0]))\nx[:, 0].copy_(t.tensor(7.0))        # a 0-d tensor broadcasts like a scalar\nprint(x)\n```\n\nShape still has to work. `x[:, 1] = t.arange(5)` on a 3-row `x` is a\n`RuntimeError` \u2014 five values cannot broadcast to three slots \u2014 and, unlike\n`out=`, assignment **does** raise, which is why it is the safer of the two.",
+     "worked_example_markdown": "Three slabs of shape (2, 3). Give row 1 of every slab an x of 1 and a y equal\nto the slab's own index, then scale the middle slab's row 1 by 10 \u2014 three\nwrites, one canvas:\n\n```python\nimport torch as t\n\nslabs = t.zeros((3, 2, 3))\nslabs[:, 1, 0] = 1.0                 # scalar broadcast to 3 slots\nslabs[:, 1, 1] = t.arange(3)         # 1-D of length 3 into 3 slots\nslabs[1, 1] = slabs[1, 1] * 10       # a whole row, rewritten from itself\nprint(slabs)\nassert slabs[1, 1].tolist() == [10.0, 10.0, 0.0]\n```\n\n| write | slice shape | RHS shape | result |\n| --- | --- | --- | --- |\n| `x[:, 0] = 1.0` on 3\u00d72 | `(3,)` | `()` | column 0 all ones |\n| `x[0] = t.arange(2)` on 3\u00d72 | `(2,)` | `(2,)` | row 0 = `[0, 1]` |\n| `x[:, 0] = t.arange(2)` on 3\u00d72 | `(3,)` | `(2,)` | `RuntimeError` |",
+     "segments": [
+      {
+       "concept_id": "s0-x-sel-value-writes-in-place-broadcasting-the-val",
+       "title": "`x[sel] = value` writes in place, broadcasting the value",
+       "concept_markdown": "You have met `x[2:5] = 0.0`: assigning to a slice writes through the view into\n`x`. That page used a scalar. Here the right-hand side becomes a **tensor**,\nthe slice becomes **multi-axis**, and two rules make this the workhorse of\ntensor building:\n\n1. **The right-hand side broadcasts to the slice.** A scalar fills every slot;\n   a 1-D tensor of the right length fills a column or a row; a full tensor of\n   the slice's shape is copied element by element. Ordinary broadcasting\n   rules, applied to the *slice's* shape.\n2. **The write is in place.** Every other view of the same storage sees it,\n   and the tensor's shape and dtype never change (a float written into an int\n   tensor is truncated, not upcast).\n\n```python\nimport torch as t\n\nx = t.zeros((3, 4))\nx[:, 1] = 3.0                 # scalar \u2192 whole column\nx[0] = t.arange(4)            # 1-D of length 4 \u2192 one row\nx[1:, 2:] = t.ones((2, 2))    # block of matching shape\nprint(x)\n```\n\nThe same write has a **method spelling** you will see in library code:\n`x[0].copy_(src)` is `x[0] = src`, with `src` broadcast to the slice. The\ntrailing underscore is PyTorch's mark for *in place* \u2014 it acts on the view,\nso it writes into `x`:\n\n```python\nimport torch as t\n\nx = t.zeros((2, 3))\nx[1].copy_(t.tensor([1.0, 2.0, 3.0]))\nx[:, 0].copy_(t.tensor(7.0))        # a 0-d tensor broadcasts like a scalar\nprint(x)\n```\n\nShape still has to work. `x[:, 1] = t.arange(5)` on a 3-row `x` is a\n`RuntimeError` \u2014 five values cannot broadcast to three slots \u2014 and, unlike\n`out=`, assignment **does** raise, which is why it is the safer of the two.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Three slabs of shape (2, 3). Give row 1 of every slab an x of 1 and a y equal\nto the slab's own index, then scale the middle slab's row 1 by 10 \u2014 three\nwrites, one canvas:\n\n```python\nimport torch as t\n\nslabs = t.zeros((3, 2, 3))\nslabs[:, 1, 0] = 1.0                 # scalar broadcast to 3 slots\nslabs[:, 1, 1] = t.arange(3)         # 1-D of length 3 into 3 slots\nslabs[1, 1] = slabs[1, 1] * 10       # a whole row, rewritten from itself\nprint(slabs)\nassert slabs[1, 1].tolist() == [10.0, 10.0, 0.0]\n```\n\n| write | slice shape | RHS shape | result |\n| --- | --- | --- | --- |\n| `x[:, 0] = 1.0` on 3\u00d72 | `(3,)` | `()` | column 0 all ones |\n| `x[0] = t.arange(2)` on 3\u00d72 | `(2,)` | `(2,)` | row 0 = `[0, 1]` |\n| `x[:, 0] = t.arange(2)` on 3\u00d72 | `(3,)` | `(2,)` | `RuntimeError` |",
+       "worked_example_code": "import torch as t\n\nslabs = t.zeros((3, 2, 3))\nslabs[:, 1, 0] = 1.0                 # scalar broadcast to 3 slots\nslabs[:, 1, 1] = t.arange(3)         # 1-D of length 3 into 3 slots\nslabs[1, 1] = slabs[1, 1] * 10       # a whole row, rewritten from itself\nprint(slabs)\nassert slabs[1, 1].tolist() == [10.0, 10.0, 0.0]\n",
+       "faded_items": [
+        {
+         "question_id": 809,
+         "prompt": "The slice is the target; the scalar broadcasts to every slot of it.",
+         "starter_code": "def solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[_____, _____] = v\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 0)\nprint(solve(*example))\n",
+         "solution": "def solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[:, col] = v\n    return canvas.tolist()\n"
+        },
+        {
+         "question_id": 810,
+         "prompt": "copy_ takes a tensor; wrap the list first.",
+         "starter_code": "def solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row]._____(t.tensor(row_values))\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 1, [1.0, 2.0, 3.0])\nprint(solve(*example))\n",
+         "solution": "def solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row].copy_(t.tensor(row_values))\n    return canvas.tolist()\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 809,
+       "prompt": "The slice is the target; the scalar broadcasts to every slot of it.",
+       "starter_code": "def solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[_____, _____] = v\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0, 0)\nprint(solve(*example))\n",
+       "solution": "def solve(n, v, col):\n    \"\"\"One column set to v by assigning into the slice.\"\"\"\n    canvas = t.zeros((n, 3))\n    canvas[:, col] = v\n    return canvas.tolist()\n"
+      },
+      {
+       "question_id": 810,
+       "prompt": "copy_ takes a tensor; wrap the list first.",
+       "starter_code": "def solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row]._____(t.tensor(row_values))\n    return canvas.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 1, [1.0, 2.0, 3.0])\nprint(solve(*example))\n",
+       "solution": "def solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row].copy_(t.tensor(row_values))\n    return canvas.tolist()\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 811,
+       "prompt": "Two scalar broadcasts into two columns.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 812,
+       "prompt": "A 1-D tensor assigned into a column.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 813,
+       "prompt": "A write through one view shows in every view.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 814,
+       "prompt": "A block write via two slices.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 815,
+       "prompt": "Assign a row, then copy_ a column; order matters at the crossing.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 816,
+       "prompt": "A float assigned into an int tensor is truncated, not upcast.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 817,
+       "prompt": "Three column writes, the third built from the second."
+      },
+      {
+       "question_id": 818,
+       "prompt": "A row-vector broadcast into a stepped row slice."
+      },
+      {
+       "question_id": 819,
+       "prompt": "copy_ a block, then rewrite it from itself."
+      }
+     ],
+     "independent_items": [
+      811,
+      812,
+      813,
+      814,
+      815,
+      816
+     ],
+     "misconceptions_markdown": "- **\"`x[:, 0] = v` makes a new tensor.\"** It does not; it writes into the\n  storage `x` already has, and every view of that storage sees the change.\n  Rebinding (`x = ...`) is what makes new tensors.\n- **\"Rows and columns are interchangeable in a write.\"** `x[0]` is a row,\n  `x[:, 0]` a column. The shapes differ, so a 1-D right-hand side that fits\n  one will raise on the other whenever the tensor is not square.\n- **\"Assignment upcasts.\"** The tensor's dtype is fixed; a float written into\n  an int tensor is truncated toward zero.",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "raytracing.ray-parametrisation",
+     "title": "A ray is an origin and a direction",
+     "supporting_kcs": [
+      "numpy.constructors",
+      "numpy.broadcasting-rules",
+      "numpy.slicing-views",
+      "numpy.ranges"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "A **ray** is half a line: it starts at a point and goes on forever in one\ndirection. ARENA writes every point on it as\n\n> **P(u) = O + u \u00b7 D**, with **u \u2265 0**\n\nwhere **O** is the origin (a point), **D** the direction (a vector), and `u` a\nscalar. `u = 0` is the origin, `u = 1` is one direction-length along, `u = 2`\ntwice that. Negative `u` would be *behind* the camera, so it is excluded.\n\nIn a tensor the ray is stored as a **(2, 3)** slab \u2014 row 0 is the origin, row\n1 the direction, and the three columns are x, y, z:\n\n```python\nimport torch as t\n\nray = t.tensor([[0.0, 0.0, 0.0],    # O\n                [1.0, 0.5, 0.0]])   # D\norigin, direction = ray[0], ray[1]\nu = 2.0\nprint(origin + u * direction)       # the point at u = 2\n```\n\nBecause the whole thing is arithmetic, **many `u` at once** is one broadcast:\na column of `u` values times the direction row gives one point per row.\n\n```python\nimport torch as t\n\norigin = t.tensor([0.0, 0.0, 0.0])\ndirection = t.tensor([1.0, 0.5, 0.0])\nu = t.tensor([0.0, 1.0, 2.0])\npoints = origin + u[:, None] * direction    # (3,1) * (3,) \u2192 (3,3)\nprint(points)\n```\n\nTwo facts you will use constantly in Chapter 0.1:\n\n- The direction is **not unit length** and does not need to be. `D = (1, 0.5, 0)`\n  is a perfectly good direction; `u` just measures in multiples of it.\n- The same ray has many parametrisations \u2014 double `D` and halve every `u`\n  and you get the same points. When ARENA asks \"does the ray hit the\n  segment\", it solves for `u` and checks `u \u2265 0`, so **the sign of `u` is what\n  carries the geometry**, not its size.\n\nA family of rays all leaving the origin then differs only in the direction\nrow \u2014 which is exactly why `make_rays_1d` builds a stack of `(2, 3)` slabs and\nonly writes into row 1.",
+     "worked_example_markdown": "Where is the ray `O = (0, 0, 0)`, `D = (1, 2, 0)` when its x-coordinate is 3?\nSolve `u \u00b7 1 = 3`, then read y = `u \u00b7 2`:\n\n```python\nimport torch as t\n\nray = t.tensor([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]])\nO, D = ray[0], ray[1]\nu = (3.0 - O[0]) / D[0]\npoint = O + u * D\nprint(u, point)\nassert point.tolist() == [3.0, 6.0, 0.0]\n```\n\n| ray `[O, D]` | `u` | `O + u\u00b7D` |\n| --- | --- | --- |\n| `[[0,0,0],[1,0.5,0]]` | 0 | `[0, 0, 0]` |\n| `[[0,0,0],[1,0.5,0]]` | 2 | `[2, 1, 0]` |\n| `[[1,1,0],[0,1,0]]` | 3 | `[1, 4, 0]` |",
+     "segments": [
+      {
+       "concept_id": "s0-origin-u-direction-and-the-2-3-layout",
+       "title": "origin + u \u00b7 direction, and the (2, 3) layout",
+       "concept_markdown": "A **ray** is half a line: it starts at a point and goes on forever in one\ndirection. ARENA writes every point on it as\n\n> **P(u) = O + u \u00b7 D**, with **u \u2265 0**\n\nwhere **O** is the origin (a point), **D** the direction (a vector), and `u` a\nscalar. `u = 0` is the origin, `u = 1` is one direction-length along, `u = 2`\ntwice that. Negative `u` would be *behind* the camera, so it is excluded.\n\nIn a tensor the ray is stored as a **(2, 3)** slab \u2014 row 0 is the origin, row\n1 the direction, and the three columns are x, y, z:\n\n```python\nimport torch as t\n\nray = t.tensor([[0.0, 0.0, 0.0],    # O\n                [1.0, 0.5, 0.0]])   # D\norigin, direction = ray[0], ray[1]\nu = 2.0\nprint(origin + u * direction)       # the point at u = 2\n```\n\nBecause the whole thing is arithmetic, **many `u` at once** is one broadcast:\na column of `u` values times the direction row gives one point per row.\n\n```python\nimport torch as t\n\norigin = t.tensor([0.0, 0.0, 0.0])\ndirection = t.tensor([1.0, 0.5, 0.0])\nu = t.tensor([0.0, 1.0, 2.0])\npoints = origin + u[:, None] * direction    # (3,1) * (3,) \u2192 (3,3)\nprint(points)\n```\n\nTwo facts you will use constantly in Chapter 0.1:\n\n- The direction is **not unit length** and does not need to be. `D = (1, 0.5, 0)`\n  is a perfectly good direction; `u` just measures in multiples of it.\n- The same ray has many parametrisations \u2014 double `D` and halve every `u`\n  and you get the same points. When ARENA asks \"does the ray hit the\n  segment\", it solves for `u` and checks `u \u2265 0`, so **the sign of `u` is what\n  carries the geometry**, not its size.\n\nA family of rays all leaving the origin then differs only in the direction\nrow \u2014 which is exactly why `make_rays_1d` builds a stack of `(2, 3)` slabs and\nonly writes into row 1.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Where is the ray `O = (0, 0, 0)`, `D = (1, 2, 0)` when its x-coordinate is 3?\nSolve `u \u00b7 1 = 3`, then read y = `u \u00b7 2`:\n\n```python\nimport torch as t\n\nray = t.tensor([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]])\nO, D = ray[0], ray[1]\nu = (3.0 - O[0]) / D[0]\npoint = O + u * D\nprint(u, point)\nassert point.tolist() == [3.0, 6.0, 0.0]\n```\n\n| ray `[O, D]` | `u` | `O + u\u00b7D` |\n| --- | --- | --- |\n| `[[0,0,0],[1,0.5,0]]` | 0 | `[0, 0, 0]` |\n| `[[0,0,0],[1,0.5,0]]` | 2 | `[2, 1, 0]` |\n| `[[1,1,0],[0,1,0]]` | 3 | `[1, 4, 0]` |",
+       "worked_example_code": "import torch as t\n\nray = t.tensor([[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]])\nO, D = ray[0], ray[1]\nu = (3.0 - O[0]) / D[0]\npoint = O + u * D\nprint(u, point)\nassert point.tolist() == [3.0, 6.0, 0.0]\n",
+       "faded_items": [
+        {
+         "question_id": 820,
+         "prompt": "Row 0, row 1, then the one line of arithmetic.",
+         "starter_code": "def solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[_____], ray[_____]\n    return (origin + _____ * direction).tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+         "solution": "def solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[0], ray[1]\n    return (origin + u * direction).tolist()\n"
+        },
+        {
+         "question_id": 821,
+         "prompt": "u needs a trailing axis so it lines up against the 3 coordinates.",
+         "starter_code": "def solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[_____, _____] * ray[1]).tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])\nprint(solve(*example))\n",
+         "solution": "def solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[:, None] * ray[1]).tolist()\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 820,
+       "prompt": "Row 0, row 1, then the one line of arithmetic.",
+       "starter_code": "def solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[_____], ray[_____]\n    return (origin + _____ * direction).tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0)\nprint(solve(*example))\n",
+       "solution": "def solve(ray, u):\n    \"\"\"The point at parameter u on a ray stored as [origin, direction].\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[0], ray[1]\n    return (origin + u * direction).tolist()\n"
+      },
+      {
+       "question_id": 821,
+       "prompt": "u needs a trailing axis so it lines up against the 3 coordinates.",
+       "starter_code": "def solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[_____, _____] * ray[1]).tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])\nprint(solve(*example))\n",
+       "solution": "def solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[:, None] * ray[1]).tolist()\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 822,
+       "prompt": "Solve O_x + u\u00b7D_x = x for u.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 823,
+       "prompt": "Solve for u from x, then read y.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 824,
+       "prompt": "Is p ahead of the camera on this ray?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 825,
+       "prompt": "Doubling D and halving u names the same point.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 826,
+       "prompt": "n integer steps along one ray.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 827,
+       "prompt": "One u, many rays.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 828,
+       "prompt": "Per-ray u from x, then per-ray y, vectorised."
+      },
+      {
+       "question_id": 829,
+       "prompt": "Many x's \u2192 many u's \u2192 many points, one broadcast."
+      },
+      {
+       "question_id": 830,
+       "prompt": "Which rays hit p ahead of the camera?"
+      }
+     ],
+     "independent_items": [
+      822,
+      823,
+      824,
+      825,
+      826,
+      827
+     ],
+     "misconceptions_markdown": "- **\"The direction must be a unit vector.\"** No. `u` is measured in\n  direction-lengths; any nonzero `D` is fine, and ARENA's rays are not\n  normalised.\n- **\"Solving for the line is solving for the ray.\"** A line accepts any\n  `u`; a ray needs `u \u2265 0`. Every \"does this ray hit\" test in 0.1 ends with\n  that sign check.\n- **\"`rays[0]` is the origins.\"** For a stack of rays `rays[0]` is the whole\n  first ray. The origins of every ray are `rays[:, 0]`.",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "raytracing.make-rays-1d",
+     "title": "make_rays_1d: a fan of rays as one (n, 2, 3) tensor",
+     "supporting_kcs": [
+      "torch.out-argument",
+      "torch.slice-assignment",
+      "raytracing.ray-parametrisation",
+      "numpy.ranges",
+      "numpy.constructors"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "ARENA's first exercise, `make_rays_1d(num_pixels, y_limit)`, asks for a\n**fan** of rays: all from the origin, all with direction x = 1, and direction\ny spread evenly from `-y_limit` to `+y_limit`. The result is one tensor of\nshape **`(num_pixels, 2, 3)`** \u2014 one `(2, 3)` ray slab per pixel.\n\nEverything you need is the three pages before this one, in order:\n\n1. **Canvas.** `t.zeros((num_pixels, 2, 3))` \u2014 every origin is already\n   `(0, 0, 0)` and every direction z is already `0`. Two columns remain.\n2. **Direction x.** Every ray's `[1, 0]` slot is `1`: a scalar broadcast\n   through a slice, `rays[:, 1, 0] = 1`.\n3. **Direction y.** `num_pixels` values from `-y_limit` to `y_limit`, written\n   into the `[:, 1, 1]` column \u2014 `t.linspace(..., out=rays[:, 1, 1])`, or the\n   same with assignment.\n\n```python\nimport torch as t\n\ndef make_rays_1d(num_pixels, y_limit):\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n\nprint(make_rays_1d(3, 1.0))\n```\n\nRead the output as three slabs. Row 0 of each is the origin; row 1 is\n`(1, y, 0)` with `y` walking `-1, 0, 1`. Nothing else was touched.\n\nThe habit to take from this: **allocate the final shape once, then write the\nparts that vary**. Building rows in a loop and stacking them gives the same\nnumbers and is the thing you will unlearn in the next chapter.",
+     "worked_example_markdown": "The same construction with y spread over `[-2, 2]` in 5 steps, checked\nagainst the two facts that define it:\n\n```python\nimport torch as t\n\nrays = t.zeros((5, 2, 3))\nrays[:, 1, 0] = 1\nrays[:, 1, 1] = t.linspace(-2.0, 2.0, 5)\nprint(rays[:, 1])                          # every direction row\nassert (rays[:, 0] == 0).all()             # all origins at 0\nassert rays[:, 1, 1].tolist() == [-2.0, -1.0, 0.0, 1.0, 2.0]\n```\n\n| `num_pixels, y_limit` | direction rows `rays[:, 1]` |\n| --- | --- |\n| `2, 1.0` | `[[1, -1, 0], [1, 1, 0]]` |\n| `3, 3.0` | `[[1, -3, 0], [1, 0, 0], [1, 3, 0]]` |",
+     "segments": [
+      {
+       "concept_id": "s0-zeros-then-write-the-two-direction-columns",
+       "title": "zeros, then write the two direction columns",
+       "concept_markdown": "ARENA's first exercise, `make_rays_1d(num_pixels, y_limit)`, asks for a\n**fan** of rays: all from the origin, all with direction x = 1, and direction\ny spread evenly from `-y_limit` to `+y_limit`. The result is one tensor of\nshape **`(num_pixels, 2, 3)`** \u2014 one `(2, 3)` ray slab per pixel.\n\nEverything you need is the three pages before this one, in order:\n\n1. **Canvas.** `t.zeros((num_pixels, 2, 3))` \u2014 every origin is already\n   `(0, 0, 0)` and every direction z is already `0`. Two columns remain.\n2. **Direction x.** Every ray's `[1, 0]` slot is `1`: a scalar broadcast\n   through a slice, `rays[:, 1, 0] = 1`.\n3. **Direction y.** `num_pixels` values from `-y_limit` to `y_limit`, written\n   into the `[:, 1, 1]` column \u2014 `t.linspace(..., out=rays[:, 1, 1])`, or the\n   same with assignment.\n\n```python\nimport torch as t\n\ndef make_rays_1d(num_pixels, y_limit):\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n\nprint(make_rays_1d(3, 1.0))\n```\n\nRead the output as three slabs. Row 0 of each is the origin; row 1 is\n`(1, y, 0)` with `y` walking `-1, 0, 1`. Nothing else was touched.\n\nThe habit to take from this: **allocate the final shape once, then write the\nparts that vary**. Building rows in a loop and stacking them gives the same\nnumbers and is the thing you will unlearn in the next chapter.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "The same construction with y spread over `[-2, 2]` in 5 steps, checked\nagainst the two facts that define it:\n\n```python\nimport torch as t\n\nrays = t.zeros((5, 2, 3))\nrays[:, 1, 0] = 1\nrays[:, 1, 1] = t.linspace(-2.0, 2.0, 5)\nprint(rays[:, 1])                          # every direction row\nassert (rays[:, 0] == 0).all()             # all origins at 0\nassert rays[:, 1, 1].tolist() == [-2.0, -1.0, 0.0, 1.0, 2.0]\n```\n\n| `num_pixels, y_limit` | direction rows `rays[:, 1]` |\n| --- | --- |\n| `2, 1.0` | `[[1, -1, 0], [1, 1, 0]]` |\n| `3, 3.0` | `[[1, -3, 0], [1, 0, 0], [1, 3, 0]]` |",
+       "worked_example_code": "import torch as t\n\nrays = t.zeros((5, 2, 3))\nrays[:, 1, 0] = 1\nrays[:, 1, 1] = t.linspace(-2.0, 2.0, 5)\nprint(rays[:, 1])                          # every direction row\nassert (rays[:, 0] == 0).all()             # all origins at 0\nassert rays[:, 1, 1].tolist() == [-2.0, -1.0, 0.0, 1.0, 2.0]\n",
+       "faded_items": [
+        {
+         "question_id": 831,
+         "prompt": "Which row is the direction, which column is x, and the two ends of the fan.",
+         "starter_code": "def solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[_____, _____, _____] = 1\n    t.linspace(_____, _____, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+         "solution": "def solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n"
+        },
+        {
+         "question_id": 832,
+         "prompt": "Same slots as before; only the spelling of the write changes.",
+         "starter_code": "def solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[_____, _____, _____] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+         "solution": "def solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 831,
+       "prompt": "Which row is the direction, which column is x, and the two ends of the fan.",
+       "starter_code": "def solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[_____, _____, _____] = 1\n    t.linspace(_____, _____, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+       "solution": "def solve(num_pixels, y_limit):\n    \"\"\"The fan of rays: zeros, then two direction columns.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    return rays.tolist()\n"
+      },
+      {
+       "question_id": 832,
+       "prompt": "Same slots as before; only the spelling of the write changes.",
+       "starter_code": "def solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[_____, _____, _____] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n\n\nimport torch as t\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 1.0)\nprint(solve(*example))\n",
+       "solution": "def solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d with the y column assigned.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays.tolist()\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 833,
+       "prompt": "The direction rows of the fan.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 834,
+       "prompt": "make_rays_1d rotated into the x\u2013z plane.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 835,
+       "prompt": "The fan, moved to a shared non-zero origin.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 836,
+       "prompt": "Three checks on a freshly built fan.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 837,
+       "prompt": "The same fan with a different x speed.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 838,
+       "prompt": "Where the fan is at a given x.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 839,
+       "prompt": "make_rays_2d: a grid of directions in one canvas."
+      },
+      {
+       "question_id": 840,
+       "prompt": "The fan against a vertical line."
+      },
+      {
+       "question_id": 841,
+       "prompt": "Reparametrising the fan without moving it."
+      }
+     ],
+     "independent_items": [
+      833,
+      834,
+      835,
+      836,
+      837,
+      838
+     ],
+     "misconceptions_markdown": "- **\"Build each ray, then stack.\"** It gives the same numbers, but the\n  exercise is teaching the allocate-then-write habit that every later\n  chapter uses. One canvas, two column writes.\n- **\"Row 0 / row 1 are x / y.\"** Rows are origin and direction; the *columns*\n  are x, y, z. `rays[:, 1, 1]` is direction-y for every ray.\n- **\"`linspace(0, y_limit)`.\"** The fan is symmetric: from `-y_limit` to\n  `+y_limit`.",
+     "notes_markdown": ""
+    }
+   ]
   }
  ]
 }

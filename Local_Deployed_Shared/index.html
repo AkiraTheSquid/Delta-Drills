@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=31" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=32" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -118,6 +118,9 @@
        and because basic-mode.css no longer hides these buttons at all —
        see the 2026-08-28 REVERSAL block in that file. -->
   <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=3" />
+  <!-- "Practice make_rays_1d" on an ARENA page: the setup dialog and the
+       related-drills list. practice/exercise-session.js. -->
+  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=1" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
        AFTER styles/practice/question.css, and this is the only thing about its
@@ -1302,7 +1305,7 @@
             <label for="account-github-username" data-dd-info="github-username">GitHub username (for ARENA Colab persistence)</label>
             <input id="account-github-username" class="text-input" type="text" placeholder="your-github-handle" autocomplete="off" spellcheck="false" />
             <div class="hint">
-              One-time setup: fork <a href="https://github.com/callummcdougall/ARENA_3.0/fork" target="_blank" rel="noreferrer">callummcdougall/ARENA_3.0</a> to your own account, then paste your GitHub username here. The Colab pills on the Predicted course scores tab will then open <em>your</em> fork. After you save a notebook in Colab via <code>File → Save a copy in GitHub</code>, future clicks on the same exercise reopen your latest edits. Leave blank to use the upstream read-only copy.
+              One-time setup: fork <a href="https://github.com/AkiraTheSquid/ARENA_3.0/fork" target="_blank" rel="noreferrer">AkiraTheSquid/ARENA_3.0</a> to your own account, then paste your GitHub username here. The Colab pills on the Predicted course scores tab will then open <em>your</em> fork. After you save a notebook in Colab via <code>File → Save a copy in GitHub</code>, future clicks on the same exercise reopen your latest edits. Leave blank to use the upstream read-only copy.
             </div>
           </div>
           <details class="account-advanced" id="account-advanced">
@@ -2161,7 +2164,7 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=26" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=27" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2204,7 +2207,7 @@ t.manual_seed(0)
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=26"></script>
-  <script src="practice/timer.js?v=25"></script>
+  <script src="practice/timer.js?v=26"></script>
   <script src="practice/kernel.js?v=5"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2263,10 +2266,14 @@ t.manual_seed(0)
        which is why they are separate scripts and not more of the view. -->
   <script src="practice/arena-notebook-nav.js?v=2"></script>
   <script src="practice/arena-notebook-state.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=4"></script>
+  <script src="practice/arena-notebook.js?v=5"></script>
   <script src="practice/ladder.js?v=9"></script>
   <script src="practice/example-gate.js?v=1"></script>
-  <script src="practice/kc-practice.js?v=4"></script>
+  <script src="practice/kc-practice.js?v=5"></script>
+  <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
+       exercise heading, the answer/review/count dialog, resume. Needs
+       kc-practice.js (startScoped) and timer.js (configure) above it. -->
+  <script src="practice/exercise-session.js?v=1"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

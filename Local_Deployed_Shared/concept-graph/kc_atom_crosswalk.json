@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 384,
-  "kcs_covered": 39,
-  "kcs_total": 39,
-  "kcs_measured": 29,
-  "atoms_used": 51,
-  "pairs": 81
+  "questions_joined": 518,
+  "kcs_covered": 43,
+  "kcs_total": 43,
+  "kcs_measured": 33,
+  "atoms_used": 54,
+  "pairs": 85
  },
  "kcs": {
   "einops.channel-groups-temporal": {
@@ -640,29 +640,29 @@
   },
   "numpy.ranges": {
    "n": 5,
-   "reliability": 0.711,
-   "shared_with": 0.4,
+   "reliability": 0.622,
+   "shared_with": 0.6,
    "tier": "measured",
    "atoms": [
     {
      "a": "linspace-evenly-spaced",
-     "w": 0.511,
+     "w": 0.584,
      "share": 0.363,
      "spec": 1.0,
      "n": 2
     },
     {
      "a": "torch-arange",
-     "w": 0.358,
+     "w": 0.409,
      "share": 0.544,
      "spec": 0.468,
      "n": 3
     },
     {
      "a": "linspace-out-param",
-     "w": 0.13,
+     "w": 0.006,
      "share": 0.093,
-     "spec": 1.0,
+     "spec": 0.041,
      "n": 1
     }
    ]
@@ -793,7 +793,7 @@
    ]
   },
   "python.calling-functions": {
-   "n": 6,
+   "n": 24,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -803,7 +803,7 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 24
     }
    ]
   },
@@ -838,7 +838,7 @@
    ]
   },
   "python.indexing": {
-   "n": 6,
+   "n": 24,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -848,12 +848,12 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 24
     }
    ]
   },
   "python.lists-and-tuples": {
-   "n": 6,
+   "n": 24,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -863,12 +863,12 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 24
     }
    ]
   },
   "python.types-and-conversion": {
-   "n": 6,
+   "n": 24,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -878,12 +878,12 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 24
     }
    ]
   },
   "python.values-and-names": {
-   "n": 6,
+   "n": 24,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -893,7 +893,67 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 24
+    }
+   ]
+  },
+  "raytracing.make-rays-1d": {
+   "n": 11,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "make-rays-1d",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 11
+    }
+   ]
+  },
+  "raytracing.ray-parametrisation": {
+   "n": 11,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "ray-parametric-form",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 11
+    }
+   ]
+  },
+  "torch.out-argument": {
+   "n": 11,
+   "reliability": 0.959,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "linspace-out-param",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 0.959,
+     "n": 11
+    }
+   ]
+  },
+  "torch.slice-assignment": {
+   "n": 11,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "broadcast-slice-assignment",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 11
     }
    ]
   }

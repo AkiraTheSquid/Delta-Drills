@@ -58,11 +58,34 @@
    still times a question the way every account was timed before today. */
 const FALLBACK_SECS = 120;
 const _clockPrefs = () => window.SessionClock || null;
+
+/* AN EXERCISE SESSION BRINGS ITS OWN NUMBERS (2026-09-06). "Practice
+   make_rays_1d" on an ARENA notebook page asks for answer time, review time
+   and a question count BEFORE it starts (practice/exercise-session.js), and
+   for that block those three override the idle picker. Seth: "its own time
+   limit, that you can set manually for the amount of answer time and the
+   amount of review time ... 3. how many problems". Absent (`null`), nothing
+   changes: the two readers below fall through to the picker exactly as
+   before.
+
+   🔴 `"answer" in cfg`, NOT `cfg.answer ??`: a value of `null` is "No limit"
+   for that step and has to win over the picker's number. The fields are
+   named answer/review/quota — the pause snapshot may not carry a per-session
+   `answerSecs:`/`reviewSecs:` pair (practice/watch_lessons.py, the v1 → v2
+   rule), and this is a different thing: the learner's choice FOR THIS BLOCK,
+   restored with it, not a copy of the picker. */
+let sessionConfig = null; // { answer, review, quota, exercise: {…} } | null
+const _configuredSecs = (field) =>
+  sessionConfig && field in sessionConfig ? sessionConfig[field] : undefined;
 const ANSWER_SECS = () => {
+  const own = _configuredSecs("answer");
+  if (own !== undefined) return own;
   const prefs = _clockPrefs();
   return prefs ? prefs.answerSecs() : FALLBACK_SECS;
 };
 const REVIEW_SECS = () => {
+  const own = _configuredSecs("review");
+  if (own !== undefined) return own;
   const prefs = _clockPrefs();
   return prefs ? prefs.reviewSecs() : FALLBACK_SECS;
 };
@@ -197,12 +220,14 @@ const PracticeSession = (() => {
          no number to clamp to and no number to count down, so `remaining`
          stays null all the way through resume; `Math.min(null, x)` is 0, which
          would resume the question already expired. */
-      const phaseLimit = phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
+      const config = _readConfig(saved.config);
+      const phaseLimit = _phaseLimit({ phase, config });
       const savedRemaining = Number.isFinite(saved.remaining) ? saved.remaining : phaseLimit;
       return {
         version: SESSION_STATE_VERSION,
         served: Math.max(1, Math.round(saved.served)),
         phase,
+        config,
         remaining: phaseLimit === null
           ? null
           : Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
@@ -217,6 +242,22 @@ const PracticeSession = (() => {
     } catch (_) {
       return null;
     }
+  };
+
+  /* The exercise session's own settings, carried in the snapshot as an
+     OPTIONAL field — a snapshot without one is a plain block and restores as
+     it always did. Shape-checked: a hand-edited entry cannot hand the clock a
+     string, and a quota that is not a finite positive number is no quota. */
+  const _readConfig = (raw) => {
+    if (!raw || typeof raw !== "object") return null;
+    const secs = (v) => v === null || (Number.isFinite(v) && v > 0);
+    const out = {};
+    if ("answer" in raw && secs(raw.answer)) out.answer = raw.answer;
+    if ("review" in raw && secs(raw.review)) out.review = raw.review;
+    if (Number.isFinite(raw.quota) && raw.quota > 0) out.quota = Math.round(raw.quota);
+    if (raw.exercise && typeof raw.exercise === "object") out.exercise = { ...raw.exercise };
+    if (raw.ladder && typeof raw.ladder === "object") out.ladder = raw.ladder;
+    return Object.keys(out).length ? out : null;
   };
 
   const _clearSaved = () => {
@@ -326,10 +367,21 @@ const PracticeSession = (() => {
          snapshot simply has no `ladder` and restores exactly as it did before.
          A silent data loss is not a fair price for a field that degrades. */
       ladder: _ladderContext(),
+      config: _configRecord(),
       draft: _draft(),
       review,
       savedAt: new Date().toISOString(),
     };
+  };
+
+  /* What a scoped block needs to come back as ITSELF: its three numbers, the
+     exercise it was started from, and the ladder's unserved items (kc-
+     practice.js serializes those; the queue is in-memory and a reload would
+     otherwise resume onto the adaptive queue with the count still running). */
+  const _configRecord = () => {
+    if (!sessionConfig) return null;
+    const ladder = window.KcPractice?.serialize?.() || null;
+    return { ...sessionConfig, ladder };
   };
 
   const _writeSaved = (snapshot) => {
@@ -401,8 +453,17 @@ const PracticeSession = (() => {
     return Math.max(0, (Date.now() - at) / 1000);
   };
 
-  const _phaseLimit = (saved) =>
-    saved.phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
+  /* The allowance the saved step gets: the block's OWN number when the
+     snapshot carries a config (a scoped exercise session, which is not yet
+     the live config while the snapshot is being read), the picker's
+     otherwise. Self-contained on purpose — practice/watch_lessons.py lifts
+     this helper into a node probe by itself. */
+  const _phaseLimit = (saved) => {
+    const field = saved.phase === "review" ? "review" : "answer";
+    const config = saved.config;
+    if (config && typeof config === "object" && field in config) return config[field];
+    return saved.phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
+  };
 
   /* What the clock should read on resume: {secs, restarted}.
 
@@ -691,6 +752,22 @@ const PracticeSession = (() => {
     if (!isActive() || state.phase !== "grading") return;
     state.review = review;
     _persist();
+    /* A miss inside an exercise session pulls the concept's prerequisites in
+       front of the queue (kc-practice.js::onMiss). Only ever additive to the
+       ORDER of what is served; the grade above is already recorded. The
+       snapshot is rewritten when it lands so a pause right after a miss
+       carries the drills that were just queued. */
+    if (sessionConfig?.exercise && review && !review.correct) {
+      const kc = PracticeAPI?.currentQuestion?.ladder_kc;
+      Promise.resolve(window.KcPractice?.onMiss?.(kc))
+        .then((n) => {
+          if (n) {
+            _persist();
+            window.ExerciseSession?.onPrereqsQueued?.(kc, n);
+          }
+        })
+        .catch((err) => console.warn("[session] prerequisite pull failed:", err));
+    }
   };
 
   const resumeAnswerPhase = () => {
@@ -882,6 +959,18 @@ const PracticeSession = (() => {
   const _resumeCore = () => {
     if (!pausedState) return;
     resumePending = false;
+    /* The block's own numbers and its ladder come back BEFORE the clock is
+       read: `_effectiveRemaining` clamps to the allowance in force, and for a
+       scoped block that is the one it was started with. */
+    if (pausedState.config) {
+      sessionConfig = _readConfig(pausedState.config);
+      if (sessionConfig?.ladder) {
+        window.KcPractice?.restore?.(sessionConfig.ladder);
+        delete sessionConfig.ladder;
+      }
+    } else {
+      sessionConfig = null;
+    }
     // Read the clock before `pausedState` is cleared below, and read it HERE
     // rather than at load: the break is still running while the resume panel
     // is on screen.
@@ -911,13 +1000,18 @@ const PracticeSession = (() => {
       _setPhase("answer", "Answering");
       _tick(_forceSubmitOrAdvance);
     }
+    window.ExerciseSession?.onResume?.(sessionConfig, state.served);
   };
 
   const discard = () => {
+    const dropped = pausedState ? _readConfig(pausedState.config) : null;
     _clearSaved();
     pausedState = null;
     resumeReady = false;
+    sessionConfig = null;
+    window.KcPractice?.stop?.();
     _showResumeOption();
+    if (dropped) window.ExerciseSession?.onEnd?.("discarded", 0, dropped);
     sessionSummary.textContent = "Saved session discarded. Set up a new block when you're ready.";
     sessionSummary.classList.remove("hidden");
   };
@@ -927,7 +1021,8 @@ const PracticeSession = (() => {
      the hook `_loadNextPracticeQuestion` asks before every fetch, and deleting
      it would mean editing every call site to stop asking. Restoring a quota is
      one line here; finding all the callers again is not. */
-  const shouldFinishInsteadOfAdvance = () => false;
+  const shouldFinishInsteadOfAdvance = () =>
+    !!state && Number.isFinite(sessionConfig?.quota) && state.served >= sessionConfig.quota;
 
   const hasSavedQuestion = (questionId) =>
     !!pausedState && String(questionId ?? "") === pausedState.questionId;
@@ -953,6 +1048,9 @@ const PracticeSession = (() => {
     state = null;
     pausedState = null;
     resumeReady = false;
+    const config = sessionConfig;
+    sessionConfig = null;
+    if (config) window.KcPractice?.stop?.();
     _clearSaved();
     _showResumeOption();
     sessionStatusRow.classList.add("hidden");
@@ -971,8 +1069,20 @@ const PracticeSession = (() => {
         ? "Could not load a question — check the connection and try again."
         : reason === "placement"
           ? "Placement test started — its questions are timed on their own clock, one at a time."
-          : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`);
+          : reason === "complete" && config?.quota
+            ? `Done — ${served} of ${config.quota} questions. Recorded answers are kept.`
+            : `Session stopped after ${served} question${served === 1 ? "" : "s"}. Recorded answers are kept.`);
     sessionSummary.classList.remove("hidden");
+    if (config) window.ExerciseSession?.onEnd?.(reason, served, config);
+  };
+
+  /* Install the exercise session's numbers for the NEXT `start()`. `null`
+     clears them. Refused while a block is live — a running countdown must not
+     change under the learner's hands (the same rule the idle picker keeps). */
+  const configure = (cfg) => {
+    if (state) return false;
+    sessionConfig = _readConfig(cfg);
+    return true;
   };
 
   /* NO NEXT QUESTION, AND THE SCREEN MUST NOT FREEZE.
@@ -1013,7 +1123,12 @@ const PracticeSession = (() => {
     sessionSummary.classList.remove("hidden");
   };
 
-  sessionStartBtn.addEventListener("click", start);
+  /* The idle button starts a PLAIN block: whatever an exercise page installed
+     and never started is dropped here, not carried into the adaptive queue. */
+  sessionStartBtn.addEventListener("click", () => {
+    sessionConfig = null;
+    start();
+  });
   sessionPauseBtn.addEventListener("click", pause);
   sessionResumeBtn.addEventListener("click", resume);
   sessionDiscardBtn.addEventListener("click", discard);
@@ -1065,6 +1180,10 @@ const PracticeSession = (() => {
     // needs this to know the question on screen belongs to that session and
     // must not be replaced by a preference refresh.
     hasPausedSession: () => !!pausedState,
+    pausedConfig: () => (pausedState ? _readConfig(pausedState.config) : null),
+    pausedServed: () => (pausedState ? pausedState.served : 0),
+    config: () => (sessionConfig ? { ...sessionConfig } : null),
+    configure,
     start,
     pause,
     resume,

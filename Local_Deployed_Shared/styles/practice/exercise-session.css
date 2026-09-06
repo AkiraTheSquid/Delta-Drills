@@ -1,0 +1,199 @@
+/* EXERCISE PRACTICE SESSIONS — practice/exercise-session.js
+   The button block under an ARENA exercise heading, the setup dialog, and
+   the "Related drills" list. Notebook typography is arena-notebook.css's;
+   nothing here restyles a `.nbv-*` node. */
+
+/* ── on the notebook page ────────────────────────────────────────── */
+.dd-ex-block {
+  margin: 10px 0 22px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 14px;
+}
+.dd-ex-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dd-ex-btn {
+  white-space: nowrap;
+}
+.dd-ex-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+.dd-ex-related {
+  margin-top: 10px;
+}
+.dd-ex-related > summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  user-select: none;
+}
+.dd-ex-related-body {
+  margin-top: 8px;
+}
+.dd-ex-related-count {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.dd-ex-kc {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+}
+.dd-ex-kc.is-target {
+  background: rgb(var(--accent-rgb) / 0.10);
+}
+.dd-ex-kc h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.dd-ex-prereq {
+  font-weight: normal;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.dd-ex-rung {
+  margin: 4px 0;
+}
+.dd-ex-rung-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.dd-ex-rung ul {
+  margin: 2px 0 6px;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.dd-ex-qid {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+/* ── the dialog ──────────────────────────────────────────────────── */
+.dd-ex-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 0.55);
+}
+.dd-ex-modal.hidden {
+  display: none;
+}
+.dd-ex-card {
+  width: min(520px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--panel);
+  color: inherit;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+}
+.dd-ex-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+.dd-ex-sub {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.dd-ex-field {
+  border: 0;
+  margin: 0 0 12px;
+  padding: 0;
+}
+.dd-ex-field legend,
+.dd-ex-count label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+.dd-ex-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dd-ex-opt {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+}
+.dd-ex-opt input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.dd-ex-opt.is-on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.dd-ex-count input {
+  width: 72px;
+  margin-left: 8px;
+  font-size: 15px;
+  padding: 4px 6px;
+}
+.dd-ex-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.dd-ex-max {
+  margin: 10px 0 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.dd-ex-error {
+  margin: 6px 0;
+  color: var(--accent-text);
+  font-size: 13px;
+}
+.dd-ex-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.dd-ex-resume-text {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.dd-ex-back {
+  margin-left: 6px;
+}
+
+/* ── the practice page during a scoped block ─────────────────────── */
+/* The idle picker is irrelevant while a block that brought its own numbers is
+   on screen; the session row already says the phase and the clock. */
+#page-practice.dd-exercise-session:not(.session-idle) #question-clock {
+  display: none;
+}

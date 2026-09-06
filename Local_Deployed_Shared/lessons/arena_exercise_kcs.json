@@ -1,0 +1,6 @@
+{
+  "_comment": "ARENA exercise → knowledge component. Keyed by notebook slug, then by the function the exercise heading names (### Exercise - implement `make_rays_1d`). practice/exercise-session.js reads it; a heading with no entry gets no button. Add the next 0.1 exercises here as their lessons land (CLAUDE.md, frontier list).",
+  "0-1": {
+    "make_rays_1d": { "kc": "raytracing.make-rays-1d", "title": "make_rays_1d" }
+  }
+}

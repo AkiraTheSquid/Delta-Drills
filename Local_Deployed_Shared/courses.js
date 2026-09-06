@@ -20,7 +20,8 @@
    "Colab ↗" link beside it, and that link is the one the fork convention from
    `stats/predicted-links.js` applies to: `colabUpstreamHref(path)` points at
    `<account_github_username>/ARENA_3.0` when the student has saved a GitHub
-   username and falls back to `callummcdougall/ARENA_3.0` otherwise, with
+   username and falls back to `AkiraTheSquid/ARENA_3.0` otherwise (Seth's
+   fork — the file the app compiles and the study group pulls), with
    `courses-fork-gate.js` intercepting the first click to offer to set it.
    Kept rather than deleted because a student with their own fork is working
    in it — an in-app notebook cannot save to their repo, and taking the door
@@ -43,8 +44,8 @@ const ARENA_DETAIL = {
   sources: [
     { label: "arena.education ↗", href: "https://www.arena.education/", title: "The ARENA programme homepage" },
     {
-      label: "callummcdougall/ARENA_3.0 ↗",
-      href: "https://github.com/callummcdougall/ARENA_3.0",
+      label: "AkiraTheSquid/ARENA_3.0 ↗",
+      href: "https://github.com/AkiraTheSquid/ARENA_3.0",
       title: "The original ARENA exercise repository on GitHub",
     },
     { label: "Curriculum book ↗", href: "https://learn.arena.education/", title: "The ARENA curriculum, published" },
@@ -60,7 +61,14 @@ const ARENA_DETAIL = {
       color: "#DC2626",
       sections: [
         { number: "0.0", title: "Prerequisites", desc: "Essential PyTorch basics, einops/einsum libraries, and tensor manipulation fundamentals.", url: "/arena-book/chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises.html" },
-        { number: "0.1", title: "Ray Tracing", desc: "Learn batched operations and linear algebra by rendering 3D meshes with raytracing.", url: "/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.html" },
+        // 🔴 The `_with_supplementary_exercises` edition, which lives ONLY on
+        // AkiraTheSquid/ARENA_3.0: the upstream notebook plus, under each
+        // exercise, a collapsible practice section (prerequisite examples,
+        // faded problems, challenges, siblings). Seth's study group pulls that
+        // repo, the Colab link opens it, and compile_arena_notebooks.py reads
+        // the fork first — one file on all three surfaces. No Jupyter Book page
+        // exists for it; the url is only ever turned back into a notebook path.
+        { number: "0.1", title: "Ray Tracing", desc: "Learn batched operations and linear algebra by rendering 3D meshes with raytracing. With supplementary practice under each exercise.", url: "/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises_with_supplementary_exercises.html" },
         { number: "0.2", title: "CNNs & ResNets", desc: "Build neural networks from scratch, from MNIST classifiers to ResNets for CIFAR-10.", url: "/arena-book/chapter0_fundamentals/exercises/part2_cnns/0.2_CNNs_%26_ResNets_exercises.html" },
         { number: "0.3", title: "Optimization", desc: "Implement SGD, RMSprop & Adam optimizers, and use Weights & Biases for experiment tracking.", url: "/arena-book/chapter0_fundamentals/exercises/part3_optimization/0.3_Optimization_exercises.html" },
         { number: "0.4", title: "Backpropagation", desc: "Build your own autograd system from scratch and train MLPs with custom backpropagation.", url: "/arena-book/chapter0_fundamentals/exercises/part4_backprop/0.4_Backprop_exercises.html" },

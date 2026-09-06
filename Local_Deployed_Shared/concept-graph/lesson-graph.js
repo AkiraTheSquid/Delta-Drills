@@ -919,12 +919,214 @@
     }).join("");
   };
 
+  /* ---------------- right pane tabs: Lesson | Metadata | Settings --------
+     Seth, 2026-09-06: "whenever you click on any given node, in the top right
+     it has three tabs … view the concept itself and maximize it, or look at
+     the metadata, or the third option is to change whether it's enabled or
+     disabled for the specific user … decrease its representativeness according
+     to the algorithm so it appears less often … 0.75 makes it 25% less likely,
+     1.5 makes it 50% more likely."
+
+     The strip is built here rather than in index.html so the markup file
+     stays another session's. Lesson is the pane as it always was; Metadata is
+     the registry + server row for the concept, read-only (edits are proposals
+     through instructor mode); Settings writes the learner's OWN preference to
+     /api/practice/kc-prefs/<kc>, which the frontier reads (kc_prefs.py). */
+  const PANE_TABS = [["lesson", "Lesson"], ["metadata", "Metadata"], ["settings", "Settings"]];
+  let paneTab = "lesson";
+
+  const _ensureTabs = () => {
+    let strip = $("kg-pane-tabs");
+    if (strip) return strip;
+    const head = document.querySelector(".kg2-info .kg2-info-head");
+    const body = $("kg-info-body");
+    if (!head || !body) return null;
+    strip = document.createElement("div");
+    strip.id = "kg-pane-tabs";
+    strip.className = "kg2-tabs";
+    strip.setAttribute("role", "tablist");
+    strip.innerHTML = PANE_TABS.map(([k, label]) =>
+      `<button type="button" role="tab" data-pane="${k}" aria-selected="${k === paneTab}">${label}</button>`).join("");
+    head.insertAdjacentElement("afterend", strip);
+    strip.querySelectorAll("button").forEach((b) =>
+      b.addEventListener("click", () => {
+        paneTab = b.dataset.pane;
+        _syncTabs();
+        if (selectedKc) renderContent(selectedKc);
+      }));
+    return strip;
+  };
+  const _syncTabs = () => {
+    const strip = _ensureTabs();
+    if (!strip) return;
+    strip.querySelectorAll("button").forEach((b) =>
+      b.setAttribute("aria-selected", String(b.dataset.pane === paneTab)));
+  };
+
+  /* Metadata — what the registry and the server say about this concept.
+     Read-only on purpose: the graph is built from lessons/kc_registry.json and
+     a browser is the wrong place to reshape it (instructor-graph-edit.js
+     queues PROPOSALS instead). The author's notes come from
+     lessons/notes/<kc>.md compiled into lessons_structured as notes_markdown. */
+  const renderMetadata = (id) => {
+    const kc = kcById[id] || {};
+    const kp = contentByKc[id] || {};
+    const row = lattice && lattice.kcs ? lattice.kcs[id] : null;
+    const lm = lessonMeta[kc.lesson] || {};
+    const cell = (k, v) => `<div class="kg2-md-k">${esc(k)}</div><div class="kg2-md-v">${v}</div>`;
+    const num = (v, d = 3) => (typeof v === "number" ? String(parseFloat(v.toFixed(d))) : "—");
+    let html = `<h2 class="kg2-title">${esc(kp.title || kc.title || id)}</h2>`;
+    html += `<div class="kg2-md-grid">`;
+    html += cell("Concept id", `<code>${esc(id)}</code>`);
+    html += cell("Lesson", `${esc(lm.title || kc.lesson || "—")} <span class="kg2-md-dim">(${esc(kc.lesson || "—")})</span>`);
+    html += cell("Topic", esc(_kcTopic(id) || "—"));
+    html += cell("Prerequisites", (parentsOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
+    html += cell("Unlocks", (childrenOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
+    if (kp.segments && kp.segments.length) html += cell("Segments", String(kp.segments.length));
+    if (row) {
+      html += cell("Gate state", esc(row.state || "—"));
+      html += cell("Mastery", `${num(row.mastery)} <span class="kg2-md-dim">${esc(row.tier || "")}${row.evidenced ? "" : " · not evidenced"}</span>`);
+      html += cell("Coreness", `${row.coreness} <span class="kg2-md-dim">descendants</span>`);
+      html += cell("Depth", String(row.depth));
+      html += cell("Drills in bank", String(row.n_questions));
+      html += cell("Frontier rank", row.frontier_rank == null ? "—" : String(row.frontier_rank + 1));
+      html += cell("Ladder rung", esc(row.ladder_stage || "—"));
+      if (row.pref) html += cell("Your setting",
+        row.pref.enabled ? `weight ${num(row.pref.weight, 2)}` : "off");
+    } else {
+      html += cell("Learner row", `<span class="kg2-md-dim">sign in to see your state for this concept</span>`);
+    }
+    html += `</div>`;
+    if (kp.notes_markdown)
+      html += `<div class="kg2-md-notes"><h3>Author notes</h3>${md(kp.notes_markdown)}</div>`;
+    html += `<p class="kg2-md-foot">Read-only. Structure edits are proposals: open instructor mode and drag on the graph.</p>`;
+    return html;
+  };
+
+  /* Settings — the learner's own control over one concept. */
+  const WEIGHT_PRESETS = [0.5, 0.75, 1, 1.5, 2];
+  const _prefFor = (id) => {
+    const row = lattice && lattice.kcs ? lattice.kcs[id] : null;
+    const p = row && row.pref ? row.pref : { enabled: true, weight: 1 };
+    return { enabled: p.enabled !== false, weight: typeof p.weight === "number" ? p.weight : 1 };
+  };
+  const _pctLabel = (w) => {
+    const d = Math.round((w - 1) * 100);
+    if (d === 0) return "normal priority";
+    return d > 0 ? `${d}% more likely to come up` : `${-d}% less likely to come up`;
+  };
+  const renderSettings = (id) => {
+    const kc = kcById[id] || {};
+    const kp = contentByKc[id] || {};
+    const pref = _prefFor(id);
+    const signedIn = !!(lattice && lattice.kcs);
+    let html = `<h2 class="kg2-title">${esc(kp.title || kc.title || id)}</h2>`;
+    if (!signedIn) {
+      html += `<div class="kg2-set-guest"><strong>Sign in</strong> to switch concepts off or change how often they come up. Settings are saved to your account.</div>`;
+      return html;
+    }
+    html += `<div class="kg2-set" data-kc="${esc(id)}">`;
+    html += `<label class="kg2-set-row kg2-set-toggle">
+        <input type="checkbox" id="kg-set-enabled" ${pref.enabled ? "checked" : ""}>
+        <span><strong>Practice this concept</strong>
+        <small>Off = the queue skips it, and anything it unlocks is treated as if it were already learned.</small></span>
+      </label>`;
+    html += `<div class="kg2-set-row kg2-set-weight ${pref.enabled ? "" : "is-off"}">
+        <div class="kg2-set-head"><strong>Priority weight</strong>
+          <output id="kg-set-out">${pref.weight.toFixed(2)} × — ${esc(_pctLabel(pref.weight))}</output></div>
+        <input type="range" id="kg-set-range" min="0.25" max="4" step="0.25" value="${pref.weight}">
+        <div class="kg2-set-presets">${WEIGHT_PRESETS.map((w) =>
+          `<button type="button" data-w="${w}" class="${Math.abs(w - pref.weight) < 1e-6 ? "active" : ""}">${w}×</button>`).join("")}</div>
+        <small>1 is normal. 1.5 sorts this concept as if it had 50% more dependents, so it reaches the front of the queue sooner; 0.75 as if it had 25% fewer. Only your queue changes — nobody else's.</small>
+      </div>`;
+    html += `<div class="kg2-set-status" id="kg-set-status" aria-live="polite"></div>`;
+    html += `</div>`;
+    return html;
+  };
+
+  /* Writes are SERIALIZED: a slider fires several changes in a second, and two
+     PUTs in flight can land in either order — the server would keep whichever
+     arrived last while the controls show the last one clicked. One chain, in
+     click order, and the lattice is re-read once after the write that changed
+     it. */
+  let _prefChain = Promise.resolve();
+  const _savePref = (id, patch) => {
+    const run = () => _savePrefNow(id, patch);
+    _prefChain = _prefChain.then(run, run);
+    return _prefChain;
+  };
+  const _savePrefNow = async (id, patch) => {
+    const status = $("kg-set-status");
+    const fn = typeof window.apiFetch === "function" ? window.apiFetch : null;
+    if (!fn) { if (status) status.textContent = "Sign in to save."; return null; }
+    if (status) status.textContent = "Saving…";
+    try {
+      const res = await fn(`/api/practice/kc-prefs/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      if (!res || !res.ok) { if (status) status.textContent = `Not saved (${res ? res.status : "offline"}).`; return null; }
+      const row = await res.json();
+      if (lattice && lattice.kcs && lattice.kcs[id])
+        lattice.kcs[id].pref = { enabled: row.enabled, weight: row.weight };
+      if (status) status.textContent = row.enabled ? "Saved." : "Saved — this concept is off for you.";
+      // The frontier is the server's; re-read it so next-up and the gate
+      // colours move with the change instead of lying until the next attempt.
+      // Awaited, so the chain's next write sees a current lattice.
+      await refreshLattice();
+      recolor(); refreshDock();
+      return row;
+    } catch (e) {
+      if (status) status.textContent = "Not saved (network).";
+      return null;
+    }
+  };
+
+  const wireSettings = (id) => {
+    const box = document.querySelector(".kg2-set");
+    if (!box) return;
+    const enabled = $("kg-set-enabled");
+    const range = $("kg-set-range");
+    const out = $("kg-set-out");
+    const weightRow = box.querySelector(".kg2-set-weight");
+    const presets = box.querySelectorAll(".kg2-set-presets button");
+    const paint = (w) => {
+      if (range) range.value = String(w);
+      if (out) out.textContent = `${Number(w).toFixed(2)} × — ${_pctLabel(Number(w))}`;
+      presets.forEach((b) => b.classList.toggle("active", Math.abs(Number(b.dataset.w) - Number(w)) < 1e-6));
+    };
+    const paintEnabled = (on) => {
+      if (enabled) enabled.checked = on;
+      if (weightRow) weightRow.classList.toggle("is-off", !on);
+    };
+    // A failed write puts every control back to what the server last said,
+    // not just the one that was touched.
+    const rollback = () => { const p = _prefFor(id); paintEnabled(p.enabled); paint(p.weight); };
+    if (enabled) enabled.addEventListener("change", async () => {
+      paintEnabled(enabled.checked);
+      const row = await _savePref(id, { enabled: enabled.checked });
+      if (!row) rollback();
+    });
+    const saveWeight = async (w) => {
+      paint(w);
+      const row = await _savePref(id, { weight: w });
+      if (!row) rollback();
+    };
+    if (range) {
+      range.addEventListener("input", () => paint(range.value));
+      range.addEventListener("change", () => saveWeight(Number(range.value)));
+    }
+    presets.forEach((b) => b.addEventListener("click", () => saveWeight(Number(b.dataset.w))));
+  };
+
   const renderContent = (id) => {
     const kc = kcById[id];
     const kp = contentByKc[id];
     if (!kc || !kp) return;
     selectedKc = id;
     const lm = lessonMeta[kc.lesson] || {};
+    _syncTabs();
 
     const meta = $("kg-info-meta");
     if (meta)
@@ -939,6 +1141,14 @@
     // choosing a concept sends the tab beside this one to the section that
     // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
     if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
+
+    if (paneTab !== "lesson") {
+      const body = $("kg-info-body");
+      body.innerHTML = paneTab === "settings" ? renderSettings(id) : renderMetadata(id);
+      body.scrollTop = 0;
+      if (paneTab === "settings") wireSettings(id);
+      return;
+    }
 
     const parents = parentsOf[id] || [];
     const kids = childrenOf[id] || [];
@@ -1185,6 +1395,7 @@
       el.innerHTML =
         '<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
         '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>' +
+        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
         '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
     } else {
       el.classList.remove("kg2-legend-mastery");
@@ -1364,12 +1575,13 @@
     // Gate state, straight from the server's report. This is the difference
     // between a diagram of the curriculum and a picture of the tutor: a locked
     // node is one the learner genuinely cannot be served yet.
-    cy.nodes().removeClass("kc-locked kc-frontier");
+    cy.nodes().removeClass("kc-locked kc-frontier kc-disabled");
     if (lattice && colorMode === "mastery") {
       cy.nodes().forEach((n) => {
         const row = lattice.kcs[n.id()];
         if (!row) return;
-        if (row.state === "locked") n.addClass("kc-locked");
+        if (row.state === "disabled") n.addClass("kc-disabled");
+        else if (row.state === "locked") n.addClass("kc-locked");
         else if (row.state === "frontier") n.addClass("kc-frontier");
       });
     }
@@ -1487,6 +1699,12 @@
         // the next-up ring is chosen from, so it keeps full presence.
         { selector: "node.kc-locked", style: {
             "opacity": 0.32, "border-style": "dotted", "z-index": 1,
+        }},
+        // Switched off by the learner (Settings tab). Not locked — nothing is
+        // waiting on it — just out of the queue, so it fades harder than a
+        // locked node and loses its border entirely.
+        { selector: "node.kc-disabled", style: {
+            "opacity": 0.22, "border-width": 0, "z-index": 0,
         }},
         { selector: "node.kc-frontier", style: {
             "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,

@@ -5,6 +5,7 @@
  "desc": "Implement Deep Q-Networks and train an agent on CartPole.",
  "chapter": "Chapter 2 — Reinforcement Learning",
  "edition": "ARENA_5.0-main",
+ "owner": "callummcdougall",
  "notebook_path": "chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises.ipynb",
  "book_url": "/arena-book/chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises.html",
  "cells": [

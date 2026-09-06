@@ -2,627 +2,1280 @@
  "id": "0-1",
  "number": "0.1",
  "title": "Ray Tracing",
- "desc": "Learn batched operations and linear algebra by rendering 3D meshes with raytracing.",
+ "desc": "Learn batched operations and linear algebra by rendering 3D meshes with raytracing. With supplementary practice under each exercise.",
  "chapter": "Chapter 0 — Fundamentals",
- "edition": "ARENA_5.0-main",
- "notebook_path": "chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.ipynb",
- "book_url": "/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.html",
+ "edition": "ARENA_3.0-fork",
+ "owner": "AkiraTheSquid",
+ "notebook_path": "chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises_with_supplementary_exercises.ipynb",
+ "book_url": "/arena-book/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises_with_supplementary_exercises.html",
  "cells": [
   {
    "t": "md",
    "id": "0-1-c000",
    "role": "prose",
-   "src": "# [0.1] - Ray Tracing (exercises)\n\n> **ARENA [Streamlit Page](https://arena-chapter0-fundamentals.streamlit.app/01_[0.1]_Ray_Tracing)**\n>\n> **Colab: [exercises](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.ipynb?t=20260520) | [solutions](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_solutions.ipynb?t=20260520)**\n\nPlease send any problems / bugs on the `#errata` channel in the [Slack group](https://info-arena.github.io/ARENA_img/slack.html), and ask any questions on the dedicated channels for this chapter of material.\n\nYou can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.\n\nLinks to all other chapters: [(0) Fundamentals](https://arena-chapter0-fundamentals.streamlit.app/), [(1) Transformer Interpretability](https://arena-chapter1-transformer-interp.streamlit.app/), [(2) RL](https://arena-chapter2-rl.streamlit.app/)."
+   "src": "[![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AkiraTheSquid/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises_with_supplementary_exercises.ipynb)"
   },
   {
    "t": "md",
    "id": "0-1-c001",
    "role": "prose",
-   "src": "![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-01.png)"
+   "src": "# [0.1] - Ray Tracing (exercises with supplementary exercises)\n\n> **ARENA [Streamlit Page](https://arena-chapter0-fundamentals.streamlit.app/01_[0.1]_Ray_Tracing)**\n>\n> **Colab: [exercises](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises.ipynb?t=20260303) | [solutions](https://colab.research.google.com/github/callummcdougall/ARENA_3.0/blob/main/chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_solutions.ipynb?t=20260303)**\n\nPlease send any problems / bugs on the `#errata` channel in the [Slack group](https://join.slack.com/t/arena-uk/shared_invite/zt-3afdmdhye-Mdb3Sv~ss_V_mEaXEbkABA), and ask any questions on the dedicated channels for this chapter of material.\n\nYou can collapse each section so only the headers are visible, by clicking the arrow symbol on the left hand side of the markdown header cells.\n\nLinks to all other chapters: [(0) Fundamentals](https://arena-chapter0-fundamentals.streamlit.app/), [(1) Transformer Interpretability](https://arena-chapter1-transformer-interp.streamlit.app/), [(2) RL](https://arena-chapter2-rl.streamlit.app/)."
   },
   {
    "t": "md",
    "id": "0-1-c002",
    "role": "prose",
-   "src": "# Introduction"
+   "src": "![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-01.png)"
   },
   {
    "t": "md",
    "id": "0-1-c003",
    "role": "prose",
-   "src": "Today we'll be practicing batched matrix operations in PyTorch by writing a basic graphics renderer. We'll start with an extremely simplified case and work up to rendering your very own 3D Pikachu!\n\nWe'll also be touching on some general topics which will be important going forwards in this course, such as:\n\n* Using GPT systems to assist your learning and coding\n* Typechecking, and good coding practices\n* Debugging, with VSCode's built-in run & debug features"
+   "src": "# Introduction"
   },
   {
    "t": "md",
    "id": "0-1-c004",
    "role": "prose",
-   "src": "## Content & Learning Objectives\n\n### 1️⃣ Rays & Segments\n\nThis section introduces the key ideas and concepts in today's exercises, and guides you through some basic functions involving creating & using 2D rays.\n\n> ##### Learning Objectives\n>\n> - Learn how to create PyTorch tensors in a variety of ways\n> - Understand how to parametrize lines and rays in 2D\n> - Learn about type annotations and linear operations in PyTorch\n\n### 2️⃣ Batched Operations\n\nIn the next section, you'll extend your work from the first section to perform batched operations, i.e. operations over several different dimensions at once.\n\n> ##### Learning Objectives\n>\n> - Learn about some important concepts related to batched operations, e.g. broadcasting and logical reductions\n> - Understand and use the `einops` library\n> - Apply this knowledge to create & work with a batch of rays\n\n### 3️⃣ Triangles\n\nIn the final section we move into the 2D and 3D realms, and build up to rendering a full 3D mesh as a 2D image.\n\n> ##### Learning Objectives\n>\n> - Understand how to parametrize triangles in 2D and 3D, and solve for their intersection with rays\n> - Put everything together, to render your mesh as a 2D image\n\n### 4️⃣ Video & Lighting\n\nIn the last set of exercises, you can implement some more mathematically complex forms of raytracing to get things like dynamic lighting & videos. There's also some optional material at the very end which covers the `pytest` library, and has you write your own tests.\n\n> ##### Learning Objectives\n> \n> - Learn how surface normal vectors can be used to compute lighting effects\n> - Render your figures in video form (as an animated camera pan)\n> - (optional) Learn about the `pytest` library, and write your own tests for the functions you wrote"
+   "src": "Today we'll be practicing batched matrix operations in PyTorch by writing a basic graphics renderer. We'll start with an extremely simplified case and work up to rendering your very own 3D Pikachu!\n\nWe'll also be touching on some general topics which will be important going forwards in this course, such as:\n\n* Using GPT systems to assist your learning and coding\n* Typechecking, and good coding practices\n* Debugging, with VSCode's built-in run & debug features"
   },
   {
    "t": "md",
    "id": "0-1-c005",
    "role": "prose",
+   "src": "## Content & Learning Objectives\n\n### 1️⃣ Rays & Segments\n\nThis section introduces the key ideas and concepts in today's exercises, and guides you through some basic functions involving creating & using 2D rays.\n\n> ##### Learning Objectives\n>\n> - Learn how to create PyTorch tensors in a variety of ways\n> - Understand how to parametrize lines and rays in 2D\n> - Learn about type annotations and linear operations in PyTorch\n\n### 2️⃣ Batched Operations\n\nIn the next section, you'll extend your work from the first section to perform batched operations, i.e. operations over several different dimensions at once.\n\n> ##### Learning Objectives\n>\n> - Learn about some important concepts related to batched operations, e.g. broadcasting and logical reductions\n> - Understand and use the `einops` library\n> - Apply this knowledge to create & work with a batch of rays\n\n### 3️⃣ Triangles\n\nIn the final section we move into the 2D and 3D realms, and build up to rendering a full 3D mesh as a 2D image.\n\n> ##### Learning Objectives\n>\n> - Understand how to parametrize triangles in 2D and 3D, and solve for their intersection with rays\n> - Put everything together, to render your mesh as a 2D image\n\n### 4️⃣ Video & Lighting\n\nIn the last set of exercises, you can implement some more mathematically complex forms of raytracing to get things like dynamic lighting & videos. There's also some optional material at the very end which covers the `pytest` library, and has you write your own tests.\n\n> ##### Learning Objectives\n>\n> - Learn how surface normal vectors can be used to compute lighting effects\n> - Render your figures in video form (as an animated camera pan)\n> - (optional) Learn about the `pytest` library, and write your own tests for the functions you wrote"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c006",
+   "role": "prose",
    "src": "## Setup code"
   },
   {
    "t": "code",
-   "id": "0-1-c006",
+   "id": "0-1-c007",
    "role": "magic",
-   "src": "import os\nimport sys\nfrom pathlib import Path\n\nIN_COLAB = \"google.colab\" in sys.modules\n\nchapter = \"chapter0_fundamentals\"\nrepo = \"ARENA_3.0\"\nbranch = \"main\"\n\n# Install dependencies\ntry:\n    import jaxtyping\nexcept:\n    %pip install jaxtyping einops\n\n# Get root directory, handling 3 different cases: (1) Colab, (2) notebook not in ARENA repo, (3) notebook in ARENA repo\nroot = (\n    \"/content\"\n    if IN_COLAB\n    else \"/root\"\n    if repo not in os.getcwd()\n    else str(next(p for p in Path.cwd().parents if p.name == repo))\n)\n\nif Path(root).exists() and not Path(f\"{root}/{chapter}\").exists():\n    if not IN_COLAB:\n        !sudo apt-get install unzip\n        %pip install jupyter ipython --upgrade\n\n    if not os.path.exists(f\"{root}/{chapter}\"):\n        !wget -P {root} https://github.com/callummcdougall/ARENA_3.0/archive/refs/heads/{branch}.zip\n        !unzip {root}/{branch}.zip '{repo}-{branch}/{chapter}/exercises/*' -d {root}\n        !mv {root}/{repo}-{branch}/{chapter} {root}/{chapter}\n        !rm {root}/{branch}.zip\n        !rmdir {root}/{repo}-{branch}\n\n\nif f\"{root}/{chapter}/exercises\" not in sys.path:\n    sys.path.append(f\"{root}/{chapter}/exercises\")\n\nos.chdir(f\"{root}/{chapter}/exercises\")"
+   "src": "import os\nimport sys\nfrom pathlib import Path\n\n# this is a new test\n\n\n# and this is a better one.\n\nIN_COLAB = \"google.colab\" in sys.modules\n\nchapter = \"chapter0_fundamentals\"\nrepo = \"ARENA_3.0\"\nbranch = \"main\"\n\n# Install dependencies\ntry:\n    import jaxtyping\nexcept:\n    %pip install jaxtyping einops\n\n# Get root directory, handling 3 different cases: (1) Colab, (2) notebook not in ARENA repo, (3) notebook in ARENA repo\nroot = (\n    \"/content\"\n    if IN_COLAB\n    else \"/root\"\n    if repo not in os.getcwd()\n    else str(next(p for p in Path.cwd().parents if p.name == repo))\n)\n\nif Path(root).exists() and not Path(f\"{root}/{chapter}\").exists():\n    if not IN_COLAB:\n        !sudo apt-get install unzip\n        %pip install jupyter ipython --upgrade\n\n    if not os.path.exists(f\"{root}/{chapter}\"):\n        !wget -P {root} https://github.com/callummcdougall/ARENA_3.0/archive/refs/heads/{branch}.zip\n        !unzip {root}/{branch}.zip '{repo}-{branch}/{chapter}/exercises/*' -d {root}\n        !mv {root}/{repo}-{branch}/{chapter} {root}/{chapter}\n        !rm {root}/{branch}.zip\n        !rmdir {root}/{repo}-{branch}\n\n\nif f\"{root}/{chapter}/exercises\" not in sys.path:\n    sys.path.append(f\"{root}/{chapter}/exercises\")\n\nos.chdir(f\"{root}/{chapter}/exercises\")"
   },
   {
    "t": "code",
-   "id": "0-1-c007",
+   "id": "0-1-c008",
    "role": "code",
    "src": "import os\nimport sys\nfrom functools import partial\nfrom pathlib import Path\nfrom typing import Callable\n\nimport einops\nimport plotly.express as px\nimport plotly.graph_objects as go\nimport torch as t\nfrom IPython.display import display\nfrom ipywidgets import interact\nfrom jaxtyping import Bool, Float\nfrom torch import Tensor\nfrom tqdm import tqdm\n\n# Make sure exercises are in the path\nchapter = \"chapter0_fundamentals\"\nsection = \"part1_ray_tracing\"\nroot_dir = next(p for p in Path.cwd().parents if (p / chapter).exists())\nexercises_dir = root_dir / chapter / \"exercises\"\nsection_dir = exercises_dir / section\nif str(exercises_dir) not in sys.path:\n    sys.path.append(str(exercises_dir))\n\nimport part1_ray_tracing.tests as tests\nfrom part1_ray_tracing.utils import (\n    render_lines_with_plotly,\n    setup_widget_fig_ray,\n    setup_widget_fig_triangle,\n)\nfrom plotly_utils import imshow\n\nMAIN = __name__ == \"__main__\""
   },
   {
    "t": "md",
-   "id": "0-1-c008",
+   "id": "0-1-c009",
    "role": "details",
    "src": "This is an annoying colab-related issue which I haven't been able to find a satisfying fix for. If you restart runtime (but don't delete runtime), and run just the imports cell above again (but not the `%pip install` cell), the problem should go away.",
    "summary": "Help - I get a NumPy-related error"
   },
   {
    "t": "md",
-   "id": "0-1-c008-1",
+   "id": "0-1-c009-1",
    "role": "details",
    "src": "We'll be using the `pathlib` library to define file paths. This is a more modern way of working with file paths than the `os` library, and is more cross-platform. You can read more about it [here](https://realpython.com/python-pathlib/).\n\nA major advantage of using `pathlib` rather than just relative path names is that it is more robust to which file / directory you happen to be running your code in. There's nothing more frustrating than failing to import or load a file, even though you can see it right there in your directory! Most of our code to load files will look something like this:\n\n```python\nwith open(section_dir / \"pikachu.pt\", \"rb\") as f:\n    triangles = t.load(f)\n```\n\nsince `section_dir` is the name of the `part1_ray_tracing` directory, and forward slashes are used to define files or directories within that directory.",
    "summary": "Note on `pathlib`"
   },
   {
    "t": "md",
-   "id": "0-1-c009",
+   "id": "0-1-c010",
    "role": "prose",
    "src": "# 1️⃣ Rays & Segments\n\n> ##### Learning Objectives\n>\n> - Learn how to create PyTorch tensors in a variety of ways\n> - Understand how to parametrize lines and rays in 2D\n> - Learn about type annotations and linear operations in PyTorch"
   },
   {
    "t": "md",
-   "id": "0-1-c010",
+   "id": "0-1-c011",
    "role": "prose",
    "src": "## 1D Image Rendering\n\nIn our initial setup, the **camera** will be a single point at the origin, and the **screen** will be the plane at x=1.\n\n**Objects** in the world consist of triangles, where triangles are represented as 3 points in 3D space (so 9 floating point values per triangle). You can build any shape out of sufficiently many triangles and your Pikachu will be made from 412 triangles.\n\nThe camera will emit one or more **rays**, where a ray is represented by an **origin** point and a **direction** point. Conceptually, the ray is emitted from the origin and continues in the given direction until it intersects an object.\n\nWe have no concept of lighting or color yet, so for now we'll say that a pixel on our screen should show a bright color if a ray from the origin through it intersects an object, otherwise our screen should be dark."
   },
   {
    "t": "md",
-   "id": "0-1-c011",
+   "id": "0-1-c012",
    "role": "prose",
    "src": "![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/ray_tracing.png)"
   },
   {
    "t": "md",
-   "id": "0-1-c012",
+   "id": "0-1-c013",
    "role": "prose",
    "src": "To start, we'll let the z dimension in our `(x, y, z)` space be zero and work in the remaining two dimensions."
   },
   {
    "t": "md",
-   "id": "0-1-c013",
+   "id": "0-1-c014",
    "role": "prose",
-   "src": "### Exercise - implement `make_rays_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```"
+   "src": "### Exercise - implement `make_rays_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n>\n> You should spend up to 10-15 minutes on this exercise.\n> ```"
   },
   {
    "t": "md",
-   "id": "0-1-c014",
+   "id": "0-1-c015",
    "role": "prose",
    "src": "Implement the following `make_rays_1d` function so it generates some rays coming out of the origin, which we'll take to be `(0, 0, 0)`.\n\nCalling `render_lines_with_plotly` on your rays will display them in a 3D plot."
   },
   {
    "t": "code",
-   "id": "0-1-c015",
+   "id": "0-1-c016",
    "role": "code",
    "src": "def make_rays_1d(num_pixels: int, y_limit: float) -> Tensor:\n    \"\"\"\n    num_pixels: The number of pixels in the y dimension. Since there is one ray per pixel, this is\n        also the number of rays.\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both endpoints.\n\n    Returns: shape (num_pixels, num_points=2, num_dim=3) where the num_points dimension contains\n        (origin, direction) and the num_dim dimension contains xyz.\n\n    Example of make_rays_1d(9, 1.0): [\n        [[0, 0, 0], [1, -1.0, 0]],\n        [[0, 0, 0], [1, -0.75, 0]],\n        [[0, 0, 0], [1, -0.5, 0]],\n        ...\n        [[0, 0, 0], [1, 0.75, 0]],\n        [[0, 0, 0], [1, 1, 0]],\n    ]\n    \"\"\"\n    raise NotImplementedError()\n\n\nrays1d = make_rays_1d(9, 10.0)\nfig = render_lines_with_plotly(rays1d)"
   },
   {
    "t": "md",
-   "id": "0-1-c016",
+   "id": "0-1-c017",
    "role": "details",
    "src": "```python\ndef make_rays_1d(num_pixels: int, y_limit: float) -> Tensor:\n    \"\"\"\n    num_pixels: The number of pixels in the y dimension. Since there is one ray per pixel, this is\n        also the number of rays.\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both endpoints.\n\n    Returns: shape (num_pixels, num_points=2, num_dim=3) where the num_points dimension contains\n        (origin, direction) and the num_dim dimension contains xyz.\n\n    Example of make_rays_1d(9, 1.0): [\n        [[0, 0, 0], [1, -1.0, 0]],\n        [[0, 0, 0], [1, -0.75, 0]],\n        [[0, 0, 0], [1, -0.5, 0]],\n        ...\n        [[0, 0, 0], [1, 0.75, 0]],\n        [[0, 0, 0], [1, 1, 0]],\n    ]\n    \"\"\"\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c017",
-   "role": "prose",
-   "src": "### Tip - the `out` keyword argument\n\nMany PyTorch functions take an optional keyword argument `out`. If provided, instead of allocating a new tensor and returning that, the output is written directly to the `out` tensor.\n\nIf you used `torch.arange` or `torch.linspace` above, try using the `out` argument. Note that a basic indexing expression like `rays[:, 1, 1]` returns a view that shares storage with `rays`, so writing to the view will modify `rays`. You'll learn more about views later today.\n\n## Ray-Object Intersection\n\nSuppose we have a line segment defined by points $L_1$ and $L_2$. Then for a given ray, we can test if the ray intersects the line segment like so:\n\n- Supposing both the ray and line segment were infinitely long, solve for their intersection point.\n- If the point exists, check whether that point is inside the line segment and the ray.\n\nOur camera ray is defined by the origin $O$ and direction $D$ and our object line is defined by points $L_1$ and $L_2$.\n\nWe can write the equations for all points on the camera ray as $R(u)=O +u D$ for $u \\in [0, \\infty)$ and on the object line as $O(v)=L_1+v(L_2 - L_1)$ for $v \\in [0, 1]$.\n\nThe following interactive widget lets you play with this parameterization of the problem. Run the cells one after another:"
-  },
-  {
-   "t": "code",
    "id": "0-1-c018",
-   "role": "code",
-   "src": "fig: go.FigureWidget = setup_widget_fig_ray()\ndisplay(fig)\n\n\n@interact(v=(0.0, 6.0, 0.01), seed=(0, 10, 1))\ndef update(v=0.0, seed=0):\n    t.manual_seed(seed)\n    L_1, L_2 = t.rand(2, 2)\n    P = lambda v: L_1 + v * (L_2 - L_1)\n    x, y = zip(P(0), P(6))\n    with fig.batch_update():\n        fig.update_traces({\"x\": x, \"y\": y}, 0)\n        fig.update_traces({\"x\": [L_1[0], L_2[0]], \"y\": [L_1[1], L_2[1]]}, 1)\n        fig.update_traces({\"x\": [P(v)[0]], \"y\": [P(v)[1]]}, 2)"
+   "role": "prose",
+   "src": "### Tip - the `out` keyword argument\n\nMany PyTorch functions take an optional keyword argument `out`. If provided, instead of allocating a new tensor and returning that, the output is written directly to the `out` tensor.\n\nIf you used `torch.arange` or `torch.linspace` above, try using the `out` argument. Note that a basic indexing expression like `rays[:, 1, 1]` returns a view that shares storage with `rays`, so writing to the view will modify `rays`. You'll learn more about views later today."
   },
   {
    "t": "md",
    "id": "0-1-c019",
    "role": "prose",
-   "src": "Setting the line equations from above equal gives the solution:\n\n$$\n\\begin{aligned}O + u D &= L_1 + v(L_2 - L_1) \\\\ u D - v(L_2 - L_1) &= L_1 - O  \\\\ \\begin{pmatrix} D_x & (L_1 - L_2)_x \\\\ D_y & (L_1 - L_2)_y \\\\ \\end{pmatrix} \\begin{pmatrix} u \\\\ v \\\\ \\end{pmatrix} &=  \\begin{pmatrix} (L_1 - O)_x \\\\ (L_1 - O)_y \\\\ \\end{pmatrix} \\end{aligned}\n$$\n\nOnce we've found values of $u$ and $v$ which satisfy this equation, if any (the lines could be parallel) we just need to check that $u \\geq 0$ and $v \\in [0, 1]$."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c020",
-   "role": "prose",
-   "src": "### Exercise - implement `intersect_ray_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 20-25 minutes on this exercise.\n> It involves some of today's core concepts - tensor manipulation, linear operations, etc.\n> ```\n\nUsing [`torch.linalg.solve`](https://pytorch.org/docs/stable/generated/torch.linalg.solve.html) and [`torch.stack`](https://pytorch.org/docs/stable/generated/torch.stack.html), implement the `intersect_ray_1d` function to solve the above matrix equation."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c020-1",
-   "role": "details",
-   "src": "`torch.stack` will combine tensors along a new dimension.\n\n```python\n>>> t.stack([t.ones(2, 2), t.zeros(2, 2)], dim=0)\ntensor([[[1., 1.],\n         [1., 1.]],\n\n        [[0., 0.],\n         [0., 0.]]])\n```\n\n`torch.concat` (alias `torch.cat`) will combine tensors along an existing dimension.\n\n```python\n>>> t.cat([t.ones(2, 2), t.zeros(2, 2)], dim=0)\ntensor([[1., 1.],\n        [1., 1.],\n        [0., 0.],\n        [0., 0.]])\n```\n\nHere, you should use `torch.stack` to construct e.g. the matrix on the left hand side, because you want to combine the vectors $D$ and $L_1 - L_2$ to make a matrix.",
-   "summary": "Aside - difference between stack and concatenate"
-  },
-  {
-   "t": "md",
-   "id": "0-1-c020-2",
-   "role": "prose",
-   "src": "Is it possible for the solve method to fail? Give a sample input where this would happen."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c020-3",
-   "role": "details",
-   "src": "If the ray and segment are exactly parallel, then the solve will fail because there is no solution to the system of equations. For this function, handle this by catching the exception and returning False.",
-   "summary": "Answer - Failing Solve"
+   "src": "### Supplementary exercises - `make_rays_1d`\n\n**Practice section.** Collapse this heading to skip it. Everything below is extra practice for the exercise you just did.\n\nSolving `make_rays_1d` cleanly needs four prerequisite skills. Each skill gets its own subsection with the same structure:\n\n1. **Worked examples** — read the code, run it, predict the output *before* running.\n2. **Faded problems** — most of the code is given; fill in the `...` blanks.\n3. **Challenge problems** — write the whole thing yourself. These probe the edges of the skill.\n\nSubsection 5 then gives several *sibling* problems at the same difficulty as `make_rays_1d` itself.\n\nEvery problem comes with `assert`-based tests in the same cell — a cell that runs with no error is a pass. Solutions are hidden in dropdowns underneath.\n\n| Subsection | Prerequisite |\n|---|---|\n| 1️⃣ | Creating tensors of a given shape & dtype (`zeros`, `ones`, `full`, `tensor`) |\n| 2️⃣ | Evenly-spaced values: `linspace` vs `arange` (endpoints, counts, steps) |\n| 3️⃣ | Writing into slices of a tensor (views, broadcasting on assignment, `out=`) |\n| 4️⃣ | Rays as `(origin, direction)` pairs — the geometry behind the tensor layout |\n| 5️⃣ | Problems at the level of `make_rays_1d` |"
   },
   {
    "t": "code",
-   "id": "0-1-c021",
+   "id": "0-1-c020",
    "role": "code",
-   "src": "def intersect_ray_1d(ray: Float[Tensor, \"points dims\"], segment: Float[Tensor, \"points dims\"]) -> bool:\n    \"\"\"\n    ray: shape (n_points=2, n_dim=3)  # O, D points\n    segment: shape (n_points=2, n_dim=3)  # L_1, L_2 points\n\n    Return True if the ray intersects the segment.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_intersect_ray_1d(intersect_ray_1d)\ntests.test_intersect_ray_1d_special_case(intersect_ray_1d)"
+   "src": "# Setup for the supplementary exercises: a tiny test helper used by every problem below.\nimport torch as t\nfrom torch import Tensor\n\ndef check(got, expected, name=\"test\", atol=1e-6):\n    \"\"\"Tiny test helper: compares shape, dtype and values.\"\"\"\n    expected = t.as_tensor(expected, dtype=got.dtype) if not isinstance(expected, Tensor) else expected\n    assert got.shape == expected.shape, f\"{name}: shape {tuple(got.shape)} != {tuple(expected.shape)}\"\n    assert got.dtype == expected.dtype, f\"{name}: dtype {got.dtype} != {expected.dtype}\"\n    assert t.allclose(got, expected, atol=atol), f\"{name}: values differ\\n got={got}\\n exp={expected}\"\n    print(f\"{name}: ok\")"
   },
   {
    "t": "md",
+   "id": "0-1-c021",
+   "role": "prose",
+   "src": "#### 1️⃣ Creating tensors of a given shape & dtype\n\n`make_rays_1d` starts with an empty container: `t.zeros((num_pixels, 2, 3), dtype=t.float32)`. You need to be fluent in describing a shape as a tuple, reading it back off a tensor, and controlling the dtype.\n\n##### Worked examples\n\nFor each cell, write down what you expect `shape` and `dtype` to be, then run it."
+  },
+  {
+   "t": "code",
    "id": "0-1-c022",
-   "role": "details",
-   "src": "Our formula only uses the x and y coordinates - remember to discard the z coordinate for now.\n\nIt's good practice to write asserts on the shape of things so that your asserts will fail with a helpful error message. In this case, you could assert that the `mat` argument is of shape (2, 2) and the `vec` argument is of shape (2,). Also, see the aside below on typechecking.",
-   "summary": "Help! My code is failing with a 'must be batches of square matrices' exception."
+   "role": "code",
+   "src": "# Example 1.1 — shape is a tuple; each entry is the length of one axis\na = t.zeros((4, 2, 3))\nprint(a.shape, a.dtype)        # torch.Size([4, 2, 3]) torch.float32  (float32 is the default)\nprint(a[0])                    # the first \"row\": a (2, 3) block of zeros"
   },
   {
-   "t": "md",
-   "id": "0-1-c022-1",
-   "role": "details",
-   "src": "```python\ndef intersect_ray_1d(ray: Float[Tensor, \"points dims\"], segment: Float[Tensor, \"points dims\"]) -> bool:\n    \"\"\"\n    ray: shape (n_points=2, n_dim=3)  # O, D points\n    segment: shape (n_points=2, n_dim=3)  # L_1, L_2 points\n\n    Return True if the ray intersects the segment.\n    \"\"\"\n    # Get the x and y coordinates (ignore z)\n    ray = ray[:, :2]\n    segment = segment[:, :2]\n\n    # Ray is [[Ox, Oy], [Dx, Dy]]\n    O, D = ray\n    # Segment is [[L1x, L1y], [L2x, L2y]]\n    L_1, L_2 = segment\n\n    # Create matrix and vector, and solve equation\n    mat = t.stack([D, L_1 - L_2], dim=-1)\n    vec = L_1 - O\n\n    # Solve equation (return False if no solution)\n    try:\n        sol = t.linalg.solve(mat, vec)\n    except RuntimeError:\n        return False\n\n    # If there is a solution, check the soln is in the correct range for there to be an intersection\n    u = sol[0].item()\n    v = sol[1].item()\n    return (u >= 0.0) and (v >= 0.0) and (v <= 1.0)\n```",
-   "summary": "Solution"
-  },
-  {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c023",
-   "role": "prose",
-   "src": "### Aside - type hints\n\nAdding type hints to your code is a useful habit to get into. Some advantages of using them:\n\n- **They help document your code**, making it more readable (for yourself and for others)\n- **The improve IDE behaviour**, i.e. getting better code completion\n- **They encourage better code structure**, since they force you to consider your inputs & outputs explicitly\n- **They make debugging easier**, since you'll find it easier to spot where a variable might not match the type signature you've given for it\n\nAs well as simple objects, you can also typecheck iterables of objects, for example:\n\n- `list[int]` for a list of integers,\n- `dict[str, float]` for a dict mapping strings to floats,\n- `tuple[Tensor, Tensor]` for a length-2 tuple containing tensors,\n- `tuple[int, ...]` for a tuple containing one or more integers.\n\nand you can also use other syntax to extend behaviour, e.g. `x: int | None` for a variable which can either be an integer or `None`.\n\nJaxtyping also gives us useful type hint features, e.g. we have `ray: Float[Tensor, \"points dims\"]` to indicate a tensor of floats with dimensions `points` and `dims`. Unlike the examples above this is unlikely to be captured by syntax highlighting when you make a mistake, instead it's best to view this as an alternative to annotating the tensor shape. You may or may not prefer to use this. \n\nWhen in doubt however, it's best to make assertions on the variable type or tensor shape explicitly, e.g. `assert isinstance(x, Tensor)` or `assert x.shape == ...`. We generally don't recommend static type checking like [mypy](https://mypy-lang.org/) in this course, because there aren't generally standard and robust ways to do it which will fit all IDEs & use-cases."
+   "role": "code",
+   "src": "# Example 1.2 — dtype is chosen at creation; ints and floats are different tensors\nb = t.ones((3,), dtype=t.int64)\nc = t.ones(3)                  # shape can be given as bare ints instead of a tuple\nprint(b, b.dtype)\nprint(c, c.dtype)\nprint((b + c).dtype)           # mixing → promotes to float32"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c024",
-   "role": "prose",
-   "src": "# 2️⃣ Batched Operations\n\n> ##### Learning Objectives\n>\n> - Learn about some important concepts related to batched operations, e.g. broadcasting and logical reductions\n> - Understand and use the `einops` library\n> - Apply this knowledge to create & work with a batch of rays"
+   "role": "code",
+   "src": "# Example 1.3 — full() fills with a constant; tensor() builds from nested Python lists\nd = t.full((2, 3), 7.0)\ne = t.tensor([[0, 0, 0], [1, -1.0, 0]])   # one float in the list → whole tensor is float32\nprint(d)\nprint(e, e.shape, e.dtype)"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c025",
-   "role": "prose",
-   "src": "In this section, we'll move onto batched operations. First, it's necessary to cover some important tips for working effectively with PyTorch tensors. If you've gone through the prerequisite material then several of these should already be familiar to you."
+   "role": "code",
+   "src": "# Example 1.4 — *_like copies shape AND dtype from another tensor\nf = t.zeros_like(e)\nprint(f.shape, f.dtype)\nprint(t.empty((2, 2)))         # empty() does NOT zero memory: garbage values, fast. Avoid unless you overwrite everything."
   },
   {
    "t": "md",
    "id": "0-1-c026",
    "role": "prose",
-   "src": "## Tensor Operations - 5 Tips"
+   "src": "##### Faded problems\n\nFill in the `...`. Do not change anything else."
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c027",
-   "role": "prose",
-   "src": "### Tip (1/5) - Elementwise Logical Operations on Tensors\n\nFor regular booleans, the keywords `and`, `or`, and `not` are used to do logical operations and the operators `&`, `|`, and `~` do `and`, `or` and `not` on each bit of the input numbers. Analogously, we use the operators `&`, `|` `~` on tensors to perform these operations on each element of the tensor, e.g. `x & y` returns the tensor with elements `x[i] and y[i]`.\n\nA few important gotchas here:\n\n- Don't try to use `and`, `or` or `not` on tensors, since Python will try to coerce the tensors to booleans, and you'll get an exception.\n- Remember about **operator precedence**! For instance, `v >= 0 & v <= 1` will actually throw an error because it's actually evaluated as `(v >= (0 & v)) <= 1` (because `&` has high precedence) and `0 & v` is not a valid operation. When in doubt, use parentheses to force the correct parsing: `(v >= 0) & (v <= 1)`."
+   "role": "code",
+   "src": "# Faded 1.1 — a (5, 2, 3) block of zeros, float32\nrays = t.zeros(..., dtype=...)\ncheck(rays, t.zeros((5, 2, 3)), \"faded 1.1\")"
   },
   {
    "t": "md",
    "id": "0-1-c028",
-   "role": "prose",
-   "src": "### Tip (2/5) - `einops`\n\nEinops is a useful library which we'll dive deeper with tomorrow. For now, the only important function you'll need to know is `einops.repeat`. This takes as arguments a tensor and a string, and returns a new tensor which has been repeated along the specified dimensions. For example, the following code shows how we can repeat a 2D tensor along the last dimension:\n\n```python\nx = t.randn(4, 3)\nx_repeated = einops.repeat(x, 'a b -> a b c', c=2) # copies x along a new dimension at the end\n\nassert x_repeated.shape == (4, 3, 2)\nt.testing.assert_close(x_repeated[:, :, 0], x)\nt.testing.assert_close(x_repeated[:, :, 1], x)\n```"
-  },
-  {
-   "t": "md",
-   "id": "0-1-c029",
-   "role": "prose",
-   "src": "### Tip (3/5) - Logical Reductions\n\nIn plain Python, if you have a list of lists and want to know if any element in a row is `True`, you could use a list comprehension like `[any(row) for row in rows]`. The efficient way to do this in PyTorch is with `torch.any()` or equivalently the `.any()` method of a tensor, which accept the dimension to reduce over. Similarly, `torch.all()` or `.all()` method. Both of these methods accept a `dim` argument, which is the dimension to reduce over."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c029-1",
    "role": "details",
-   "src": "Most functions like `torch.any(tensor, ...)` (which take a tensor as first argument) have an equivalent tensor method `tensor.any(...)`. We'll see many more examples of functions like this as we go through the course.",
-   "summary": "Aside - tensor methods"
+   "src": "```python\nrays = t.zeros((5, 2, 3), dtype=t.float32)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c029",
+   "role": "code",
+   "src": "# Faded 1.2 — a length-4 integer tensor of all 1s, and a length-4 float tensor of all -2.5\nones_int = t.ones(..., dtype=...)\nneg = t.full(..., ...)\nassert ones_int.dtype == t.int64 and ones_int.tolist() == [1, 1, 1, 1], \"faded 1.2 ones_int\"\ncheck(neg, t.tensor([-2.5, -2.5, -2.5, -2.5]), \"faded 1.2 neg\")"
   },
   {
    "t": "md",
    "id": "0-1-c030",
-   "role": "prose",
-   "src": "### Tip (4/5) - Broadcasting\n\nBroadcasting is what happens when you perform an operation on two tensors, and one is a smaller size, but is copied along the dimensions of the larger one in order to apply to it. There are some complicated broadcasting rules which we'll get into later in the course (you can also review the broadcasting section in the prerequisite material which comes before this chapter), but for our purposes the only thing you need to know is this: if you perform an operation on 2 tensors `A, B` where `A.shape == B.shape[-A.ndim:]` (i.e. `A` matches the last dimensions of `B`), then `A` will be copied along its leading dimensions until it has the same shape as `B`. For example:\n\n```python\nB = t.ones(4, 3, 2)\nA = t.ones(3, 2)\nC = A + B\nprint(C.shape) # torch.Size([4, 3, 2]), the size of the broadcasted tensor\nprint(C.max(), C.min()) # tensor(2.) tensor(2.), because all elements are 2\n```"
+   "role": "details",
+   "src": "```python\nones_int = t.ones((4,), dtype=t.int64)\nneg = t.full((4,), -2.5)\n```",
+   "summary": "Solution"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c031",
-   "role": "prose",
-   "src": "### Tip (5/5) - Indexing\n\nIndexing is a pretty deep topic in PyTorch, and it takes a while to get fully comfortable with it. However, we'll specifically cover some features which will be useful for the following exercises.\n\n**Using ellipses.** You can use an ellipsis `...` in an indexing expression to avoid repeated `:` and to write indexing expressions that work on varying numbers of input dimensions. For example, `x[..., 0]` is equivalent to `x[:, :, 0]` if `x` is 3D, and equivalent to `x[:, :, :, 0]` if `x` is 4D.\n\n**Boolean indexing.** Boolean indexing allows you to select elements of a tensor based on a corresponding boolean tensor. Only the elements where the boolean value is True are selected. The following example shows boolean indexing *and* broadcasting:\n\n```python\nD = t.ones(2)  # Tensor with shape (2,)\nE = t.zeros(3, 2)  # Tensor with shape (3, 2)\nE[[True, False, True], :].shape  # Shape: (2, 2)\nE[[True, False, True], :] = D  # Assign values from D to selected rows\nprint(E)\n# output:\n# tensor([[1., 1.],\n#         [0., 0.],\n#         [1., 1.]])\n```\n\nNote that `E` gets modified when `E[[True, False, True], :]` gets modified - this is because the latter is a **view** of the former, not a new tensor (i.e. it points to the same place in memory) - we'll look a bit more at this topic later.\n\n**Multi-dimensional indexing.** You can also apply boolean indexing to multiple dimensions simultaneously. This allows you to select elements across several dimensions based on a boolean condition. The following example shows multi-dimensional boolean indexing *and* broadcasting:\n\n```python\nD = t.ones(2)  # Tensor with shape (2,)\nF = t.zeros(2, 2, 2)  # Tensor with shape (2, 2, 2)\nF[[[True, True], [False, True]], :].shape  # Shape: (3, 2)\nF[[[True, True], [False, True]], :] = D\nprint(F)\n# output:\n# tensor([[[1., 1.],\n#          [1., 1.]],\n\n#         [[0., 0.],\n#          [1., 1.]]])\n```\n\nThis works because our indexing creates a tensor of shape `(3, 2)`, formed by stacking the three tensors `F[0, 0]`, `F[0, 1]` and `F[1, 1]` (those where the corresponding index value is True) along a new leading dimension."
+   "role": "code",
+   "src": "# Faded 1.3 — build this exact tensor from a Python list literal:\n# [[0., 0., 0.],\n#  [1., 0.5, 0.]]\npair = t.tensor(...)\ncheck(pair, t.tensor([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]), \"faded 1.3\")"
   },
   {
    "t": "md",
    "id": "0-1-c032",
-   "role": "prose",
-   "src": "### Summary of tips\n\n> * Use `...` to avoid repeated `:` in indexing expressions\n> * Use `&`, `|`, and `~` for elementwise logical operations on tensors\n> * Use parentheses to force the correct operator precedence\n> * Use `torch.any()` or `.any()` to do logical reductions (you can do this over a single dimension, with the `dim` argument)\n> * Tensors can broadcast along leading dimensions to operate together\n>   * e.g. `t.ones(2) + t.ones(3, 2)` works because the former tensor gets broadcasted to shape `(3, 2)`\n> * We can index with boolean tensors to select multiple elements\n>   * e.g. if `A.shape = (3, n1, n2, ...)` then `A[[True, False, True]]` has shape `(2, n1, n2, ...)` and contains the first & third rows of `A`\n> * We can index with multi-dimensional boolean tensors too\n>   * e.g. if `A.shape = (2, 2, n1, n2, ...)` then `A[[[True, True], [False, True]], :]` has shape `(3, n1, n2, ...)` and contains the elements `A[0, 0]`, `A[0, 1]` and `A[1, 1]`, stacked along a new leading dimension"
+   "role": "details",
+   "src": "```python\npair = t.tensor([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]])\n```",
+   "summary": "Solution"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c033",
-   "role": "prose",
-   "src": "## Batched Ray-Segment Intersection\n\nWe'll now move on to implementing a batched version of our previous function which takes multiple rays, multiple line segments, and returns a boolean for each ray indicating whether ***any*** segment intersects with that ray.\n\nNote - in the batched version, we don't want the solver to throw an exception just because some of the equations don't have a solution - these should just return False."
+   "role": "code",
+   "src": "# Faded 1.4 — same shape and dtype as `template`, but filled with 9s. Use a *_like function.\ntemplate = t.zeros((3, 2), dtype=t.float64)\nnines = t.full_like(..., ...)\ncheck(nines, t.full((3, 2), 9.0, dtype=t.float64), \"faded 1.4\")"
   },
   {
    "t": "md",
    "id": "0-1-c034",
-   "role": "prose",
-   "src": "### Exercise - implement `intersect_rays_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 25-40 minutes on this exercise.\n> This will probably be one of the hardest exercises you'll complete today.\n> ```\n\nOne part you might find difficult is dealing with the zero determinant cases. Previously we dealt with those by using `try / except`, but here we can't do that because we want to perform all the operations at once. Instead, we can use the following clever trick to find all the pairs of intersecting rays and segments:\n\n1. Figure out which matrices have zero determinant (e.g. with `determinants.abs() < 1e-8`)\n2. Replace those matrices with the identity matrix `t.eye(2)`, since this will certainly not raise an error when solving\n3. Find the matrices s.t. `u, v` are in the required range **and** our original matrix was non-singular\n\nThis way, we've identified all pairs of rays and segments where an intersection point exists **and** that intersection point is valid (i.e. it's actually on the positive side of the ray, and somewhere in the middle of the segment).\n\nOnce we have this 2D array of booleans representing whether each ray intersects with each segment, we can reduce using the torch function `t.any` to find the rays which intersect *any* segment."
-  },
-  {
-   "t": "code",
-   "id": "0-1-c035",
-   "role": "code",
-   "src": "def intersect_rays_1d(\n    rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if it intersects any segment.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_intersect_rays_1d(intersect_rays_1d)\ntests.test_intersect_rays_1d_special_case(intersect_rays_1d)"
-  },
-  {
-   "t": "md",
-   "id": "0-1-c036",
    "role": "details",
-   "src": "You should have some variable `mat` which is a batch of matrices, i.e. it has shape `(n_rays, n_segments, 2, 2)`. You can then define `is_singular` as a boolean tensor of shape `(n_rays, n_segments)` which is true wherever the matrix is singular. Now, indexing `mat[is_singular]` returns a tensor of shape `(N, 2, 2)` where the `[i, :, :]`-th element is the `i`-th singular matrix. Thanks to broadcasting rules, you can set `mat[is_singular] = t.eye(2)`, and the identity matrix with shape `(2, 2)` will get broadcasted to the left hand shape `(N, 2, 2)`.",
-   "summary": "Help - I don't know how to set all my matrices to the identity"
-  },
-  {
-   "t": "md",
-   "id": "0-1-c036-1",
-   "role": "details",
-   "src": "```python\ndef intersect_rays_1d(\n    rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if it intersects any segment.\n    \"\"\"\n    NR = rays.size(0)\n    NS = segments.size(0)\n\n    # Get just the x and y coordinates\n    rays = rays[..., :2]\n    segments = segments[..., :2]\n\n    # Repeat rays and segments so that we can compuate the intersection of every (ray, segment) pair\n    rays = einops.repeat(rays, \"nrays p d -> nrays nsegments p d\", nsegments=NS)\n    segments = einops.repeat(segments, \"nsegments p d -> nrays nsegments p d\", nrays=NR)\n\n    # Each element of `rays` is [[Ox, Oy], [Dx, Dy]]\n    O = rays[:, :, 0]\n    D = rays[:, :, 1]\n    assert O.shape == (NR, NS, 2)\n\n    # Each element of `segments` is [[L1x, L1y], [L2x, L2y]]\n    L_1 = segments[:, :, 0]\n    L_2 = segments[:, :, 1]\n    assert L_1.shape == (NR, NS, 2)\n\n    # Define matrix on left hand side of equation\n    mat = t.stack([D, L_1 - L_2], dim=-1)\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    dets = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    assert is_singular.shape == (NR, NS)\n    mat[is_singular] = t.eye(2)\n\n    # Define vector on the right hand side of equation\n    vec = L_1 - O\n\n    # Solve equation, get results\n    sol = t.linalg.solve(mat, vec)\n    u = sol[..., 0]\n    v = sol[..., 1]\n\n    # Return boolean of (matrix is nonsingular, and soln is in correct range implying intersection)\n    return ((u >= 0) & (v >= 0) & (v <= 1) & ~is_singular).any(dim=-1)\n```",
+   "src": "```python\nnines = t.full_like(template, 9.0)\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c037",
+   "id": "0-1-c035",
    "role": "prose",
-   "src": "## Using GPT to understand code\n\n*Note, the world of LLMs moves fast, so this section is likely to get out of date at some point!*\n\nNext week we'll start learning about transformers and how to build them, but it's not too early to start using them to accelerate your own learning!\n\nWe'll be discussing more advanced ways to use GPT 3 and 4 as coding partners / research assistants in the coming weeks, but for now we'll look at a simple example: **using GPT to understand code**. You're recommended to read the recent [LessWrong post](https://www.lesswrong.com/posts/ptY6X3BdW4kgqpZFo/using-gpt-4-to-understand-code) by Siddharth Hiregowdara in which he explains his process. This works best on GPT-4, but I've found GPT-3.5 works equally well for reasonably straightforward problems (see the section below).\n\nFirstly, you should get an account to use GPT with if you haven't already. Next, try asking GPT-3.5 / 4 for an explanation of the function above. You can do this e.g. via the following prompt:\n\n> Explain this Python function, line by line. You should break up your explanation by inserting sections of the code.\n> \n> ```python\n> def intersect_rays_1d(rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]) -> Bool[Tensor, \" nrays\"]:\n>     NR = rays.size(0)\n>     NS = segments.size(0)\n>     rays = rays[..., :2]\n>     ...\n> ```\n\nI've found removing comments is often more helpful, because then GPT will answer in its own words rather than just repeating the comments (and the comments can sometimes confuse it).\n\nOnce you've got a response, here are a few more things you might want to consider asking:\n\n* Can you suggest ways to improve the code?\n    * GPT-4 recommended using a longer docstring and more descriptive variable names, among other things.\n* Can you explain why the line `mat[is_singular] = t.eye(2)` works?\n    * GPT-4 gave me a correct and very detailed explanation involving broadcasting and tensor shapes.\n\nIs using GPT in this way cheating? It can be, if your first instinct is to jump to GPT rather than trying to understand the code yourself. But it's important here to bring up the distinction of [playing in easy mode](https://www.lesswrong.com/posts/nJPtHHq6L7MAMBvRK/play-in-easy-mode) vs [playing in hard mode](https://www.lesswrong.com/posts/7hLWZf6kFkduecH2g/play-in-hard-mode). There are situations where it's valuable for you to think about a problem for a while before moving forward because that deliberation will directly lead to you becoming a better researcher or engineer (e.g. when you're thinking of a hypothesis for how a circuit works while doing mechanistic interpretability on a transformer, or you're pondering which datastructure best fits your use case while implementing some RL algorithm). But there are also situations (like this one) where you'll get more value from speedrunning towards an understanding of certain code or concepts, and apply your understanding in subsequent exercises. It's important to find a balance!\n\n#### When to use GPT-3.5 and GPT-4\n\nGPT-3.5 and 4 both have advantages and disadvantages in different situations. GPT-3.5 has a large advantage in speed over GPT-4, and works equally well on simple problems or functions. If it's anything that Copilot is capable of writing, then you're likely better off using it instead of GPT-4.\n\nOn the other hand, GPT-4 has an advantage at generating coherent code (although we don't expect you to be using it for code generation much at this stage in the program), and is generally better at responding to complex tasks with less prompt engineering.\n\n#### Additional notes on using GPT (from Joseph Bloom)\n\n* ChatGPT is overly friendly. If you give it bad code it won't tell you it's shit so you need to encourage it to give feedback and/or show you examples of great code. Especially for beginner coders using it, it's important to realise how *under* critical it is.\n* GPT is great at writing tests (asking it to write a test for a function is often better than asking it if a function is correct), refactoring code (identifying repeated tasks and extracting them) and naming variables well. These are specific things worth doing a few times to see how useful they can be.\n* GPT-4 does well with whole modules/scripts so don't hesitate to add those. When you start managing repos on GitHub, use tracked files so that when you copy-paste edited code back, all the changes are highlighted for you as if you'd made them. (VSCode highlights changes with small blue bars next to the line numbers in your python files.)\n\nHere are some things you can play around with:\n\n* Ask GPT it to write tests for the function. You can give more specific instructions (e.g. asking it to use / not to use the `unittests` library, or to print more informative error messages).\n* Ask GPT how to refactor the function above. (When I did this, it suggested splitting the function up into subfunctions which performed the discrete tasks of \"compute intersection points\")"
+   "src": "##### Challenge problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c036",
+   "role": "code",
+   "src": "# Challenge 1.1 — implement `blank_rays(n)`: shape (n, 2, 3), float32, all zeros.\n# It must work for n = 0 as well (an empty batch is still a valid tensor).\ndef blank_rays(n: int) -> Tensor:\n    raise NotImplementedError()\n\ncheck(blank_rays(6), t.zeros((6, 2, 3)), \"challenge 1.1 n=6\")\ncheck(blank_rays(0), t.zeros((0, 2, 3)), \"challenge 1.1 n=0\")\nassert blank_rays(3).dtype == t.float32"
   },
   {
    "t": "md",
+   "id": "0-1-c037",
+   "role": "details",
+   "src": "```python\ndef blank_rays(n: int) -> Tensor:\n    return t.zeros((n, 2, 3), dtype=t.float32)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
    "id": "0-1-c038",
-   "role": "prose",
-   "src": "## 2D Rays\n\nNow we're going to make use of the z dimension and have rays emitted from the origin in both y and z dimensions."
+   "role": "code",
+   "src": "# Challenge 1.2 — predict, then verify. Fill each `expected_*` with the literal you predict.\nx = t.tensor([1, 2, 3])\ny = t.tensor([1.0, 2, 3])\nz = t.tensor([True, False])\n\nexpected_x_dtype = ...   # e.g. t.int64\nexpected_y_dtype = ...\nexpected_z_dtype = ...\nexpected_xy_dtype = ...  # dtype of x + y\n\nassert x.dtype == expected_x_dtype, x.dtype\nassert y.dtype == expected_y_dtype, y.dtype\nassert z.dtype == expected_z_dtype, z.dtype\nassert (x + y).dtype == expected_xy_dtype, (x + y).dtype\nprint(\"challenge 1.2: ok\")"
   },
   {
    "t": "md",
    "id": "0-1-c039",
-   "role": "prose",
-   "src": "### Exercise - implement `make_rays_2d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵⚪⚪⚪\n> \n> You should spend up to 10-20 minutes on this exercise.\n> ```\n\nImplement `make_rays_2d` analogously to `make_rays_1d`. The result should look like a pyramid with the tip at the origin."
+   "role": "details",
+   "src": "```python\nexpected_x_dtype = t.int64\nexpected_y_dtype = t.float32\nexpected_z_dtype = t.bool\nexpected_xy_dtype = t.float32\n```",
+   "summary": "Solution"
   },
   {
    "t": "code",
    "id": "0-1-c040",
    "role": "code",
-   "src": "def make_rays_2d(num_pixels_y: int, num_pixels_z: int, y_limit: float, z_limit: float) -> Float[Tensor, \"nrays 2 3\"]:\n    \"\"\"\n    num_pixels_y: The number of pixels in the y dimension\n    num_pixels_z: The number of pixels in the z dimension\n\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both.\n    z_limit: At x=1, the rays should extend from -z_limit to +z_limit, inclusive of both.\n\n    Returns: shape (num_rays=num_pixels_y * num_pixels_z, num_points=2, num_dims=3).\n    \"\"\"\n    raise NotImplementedError()\n\n\nrays_2d = make_rays_2d(10, 10, 0.3, 0.3)\nrender_lines_with_plotly(rays_2d)"
+   "src": "# Challenge 1.3 — `stack_pairs(origin, directions)`:\n#   origin: shape (3,)          directions: shape (n, 3)\n#   returns shape (n, 2, 3) where out[i, 0] == origin and out[i, 1] == directions[i]\n# Do it WITHOUT a Python loop. (Hints: t.stack, or broadcast + expand.)\ndef stack_pairs(origin: Tensor, directions: Tensor) -> Tensor:\n    raise NotImplementedError()\n\no = t.tensor([0.0, 0.0, 0.0])\nd = t.tensor([[1.0, -1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]])\ngot = stack_pairs(o, d)\ncheck(got, t.tensor([[[0,0,0],[1,-1,0]], [[0,0,0],[1,0,0]], [[0,0,0],[1,1,0]]], dtype=t.float32), \"challenge 1.3\")"
   },
   {
    "t": "md",
    "id": "0-1-c041",
    "role": "details",
-   "src": "Don't write it as a function right away. The most efficient way is to write and test each line individually in the REPL to verify it does what you expect before proceeding.\n\nYou can either build up the output tensor using `torch.stack`, or you can initialize the output tensor to its final size and then assign to slices like `rays[:, 1, 1] = ...`. It's good practice to be able to do it both ways.\n\nEach y coordinate needs a ray with each corresponding z coordinate - in other words this is an outer product. The most elegant way to do this is with two calls to `einops.repeat`. You can also accomplish this with `unsqueeze`, `expand`, and `reshape` combined.",
-   "summary": "Help - I'm not sure how to implement this function."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c041-1",
-   "role": "details",
-   "src": "```python\ndef make_rays_2d(num_pixels_y: int, num_pixels_z: int, y_limit: float, z_limit: float) -> Float[Tensor, \"nrays 2 3\"]:\n    \"\"\"\n    num_pixels_y: The number of pixels in the y dimension\n    num_pixels_z: The number of pixels in the z dimension\n\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both.\n    z_limit: At x=1, the rays should extend from -z_limit to +z_limit, inclusive of both.\n\n    Returns: shape (num_rays=num_pixels_y * num_pixels_z, num_points=2, num_dims=3).\n    \"\"\"\n    n_pixels = num_pixels_y * num_pixels_z\n    ygrid = t.linspace(-y_limit, y_limit, num_pixels_y)\n    zgrid = t.linspace(-z_limit, z_limit, num_pixels_z)\n    rays = t.zeros((n_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = einops.repeat(ygrid, \"y -> (y z)\", z=num_pixels_z)\n    rays[:, 1, 2] = einops.repeat(zgrid, \"z -> (y z)\", y=num_pixels_y)\n    return rays\n```",
+   "src": "```python\ndef stack_pairs(origin: Tensor, directions: Tensor) -> Tensor:\n    origins = origin.expand_as(directions)          # (n, 3), no copy\n    return t.stack([origins, directions], dim=1)    # (n, 2, 3)\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
    "id": "0-1-c042",
    "role": "prose",
-   "src": "# 3️⃣ Triangles\n\n> ##### Learning Objectives\n>\n> - Understand how to parametrize triangles in 2D and 3D, and solve for their intersection with rays\n> - Put everything together, to render your mesh as a 2D image"
+   "src": "#### 2️⃣ Evenly-spaced values: `linspace` vs `arange`\n\nThe y-coordinates of the directions in `make_rays_1d(9, 1.0)` are `-1, -0.75, -0.5, ..., 0.75, 1` — nine values, both endpoints included. That is exactly `t.linspace(-1, 1, 9)`.\n\nThe two tools for evenly-spaced values differ in what you specify:\n\n| | you give | endpoint | count |\n|---|---|---|---|\n| `t.linspace(start, end, steps)` | start, end, **how many** | **inclusive** | exactly `steps` |\n| `t.arange(start, end, step)` | start, end, **step size** | **exclusive** | `ceil((end-start)/step)` |\n\n##### Worked examples"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c043",
-   "role": "prose",
-   "src": "## Triangle Coordinates\n\nThe area inside a triangle can be defined by three (non-collinear) points $A$, $B$ and $C$, and can be written algebraically as a **convex combination** of those three points:\n\n$$\n\\begin{align*}\nP(w, u, v) &= wA + uB + vC \\quad\\quad \\\\\n    \\\\\ns.t. \\quad 0 &\\leq w,u,v \\\\\n1 &= w + u + v\n\\end{align*}\n$$\n\nOr equivalently:\n\n$$\n\\begin{align*}\n\\quad\\quad\\quad\\quad P(u, v) &= (1 - u - v)A + uB + vC \\\\\n&= A + u(B - A) + v(C - A) \\\\\n\\\\\ns.t. \\quad 0 &\\leq u,v \\\\\nu + v &\\leq 1\n\\end{align*}\n$$\n\nThese $u, v$ are called \"barycentric coordinates\".\n\nIf we remove the bounds on $u$ and $v$, we get an equation for the plane containing the triangle. Play with the widget to understand the behavior of $u, v$."
+   "role": "code",
+   "src": "# Example 2.1 — linspace: 5 values from -1 to 1 inclusive → spacing is 2/(5-1) = 0.5\nprint(t.linspace(-1, 1, 5))       # tensor([-1.0, -0.5, 0.0, 0.5, 1.0])\nprint(t.linspace(0, 10, 3))       # tensor([0., 5., 10.])\nprint(t.linspace(0, 10, 1))       # a single value: the start"
   },
   {
    "t": "code",
    "id": "0-1-c044",
    "role": "code",
-   "src": "one_triangle = t.tensor([[0, 0, 0], [4, 0.5, 0], [2, 3, 0]])\nA, B, C = one_triangle\nx, y, z = one_triangle.T\n\nfig: go.FigureWidget = setup_widget_fig_triangle(x, y, z)\ndisplay(fig)\n\n\n@interact(u=(-0.5, 1.5, 0.01), v=(-0.5, 1.5, 0.01))\ndef update(u=0.0, v=0.0):\n    P = A + u * (B - A) + v * (C - A)\n    fig.update_traces({\"x\": [P[0]], \"y\": [P[1]]}, 2)"
-  },
-  {
-   "t": "md",
-   "id": "0-1-c045",
-   "role": "prose",
-   "src": "### Triangle-Ray Intersection\n\nGiven a ray with origin $O$ and direction $D$, our intersection algorithm will consist of two steps:\n\n- Finding the intersection between the line and the plane containing the triangle, by solving the equation $P(u, v) = P(s)$;\n- Checking if $u$ and $v$ are within the bounds of the triangle.\n\nExpanding the equation $P(u, v) = P(s)$, we have:\n\n$$\n\\begin{align*}\nA + u(B - A) + v(C - A) &= O + sD \\\\\n\\Rightarrow\n\\begin{pmatrix}\n    -D & (B - A) & (C - A) \\\\\n\\end{pmatrix}\n\\begin{pmatrix}\n    s \\\\\n    u \\\\\n    v  \n\\end{pmatrix}\n&= \\begin{pmatrix} O - A \\end{pmatrix} \\\\\n\\Rightarrow \\begin{pmatrix}\n    -D_x & (B - A)_x & (C - A)_x \\\\\n    -D_y & (B - A)_y & (C - A)_y \\\\\n    -D_z & (B - A)_z & (C - A)_z \\\\\n\\end{pmatrix}\n\\begin{pmatrix}\n    s \\\\\n    u \\\\\n    v  \n\\end{pmatrix} &= \\begin{pmatrix}\n    (O - A)_x \\\\\n    (O - A)_y \\\\\n    (O - A)_z \\\\\n\\end{pmatrix}\n\\end{align*}\n$$\n\n$$\n$$\n\nWe can therefore find the coordinates `s`, `u`, `v` of the intersection point by solving the linear system above."
-  },
-  {
-   "t": "md",
-   "id": "0-1-c046",
-   "role": "prose",
-   "src": "### Exercise - implement `triangle_ray_intersects`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 15-20 minutes on this exercise.\n> ```\n\nUsing `torch.linalg.solve` and `torch.stack`, implement `triangle_ray_intersects(A, B, C, O, D)`.\n\nA few tips:\n\n* If you have a 0-dimensional tensor with shape `()` containing a single value, use the `item()` method to convert it to a plain Python value.\n* If you have a tensor of shape `tensor.shape = (3, ...)`, then you can unpack it along the first dimension into three separate tensors the same way that you'd unpack a normal python list: `s, u, v = tensor`.\n    * Note - if the dimension you want to unpack isn't at the start, a nice alternative is `s, u, v = tensor.unbind(dim)`, which does the same thing but along the dimension given by `dim` rather than the first dimension.\n* If your function isn't working, try making a simple ray and triangle with nice round numbers where you can work out manually if it should intersect or not, then debug from there."
+   "src": "# Example 2.2 — arange: step size, stop excluded\nprint(t.arange(0, 5))             # tensor([0, 1, 2, 3, 4])  int64 because all args are ints\nprint(t.arange(0, 5, 2))          # tensor([0, 2, 4])\nprint(t.arange(0.0, 1.0, 0.25))   # tensor([0.00, 0.25, 0.50, 0.75])  — 1.0 is NOT included"
   },
   {
    "t": "code",
-   "id": "0-1-c047",
+   "id": "0-1-c045",
    "role": "code",
-   "src": "Point = Float[Tensor, \"points=3\"]\n\n\ndef triangle_ray_intersects(A: Point, B: Point, C: Point, O: Point, D: Point) -> bool:\n    \"\"\"\n    A: shape (3,), one vertex of the triangle\n    B: shape (3,), second vertex of the triangle\n    C: shape (3,), third vertex of the triangle\n    O: shape (3,), origin point\n    D: shape (3,), direction point\n\n    Return True if the ray and the triangle intersect.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_triangle_ray_intersects(triangle_ray_intersects)"
+   "src": "# Example 2.3 — the classic trap: to get an inclusive end with arange you need to overshoot,\n# and float steps can give you an extra/missing element from rounding. linspace is safer for \"n values between a and b\".\nprint(t.arange(-1, 1.0001, 0.5))  # works, but fragile\nprint(t.linspace(-1, 1, 5))       # same values, robust"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c046",
+   "role": "code",
+   "src": "# Example 2.4 — spacing formula. For linspace(a, b, n), consecutive gap = (b - a) / (n - 1)\nv = t.linspace(-10, 10, 9)\nprint(v)\nprint(v[1] - v[0])                # 2.5 == 20 / 8"
   },
   {
    "t": "md",
+   "id": "0-1-c047",
+   "role": "prose",
+   "src": "##### Faded problems"
+  },
+  {
+   "t": "code",
    "id": "0-1-c048",
-   "role": "details",
-   "src": "```python\ndef triangle_ray_intersects(A: Point, B: Point, C: Point, O: Point, D: Point) -> bool:\n    \"\"\"\n    A: shape (3,), one vertex of the triangle\n    B: shape (3,), second vertex of the triangle\n    C: shape (3,), third vertex of the triangle\n    O: shape (3,), origin point\n    D: shape (3,), direction point\n\n    Return True if the ray and the triangle intersect.\n    \"\"\"\n    s, u, v = t.linalg.solve(t.stack([-D, B - A, C - A], dim=1), O - A)\n    return ((s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1)).item()\n```",
-   "summary": "Solution"
+   "role": "code",
+   "src": "# Faded 2.1 — 7 values from -3 to 3 inclusive\nys = t.linspace(..., ..., ...)\ncheck(ys, t.tensor([-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]), \"faded 2.1\")"
   },
   {
    "t": "md",
    "id": "0-1-c049",
-   "role": "prose",
-   "src": "## Single-Triangle Rendering\n\nImplement `raytrace_triangle` using only one call to `torch.linalg.solve`.\n\nReshape the output and visualize with `plt.imshow`. It's normal for the edges to look pixelated and jagged - using a small number of pixels is a good way to debug quickly.\n\nIf you think it's working, increase the number of pixels and verify that it looks less pixelated at higher resolution."
+   "role": "details",
+   "src": "```python\nys = t.linspace(-3, 3, 7)\n```",
+   "summary": "Solution"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c050",
-   "role": "prose",
-   "src": "### Views and Copies\n\nIt's critical to know when you are making a copy of a `Tensor`, versus making a view of it that shares the data with the original tensor. It's preferable to use a view whenever possible to avoid copying memory unnecessarily. On the other hand, modifying a view modifies the original tensor which can be unintended and surprising. Consult [the documentation](https://pytorch.org/docs/stable/tensor_view.html) if you're unsure if a function returns a view. A short reference of common functions:\n\n- `torch.expand`: always returns a view\n- `torch.view`: always returns a view\n- `torch.detach`: always returns a view\n- `torch.repeat`: always copies\n- `torch.clone`: always copies\n- `torch.flip`: always copies (different than numpy.flip which returns a view)\n- `torch.tensor`: always copies, but PyTorch recommends using `.clone().detach()` instead.\n- `torch.Tensor.contiguous`: returns self if possible, otherwise a copy\n- `torch.transpose`: returns a view if possible, otherwise (sparse tensor) a copy\n- `torch.reshape`: returns a view if possible, otherwise a copy\n- `torch.flatten`: returns a view if possible, otherwise a copy (different than numpy.flatten which returns a copy)\n- `einops.repeat`: returns a view if possible, otherwise a copy\n- `einops.rearrange`: returns a view if possible, otherwise a copy\n- Basic indexing returns a view, while advanced indexing returns a copy."
+   "role": "code",
+   "src": "# Faded 2.2 — the integers 2, 4, 6, 8 using arange\nevens = t.arange(..., ..., ...)\nassert evens.tolist() == [2, 4, 6, 8], evens\nprint(\"faded 2.2: ok\")"
   },
   {
    "t": "md",
    "id": "0-1-c051",
-   "role": "prose",
-   "src": "### Storage Objects\n\nCalling `storage()` on a `Tensor` returns a Python object wrapping the underlying C++ array. This array is 1D regardless of the dimensionality of the `Tensor`. This allows you to look inside the `Tensor` abstraction and see how the actual data is laid out in RAM.\n\nNote that a new Python wrapper object is generated each time you call `storage()`, and both `x.storage() == x.storage()` and `x.storage() is x.storage()` evaluates to False.\n\nIf you want to check if two `Tensor`s share an underlying C++ array, you can compare their `storage().data_ptr()` fields. This can be useful for debugging."
+   "role": "details",
+   "src": "```python\nevens = t.arange(2, 10, 2)  # or t.arange(2, 9, 2)\n```",
+   "summary": "Solution"
   },
   {
-   "t": "md",
+   "t": "code",
    "id": "0-1-c052",
-   "role": "prose",
-   "src": "### `Tensor._base`\n\nIf `x` is a view, you can access the original `Tensor` with `x._base`. This is an undocumented internal feature that's useful to know. Consider the following code:\n\n```python\nx = t.zeros(1024*1024*1024)\ny = x[0]\ndel x\n```\n\nHere, `y` was created through basic indexing, so `y` is a view and `y._base` refers to `x`. This means `del x` won't actually deallocate the 4GB of memory, and that memory will remain in use which can be quite surprising. `y = x[0].clone()` would be an alternative here that does allow reclaiming the memory."
+   "role": "code",
+   "src": "# Faded 2.3 — 9 values from -y_limit to +y_limit, as in make_rays_1d(9, 10.0)\ny_limit = 10.0\nys = t.linspace(-..., ..., 9)\ncheck(ys, t.tensor([-10.0, -7.5, -5.0, -2.5, 0.0, 2.5, 5.0, 7.5, 10.0]), \"faded 2.3\")"
   },
   {
    "t": "md",
    "id": "0-1-c053",
-   "role": "prose",
-   "src": "### Exercise - implement `raytrace_triangle`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 15-20 minutes on this exercise.\n> This is about as hard as `intersect_rays_1d`, although hopefully you should find it more familiar.\n> ```\n\nBelow, you should implement `raytrace_triangle`, a funtion which checks whether each ray in `ray` intersects a single given triangle."
+   "role": "details",
+   "src": "```python\nys = t.linspace(-y_limit, y_limit, 9)\n```",
+   "summary": "Solution"
   },
   {
    "t": "code",
    "id": "0-1-c054",
    "role": "code",
-   "src": "def raytrace_triangle(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangle: Float[Tensor, \"trianglePoints=3 dims=3\"],\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if the triangle intersects that ray.\n    \"\"\"\n    raise NotImplementedError()\n\n\nA = t.tensor([1, 0.0, -0.5])\nB = t.tensor([1, -0.5, 0.0])\nC = t.tensor([1, 0.5, 0.5])\nnum_pixels_y = num_pixels_z = 15\ny_limit = z_limit = 0.5\n\n# Plot triangle & rays\ntest_triangle = t.stack([A, B, C], dim=0)\nrays2d = make_rays_2d(num_pixels_y, num_pixels_z, y_limit, z_limit)\ntriangle_lines = t.stack([A, B, C, A, B, C], dim=0).reshape(-1, 2, 3)\nrender_lines_with_plotly(rays2d, triangle_lines)\n\n# Calculate and display intersections\nintersects = raytrace_triangle(rays2d, test_triangle)\nimg = intersects.reshape(num_pixels_y, num_pixels_z).int()\nimshow(img, origin=\"lower\", width=600, title=\"Triangle (as intersected by rays)\")"
+   "src": "# Faded 2.4 — how many elements? Fill the literal integers you predict.\nn_a = ...   # len(t.linspace(0, 1, 50))\nn_b = ...   # len(t.arange(0, 1, 0.1))\nn_c = ...   # len(t.arange(0, 10, 3))\nassert n_a == len(t.linspace(0, 1, 50))\nassert n_b == len(t.arange(0, 1, 0.1))\nassert n_c == len(t.arange(0, 10, 3))\nprint(\"faded 2.4: ok\")"
   },
   {
    "t": "md",
    "id": "0-1-c055",
    "role": "details",
-   "src": "```python\ndef raytrace_triangle(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangle: Float[Tensor, \"trianglePoints=3 dims=3\"],\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if the triangle intersects that ray.\n    \"\"\"\n    NR = rays.size(0)\n\n    # Triangle is [[Ax, Ay, Az], [Bx, By, Bz], [Cx, Cy, Cz]]\n    A, B, C = einops.repeat(triangle, \"pts dims -> pts NR dims\", NR=NR)\n    assert A.shape == (NR, 3)\n\n    # Each element of `rays` is [[Ox, Oy, Oz], [Dx, Dy, Dz]]\n    O, D = rays.unbind(dim=1)\n    assert O.shape == (NR, 3)\n\n    # Define matrix on left hand side of equation\n    mat: Float[Tensor, \"NR 3 3\"] = t.stack([-D, B - A, C - A], dim=-1)\n\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    # Note - this works because mat[is_singular] has shape (NR_where_singular, 3, 3), so we\n    # can broadcast the identity matrix to that shape.\n    dets: Float[Tensor, \"NR\"] = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3)\n\n    # Define vector on the right hand side of equation\n    vec = O - A\n\n    # Solve eqns\n    sol: Float[Tensor, \"NR 3\"] = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(dim=-1)\n\n    # Return boolean of (matrix is nonsingular) && (solution is in correct range implying intersection)\n    return (s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular\n```",
+   "src": "```python\nn_a = 50\nn_b = 10   # 0.0 ... 0.9\nn_c = 4    # 0, 3, 6, 9\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
    "id": "0-1-c056",
    "role": "prose",
+   "src": "##### Challenge problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c057",
+   "role": "code",
+   "src": "# Challenge 2.1 — `symmetric(limit, n)`: n values from -limit to +limit inclusive (assume n >= 2).\n# Must satisfy: first == -limit, last == +limit, and the sequence is its own negation reversed.\ndef symmetric(limit: float, n: int) -> Tensor:\n    raise NotImplementedError()\n\ns = symmetric(4.0, 5)\ncheck(s, t.tensor([-4.0, -2.0, 0.0, 2.0, 4.0]), \"challenge 2.1 values\")\nassert t.allclose(symmetric(1.5, 8), -symmetric(1.5, 8).flip(0)), \"challenge 2.1 symmetry\""
+  },
+  {
+   "t": "md",
+   "id": "0-1-c058",
+   "role": "details",
+   "src": "```python\ndef symmetric(limit: float, n: int) -> Tensor:\n    return t.linspace(-limit, limit, n)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c059",
+   "role": "code",
+   "src": "# Challenge 2.2 — reproduce t.linspace(a, b, n) using ONLY t.arange and arithmetic (no linspace).\n# Careful with n == 1.\ndef my_linspace(a: float, b: float, n: int) -> Tensor:\n    raise NotImplementedError()\n\nfor (a, b, n) in [(-1, 1, 9), (0, 10, 3), (2.5, 2.5, 4), (0, 1, 1)]:\n    check(my_linspace(a, b, n), t.linspace(a, b, n), f\"challenge 2.2 {(a,b,n)}\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c060",
+   "role": "details",
+   "src": "```python\ndef my_linspace(a: float, b: float, n: int) -> Tensor:\n    if n == 1:\n        return t.tensor([float(a)])\n    step = (b - a) / (n - 1)\n    return a + step * t.arange(n, dtype=t.float32)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c061",
+   "role": "code",
+   "src": "# Challenge 2.3 — pixel CENTRES rather than pixel EDGES.\n# A screen from -limit to +limit is split into n equal pixels. Return the centre of each pixel.\n# e.g. centres(1.0, 4) → [-0.75, -0.25, 0.25, 0.75]\n# (Two valid routes: linspace on the edges then average neighbours, or linspace with a half-pixel inset.)\ndef centres(limit: float, n: int) -> Tensor:\n    raise NotImplementedError()\n\ncheck(centres(1.0, 4), t.tensor([-0.75, -0.25, 0.25, 0.75]), \"challenge 2.3 a\")\ncheck(centres(2.0, 1), t.tensor([0.0]), \"challenge 2.3 b\")\ncheck(centres(3.0, 3), t.tensor([-2.0, 0.0, 2.0]), \"challenge 2.3 c\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c062",
+   "role": "details",
+   "src": "```python\ndef centres(limit: float, n: int) -> Tensor:\n    edges = t.linspace(-limit, limit, n + 1)\n    return (edges[:-1] + edges[1:]) / 2\n    # alternative: half = limit / n; return t.linspace(-limit + half, limit - half, n)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c063",
+   "role": "prose",
+   "src": "#### 3️⃣ Writing into slices: views, broadcasting on assignment, `out=`\n\nThe reference solution never builds the direction vectors as separate objects. It allocates zeros, then writes *into* two slices:\n\n```python\nrays[:, 1, 0] = 1                                   # every ray's direction x = 1\nt.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])   # direction y\n```\n\nThree ideas make this work:\n\n* **Basic indexing returns a view.** `rays[:, 1, 1]` is not a copy; it shares memory with `rays`. Writing to it writes to `rays`.\n* **Broadcasting on assignment.** A scalar (or a smaller tensor) on the right is stretched to the slice's shape.\n* **`out=`.** Many torch functions accept `out=some_view` and write their result straight into it.\n\n##### Worked examples"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c064",
+   "role": "code",
+   "src": "# Example 3.1 — a slice is a view; mutating it mutates the original\nm = t.zeros((3, 2, 3))\ncol = m[:, 1, 0]                  # shape (3,): the \"direction x\" entry of each of the 3 rays\ncol[:] = 1                        # in-place write through the view\nprint(m[:, 1, :])                 # x-column is now 1 for all rows\nprint(col.untyped_storage().data_ptr() == m.untyped_storage().data_ptr())   # True: same underlying storage"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c065",
+   "role": "code",
+   "src": "# Example 3.2 — broadcasting on assignment: scalar, then a 1-D tensor\nm = t.zeros((4, 2, 3))\nm[:, 1, 0] = 1                    # scalar → all 4 entries\nm[:, 1, 1] = t.tensor([-1.0, -0.5, 0.5, 1.0])   # shape (4,) matches slice shape (4,)\nprint(m[:, 1, :])"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c066",
+   "role": "code",
+   "src": "# Example 3.3 — out= writes the result of a function directly into an existing view\nm = t.zeros((5, 2, 3))\nt.linspace(-2, 2, 5, out=m[:, 1, 1])\nprint(m[:, 1, 1])                 # tensor([-2., -1., 0., 1., 2.])"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c067",
+   "role": "code",
+   "src": "# Example 3.4 — shape mismatch on assignment is an error (broadcasting only stretches size-1 axes)\nm = t.zeros((4, 2, 3))\ntry:\n    m[:, 1, 1] = t.tensor([1.0, 2.0, 3.0])   # (3,) into a (4,) slice\nexcept RuntimeError as e:\n    print(\"RuntimeError:\", str(e)[:80], \"...\")"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c068",
+   "role": "code",
+   "src": "# Example 3.5 — advanced (fancy) indexing returns a COPY, not a view. Writing to it does nothing to the original.\nm = t.zeros(5)\nsub = m[[0, 2, 4]]                # index with a list → copy\nsub[:] = 9\nprint(m)                          # still zeros!\nm[[0, 2, 4]] = 9                  # ...but direct assignment through fancy indexing DOES work\nprint(m)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c069",
+   "role": "prose",
+   "src": "##### Faded problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c070",
+   "role": "code",
+   "src": "# Faded 3.1 — set the x-component of every direction to 1\nrays = t.zeros((6, 2, 3))\nrays[..., ..., ...] = 1\ncheck(rays[:, 1, 0], t.ones(6), \"faded 3.1 x\")\ncheck(rays[:, 0, :], t.zeros((6, 3)), \"faded 3.1 origin untouched\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c071",
+   "role": "details",
+   "src": "```python\nrays[:, 1, 0] = 1\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c072",
+   "role": "code",
+   "src": "# Faded 3.2 — write linspace(-1, 1, 6) into the y-component of every direction using out=\nrays = t.zeros((6, 2, 3))\nt.linspace(..., ..., ..., out=rays[..., ..., ...])\ncheck(rays[:, 1, 1], t.linspace(-1, 1, 6), \"faded 3.2\")\nassert rays[:, 1, 0].sum() == 0 and rays[:, 1, 2].sum() == 0, \"faded 3.2 wrote to the wrong column\""
+  },
+  {
+   "t": "md",
+   "id": "0-1-c073",
+   "role": "details",
+   "src": "```python\nt.linspace(-1, 1, 6, out=rays[:, 1, 1])\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c074",
+   "role": "code",
+   "src": "# Faded 3.3 — same result as 3.2, but WITHOUT out=: plain slice assignment\nrays = t.zeros((6, 2, 3))\nrays[:, 1, 1] = ...\ncheck(rays[:, 1, 1], t.linspace(-1, 1, 6), \"faded 3.3\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c075",
+   "role": "details",
+   "src": "```python\nrays[:, 1, 1] = t.linspace(-1, 1, 6)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c076",
+   "role": "code",
+   "src": "# Faded 3.4 — assign a whole direction vector at once to ray number 2 (0-indexed)\nrays = t.zeros((4, 2, 3))\nrays[..., ...] = t.tensor([1.0, 0.25, 0.0])\ncheck(rays[2, 1], t.tensor([1.0, 0.25, 0.0]), \"faded 3.4 row 2\")\nassert rays.sum() == 1.25, \"faded 3.4 wrote elsewhere\""
+  },
+  {
+   "t": "md",
+   "id": "0-1-c077",
+   "role": "details",
+   "src": "```python\nrays[2, 1] = t.tensor([1.0, 0.25, 0.0])\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c078",
+   "role": "prose",
+   "src": "##### Challenge problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c079",
+   "role": "code",
+   "src": "# Challenge 3.1 — is it a view? For each expression on `base`, predict True (view: shares storage) or False (copy).\nbase = t.arange(12.0).reshape(3, 4)\npred_a = ...   # base[1]\npred_b = ...   # base[:, 2]\npred_c = ...   # base[[0, 2]]\npred_d = ...   # base.reshape(12)\npred_e = ...   # base[base > 5]\npred_f = ...   # base.T\n\ndef shares(x): return x.untyped_storage().data_ptr() == base.untyped_storage().data_ptr()\nassert pred_a == shares(base[1])\nassert pred_b == shares(base[:, 2])\nassert pred_c == shares(base[[0, 2]])\nassert pred_d == shares(base.reshape(12))\nassert pred_e == shares(base[base > 5])\nassert pred_f == shares(base.T)\nprint(\"challenge 3.1: ok\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c080",
+   "role": "details",
+   "src": "```python\npred_a = True    # basic indexing\npred_b = True    # basic slicing\npred_c = False   # fancy (list) indexing copies\npred_d = True    # reshape of a contiguous tensor is a view\npred_e = False   # boolean mask indexing copies\npred_f = True    # transpose is a view (strides change, storage doesn't)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c081",
+   "role": "code",
+   "src": "# Challenge 3.2 — `fill_directions(rays, xs, ys)` mutates `rays` IN PLACE (returns None):\n#   rays: (n, 2, 3) zeros;  xs: (n,) ;  ys: (n,)\n#   after the call, rays[i, 1] == (xs[i], ys[i], 0) and rays[i, 0] is untouched.\n# No loops, no new (n, 2, 3) tensor. Then the assertion checks you really mutated the original object.\ndef fill_directions(rays: Tensor, xs: Tensor, ys: Tensor) -> None:\n    raise NotImplementedError()\n\nr = t.zeros((3, 2, 3))\nr_id = id(r)\nfill_directions(r, t.tensor([1.0, 1.0, 1.0]), t.tensor([-1.0, 0.0, 1.0]))\nassert id(r) == r_id\ncheck(r[:, 1], t.tensor([[1.0, -1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]), \"challenge 3.2 dirs\")\ncheck(r[:, 0], t.zeros((3, 3)), \"challenge 3.2 origins\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c082",
+   "role": "details",
+   "src": "```python\ndef fill_directions(rays: Tensor, xs: Tensor, ys: Tensor) -> None:\n    rays[:, 1, 0] = xs\n    rays[:, 1, 1] = ys\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c083",
+   "role": "code",
+   "src": "# Challenge 3.3 — broadcasting on assignment with a 2-D right-hand side.\n# Set ALL origins (rays[:, 0, :]) of an (n, 2, 3) tensor to the vector `origin`, shape (3,), in ONE assignment.\n# Then set ALL directions to `direction`, shape (3,), in ONE assignment.\ndef set_all(rays: Tensor, origin: Tensor, direction: Tensor) -> None:\n    raise NotImplementedError()\n\nr = t.zeros((4, 2, 3))\nset_all(r, t.tensor([0.0, 0.0, 5.0]), t.tensor([1.0, 2.0, 3.0]))\ncheck(r[:, 0], t.tensor([0.0, 0.0, 5.0]).expand(4, 3), \"challenge 3.3 origins\")\ncheck(r[:, 1], t.tensor([1.0, 2.0, 3.0]).expand(4, 3), \"challenge 3.3 directions\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c084",
+   "role": "details",
+   "src": "```python\ndef set_all(rays: Tensor, origin: Tensor, direction: Tensor) -> None:\n    rays[:, 0] = origin       # (3,) broadcasts over the (n, 3) slice\n    rays[:, 1] = direction\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c085",
+   "role": "prose",
+   "src": "#### 4️⃣ Rays as `(origin, direction)` pairs\n\nA **ray** is a half-line: it starts at an origin $O$ and heads in a direction $D$. Every point on it is\n\n$$P(u) = O + u\\,D, \\qquad u \\ge 0.$$\n\nIn this chapter a ray is stored as a `(2, 3)` tensor: row 0 is $O$, row 1 is $D$, and each row is `(x, y, z)`. A batch of $n$ rays is `(n, 2, 3)`.\n\nTwo facts matter for `make_rays_1d`:\n\n* The camera is at the origin `(0, 0, 0)` and the screen is the plane `x = 1`. A ray from the camera through screen point `(1, y, 0)` therefore has direction `(1, y, 0)` — with $u = 1$ the ray is *on* the screen.\n* The $z$ coordinate stays 0: we're working in the $xy$-plane for now, but keep 3 dims so the tensors line up with the 3D code later.\n\n##### Worked examples"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c086",
+   "role": "code",
+   "src": "# Example 4.1 — walking along a ray: P(u) = O + u D\nO = t.tensor([0.0, 0.0, 0.0])\nD = t.tensor([1.0, -0.5, 0.0])\nfor u in [0.0, 1.0, 2.0]:\n    print(u, O + u * D)         # u=1 lands on the screen x=1 at y=-0.5"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c087",
+   "role": "code",
+   "src": "# Example 4.2 — a ray as a (2, 3) tensor, and reading its parts back\nray = t.tensor([[0.0, 0.0, 0.0], [1.0, 0.75, 0.0]])\norigin, direction = ray          # unpacking along dim 0\nprint(\"origin   \", origin)\nprint(\"direction\", direction)\nprint(\"dir y    \", ray[1, 1])    # [row=direction, col=y]"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c088",
+   "role": "code",
+   "src": "# Example 4.3 — a batch of rays: (n, 2, 3). Index order is [ray, point, coord].\nrays = t.tensor([\n    [[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]],\n    [[0.0, 0.0, 0.0], [1.0,  0.0, 0.0]],\n    [[0.0, 0.0, 0.0], [1.0,  1.0, 0.0]],\n])\nprint(rays.shape)\nprint(rays[:, 1, 1])              # all direction-y values: tensor([-1., 0., 1.])\nprint(rays[2])                    # the whole third ray"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c089",
+   "role": "code",
+   "src": "# Example 4.4 — where does each ray hit the screen x = 1?  Solve O_x + u D_x = 1 for u, then P(u).\nO = rays[:, 0]                    # (n, 3)\nD = rays[:, 1]                    # (n, 3)\nu = (1 - O[:, 0]) / D[:, 0]       # (n,)\nhits = O + u[:, None] * D         # broadcast u over the coord axis\nprint(hits)                       # every x is 1; y matches direction y because O = 0 and D_x = 1"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c090",
+   "role": "prose",
+   "src": "##### Faded problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c091",
+   "role": "code",
+   "src": "# Faded 4.1 — the point at parameter u along the ray\ndef point_at(ray: Tensor, u: float) -> Tensor:\n    origin, direction = ray\n    return ... + ... * ...\n\nr = t.tensor([[0.0, 1.0, 0.0], [2.0, 0.0, 0.0]])\ncheck(point_at(r, 0.0), t.tensor([0.0, 1.0, 0.0]), \"faded 4.1 u=0\")\ncheck(point_at(r, 1.5), t.tensor([3.0, 1.0, 0.0]), \"faded 4.1 u=1.5\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c092",
+   "role": "details",
+   "src": "```python\ndef point_at(ray: Tensor, u: float) -> Tensor:\n    origin, direction = ray\n    return origin + u * direction\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c093",
+   "role": "code",
+   "src": "# Faded 4.2 — build ONE ray from the camera at (0,0,0) through screen point (1, y, 0)\ndef ray_through(y: float) -> Tensor:\n    return t.tensor([[0.0, 0.0, 0.0], [..., ..., ...]])\n\ncheck(ray_through(-0.25), t.tensor([[0.0, 0.0, 0.0], [1.0, -0.25, 0.0]]), \"faded 4.2\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c094",
+   "role": "details",
+   "src": "```python\ndef ray_through(y: float) -> Tensor:\n    return t.tensor([[0.0, 0.0, 0.0], [1.0, y, 0.0]])\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c095",
+   "role": "code",
+   "src": "# Faded 4.3 — extract the direction-y of every ray in a batch, and the origin of every ray\nrays = t.zeros((5, 2, 3)); rays[:, 1, 0] = 1; rays[:, 1, 1] = t.linspace(-2, 2, 5)\ndir_y = rays[..., ..., ...]\norigins = rays[..., ...]\ncheck(dir_y, t.linspace(-2, 2, 5), \"faded 4.3 dir_y\")\ncheck(origins, t.zeros((5, 3)), \"faded 4.3 origins\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c096",
+   "role": "details",
+   "src": "```python\ndir_y = rays[:, 1, 1]\norigins = rays[:, 0]\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c097",
+   "role": "code",
+   "src": "# Faded 4.4 — screen hit points for a batch, assuming origin = 0 and direction x = 1 (so u = 1)\ndef screen_hits(rays: Tensor) -> Tensor:\n    origins = rays[:, 0]\n    directions = rays[:, 1]\n    u = ...\n    return origins + u * directions\n\ncheck(screen_hits(rays), t.stack([t.ones(5), t.linspace(-2, 2, 5), t.zeros(5)], dim=1), \"faded 4.4\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c098",
+   "role": "details",
+   "src": "```python\ndef screen_hits(rays: Tensor) -> Tensor:\n    origins = rays[:, 0]\n    directions = rays[:, 1]\n    u = 1.0\n    return origins + u * directions\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c099",
+   "role": "prose",
+   "src": "##### Challenge problems"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c100",
+   "role": "code",
+   "src": "# Challenge 4.1 — `screen_hits_general(rays, screen_x)`: rays (n, 2, 3) with ANY origin and ANY nonzero\n# direction x. Return the (n, 3) points where each ray meets the plane x = screen_x. No loops.\n# A ray is a HALF-line (u >= 0): if the plane is behind the origin, return NaN for that ray's row.\n# (Hint: compute u, then `t.where(u[:, None] >= 0, hits, t.nan)`.)\ndef screen_hits_general(rays: Tensor, screen_x: float) -> Tensor:\n    raise NotImplementedError()\n\nrs = t.tensor([\n    [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]],      # hits x=3 at u=3 → (3, 6, 0)\n    [[1.0, 1.0, 1.0], [2.0, 0.0, -1.0]],     # hits x=3 at u=1 → (3, 1, 0)\n    [[-1.0, 0.0, 0.0], [0.5, 0.5, 0.5]],     # hits x=3 at u=8 → (3, 4, 4)\n])\ncheck(screen_hits_general(rs, 3.0), t.tensor([[3.0, 6.0, 0.0], [3.0, 1.0, 0.0], [3.0, 4.0, 4.0]]), \"challenge 4.1\")\nbehind = screen_hits_general(t.tensor([[[2.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]), 1.0)   # plane x=1 is behind origin x=2\nassert behind.shape == (1, 3) and behind.isnan().all(), \"challenge 4.1: a plane behind the origin must give NaN\""
+  },
+  {
+   "t": "md",
+   "id": "0-1-c101",
+   "role": "details",
+   "src": "```python\ndef screen_hits_general(rays: Tensor, screen_x: float) -> Tensor:\n    O, D = rays[:, 0], rays[:, 1]\n    u = (screen_x - O[:, 0]) / D[:, 0]        # (n,)\n    hits = O + u[:, None] * D\n    return t.where(u[:, None] >= 0, hits, t.nan)   # half-line: nothing behind the origin\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c102",
+   "role": "code",
+   "src": "# Challenge 4.2 — same ray, different tensor. Two (origin, direction) pairs describe the SAME half-line\n# iff origins are equal and directions are positive multiples of each other. Write `same_ray(a, b) -> bool`.\ndef same_ray(a: Tensor, b: Tensor) -> bool:\n    raise NotImplementedError()\n\nA = t.tensor([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]])\nassert same_ray(A, t.tensor([[0.0, 0.0, 0.0], [2.0, 1.0, 0.0]])) is True      # scaled by 2\nassert same_ray(A, t.tensor([[0.0, 0.0, 0.0], [-1.0, -0.5, 0.0]])) is False   # opposite direction\nassert same_ray(A, t.tensor([[0.0, 1.0, 0.0], [1.0, 0.5, 0.0]])) is False     # different origin\nassert same_ray(A, t.tensor([[0.0, 0.0, 0.0], [1.0, 0.6, 0.0]])) is False     # not parallel\ntiny = t.tensor([[0.0, 0.0, 0.0], [1e-4, 0.0, 0.0]])\nassert same_ray(tiny, t.tensor([[0.0, 0.0, 0.0], [1e-4, 1e-4, 0.0]])) is False  # 45° apart — tolerance must not depend on scale\nassert same_ray(tiny, t.tensor([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0]])) is True      # same direction, wildly different length\nprint(\"challenge 4.2: ok\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c103",
+   "role": "details",
+   "src": "```python\ndef same_ray(a: Tensor, b: Tensor) -> bool:\n    if not t.allclose(a[0], b[0]):\n        return False\n    # compare UNIT directions so the tolerance is scale-free\n    da, db = a[1] / a[1].norm(), b[1] / b[1].norm()\n    return t.allclose(da, db, atol=1e-6)   # equal unit vectors ⇔ parallel AND same sense\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c104",
+   "role": "code",
+   "src": "# Challenge 4.3 — pen-and-paper, then code. A camera sits at (0, 0, 0). The screen is x = 1 and spans\n# y ∈ [-y_limit, y_limit]. A ray through screen point (1, y, 0) continues to x = 4.\n# (a) What is its y-coordinate at x = 4, as a formula in y?   → fill `y_at_4(y)`.\n# (b) A segment sits at x = 4 covering y ∈ [-2, 2]. For which y on the screen does the ray hit it?\n#     Return the (inclusive) interval as a tuple (lo, hi)  → fill `screen_window()`.\ndef y_at_4(y: float) -> float:\n    raise NotImplementedError()\n\ndef screen_window() -> tuple[float, float]:\n    raise NotImplementedError()\n\nassert abs(y_at_4(0.25) - 1.0) < 1e-9\nassert abs(y_at_4(-1.0) + 4.0) < 1e-9\nassert screen_window() == (-0.5, 0.5)\nprint(\"challenge 4.3: ok\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c105",
+   "role": "details",
+   "src": "```python\ndef y_at_4(y: float) -> float:\n    return 4 * y          # P(u) = u * (1, y, 0); x = 4 ⇒ u = 4 ⇒ y-coord = 4y\n\ndef screen_window() -> tuple[float, float]:\n    return (-0.5, 0.5)    # need 4y ∈ [-2, 2]\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c106",
+   "role": "prose",
+   "src": "#### 5️⃣ Problems at the level of `make_rays_1d`\n\nEach of these is a small variation on the original. Same difficulty (🔴🔴⚪⚪⚪), same 10–15 minute budget. Aim for the same three-line shape: allocate zeros → write the constant column → write the `linspace` column. Avoid Python loops.\n\nReference, for comparison (don't peek until you've done at least one):\n\n```python\ndef make_rays_1d(num_pixels, y_limit):\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n```"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c107",
+   "role": "code",
+   "src": "# Problem 5.1 — make_rays_1d_z: identical to make_rays_1d but the rays fan out in the z direction\n# instead of y. Directions run from (1, 0, -z_limit) to (1, 0, +z_limit) inclusive.\ndef make_rays_1d_z(num_pixels: int, z_limit: float) -> Tensor:\n    raise NotImplementedError()\n\nr = make_rays_1d_z(5, 2.0)\nassert r.shape == (5, 2, 3) and r.dtype == t.float32\ncheck(r[:, 0], t.zeros((5, 3)), \"5.1 origins\")\ncheck(r[:, 1, 0], t.ones(5), \"5.1 dir x\")\ncheck(r[:, 1, 1], t.zeros(5), \"5.1 dir y\")\ncheck(r[:, 1, 2], t.tensor([-2.0, -1.0, 0.0, 1.0, 2.0]), \"5.1 dir z\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c108",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_z(num_pixels: int, z_limit: float) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    t.linspace(-z_limit, z_limit, num_pixels, out=rays[:, 1, 2])\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c109",
+   "role": "code",
+   "src": "# Problem 5.2 — make_rays_1d_from: the camera is at an arbitrary `origin` (shape (3,)) and the screen is the\n# plane x = origin_x + 1. Rays still fan out in y from -y_limit to +y_limit RELATIVE to the origin.\n# So direction is (1, y, 0) exactly as before, but every origin row equals `origin`.\ndef make_rays_1d_from(num_pixels: int, y_limit: float, origin: Tensor) -> Tensor:\n    raise NotImplementedError()\n\no = t.tensor([-3.0, 1.0, 0.5])\nr = make_rays_1d_from(4, 1.5, o)\nassert r.shape == (4, 2, 3)\ncheck(r[:, 0], o.expand(4, 3), \"5.2 origins\")\ncheck(r[:, 1], t.tensor([[1.0, -1.5, 0.0], [1.0, -0.5, 0.0], [1.0, 0.5, 0.0], [1.0, 1.5, 0.0]]), \"5.2 directions\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c110",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_from(num_pixels: int, y_limit: float, origin: Tensor) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 0] = origin\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c111",
+   "role": "code",
+   "src": "# Problem 5.3 — make_rays_1d_screen: the screen is at x = screen_x instead of x = 1.\n# Direction vectors must point AT the screen point, i.e. direction = (screen_x, y, 0) with y in\n# [-y_limit, y_limit] inclusive — so u = 1 still lands on the screen.\ndef make_rays_1d_screen(num_pixels: int, y_limit: float, screen_x: float) -> Tensor:\n    raise NotImplementedError()\n\nr = make_rays_1d_screen(3, 1.0, 2.5)\ncheck(r[:, 0], t.zeros((3, 3)), \"5.3 origins\")\ncheck(r[:, 1], t.tensor([[2.5, -1.0, 0.0], [2.5, 0.0, 0.0], [2.5, 1.0, 0.0]]), \"5.3 directions\")\n# Sanity: with u = 1 every ray sits on the plane x = screen_x\nassert t.allclose((r[:, 0] + r[:, 1])[:, 0], t.full((3,), 2.5))"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c112",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_screen(num_pixels: int, y_limit: float, screen_x: float) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = screen_x\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c113",
+   "role": "code",
+   "src": "# Problem 5.4 — make_rays_1d_unit: same fan as make_rays_1d, but every direction is normalised to\n# unit length. (Hint: compute directions first, then divide by their norm along the last axis with keepdim.)\ndef make_rays_1d_unit(num_pixels: int, y_limit: float) -> Tensor:\n    raise NotImplementedError()\n\nr = make_rays_1d_unit(3, 1.0)\ncheck(r[:, 0], t.zeros((3, 3)), \"5.4 origins\")\ncheck(r[:, 1].norm(dim=-1), t.ones(3), \"5.4 unit length\")\ns = 2 ** -0.5\ncheck(r[:, 1], t.tensor([[s, -s, 0.0], [1.0, 0.0, 0.0], [s, s, 0.0]]), \"5.4 directions\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c114",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_unit(num_pixels: int, y_limit: float) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    rays[:, 1] /= rays[:, 1].norm(dim=-1, keepdim=True)\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c115",
+   "role": "code",
+   "src": "# Problem 5.5 — make_rays_1d_centres: like make_rays_1d, but the screen [-y_limit, y_limit] is divided into\n# num_pixels equal pixels and each ray goes through the CENTRE of its pixel (see Challenge 2.3).\n# make_rays_1d_centres(4, 1.0) has direction-y values [-0.75, -0.25, 0.25, 0.75].\ndef make_rays_1d_centres(num_pixels: int, y_limit: float) -> Tensor:\n    raise NotImplementedError()\n\nr = make_rays_1d_centres(4, 1.0)\ncheck(r[:, 1, 0], t.ones(4), \"5.5 dir x\")\ncheck(r[:, 1, 1], t.tensor([-0.75, -0.25, 0.25, 0.75]), \"5.5 dir y\")\ncheck(make_rays_1d_centres(1, 3.0)[:, 1, 1], t.tensor([0.0]), \"5.5 single pixel\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c116",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_centres(num_pixels: int, y_limit: float) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    half = y_limit / num_pixels\n    rays[:, 1, 1] = t.linspace(-y_limit + half, y_limit - half, num_pixels)\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c117",
+   "role": "code",
+   "src": "# Problem 5.6 — make_rays_1d_range: rays whose screen y runs from y_min to y_max (not symmetric).\n# make_rays_1d_range(3, 0.0, 1.0) has direction-y [0.0, 0.5, 1.0].\n# Then confirm that make_rays_1d_range(n, -L, L) matches the reference make_rays_1d(n, L) exactly.\ndef make_rays_1d_range(num_pixels: int, y_min: float, y_max: float) -> Tensor:\n    raise NotImplementedError()\n\ndef make_rays_1d(num_pixels, y_limit):   # reference, for the comparison\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n\ncheck(make_rays_1d_range(3, 0.0, 1.0)[:, 1, 1], t.tensor([0.0, 0.5, 1.0]), \"5.6 asymmetric\")\ncheck(make_rays_1d_range(9, -10.0, 10.0), make_rays_1d(9, 10.0), \"5.6 matches reference\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c118",
+   "role": "details",
+   "src": "```python\ndef make_rays_1d_range(num_pixels: int, y_min: float, y_max: float) -> Tensor:\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    t.linspace(y_min, y_max, num_pixels, out=rays[:, 1, 1])\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c119",
+   "role": "prose",
+   "src": "##### Where next\n\nIf every cell above passes, redo `make_rays_1d` above from scratch without looking at the solution. The next exercise, `intersect_ray_1d`, leans on Section 4 (the $O + uD$ parametrisation) plus solving a $2\\times2$ linear system with `t.linalg.solve`."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c120",
+   "role": "prose",
+   "src": "## Ray-Object Intersection\n\nSuppose we have a line segment defined by points $L_1$ and $L_2$. Then for a given ray, we can test if the ray intersects the line segment like so:\n\n- Supposing both the ray and line segment were infinitely long, solve for their intersection point.\n- If the point exists, check whether that point is inside the line segment and the ray.\n\nOur camera ray is defined by the origin $O$ and direction $D$ and our object line is defined by points $L_1$ and $L_2$.\n\nWe can write the equations for all points on the camera ray as $R(u)=O +u D$ for $u \\in [0, \\infty)$ and on the object line as $O(v)=L_1+v(L_2 - L_1)$ for $v \\in [0, 1]$.\n\nThe following interactive widget lets you play with this parameterization of the problem. Run the cells one after another:"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c121",
+   "role": "code",
+   "src": "fig: go.FigureWidget = setup_widget_fig_ray()\ndisplay(fig)\n\n\n@interact(v=(0.0, 6.0, 0.01), seed=(0, 10, 1))\ndef update(v=0.0, seed=0):\n    t.manual_seed(seed)\n    L_1, L_2 = t.rand(2, 2)\n    P = lambda v: L_1 + v * (L_2 - L_1)\n    x, y = zip(P(0), P(6))\n    with fig.batch_update():\n        fig.update_traces({\"x\": x, \"y\": y}, 0)\n        fig.update_traces({\"x\": [L_1[0], L_2[0]], \"y\": [L_1[1], L_2[1]]}, 1)\n        fig.update_traces({\"x\": [P(v)[0]], \"y\": [P(v)[1]]}, 2)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c122",
+   "role": "prose",
+   "src": "Setting the line equations from above equal gives the solution:\n\n$$\n\\begin{aligned}O + u D &= L_1 + v(L_2 - L_1) \\\\ u D - v(L_2 - L_1) &= L_1 - O  \\\\ \\begin{pmatrix} D_x & (L_1 - L_2)_x \\\\ D_y & (L_1 - L_2)_y \\\\ \\end{pmatrix} \\begin{pmatrix} u \\\\ v \\\\ \\end{pmatrix} &=  \\begin{pmatrix} (L_1 - O)_x \\\\ (L_1 - O)_y \\\\ \\end{pmatrix} \\end{aligned}\n$$\n\nOnce we've found values of $u$ and $v$ which satisfy this equation, if any (the lines could be parallel) we just need to check that $u \\geq 0$ and $v \\in [0, 1]$."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c123",
+   "role": "prose",
+   "src": "### Exercise - implement `intersect_ray_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 20-25 minutes on this exercise.\n> It involves some of today's core concepts - tensor manipulation, linear operations, etc.\n> ```\n\nUsing [`torch.linalg.solve`](https://pytorch.org/docs/stable/generated/torch.linalg.solve.html) and [`torch.stack`](https://pytorch.org/docs/stable/generated/torch.stack.html), implement the `intersect_ray_1d` function to solve the above matrix equation."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c123-1",
+   "role": "details",
+   "src": "`torch.stack` will combine tensors along a new dimension.\n\n```python\n>>> t.stack([t.ones(2, 2), t.zeros(2, 2)], dim=0)\ntensor([[[1., 1.],\n         [1., 1.]],\n\n        [[0., 0.],\n         [0., 0.]]])\n```\n\n`torch.concat` (alias `torch.cat`) will combine tensors along an existing dimension.\n\n```python\n>>> t.cat([t.ones(2, 2), t.zeros(2, 2)], dim=0)\ntensor([[1., 1.],\n        [1., 1.],\n        [0., 0.],\n        [0., 0.]])\n```\n\nHere, you should use `torch.stack` to construct e.g. the matrix on the left hand side, because you want to combine the vectors $D$ and $L_1 - L_2$ to make a matrix.",
+   "summary": "Aside - difference between stack and concatenate"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c123-2",
+   "role": "prose",
+   "src": "Is it possible for the solve method to fail? Give a sample input where this would happen."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c123-3",
+   "role": "details",
+   "src": "If the ray and segment are exactly parallel, then the solve will fail because there is no solution to the system of equations. For this function, handle this by catching the exception and returning False.",
+   "summary": "Answer - Failing Solve"
+  },
+  {
+   "t": "code",
+   "id": "0-1-c124",
+   "role": "code",
+   "src": "def intersect_ray_1d(ray: Float[Tensor, \"points dims\"], segment: Float[Tensor, \"points dims\"]) -> bool:\n    \"\"\"\n    ray: shape (n_points=2, n_dim=3)  # O, D points\n    segment: shape (n_points=2, n_dim=3)  # L_1, L_2 points\n\n    Return True if the ray intersects the segment.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_intersect_ray_1d(intersect_ray_1d)\ntests.test_intersect_ray_1d_special_case(intersect_ray_1d)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c125",
+   "role": "details",
+   "src": "Our formula only uses the x and y coordinates - remember to discard the z coordinate for now.\n\nIt's good practice to write asserts on the shape of things so that your asserts will fail with a helpful error message. In this case, you could assert that the `mat` argument is of shape (2, 2) and the `vec` argument is of shape (2,). Also, see the aside below on typechecking.",
+   "summary": "Help! My code is failing with a 'must be batches of square matrices' exception."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c125-1",
+   "role": "details",
+   "src": "```python\ndef intersect_ray_1d(ray: Float[Tensor, \"points dims\"], segment: Float[Tensor, \"points dims\"]) -> bool:\n    \"\"\"\n    ray: shape (n_points=2, n_dim=3)  # O, D points\n    segment: shape (n_points=2, n_dim=3)  # L_1, L_2 points\n\n    Return True if the ray intersects the segment.\n    \"\"\"\n    # Get the x and y coordinates (ignore z)\n    ray = ray[:, :2]\n    segment = segment[:, :2]\n\n    # Ray is [[Ox, Oy], [Dx, Dy]]\n    O, D = ray\n    # Segment is [[L1x, L1y], [L2x, L2y]]\n    L_1, L_2 = segment\n\n    # Create matrix and vector, and solve equation\n    mat = t.stack([D, L_1 - L_2], dim=-1)\n    vec = L_1 - O\n\n    # Solve equation (return False if no solution)\n    try:\n        sol = t.linalg.solve(mat, vec)\n    except RuntimeError:\n        return False\n\n    # If there is a solution, check the soln is in the correct range for there to be an intersection\n    u = sol[0].item()\n    v = sol[1].item()\n    return (u >= 0.0) and (v >= 0.0) and (v <= 1.0)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c126",
+   "role": "prose",
+   "src": "### Aside - type hints\n\nAdding type hints to your code is a useful habit to get into. Some advantages of using them:\n\n- **They help document your code**, making it more readable (for yourself and for others)\n- **The improve IDE behaviour**, i.e. getting better code completion\n- **They encourage better code structure**, since they force you to consider your inputs & outputs explicitly\n- **They make debugging easier**, since you'll find it easier to spot where a variable might not match the type signature you've given for it\n\nAs well as simple objects, you can also typecheck iterables of objects, for example:\n\n- `list[int]` for a list of integers,\n- `dict[str, float]` for a dict mapping strings to floats,\n- `tuple[Tensor, Tensor]` for a length-2 tuple containing tensors,\n- `tuple[int, ...]` for a tuple containing one or more integers.\n\nand you can also use other syntax to extend behaviour, e.g. `x: int | None` for a variable which can either be an integer or `None`.\n\nJaxtyping also gives us useful type hint features, e.g. we have `ray: Float[Tensor, \"points dims\"]` to indicate a tensor of floats with dimensions `points` and `dims`. Unlike the examples above this is unlikely to be captured by syntax highlighting when you make a mistake, instead it's best to view this as an alternative to annotating the tensor shape. You may or may not prefer to use this.\n\nWhen in doubt however, it's best to make assertions on the variable type or tensor shape explicitly, e.g. `assert isinstance(x, Tensor)` or `assert x.shape == ...`. We generally don't recommend static type checking like [mypy](https://mypy-lang.org/) in this course, because there aren't generally standard and robust ways to do it which will fit all IDEs & use-cases."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c127",
+   "role": "prose",
+   "src": "# 2️⃣ Batched Operations\n\n> ##### Learning Objectives\n>\n> - Learn about some important concepts related to batched operations, e.g. broadcasting and logical reductions\n> - Understand and use the `einops` library\n> - Apply this knowledge to create & work with a batch of rays"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c128",
+   "role": "prose",
+   "src": "In this section, we'll move onto batched operations. First, it's necessary to cover some important tips for working effectively with PyTorch tensors. If you've gone through the prerequisite material then several of these should already be familiar to you."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c129",
+   "role": "prose",
+   "src": "## Tensor Operations - 5 Tips"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c130",
+   "role": "prose",
+   "src": "### Tip (1/5) - Elementwise Logical Operations on Tensors\n\nFor regular booleans, the keywords `and`, `or`, and `not` are used to do logical operations and the operators `&`, `|`, and `~` do `and`, `or` and `not` on each bit of the input numbers. Analogously, we use the operators `&`, `|` `~` on tensors to perform these operations on each element of the tensor, e.g. `x & y` returns the tensor with elements `x[i] and y[i]`.\n\nA few important gotchas here:\n\n- Don't try to use `and`, `or` or `not` on tensors, since Python will try to coerce the tensors to booleans, and you'll get an exception.\n- Remember about **operator precedence**! For instance, `v >= 0 & v <= 1` will actually throw an error because it's actually evaluated as `(v >= (0 & v)) <= 1` (because `&` has high precedence) and `0 & v` is not a valid operation. When in doubt, use parentheses to force the correct parsing: `(v >= 0) & (v <= 1)`."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c131",
+   "role": "prose",
+   "src": "### Tip (2/5) - `einops`\n\nEinops is a useful library which we'll dive deeper with tomorrow. For now, the only important function you'll need to know is `einops.repeat`. This takes as arguments a tensor and a string, and returns a new tensor which has been repeated along the specified dimensions. For example, the following code shows how we can repeat a 2D tensor along the last dimension:\n\n```python\nx = t.randn(4, 3)\nx_repeated = einops.repeat(x, 'a b -> a b c', c=2) # copies x along a new dimension at the end\n\nassert x_repeated.shape == (4, 3, 2)\nt.testing.assert_close(x_repeated[:, :, 0], x)\nt.testing.assert_close(x_repeated[:, :, 1], x)\n```"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c132",
+   "role": "prose",
+   "src": "### Tip (3/5) - Logical Reductions\n\nIn plain Python, if you have a list of lists and want to know if any element in a row is `True`, you could use a list comprehension like `[any(row) for row in rows]`. The efficient way to do this in PyTorch is with `torch.any()` or equivalently the `.any()` method of a tensor, which accept the dimension to reduce over. Similarly, `torch.all()` or `.all()` method. Both of these methods accept a `dim` argument, which is the dimension to reduce over."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c132-1",
+   "role": "details",
+   "src": "Most functions like `torch.any(tensor, ...)` (which take a tensor as first argument) have an equivalent tensor method `tensor.any(...)`. We'll see many more examples of functions like this as we go through the course.",
+   "summary": "Aside - tensor methods"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c133",
+   "role": "prose",
+   "src": "### Tip (4/5) - Broadcasting\n\nBroadcasting is what happens when you perform an operation on two tensors, and one is a smaller size, but is copied along the dimensions of the larger one in order to apply to it. There are some complicated broadcasting rules which we'll get into later in the course (you can also review the broadcasting section in the prerequisite material which comes before this chapter), but for our purposes the only thing you need to know is this: if you perform an operation on 2 tensors `A, B` where `A.shape == B.shape[-A.ndim:]` (i.e. `A` matches the last dimensions of `B`), then `A` will be copied along its leading dimensions until it has the same shape as `B`. For example:\n\n```python\nB = t.ones(4, 3, 2)\nA = t.ones(3, 2)\nC = A + B\nprint(C.shape) # torch.Size([4, 3, 2]), the size of the broadcasted tensor\nprint(C.max(), C.min()) # tensor(2.) tensor(2.), because all elements are 2\n```"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c134",
+   "role": "prose",
+   "src": "### Tip (5/5) - Indexing\n\nIndexing is a pretty deep topic in PyTorch, and it takes a while to get fully comfortable with it. However, we'll specifically cover some features which will be useful for the following exercises.\n\n**Using ellipses.** You can use an ellipsis `...` in an indexing expression to avoid repeated `:` and to write indexing expressions that work on varying numbers of input dimensions. For example, `x[..., 0]` is equivalent to `x[:, :, 0]` if `x` is 3D, and equivalent to `x[:, :, :, 0]` if `x` is 4D.\n\n**Boolean indexing.** Boolean indexing allows you to select elements of a tensor based on a corresponding boolean tensor. Only the elements where the boolean value is True are selected. The following example shows boolean indexing *and* broadcasting:\n\n```python\nD = t.ones(2)  # Tensor with shape (2,)\nE = t.zeros(3, 2)  # Tensor with shape (3, 2)\nE[[True, False, True], :].shape  # Shape: (2, 2)\nE[[True, False, True], :] = D  # Assign values from D to selected rows\nprint(E)\n# output:\n# tensor([[1., 1.],\n#         [0., 0.],\n#         [1., 1.]])\n```\n\nNote that `E` gets modified when `E[[True, False, True], :]` gets modified - this is because the latter is a **view** of the former, not a new tensor (i.e. it points to the same place in memory) - we'll look a bit more at this topic later.\n\n**Multi-dimensional indexing.** You can also apply boolean indexing to multiple dimensions simultaneously. This allows you to select elements across several dimensions based on a boolean condition. The following example shows multi-dimensional boolean indexing *and* broadcasting:\n\n```python\nD = t.ones(2)  # Tensor with shape (2,)\nF = t.zeros(2, 2, 2)  # Tensor with shape (2, 2, 2)\nF[[[True, True], [False, True]], :].shape  # Shape: (3, 2)\nF[[[True, True], [False, True]], :] = D\nprint(F)\n# output:\n# tensor([[[1., 1.],\n#          [1., 1.]],\n\n#         [[0., 0.],\n#          [1., 1.]]])\n```\n\nThis works because our indexing creates a tensor of shape `(3, 2)`, formed by stacking the three tensors `F[0, 0]`, `F[0, 1]` and `F[1, 1]` (those where the corresponding index value is True) along a new leading dimension."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c135",
+   "role": "prose",
+   "src": "### Summary of tips\n\n> * Use `...` to avoid repeated `:` in indexing expressions\n> * Use `&`, `|`, and `~` for elementwise logical operations on tensors\n> * Use parentheses to force the correct operator precedence\n> * Use `torch.any()` or `.any()` to do logical reductions (you can do this over a single dimension, with the `dim` argument)\n> * Tensors can broadcast along leading dimensions to operate together\n>   * e.g. `t.ones(2) + t.ones(3, 2)` works because the former tensor gets broadcasted to shape `(3, 2)`\n> * We can index with boolean tensors to select multiple elements\n>   * e.g. if `A.shape = (3, n1, n2, ...)` then `A[[True, False, True]]` has shape `(2, n1, n2, ...)` and contains the first & third rows of `A`\n> * We can index with multi-dimensional boolean tensors too\n>   * e.g. if `A.shape = (2, 2, n1, n2, ...)` then `A[[[True, True], [False, True]], :]` has shape `(3, n1, n2, ...)` and contains the elements `A[0, 0]`, `A[0, 1]` and `A[1, 1]`, stacked along a new leading dimension"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c136",
+   "role": "prose",
+   "src": "## Batched Ray-Segment Intersection\n\nWe'll now move on to implementing a batched version of our previous function which takes multiple rays, multiple line segments, and returns a boolean for each ray indicating whether ***any*** segment intersects with that ray.\n\nNote - in the batched version, we don't want the solver to throw an exception just because some of the equations don't have a solution - these should just return False."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c137",
+   "role": "prose",
+   "src": "### Exercise - implement `intersect_rays_1d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 25-40 minutes on this exercise.\n> This will probably be one of the hardest exercises you'll complete today.\n> ```\n\nOne part you might find difficult is dealing with the zero determinant cases. Previously we dealt with those by using `try / except`, but here we can't do that because we want to perform all the operations at once. Instead, we can use the following clever trick to find all the pairs of intersecting rays and segments:\n\n1. Figure out which matrices have zero determinant (e.g. with `determinants.abs() < 1e-8`)\n2. Replace those matrices with the identity matrix `t.eye(2)`, since this will certainly not raise an error when solving\n3. Find the matrices s.t. `u, v` are in the required range **and** our original matrix was non-singular\n\nThis way, we've identified all pairs of rays and segments where an intersection point exists **and** that intersection point is valid (i.e. it's actually on the positive side of the ray, and somewhere in the middle of the segment).\n\nOnce we have this 2D array of booleans representing whether each ray intersects with each segment, we can reduce using the torch function `t.any` to find the rays which intersect *any* segment."
+  },
+  {
+   "t": "code",
+   "id": "0-1-c138",
+   "role": "code",
+   "src": "def intersect_rays_1d(\n    rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if it intersects any segment.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_intersect_rays_1d(intersect_rays_1d)\ntests.test_intersect_rays_1d_special_case(intersect_rays_1d)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c139",
+   "role": "details",
+   "src": "You should have some variable `mat` which is a batch of matrices, i.e. it has shape `(n_rays, n_segments, 2, 2)`. You can then define `is_singular` as a boolean tensor of shape `(n_rays, n_segments)` which is true wherever the matrix is singular. Now, indexing `mat[is_singular]` returns a tensor of shape `(N, 2, 2)` where the `[i, :, :]`-th element is the `i`-th singular matrix. Thanks to broadcasting rules, you can set `mat[is_singular] = t.eye(2)`, and the identity matrix with shape `(2, 2)` will get broadcasted to the left hand shape `(N, 2, 2)`.",
+   "summary": "Help - I don't know how to set all my matrices to the identity"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c139-1",
+   "role": "details",
+   "src": "```python\ndef intersect_rays_1d(\n    rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if it intersects any segment.\n    \"\"\"\n    NR = rays.size(0)\n    NS = segments.size(0)\n\n    # Get just the x and y coordinates\n    rays = rays[..., :2]\n    segments = segments[..., :2]\n\n    # Repeat rays and segments so that we can compuate the intersection of every (ray, segment) pair\n    rays = einops.repeat(rays, \"nrays p d -> nrays nsegments p d\", nsegments=NS)\n    segments = einops.repeat(segments, \"nsegments p d -> nrays nsegments p d\", nrays=NR)\n\n    # Each element of `rays` is [[Ox, Oy], [Dx, Dy]]\n    O = rays[:, :, 0]\n    D = rays[:, :, 1]\n    assert O.shape == (NR, NS, 2)\n\n    # Each element of `segments` is [[L1x, L1y], [L2x, L2y]]\n    L_1 = segments[:, :, 0]\n    L_2 = segments[:, :, 1]\n    assert L_1.shape == (NR, NS, 2)\n\n    # Define matrix on left hand side of equation\n    mat = t.stack([D, L_1 - L_2], dim=-1)\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    dets = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    assert is_singular.shape == (NR, NS)\n    mat[is_singular] = t.eye(2)\n\n    # Define vector on the right hand side of equation\n    vec = L_1 - O\n\n    # Solve equation, get results\n    sol = t.linalg.solve(mat, vec)\n    u = sol[..., 0]\n    v = sol[..., 1]\n\n    # Return boolean of (matrix is nonsingular, and soln is in correct range implying intersection)\n    return ((u >= 0) & (v >= 0) & (v <= 1) & ~is_singular).any(dim=-1)\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c140",
+   "role": "prose",
+   "src": "## Using GPT to understand code\n\n*Note, the world of LLMs moves fast, so this section is likely to get out of date at some point!*\n\nNext week we'll start learning about transformers and how to build them, but it's not too early to start using them to accelerate your own learning!\n\nWe'll be discussing more advanced ways to use GPT 3 and 4 as coding partners / research assistants in the coming weeks, but for now we'll look at a simple example: **using GPT to understand code**. You're recommended to read the recent [LessWrong post](https://www.lesswrong.com/posts/ptY6X3BdW4kgqpZFo/using-gpt-4-to-understand-code) by Siddharth Hiregowdara in which he explains his process. This works best on GPT-4, but I've found GPT-3.5 works equally well for reasonably straightforward problems (see the section below).\n\nFirstly, you should get an account to use GPT with if you haven't already. Next, try asking GPT-3.5 / 4 for an explanation of the function above. You can do this e.g. via the following prompt:\n\n> Explain this Python function, line by line. You should break up your explanation by inserting sections of the code.\n>\n> ```python\n> def intersect_rays_1d(rays: Float[Tensor, \"nrays 2 3\"], segments: Float[Tensor, \"nsegments 2 3\"]) -> Bool[Tensor, \" nrays\"]:\n>     NR = rays.size(0)\n>     NS = segments.size(0)\n>     rays = rays[..., :2]\n>     ...\n> ```\n\nI've found removing comments is often more helpful, because then GPT will answer in its own words rather than just repeating the comments (and the comments can sometimes confuse it).\n\nOnce you've got a response, here are a few more things you might want to consider asking:\n\n* Can you suggest ways to improve the code?\n    * GPT-4 recommended using a longer docstring and more descriptive variable names, among other things.\n* Can you explain why the line `mat[is_singular] = t.eye(2)` works?\n    * GPT-4 gave me a correct and very detailed explanation involving broadcasting and tensor shapes.\n\nIs using GPT in this way cheating? It can be, if your first instinct is to jump to GPT rather than trying to understand the code yourself. But it's important here to bring up the distinction of [playing in easy mode](https://www.lesswrong.com/posts/nJPtHHq6L7MAMBvRK/play-in-easy-mode) vs [playing in hard mode](https://www.lesswrong.com/posts/7hLWZf6kFkduecH2g/play-in-hard-mode). There are situations where it's valuable for you to think about a problem for a while before moving forward because that deliberation will directly lead to you becoming a better researcher or engineer (e.g. when you're thinking of a hypothesis for how a circuit works while doing mechanistic interpretability on a transformer, or you're pondering which datastructure best fits your use case while implementing some RL algorithm). But there are also situations (like this one) where you'll get more value from speedrunning towards an understanding of certain code or concepts, and apply your understanding in subsequent exercises. It's important to find a balance!\n\n#### When to use GPT-3.5 and GPT-4\n\nGPT-3.5 and 4 both have advantages and disadvantages in different situations. GPT-3.5 has a large advantage in speed over GPT-4, and works equally well on simple problems or functions. If it's anything that Copilot is capable of writing, then you're likely better off using it instead of GPT-4.\n\nOn the other hand, GPT-4 has an advantage at generating coherent code (although we don't expect you to be using it for code generation much at this stage in the program), and is generally better at responding to complex tasks with less prompt engineering.\n\n#### Additional notes on using GPT (from Joseph Bloom)\n\n* ChatGPT is overly friendly. If you give it bad code it won't tell you it's shit so you need to encourage it to give feedback and/or show you examples of great code. Especially for beginner coders using it, it's important to realise how *under* critical it is.\n* GPT is great at writing tests (asking it to write a test for a function is often better than asking it if a function is correct), refactoring code (identifying repeated tasks and extracting them) and naming variables well. These are specific things worth doing a few times to see how useful they can be.\n* GPT-4 does well with whole modules/scripts so don't hesitate to add those. When you start managing repos on GitHub, use tracked files so that when you copy-paste edited code back, all the changes are highlighted for you as if you'd made them. (VSCode highlights changes with small blue bars next to the line numbers in your python files.)\n\nHere are some things you can play around with:\n\n* Ask GPT it to write tests for the function. You can give more specific instructions (e.g. asking it to use / not to use the `unittests` library, or to print more informative error messages).\n* Ask GPT how to refactor the function above. (When I did this, it suggested splitting the function up into subfunctions which performed the discrete tasks of \"compute intersection points\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c141",
+   "role": "prose",
+   "src": "## 2D Rays\n\nNow we're going to make use of the z dimension and have rays emitted from the origin in both y and z dimensions."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c142",
+   "role": "prose",
+   "src": "### Exercise - implement `make_rays_2d`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵⚪⚪⚪\n>\n> You should spend up to 10-20 minutes on this exercise.\n> ```\n\nImplement `make_rays_2d` analogously to `make_rays_1d`. The result should look like a pyramid with the tip at the origin."
+  },
+  {
+   "t": "code",
+   "id": "0-1-c143",
+   "role": "code",
+   "src": "def make_rays_2d(num_pixels_y: int, num_pixels_z: int, y_limit: float, z_limit: float) -> Float[Tensor, \"nrays 2 3\"]:\n    \"\"\"\n    num_pixels_y: The number of pixels in the y dimension\n    num_pixels_z: The number of pixels in the z dimension\n\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both.\n    z_limit: At x=1, the rays should extend from -z_limit to +z_limit, inclusive of both.\n\n    Returns: shape (num_rays=num_pixels_y * num_pixels_z, num_points=2, num_dims=3).\n    \"\"\"\n    raise NotImplementedError()\n\n\nrays_2d = make_rays_2d(10, 10, 0.3, 0.3)\nrender_lines_with_plotly(rays_2d)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c144",
+   "role": "details",
+   "src": "Don't write it as a function right away. The most efficient way is to write and test each line individually in the REPL to verify it does what you expect before proceeding.\n\nYou can either build up the output tensor using `torch.stack`, or you can initialize the output tensor to its final size and then assign to slices like `rays[:, 1, 1] = ...`. It's good practice to be able to do it both ways.\n\nEach y coordinate needs a ray with each corresponding z coordinate - in other words this is an outer product. The most elegant way to do this is with two calls to `einops.repeat`. You can also accomplish this with `unsqueeze`, `expand`, and `reshape` combined.",
+   "summary": "Help - I'm not sure how to implement this function."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c144-1",
+   "role": "details",
+   "src": "```python\ndef make_rays_2d(num_pixels_y: int, num_pixels_z: int, y_limit: float, z_limit: float) -> Float[Tensor, \"nrays 2 3\"]:\n    \"\"\"\n    num_pixels_y: The number of pixels in the y dimension\n    num_pixels_z: The number of pixels in the z dimension\n\n    y_limit: At x=1, the rays should extend from -y_limit to +y_limit, inclusive of both.\n    z_limit: At x=1, the rays should extend from -z_limit to +z_limit, inclusive of both.\n\n    Returns: shape (num_rays=num_pixels_y * num_pixels_z, num_points=2, num_dims=3).\n    \"\"\"\n    n_pixels = num_pixels_y * num_pixels_z\n    ygrid = t.linspace(-y_limit, y_limit, num_pixels_y)\n    zgrid = t.linspace(-z_limit, z_limit, num_pixels_z)\n    rays = t.zeros((n_pixels, 2, 3), dtype=t.float32)\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = einops.repeat(ygrid, \"y -> (y z)\", z=num_pixels_z)\n    rays[:, 1, 2] = einops.repeat(zgrid, \"z -> (y z)\", y=num_pixels_y)\n    return rays\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c145",
+   "role": "prose",
+   "src": "# 3️⃣ Triangles\n\n> ##### Learning Objectives\n>\n> - Understand how to parametrize triangles in 2D and 3D, and solve for their intersection with rays\n> - Put everything together, to render your mesh as a 2D image"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c146",
+   "role": "prose",
+   "src": "## Triangle Coordinates\n\nThe area inside a triangle can be defined by three (non-collinear) points $A$, $B$ and $C$, and can be written algebraically as a **convex combination** of those three points:\n\n$$\n\\begin{align*}\nP(w, u, v) &= wA + uB + vC \\quad\\quad \\\\\n    \\\\\ns.t. \\quad 0 &\\leq w,u,v \\\\\n1 &= w + u + v\n\\end{align*}\n$$\n\nOr equivalently:\n\n$$\n\\begin{align*}\n\\quad\\quad\\quad\\quad P(u, v) &= (1 - u - v)A + uB + vC \\\\\n&= A + u(B - A) + v(C - A) \\\\\n\\\\\ns.t. \\quad 0 &\\leq u,v \\\\\nu + v &\\leq 1\n\\end{align*}\n$$\n\nThese $u, v$ are called \"barycentric coordinates\".\n\nIf we remove the bounds on $u$ and $v$, we get an equation for the plane containing the triangle. Play with the widget to understand the behavior of $u, v$."
+  },
+  {
+   "t": "code",
+   "id": "0-1-c147",
+   "role": "code",
+   "src": "one_triangle = t.tensor([[0, 0, 0], [4, 0.5, 0], [2, 3, 0]])\nA, B, C = one_triangle\nx, y, z = one_triangle.T\n\nfig: go.FigureWidget = setup_widget_fig_triangle(x, y, z)\ndisplay(fig)\n\n\n@interact(u=(-0.5, 1.5, 0.01), v=(-0.5, 1.5, 0.01))\ndef update(u=0.0, v=0.0):\n    P = A + u * (B - A) + v * (C - A)\n    fig.update_traces({\"x\": [P[0]], \"y\": [P[1]]}, 2)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c148",
+   "role": "prose",
+   "src": "### Triangle-Ray Intersection\n\nGiven a ray with origin $O$ and direction $D$, our intersection algorithm will consist of two steps:\n\n- Finding the intersection between the line and the plane containing the triangle, by solving the equation $P(u, v) = P(s)$;\n- Checking if $u$ and $v$ are within the bounds of the triangle.\n\nExpanding the equation $P(u, v) = P(s)$, we have:\n\n$$\n\\begin{align*}\nA + u(B - A) + v(C - A) &= O + sD \\\\\n\\Rightarrow\n\\begin{pmatrix}\n    -D & (B - A) & (C - A) \\\\\n\\end{pmatrix}\n\\begin{pmatrix}\n    s \\\\\n    u \\\\\n    v  \n\\end{pmatrix}\n&= \\begin{pmatrix} O - A \\end{pmatrix} \\\\\n\\Rightarrow \\begin{pmatrix}\n    -D_x & (B - A)_x & (C - A)_x \\\\\n    -D_y & (B - A)_y & (C - A)_y \\\\\n    -D_z & (B - A)_z & (C - A)_z \\\\\n\\end{pmatrix}\n\\begin{pmatrix}\n    s \\\\\n    u \\\\\n    v  \n\\end{pmatrix} &= \\begin{pmatrix}\n    (O - A)_x \\\\\n    (O - A)_y \\\\\n    (O - A)_z \\\\\n\\end{pmatrix}\n\\end{align*}\n$$\n\n$$\n$$\n\nWe can therefore find the coordinates `s`, `u`, `v` of the intersection point by solving the linear system above."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c149",
+   "role": "prose",
+   "src": "### Exercise - implement `triangle_ray_intersects`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n>\n> You should spend up to 15-20 minutes on this exercise.\n> ```\n\nUsing `torch.linalg.solve` and `torch.stack`, implement `triangle_ray_intersects(A, B, C, O, D)`.\n\nA few tips:\n\n* If you have a 0-dimensional tensor with shape `()` containing a single value, use the `item()` method to convert it to a plain Python value.\n* If you have a tensor of shape `tensor.shape = (3, ...)`, then you can unpack it along the first dimension into three separate tensors the same way that you'd unpack a normal python list: `s, u, v = tensor`.\n    * Note - if the dimension you want to unpack isn't at the start, a nice alternative is `s, u, v = tensor.unbind(dim)`, which does the same thing but along the dimension given by `dim` rather than the first dimension.\n* If your function isn't working, try making a simple ray and triangle with nice round numbers where you can work out manually if it should intersect or not, then debug from there."
+  },
+  {
+   "t": "code",
+   "id": "0-1-c150",
+   "role": "code",
+   "src": "Point = Float[Tensor, \"points=3\"]\n\n\ndef triangle_ray_intersects(A: Point, B: Point, C: Point, O: Point, D: Point) -> bool:\n    \"\"\"\n    A: shape (3,), one vertex of the triangle\n    B: shape (3,), second vertex of the triangle\n    C: shape (3,), third vertex of the triangle\n    O: shape (3,), origin point\n    D: shape (3,), direction point\n\n    Return True if the ray and the triangle intersect.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_triangle_ray_intersects(triangle_ray_intersects)"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c151",
+   "role": "details",
+   "src": "```python\ndef triangle_ray_intersects(A: Point, B: Point, C: Point, O: Point, D: Point) -> bool:\n    \"\"\"\n    A: shape (3,), one vertex of the triangle\n    B: shape (3,), second vertex of the triangle\n    C: shape (3,), third vertex of the triangle\n    O: shape (3,), origin point\n    D: shape (3,), direction point\n\n    Return True if the ray and the triangle intersect.\n    \"\"\"\n    s, u, v = t.linalg.solve(t.stack([-D, B - A, C - A], dim=1), O - A)\n    return ((s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1)).item()\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c152",
+   "role": "prose",
+   "src": "## Single-Triangle Rendering\n\nImplement `raytrace_triangle` using only one call to `torch.linalg.solve`.\n\nReshape the output and visualize with `plt.imshow`. It's normal for the edges to look pixelated and jagged - using a small number of pixels is a good way to debug quickly.\n\nIf you think it's working, increase the number of pixels and verify that it looks less pixelated at higher resolution."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c153",
+   "role": "prose",
+   "src": "### Views and Copies\n\nIt's critical to know when you are making a copy of a `Tensor`, versus making a view of it that shares the data with the original tensor. It's preferable to use a view whenever possible to avoid copying memory unnecessarily. On the other hand, modifying a view modifies the original tensor which can be unintended and surprising. Consult [the documentation](https://pytorch.org/docs/stable/tensor_view.html) if you're unsure if a function returns a view. A short reference of common functions:\n\n- `torch.expand`: always returns a view\n- `torch.view`: always returns a view\n- `torch.detach`: always returns a view\n- `torch.repeat`: always copies\n- `torch.clone`: always copies\n- `torch.flip`: always copies (different than numpy.flip which returns a view)\n- `torch.tensor`: always copies, but PyTorch recommends using `.clone().detach()` instead.\n- `torch.Tensor.contiguous`: returns self if possible, otherwise a copy\n- `torch.transpose`: returns a view if possible, otherwise (sparse tensor) a copy\n- `torch.reshape`: returns a view if possible, otherwise a copy\n- `torch.flatten`: returns a view if possible, otherwise a copy (different than numpy.flatten which returns a copy)\n- `einops.repeat`: returns a view if possible, otherwise a copy\n- `einops.rearrange`: returns a view if possible, otherwise a copy\n- Basic indexing returns a view, while advanced indexing returns a copy."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c154",
+   "role": "prose",
+   "src": "### Storage Objects\n\nCalling `storage()` on a `Tensor` returns a Python object wrapping the underlying C++ array. This array is 1D regardless of the dimensionality of the `Tensor`. This allows you to look inside the `Tensor` abstraction and see how the actual data is laid out in RAM.\n\nNote that a new Python wrapper object is generated each time you call `storage()`, and both `x.storage() == x.storage()` and `x.storage() is x.storage()` evaluates to False.\n\nIf you want to check if two `Tensor`s share an underlying C++ array, you can compare their `storage().data_ptr()` fields. This can be useful for debugging."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c155",
+   "role": "prose",
+   "src": "### `Tensor._base`\n\nIf `x` is a view, you can access the original `Tensor` with `x._base`. This is an undocumented internal feature that's useful to know. Consider the following code:\n\n```python\nx = t.zeros(1024*1024*1024)\ny = x[0]\ndel x\n```\n\nHere, `y` was created through basic indexing, so `y` is a view and `y._base` refers to `x`. This means `del x` won't actually deallocate the 4GB of memory, and that memory will remain in use which can be quite surprising. `y = x[0].clone()` would be an alternative here that does allow reclaiming the memory."
+  },
+  {
+   "t": "md",
+   "id": "0-1-c156",
+   "role": "prose",
+   "src": "### Exercise - implement `raytrace_triangle`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 15-20 minutes on this exercise.\n> This is about as hard as `intersect_rays_1d`, although hopefully you should find it more familiar.\n> ```\n\nBelow, you should implement `raytrace_triangle`, a funtion which checks whether each ray in `ray` intersects a single given triangle."
+  },
+  {
+   "t": "code",
+   "id": "0-1-c157",
+   "role": "code",
+   "src": "def raytrace_triangle(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangle: Float[Tensor, \"trianglePoints=3 dims=3\"],\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if the triangle intersects that ray.\n    \"\"\"\n    raise NotImplementedError()\n\n\nA = t.tensor([1, 0.0, -0.5])\nB = t.tensor([1, -0.5, 0.0])\nC = t.tensor([1, 0.5, 0.5])\nnum_pixels_y = num_pixels_z = 15\ny_limit = z_limit = 0.5\n\n# Plot triangle & rays\ntest_triangle = t.stack([A, B, C], dim=0)\nrays2d = make_rays_2d(num_pixels_y, num_pixels_z, y_limit, z_limit)\ntriangle_lines = t.stack([A, B, C, A, B, C], dim=0).reshape(-1, 2, 3)\nrender_lines_with_plotly(rays2d, triangle_lines)\n\n# Calculate and display intersections\nintersects = raytrace_triangle(rays2d, test_triangle)\nimg = intersects.reshape(num_pixels_y, num_pixels_z).int()\nimshow(img, origin=\"lower\", width=600, title=\"Triangle (as intersected by rays)\")"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c158",
+   "role": "details",
+   "src": "```python\ndef raytrace_triangle(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangle: Float[Tensor, \"trianglePoints=3 dims=3\"],\n) -> Bool[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return True if the triangle intersects that ray.\n    \"\"\"\n    NR = rays.size(0)\n\n    # Triangle is [[Ax, Ay, Az], [Bx, By, Bz], [Cx, Cy, Cz]]\n    A, B, C = einops.repeat(triangle, \"pts dims -> pts NR dims\", NR=NR)\n    assert A.shape == (NR, 3)\n\n    # Each element of `rays` is [[Ox, Oy, Oz], [Dx, Dy, Dz]]\n    O, D = rays.unbind(dim=1)\n    assert O.shape == (NR, 3)\n\n    # Define matrix on left hand side of equation\n    mat: Float[Tensor, \"NR 3 3\"] = t.stack([-D, B - A, C - A], dim=-1)\n\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    # Note - this works because mat[is_singular] has shape (NR_where_singular, 3, 3), so we\n    # can broadcast the identity matrix to that shape.\n    dets: Float[Tensor, \"NR\"] = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3)\n\n    # Define vector on the right hand side of equation\n    vec = O - A\n\n    # Solve eqns\n    sol: Float[Tensor, \"NR 3\"] = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(dim=-1)\n\n    # Return boolean of (matrix is nonsingular) && (solution is in correct range implying intersection)\n    return (s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular\n```",
+   "summary": "Solution"
+  },
+  {
+   "t": "md",
+   "id": "0-1-c159",
+   "role": "prose",
    "src": "## Debugging"
   },
   {
    "t": "md",
-   "id": "0-1-c057",
+   "id": "0-1-c160",
    "role": "prose",
    "src": "Debugging code is an extremely important thing to learn. Just like using GPT to assist your coding, it's something that can significantly speedrun your development, and stop you getting hung up on all the frustrating things!\n\nTo give you practice debugging using VSCode's built-in debugger\\*, we've provided an example function below. This is an implementation of `raytrace_triangle` which has a few mistakes in it. Your task is to use the debugger to find the mistake and fix it. (Note - you're encouraged to actually use the debugger, rather than comparing it to the solution above!)"
   },
   {
    "t": "md",
-   "id": "0-1-c058",
+   "id": "0-1-c161",
    "role": "details",
    "src": "```python\ndef raytrace_triangle_with_bug(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangle: Float[Tensor, \"trianglePoints=3 dims=3\"]\n) -> Bool[Tensor, \" nrays\"]:\n    '''\n    For each ray, return True if the triangle intersects that ray.\n    '''\n    NR = rays.size[0]\n\n    A, B, C = einops.repeat(triangle, \"pts dims -> pts NR dims\", NR=NR)\n\n    O, D = rays.unbind(-1)\n\n    mat = t.stack([- D, B - A, C - A])\n    \n    dets = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3)\n\n    vec = O - A\n\n    sol = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(dim=-1)\n\n    return ((u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular)\n\n\nintersects = raytrace_triangle_with_bug(rays2d, test_triangle)\nimg = intersects.reshape(num_pixels_y, num_pixels_z).int()\nimshow(img, origin=\"lower\", width=600, title=\"Triangle (as intersected by rays)\")\n```",
    "summary": "Incorrect function"
   },
   {
    "t": "md",
-   "id": "0-1-c059",
+   "id": "0-1-c162",
    "role": "prose",
    "src": "You can debug a cell by clicking on the **Debug cell** option at the bottom of your cell. Your cell should contain the code that is actually run to cause an error (rather than needing to contain the function which is the source of the error). Before you run your debugger, you can set breakpoints by clicking on the left-hand side of the line number (a red dot will appear). You can then step through your code, using the toolbar of buttons which will appear when you run the debugger (see [here](https://pawelgrzybek.com/continue-step-over-step-into-and-step-out-actions-in-visual-studio-code-debugger-explained/) for an explanation of what each of the buttons does). When you reach a breakpoint, you can use the following tools:\n\n* Inspect local and global variables, in the **VARIABLES** window that appears on the left sidebar.\n* Add variables expressions to watch, in the **WATCH** window that appears on the left sidebar.\n    * You can just type in any expression here, e.g. the type of a variable or the length of a list, and this will update as you step through the function.\n* Evaluate expressions on a one-time basis, by typing them into the **DEBUG CONSOLE** (which appears at the bottom of the screen)\n\nNote, when you run the debugger, it will stop *before* the breakpoint line is evaluated. So if you've run a cell and got an error on a specific line, then *that* is the line you want to set a breakpoint on.\n\n*This all works basically the same if you're in a notebook in VSCode, except for a few changes e.g. the debug button is on the dropdown at the top-left of the cell (if it doesn't appear for you then you'll need to go into user settings and add the line `\"notebook.consolidatedRunButton\": true`).*\n\nThere's much more detail we could go into about debugging, but this will suffice for most purposes. It's generally a much more efficient way of debugging than using print statements or asserts (although these can also be helpful in some situations)."
   },
   {
    "t": "md",
-   "id": "0-1-c060",
+   "id": "0-1-c163",
    "role": "details",
    "src": "```python\nNR = rays.size[0]\n```\n\nThis should be `rays.size(0)` (or equivalently, `rays.shape[0]`). `size` is a method which takes an int and returns the size of that dimension; `shape` returns a `torch.Size` object which can be indexed into.\n\nThis would have been pretty easy to realise without using the debugger, because the error message is informative.\n\n```python\nO, D = rays.unbind(-1)\n```\n\nWe're unbinding from the wrong dimension. `rays` has shape `(nrays, points=2, dims=3)`, and we actually want to unbind along the `points` dimension. So we should use `rays.unbind(1)`.\n\nWe could have found this by inspecting the `rays` object in the variables pane (you can click on the dropdown next to the variable name to look at its attributes, including `shape`), or you could just type `rays.shape` into the debug console. However, this error should also have been apparent given the type signature of the function (a good case for using typing!).\n\n```python\nmat = t.stack([- D, B - A, C - A])\n```\n\nThis should have had the argument `dim=-1` on the end, because `torch.stack` by default stacks along the first dimension.\n\nThis error is a bit harder to diagnose, because the line causing an error is after the line containing the mistake. Again, we could have diagnosed this with the debugger by inspecting the shape of our `mat` tensor in the variables pane.\n\n---\n\nThese were all relatively easy bugs to diagnose (not all bugs will present as actual errors in your code, some might just be an unexpected set of results). But hopefully this has given you a sense for how to use the debugger. It's a very powerful tool, and can save you a lot of time!",
    "summary": "Answer - what are the bugs, and how can they be fixed?"
   },
   {
    "t": "md",
-   "id": "0-1-c061",
+   "id": "0-1-c164",
    "role": "prose",
    "src": "\\**If you're using Colab, you'll have to use different strategies for debugging. See [this page](https://zohaib.me/debugging-in-google-collab-notebook/) for one suggested approach.*"
   },
   {
    "t": "md",
-   "id": "0-1-c062",
+   "id": "0-1-c165",
    "role": "prose",
    "src": "## Mesh Loading\n\nUse the given code to load the triangles for your Pikachu. By convention, files written with `torch.save` end in the `.pt` extension, but these are actually just zip files."
   },
   {
    "t": "code",
-   "id": "0-1-c063",
+   "id": "0-1-c166",
    "role": "code",
    "src": "triangles = t.load(section_dir / \"pikachu.pt\", weights_only=True)"
   },
   {
    "t": "md",
-   "id": "0-1-c064",
+   "id": "0-1-c167",
    "role": "prose",
    "src": "## Mesh Rendering\n\nFor our purposes, a mesh is just a group of triangles, so to render it we'll intersect all rays and all triangles at once. We previously just returned a boolean for whether a given ray intersects the triangle, but now it's possible that more than one triangle intersects a given ray.\n\nFor each ray (pixel) we will return a float representing the minimum distance to a triangle if applicable, otherwise the special value `float('inf')` representing infinity. We won't return which triangle was intersected for now.\n\nNote - by distance to a triangle, we specifically mean **distance along the x-dimension**, not Euclidean distance."
   },
   {
    "t": "md",
-   "id": "0-1-c065",
+   "id": "0-1-c168",
    "role": "prose",
-   "src": "### Exercise - implement `raytrace_mesh`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 20-25 minutes on this exercise.\n> \n> This is the main function we've been building towards, and marks the end of the core exercises. If should involve a lot of repurposed code from the last excercise.\n> ```\n\nImplement `raytrace_mesh` and as before, reshape and visualize the output. Your Pikachu is centered on (0, 0, 0), so you'll want to slide the ray origin back to at least `x=-2` to see it properly.\n\nReminder - `t.linalg.solve` (and most batched operations) can accept multiple dimensions as being batch dims. Previously, you've just used `NR` (the number of rays) as the batch dimension, but you can also use `(NR, NT)` (the number of rays and triangles) as your batch dimensions, so you can solve for all rays and triangles at once."
+   "src": "### Exercise - implement `raytrace_mesh`\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n>\n> You should spend up to 20-25 minutes on this exercise.\n>\n> This is the main function we've been building towards, and marks the end of the core exercises. If should involve a lot of repurposed code from the last excercise.\n> ```\n\nImplement `raytrace_mesh` and as before, reshape and visualize the output. Your Pikachu is centered on (0, 0, 0), so you'll want to slide the ray origin back to at least `x=-2` to see it properly.\n\nReminder - `t.linalg.solve` (and most batched operations) can accept multiple dimensions as being batch dims. Previously, you've just used `NR` (the number of rays) as the batch dimension, but you can also use `(NR, NT)` (the number of rays and triangles) as your batch dimensions, so you can solve for all rays and triangles at once."
   },
   {
    "t": "code",
-   "id": "0-1-c066",
+   "id": "0-1-c169",
    "role": "code",
    "src": "def raytrace_mesh(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles trianglePoints=3 dims=3\"],\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the distance to the closest intersecting triangle, or infinity.\n    \"\"\"\n    raise NotImplementedError()\n\n\nnum_pixels_y = 120\nnum_pixels_z = 120\ny_limit = z_limit = 1\n\nrays = make_rays_2d(num_pixels_y, num_pixels_z, y_limit, z_limit)\nrays[:, 0] = t.tensor([-2, 0.0, 0.0])\ndists = raytrace_mesh(rays, triangles)\nintersects = t.isfinite(dists).view(num_pixels_y, num_pixels_z)\ndists_square = dists.view(num_pixels_y, num_pixels_z)\nimg = t.stack([intersects, dists_square], dim=0)\n\nfig = px.imshow(img, facet_col=0, origin=\"lower\", color_continuous_scale=\"magma\", width=1000)\nfig.update_layout(coloraxis_showscale=False)\nfor i, text in enumerate([\"Intersects\", \"Distance\"]):\n    fig.layout.annotations[i][\"text\"] = text\nfig.show()"
   },
   {
    "t": "md",
-   "id": "0-1-c067",
+   "id": "0-1-c170",
    "role": "details",
    "src": "```python\ndef raytrace_mesh(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles trianglePoints=3 dims=3\"],\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the distance to the closest intersecting triangle, or infinity.\n    \"\"\"\n    NR = rays.size(0)\n    NT = triangles.size(0)\n\n    # Each triangle is [[Ax, Ay, Az], [Bx, By, Bz], [Cx, Cy, Cz]]\n    triangles = einops.repeat(triangles, \"NT pts dims -> pts NR NT dims\", NR=NR)\n    A, B, C = triangles\n    assert A.shape == (NR, NT, 3)\n\n    # Each ray is [[Ox, Oy, Oz], [Dx, Dy, Dz]]\n    rays = einops.repeat(rays, \"NR pts dims -> pts NR NT dims\", NT=NT)\n    O, D = rays\n    assert O.shape == (NR, NT, 3)\n\n    # Define matrix on left hand side of equation\n    mat: Float[Tensor, \"NR NT 3 3\"] = t.stack([-D, B - A, C - A], dim=-1)\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    dets: Float[Tensor, \"NR NT\"] = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3)\n\n    # Define vector on the right hand side of equation\n    vec: Float[Tensor, \"NR NT 3\"] = O - A\n\n    # Solve eqns (note, s is the distance along ray)\n    sol: Float[Tensor, \"NR NT 3\"] = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(-1)\n\n    # Scale s by Dx to get the distance along ray\n    s *= D[..., 0]\n\n    # Get boolean of intersects, and use it to set distance = infinity when there is no intersection\n    intersects = (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular\n    s[~intersects] = float(\"inf\")  # t.inf\n\n    # Get the minimum distance (over all triangles) for each ray\n    return einops.reduce(s, \"NR NT -> NR\", \"min\")\n\n\nnum_pixels_y = 120\nnum_pixels_z = 120\ny_limit = z_limit = 1\n\nrays = make_rays_2d(num_pixels_y, num_pixels_z, y_limit, z_limit)\nrays[:, 0] = t.tensor([-2, 0.0, 0.0])\ndists = raytrace_mesh(rays, triangles)\nintersects = t.isfinite(dists).view(num_pixels_y, num_pixels_z)\ndists_square = dists.view(num_pixels_y, num_pixels_z)\nimg = t.stack([intersects, dists_square], dim=0)\n\nfig = px.imshow(img, facet_col=0, origin=\"lower\", color_continuous_scale=\"magma\", width=1000)\nfig.update_layout(coloraxis_showscale=False)\nfor i, text in enumerate([\"Intersects\", \"Distance\"]):\n    fig.layout.annotations[i][\"text\"] = text\nfig.show()\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c068",
+   "id": "0-1-c171",
    "role": "prose",
    "src": "Congratulations, you've now got to the end of the exercises! Read on for some more bonus material."
   },
   {
    "t": "md",
-   "id": "0-1-c069",
+   "id": "0-1-c172",
    "role": "prose",
    "src": "# 4️⃣ Video & Lighting\n\n> ##### Learning Objectives\n>\n> - Learn how surface normal vectors can be used to compute lighting effects\n> - Render your figures in video form (as an animated camera pan)\n> - (optional) Learn about the `pytest` library, and write your own tests for the functions you wrote"
   },
   {
    "t": "md",
-   "id": "0-1-c070",
+   "id": "0-1-c173",
    "role": "prose",
    "src": "Here, we've included some more raytracing exercises, which extend the previous animation by providing video and lighting."
   },
   {
    "t": "md",
-   "id": "0-1-c071",
+   "id": "0-1-c174",
    "role": "prose",
-   "src": "### Exercise - rotation matrix\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nBelow is some code to iterate through a range of angles, rotating the pikachu model around the y-axis and raytracing the mesh at each angle. These frames are then concatenated together and animated into some dramatic footage! Your job is to fill in the `rotation_matrix` function, which should give you a matrix that rotates counterclockwise around the y-axis by a given angle `theta` (which is a scalar tensor). If you're stuck, see [this Wikipedia page](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_3D_rotations) on basic 3D rotations."
+   "src": "### Exercise - rotation matrix\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n>\n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nBelow is some code to iterate through a range of angles, rotating the pikachu model around the y-axis and raytracing the mesh at each angle. These frames are then concatenated together and animated into some dramatic footage! Your job is to fill in the `rotation_matrix` function, which should give you a matrix that rotates counterclockwise around the y-axis by a given angle `theta` (which is a scalar tensor). If you're stuck, see [this Wikipedia page](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_3D_rotations) on basic 3D rotations."
   },
   {
    "t": "code",
-   "id": "0-1-c072",
+   "id": "0-1-c175",
    "role": "code",
    "src": "def rotation_matrix(theta: Float[Tensor, \"\"]) -> Float[Tensor, \"rows cols\"]:\n    \"\"\"\n    Creates a rotation matrix representing a counterclockwise rotation of `theta` around the y-axis.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_rotation_matrix(rotation_matrix)"
   },
   {
    "t": "md",
-   "id": "0-1-c073",
+   "id": "0-1-c176",
    "role": "details",
    "src": "```python\ndef rotation_matrix(theta: Float[Tensor, \"\"]) -> Float[Tensor, \"rows cols\"]:\n    \"\"\"\n    Creates a rotation matrix representing a counterclockwise rotation of `theta` around the y-axis.\n    \"\"\"\n    return t.tensor(\n        [\n            [t.cos(theta), 0.0, t.sin(theta)],\n            [0.0, 1.0, 0.0],\n            [-t.sin(theta), 0.0, t.cos(theta)],\n        ]\n    )\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c074",
+   "id": "0-1-c177",
    "role": "prose",
    "src": "Once you've passed the tests, you can run the code below to create an animation! It might take a while to run, but should be no longer than 2 minutes."
   },
   {
    "t": "code",
-   "id": "0-1-c075",
+   "id": "0-1-c178",
    "role": "code",
    "src": "def raytrace_mesh_video(\n    rays: Float[Tensor, \"nrays points dim\"],\n    triangles: Float[Tensor, \"ntriangles points dims\"],\n    rotation_matrix: Callable[[float], Float[Tensor, \"rows cols\"]],\n    raytrace_function: Callable,\n    num_frames: int,\n) -> Bool[Tensor, \"nframes nrays\"]:\n    \"\"\"\n    Creates a stack of raytracing results, rotating the triangles by `rotation_matrix` each frame.\n    \"\"\"\n    result = []\n    theta = t.tensor(2 * t.pi) / num_frames\n    R = rotation_matrix(theta)\n    for theta in tqdm(range(num_frames)):\n        triangles = triangles @ R\n        result.append(raytrace_function(rays, triangles))\n        t.cuda.empty_cache()  # clears GPU memory (this line will be more important later on!)\n    return t.stack(result, dim=0)\n\n\ndef display_video(distances: Float[Tensor, \"frames y z\"]):\n    \"\"\"\n    Displays video of raytracing results, using Plotly. `distances` is a tensor where the [i, y, z]\n    element is distance to the closest triangle for the i-th frame & the [y, z]-th ray in our 2D\n    grid of rays.\n    \"\"\"\n    px.imshow(\n        distances,\n        animation_frame=0,\n        origin=\"lower\",\n        zmin=0.0,\n        zmax=distances[distances.isfinite()].quantile(0.99).item(),\n        color_continuous_scale=\"viridis_r\",  # \"Brwnyl\"\n    ).update_layout(coloraxis_showscale=False, width=550, height=600, title=\"Raytrace mesh video\").show()\n\n\nnum_pixels_y = 250\nnum_pixels_z = 250\ny_limit = z_limit = 0.8\nnum_frames = 50\n\nrays = make_rays_2d(num_pixels_y, num_pixels_z, y_limit, z_limit)\nrays[:, 0] = t.tensor([-3.0, 0.0, 0.0])\ndists = raytrace_mesh_video(rays, triangles, rotation_matrix, raytrace_mesh, num_frames)\ndists = einops.rearrange(dists, \"frames (y z) -> frames y z\", y=num_pixels_y)\n\ndisplay_video(dists)"
   },
   {
    "t": "md",
-   "id": "0-1-c076",
+   "id": "0-1-c179",
    "role": "prose",
-   "src": "### Exercise - use GPUs\n\n> ```yaml\n> Difficulty: 🔴⚪⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nWe'll discuss GPUs a lot more in later sections and exercises. For now, One last thing to discuss before we move onto training our model: **GPUs**. Essentially, the GPU (graphics processing unit) is a specialized processor for rendering graphics and doing other kinds of parallel processing. Although we are actually using it for graphics in this section, it's much better known today for its role in deep learning, since it allows for efficient parallelized computations.\n\nWhen you create a tensor, by default it's located on the CPU. You can use the `to` method to move your tensor between devices, e.g. `x = x.to(\"cuda\")` to move to the GPU, and `x = x.to(\"cpu\")` to move back to the CPU (or `x = x.cuda()` and `x = x.cpu()` as a shorthand). **CUDA** stands for Compute Unified Device Architecture, a parallel computing platform and programming model developed by NVIDIA which is supported by PyTorch. Note that this method returns a copy of the tensor rather than the tensor itself (unless the `to` command doesn't change its device). You can check whether CUDA is available by calling `t.cuda.is_available()` - if it's not, you can try installing a CUDA-supporting version of PyTorch from the [homepage](https://pytorch.org/).\n\nBelow, you should write the `raytrace_mesh_gpu` function to be identical to `raytrace_mesh`, except that the computation should be done on the GPU. This means `triangles` and `rays` should be moved to the GPU before the computation is done, and the returned object should be moved back to the CPU before finishing."
+   "src": "### Exercise - use GPUs\n\n> ```yaml\n> Difficulty: 🔴⚪⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n>\n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nWe'll discuss GPUs a lot more in later sections and exercises. For now, One last thing to discuss before we move onto training our model: **GPUs**. Essentially, the GPU (graphics processing unit) is a specialized processor for rendering graphics and doing other kinds of parallel processing. Although we are actually using it for graphics in this section, it's much better known today for its role in deep learning, since it allows for efficient parallelized computations.\n\nWhen you create a tensor, by default it's located on the CPU. You can use the `to` method to move your tensor between devices, e.g. `x = x.to(\"cuda\")` to move to the GPU, and `x = x.to(\"cpu\")` to move back to the CPU (or `x = x.cuda()` and `x = x.cpu()` as a shorthand). **CUDA** stands for Compute Unified Device Architecture, a parallel computing platform and programming model developed by NVIDIA which is supported by PyTorch. Note that this method returns a copy of the tensor rather than the tensor itself (unless the `to` command doesn't change its device). You can check whether CUDA is available by calling `t.cuda.is_available()` - if it's not, you can try installing a CUDA-supporting version of PyTorch from the [homepage](https://pytorch.org/).\n\nBelow, you should write the `raytrace_mesh_gpu` function to be identical to `raytrace_mesh`, except that the computation should be done on the GPU. This means `triangles` and `rays` should be moved to the GPU before the computation is done, and the returned object should be moved back to the CPU before finishing."
   },
   {
    "t": "code",
-   "id": "0-1-c077",
+   "id": "0-1-c180",
    "role": "code",
    "src": "def raytrace_mesh_gpu(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles trianglePoints=3 dims=3\"],\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the distance to the closest intersecting triangle, or infinity.\n\n    All computations should be performed on the GPU.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndists = raytrace_mesh_video(rays, triangles, rotation_matrix, raytrace_mesh_gpu, num_frames)\ndists = einops.rearrange(dists, \"frames (y z) -> frames y z\", y=num_pixels_y)\ndisplay_video(dists)"
   },
   {
    "t": "md",
-   "id": "0-1-c078",
+   "id": "0-1-c181",
    "role": "details",
    "src": "```python\ndef raytrace_mesh_gpu(\n    rays: Float[Tensor, \"nrays rayPoints=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles trianglePoints=3 dims=3\"],\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the distance to the closest intersecting triangle, or infinity.\n\n    All computations should be performed on the GPU.\n    \"\"\"\n    NR = rays.size(0)\n    NT = triangles.size(0)\n    device = \"cuda\"\n    triangles = triangles.to(device)\n    rays = rays.to(device)\n\n    # Each triangle is [[Ax, Ay, Az], [Bx, By, Bz], [Cx, Cy, Cz]]\n    triangles = einops.repeat(triangles, \"NT pts dims -> pts NR NT dims\", NR=NR)\n    A, B, C = triangles\n    assert A.shape == (NR, NT, 3)\n\n    # Each ray is [[Ox, Oy, Oz], [Dx, Dy, Dz]]\n    rays = einops.repeat(rays, \"NR pts dims -> pts NR NT dims\", NT=NT)\n    O, D = rays\n    assert O.shape == (NR, NT, 3)\n\n    # Define matrix on left hand side of equation\n    mat: Float[Tensor, \"NR NT 3 3\"] = t.stack([-D, B - A, C - A], dim=-1)\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    dets: Float[Tensor, \"NR NT\"] = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3).to(device)\n\n    # Define vector on the right hand side of equation\n    vec: Float[Tensor, \"NR NT 3\"] = O - A\n\n    # Solve eqns (note, s is the distance along ray)\n    sol: Float[Tensor, \"NR NT 3\"] = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(-1)\n\n    # Scale s by Dx to get the distance along ray\n    s *= D[..., 0]\n\n    # Get boolean of intersects, and use it to set distance = infinity when there is no intersection\n    intersects = (s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular\n    s[~intersects] = t.inf\n\n    # Get the minimum distance (over all triangles) for each ray\n    return einops.reduce(s, \"NR NT -> NR\", \"min\").cpu()\n\n\ndists = raytrace_mesh_video(rays, triangles, rotation_matrix, raytrace_mesh_gpu, num_frames)\ndists = einops.rearrange(dists, \"frames (y z) -> frames y z\", y=num_pixels_y)\ndisplay_video(dists)\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c079",
+   "id": "0-1-c182",
    "role": "prose",
-   "src": "### Exercise (bonus) - add lighting\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴🔴\n> Importance: 🔵🔵⚪⚪⚪\n> \n> You've done all the essential content for today at this point.\n> You can complete this exercise for fun if you have time, or just read & run the solution!\n> ```\n\nWe can improve our images by adding lighting, i.e. coloring triangles based on the angle of some light source rather than just from distance from the origin. The most common way to do this is using the [Lambertian reflection model](https://en.wikipedia.org/wiki/Lambertian_reflectance), which says that the intensity of the light that reflects off a surface is proportional to the cosine of the angle between the light vector and the surface normal (or equivalently, proportional to their dot product, assuming both vectors are normalized).\n\n![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/raytracing-lighting-2.png)\n\nYou should implement the `raytrace_mesh_lambert` function below, which puts this into practice. In other words, your function should return the following for each ray:\n\n- Zero if there is no intersection, i.e. distance to every triangle is infinite\n- `intensity + ambient_intensity` if there is an interesection, where `ambient_intensity` is a value we give you (minimum brightness for a triangle, to distinguish it from the black background) and `intensity` is the intensity of light hitting the triangle, i.e. the dot product of the triangle's normal vector and the light vector, set to zero if this dot product is negative.\n\nTo emphasize - unlike in your previous functions where you used the distance of each ray to the nearest triangle to determine the color of a given ray/pixel, here every triangle has a unique intensity value and the color of a given ray/pixel is determined only by what its nearest triangle is. The only reason we still need to compute distances is to compute what (if any) the first triangle is that the ray intersects with."
+   "src": "### Exercise (bonus) - add lighting\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴🔴\n> Importance: 🔵🔵⚪⚪⚪\n>\n> You've done all the essential content for today at this point.\n> You can complete this exercise for fun if you have time, or just read & run the solution!\n> ```\n\nWe can improve our images by adding lighting, i.e. coloring triangles based on the angle of some light source rather than just from distance from the origin. The most common way to do this is using the [Lambertian reflection model](https://en.wikipedia.org/wiki/Lambertian_reflectance), which says that the intensity of the light that reflects off a surface is proportional to the cosine of the angle between the light vector and the surface normal (or equivalently, proportional to their dot product, assuming both vectors are normalized).\n\n![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/raytracing-lighting-2.png)\n\nYou should implement the `raytrace_mesh_lambert` function below, which puts this into practice. In other words, your function should return the following for each ray:\n\n- Zero if there is no intersection, i.e. distance to every triangle is infinite\n- `intensity + ambient_intensity` if there is an interesection, where `ambient_intensity` is a value we give you (minimum brightness for a triangle, to distinguish it from the black background) and `intensity` is the intensity of light hitting the triangle, i.e. the dot product of the triangle's normal vector and the light vector, set to zero if this dot product is negative.\n\nTo emphasize - unlike in your previous functions where you used the distance of each ray to the nearest triangle to determine the color of a given ray/pixel, here every triangle has a unique intensity value and the color of a given ray/pixel is determined only by what its nearest triangle is. The only reason we still need to compute distances is to compute what (if any) the first triangle is that the ray intersects with."
   },
   {
    "t": "code",
-   "id": "0-1-c080",
+   "id": "0-1-c183",
    "role": "code",
    "src": "def raytrace_mesh_lambert(\n    rays: Float[Tensor, \"nrays points=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles points=3 dims=3\"],\n    light: Float[Tensor, \"dims=3\"],\n    ambient_intensity: float,\n    device: str = \"cuda\",\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the intensity of light hitting the triangle it intersects with (or zero if\n    no intersection).\n\n    Args:\n        rays:   A tensor of rays, with shape `[nrays, 2, 3]`.\n        triangles:  A tensor of triangles, with shape `[ntriangles, 3, 3]`.\n        light:  A tensor representing the light vector, with shape `[3]`. We compute the intensity\n                as the dot product of the triangle normals & the light vector, then set it to be\n                zero if the sign is negative.\n        ambient_intensity:  A float representing the ambient intensity. This is the minimum\n                            brightness for a triangle, to differentiate it from the black background\n                            (rays that don't hit any triangle).\n        device: The device to perform the computation on.\n\n    Returns:\n        A tensor of intensities for each of the rays, flattened over the [y, z] dimensions. The\n        values are zero when there is no intersection, and `ambient_intensity + intensity` when\n        there is an interesection (where `intensity` is the dot product of the triangle's normal\n        vector and the light vector, truncated at zero).\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef display_video_with_lighting(intensity: Float[Tensor, \"frames y z\"]):\n    \"\"\"\n    Displays video of raytracing results, using Plotly. `distances` is a tensor where the [i, y, z]\n    element is the lighting intensity based on the angle of light & the surface of the triangle\n    which this ray hits first.\n    \"\"\"\n    px.imshow(\n        intensity,\n        animation_frame=0,\n        origin=\"lower\",\n        color_continuous_scale=\"magma\",\n    ).update_layout(coloraxis_showscale=False, width=550, height=600, title=\"Raytrace mesh video (lighting)\").show()\n\n\nambient_intensity = 0.5\nlight = t.tensor([0.0, -1.0, 1.0])\nraytrace_function = partial(\n    raytrace_mesh_lambert,\n    ambient_intensity=ambient_intensity,\n    light=light,\n)\n\nintensity = raytrace_mesh_video(rays, triangles, rotation_matrix, raytrace_function, num_frames)\nintensity = einops.rearrange(intensity, \"frames (y z) -> frames y z\", y=num_pixels_y)\ndisplay_video_with_lighting(intensity)"
   },
   {
    "t": "md",
-   "id": "0-1-c081",
+   "id": "0-1-c184",
    "role": "details",
    "src": "You can use the `torch.cross` function, using two edges of the triangle as arguments. For example, you can compute the un-normalized vectors as:\n\n```python\nnormals = t.cross(triangles[:, 2] - triangles[:, 0], triangles[:, 1] - triangles[:, 0], dim=1)\n```\n\nwhich will have the same shape as each of `triangles[:, i]`.",
    "summary": "Help - I'm not sure how to compute the normal vectors."
   },
   {
    "t": "md",
-   "id": "0-1-c081-1",
+   "id": "0-1-c184-1",
    "role": "details",
    "src": "The `pikachu.stl` file stores triangles in a consistent orientation based on the right hand rule. Assuming you chose a consistent method for computing normal vectors like the one in the dropdown above, your computed intensity values per triangle will either all be the correct sign or all be the opposite sign to the true signed values. This means you can either use `t.where(intensity > 0, intensity, 0.0)` or `t.where(intensity < 0, -intensity, 0.0)` as your final zeroed intensity values and both should look fine (although one will look like the light source is coming from the opposite direction to the other). It doesn't matter which orientation you choose.",
    "summary": "Help - I'm not sure how to set the intensity to zero if the light is coming from the wrong side of the triangle."
   },
   {
    "t": "md",
-   "id": "0-1-c081-2",
+   "id": "0-1-c184-2",
    "role": "details",
    "src": "```python\ndef raytrace_mesh_lambert(\n    rays: Float[Tensor, \"nrays points=2 dims=3\"],\n    triangles: Float[Tensor, \"ntriangles points=3 dims=3\"],\n    light: Float[Tensor, \"dims=3\"],\n    ambient_intensity: float,\n    device: str = \"cuda\",\n) -> Float[Tensor, \" nrays\"]:\n    \"\"\"\n    For each ray, return the intensity of light hitting the triangle it intersects with (or zero if\n    no intersection).\n\n    Args:\n        rays:   A tensor of rays, with shape `[nrays, 2, 3]`.\n        triangles:  A tensor of triangles, with shape `[ntriangles, 3, 3]`.\n        light:  A tensor representing the light vector, with shape `[3]`. We compute the intensity\n                as the dot product of the triangle normals & the light vector, then set it to be\n                zero if the sign is negative.\n        ambient_intensity:  A float representing the ambient intensity. This is the minimum\n                            brightness for a triangle, to differentiate it from the black background\n                            (rays that don't hit any triangle).\n        device: The device to perform the computation on.\n\n    Returns:\n        A tensor of intensities for each of the rays, flattened over the [y, z] dimensions. The\n        values are zero when there is no intersection, and `ambient_intensity + intensity` when\n        there is an interesection (where `intensity` is the dot product of the triangle's normal\n        vector and the light vector, truncated at zero).\n    \"\"\"\n    NR = rays.size(0)\n    NT = triangles.size(0)\n    triangles = triangles.to(device)\n    rays = rays.to(device)\n\n    # Each triangle is [[Ax, Ay, Az], [Bx, By, Bz], [Cx, Cy, Cz]]\n    triangles_repeated = einops.repeat(triangles, \"NT pts dims -> pts NR NT dims\", NR=NR)\n    A, B, C = triangles_repeated\n    assert A.shape == (NR, NT, 3)\n\n    # Each ray is [[Ox, Oy, Oz], [Dx, Dy, Dz]]\n    rays_repeated = einops.repeat(rays, \"NR pts dims -> pts NR NT dims\", NT=NT)\n    O, D = rays_repeated\n    assert O.shape == (NR, NT, 3)\n\n    # Define matrix on left hand side of equation\n    mat: Float[Tensor, \"NR NT 3 3\"] = t.stack([-D, B - A, C - A], dim=-1)\n    # Get boolean of where matrix is singular, and replace it with the identity in these positions\n    dets: Float[Tensor, \"NR NT\"] = t.linalg.det(mat)\n    is_singular = dets.abs() < 1e-8\n    mat[is_singular] = t.eye(3).to(device)\n\n    # Define vector on the right hand side of equation\n    vec: Float[Tensor, \"NR NT 3\"] = O - A\n\n    # Solve eqns (note, s is the distance along ray)\n    sol: Float[Tensor, \"NR NT 3\"] = t.linalg.solve(mat, vec)\n    s, u, v = sol.unbind(-1)  # each shape [NR, NT]\n\n    # Scale s by Dx to get the distance along ray\n    s *= D[..., 0]\n\n    # Get boolean of intersects, and use it to set distance = infinity when there is no intersection\n    intersects = (s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular\n    s[~intersects] = float(\"inf\")\n\n    # Get the minimum distance (over all triangles) for each ray\n    closest_distances, closest_triangles_for_each_ray = s.min(dim=-1)  # both shape [NR]\n\n    # Get the intensity by taking dot product of triangle normals & light vector\n    normals = t.cross(triangles[:, 2] - triangles[:, 0], triangles[:, 1] - triangles[:, 0], dim=1)  # shape [NT dims]\n    normals /= normals.norm(dim=1, keepdim=True)\n    intensity_per_triangle = einops.einsum(normals, light.to(device), \"nt dims, dims -> nt\")\n    intensity_per_triangle_signed = t.where(intensity_per_triangle > 0, intensity_per_triangle, 0.0)\n\n    # Get intensity for each ray, and add ambient intensity where there's an intersection\n    intensity = intensity_per_triangle_signed[closest_triangles_for_each_ray] + ambient_intensity\n\n    # Set to zero if the ray doesn't intersect with any triangle\n    intensity = t.where(closest_distances.isfinite(), intensity, 0.0)\n\n    return intensity.cpu()\n\n\ndef display_video_with_lighting(intensity: Float[Tensor, \"frames y z\"]):\n    \"\"\"\n    Displays video of raytracing results, using Plotly. `distances` is a tensor where the [i, y, z]\n    element is the lighting intensity based on the angle of light & the surface of the triangle\n    which this ray hits first.\n    \"\"\"\n    px.imshow(\n        intensity,\n        animation_frame=0,\n        origin=\"lower\",\n        color_continuous_scale=\"magma\",\n    ).update_layout(coloraxis_showscale=False, width=550, height=600, title=\"Raytrace mesh video (lighting)\").show()\n\n\nambient_intensity = 0.5\nlight = t.tensor([0.0, -1.0, 1.0])\nraytrace_function = partial(\n    raytrace_mesh_lambert,\n    ambient_intensity=ambient_intensity,\n    light=light,\n)\n\nintensity = raytrace_mesh_video(rays, triangles, rotation_matrix, raytrace_function, num_frames)\nintensity = einops.rearrange(intensity, \"frames (y z) -> frames y z\", y=num_pixels_y)\ndisplay_video_with_lighting(intensity)\n```",
    "summary": "Solution"
   },
   {
    "t": "md",
-   "id": "0-1-c082",
+   "id": "0-1-c185",
    "role": "prose",
    "src": "As a final bonus exercise before we conclude, you can try rendering with a **wireframe**, i.e. only including the edges of the triangles rather than the full triangle. All you have to do here is change your `triangle_ray_intersects` function, so that it only detects intersection at a certain subset of the parameter values `u` and `v` (can you see how to do this?)."
   },
   {
    "t": "md",
-   "id": "0-1-c083",
+   "id": "0-1-c186",
    "role": "prose",
    "src": "## Bonus - testing with `pytest`"
   },
   {
    "t": "md",
-   "id": "0-1-c084",
+   "id": "0-1-c187",
    "role": "prose",
    "src": "> *Note - this section was also just written with VSCode in mind, so it might be less suitable for Colab, and you might consider skipping it.*"
   },
   {
    "t": "md",
-   "id": "0-1-c085",
+   "id": "0-1-c188",
    "role": "prose",
    "src": "To wrap up today, we're going to have a further discussion of **testing**. So far, our test functions have been pretty simple - we imported a test from the `part1_ray_tracing/tests.py` file, and ran it to compare our answers to the answers in `part1_ray_tracing/solutions.py`. This works perfectly fine, but there are other Python libraries which can make testing easier and more powerful. In particular, two such libraries are `unittest` and `pytest`. Both these libraries provide extensive features for modularizing and running test functions, and have nice integrations with VSCode. `unittest` is very powerful, but also has a steep learning curve and isn't worth the trouble of learning during a 6 week course. However, `pytest` is very useful and easy to learn, so we'll spend some time here discussing it.\n\nThe pytest framework makes it easy to write small, readable tests, and can scale to support complex functional testing for applications and libraries. Today we'll just discuss a few features which will be particularly useful for the kinds of tests we'll be writing, but you're welcome to explore more tests later on.\n\n*Important note - if you're working on Colab or a notebook for these exercises, your tests won't work, because in this setup we'll be importing answers from our test file, rather than importing tests from our answers file. For this reason, we won't be using pytest for the structured exercises in this course (in case anybody is following these exercises in a notebook), but you're strongly recommended to use pytest when you're working from `.py` files instead - which is strongly recommended during much of the bonus content.*\n\nFirst, look at `part1_ray_tracing/tests.py`. The tests in this file all follow a similar pattern: evaluate your function on some input, check it equals the solution. This is a clear sign that we can use modularization to simplify our code! Compare this file to `part1_ray_tracing/test_with_pytest.py`, which contains the same tests but refactored using pytest. The latter is clearly separated into three sections: one for library imports, one for defining the inputs we'll use for our test functions, and one where we define our test functions.\n\n### Parametrization\n\nWe use `pytest.mark.parametrize` to parametrize our tests. This means we can run the same test a bunch of different times on different inputs. In the non-pytest version, we did this by defining different functions (e.g. `test_intersect_ray_1d` and `test_intersect_ray_1d_special_case`), but this isn't necessary here.\n\nThe syntax of a function decorated by `pytest.mark.parametrize` is:\n\n```python\n@pytest.mark.parametrize(\"arg1, arg2, arg3\", [\n    (val1, val2, val3),\n    (val4, val5, val6),\n    ...\n])\ndef test_function(arg1, arg2, arg3):\n    ...\n```\n\nThis will result in running `test_function` multiple times, the first time with `arg1=val1, arg2=val2, arg3=val3`, and the second time with `arg1=val4, arg2=val5, arg3=val6`, etc. This is a much better way to write tests, because it makes it easy for us to add new test cases without having to write new functions.\n\n### How to run these tests?\n\nThere are three ways to run the above tests:\n\n1. **From the terminal**\n\nYou can run them from the command line using the pytest command. Open your terminal in VSCode at the bottom of the screen, make sure you're in the directory `chapter0_fundamentals`, then enter the command `pytest`. This will search the current directory (or subdirectories) for any python files with the prefix `test_`, and within that file run all functions with the prefix `test_` (i.e. all the tests for these exercises).\n\nYou can also add more complicated commands, like:\n\n* `pytest test_intersect_ray_1d` to specify the file to run tests from\n* `pytest test_intersect_ray_1d::test_intersect_ray_1d` to specify the file and test function\n\n2. **From your Python file**\n\nTo do this, you need to call `pytest.main` (make sure this is wrapped in an `if MAIN` block). The first argument of this function is a list of args to `pytest`. This has analogous syntax to the command line option, for instance here are a few ways you can do this:\n\n```python\npytest.main([])\npytest.main([\"test_part1_ray_tracing.py\"])\npytest.main([\"test_part1_ray_tracing.py::test_intersect_ray_1d\"])\n```\n\n3. **From VSCode's testing display**\n\nThis is by far the most useful way to run test functions. VSCode provides a helpful interface to run all test functions in your directory, and see which of them have passed. First, press the test icon on the left hand sidebar (it will look like a triangular flask). If this is your first time, then you'll need to click on the **Configure Python Tests** button, then select `pytest` as your framework (you may have to install pytest when prompted). This should automatically perform test discovery for you, showing you all the test files & functions in your current directory in the left hand window (it detects this the same way pytest does, using the `test_` prefix). You can hover over tests or files to see options like \"run test(s)\" or debug test(s)\". When you run them, you'll see a tick or cross appear next to the test, indicating whether it passed or failed.\n\nThis is a very useful interface when you're working on a large project, because as you make updates you can easily re-run all tests, then identify & fix problems."
   },
   {
    "t": "md",
-   "id": "0-1-c085-1",
+   "id": "0-1-c188-1",
    "role": "details",
    "src": "Try opening your terminal (at the bottom of the screen) and running `pytest --collect-only`. This should print output that helps you diagnose the problem.\n\nOne possible issue is changing directories within your python files (e.g. with `os.chdir`), because this can often confuse PyTest's search for tests.",
    "summary": "Help - I get `Error discovering pytest tests`"
   },
   {
    "t": "md",
-   "id": "0-1-c086",
+   "id": "0-1-c189",
    "role": "details",
    "src": "Note that the test file has the annotation `# type: ignore` at the end of an import line, at the top of the file. This is because VSCode's typechecker will complain when you try and import a file that doesn't exist yet! This line removes the type error, and allows you to write functions without all those annoying squiggly red lines! However, don't overuse this annotation, because it can often be a signal that you've made a mistake in your code, or else have followed a bad coding practice.",
    "summary": "Aside - `# type: ignore`"
   },
   {
    "t": "md",
-   "id": "0-1-c086-1",
+   "id": "0-1-c189-1",
    "role": "details",
    "src": "Another way you can clean this code up is to use **named tuples**. These are an especially nice and Pythonic structure which maintains the features of a tuple, but also allows you to define instances & access elements by name. For instance, instead of:\n\n```python\nray_segment_batch = (\n    solutions.rays1d,\n    solutions.segments\n)\n```\n\nyou could have:\n\n```python\nfrom collections import namedtuple\nTestCase = namedtuple(\"TestCase\", \"rays segments\")\n\nray_segment_batch = TestCase(\n    rays = solutions.rays1d,\n    segments = solutions.segments\n)\n```\n\nand this `ray_segment_batch` object would still be treated like a tensor when it's used in a parameterized test.",
    "summary": "Aside - named tuples"
