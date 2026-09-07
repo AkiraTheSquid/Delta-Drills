@@ -185,6 +185,46 @@ check("a placement never certifies mastery",
       all(v <= D.SEED_MASTERY_CAP for v in run.atom_mastery.values()),
       max(run.atom_mastery.values(), default=0))
 
+# --- E. the answer route ----------------------------------------------------
+# The route itself, not just the module: which ids /diagnostic/answer accepts
+# with and without a pending probe, and that a retry never rewrites a record.
+from fastapi import HTTPException
+from app.practice.diagnostic_router import diagnostic_answer
+from app.practice_schemas import DiagnosticAnswerRequest
+from app.adaptive import get_user_state  # the route reads the shared store, so seed it there
+
+
+class _User:
+    def __init__(self, uid): self.id = uid
+
+
+def _answer(uid, qid, result):
+    try:
+        return diagnostic_answer(DiagnosticAnswerRequest(question_id=qid, result=result), _User(uid)), None
+    except HTTPException as exc:
+        return None, exc.status_code
+
+
+ru = "route-user"
+route_state = get_user_state(ru)
+D.start(route_state, hours=6)
+first = D.select_probe(route_state)
+check("an arbitrary id with a probe on screen is refused", _answer(ru, first.id + 100000, "dont_know")[1] in (404, 409))
+st, code = _answer(ru, first.id, "correct")
+check("the problem on screen is recorded", code is None and st.probes_done == 1, code)
+before = [dict(p) for p in D.get_diag(route_state)["probes"]]
+st, code = _answer(ru, first.id, "dont_know")
+check("a late dont_know behind a graded answer does not rewrite it",
+      code is None and D.get_diag(route_state)["probes"][-1]["result"] == "correct"
+      and len(D.get_diag(route_state)["probes"]) == 1, (code, D.get_diag(route_state)["probes"]))
+check("the replay answers with the current state, not a second record", st is not None and st.probes_done == 1)
+second = D.select_probe(route_state)
+st, code = _answer(ru, second.id, "incorrect")
+check("the next probe records too", code is None and st.probes_done == 2)
+check("an OLDER probe's id is refused once a newer one exists", _answer(ru, first.id, "dont_know")[1] == 409)
+check("an id never served is refused between probes", _answer(ru, first.id + 100000, "dont_know")[1] in (404, 409))
+check("a finished run answers 400", (D.finish(route_state), _answer(ru, second.id, "dont_know")[1])[1] == 400)
+
 print()
 if fails:
     print(f"{len(fails)} FAILED: " + ", ".join(fails))

@@ -202,14 +202,28 @@ _LEAK_IGNORE = set(dir(__import__("builtins"))) | set(__import__("keyword").kwli
 
 
 def _called_symbols(code: str) -> set[str]:
-    """Leaf names of every call in `code`, minus builtins/keywords/aliases."""
-    out: set[str] = set()
-    for m in _CALL_RE.finditer(code or ""):
-        leaf = m.group(1).split(".")[-1]
-        if leaf in _LEAK_IGNORE or len(leaf) < 3:
-            continue
-        out.add(leaf)
-    return out
+    """Leaf names of every call in `code`, minus builtins/keywords/aliases.
+
+    Parsed, not scanned: a regex over the raw text counted `foo()` inside a
+    comment or a string as a call the answer makes (codex, first review). The
+    regex stays only as the fallback for a snippet that will not parse — a
+    starter with a syntax error is already a blocking `starter_syntax`."""
+    code = code or ""
+    leaves: set[str] = set()
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        leaves = {m.group(1).split(".")[-1] for m in _CALL_RE.finditer(code)}
+    else:
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            fn = node.func
+            if isinstance(fn, ast.Attribute):
+                leaves.add(fn.attr)
+            elif isinstance(fn, ast.Name):
+                leaves.add(fn.id)
+    return {leaf for leaf in leaves if leaf not in _LEAK_IGNORE and len(leaf) >= 3}
 
 
 def _named_in_code_form(symbol: str, text: str) -> bool:

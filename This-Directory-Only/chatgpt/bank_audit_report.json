@@ -79,6 +79,12 @@
     "detail": "prompt names solution call(s) in code form: ['repeat']"
    }
   ],
+  "355": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
   "361": [
    {
     "check": "answer_symbol_in_prompt",
@@ -235,6 +241,12 @@
     "detail": "prompt names solution call(s) in code form: ['exp']"
    }
   ],
+  "437": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['outer']"
+   }
+  ],
   "439": [
    {
     "check": "answer_symbol_in_prompt",
@@ -371,7 +383,7 @@
   "476": [
    {
     "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['no_grad']"
+    "detail": "prompt names solution call(s) in code form: ['mean', 'no_grad']"
    }
   ],
   "477": [
@@ -402,6 +414,12 @@
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel']"
+   }
+  ],
+  "495": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['item']"
    }
   ],
   "523": [
@@ -462,6 +480,12 @@
     "detail": "prompt names solution call(s) in code form: ['upper']"
    }
   ],
+  "609": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['append']"
+   }
+  ],
   "799": [
    {
     "check": "answer_symbol_in_prompt",
@@ -489,7 +513,7 @@
   "804": [
    {
     "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['zeros']"
+    "detail": "prompt names solution call(s) in code form: ['arange', 'zeros']"
    }
   ],
   "805": [
@@ -516,6 +540,12 @@
     "detail": "prompt names solution call(s) in code form: ['linspace', 'ones']"
    }
   ],
+  "810": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['copy_']"
+   }
+  ],
   "811": [
    {
     "check": "answer_symbol_in_prompt",
@@ -537,7 +567,7 @@
   "815": [
    {
     "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['arange']"
+    "detail": "prompt names solution call(s) in code form: ['arange', 'copy_']"
    }
   ],
   "816": [
@@ -550,6 +580,12 @@
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "819": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['copy_']"
    }
   ],
   "826": [
@@ -566,7 +602,7 @@
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 87,
+  "answer_symbol_in_prompt": 93,
   "precompute_leak": 5,
   "starter_passes_some_cases": 1
  }

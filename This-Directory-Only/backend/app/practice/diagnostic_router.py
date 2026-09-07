@@ -117,23 +117,32 @@ def diagnostic_answer(
     # screen the check fell through, so any question id at all could be posted
     # as "dont_know" and be recorded as a probe the server never served —
     # evidence about a concept the learner was never asked about, straight into
-    # the placement estimate. `pending` is empty in exactly two states, and
-    # neither of them is answerable: between probes, and after this same probe
-    # was already recorded. The second is a real client retry (a late timeout
-    # firing behind a submitted answer), so it stays allowed — `record_probe`
-    # replaces the earlier record and refunds its time rather than charging
-    # twice. Everything else is refused.
+    # the placement estimate.
+    #
+    # 🔴 AND A RETRY IS A REPLAY, NOT A SECOND RECORDING (codex, 2026-09-07).
+    # The first fix let any id already in the probe log through and re-recorded
+    # it — so a placement-timer "dont_know" firing late, behind a /submit that
+    # had just graded the same problem correct, REPLACED the correct record
+    # with dont_know, and a stale tab could re-post an old probe the same way.
+    # Placement evidence seeds BKT mastery; nothing on this path may rewrite a
+    # record. With nothing pending, only the most recent probe's id is accepted,
+    # and it is answered with the current state, unrecorded. Everything else is
+    # 409.
     pending_id = (d.get("pending") or {}).get("question_id")
-    already_probed = any(p["question_id"] == payload.question_id for p in d["probes"])
     if pending_id is not None:
-        answerable = pending_id == payload.question_id
+        if pending_id != payload.question_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="That is not the placement problem currently on screen.",
+            )
     else:
-        answerable = already_probed
-    if not answerable:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="That is not the placement problem currently on screen.",
-        )
+        latest = d["probes"][-1]["question_id"] if d["probes"] else None
+        if latest != payload.question_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="That is not the placement problem currently on screen.",
+            )
+        return _status(user_state)
     diagnostic.record_probe(user_state, question, payload.result, elapsed_secs=payload.elapsed_secs)
     save_user_state(str(user.id))
     return _status(user_state)
