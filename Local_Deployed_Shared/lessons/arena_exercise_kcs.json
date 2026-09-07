@@ -181,13 +181,12 @@
    "original": null
   },
   "temperatures_average": {
-   "kc": "einops.reduce-model",
-   "title": "(B1) temperature average",
+   "kc": "einops.pooling",
+   "title": "(B1) temperature average — window reductions",
    "variants": [
     929,
     930,
-    931,
-    932
+    931
    ],
    "original": null
   },

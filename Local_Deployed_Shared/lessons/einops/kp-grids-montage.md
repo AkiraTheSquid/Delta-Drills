@@ -62,13 +62,21 @@ assert grid[0, 2, 0] == 1.0                  # top-right block = image 1
 assert grid[2, 0, 0] == 2.0                  # second row starts image 2
 assert grid[4, 2, 0] == 5.0                  # bottom-right = image 5
 
+print("6 images", tuple(imgs.shape), "-> montage", tuple(grid.shape))
+print(grid[:, :, 0])          # each image is a constant block, so read them off
+```
+
+The montage runs in reverse by swapping the pattern's sides — but now each merged axis hides two unknowns, so each group needs its own keyword.
+
+```python
+import torch as t
+import einops
+
 # Reverse: carve the montage back into the batch. Each merged input axis
 # hides two unknowns, so each group needs one keyword: g1 (fixes h) AND
 # g2 (fixes w).
 back = einops.rearrange(grid, '(g1 h) (g2 w) c -> (g1 g2) h w c', g1=3, g2=2)
 assert t.equal(back, imgs)
-print("6 images", tuple(imgs.shape), "-> montage", tuple(grid.shape))
-print(grid[:, :, 0])          # each image is a constant block, so read them off
 print("carved back to the batch exactly:", bool(t.equal(back, imgs)))
 ```
 
@@ -147,9 +155,10 @@ column-major grid
 - **"Montages need a loop pasting images into a canvas."** — The
   split-merge pattern is the whole operation. If you're computing paste
   offsets, the pattern replaces that code.
-- **"g1 is rows because it's named g1."** — It's rows because it's the SLOW
-  factor of the batch split AND merges with h. Rename freely; position does
-  the work. (Corollary: to fill column-major, swap the split order, not the
+- **"g1 is rows because it's named g1."** — It's rows because it MERGES
+  WITH `h` on the right. Its position in the split on the left decides the
+  fill order (slow = row-major, fast = column-major), not what it means.
+  Rename freely; position does the work. (Corollary: to fill column-major, swap the split order, not the
   names.)
 - **"The grid pattern only works for images."** — Any batch × per-item-2D
   data montages the same way; and the same split-merge shape reappears in

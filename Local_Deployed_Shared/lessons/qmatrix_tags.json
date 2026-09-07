@@ -8445,7 +8445,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "865": {
   "target_kcs": [
@@ -8510,7 +8510,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "870": {
   "target_kcs": [
@@ -8575,7 +8575,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "875": {
   "target_kcs": [
@@ -8640,7 +8640,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "880": {
   "target_kcs": [
@@ -8653,7 +8653,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "881": {
   "target_kcs": [
@@ -8705,7 +8705,7 @@
   "new_syntax": [
    "einops.einsum"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "885": {
   "target_kcs": [
@@ -8770,7 +8770,7 @@
   "new_syntax": [
    "einops-axis-composition"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "890": {
   "target_kcs": [
@@ -8783,7 +8783,7 @@
   "new_syntax": [
    "einops-axis-composition"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "891": {
   "target_kcs": [
@@ -8796,7 +8796,7 @@
   "new_syntax": [
    "einops-axis-composition"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "892": {
   "target_kcs": [
@@ -8822,7 +8822,7 @@
   "new_syntax": [
    "einops.repeat"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "894": {
   "target_kcs": [
@@ -8835,7 +8835,7 @@
   "new_syntax": [
    "einops.repeat"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "895": {
   "target_kcs": [
@@ -8861,7 +8861,7 @@
   "new_syntax": [
    "einops.repeat"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "897": {
   "target_kcs": [
@@ -8926,7 +8926,7 @@
   "new_syntax": [
    "einops.repeat"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "902": {
   "target_kcs": [
@@ -8939,7 +8939,7 @@
   "new_syntax": [
    "einops.repeat"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "903": {
   "target_kcs": [
@@ -9073,7 +9073,7 @@
   "new_syntax": [
    "einops.rearrange"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "914": {
   "target_kcs": [
@@ -9085,7 +9085,7 @@
   "new_syntax": [
    "einops.rearrange"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "915": {
   "target_kcs": [
@@ -9097,7 +9097,7 @@
   "new_syntax": [
    "einops.rearrange"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "916": {
   "target_kcs": [
@@ -9109,7 +9109,7 @@
   "new_syntax": [
    "einops.rearrange"
   ],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "917": {
   "target_kcs": [
@@ -9163,7 +9163,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "922": {
   "target_kcs": [
@@ -9193,7 +9193,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "925": {
   "target_kcs": [
@@ -9203,7 +9203,7 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "926": {
   "target_kcs": [
@@ -9233,45 +9233,39 @@
    "einops.merge-axes"
   ],
   "new_syntax": [],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "929": {
   "target_kcs": [
-   "einops.reduce-model"
+   "einops.pooling"
   ],
   "supporting_kcs": [
-   "einops.pattern-language",
-   "numpy.axis-reductions"
+   "einops.reduce-model",
+   "einops.split-axes"
   ],
-  "new_syntax": [
-   "einops.reduce"
-  ],
+  "new_syntax": [],
   "source": "kp-integrated"
  },
  "930": {
   "target_kcs": [
-   "einops.reduce-model"
+   "einops.pooling"
   ],
   "supporting_kcs": [
-   "einops.pattern-language",
-   "numpy.axis-reductions"
+   "einops.reduce-model",
+   "einops.split-axes"
   ],
-  "new_syntax": [
-   "einops.reduce"
-  ],
+  "new_syntax": [],
   "source": "kp-integrated"
  },
  "931": {
   "target_kcs": [
-   "einops.reduce-model"
+   "einops.pooling"
   ],
   "supporting_kcs": [
-   "einops.pattern-language",
-   "numpy.axis-reductions"
+   "einops.reduce-model",
+   "einops.split-axes"
   ],
-  "new_syntax": [
-   "einops.reduce"
-  ],
+  "new_syntax": [],
   "source": "kp-integrated"
  },
  "932": {

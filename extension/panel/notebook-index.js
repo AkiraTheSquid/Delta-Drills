@@ -41,7 +41,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 51
+      "problems": 62
     },
     {
       "id": "eo-2",
@@ -57,7 +57,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
-      "problems": 23
+      "problems": 28
     },
     {
       "id": "tr-1",
@@ -73,7 +73,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Einsum",
       "file": "es-1-einsum.ipynb",
-      "problems": 14
+      "problems": 20
     }
   ],
   "subtopics": {

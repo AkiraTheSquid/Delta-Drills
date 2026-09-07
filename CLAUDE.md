@@ -166,6 +166,21 @@ skill report the same thing from the other side.
   E (argmax accuracy), F/G/I (indexing + gather), H (logsumexp / softmax / cross-entropy)
   — they need new KCs (graph atoms exist: `vector-normalize-keepdim`, `index-by-tensor`,
   `logsumexp-cross-entropy`, `argmax-accuracy-eval`…); the graph AI owns new atoms/edges.
+- **Rubric pass over the 0.0 einops set** (2026-09-07): `scripts/CONTENT_RUBRIC.md` is
+  the written standard (STMT_*/GIVE_*/EXPL_*/DIFF_*/CORR_* codes). Reviewed by GPT-6 Astra
+  (one `codex exec` run, `scripts/content_critic.py`) + Fable in-session; reports in
+  `scripts/content_review/`. Fixes: all 94 prompts q847–940 rewritten self-contained
+  (no "Variant of exercise (1)", shapes stated, einsum drills forbid `@`/`.T`/loops);
+  q847/q903 example ≠ case; q917/918/920 got tall cases that catch factor-order
+  mistakes; q936 a 7-day row; single-idea Integrated items re-rung to Solo; every einops
+  page's worked fence split with prose between (INTERLEAVE), einsum INTRO paragraphs,
+  callable reductions (`t.std`) taught on reduce-model; `0-0/temperatures_average`
+  now maps to `einops.pooling` variants 929–931 (q932 dropped from the button).
+  🔴 Left: faded starters on 7 pages (q345/391/361/389/325/324/356) are transcriptions
+  and need new drills; duplicates q870/875/883/886/925 not retired (retirement path is
+  entangled with qmatrix); bank faded starters q847–854 are `return None` while the
+  pages carry scaffolds — check which the UI serves. 🔑 `audit_solution_prereqs.py`
+  parses backticked code spans in PROMPTS as symbols, so write prompt maths in words.
 - **`einops` rearrange/reduce/repeat KPs have NOT had the full treatment.** Its KPs still carry the pre-2026-08-28 content:
   thin rungs, no Solo/Integrated split, no worked input/output tables. It is the
   next frontier — do it as Seth reaches it, one concept at a time, same

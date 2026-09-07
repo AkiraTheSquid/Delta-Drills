@@ -22,8 +22,8 @@ both are single einops patterns:
 then channel 1's — the order PyTorch's `.view(b, -1)` produces, so weights
 transfer). A single image entering a batch-expecting classifier combines
 this with the singleton trick: `'c h w -> 1 (c h w)'`. The full-tensor
-collapse `'b c h w -> b'`-style sums are reduce; TOTAL flattening to a
-scalar count of axes is `'... -> (...)'`-shaped merges — same grammar
+collapse `'b c h w -> b'`-style sums are reduce; flattening EVERYTHING to
+one axis of length b·c·h·w is `'b c h w -> (b c h w)'` — same grammar
 throughout.
 
 **The attention-head split/merge.** Multi-head attention stores per-head
@@ -60,6 +60,16 @@ assert flat.shape == (2, 12)
 # c slow: the first 4 entries of item 0 are channel 0's pixels.
 assert flat[0, :4].tolist() == feats[0, 0].ravel().tolist()
 
+print("feats", tuple(feats.shape), "-> flat", tuple(flat.shape))
+print("item 0 starts with channel 0's pixels:", flat[0, :4])
+```
+
+Attention output wants ONE vector per token holding every head's features, head 0's first — a merge with `nh` slow.
+
+```python
+import torch as t
+import einops
+
 # Heads merge: (b, nh, t, d) -> (b, t, (nh d)).
 heads = t.arange(16.0).reshape(1, 2, 2, 4)     # (b, nh=2, t, d=4)
 merged = einops.rearrange(heads, 'b nh t d -> b t (nh d)')
@@ -68,13 +78,19 @@ assert merged.shape == (1, 2, 8)
 assert merged[0, 0].tolist() == (heads[0, 0, 0].tolist()
                                  + heads[0, 1, 0].tolist())
 
+print("heads", tuple(heads.shape), "-> merged", tuple(merged.shape))
+print("token 0 =", merged[0, 0], " (head 0's four, then head 1's)")
+```
+
+Splitting the packed axis back needs the head count; matching conventions round-trip exactly.
+
+```python
+import torch as t
+import einops
+
 # The inverse split — declare how the packed axis factors.
 unmerged = einops.rearrange(merged, 'b t (nh d) -> b nh t d', nh=2)
 assert t.equal(unmerged, heads)          # round trip exact
-print("feats", tuple(feats.shape), "-> flat", tuple(flat.shape))
-print("item 0 starts with channel 0's pixels:", flat[0, :4])
-print("heads", tuple(heads.shape), "-> merged", tuple(merged.shape))
-print("token 0 =", merged[0, 0], " (head 0's four, then head 1's)")
 print("split back exactly:", bool(t.equal(unmerged, heads)))
 ```
 

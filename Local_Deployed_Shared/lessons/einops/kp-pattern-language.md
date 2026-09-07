@@ -5,8 +5,8 @@ supporting: [numpy.reshape-flatten]
 new_syntax: [einops.rearrange]
 faded: [345]
 guided: [388]
-independent: [335, 330, 379, 319, 327, 344]
-integrated: [913, 914, 915, 916]
+independent: [335, 330, 379, 319, 327, 344, 913, 914, 915, 916]
+integrated: []
 ---
 
 ## Concept
@@ -60,11 +60,29 @@ assert first.shape == (2, 3, 2, 2)
 # Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).
 assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 
+print("channels-last", tuple(arr.shape), "-> channels-first", tuple(first.shape))
+```
+
+The image example moved the channel axis; the same grammar moves the time axis of a sequence in front of its batch axis.
+
+```python
+import torch as t
+import einops
+
 # Sequence layout swap: batch-first -> time-first.
 seq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)
 tfirst = einops.rearrange(seq, 'b t d -> t b d')
 assert tfirst.shape == (3, 2, 2)
 assert seq[1, 2, 0] == tfirst[2, 1, 0]
+
+print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
+```
+
+Finally, the pattern is an EXPECTATION about the input, and einops enforces it.
+
+```python
+import torch as t
+import einops
 
 # The pattern is checked against reality: wrong axis count = loud error.
 try:
@@ -75,18 +93,16 @@ except Exception as err:
     print("4-name pattern on 3-D data ->", type(err).__name__)
 assert raised
 
-print("channels-last", tuple(arr.shape), "-> channels-first",
-      tuple(first.shape))
 print("element (1,0,1,2) moved to (1,2,0,1):",
       arr[1, 0, 1, 2].item(), "==", first[1, 2, 0, 1].item())
-print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
 ```
 
 Why each step:
 
 1. The tracked element (`arr[1,0,1,2] == first[1,2,0,1]`) is the same
    verification that works for every relayout — indices permute exactly as
-   the names did. One element proves the whole mapping.
+   the names did. One element is a spot check of the mapping; a full
+   `t.equal` against `arr.permute(0, 3, 1, 2)` is the proof.
 2. Note what the names buy in the sequence example: 'b t d -> t b d' READS
    as "time first"; the transpose-tuple spelling `(1, 0, 2)` says the same
    thing to the machine and nothing to the reader.
@@ -105,7 +121,7 @@ import einops
 
 def solve(arr):
     """(b, h, w, c) -> (b, c, h, w)."""
-    return einops.rearrange(arr, '_____')
+    return einops._____(arr, '_____')
 ```
 
 ```python solution
@@ -135,20 +151,6 @@ Also from the bank: q319 (channels-first batch to channels-last — the
 single most common layout flip), q327 ((h, w, c) to (h, c, w) — colour
 lands between height and width), q344 (transpose H and W WITHIN each
 channel).
-
-## Integrated practice
-
-### q913
-batch transpose
-
-### q914
-channels first to last
-
-### q915
-channels last to first
-
-### q916
-batch and channel swapped
 
 ## Misconceptions
 
