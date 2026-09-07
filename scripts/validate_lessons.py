@@ -388,7 +388,9 @@ def check_coverage(registry, bank, kps, errors):
 
 def main(argv):
     coverage = "--coverage" in argv
-    files = [Path(a) for a in argv if a.endswith(".md")]
+    # Resolve so a path given relative to the cwd (the usual way to type it)
+    # still satisfies lesson_lib's `path.relative_to(REPO)`.
+    files = [Path(a).resolve() for a in argv if a.endswith(".md")]
     registry = load_registry()
     bank = load_bank()
     errors = []
