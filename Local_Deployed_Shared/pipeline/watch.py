@@ -177,10 +177,70 @@ def check_reviewed_corrections_ship_to_both_banks():
     assert f'!Local_Deployed_Shared/pipeline/{filename}' in _source(os.path.join(_REPO_ROOT, '.dockerignore'))
 
 
+def check_the_card_never_names_the_answer():
+    """audit_question_bank.py must catch a solution call named under the prompt.
+
+    Seth, 2026-09-07, mid-placement on q551: the "Not this" note read
+    "`t.equal` returns the single verdict" — the call the drill exists to make
+    the learner find, printed under the question. His ask: a regex watch over
+    the questions for any of the solution's code appearing in the question, so
+    "answer leak would never happen". That check lives in the deploy gate
+    (`check_answer_leak`, BLOCKING as `answer_leak_in_wrong_example`); this
+    watch pins that it is wired, that it blocks, and — by mutation — that it
+    still fires on exactly the q551 shape and stays quiet on a clean card.
+    """
+    import importlib.util
+    src = _source(os.path.join(_DIR, 'audit_question_bank.py'))
+    tree = ast.parse(src)
+    audit_fn = next(n for n in ast.walk(tree)
+                    if isinstance(n, ast.FunctionDef) and n.name == 'audit')
+    called = {n.func.id for n in ast.walk(audit_fn)
+              if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)}
+    assert 'check_answer_leak' in called, (
+        'audit() no longer calls check_answer_leak — a wrong_examples `why` that '
+        'names the answer (q551, `t.equal`) ships again')
+    blocking = next(n for n in tree.body if isinstance(n, ast.Assign)
+                    and any(isinstance(t, ast.Name) and t.id == 'BLOCKING_CHECKS' for t in n.targets))
+    names = {c.value for c in ast.walk(blocking.value) if isinstance(c, ast.Constant)}
+    assert {'answer_leak_in_wrong_example', 'answer_leak_in_hint'} <= names, (
+        'answer_leak_* left BLOCKING_CHECKS — the gate would report the leak and deploy it anyway')
+
+    spec = importlib.util.spec_from_file_location(
+        'audit_question_bank', os.path.join(_DIR, 'audit_question_bank.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    q551 = {
+        'id': 551, 'function_name': 'solve',
+        'question_text': 'Write a function solve(rows_a, rows_b) that returns a tuple '
+                         '(equal, same_shape): the whole-tensor comparison of the two tensors.',
+        'starter_code': 'import torch as t\n\ndef solve(rows_a, rows_b):\n    return None\n',
+        'answer_code': 'import torch as t\n\ndef solve(rows_a, rows_b):\n    a = t.tensor(rows_a)\n'
+                       '    b = t.tensor(rows_b)\n    return (t.equal(a, b), tuple(a.shape) == tuple(b.shape))\n',
+        'wrong_examples': [{'call': 'solve([[1]], [[1]])', 'output': '(tensor([[True]]), True)',
+                            'why': '`==` is elementwise and returns a tensor of bools. '
+                                   '`t.equal` returns the single verdict.'}],
+    }
+    hits = [f for f in mod.check_answer_leak(q551) if f['check'] == 'answer_leak_in_wrong_example']
+    assert hits and 'equal' in hits[0]['detail'], (
+        'check_answer_leak no longer fires on the q551 shape (`t.equal` in the why)')
+    # The prose word is not a leak; the same idea said without the call is clean.
+    clean = dict(q551, wrong_examples=[dict(q551['wrong_examples'][0],
+        why='`==` is elementwise and returns a tensor of bools. The first slot asks for '
+            'a single verdict about the whole tensor — is every entry equal?')])
+    assert not [f for f in mod.check_answer_leak(clean) if f['check'].startswith('answer_leak')], (
+        'check_answer_leak flags the prose word "equal" — it must only match code form '
+        '(backticked, dotted, or called), or every honest explanation blocks the deploy')
+    # Named in the prompt = spec, not a leak further down the card.
+    told = dict(q551, question_text=q551['question_text'] + ' Use `t.equal`.')
+    assert not [f for f in mod.check_answer_leak(told) if f['check'] == 'answer_leak_in_wrong_example'], (
+        'a call the prompt itself names must not count as leaked by the why')
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
-              check_reviewed_corrections_ship_to_both_banks]
+              check_reviewed_corrections_ship_to_both_banks,
+              check_the_card_never_names_the_answer]
     for fn in checks:
         try:
             fn()

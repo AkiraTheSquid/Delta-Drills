@@ -13,6 +13,11 @@ does not:
                         starter passes
   todo_answer_leak      a TODO comment in starter_code spells out the graded
                         expression
+  answer_leak_in_wrong_example
+                        a wrong_examples `why` names, in code form, a call the
+                        answer makes and the learner was never told about
+  answer_symbol_in_prompt
+                        (informational) the prompt itself names such a call
 
 Unlike validate_function_bank.py this script never writes
 function_mode_broken_ids.json (that file silently EXCLUDES ids from the
@@ -164,6 +169,99 @@ def check_todo_answer_leak(question: dict) -> list[dict]:
                     "detail": f"TODO comment contains graded expression chunk: {token!r}",
                 })
                 break
+    return findings
+
+# --- the answer must not be printed under the question ----------------------
+#
+# Seth, 2026-09-07, mid-placement on q551 ("returns a tuple (equal, same_shape)
+# ... whole-tensor comparison"): the "Not this" block under the prompt read
+#   "`==` is elementwise and returns a tensor of bools. `t.equal` returns the
+#    single verdict."
+# — the second sentence IS the answer. The learner had not been told t.equal
+# exists; discovering it was the drill. "You should write a watch that does
+# regex search within the questions to see if any of the code for the solution
+# is included in the question ... t.equal would have been caught."
+#
+# What counts as the solution: every call the answer makes that the scaffold
+# does not already hand over — not in starter_code, not the function being
+# written, not a builtin / keyword / import alias, and at least three
+# characters (one- and two-letter names are einops axes and loop variables,
+# never an API). What counts as "included": a CODE-FORM mention — inside
+# backticks, dotted (`.numel()`), or called (`eye(n)`). A prose word is not a
+# leak: "returns its arithmetic mean" describes the task, `.mean()` answers it.
+#
+# The prompt naming a call is spec ("Use einops.rearrange"), so a symbol the
+# prompt already names is not a leak anywhere else on the card, and the prompt
+# itself is reported but never blocks. The wrong_examples `why` is where the
+# leak actually shipped and is the one place there is no honest reason to name
+# the fix — the block explains why the WRONG output is wrong — so that blocks.
+_CALL_RE = re.compile(r"(?<![\w.])((?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*)\s*\(")
+_LEAK_IGNORE = set(dir(__import__("builtins"))) | set(__import__("keyword").kwlist) | {
+    "t", "torch", "np", "numpy", "einops", "math", "F", "nn", "plt",
+}
+
+
+def _called_symbols(code: str) -> set[str]:
+    """Leaf names of every call in `code`, minus builtins/keywords/aliases."""
+    out: set[str] = set()
+    for m in _CALL_RE.finditer(code or ""):
+        leaf = m.group(1).split(".")[-1]
+        if leaf in _LEAK_IGNORE or len(leaf) < 3:
+            continue
+        out.add(leaf)
+    return out
+
+
+def _named_in_code_form(symbol: str, text: str) -> bool:
+    """`symbol` appears in `text` as code: backticked, dotted, or called.
+
+    Backtick spans are PAIRED first: a single regex over the whole text matched
+    the prose BETWEEN two spans ("`==` is ... a tensor of bools. `t.equal`") as
+    if it were inside one, and flagged the word "tensor". Found by this file's
+    own watch (the told-in-prompt case), before it ever ran on the bank."""
+    text = text or ""
+    word = re.compile(r"(?<![\w])" + re.escape(symbol) + r"(?![\w])")
+    if any(word.search(span) for span in re.findall(r"`([^`]*)`", text)):
+        return True
+    sym = re.escape(symbol)
+    return bool(re.search(r"\." + sym + r"(?![\w])", text)
+                or re.search(r"(?<![\w])" + sym + r"\s*\(", text))
+
+
+def solution_symbols(question: dict) -> set[str]:
+    """Calls the answer makes that the learner has to come up with."""
+    answer = question.get("answer_code") or ""
+    given = _called_symbols(question.get("starter_code") or "")
+    given.add(question.get("function_name") or "")
+    given |= set(re.findall(r"(?m)^\s*def\s+(\w+)", answer))
+    return _called_symbols(answer) - given
+
+
+def check_answer_leak(question: dict) -> list[dict]:
+    """The card must not name the call that is the answer (see block comment)."""
+    findings: list[dict] = []
+    prompt = question.get("question_text") or ""
+    symbols = solution_symbols(question)
+    in_prompt = sorted(s for s in symbols if _named_in_code_form(s, prompt))
+    if in_prompt:
+        findings.append({"check": "answer_symbol_in_prompt",
+                         "detail": f"prompt names solution call(s) in code form: {in_prompt}"})
+    # Named in the prompt = told to the learner = not a leak further down.
+    hidden = symbols - set(in_prompt)
+    for idx, wx in enumerate(question.get("wrong_examples") or []):
+        why = str(wx.get("why") or "")
+        leaked = sorted(s for s in hidden if _named_in_code_form(s, why))
+        if leaked:
+            findings.append({
+                "check": "answer_leak_in_wrong_example",
+                "detail": f"wrong_examples[{idx}].why names the answer's call(s) {leaked}: "
+                          f"{why[:100]!r}",
+            })
+    hint = str(question.get("hint") or "")
+    leaked = sorted(s for s in hidden if _named_in_code_form(s, hint))
+    if leaked:
+        findings.append({"check": "answer_leak_in_hint",
+                         "detail": f"hint names the answer's call(s) {leaked}: {hint[:100]!r}"})
     return findings
 
 
@@ -620,6 +718,7 @@ def audit(confirm: bool) -> dict:
         qid = question["id"]
         findings = check_starter_syntax(question)
         findings += check_todo_answer_leak(question)
+        findings += check_answer_leak(question)
         if confirm:
             findings += check_stdout_expected(code_runner, question)
         findings += check_wrong_examples(question, code_runner if confirm else None)
@@ -652,6 +751,7 @@ def audit(confirm: bool) -> dict:
 # preloaded fork path prod uses.
 BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
                    "confirm_error",
+                   "answer_leak_in_wrong_example", "answer_leak_in_hint",
                    "wrong_example_matches_correct", "starter_passes_all_cases",
                    "expected_eval_error", "setup_exec_error", "identity_expected",
                    "torch_unconfirmable", "stdout_expected_stale", "answer_exec_error",
