@@ -71,7 +71,7 @@
       {
         "call": "solve([1, 2, 3])",
         "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
-        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, a two-element input raises instead of returning None."
+        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, an input with more than one element raises instead of returning None."
       }
     ]
   },
@@ -116,7 +116,7 @@
       {
         "call": "solve([[1, 2, 3], [4, 5, 6]])",
         "output": "(False, False, True, False)",
-        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves three of the four answers wrong."
+        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves two of the four answers wrong."
       }
     ]
   },
@@ -142,6 +142,14 @@
       {
         "output": "('HI', 2, <built-in function sqrt>)",
         "why": "The third slot hands back a function object instead of the number it computes \u2014 the parentheses are what make it a call."
+      }
+    ]
+  },
+  "623": {
+    "wrong_examples": [
+      {
+        "output": "(False, (3, 2))",
+        "why": "Cutting the same run to the TRANSPOSE's shape (axis lengths swapped) is neither a transpose nor x \u2014 the numbers keep their reading order, the grid is just a different shape. The round trip has to use x's own shape."
       }
     ]
   },
@@ -197,7 +205,7 @@
     "wrong_examples": [
       {
         "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
-        "why": "An unseeded generator starts from a nondeterministic state, so passing the same seed argument no longer replays the same numbers \u2014 the seed has to be applied to the generator itself."
+        "why": "A generator that never had the seed applied starts from PyTorch's fixed default seed, so the seed argument is ignored and every call replays the same default sequence whatever seed was passed."
       }
     ]
   },

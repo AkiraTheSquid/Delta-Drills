@@ -234,6 +234,14 @@ def check_the_card_never_names_the_answer():
     told = dict(q551, question_text=q551['question_text'] + ' Use `t.equal`.')
     assert not [f for f in mod.check_answer_leak(told) if f['check'] == 'answer_leak_in_wrong_example'], (
         'a call the prompt itself names must not count as leaked by the why')
+    # Calls are PARSED out of the answer: a name in a comment or a string is
+    # not a call the answer makes, so it can be named in the why without leaking.
+    commented = dict(q551, answer_code=q551['answer_code'] + '# t.allclose() would be wrong here\nNOTE = "see numel()"\n',
+                     wrong_examples=[dict(q551['wrong_examples'][0],
+                         why='Not `allclose` — that is tolerance, not equality; and `.numel()` is a count, not a verdict.')])
+    assert not [f for f in mod.check_answer_leak(commented) if f['check'] == 'answer_leak_in_wrong_example'], (
+        'check_answer_leak counts a name inside a comment or string of answer_code as a '
+        'call the answer makes — parse the answer, do not scan it')
 
 
 # ── Run all checks ────────────────────────────
