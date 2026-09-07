@@ -42,8 +42,8 @@ surgery) operate at.
 
 ## Worked example
 
-Task: split interleaved channel groups; swap group blocks; average-pool
-time pairs.
+Task: split interleaved channel groups, compare with the contiguous reading
+of the same axis, then average-pool time pairs.
 
 ```python
 import torch as t
@@ -58,17 +58,33 @@ assert split.shape == (2, 1, 3, 1, 2)
 # Group 0 must hold original channels 0, 2, 4 (every second one):
 assert t.equal(split[0, 0, :, 0, 0], x[0, ::2, 0, 0])
 
+print("channels        ", x[0, :, 0, 0])
+print("'(c g)' group 0 ", split[0, 0, :, 0, 0], " <- every second channel")
+```
+
+Read the SAME channel axis with the group index slow instead, and the split is shape-compatible but wrong for this data.
+
+```python
+import torch as t
+import einops
+
 # Same data read as GROUP SLOWEST would give a different (wrong here) split:
 wrong = einops.rearrange(x, 'b (g c) h w -> g b c h w', g=2)
 assert not t.equal(split, wrong)          # conventions matter!
+
+print("'(g c)' group 0 ", wrong[0, 0, :, 0, 0], " <- a contiguous half")
+```
+
+The factor-order rule is not about pixels: split a time axis into adjacent pairs and average within each pair.
+
+```python
+import torch as t
+import einops
 
 # Temporal pooling: average adjacent pairs of time steps.
 seq = t.arange(8.0).reshape(1, 1, 8)            # (b, c, t=8)
 halved = einops.reduce(seq, 'b c (t two) -> b c t', 'mean', two=2)
 assert halved[0, 0].tolist() == [0.5, 2.5, 4.5, 6.5]
-print("channels        ", x[0, :, 0, 0])
-print("'(c g)' group 0 ", split[0, 0, :, 0, 0], " <- every second channel")
-print("'(g c)' group 0 ", wrong[0, 0, :, 0, 0], " <- a contiguous half")
 print("seq", seq[0, 0], "-> pairwise mean", halved[0, 0])
 ```
 
@@ -124,8 +140,8 @@ channels: (g c) → (c g)), q378 (average-pool time with window length w),
 q397 (spatial axes leading, batch and channels merged with batch slowest —
 a pure but rank-heavy rearrange).
 
-Also from the bank: q316 (channel axis interleaves `coord` groups of k,
-group index SLOWEST — split the group out and move it to the front), q359
+Also from the bank: q316 (channel axis holds `coord` CONTIGUOUS groups of k,
+group index slowest — split the group out and move it to the front), q359
 (same split, phrased for unpacking: `part1, part2 = solve(x, 2)`).
 
 ## Misconceptions

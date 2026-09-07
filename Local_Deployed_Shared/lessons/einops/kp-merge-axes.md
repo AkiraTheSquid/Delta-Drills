@@ -5,8 +5,8 @@ supporting: [einops.pattern-language, numpy.reshape-flatten]
 new_syntax: [einops-axis-composition]
 faded: [391, 347]
 guided: [357]
-independent: [342, 314, 346, 353, 373, 380, 392, 400]
-integrated: [889, 890, 891, 892, 905, 906, 907, 908]
+independent: [342, 314, 346, 353, 373, 380, 392, 400, 889, 890, 891]
+integrated: [892, 905, 906, 907, 908]
 ---
 
 ## Concept
@@ -58,9 +58,27 @@ flat = einops.rearrange(img, 'c h w -> c (h w)')
 assert flat.shape == (3, 4)
 assert flat[0].tolist() == [0, 1, 2, 3]   # row 0 then row 1 of channel 0
 
+print("'(h w)' reads across rows:", flat[0])
+```
+
+Same merge, other order inside the parens: the walk changes, the length does not.
+
+```python
+import torch as t
+import einops
+
 # Paren order matters: (w h) reads DOWN the columns instead.
 flat_cols = einops.rearrange(img, 'c h w -> c (w h)')
 assert flat_cols[0].tolist() == [0, 2, 1, 3]
+
+print("'(w h)' reads down columns:", flat_cols[0])
+```
+
+To put whole images side by side, the batch index must vary SLOWER than the column index — so `b` goes on the left inside the parens, even though `b` and `w` are not adjacent in the input.
+
+```python
+import torch as t
+import einops
 
 # Merge NON-adjacent axes: batch into width -> images side by side.
 batch = t.arange(16).reshape(2, 2, 2, 2)  # (b, h, w, c)
@@ -68,8 +86,6 @@ wide = einops.rearrange(batch, 'b h w c -> h (b w) c')
 assert wide.shape == (2, 4, 2)
 # Row 0: image 0's two columns, THEN image 1's two columns (b is slow).
 assert wide[0, :, 0].tolist() == [0, 2, 8, 10]
-print("'(h w)' reads across rows:", flat[0])
-print("'(w h)' reads down columns:", flat_cols[0])
 print("batch merged into width", tuple(wide.shape), "-> row 0:",
       wide[0, :, 0])
 ```
@@ -153,18 +169,11 @@ sequence), q373 (unroll the CHANNEL axis along height, plus a trailing
 singleton — '(c h) w ()'), q380 (batch into height AND channels-last in
 the same pattern), q392 (stack vertically in channels-first — 'c (b h)
 w'), q400 (batch merged into width with the batch index INNERMOST, so
-columns interleave instead of images concatenating).
+columns interleave instead of images concatenating), q889 (batch side by
+side, channels-first), q890 (batch stacked vertically, channels-last), q891
+(channels stacked vertically).
 
 ## Integrated practice
-
-### q889
-batch side by side
-
-### q890
-vertical stack, channels-last
-
-### q891
-channels stacked vertically
 
 ### q892
 batch and space into one axis

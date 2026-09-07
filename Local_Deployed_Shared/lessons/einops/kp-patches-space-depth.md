@@ -23,11 +23,11 @@ then pull the block coordinates out as a patch index:
 
 Height splits into h blocks of p1 rows; width likewise; merging (h w)
 row-major gives the patch list. **Reassembly is the same pattern reversed**
-— it was your grid-KP faded exercise (q323), now recognized as
+— this page's faded exercise (q323) practises exactly that direction,
 depth-to-space's cousin.
 
-**Space-to-depth** — the block coordinates fold into the CHANNEL axis
-instead of a patch index:
+**Space-to-depth** — the within-block offsets fold into the CHANNEL axis
+(the block's grid position stays spatial) instead of becoming a patch index:
 
 > `'b c (h p) (w q) -> b (c p q) h w', p=P, q=P`
 
@@ -62,9 +62,28 @@ assert patches.shape == (4, 2, 2, 1)
 assert patches[0, :, :, 0].tolist() == [[0.0, 1.0], [4.0, 5.0]]
 assert patches[1, 0, 0, 0] == 2.0          # patch 1 starts at column 2
 
+print("image", tuple(img.shape), "-> patches", tuple(patches.shape))
+print("patch 0 =", patches[0, :, :, 0].tolist(), "| patch 1 starts at", patches[1, 0, 0, 0].item())
+```
+
+Reassembly is the extraction pattern with its sides swapped; the keyword moves to whichever side now has the unknowns.
+
+```python
+import torch as t
+import einops
+
 # REASSEMBLE: the same pattern, sides swapped (this is q323's shape).
 back = einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=2)
 assert t.equal(back, img)
+
+print("reassembled to the original:", bool(t.equal(back, img)))
+```
+
+Space-to-depth keeps the block's grid position on the spatial axes and folds the position WITHIN the block into the channel axis.
+
+```python
+import torch as t
+import einops
 
 # SPACE-TO-DEPTH on a batch: blocks fold into channels; H, W halve.
 x = t.arange(32.0).reshape(1, 2, 4, 4)    # (b, c=2, H, W)
@@ -72,10 +91,6 @@ s2d = einops.rearrange(x, 'b c (h p) (w q) -> b (c p q) h w', p=2, q=2)
 assert s2d.shape == (1, 8, 2, 2)           # channels x4, spatial /2
 # The new channel block for output pixel (0,0) holds input block [0:2, 0:2]:
 assert s2d[0, :4, 0, 0].tolist() == [0.0, 1.0, 4.0, 5.0]
-print("image", tuple(img.shape), "-> patches", tuple(patches.shape))
-print("patch 0 =", patches[0, :, :, 0].tolist(),
-      "| patch 1 starts at", patches[1, 0, 0, 0].item())
-print("reassembled to the original:", bool(t.equal(back, img)))
 print("space-to-depth", tuple(x.shape), "->", tuple(s2d.shape),
       "(channels x4, spatial /2)")
 print("pixel (0,0)'s new channels:", s2d[0, :4, 0, 0])

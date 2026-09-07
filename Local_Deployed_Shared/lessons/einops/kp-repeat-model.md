@@ -5,8 +5,8 @@ supporting: [einops.split-axes, numpy.broadcasting-rules]
 new_syntax: [einops.repeat]
 faded: [317]
 guided: [351]
-independent: [338, 348, 385, 341, 339, 383, 352, 355]
-integrated: [893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904, 933, 934, 935, 936, 937, 938, 939, 940]
+independent: [338, 348, 385, 341, 339, 383, 352, 355, 893, 894, 896, 901, 902]
+integrated: [895, 897, 898, 899, 900, 903, 904, 933, 934, 935, 936, 937, 938, 939, 940]
 ---
 
 ## Concept
@@ -57,6 +57,15 @@ seq = einops.repeat(cls, 'b d -> b t d', t=3)
 assert seq.shape == (2, 3, 2)
 assert seq[0].tolist() == [[1.0, 2.0]] * 3   # identical copies down t
 
+print("new axis:", tuple(cls.shape), "->", tuple(seq.shape), "| item 0 =", seq[0].tolist())
+```
+
+That was a brand-new axis. The second move stretches an axis that already exists; which side of the name the factor sits on decides the layout.
+
+```python
+import torch as t
+import einops
+
 # 2. STRETCH, factor fast: each ROW repeats consecutively.
 img = t.tensor([[1, 2],
                 [3, 4]])                     # (h, w) for clarity
@@ -66,6 +75,15 @@ assert rows3.tolist() == [[1, 2],
                           [3, 4],
                           [3, 4]]            # row, its copy, next row
 
+print("'(h r)' factor FAST — each row repeats:\n", rows3)
+```
+
+Same data, same factor, other side of the name: now the copy index is the SLOW one, so the whole block repeats.
+
+```python
+import torch as t
+import einops
+
 # 3. STRETCH, factor slow: the WHOLE block repeats.
 whole = einops.repeat(img, 'h w -> (r h) w', r=2)
 assert whole.tolist() == [[1, 2],
@@ -73,16 +91,21 @@ assert whole.tolist() == [[1, 2],
                           [1, 2],
                           [3, 4]]            # full image, then again
 
+print("'(r h)' factor SLOW — the block repeats:\n", whole)
+```
+
+Put the fast factor on both spatial axes at once and every pixel becomes a block — nearest-neighbour upscaling.
+
+```python
+import torch as t
+import einops
+
 # Nearest-neighbor 2x upscale: both axes, factor fast on each.
 up = einops.repeat(img, 'h w -> (h a) (w b)', a=2, b=2)
 assert up.tolist() == [[1, 1, 2, 2],
                        [1, 1, 2, 2],
                        [3, 3, 4, 4],
                        [3, 3, 4, 4]]
-print("new axis:", tuple(cls.shape), "->", tuple(seq.shape),
-      "| item 0 =", seq[0].tolist())
-print("'(h r)' factor FAST — each row repeats:\n", rows3)
-print("'(r h)' factor SLOW — the block repeats:\n", whole)
 print("2x nearest-neighbor upscale:\n", up)
 ```
 
@@ -91,9 +114,10 @@ Why each step:
 1. `(h r)` vs `(r h)` on the same data is the `repeat_interleave`-vs-`repeat` shootout
    resettled by one convention (left slow) instead of two function names —
    run both once, then trust the rule.
-2. The new-axis case allocates real copies (unlike `expand`'s
-   virtual stretch) — fine for drills; in memory-tight code you'd reach
-   for broadcast_to semantics knowingly.
+2. `repeat` promises the VALUES and the shape, not fresh memory: on the
+   torch backend the result is usually an `expand` view (check
+   `seq.is_contiguous()`). Call `.contiguous()` or `.clone()` before writing
+   into it.
 3. The upscale's per-axis factors (a, b) show the moves composing — each
    axis independently gets the "pixel becomes a block" treatment, and the
    2×2 blocks in the output are the proof.
@@ -109,7 +133,7 @@ import einops
 
 def solve(img):
     """(c, h, w) -> (c, 3h, w): each row appears 3x in a row."""
-    return einops.repeat(img, 'c h w -> c (_____) w')
+    return einops._____(img, 'c h w -> c (_____) w')
 ```
 
 ```python solution
@@ -140,21 +164,19 @@ BLOCK r times — slow or fast?).
 
 Also from the bank: q352 (stretch vertically by duplicating each ROW in
 place — '(h k)', new index FASTEST), q355 (slice, stack two images
-vertically, then repeat the strip horizontally).
+vertically, then repeat the strip horizontally), q893 (a second copy to the
+right), q894 (n whole copies stacked), q896 (grayscale to three channels),
+q901 (every column doubled in place), q902 (every row k times in place).
 
 ## Integrated practice
 
-### q893
-copy along width
-
-### q894
-n copies stacked
+q933–q940 combine `reduce` (per-week statistics) with `repeat` (laying the
+statistic back over the days). Three of them need a standard deviation:
+`einops.reduce` accepts a FUNCTION as its aggregation (`t.std`, which divides
+by n−1) — see the reduce KP's concept section.
 
 ### q895
 2x2 tiling
-
-### q896
-grayscale to RGB
 
 ### q897
 side by side, doubled vertically
@@ -167,12 +189,6 @@ each image doubled in place
 
 ### q900
 grayscale stack + double
-
-### q901
-stretch width
-
-### q902
-stretch height by k
 
 ### q903
 2x nearest-neighbour upscale
@@ -215,6 +231,6 @@ scale by weekly std
   "consecutively"/"each row" vs "whole image again" — map the words to
   the order.
 - **"Broadcasting makes repeat unnecessary."** — Broadcasting stretches
-  virtually within an operation; repeat materializes an actual tensor with
-  the new shape — which is what a drill's return-shape contract (and much
-  downstream code) requires. Know which one you're producing.
+  virtually inside ONE operation; repeat returns a tensor that HAS the new
+  shape, which is what a drill's return-shape contract (and much downstream
+  code) requires. It may still be a view — do not assume fresh memory.

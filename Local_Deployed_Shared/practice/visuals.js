@@ -366,9 +366,15 @@ function renderArrayToCanvas(canvasEl, arrayData) {
       for (let x = 0; x < width; x++) {
         const pixel = normalized[y][x];
         const idx = (y * width + x) * 4;
-        imageData.data[idx] = Math.max(0, Math.min(255, pixel[0] ?? 0));
-        imageData.data[idx + 1] = Math.max(0, Math.min(255, pixel[1] ?? 0));
-        imageData.data[idx + 2] = Math.max(0, Math.min(255, pixel[2] ?? 0));
+        /* ONE CHANNEL IS GREY, NOT RED. A `(1, h, w)` result — every drill
+           whose canonical case passes a single-channel image — arrives here
+           as pixels of length 1, and reading `pixel[1] ?? 0` for green and
+           blue painted the ARENA digits black-on-RED. A missing channel means
+           "same as the first one"; only a real second channel makes a colour. */
+        const red = Math.max(0, Math.min(255, pixel[0] ?? 0));
+        imageData.data[idx] = red;
+        imageData.data[idx + 1] = pixel.length > 1 ? Math.max(0, Math.min(255, pixel[1])) : red;
+        imageData.data[idx + 2] = pixel.length > 2 ? Math.max(0, Math.min(255, pixel[2])) : red;
         imageData.data[idx + 3] = pixel.length > 3 ? Math.max(0, Math.min(255, pixel[3])) : 255;
       }
     }
@@ -420,6 +426,35 @@ async function renderQuestionVisual(question) {
   if (!plan?.setupCode || !plan?.resultExpr) {
     setVisualDebug({ rendered: false, reason: "missing_execution_plan" });
     questionVisualNote.textContent = "Image preview unavailable for this question.";
+    return;
+  }
+
+  /* A LITERAL IS NOT A REFERENCE IMAGE. The 0.0 einops variants (q889-q920)
+     are graded on nested lists, so `expected_expr` is a 2x2 toy written out
+     in full — `[[[0, 1, 4, 5], [2, 3, 6, 7]]]`. Running it through Pyodide
+     ended in `AttributeError: 'list' object has no attribute 'tolist'` and
+     the catch below quietly drew the source strip under the words "live
+     preview unavailable", which reads as a broken app rather than as what it
+     is: those ARE the images the drill is about. Say so, and skip the attempt
+     that was always going to fail. The learner's own result now renders on
+     the same digits once they run their code — practice/visual-fixture.js. */
+  // Opening bracket AND no call in it. A bare `/^[[(]/` also caught anything a
+  // future author wrapped in parentheses — `(solve(img) * 2)` is computed, is
+  // renderable, and would have been sent to the fallback without ever being
+  // tried. Nothing in the bank does that today; the guard costs one regex.
+  // (codex, 2026-09-07.)
+  const isLiteralExpected =
+    /^\s*[[(]/.test(plan.resultExpr) && !/[A-Za-z_]\w*\s*\(/.test(plan.resultExpr);
+  if (isLiteralExpected) {
+    setVisualDebug({ rendered: false, reason: "literal_expected_value" });
+    try {
+      await renderFallbackImage(question);
+      questionVisualNote.textContent =
+        "The images this exercise works on. Run your code to see your own result.";
+    } catch (fallbackErr) {
+      setVisualDebug({ fallbackImageError: fallbackErr.message || String(fallbackErr) });
+      questionVisualNote.textContent = "Image preview unavailable for this question.";
+    }
     return;
   }
 

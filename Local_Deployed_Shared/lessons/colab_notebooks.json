@@ -40,7 +40,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 51
+      "problems": 62
     },
     {
       "id": "eo-2",
@@ -56,7 +56,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
-      "problems": 23
+      "problems": 28
     },
     {
       "id": "tr-1",
@@ -72,7 +72,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Einsum",
       "file": "es-1-einsum.ipynb",
-      "problems": 14
+      "problems": 20
     }
   ],
   "questions": {
@@ -450,6 +450,17 @@
     "403": "eo-1",
     "404": "eo-1",
     "531": "eo-1",
+    "889": "eo-1",
+    "890": "eo-1",
+    "891": "eo-1",
+    "913": "eo-1",
+    "914": "eo-1",
+    "915": "eo-1",
+    "916": "eo-1",
+    "921": "eo-1",
+    "924": "eo-1",
+    "925": "eo-1",
+    "928": "eo-1",
     "324": "eo-2",
     "325": "eo-2",
     "326": "eo-2",
@@ -488,6 +499,11 @@
     "394": "eo-3",
     "396": "eo-3",
     "397": "eo-3",
+    "893": "eo-3",
+    "894": "eo-3",
+    "896": "eo-3",
+    "901": "eo-3",
+    "902": "eo-3",
     "798": "tr-1",
     "799": "tr-1",
     "800": "tr-1",
@@ -533,7 +549,13 @@
     "857": "es-1",
     "858": "es-1",
     "859": "es-1",
-    "860": "es-1"
+    "860": "es-1",
+    "864": "es-1",
+    "869": "es-1",
+    "874": "es-1",
+    "879": "es-1",
+    "880": "es-1",
+    "884": "es-1"
   },
   "subtopics": {
     "Python: Getting started": "py-0",

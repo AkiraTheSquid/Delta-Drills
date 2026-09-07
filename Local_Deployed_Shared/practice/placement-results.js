@@ -7,9 +7,14 @@
    a lie by omission, because /api/practice/diagnostic/status has returned
    the real numbers the entire time:
 
-       areas: [{ topic, theta, sd, probes }]   theta on the 0-100 difficulty scale
+       areas: [{ topic, theta, sd, probes }]   theta = 100 × P(known), folded
+                                               from the per-concept rows
+       kcs: [{ kc, title, lesson, topic, p, state, probes, arena_probes,
+               arena_linked }]                 one row per enabled concept
+       fast_track: [kc]                        settled with one probe each
+       edge_violations: [{ prereq, dependent, p_prereq, p_dependent }]
        atoms_seeded: <int>                     concepts seeded at finish()
-       probes_done / budget / min_probes
+       plan: { hours, budget_secs, spent_secs, … }
        completed_at, self_reported_level
 
    Nothing rendered them. This file does, and it is the ONLY writer of the
@@ -60,13 +65,17 @@ const PlacementResults = (() => {
      difference between reporting the learner's placement and reporting a
      figure nothing else in the system agrees with. practice/watch.py parses
      BOTH files and fails if they ever drift apart. */
-  const DIFF_FLOOR = 20.0;         // diagnostic.py _DIFF_FLOOR
-  const DIFF_SPAN = 80.0;          // diagnostic.py _DIFF_SPAN
   const SEED_MASTERY_FLOOR = 0.02; // diagnostic.py SEED_MASTERY_FLOOR
   const SEED_MASTERY_CAP = 0.92;   // diagnostic.py SEED_MASTERY_CAP
+  /* 2026-09-07: `theta` is 100 × P(known) — the topic-θ difficulty scale and
+     its _DIFF_FLOOR/_DIFF_SPAN map retired with the per-concept model, and
+     the seeding is `_mastery_from_p`, a clip of P to the range above. ALEKS's
+     cut-offs (placement_model.py IN_STATE / OUT_OF_STATE) sort the rows. */
+  const KNOWN_P = 0.8;
+  const UNKNOWN_P = 0.2;
 
   const readiness = (theta) => {
-    const m = (Number(theta) - DIFF_FLOOR) / DIFF_SPAN;
+    const m = Number(theta) / 100;
     if (!Number.isFinite(m)) return SEED_MASTERY_FLOOR;
     return Math.max(SEED_MASTERY_FLOOR, Math.min(SEED_MASTERY_CAP, m));
   };
@@ -76,7 +85,7 @@ const PlacementResults = (() => {
      points by the same span. Capped at 50 because a band wider than that is
      "we do not know" and a ±78 reads as precision about the uncertainty. */
   const band = (sd) => {
-    const b = Math.round((Number(sd) / DIFF_SPAN) * 100);
+    const b = Math.round(Number(sd));
     return Number.isFinite(b) ? Math.max(1, Math.min(50, b)) : null;
   };
 
@@ -111,8 +120,19 @@ const PlacementResults = (() => {
     const chip = (text) => host.appendChild(el("span", "placement-chip", text));
     const on = completedOn(status.completed_at);
     if (on) chip(on);
-    chip(`${Number(status.probes_done) || 0} questions`);
-    if (areas.length) chip(`${probedCount}/${areas.length} areas probed`);
+    chip(`${Number(status.probes_done) || 0} problems`);
+    const spent = Number(status.plan?.spent_secs);
+    if (Number.isFinite(spent) && spent > 0) {
+      const h = Math.floor(spent / 3600);
+      const m = Math.floor((spent % 3600) / 60);
+      chip(h > 0 ? `${h}h ${m}m` : m > 0 ? `${m} min` : "under a minute");
+    }
+    const kcs = Array.isArray(status.kcs) ? status.kcs : [];
+    if (kcs.length) {
+      chip(`${kcs.filter((k) => (Number(k.probes) || 0) > 0).length}/${kcs.length} concepts probed`);
+    } else if (areas.length) {
+      chip(`${probedCount}/${areas.length} areas probed`);
+    }
     const seeded = Number(status.atoms_seeded);
     if (Number.isFinite(seeded)) chip(`${seeded} concepts seeded`);
   };
@@ -242,6 +262,95 @@ const PlacementResults = (() => {
     });
   };
 
+  /* ---- per-concept report ------------------------------------------- */
+
+  /* The graph-wide result, one row per enabled concept, grouped by what the
+     test concluded: known / uncertain / unknown (ALEKS's own three states).
+     Weakest first inside each group. The honesty rule applies row by row: a
+     concept with `probes === 0` was never asked and is marked so, and the
+     ARENA rows say when the evidence was ARENA's own exercise.
+
+     `fast_track` (settled in one problem) and `edge_violations` (a dependent
+     the learner knows better than its prerequisite — the sign an edge in the
+     graph is wrong, which the 6-hour plan exists to find) each get a short
+     line; both are empty for most runs and then draw nothing.
+
+     Anchored INSIDE the results card, after #placement-readiness. The host is
+     minted once here because this file is the card body's only writer; the
+     card itself (#diagnostic-results) stays static in index.html. */
+  const STATE_LABEL = { known: "Known", uncertain: "Uncertain", unknown: "To learn" };
+  const STATE_ORDER = ["unknown", "uncertain", "known"];
+  const stateOf = (k) =>
+    k.state || (Number(k.p) >= KNOWN_P ? "known" : Number(k.p) <= UNKNOWN_P ? "unknown" : "uncertain");
+
+  const _kcsHost = () => {
+    let host = byId("placement-kcs");
+    if (host) return host;
+    const after = byId("placement-readiness");
+    if (!after?.parentNode) return null;
+    host = el("div", "placement-kcs");
+    host.id = "placement-kcs";
+    after.parentNode.insertBefore(host, after.nextSibling);
+    return host;
+  };
+
+  const renderKcs = (status) => {
+    const host = _kcsHost();
+    if (!host) return;
+    host.textContent = "";  // `renderKcs(null)` = clear: no learner, no report
+    const kcs = Array.isArray(status?.kcs) ? status.kcs : [];
+    if (!kcs.length) return;
+
+    STATE_ORDER.forEach((state) => {
+      const rows = kcs
+        .filter((k) => stateOf(k) === state)
+        .sort((a, b) => Number(a.p) - Number(b.p) || (Number(b.probes) || 0) - (Number(a.probes) || 0));
+      if (!rows.length) return;
+      const group = el("div", `placement-kc-group placement-kc-group--${state}`);
+      group.appendChild(el("div", "placement-areas-head", `${STATE_LABEL[state]} · ${rows.length}`));
+      rows.forEach((k) => {
+        const probes = Number(k.probes) || 0;
+        const arena = Number(k.arena_probes) || 0;
+        const r = readiness(Number(k.p) * 100);
+        const row = el("div", `placement-area placement-kc${probes ? "" : " placement-area--unprobed"}`);
+        const name = el("span", "placement-area-name", String(k.title || k.kc));
+        if (k.lesson) name.title = String(k.lesson);
+        row.appendChild(name);
+        const bar = el("span", "placement-area-bar");
+        const fill = el("i");
+        fill.style.width = `${pct(r)}%`;
+        bar.appendChild(fill);
+        row.appendChild(bar);
+        row.appendChild(el("span", "placement-area-pct", `${pct(r)}%`));
+        row.appendChild(el("span", "placement-area-conf", k.arena_linked ? (arena ? "ARENA ✓" : "ARENA") : ""));
+        row.appendChild(el("span", "placement-area-probes",
+          probes ? `${probes} probed${arena ? ` · ${arena} ARENA` : ""}` : "not probed"));
+        group.appendChild(row);
+      });
+      host.appendChild(group);
+    });
+
+    const byKc = Object.fromEntries(kcs.map((k) => [k.kc, k]));
+    const title = (id) => String(byKc[id]?.title || id);
+    /* ALEKS's fast track: the concepts the test left UNCERTAIN go first in
+       practice. They are the "Uncertain" rows above, so one line with the
+       count — not 41 names again. */
+    const fast = Array.isArray(status.fast_track) ? status.fast_track : [];
+    if (fast.length) {
+      host.appendChild(el("p", "placement-kc-note",
+        `${fast.length} uncertain concept${fast.length === 1 ? "" : "s"} go first in practice.`));
+    }
+    const edges = Array.isArray(status.edge_violations) ? status.edge_violations : [];
+    if (edges.length) {
+      const note = el("p", "placement-kc-note placement-kc-note--edges");
+      note.appendChild(el("strong", null, "Graph edges this run disagrees with: "));
+      note.appendChild(document.createTextNode(
+        edges.map((e) => `${title(e.dependent)} (${pct(Number(e.p_dependent))}%) known better than its prerequisite ${title(e.prereq)} (${pct(Number(e.p_prereq))}%)`).join("; "),
+      ));
+      host.appendChild(note);
+    }
+  };
+
   /* ---- entry point -------------------------------------------------- */
 
   const render = (status) => {
@@ -249,17 +358,19 @@ const PlacementResults = (() => {
     const probedCount = areas.filter((a) => (Number(a.probes) || 0) > 0).length;
     renderMeta(status || {}, areas, probedCount);
     renderOverall(status || {}, areas, probedCount);
+    renderKcs(status || {});
     renderAreas(areas);
 
     const empty = byId("placement-results-empty");
     // A finished placement with no areas at all means the bank changed under
     // the account. Say so rather than render three empty containers.
-    empty?.classList.toggle("hidden", areas.length > 0);
+    const kcCount = Array.isArray(status?.kcs) ? status.kcs.length : 0;
+    empty?.classList.toggle("hidden", areas.length > 0 || kcCount > 0);
   };
 
   /* `renderAreas` is public now: diagnostic-page.js calls it on every status,
      while `render` (the meta chips and the overall figure, which ARE about one
      completed test) stays gated on `completed_at`. */
-  return { render, renderAreas, readiness, band };
+  return { render, renderAreas, renderKcs, readiness, band };
 })();
 window.PlacementResults = PlacementResults;

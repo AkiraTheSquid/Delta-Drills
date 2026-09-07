@@ -7,8 +7,8 @@ previews: []
 concepts: [one-operand, two-operands, repeated-names, batch-axes]
 faded: [847, 848, 849, 850, 851, 852, 853, 854]
 guided: []
-independent: [855, 856, 857, 858, 859, 860]
-integrated: [861, 862, 863, 864, 869, 874, 879, 884, 865, 866, 867, 868, 870, 871, 872, 873, 875, 876, 877, 878, 880, 881, 882, 883, 885, 886, 887, 888]
+independent: [855, 856, 857, 858, 859, 860, 864, 869, 874, 879, 884, 880]
+integrated: [861, 862, 863, 865, 866, 867, 868, 870, 871, 872, 873, 875, 876, 877, 878, 881, 882, 883, 885, 886, 887, 888]
 ---
 
 ## Concept: one operand — name every axis, drop the ones to sum
@@ -34,11 +34,22 @@ derivation — no `dim=` to look up, no `.T`.
 
 ## Worked example
 
+We take one 2×3 matrix and ask for its total, its column sums, its row sums and its transpose — four patterns, one operand — and check that the surviving names alone decide each shape.
+
 ```python
 import torch as t
 import einops
 
 a = t.arange(6).reshape(2, 3)          # (i, j)
+
+print("a =", a.tolist())
+```
+
+The four patterns below differ only in what survives on the right of `->`.
+
+```python
+import torch as t
+import einops
 
 whole = einops.einsum(a, "i j ->")       # nothing kept -> every element summed
 cols = einops.einsum(a, "i j -> j")      # i vanishes -> one number per column
@@ -58,14 +69,14 @@ as "for each j, sum over i" — the summed axis is the one that is not there.
 ## Faded practice
 
 ### q847
-Which axis disappears when you keep only `j`?
+Return one total per matrix column.
 
 ```python starter
 import torch as t
 import einops
 
 def solve(mat):
-    """Column sums via einsum."""
+    """One total per column."""
     a = t.tensor(mat)
     return einops._____(a, "_____").tolist()
 ```
@@ -75,20 +86,20 @@ import torch as t
 import einops
 
 def solve(mat):
-    """Column sums via einsum."""
+    """One total per column."""
     a = t.tensor(mat)
     return einops.einsum(a, "i j -> j").tolist()
 ```
 
 ### q848
-Three names on the left; two survive. The one to drop is the last.
+Sum away the last axis only; the other two survive in order.
 
 ```python starter
 import torch as t
 import einops
 
 def solve(x):
-    """Sum the last axis of a 3-D tensor via einsum."""
+    """Sum away the last axis only."""
     a = t.tensor(x)
     return einops._____(a, "_____").tolist()
 ```
@@ -98,7 +109,7 @@ import torch as t
 import einops
 
 def solve(x):
-    """Sum the last axis of a 3-D tensor via einsum."""
+    """Sum away the last axis only."""
     a = t.tensor(x)
     return einops.einsum(a, "b i j -> b i").tolist()
 ```
@@ -119,6 +130,8 @@ allows a shared axis of length 1 to broadcast against the other operand.
 
 ## Worked example
 
+We multiply a matrix by a vector, then by a second matrix, and check which shared name is summed in each case.
+
 ```python
 import torch as t
 import einops
@@ -126,6 +139,15 @@ import einops
 a = t.arange(6).reshape(2, 3)      # (i, j)
 v = t.arange(3)                    # (j,)
 b = t.arange(15).reshape(3, 5)     # (j, k)
+
+print("shapes:", tuple(a.shape), tuple(v.shape), tuple(b.shape))
+```
+
+`j` is the only name both operands share. It is absent from the right, so it is the axis that gets summed.
+
+```python
+import torch as t
+import einops
 
 mv = einops.einsum(a, v, "i j, j -> i")        # == a @ v
 mm = einops.einsum(a, b, "i j, j k -> i k")    # == a @ b
@@ -142,14 +164,14 @@ surviving names are the output shape, in the order you wrote them.
 ## Faded practice
 
 ### q849
-The shared axis is the vector's ONLY axis, and it is the matrix's first one this time.
+The vector sits on the LEFT of the matrix this time: `vec @ mat`.
 
 ```python starter
 import torch as t
 import einops
 
 def solve(vec, mat):
-    """Vector times matrix via einsum."""
+    """Vector on the left of a matrix."""
     v, a = t.tensor(vec), t.tensor(mat)
     return einops._____(v, a, "_____").tolist()
 ```
@@ -159,20 +181,20 @@ import torch as t
 import einops
 
 def solve(vec, mat):
-    """Vector times matrix via einsum."""
+    """Vector on the left of a matrix."""
     v, a = t.tensor(vec), t.tensor(mat)
     return einops.einsum(v, a, "i, i j -> j").tolist()
 ```
 
 ### q850
-Both operands end in the same axis. Name it the same, and the transpose is free.
+Compute `mat1 @ mat2.T` without transposing anything.
 
 ```python starter
 import torch as t
 import einops
 
 def solve(mat1, mat2):
-    """A times B-transpose via einsum."""
+    """A times B-transpose."""
     a, b = t.tensor(mat1), t.tensor(mat2)
     return einops._____(a, b, "_____").tolist()
 ```
@@ -182,7 +204,7 @@ import torch as t
 import einops
 
 def solve(mat1, mat2):
-    """A times B-transpose via einsum."""
+    """A times B-transpose."""
     a, b = t.tensor(mat1), t.tensor(mat2)
     return einops.einsum(a, b, "i k, j k -> i j").tolist()
 ```
@@ -203,6 +225,8 @@ missing names sum (Rocktäschel §2.7–2.9, and the trace):
 
 ## Worked example
 
+We compare corresponding-entry products, all-pairs products and diagonal selection on two small vectors and one square matrix.
+
 ```python
 import torch as t
 import einops
@@ -211,9 +235,27 @@ a = t.arange(3)                    # [0, 1, 2]
 b = t.arange(3, 6)                 # [3, 4, 5]
 m = t.tensor([[1, 2], [3, 4]])
 
+print("a =", a.tolist(), "b =", b.tolist(), "m =", m.tolist())
+```
+
+Now the same two rules on data where the answer is easy to check by hand.
+
+```python
+import torch as t
+import einops
+
 dot = einops.einsum(a, b, "i, i ->")          # 0*3 + 1*4 + 2*5
 outer = einops.einsum(a, b, "i, j -> i j")     # (3, 3): a[i] * b[j]
 had = einops.einsum(m, m, "i j, i j -> i j")   # m * m
+print("dot", dot.item(), "| outer row 1", outer[1].tolist(), "| hadamard", had.tolist())
+```
+
+Repeating a name INSIDE one operand is a third rule: it keeps only the entries whose two coordinates are equal (the diagonal); dropping that name then sums them.
+
+```python
+import torch as t
+import einops
+
 tr = einops.einsum(m, "i i ->")                # 1 + 4
 
 assert dot.item() == 14
@@ -223,21 +265,22 @@ assert tr.item() == 5
 print(dot, outer.shape, tr)
 ```
 
-Why each step: the SAME two rules decide every case — count which names are
-shared (those multiply) and which are missing on the right (those sum). The
-outer product shares none and drops none, so it is pure multiplication.
+Why each step: shared names across operands pair the entries up and multiply
+them; a name repeated INSIDE one operand keeps only the entries whose two
+coordinates are equal; whatever is missing on the right is summed. The outer
+product shares none and drops none, so it is pure multiplication.
 
 ## Faded practice
 
 ### q851
-The trace repeats a name and keeps nothing. Keep it instead.
+Return the main diagonal in order.
 
 ```python starter
 import torch as t
 import einops
 
 def solve(mat):
-    """The diagonal via a repeated index."""
+    """The main diagonal."""
     a = t.tensor(mat)
     return einops._____(a, "_____").tolist()
 ```
@@ -247,13 +290,13 @@ import torch as t
 import einops
 
 def solve(mat):
-    """The diagonal via a repeated index."""
+    """The main diagonal."""
     a = t.tensor(mat)
     return einops.einsum(a, "i i -> i").tolist()
 ```
 
 ### q852
-Both names shared, both dropped.
+Return the sum of all corresponding-entry products of two same-shape matrices.
 
 ```python starter
 import torch as t
@@ -290,6 +333,8 @@ output is the whole change. No `torch.bmm`, no `unsqueeze`, no loop.
 
 ## Worked example
 
+We multiply two matrices by two identities in one call — one product per batch entry — then take one dot product per row of a batch.
+
 ```python
 import torch as t
 import einops
@@ -299,6 +344,15 @@ y = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities
 
 bmm = einops.einsum(x, y, "b i j, b j k -> b i k")
 assert bmm.tolist() == x.tolist()             # times the identity, per batch
+
+print("bmm shape", tuple(bmm.shape), "== x:", bmm.tolist() == x.tolist())
+```
+
+The same carry-through works with one axis fewer: one dot product per row.
+
+```python
+import torch as t
+import einops
 
 rows = t.tensor([[1, 2], [3, 4]])
 dots = einops.einsum(rows, rows, "b i, b i -> b")
@@ -312,7 +366,7 @@ Why each step: `b` is on the right, so nothing is summed over it; `j` (or
 ## Faded practice
 
 ### q853
-Matrix–vector, with a `b` carried through both operands and the output.
+Pair each matrix with the vector at the same batch position.
 
 ```python starter
 import torch as t
@@ -335,7 +389,7 @@ def solve(mats, vecs):
 ```
 
 ### q854
-Outer product shares no name — except the batch, which is carried through.
+Return one outer-product matrix per pair of batch vectors.
 
 ```python starter
 import torch as t
@@ -360,10 +414,10 @@ def solve(u, v):
 ## Solo practice
 
 ### q855
-Sum across the batch axis.
+Sum across the first axis.
 
 ### q856
-Gram matrix A A^T.
+Gram matrix.
 
 ### q857
 A three-operand contraction.
@@ -372,10 +426,28 @@ A three-operand contraction.
 Row-wise dot products.
 
 ### q859
-Diagonals of a batch.
+Diagonal of every matrix in a batch.
 
 ### q860
-Row scaling as an einsum.
+Scale each row by a weight.
+
+### q864
+The trace.
+
+### q869
+Matrix times vector.
+
+### q874
+Matrix product.
+
+### q879
+Dot product.
+
+### q884
+Outer product.
+
+### q880
+Squared norm.
 
 ## Integrated practice
 
@@ -388,80 +460,62 @@ Per-batch Gram matrices.
 ### q863
 Query-key scores.
 
-### q864
-einsum_trace
-
-### q869
-einsum_mv
-
-### q874
-einsum_mm
-
-### q879
-einsum_inner
-
-### q884
-einsum_outer
-
 ### q865
-trace of A squared
+Trace of the square, without the square.
 
 ### q866
-batch of traces
+One trace per matrix.
 
 ### q867
-sum of squared diagonal
+Sum of squared diagonal entries.
 
 ### q868
-scaled diagonal
+Scaled diagonal.
 
 ### q870
-vector-matrix product
+Vector times matrix.
 
 ### q871
-transpose-then-multiply
+Transpose times vector, no transpose.
 
 ### q872
-one matrix, many vectors
+One matrix, many vectors.
 
 ### q873
-many matrices, one vector
+Many matrices, one vector.
 
 ### q875
-A times B transpose
+A times B-transpose, no transpose.
 
 ### q876
-A transpose times B
+A-transpose times B, no transpose.
 
 ### q877
-batch matmul
+Batched matrix product.
 
 ### q878
-three-matrix chain
-
-### q880
-squared norm
+Three-matrix chain in one call.
 
 ### q881
-batched dot products
+One dot product per row.
 
 ### q882
-weighted dot product
+Weighted dot product.
 
 ### q883
-matrix inner product
+Sum of all pairwise products.
 
 ### q885
-transposed outer product
+Transposed outer product.
 
 ### q886
-batched outer products
+One outer product per batch entry.
 
 ### q887
-three-way outer product
+Three-way outer product.
 
 ### q888
-masked outer product
+Masked outer product.
 
 ## Misconceptions
 
