@@ -91,6 +91,26 @@ def get_diag(user_state: UserPracticeState) -> dict:
     d.setdefault("plan", None)
     d.setdefault("spent_secs", 0)
     d.setdefault("pending", None)
+
+    # 🔴 LEGACY RUNS HAVE NO PLAN, AND AN ACTIVE ONE TRAPPED THE LEARNER.
+    #
+    # Before the time-plan rewrite (2026-09-07) a run was a count of probes,
+    # not a clock, so `plan` did not exist. Left `active`, such a run has no
+    # budget, no per-problem cap and nothing for `remaining_secs` to spend —
+    # while the placement page hides the 1h/3h/6h picker for exactly as long as
+    # a run is active. Measured on prod: 9 of 60 learners (Seth included) sat on
+    # "In progress · 0 of at most 15" with no picker, no way to choose the
+    # 6-hour graph-wide audit, and no way to finish the run they were in.
+    #
+    # An active run with no plan is an ABANDONED old run — every one of them was
+    # last touched 2026-08-23 — so it is reopened as "not started" and the
+    # learner gets the picker back. NOTHING IS DELETED: the old probe log stays
+    # exactly where it is (`start()` clears it when they actually retake), and
+    # the old probes carry no `kc`, so `_model_probes` already ignores them and
+    # no stale evidence leaks into the new estimator either way.
+    if d["active"] and not isinstance(d.get("plan"), dict):
+        d["active"] = False
+        d["pending"] = None
     return d
 
 
@@ -403,6 +423,19 @@ def _ranked(user_state: UserPracticeState):
 
 def select_probe(user_state: UserPracticeState):
     """The next placement problem, or None when nothing informative is left."""
+    # RESUME BEFORE RE-ROLLING. A probe that was served and never answered is
+    # still the problem on screen, so a reload, a second tab or any repeated
+    # /next-question has to get THAT problem back. Re-rolling instead cost two
+    # things: the served question went to `served_question_ids` and could never
+    # be served again (a silently burnt bank item), and its serve-to-answer time
+    # was never charged — `spent_secs` only grows in `record_probe` — so the
+    # plan's "hard cap" was dodgeable indefinitely by reloading before
+    # answering. The cap can only be hard if abandoning a problem costs time.
+    pending = get_diag(user_state).get("pending") or {}
+    if pending.get("question_id") is not None:
+        resumed = get_question_by_id(pending["question_id"])
+        if resumed is not None:
+            return resumed
     ranked, cands, _graph_, _B = _ranked(user_state)
     for _score, kc in ranked:
         arena, generic = cands[kc]

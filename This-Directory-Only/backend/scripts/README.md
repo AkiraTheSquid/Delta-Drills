@@ -6,6 +6,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 ## Owns
 - `init_db.py`: bootstrap a fresh Postgres schema (creates pgcrypto extension, runs `Base.metadata.create_all`). Run once after a clean DB.
 - `recompute_p_ewma.py`: recompute the per-subtopic EWMA correctness rate (`p`) from each user's attempt history in `../user_data/*.json`. Use after changing the EWMA alpha or fixing data corruption.
+- `test_placement.py`: the validation suite for the graph-wide placement diagnostic (`app/diagnostic.py`) — legacy-run migration, probe resume, the server-side clock and per-problem cap, and a full 6-hour run's concept + ARENA coverage. 29 checks, no pytest, no network. Run `.venv/bin/python scripts/test_placement.py`.
 
 ## Does NOT own
 - The schema definitions themselves — those live in `../app/models.py` and `../schema.sql`.
@@ -35,6 +36,13 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
+- **`test_diagnostic_history.py` tests a model that no longer exists** — `ACTIVE`
+  - When it happens: any run of it, since the 2026-09-07 placement rewrite.
+  - Symptom: `AttributeError: module 'app.diagnostic' has no attribute 'p_correct'` at line 39; the whole file aborts.
+  - Root cause: it validates the retired topic-θ estimator (`p_correct`, `_DIFF_FLOOR`, per-area budgets). The rewrite deleted that model and left the suite behind, and no watcher runs it, so it went red silently.
+  - Prevention/fix: `test_placement.py` covers the replacement model. Retire this file (or port the two checks worth keeping: history-informed priors and post-completion estimate stability) rather than leaving a red suite nothing runs.
+  - Status: ACTIVE.
+
 - **Recompute script reads user files in place** — `ACTIVE`
   - When it happens: `recompute_p_ewma.py` rewrites JSON files directly with no backup.
   - Symptom: a buggy formula change permanently rewrites historical `p`.
@@ -43,5 +51,6 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
   - Status: ACTIVE.
 
 ## Recent Changes
+- 2026-09-07: `test_placement.py` added — 29 checks over the graph-wide placement diagnostic, written alongside the fix for the unreachable 6-hour plan. `test_diagnostic_history.py` recorded as ACTIVE-broken above; it has been failing at import since the model it tests was deleted.
 - 2026-04-28: Doc filled in.
 - 2026-04-27: Initial doc created.

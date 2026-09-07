@@ -112,8 +112,24 @@ def diagnostic_answer(
         )
     # Only the problem the server served can be answered on this path — a
     # no-attempt response to an arbitrary question would be free evidence.
-    pending = d.get("pending") or {}
-    if pending.get("question_id") not in (None, payload.question_id):
+    #
+    # 🔴 AN EMPTY `pending` IS NOT A PASS. It used to be: with nothing on
+    # screen the check fell through, so any question id at all could be posted
+    # as "dont_know" and be recorded as a probe the server never served —
+    # evidence about a concept the learner was never asked about, straight into
+    # the placement estimate. `pending` is empty in exactly two states, and
+    # neither of them is answerable: between probes, and after this same probe
+    # was already recorded. The second is a real client retry (a late timeout
+    # firing behind a submitted answer), so it stays allowed — `record_probe`
+    # replaces the earlier record and refunds its time rather than charging
+    # twice. Everything else is refused.
+    pending_id = (d.get("pending") or {}).get("question_id")
+    already_probed = any(p["question_id"] == payload.question_id for p in d["probes"])
+    if pending_id is not None:
+        answerable = pending_id == payload.question_id
+    else:
+        answerable = already_probed
+    if not answerable:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="That is not the placement problem currently on screen.",
