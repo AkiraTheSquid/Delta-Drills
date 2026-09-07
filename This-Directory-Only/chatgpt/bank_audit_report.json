@@ -22,6 +22,12 @@
     "detail": "post-setup var 'example' already equals the expected value"
    }
   ],
+  "550": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/4 graded cases"
+   }
+  ],
   "581": [
    {
     "check": "precompute_leak",
@@ -38,6 +44,7 @@
   ]
  },
  "counts": {
-  "precompute_leak": 5
+  "precompute_leak": 5,
+  "starter_passes_some_cases": 1
  }
 }
