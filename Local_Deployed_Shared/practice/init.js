@@ -133,6 +133,50 @@ const initPractice = async () => {
     renderQuestion(PracticeAPI.currentQuestion, practiceQuestionCount);
     return;
   }
+  /* 🔴 DO NOT FETCH A QUESTION INTO A LIVE PLACEMENT. While a placement is
+     ACTIVE the backend's next-question endpoint serves PROBES — there is no
+     practice stream running beside a live test — so this boot fetch handed the
+     Learner Home a probe with `diagnostic_active: true`, started its 2:00 on it
+     and left it counting down behind the idle surface, where it expired into a
+     recorded miss on a question the learner never saw. diagnostic-page.js
+     documents that measurement in its "SKIP FOR NOW" note, which is why the
+     mid-test exit is hidden; this is the same hazard reached through a reload
+     rather than a tab switch.
+
+     It is also what makes pausing the placement stick (diagnostic-page.js
+     `pause()`): pausing clears the saved probe, so a reload lands exactly here,
+     and without this guard the next boot dealt the learner straight back into a
+     running probe. NO extra state is needed to know a pause happened — "a
+     placement is active and no probe is saved" is the paused state.
+
+     A learner who reloads MID-probe never reaches this line: their probe is in
+     `practiceProgress.currentQuestion` and the early return above renders it,
+     clock and all.
+
+     `diagnosticStatus()` answers null outside backend mode and
+     `{unavailable:true}` when the call fails, and neither is "a test is
+     running" — an outage must not leave the practice page permanently empty. */
+  const diag = await PracticeAPI.diagnosticStatus();
+  if (diag && !diag.unavailable && diag.active) {
+    savePracticeProgress(practiceProgress);
+    /* Send them where the resume is. The placement page renders "Load next
+       placement question" for exactly this state; the Learner Home would show
+       an idle dial and no explanation of why no question came. `switchTab` is a
+       top-level const in app.js — classic scripts share one global lexical
+       scope, and app.js parses first — with the window read as the fallback. */
+    /* 🔴 NEVER OFF A SOLO ROUTE. `/knowledge-graph`, `/courses`, `/notebooks`
+       and the rest are pathname deep links that solo-route.js stamps before
+       first paint (html.dd-solo), and they are pages people are SENT. A learner
+       who happens to have an unfinished placement would have had the link they
+       followed swapped out from under them for the placement page. The route
+       the visitor asked for wins; the skipped fetch above is what this guard is
+       protecting, and it has already happened by here. */
+    const solo = document.documentElement.classList.contains("dd-solo");
+    const go = typeof switchTab !== "undefined" ? switchTab : window.switchTab;
+    if (!solo && typeof go === "function") go("placement");
+    window.DiagnosticPage?.refresh?.();
+    return;
+  }
   const nextQ = await PracticeAPI.getNextQuestion();
   savePracticeProgress(practiceProgress);
   renderQuestion(nextQ, practiceQuestionCount);

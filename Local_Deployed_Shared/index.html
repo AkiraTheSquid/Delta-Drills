@@ -139,7 +139,7 @@
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=8" />
   <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
-  <link rel="stylesheet" href="styles/solo-route.css?v=1" />
+  <link rel="stylesheet" href="styles/solo-route.css?v=2" />
   <link rel="stylesheet" href="styles/test-users.css?v=1" />
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
        No SRI integrity attrs on purpose: a stale/wrong hash would silently block
@@ -2023,6 +2023,20 @@ t.manual_seed(0)
                is leaving on purpose. -->
           <button type="button" class="ghost placement-skip-btn" id="placement-skip-btn"
                   >Skip for now &mdash; go to practice</button>
+          <!-- PAUSE THE PLACEMENT. Hidden here, and permanently so: the only
+               moment pausing means anything is while a probe is on screen, and
+               a probe on screen is exactly when this card is hidden
+               (.diagnostic-running, styles/practice/diagnostic.css). The
+               surface is the topbar notch — its square and its menu row — and
+               this is the button they proxy to, the same arrangement
+               #session-pause-btn has with the notch for a practice session.
+               It exists rather than the notch calling DiagnosticPage.pause()
+               itself so there is ONE place the behaviour is written down and
+               one element carrying its enabled state; practice/notch-menu.js
+               documents why it clicks the real control instead of copying it.
+               practice/diagnostic-page.js owns what pausing does. -->
+          <button type="button" class="ghost placement-pause-btn hidden" id="placement-pause-btn"
+                  >Pause the placement test</button>
         </div>
       </section>
       <!-- Filled by practice/placement-results.js from the SAME
@@ -2187,7 +2201,7 @@ t.manual_seed(0)
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
-  <script src="practice/visuals.js?v=16"></script>
+  <script src="practice/visuals.js?v=18"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
        and the question → lesson-notebook resolver. MUST load before ui.js,
@@ -2229,9 +2243,10 @@ t.manual_seed(0)
        arena-notebook.js — but it reuses code-highlight.js/code-complete.js and
        must load after both. -->
   <script src="practice/notebook-code-edit.js?v=1"></script>
-  <script src="practice/runner.js?v=22"></script>
+  <script src="practice/visual-fixture.js?v=1"></script>
+  <script src="practice/runner.js?v=23"></script>
   <script src="practice/notebook.js?v=8"></script>
-  <script src="practice/notebook-editor.js?v=4"></script>
+  <script src="practice/notebook-editor.js?v=5"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
@@ -2243,7 +2258,7 @@ t.manual_seed(0)
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
   <script src="concept-pill.js?v=3"></script>
-  <script src="practice/notch-menu.js?v=7"></script>
+  <script src="practice/notch-menu.js?v=8"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -2312,12 +2327,12 @@ t.manual_seed(0)
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-results.js?v=3"></script>
-  <script src="practice/diagnostic-page.js?v=19"></script>
+  <script src="practice/diagnostic-page.js?v=22"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->
   <script src="practice/placement-timer.js?v=4"></script>
-  <script src="practice/init.js?v=16"></script>
+  <script src="practice/init.js?v=18"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
        files survive because the rest of the app depends on them:

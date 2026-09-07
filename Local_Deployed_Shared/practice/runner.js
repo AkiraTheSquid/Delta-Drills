@@ -17,9 +17,57 @@ function hideOutputVisual() {
   ctx.clearRect(0, 0, outputVisualCanvas.width || 1, outputVisualCanvas.height || 1);
 }
 
-async function renderRunOutputVisual(pyodide, question) {
+/* Only reached if practice/visual-fixture.js failed to load — the canvas
+   still needs a way to turn a returned tensor into JSON. */
+const FALLBACK_JSONABLE = `
+def _delta_to_jsonable(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, (tuple, list)):
+        return [_delta_to_jsonable(v) for v in value]
+    return value
+`;
+
+async function renderBackendOutputVisual(question, learnerCode) {
+  const program = learnerCode
+    ? window.DeltaVisualFixture?.backendProgram?.(question, learnerCode)
+    : null;
+  if (!program || practiceMode !== "backend") {
+    hideOutputVisual();
+    return;
+  }
+  try {
+    const res = await apiFetch("/api/practice/run-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: program }),
+    });
+    if (!res.ok) throw new Error("run-code " + res.status);
+    const data = await res.json();
+    const parsed = window.DeltaVisualFixture.parseSentinel(data.stdout);
+    if (!parsed) throw new Error("no visual payload");
+    window.renderDeltaArrayToCanvas(outputVisualCanvas, parsed);
+    outputVisual.classList.remove("hidden");
+    outputVisualNote.textContent = "Your solve(), run again on the real images.";
+  } catch (err) {
+    // A preview is a bonus, never a failure the learner has to read: the
+    // graded result already told them whether their answer was right.
+    hideOutputVisual();
+  }
+}
+
+async function renderRunOutputVisual(pyodide, question, learnerCode = null) {
   if (!question?.supports_visual_output || question?.submission_mode !== "function") {
     hideOutputVisual();
+    return;
+  }
+  // Backend/kernel runs come back with no Pyodide instance to query, which used
+  // to end the preview here for every torch drill in the bank. Ask the backend
+  // instead — practice/visual-fixture.js explains the round trip.
+  if (!pyodide) {
+    await renderBackendOutputVisual(question, learnerCode);
     return;
   }
   // Parameterized visual questions take real arguments — render from the
@@ -28,32 +76,39 @@ async function renderRunOutputVisual(pyodide, question) {
   // legacy questions fall back to solve().
   const visualCall =
     (Array.isArray(question.test_cases) && question.test_cases[0]?.call) || "solve()";
-  try {
-    const payload = await pyodide.runPythonAsync(`
+  /* PREVIEW ON REAL PIXELS WHERE THERE ARE ANY. The graded call passes a 2x2
+     toy, and drawing that is the "matrix rather than the image" Seth reported —
+     see practice/visual-fixture.js, which builds the same call over the ARENA
+     digits. Only the PREVIEW changes; grading still runs the toy. A drill the
+     fixture cannot serve (or a `solve` that trips over the real shape) falls
+     back to the graded call, which is what this always did. */
+  const realCall = window.DeltaVisualFixture?.realImageCall?.(question) || null;
+  const bodies = realCall
+    ? [{ code: realCall, real: true }, { code: `_delta_output_value = ${visualCall}`, real: false }]
+    : [{ code: `_delta_output_value = ${visualCall}`, real: false }];
+  for (const body of bodies) {
+    try {
+      const payload = await pyodide.runPythonAsync(`
 import json
 import numpy as np
-
-def _delta_to_jsonable(value):
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    if isinstance(value, np.generic):
-        return value.item()
-    if isinstance(value, tuple):
-        return [_delta_to_jsonable(v) for v in value]
-    if isinstance(value, list):
-        return [_delta_to_jsonable(v) for v in value]
-    return value
-
-_delta_output_value = ${visualCall}
+${window.DeltaVisualFixture?.pythonHelper?.() || FALLBACK_JSONABLE}
+${body.code}
 json.dumps(_delta_to_jsonable(_delta_output_value))
 `);
-    const parsed = JSON.parse(payload);
-    window.renderDeltaArrayToCanvas(outputVisualCanvas, parsed);
-    outputVisual.classList.remove("hidden");
-    outputVisualNote.textContent = "Rendered from solve().";
-  } catch (err) {
-    hideOutputVisual();
+      const parsed = JSON.parse(payload);
+      window.renderDeltaArrayToCanvas(outputVisualCanvas, parsed);
+      outputVisual.classList.remove("hidden");
+      outputVisualNote.textContent = body.real
+        ? "Your solve(), run again on the real images."
+        : "Rendered from solve().";
+      return;
+    } catch (err) {
+      // Keep going: the real-image attempt is allowed to fail (a pooling
+      // factor that does not divide 120, a solve() that hard-codes a size),
+      // and the graded call behind it is the answer that always worked.
+    }
   }
+  hideOutputVisual();
 }
 
 async function initPyodide() {
@@ -510,8 +565,12 @@ runBtn.addEventListener("click", async () => {
     });
     outputArea.textContent = result.text;
     window.DeltaNotebook?.markRun(document.querySelector('.notebook-cell[data-cell-id="1"]'), result);
-    if (!result.failed && result.pyodide) {
-      await renderRunOutputVisual(result.pyodide, runQuestion);
+    /* `result.pyodide` is null for every backend/kernel run, and gating on it
+       here is what left the image drills with no picture at all — see
+       renderBackendOutputVisual. The editor's code is passed on because a
+       backend preview has to re-declare `solve` in its own process. */
+    if (!result.failed) {
+      await renderRunOutputVisual(result.pyodide, runQuestion, codeEditor.value);
     } else {
       hideOutputVisual();
     }

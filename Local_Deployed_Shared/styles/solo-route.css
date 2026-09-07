@@ -15,6 +15,78 @@ html.dd-solo .footer {
   display: none !important;
 }
 
+/* ---- THE TIMED ROUTES KEEP THEIR CLOCK ---------------------------------
+   🔴 A TIMED PAGE MAY NOT HIDE ITS TIMER (Seth, 2026-09-06). #practice-notch
+   is a direct child of <header class="topbar"> — it hangs off the bar's bottom
+   edge and is positioned against it (styles/practice/notch-menu.css explains
+   why it is anchored there rather than inside a cell). So the blanket
+   `display: none` above took the clock, the pause square and the pause menu off
+   the screen along with the navigation.
+
+   On three of these routes something is COUNTING. `/diagnostic` is the worst:
+   a learner opening the shared placement link sat a test where every question
+   has a hard 2:00 that force-submits (practice/placement-timer.js `_expire`)
+   with no clock on screen to warn them and, since the pause landed, no way to
+   put it down either. `/practice` and `/targeted-practice` run the session
+   clock and have the same hole.
+
+   The bar comes back on those three and nothing else does: no tab strip, no
+   level pill, no account menu, no surface and no rule — solo still means one
+   page with no navigation. What is restored is the CHROME THE CLOCK NEEDS,
+   which is the bar's box (the notch's positioned ancestor) and its height (the
+   notch hangs BELOW that box, so the reserved band is what keeps it off the
+   page's first line). Everything a reader would call the topbar stays gone.
+
+   Listed route by route rather than as `:not(...)`: a route that starts timing
+   something later must opt in deliberately, and a new untimed page must not
+   inherit a bar because it was added to ROUTES. */
+html.dd-solo[data-solo-page="placement"] .topbar,
+html.dd-solo[data-solo-page="practice"] .topbar,
+html.dd-solo[data-solo-page="targeted-practice"] .topbar {
+  display: grid !important;
+  /* 🔴 THE BAR STAYS POSITIONED AND STAYS STICKY, and both halves are
+     load-bearing.
+
+     POSITIONED: #practice-notch is `position: absolute`, and an absolute box
+     resolves against its nearest POSITIONED ancestor. `.topbar` is that
+     ancestor only because it is sticky, and a sticky box is a positioned box —
+     styles/practice/notch-menu.css spells this out. Overriding this to
+     `static` here dropped the anchor to the initial containing block and the
+     clock landed 700px down the page, mid-content, measured. `sticky` keeps it;
+     `relative` would too, and neither is a free choice to make quietly.
+
+     STICKY: the thing hanging off this bar is a countdown that force-submits.
+     Scrolling a long question must not scroll the deadline off the screen.
+
+     The background is the PAGE colour rather than `--surface`, so the band
+     reads as empty rather than as a chrome bar with nothing in it — but it is
+     painted, not transparent: the content scrolls UNDER a sticky box, and a
+     see-through one would drag the question up through the clock. */
+  background: var(--bg);
+  border-bottom: 0;
+}
+
+/* The bar's own contents — every one of them is navigation or identity, which
+   is exactly what a solo route promises not to show. `.practice-notch` is a
+   sibling of these, not a child, so it survives. */
+html.dd-solo[data-solo-page="placement"] .topbar-side,
+html.dd-solo[data-solo-page="placement"] .topbar-mid,
+html.dd-solo[data-solo-page="practice"] .topbar-side,
+html.dd-solo[data-solo-page="practice"] .topbar-mid,
+html.dd-solo[data-solo-page="targeted-practice"] .topbar-side,
+html.dd-solo[data-solo-page="targeted-practice"] .topbar-mid {
+  display: none;
+}
+
+/* The exit pill is `position: fixed` at top-left and the bar is now a real box
+   in the flow above the page; on a narrow window the two met. Drop the pill
+   below the band the notch hangs in. */
+html.dd-solo[data-solo-page="placement"] .dd-solo-exit,
+html.dd-solo[data-solo-page="practice"] .dd-solo-exit,
+html.dd-solo[data-solo-page="targeted-practice"] .dd-solo-exit {
+  top: calc(var(--dd-topbar-h) + 14px);
+}
+
 .dd-solo-exit {
   position: fixed;
   top: 10px;

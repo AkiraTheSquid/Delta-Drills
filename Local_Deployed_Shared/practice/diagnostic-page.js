@@ -501,6 +501,87 @@ const DiagnosticPage = (() => {
   byId("diagnostic-practice-btn")?.addEventListener("click", () => {
     window.dispatchEvent(new CustomEvent("delta:diagnostic-next"));
   });
+
+  /* PAUSING THE PLACEMENT (Seth, 2026-09-06: "you can't press the pause
+     button. you should be able to do that so that you don't have to take the
+     diagnostic all at once").
+
+     🔴 THIS REVERSES A DELIBERATE RULE, and the rule's own machinery is what
+     makes the reversal safe. The test was unpausable on purpose — every probe
+     gets the same fixed 2:00, which is what makes the evidence comparable —
+     and notch-menu.js said so in a tooltip. But the clock ALREADY hands a
+     probe back whole after a break longer than PlacementTimer's grace window
+     (placement-timer.js: "after a real break the probe gets its full time
+     again — the same trade PracticeSession makes for a paused step"). A learner
+     who closed the tab got that trade; one who wanted to stop for the evening
+     got no exit at all, because "Skip for now" is hidden while the test is
+     ACTIVE. So pausing buys nothing that walking away did not already buy, and
+     the comparability rule survives: the probe you come back to is a fresh
+     2:00, never a part-spent one you thought about overnight.
+
+     What it is NOT: a decline, a finish, or an answer. The backend keeps the
+     placement ACTIVE and no probe is recorded — /next-question picks a probe on
+     demand and only /submit and /answer write one (app/practice/diagnostic
+     _router.py), so dropping the one on screen costs the record nothing.
+
+     THE ORDER MATTERS. Stop the clock first: `#placement-timer` hangs off the
+     topbar notch, which is on every page, and a clock left running counts a
+     probe nobody is looking at down to 00:00 and expires it into a recorded
+     miss — the exact failure that closed the mid-test door in the first place
+     (see the "SKIP FOR NOW" note in render()). Then drop the probe, because
+     `syncWorkspace` reads `currentQuestion.diagnostic_active` to decide where
+     the editor lives: with no probe the workspace goes home and this page
+     renders as itself, with "Load next placement question" as the way back in.
+     That button IS the resume, and the account menu's row already reads
+     "Resume the placement test". */
+  const pause = () => {
+    if (!running) return false;
+    /* `PracticeAPI` is a top-level const, so it is NOT on `window` — this file
+       documents that trap twice already. */
+    const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    const probe = _papi?.currentQuestion?.diagnostic_active ? _papi.currentQuestion : null;
+    /* 🔴 NOT WHILE A GRADE IS IN FLIGHT. `pauseForGrading` stops the probe
+       clock the moment Submit is pressed, so "a probe on screen with a stopped
+       clock" is precisely the window between submitting and the result landing.
+       Dropping the question there would leave the grade arriving against an
+       empty workspace and the probe recorded with nothing on screen to explain
+       it. The notch already refuses the click in this state (its square is
+       disabled and carries the reason); this guard is for `pause()` as a public
+       API, which nothing else may bypass it through. */
+    if (probe && window.PlacementTimer?.isRunning?.() === false) return false;
+    window.PlacementTimer?.stop?.();
+    if (probe) _papi.currentQuestion = null;
+    /* 🔴 AND THE SAVED COPY, or the pause does not survive a reload. init.js
+       hydrates `practiceProgress.currentQuestion` from localStorage at boot;
+       left there, the probe paints itself back over the paused page and
+       restarts its clock. Same script-scope-const trap, same guard. */
+    const _progress =
+      typeof practiceProgress !== "undefined" ? practiceProgress : window.practiceProgress;
+    if (_progress?.currentQuestion?.diagnostic_active) {
+      _progress.currentQuestion = null;
+      if (typeof savePracticeProgress === "function") savePracticeProgress(_progress);
+    }
+    syncWorkspace();
+    /* 🔴 SYNC THE NOTCH AFTER THE PROBE IS GONE, not just when the clock
+       stopped. `PlacementTimer.stop()` above already pokes it (`_hideChip` →
+       `_syncNotch`), but that runs BEFORE the two lines that drop the probe —
+       so the notch recomputed its tooltip while `currentQuestion` still said a
+       probe was up and settled on "Pause becomes available when this placement
+       question finishes.", which is the mid-grade reason, on a test that is
+       between probes. */
+    window.PracticeNotch?.syncClock?.();
+    /* Land on THIS page, never on Practice. Mid-test the backend's
+       next-question endpoint serves probes, so a route to the Learner Home
+       fetches another probe and starts another clock — which is why
+       `#placement-skip-btn` is hidden while the test is active. `switchTab` is
+       a top-level const in app.js; app.js parses first, so the bare binding
+       resolves, and classic scripts share one global lexical scope. */
+    const go = typeof switchTab !== "undefined" ? switchTab : window.switchTab;
+    if (typeof go === "function") go("placement");
+    refresh();
+    return true;
+  };
+  byId("placement-pause-btn")?.addEventListener("click", pause);
   // Called with an Event, which must not land in `attempt`.
   window.addEventListener("delta:practice-state-changed", () => refresh());
   /* And re-place the workspace IMMEDIATELY on the same event. `refresh()` is a
@@ -544,7 +625,7 @@ const DiagnosticPage = (() => {
     }
   });
 
-  return { refresh, leave, renderStartButton, isRunning: () => running, progressLabel };
+  return { refresh, leave, pause, renderStartButton, isRunning: () => running, progressLabel };
 })();
 window.DiagnosticPage = DiagnosticPage;
 

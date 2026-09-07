@@ -151,8 +151,17 @@ def is_visual_einops_prompt(question_text: str, answer_code: str) -> bool:
         "pixels",
         "c h w",
         "h w c",
-        "row",
-        "column",
+        # 🔴 "row" and "column" ARE NOT IMAGE WORDS. They are the einops pattern
+        # language's own vocabulary, and every reshape drill on the planet uses
+        # them: "reshape t.arange(n) into h rows" matched here, was declared
+        # `image_transform`, and the app then promised a picture of a 1-D range.
+        # Seth, 2026-09-06, on one of those drills: "whenever I solved it, it
+        # returned the matrix rather than the image itself." It had no image to
+        # return. Removing the two words demotes exactly the seven (A1)/(A2)
+        # arange/flat-list variants (q921, 922, 924, 925, 926, 927, 928) and
+        # touches nothing else in the bank — measured over all 692 questions.
+        # A drill that really is about pixels says so: "image", "img", "digit",
+        # "pixel", or an explicit `c h w` / `h w c` layout.
     )
     return shape_is_image_like and any(marker in blob for marker in visual_markers)
 

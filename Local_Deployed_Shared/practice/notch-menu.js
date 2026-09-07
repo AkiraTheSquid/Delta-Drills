@@ -53,6 +53,21 @@
     typeof PracticeSession !== "undefined" ? PracticeSession : window.PracticeSession;
 
   const _pauseBtn = () => document.getElementById("session-pause-btn");
+  /* The placement's own pause control (index.html, owned by
+     practice/diagnostic-page.js). A placement runs OUTSIDE a session, so
+     `#session-pause-btn` is inert for the whole test — proxying to it was what
+     left the square and the menu row dead while a probe was on the clock. */
+  const _placementPauseBtn = () => document.getElementById("placement-pause-btn");
+
+  /* WHICH pause this notch is offering right now. The placement wins whenever
+     its clock is up, because that is the clock the notch is showing (see
+     `_syncClock`) and pausing has to mean the thing the learner is looking at.
+     Returns null when neither is available, which is what disables both
+     controls. */
+  function _pauseTarget() {
+    if (_placementOnClock()) return _placementPauseBtn();
+    return _sessionOpen() ? _pauseBtn() : null;
+  }
 
   /* A session is running when timer.js has unhidden its row. That class is
      the single fact both this menu and the row itself read — see timer.js
@@ -162,31 +177,56 @@
 
   function _syncItems() {
     const open = _sessionOpen();
-    const pauseBtn = _pauseBtn();
+    const placement = _placementOnClock();
+    const target = _pauseTarget();
+    /* Refused for one of two reasons, and they are not the same: nothing to
+       pause at all, or a question that is mid-grade. timer.js owns the second
+       and writes the reason into the session button's `title`; the placement's
+       control carries no such state — a probe on the clock can always be put
+       down. */
+    const refused = !target || target.disabled;
+    /* 🔴 THE PLACEMENT'S PAUSE IS REAL NOW (Seth, 2026-09-06). This used to
+       read `!open || …`, which dimmed both controls for the whole of a test —
+       the test runs outside a session by design, so `open` is false throughout
+       — and the tooltip told the learner the test "can't be paused" while a
+       clock counted down in front of them. It was true when it was written and
+       it is not any more: practice/diagnostic-page.js `pause()` stops the probe
+       clock, drops the probe and leaves the placement ACTIVE and resumable.
+       The comparability rule it protected is unharmed — the probe comes back
+       whole, on a fresh 2:00 — see that function's note. */
+    /* 🔴 "No session running." IS STILL A LIE MID-GRADE. `pauseForGrading`
+       hides the placement chip while a probe's answer is in flight, so
+       `_placementOnClock()` goes false for those seconds on a test that is very
+       much running — and the fallback reason would have gone back to claiming
+       nothing was happening. Ask the page, not the chip, for whether a
+       placement exists; the chip only says whether it is being timed. */
+    const placementActive = placement || window.DiagnosticPage?.isRunning?.() === true;
+    /* 🔴 AND WHICH KIND OF "not right now" IT IS. Between probes there is
+       nothing to pause and the way on is a button on the page; mid-grade there
+       IS a probe, it is just not interruptible. Both states hide the chip, so
+       the chip cannot tell them apart — the PROBE can. Same script-scope-const
+       trap as everywhere else: `PracticeAPI` is not on `window`. */
+    const _api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    const probeHeldBack = !!_api?.currentQuestion?.diagnostic_active;
+    const why = placement
+      ? "Pause the placement test. It stays where it is; you come back to a fresh 2:00 on this question."
+      : placementActive
+        ? probeHeldBack
+          ? "Pause becomes available when this placement question finishes."
+          : "Nothing to pause — load the next placement question to carry on."
+        : open && target
+          ? target.title || ""
+          : "No session running.";
     if (pauseItem) {
-      /* Two reasons a pause can be refused, and they are not the same: no
-         session at all, or a session whose current question is mid-grade.
-         timer.js owns the second one and writes the reason into `title`. */
-      pauseItem.disabled = !open || !pauseBtn || pauseBtn.disabled;
-      pauseItem.title = open && pauseBtn ? pauseBtn.title || "" : "";
+      pauseItem.disabled = refused;
+      pauseItem.title = why;
     }
     if (stopBtn) {
-      stopBtn.disabled = !open || !pauseBtn || pauseBtn.disabled;
-      /* 🔴 "No session running." IS A LIE DURING A PLACEMENT. The test runs
-         outside a session by design, so `open` is false for all of it and the
-         square is dimmed — the one place the placement still reads differently
-         from practice, and the tooltip was telling the learner nothing was
-         happening while a clock counted down in front of them. It cannot be
-         pressed either way (there is no pause in the placement: every probe is
-         a fixed allowance, which is the point), so what changes here is only
-         that the reason given is the true one. */
-      stopBtn.title = open && pauseBtn
-        ? pauseBtn.title || ""
-        : _placementOnClock()
-          ? "The placement test can't be paused — every question is timed."
-          : "No session running.";
+      stopBtn.disabled = refused;
+      stopBtn.title = why;
     }
-    if (note) note.classList.toggle("hidden", open);
+    /* The note explains the idle clock, and a placement is not idle. */
+    if (note) note.classList.toggle("hidden", open || placement);
   }
 
   function _open() {
@@ -239,8 +279,10 @@
     };
   }
 
-  if (pauseItem) pauseItem.addEventListener("click", _proxy(_pauseBtn));
-  if (stopBtn) stopBtn.addEventListener("click", _proxy(_pauseBtn));
+  /* `_pauseTarget`, not `_pauseBtn`: which pause is on offer is decided per
+     click, because a placement can start or finish under an open menu. */
+  if (pauseItem) pauseItem.addEventListener("click", _proxy(_pauseTarget));
+  if (stopBtn) stopBtn.addEventListener("click", _proxy(_pauseTarget));
 
   /* Session state changes underneath an open menu — a question submits, the
      block ends on its own clock — so the items re-read it rather than
