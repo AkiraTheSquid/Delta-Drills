@@ -39,7 +39,6 @@
 
   let dock = null;
   let area = null;
-  let page = null;
 
   const _open = (on) => {
     if (dock) dock.classList.toggle("is-open", !!on);
@@ -58,15 +57,26 @@
      belongs to is the one being looked at. Miss the second and the learner
      lands on Account or Concepts with a difficulty question from another tab
      pinned to the bottom of the window. */
-  const _areaIsShowing = () =>
-    !!area &&
-    !area.classList.contains("hidden") &&
-    !!page &&
-    !page.classList.contains("hidden");
+  /* 🔴 THE PAGE IS WHICHEVER ONE HOLDS THE AREA RIGHT NOW, NOT #page-practice.
+     Seth, 2026-09-07, mid-placement: solved q551, saw "Correct" and
+     "Placement recorded — on to the next probe." — and nothing else. The
+     backend log shows the /submit, the /diagnostic/status, and then silence:
+     the client never asked for /next-question. Next problem had lost its
+     `hidden` class, but it lives in THIS dock, and the dock was closed —
+     because the placement has run on #page-placement since 2026-09-01
+     (diagnostic-page.js `moveWorkspace` re-parents the practice workspace
+     there), while this check still asked whether #page-practice was showing.
+     Measured: the button was 0×0 with `difficulty-dock` the hidden ancestor.
+     `closest(".page")` follows the workspace wherever it is moved, and every
+     `.page` is observed below so a tab switch still closes the dock. */
+  const _areaIsShowing = () => {
+    if (!area || area.classList.contains("hidden")) return false;
+    const owner = area.closest(".page");
+    return !!owner && !owner.classList.contains("hidden");
+  };
 
   const build = () => {
     area = document.getElementById("practice-feedback-area");
-    page = document.getElementById("page-practice");
     const prompt = document.getElementById("feedback-prompt");
     const buttons = area && area.querySelector(".feedback-buttons");
     const override = document.getElementById("override-row");
@@ -76,7 +86,7 @@
     // override belongs here too: on an incorrect grade it is a fourth answer,
     // then its existing handler hides it and repaints the three size choices
     // as harder once the learner says the verdict was wrong.
-    if (!area || !page || !prompt || !buttons || !override) return;
+    if (!area || !prompt || !buttons || !override) return;
 
     dock = document.createElement("div");
     dock.id = "difficulty-dock";
@@ -134,7 +144,10 @@
 
     _open(_areaIsShowing());
     const watch = new MutationObserver(() => _open(_areaIsShowing()));
-    for (const el of [area, page]) {
+    // Every page, not just the practice one: the workspace (and the area
+    // inside it) is moved between pages, so the tab that matters is a
+    // runtime question. The `.page` set itself is static markup.
+    for (const el of [area, ...document.querySelectorAll(".page")]) {
       watch.observe(el, { attributes: true, attributeFilter: ["class"] });
     }
   };
