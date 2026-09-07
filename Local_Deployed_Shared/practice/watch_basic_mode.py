@@ -238,11 +238,26 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
     # 1b. It closes when the practice tab does. The dock hangs off <body> so
     #     that it can sit over the viewport, which also means leaving the tab
     #     does not take it away the way it takes the rest of the practice UI.
-    assert 'getElementById("page-practice")' in dock, (
-        "difficulty-dock.js no longer checks whether the practice page itself "
-        "is visible — the dock hangs off <body>, so a difficulty question "
-        "stays pinned to the bottom of the window on Account, Concepts and "
-        "every other tab"
+    #     🔴 THE PAGE IS WHICHEVER ONE HOLDS THE AREA, NOT #page-practice. The
+    #     placement re-parents the practice workspace onto #page-placement
+    #     (diagnostic-page.js `moveWorkspace`), and a dock that asked about
+    #     #page-practice by id stayed CLOSED there — Seth, 2026-09-07, solved a
+    #     probe, read "Correct", and Next problem was a 0×0 button inside a
+    #     display:none dock. The backend saw /submit and then nothing.
+    assert 'area.closest(".page")' in dock, (
+        "difficulty-dock.js no longer asks which .page currently holds "
+        "#practice-feedback-area — a check on #page-practice by id keeps the "
+        "dock (and Next problem inside it) closed on the placement page, where "
+        "the workspace is re-parented onto #page-placement"
+    )
+    assert 'getElementById("page-practice")' not in dock, (
+        "difficulty-dock.js is back to checking #page-practice by id; that is "
+        "the 2026-09-07 placement trap (Next problem unreachable after a "
+        "graded probe)"
+    )
+    assert 'querySelectorAll(".page")' in dock, (
+        "difficulty-dock.js must observe every .page, not one: the workspace "
+        "moves between them, so the tab whose class matters is a runtime question"
     )
 
     # 2. Both halves linked.
