@@ -2930,7 +2930,7 @@
       {
         "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
         "output": "(True, 1, [1, 2, 3])",
-        "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. `t.tensor(rows)` copies the whole nested list into one block."
+        "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. The whole nested list has to become one block, not just its first row."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -10625,7 +10625,7 @@
       {
         "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
         "output": "(3, (2, 2, 2), 2)",
-        "why": "`len()` is the first axis only. The element count is `.numel()` — 8 for a 2x2x2 cube."
+        "why": "`len()` is the first axis only — 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -12442,7 +12442,7 @@
       {
         "call": "solve([[7, 8], [9, 10]])",
         "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
-        "why": "`.tolist()` is what converts the block back to Python. Returning the tensor hands back a tensor object, not a list."
+        "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -12487,7 +12487,7 @@
       {
         "call": "solve([7])",
         "output": "tensor(7)",
-        "why": "Indexing gives a 0-d TENSOR. `.item()` is the call that hands back a plain Python number."
+        "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -12537,7 +12537,7 @@
       {
         "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
         "output": "tensor([[True, True],\n        [True, True]])",
-        "why": "`==` compares elementwise and returns a tensor of bools. `t.equal` returns the one verdict the question asks for."
+        "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -12817,7 +12817,7 @@
       {
         "call": "solve([[1, 2, 3], [4, 5, 6]])",
         "output": "(2, 2)",
-        "why": "`len()` on a tensor is the first axis only. The total element count is `.numel()`."
+        "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13222,7 +13222,7 @@
       {
         "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
         "output": "((2, 2, 2), 3, False)",
-        "why": "The middle slot is the ELEMENT count (`.numel()`), and the shape multiplies out to that, not to the number of axes."
+        "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that — it is not the number of axes."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13272,7 +13272,7 @@
       {
         "call": "solve([1, 2, 3])",
         "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
-        "why": "`.item()` refuses on anything but a one-element tensor. Without the `.numel() != 1` guard it raises instead of returning None."
+        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, a two-element input raises instead of returning None."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13322,7 +13322,7 @@
       {
         "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
         "output": "(tensor([[True, True],\n        [True, True]]), True)",
-        "why": "`==` is elementwise and returns a tensor of bools. `t.equal` returns the single verdict."
+        "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13412,7 +13412,7 @@
       {
         "call": "solve([[1, 2, 3], [4, 5, 6]])",
         "output": "(True, False, False)",
-        "why": "`.contiguous()` returns a NEW packed tensor. Reusing the view means the third answer is still the view's."
+        "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13727,7 +13727,7 @@
       {
         "call": "solve([[1, 2, 3], [4, 5, 6]])",
         "output": "((2, 3), 'torch.int64', 2)",
-        "why": "The last slot is the ELEMENT count (`.numel()`), not the axis count."
+        "why": "The last slot is the ELEMENT count, not the axis count."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13917,7 +13917,7 @@
       {
         "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
         "output": "(3, (2, 2, 2), 2, 'torch.int64')",
-        "why": "`len()` is the first axis only. The element count is `.numel()`."
+        "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -13962,7 +13962,7 @@
       {
         "call": "solve([[1, 2, 3], [4, 5, 6]])",
         "output": "(False, False, True, False)",
-        "why": "`.contiguous()` returns a NEW tensor with its own block, in reading order. Reusing the view leaves three of the four answers wrong."
+        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves three of the four answers wrong."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -14007,7 +14007,7 @@
       {
         "call": "solve([7])",
         "output": "(1, tensor(7), 'torch.int64')",
-        "why": "Indexing gives a 0-d tensor. `.item()` is what hands back the Python number."
+        "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -16019,7 +16019,7 @@
     "wrong_examples": [
       {
         "output": "(3, 2)",
-        "why": "`floor` goes DOWN and `ceil` goes UP; returning them in the other order reports each one in the wrong slot."
+        "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -16068,7 +16068,7 @@
     "wrong_examples": [
       {
         "output": "('HI', 2, <built-in function sqrt>)",
-        "why": "The third slot hands back the function `math.sqrt` instead of the number it computes — the parentheses are what make it a call."
+        "why": "The third slot hands back a function object instead of the number it computes — the parentheses are what make it a call."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -17048,7 +17048,7 @@
     "wrong_examples": [
       {
         "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
-        "why": "The prompt fixes the COLUMN count, which is the last axis — so -1 goes first. reshape(cols, -1) fixes the row count instead."
+        "why": "The prompt fixes the COLUMN count, which is the last axis — so the -1 goes first. Putting the fixed count first fixes the row count instead."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -18028,7 +18028,7 @@
     "wrong_examples": [
       {
         "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
-        "why": "full puts v in every cell. v on the diagonal only is the identity scaled — eye(n) * v."
+        "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else — the identity, scaled by v."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -19008,7 +19008,7 @@
     "wrong_examples": [
       {
         "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
-        "why": "argsort answers WHERE the sorted values came from. The sorted values themselves are sort(...).values."
+        "why": "argsort answers WHERE the sorted values came from — indices, not values. The first two slots ask for the sorted values themselves."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -19351,7 +19351,7 @@
     "wrong_examples": [
       {
         "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
-        "why": "The first row asked for is the TRANSPOSE's — column 0 of a. a.tolist()[0] is a's own first row."
+        "why": "The first row asked for is the TRANSPOSE's — column 0 of a. Taking row 0 of a itself hands back a's own first row."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -19400,7 +19400,7 @@
     "wrong_examples": [
       {
         "output": "((3, 2), 'torch.float32', 2)",
-        "why": "The size arguments are read in order: `t.randn(rows, cols)` makes rows rows of cols numbers. Swapping them transposes the shape you asked for."
+        "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -19542,7 +19542,7 @@
     "wrong_examples": [
       {
         "output": "((4,), [1, 1, 2, 3])",
-        "why": "`t.randint` draws WITH replacement, so it repeats values and skips others. `t.randperm` is a shuffling: every number 0..n-1 appears exactly once."
+        "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -20305,7 +20305,7 @@
     "wrong_examples": [
       {
         "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
-        "why": "An unseeded `t.Generator()` starts from a nondeterministic state, so the same seed argument no longer replays the same numbers."
+        "why": "An unseeded generator starts from a nondeterministic state, so passing the same seed argument no longer replays the same numbers — the seed has to be applied to the generator itself."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -25757,7 +25757,7 @@
     "wrong_examples": [
       {
         "output": "TypeError: can't assign a list to a torch.FloatTensor",
-        "why": "A Python list cannot be written into a tensor slice — TypeError. Wrap it in t.tensor(...) first; copy_ takes a tensor too."
+        "why": "A Python list cannot be written into a tensor slice — TypeError. The row values have to become a tensor before they are copied in."
       }
     ],
     "expected_artifact_type": "stdout",
@@ -27217,7 +27217,7 @@
     "wrong_examples": [
       {
         "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
-        "why": "Plain `linspace(-y_limit, y_limit, n)` puts rays on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+        "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
       }
     ],
     "expected_artifact_type": "stdout",
