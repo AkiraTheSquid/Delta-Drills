@@ -103,6 +103,42 @@
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+/* The plan picker (practice/placement-plan.js): one radio-button per length,
+   the point estimate under each. Same chip language as the rest of the card. */
+.placement-plan { margin-top: 16px; }
+.placement-plan.hidden { display: none; }
+.placement-plan-head { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.placement-plan-title { color: var(--text); font-size: 13px; font-weight: 600; }
+.placement-plan-options { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.placement-plan-option {
+  background: rgb(var(--well-rgb) / calc(0.14 * var(--well-k)));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  gap: 2px;
+  padding: 10px 12px;
+  text-align: left;
+}
+.placement-plan-option:hover { border-color: var(--accent-text); }
+.placement-plan-option.is-selected { border-color: var(--accent-text); box-shadow: inset 0 0 0 1px var(--accent-text); }
+.placement-plan-hours { font-size: 15px; font-weight: 700; }
+.placement-plan-cap { color: var(--muted-dim); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.placement-plan-est { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.placement-plan-note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+
+/* Per-concept report inside the results card (placement-results.js renderKcs):
+   the same row grid as the area bars, grouped by verdict. */
+.placement-kcs { border-top: 1px solid var(--border); margin-top: 22px; padding-top: 18px; }
+.placement-kc-group + .placement-kc-group { margin-top: 16px; }
+.placement-kc-group--unknown .placement-area-bar i { background: var(--danger, #d9534f); }
+.placement-kc-group--uncertain .placement-area-bar i { opacity: .6; }
+.placement-kc-note { color: var(--muted); font-size: 12px; margin: 12px 0 0; }
+.placement-kc-note--edges { color: var(--text); }
+
 .diagnostic-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
 /* The ⓘ belongs TO the button, not under it. infotips.js forces place="after"
    for a <button> anchor and inserts the dot into the anchor's parentNode, so

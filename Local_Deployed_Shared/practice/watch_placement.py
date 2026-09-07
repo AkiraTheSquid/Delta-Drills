@@ -21,14 +21,43 @@ def check_every_placement_question_gets_the_same_clock():
         expires onto the NEXT question and answers it for the learner.
     """
     timer = read(os.path.join(HERE, "placement-timer.js"))
-    assert "const PLACEMENT_ANSWER_SECS = 120;" in timer, (
-        "the placement allowance must stay one named constant — every probe "
-        "gets the same time or the estimates are not comparable"
+    assert "const PLACEMENT_ANSWER_SECS = 1200;" in timer, (
+        "the placement allowance must stay one named constant — every problem "
+        "gets the same 20:00 (Seth, 2026-09-07) or the estimates are not comparable"
     )
-    # No second source of truth: the only other number the clock may hold is
-    # the resume floor/grace, never a per-question or per-difficulty value.
+    # 🔴 THE SERVER CAPS WHAT IT CHARGES AT THE SAME NUMBER. A 20:00 clock over
+    # a 15:00 server cap would let the last five minutes of thinking go
+    # unmeasured; the reverse would cut a problem off that the server would
+    # have charged in full. PER_PROBLEM_SECS in app/diagnostic.py is the
+    # other half of this constant. And the picker may only offer lengths the
+    # server accepts — an unknown pick silently becomes the default plan.
+    diag_py = os.path.join(
+        HERE, "..", "..", "This-Directory-Only", "backend", "app", "diagnostic.py")
+    if os.path.exists(diag_py):
+        backend = read(diag_py)
+        m = re.search(r"^PER_PROBLEM_SECS = (.+)$", backend, re.M)
+        assert m and eval(m.group(1)) == 1200, (
+            "app/diagnostic.py PER_PROBLEM_SECS drifted from the 1200 s clock"
+        )
+        m = re.search(r"^PLAN_HOURS: Tuple\[int, \.\.\.\] = \(([0-9, ]+)\)", backend, re.M)
+        plan_js = read(os.path.join(HERE, "placement-plan.js"))
+        m_js = re.search(r"const PLAN_HOURS = \[([0-9, ]+)\];", plan_js)
+        assert m and m_js, "PLAN_HOURS lost on one side (diagnostic.py / placement-plan.js)"
+        py_hours = [int(x) for x in m.group(1).split(",") if x.strip()]
+        js_hours = [int(x) for x in m_js.group(1).split(",") if x.strip()]
+        assert py_hours == js_hours, (
+            f"plan picker offers {js_hours} but the server accepts {py_hours}"
+        )
+    # No second source of truth: the only other numbers the clock may hold are
+    # the resume floor/grace and the SERVER's remainder for the last problem
+    # (`problem_secs_allowed`, never more than the constant) — never a
+    # per-question or per-difficulty value.
     assert "q().answer_secs" not in timer and "difficulty" not in timer, (
         "placement timing must not vary by question or difficulty"
+    )
+    assert "Math.min(PLACEMENT_ANSWER_SECS, Math.round(allowed))" in timer, (
+        "the last problem of a capped plan must get only what is left — the "
+        "clock has to take the smaller of the constant and problem_secs_allowed"
     )
     # `PracticeAPI` is a top-level const in api.js — NOT a window property.
     # Reading it off window is undefined at runtime and silent at review time:
@@ -200,10 +229,10 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
     Three separate failures live in this one check, all of them from
     2026-08-23.
 
-    1. THE READINESS FIGURE IS A COPY. `placement-results.js` turns the
-       backend's theta into a percentage with the same affine map that
-       `diagnostic.py::_mastery_from_theta` uses to SEED per-atom BKT mastery
-       at finish(). If those four constants drift apart, the card tells the
+    1. THE READINESS FIGURE IS A COPY. `placement-results.js` clips the
+       backend's P(known) to the same range that `diagnostic.py::_mastery_from_p`
+       uses to SEED per-atom BKT mastery at finish() (theta = 100 × P since
+       2026-09-07). If those two constants drift apart, the card tells the
        learner a readiness the rest of the app does not act on — the quiet
        kind of wrong, because both halves keep working. Same reasoning as
        check_promotion_threshold_matches_the_backend, same remedy.
@@ -230,9 +259,7 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "diagnostic.py")
     if os.path.exists(diag):
         backend = read(diag)
-        for js_name, py_name in (("DIFF_FLOOR", "_DIFF_FLOOR"),
-                                 ("DIFF_SPAN", "_DIFF_SPAN"),
-                                 ("SEED_MASTERY_FLOOR", "SEED_MASTERY_FLOOR"),
+        for js_name, py_name in (("SEED_MASTERY_FLOOR", "SEED_MASTERY_FLOOR"),
                                  ("SEED_MASTERY_CAP", "SEED_MASTERY_CAP")):
             m_js = re.search(rf"^\s*const {js_name} = ([0-9.]+)\s*;", results_js, re.M)
             m_py = re.search(rf"^{py_name} = ([0-9.]+)", backend, re.M)
@@ -261,6 +288,17 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
         "the dot into the anchor's parentNode, so unwrapped it orphans below the button"
     )
     assert ".placement-cta" in css, "styles/practice/diagnostic.css lost .placement-cta"
+    # The plan picker's anchor + script, and the page's hand-off to it. The
+    # picker is the only way a learner chooses 3h or 6h; without the anchor
+    # every run is silently the server's default.
+    assert 'id="placement-plan"' in index, "index.html lost the #placement-plan anchor"
+    assert re.search(r'practice/placement-plan\.js\?v=\d+"></script>\s*<script src="practice/placement-results\.js', index), (
+        "placement-plan.js must load before placement-results.js / diagnostic-page.js"
+    )
+    assert "window.PlacementPlan?.render(status)" in page, (
+        "diagnostic-page.js must hand every status to placement-plan.js"
+    )
+    assert ".placement-plan-option" in css, "diagnostic.css lost the plan picker styles"
     assert ".placement-cta.hidden" in css and "el.parentElement?.classList.toggle" in page, (
         "the CTA wrapper must hide WITH its button, and .hidden must be re-asserted "
         "at this file's specificity — diagnostic.css loads after components.css, so "

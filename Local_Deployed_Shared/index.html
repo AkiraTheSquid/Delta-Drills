@@ -1970,7 +1970,7 @@ t.manual_seed(0)
              probes is the backend's to decide (`budget`, `min_probes`) and
              hard-coding "about 30 minutes" here is how the page ends up
              quoting a length the test stopped using. -->
-        <p class="diagnostic-timing" id="placement-length"><span class="placement-chip"><strong>2:00</strong> per question</span></p>
+        <p class="diagnostic-timing" id="placement-length"><span class="placement-chip"><strong>20:00</strong> per problem</span></p>
         <!-- How far through the test you are. `budget` is a CEILING, not a
              length: the placement stops as soon as it is confident, which can
              be at `min_probes`. The tick is where that becomes possible, so
@@ -2003,6 +2003,10 @@ t.manual_seed(0)
              and 12px/28px padding, and .placement-start-btn's own 4px/10px
              padding won on padding only — so the button rendered as a
              full-bleed 4px-tall strip. -->
+        <!-- The 1h / 3h / 6h picker, filled by practice/placement-plan.js
+             before a run; hidden while one is live. Static anchor on purpose
+             (see that file's header). -->
+        <div class="placement-plan hidden" id="placement-plan"></div>
         <div class="diagnostic-actions">
           <span class="placement-cta">
             <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take the placement test</button>
@@ -2220,7 +2224,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=26"></script>
+  <script src="practice/api.js?v=27"></script>
   <script src="practice/timer.js?v=28"></script>
   <script src="practice/kernel.js?v=6"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
@@ -2326,12 +2330,13 @@ t.manual_seed(0)
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-results.js?v=3"></script>
-  <script src="practice/diagnostic-page.js?v=22"></script>
+  <script src="practice/placement-plan.js?v=1"></script>
+  <script src="practice/placement-results.js?v=4"></script>
+  <script src="practice/diagnostic-page.js?v=23"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->
-  <script src="practice/placement-timer.js?v=4"></script>
+  <script src="practice/placement-timer.js?v=5"></script>
   <script src="practice/init.js?v=18"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

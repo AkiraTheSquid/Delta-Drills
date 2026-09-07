@@ -274,12 +274,36 @@ const PracticeAPI = {
   // --- Placement test (backend mode only) --------------------------------
   // "I don't know yet" and self-rated probe results go here; answered probes
   // are recorded server-side by /submit while the diagnostic is active.
+  /* Every placement status that comes back through this object is kept on
+     `lastDiagnosticStatus` and announced as `delta-drills-diagnostic-status`,
+     so the problem clock (placement-timer.js) and the plan readout
+     (placement-plan.js) read the plan the SERVER is running — total cap, time
+     left, what the next problem is allowed — without each fetching it again.
+     `null` / `unavailable` are not statuses and are not kept. */
+  lastDiagnosticStatus: null,
+  _keepDiagnosticStatus(status) {
+    if (!status || status.unavailable) return status;
+    this.lastDiagnosticStatus = status;
+    try {
+      window.dispatchEvent(new CustomEvent("delta-drills-diagnostic-status", { detail: status }));
+    } catch (_) {}
+    return status;
+  },
+
   async diagnosticAnswer(questionId, result) {
     if (practiceMode !== "backend") return null;
+    /* Advisory only: the server charges its own serve-to-answer time and
+       ignores this whenever it has one. Sent so a status that predates the
+       server's clock still carries a number. */
+    const elapsed = window.PlacementTimer?.elapsedSecs?.();
     const res = await apiFetch("/api/practice/diagnostic/answer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question_id: questionId, result }),
+      body: JSON.stringify({
+        question_id: questionId,
+        result,
+        elapsed_secs: Number.isFinite(elapsed) ? elapsed : null,
+      }),
     });
     if (res.status === 401) {
       handleExpiredToken();
@@ -289,13 +313,35 @@ const PracticeAPI = {
       const detail = await res.text();
       throw new Error(detail || "Failed to record placement answer.");
     }
-    return await res.json();
+    return this._keepDiagnosticStatus(await res.json());
   },
 
-  async diagnosticStart() {
+  /* The 1h / 3h / 6h picker's numbers: for each length, how many problems it
+     is likely to hold and how long it will probably really take. */
+  async diagnosticPlan() {
     if (practiceMode !== "backend") return null;
+    try {
+      const res = await apiFetch("/api/practice/diagnostic/plan");
+      if (res.ok) return await res.json();
+      return { unavailable: true, httpStatus: res.status };
+    } catch (_) {
+      return { unavailable: true, httpStatus: 0 };
+    }
+  },
+
+  /* `hours` is the learner's pick from the plan picker (placement-plan.js);
+     read from it when the caller does not say, so the start button in
+     advance-events.js needs no knowledge of the picker. The server falls back
+     to its default plan for anything it does not recognise. */
+  async diagnosticStart(hours) {
+    if (practiceMode !== "backend") return null;
+    const h = Number.isFinite(Number(hours)) && Number(hours) > 0
+      ? Number(hours)
+      : window.PlacementPlan?.selectedHours?.();
     const res = await apiFetch("/api/practice/diagnostic/start", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hours: Number.isFinite(Number(h)) && Number(h) > 0 ? Number(h) : null }),
     });
     if (res.status === 401) {
       handleExpiredToken();
@@ -305,7 +351,7 @@ const PracticeAPI = {
       const detail = await res.text();
       throw new Error(detail || "Failed to start the placement test.");
     }
-    return await res.json();
+    return this._keepDiagnosticStatus(await res.json());
   },
 
   /* Three different answers, and they used to be one.
@@ -324,7 +370,7 @@ const PracticeAPI = {
     if (practiceMode !== "backend") return null;
     try {
       const res = await apiFetch("/api/practice/diagnostic/status");
-      if (res.ok) return await res.json();
+      if (res.ok) return this._keepDiagnosticStatus(await res.json());
       return { unavailable: true, httpStatus: res.status };
     } catch (_) {
       return { unavailable: true, httpStatus: 0 };

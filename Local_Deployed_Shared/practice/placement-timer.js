@@ -1,5 +1,5 @@
 /* ================================================================
-   PLACEMENT TEST — one fixed clock per probe
+   PLACEMENT TEST — one fixed clock per problem, inside a total cap
 
    The placement test runs OUTSIDE a practice session: starting it calls
    PracticeSession.finish("placement") (see events.js), so none of the
@@ -8,9 +8,17 @@
    EVERY question gets the SAME allowance, and the learner never chooses it.
    That is the whole point of a placement — comparable evidence per probe.
 
-   So: PLACEMENT_ANSWER_SECS for each probe, no setup panel, no review
-   countdown. Reviewing a graded probe is untimed; the next probe's clock
-   starts when that probe renders.
+   So: PLACEMENT_ANSWER_SECS for each problem (20:00 — Seth, 2026-09-07:
+   "20 minutes for every single problem"), no review countdown. Reviewing a
+   graded problem is untimed; the next problem's clock starts when it renders.
+
+   🔴 THE TOTAL PLAN IS A HARD CAP TOO. The learner picked 1h / 3h / 6h
+   (placement-plan.js) and the server refuses to go past it, so the LAST
+   problem of a run gets only what is left: the server says how much in
+   `plan.problem_secs_allowed` on every status, and `_startingSecs` takes the
+   smaller of that and the constant. The server also charges its own
+   serve-to-answer time regardless of what this clock shows, so the clock
+   cannot buy time — it can only tell the truth about how much there is.
 
    When time runs out we record what the learner actually has:
      - typed something ≠ the starter code  → click Submit and grade it
@@ -23,7 +31,7 @@
    than RETURN_GRACE_SECS) the probe gets its full time again — the same
    trade PracticeSession makes for a paused step.
    ================================================================ */
-const PLACEMENT_ANSWER_SECS = 120;
+const PLACEMENT_ANSWER_SECS = 1200;
 
 const PlacementTimer = (() => {
   /* How long a break may be before the probe's clock is handed back whole.
@@ -60,6 +68,23 @@ const PlacementTimer = (() => {
   const _api = () => (typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI);
   const q = () => _api()?.currentQuestion || null;
   const isProbe = () => !!q()?.diagnostic_active;
+
+  /* What the server will let THIS problem take: the constant, or the plan's
+     remainder when that is shorter (the last problem of a capped run). The
+     status is the one api.js kept from its latest call; with none, the
+     constant — the server still caps what it charges. */
+  const _plan = () => _api()?.lastDiagnosticStatus?.plan || null;
+  const _allowedSecs = () => {
+    const allowed = Number(_plan()?.problem_secs_allowed);
+    if (!Number.isFinite(allowed) || allowed <= 0) return PLACEMENT_ANSWER_SECS;
+    return Math.min(PLACEMENT_ANSWER_SECS, Math.round(allowed));
+  };
+  /* Seconds this problem has been on the clock — advisory, sent with a
+     "don't know" so the server has a number even when its own clock predates
+     the run. */
+  let startedAt = 0;
+  const elapsedSecs = () =>
+    startedAt ? Math.max(0, Math.round((Date.now() - startedAt) / 1000)) : null;
 
   // A session and a placement never time the same question: placement ends
   // the session before its first probe. If one is somehow live, it owns the
@@ -99,18 +124,36 @@ const PlacementTimer = (() => {
   /* Seconds this probe should start with. A snapshot for a DIFFERENT question,
      or one written before a real break, is worth nothing — full time. */
   const _startingSecs = () => {
+    const allowed = _allowedSecs();
     const saved = _read();
-    if (!saved || saved.questionId !== _questionId()) return PLACEMENT_ANSWER_SECS;
+    if (!saved || saved.questionId !== _questionId()) return allowed;
     const away = (Date.now() - (Number(saved.savedAt) || 0)) / 1000;
-    if (!Number.isFinite(away) || away > RETURN_GRACE_SECS) return PLACEMENT_ANSWER_SECS;
+    if (!Number.isFinite(away) || away > RETURN_GRACE_SECS) return allowed;
     const left = Math.round((saved.deadline - Date.now()) / 1000);
-    return Math.max(RESUME_FLOOR_SECS, Math.min(PLACEMENT_ANSWER_SECS, left));
+    // The floor never exceeds what the server allows this problem — on the
+    // last problem of a capped plan the allowance can be under 15 s.
+    return Math.max(Math.min(RESUME_FLOOR_SECS, allowed), Math.min(allowed, left));
   };
 
   const _format = (secs) => {
     const clamped = Math.max(0, Math.round(secs));
     return String(Math.floor(clamped / 60)).padStart(2, "0") + ":" +
       String(clamped % 60).padStart(2, "0");
+  };
+
+  /* The plan's own remainder, beside the problem clock: "12:34 · 2h 41m
+     left". The server's number minus what this problem has used so far, so it
+     moves with the clock rather than jumping once per answer. Empty when the
+     status carries no plan (a pre-plan build). */
+  const _planLeft = () => {
+    const plan = _plan();
+    const remaining = Number(plan?.remaining_secs);
+    if (!Number.isFinite(remaining)) return "";
+    const used = elapsedSecs() || 0;
+    const left = Math.max(0, remaining - used);
+    const h = Math.floor(left / 3600);
+    const m = Math.floor((left % 3600) / 60);
+    return h > 0 ? `${h}h ${String(m).padStart(2, "0")}m left` : `${m}m left`;
   };
 
   /* The clock lives on the NOTCH TAB (.practice-notch-tab in index.html), in
@@ -147,7 +190,8 @@ const PlacementTimer = (() => {
     const el = _chip();
     if (!el) return;
     const left = _remaining();
-    el.textContent = _format(left);
+    const total = _planLeft();
+    el.textContent = total ? `${_format(left)} · ${total}` : _format(left);
     el.classList.remove("hidden");
     /* The SESSION clock's low class, not one of this module's own. The element
        carries `.practice-notch-clock`, so the placement's last 30 seconds are
@@ -229,6 +273,7 @@ const PlacementTimer = (() => {
 
   const _run = (secs) => {
     _stopTick();
+    if (!startedAt) startedAt = Date.now();
     deadlineAt = Date.now() + Math.max(0, secs) * 1000;
     _paint();
     _write();
@@ -243,6 +288,7 @@ const PlacementTimer = (() => {
       stop();
       return;
     }
+    startedAt = 0;
     _run(_startingSecs());
   };
 
@@ -266,6 +312,7 @@ const PlacementTimer = (() => {
   const stop = () => {
     _stopTick();
     deadlineAt = 0;
+    startedAt = 0;
     _clearSaved();
     _hideChip();
   };
@@ -311,6 +358,7 @@ const PlacementTimer = (() => {
     resumeAfterFailedSubmit,
     stop,
     secondsPerQuestion: () => PLACEMENT_ANSWER_SECS,
+    elapsedSecs,
     isRunning: () => !!interval,
   };
 })();
