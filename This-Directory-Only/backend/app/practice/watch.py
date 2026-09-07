@@ -656,6 +656,50 @@ def check_the_two_nudge_tables_agree():
     )
 
 
+def check_placement_cannot_classify_without_a_direct_probe():
+    """The graph-wide placement (2026-09-07) rests on one invariant: NOTHING
+    BUT A DIRECT PROBE CAN CLASSIFY A CONCEPT. Prior + propagated evidence is
+    clipped so P(known) stays strictly inside (OUT_OF_STATE, IN_STATE) until
+    the concept is probed itself. In simulation, without the clip, one slip
+    on a root marked thirteen never-probed concepts "unknown" and the
+    selector never went back for them — a "comprehensive" test that never
+    looked. `placement_model` is pure math with no backend deps, so this
+    imports it directly.
+    """
+    import importlib.util
+    path = os.path.join(THIS, '..', 'placement_model.py')
+    spec = importlib.util.spec_from_file_location('placement_model', path)
+    pm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pm)
+
+    lo, hi = pm.sigmoid(-pm.INDIRECT_CLIP), pm.sigmoid(pm.INDIRECT_CLIP)
+    assert pm.OUT_OF_STATE < lo and hi < pm.IN_STATE, (
+        f"INDIRECT_CLIP={pm.INDIRECT_CLIP} lets indirect evidence reach "
+        f"[{lo:.2f}, {hi:.2f}], outside ({pm.OUT_OF_STATE}, {pm.IN_STATE}) — "
+        "a never-probed concept could be classified")
+    assert pm.PRIOR_CLIP <= pm.INDIRECT_CLIP, "a prior alone must not exceed the indirect clip"
+
+    # A chain root -> mid -> leaf; hammer the root with every kind of miss and
+    # the leaf must still read "uncertain".
+    g = pm.Graph({'root': [], 'mid': ['root'], 'leaf': ['mid']}, ['root', 'mid', 'leaf'])
+    probes = [{'kc': 'root', 'result': r} for r in ('dont_know', 'incorrect', 'dont_know', 'incorrect')]
+    P = pm.posterior({'root': -1.2, 'mid': -1.2, 'leaf': -1.2}, g, probes)
+    assert pm.classify(P['root']) == 'unknown', P
+    assert pm.classify(P['mid']) == 'uncertain' and pm.classify(P['leaf']) == 'uncertain', (
+        f"propagation classified an unprobed concept: {P}")
+    # ...and a pass on the leaf must not certify the root either.
+    P = pm.posterior({'root': 1.2, 'mid': 1.2, 'leaf': 1.2}, g, [{'kc': 'leaf', 'result': 'correct'}] * 4)
+    assert pm.classify(P['leaf']) == 'known' and pm.classify(P['root']) == 'uncertain', P
+
+    # Asymmetry is the ALEKS shape: correct > incorrect in magnitude, don't-know strongest.
+    c, i, d = pm.log_bayes_factor('correct'), pm.log_bayes_factor('incorrect'), pm.log_bayes_factor('dont_know')
+    assert c > 0 > i > d, (c, i, d)
+    assert abs(c) > abs(i), "a careless miss must weigh less than a pass on open-ended code"
+
+    # A miss must flow DOWN more weakly than a pass flows UP.
+    assert pm.HOP_ATTENUATION_DOWN < pm.HOP_ATTENUATION_UP <= 1.0
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -664,7 +708,8 @@ if __name__ == '__main__':
               check_ai_repairs_are_gated,
               check_repair_runs_off_the_local_cli,
               check_repair_queue_never_loses_an_open_job,
-              check_the_two_nudge_tables_agree]
+              check_the_two_nudge_tables_agree,
+              check_placement_cannot_classify_without_a_direct_probe]
     for fn in checks:
         try:
             fn()

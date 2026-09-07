@@ -263,6 +263,44 @@ class DiagnosticAreaEstimate(BaseModel):
     probes: int     # probes answered in this area
 
 
+class DiagnosticKcEstimate(BaseModel):
+    kc: str
+    title: str
+    lesson: str | None = None
+    topic: str | None = None
+    p: float                 # P(known), 0-1
+    state: str               # known | uncertain | unknown (ALEKS cut-offs)
+    probes: int = 0
+    arena_probes: int = 0    # of which were ARENA's own exercises
+    arena_linked: bool = False
+
+
+class DiagnosticPlan(BaseModel):
+    hours: int
+    budget_secs: int
+    per_problem_secs: int
+    spent_secs: int = 0
+    remaining_secs: int = 0
+    problem_secs_allowed: int = 0   # the NEXT problem's clock: cap, or what is left
+    started_at: str | None = None
+
+
+class DiagnosticPlanOption(BaseModel):
+    hours: int
+    budget_secs: int
+    per_problem_secs: int
+    est_probes: int          # problems the plan is likely to hold
+    est_minutes: int         # point estimate of real time, not the cap
+    min_probes_at_cap: int   # if every problem used its full 20:00
+
+
+class DiagnosticEdgeViolation(BaseModel):
+    prereq: str
+    dependent: str
+    p_prereq: float
+    p_dependent: float
+
+
 class DiagnosticStatusResponse(BaseModel):
     active: bool
     completed_at: str | None = None
@@ -274,6 +312,22 @@ class DiagnosticStatusResponse(BaseModel):
     atoms_seeded: int | None = None   # set once finished
     can_set_prior: bool = False
     self_reported_level: str | None = None
+    # 2026-09-07 graph-wide placement: the time plan and the per-concept rows.
+    plan: DiagnosticPlan | None = None
+    kcs: list[DiagnosticKcEstimate] = Field(default_factory=list)
+    fast_track: list[str] = Field(default_factory=list)
+    edge_violations: list[DiagnosticEdgeViolation] = Field(default_factory=list)
+
+
+class DiagnosticStartRequest(BaseModel):
+    # One of diagnostic.PLAN_HOURS; anything else falls back to the default.
+    hours: int | None = None
+
+
+class DiagnosticPlanResponse(BaseModel):
+    options: list[DiagnosticPlanOption] = Field(default_factory=list)
+    assessed_kcs: int = 0
+    arena_linked_kcs: int = 0
 
 
 class DiagnosticAnswerRequest(BaseModel):
@@ -281,6 +335,9 @@ class DiagnosticAnswerRequest(BaseModel):
     # "dont_know" is the first-class no-attempt response; correct/incorrect
     # cover self-rated paths (e.g. Colab-routed items).
     result: Literal["dont_know", "correct", "incorrect"]
+    # Problem time the client measured, seconds. Advisory: the server's own
+    # serve-to-answer reading wins whenever it has one.
+    elapsed_secs: float | None = None
 
 
 class CodeRunRequest(BaseModel):

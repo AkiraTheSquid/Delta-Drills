@@ -1,8 +1,9 @@
-"""Placement-diagnostic endpoints (ALEKS-style cold-start calibration).
+"""Placement-diagnostic endpoints (graph-wide, ALEKS-style calibration).
 
 Endpoints (mounted under /api/practice by the parent router):
   GET  /diagnostic/status
-  POST /diagnostic/start
+  GET  /diagnostic/plan      — the 1h / 3h / 6h picker with time estimates
+  POST /diagnostic/start     — body {hours}
   POST /diagnostic/answer    — "I don't know yet" / self-rated probe results
   POST /diagnostic/finish
   POST /diagnostic/decline
@@ -22,6 +23,8 @@ from app.auth import get_current_user
 from app.models import User
 from app.practice_schemas import (
     DiagnosticAnswerRequest,
+    DiagnosticPlanResponse,
+    DiagnosticStartRequest,
     DiagnosticStatusResponse,
 )
 from app.questions import get_question_by_id
@@ -31,6 +34,7 @@ router = APIRouter()
 
 def _status(user_state) -> DiagnosticStatusResponse:
     d = diagnostic.get_diag(user_state)
+    plan = d.get("plan")
     return DiagnosticStatusResponse(
         active=d["active"],
         completed_at=d["completed_at"],
@@ -38,14 +42,25 @@ def _status(user_state) -> DiagnosticStatusResponse:
         probes_done=len(d["probes"]),
         budget=diagnostic.effective_budget(user_state),
         min_probes=diagnostic.effective_min_probes(user_state),
-        # 🔴 THE GROUPED READOUT, not `area_estimates`. The model has eight
-        # areas and the learner has three (PyTorch / Einops / Einsum) — see
-        # DISPLAY_AREAS in diagnostic.py for why the bank's "Numpy" label is
-        # not one of them. This endpoint is the only reader of either.
+        # The grouped readout the existing results card draws (PyTorch /
+        # Einops / Einsum), folded from the per-concept rows below.
         areas=diagnostic.display_area_estimates(user_state),
         atoms_seeded=d.get("atoms_seeded"),
         can_set_prior=diagnostic.can_set_prior(user_state),
         self_reported_level=user_state.self_reported_level,
+        plan=(
+            {
+                **plan,
+                "spent_secs": int(d.get("spent_secs") or 0),
+                "remaining_secs": diagnostic.remaining_secs(user_state),
+                "problem_secs_allowed": diagnostic.problem_secs_allowed(user_state),
+            }
+            if isinstance(plan, dict)
+            else None
+        ),
+        kcs=diagnostic.kc_estimates(user_state),
+        fast_track=list(d.get("fast_track") or []),
+        edge_violations=list(d.get("edge_violations") or []),
     )
 
 
@@ -54,10 +69,25 @@ def diagnostic_status(user: User = Depends(get_current_user)) -> DiagnosticStatu
     return _status(get_user_state(str(user.id)))
 
 
-@router.post("/diagnostic/start", response_model=DiagnosticStatusResponse)
-def diagnostic_start(user: User = Depends(get_current_user)) -> DiagnosticStatusResponse:
+@router.get("/diagnostic/plan", response_model=DiagnosticPlanResponse)
+def diagnostic_plan(user: User = Depends(get_current_user)) -> DiagnosticPlanResponse:
     user_state = get_user_state(str(user.id))
-    diagnostic.start(user_state)
+    kcs = diagnostic.assessed_kcs(user_state)
+    links = diagnostic._arena_links()
+    return DiagnosticPlanResponse(
+        options=diagnostic.plan_options(user_state),
+        assessed_kcs=len(kcs),
+        arena_linked_kcs=sum(1 for k in kcs if links.get(k)),
+    )
+
+
+@router.post("/diagnostic/start", response_model=DiagnosticStatusResponse)
+def diagnostic_start(
+    payload: DiagnosticStartRequest | None = None,
+    user: User = Depends(get_current_user),
+) -> DiagnosticStatusResponse:
+    user_state = get_user_state(str(user.id))
+    diagnostic.start(user_state, hours=payload.hours if payload else None)
     save_user_state(str(user.id))
     return _status(user_state)
 
@@ -80,7 +110,15 @@ def diagnostic_answer(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Question not found",
         )
-    diagnostic.record_probe(user_state, question, payload.result)
+    # Only the problem the server served can be answered on this path — a
+    # no-attempt response to an arbitrary question would be free evidence.
+    pending = d.get("pending") or {}
+    if pending.get("question_id") not in (None, payload.question_id):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="That is not the placement problem currently on screen.",
+        )
+    diagnostic.record_probe(user_state, question, payload.result, elapsed_secs=payload.elapsed_secs)
     save_user_state(str(user.id))
     return _status(user_state)
 
