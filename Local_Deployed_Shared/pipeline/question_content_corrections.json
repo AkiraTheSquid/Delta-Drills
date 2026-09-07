@@ -1,6 +1,220 @@
 {
+  "224": {
+    "wrong_examples": [
+      {
+        "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
+        "output": "(True, 1, [1, 2, 3])",
+        "why": "`rows[0]` builds a tensor from ONE row \u2014 1 axis, not 2. The whole nested list has to become one block, not just its first row."
+      }
+    ]
+  },
   "391": {
     "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
     "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
+  },
+  "485": {
+    "wrong_examples": [
+      {
+        "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
+        "output": "(3, (2, 2, 2), 2)",
+        "why": "`len()` is the first axis only \u2014 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
+      }
+    ]
+  },
+  "532": {
+    "wrong_examples": [
+      {
+        "call": "solve([[7, 8], [9, 10]])",
+        "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
+        "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
+      }
+    ]
+  },
+  "533": {
+    "wrong_examples": [
+      {
+        "call": "solve([7])",
+        "output": "tensor(7)",
+        "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
+      }
+    ]
+  },
+  "534": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "output": "tensor([[True, True],\n        [True, True]])",
+        "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
+      }
+    ]
+  },
+  "540": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(2, 2)",
+        "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
+      }
+    ]
+  },
+  "549": {
+    "wrong_examples": [
+      {
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "((2, 2, 2), 3, False)",
+        "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that \u2014 it is not the number of axes."
+      }
+    ]
+  },
+  "550": {
+    "wrong_examples": [
+      {
+        "call": "solve([1, 2, 3])",
+        "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
+        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, a two-element input raises instead of returning None."
+      }
+    ]
+  },
+  "551": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+        "output": "(tensor([[True, True],\n        [True, True]]), True)",
+        "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
+      }
+    ]
+  },
+  "553": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(True, False, False)",
+        "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
+      }
+    ]
+  },
+  "560": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "((2, 3), 'torch.int64', 2)",
+        "why": "The last slot is the ELEMENT count, not the axis count."
+      }
+    ]
+  },
+  "564": {
+    "wrong_examples": [
+      {
+        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+        "output": "(3, (2, 2, 2), 2, 'torch.int64')",
+        "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
+      }
+    ]
+  },
+  "565": {
+    "wrong_examples": [
+      {
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "output": "(False, False, True, False)",
+        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves three of the four answers wrong."
+      }
+    ]
+  },
+  "566": {
+    "wrong_examples": [
+      {
+        "call": "solve([7])",
+        "output": "(1, tensor(7), 'torch.int64')",
+        "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
+      }
+    ]
+  },
+  "607": {
+    "wrong_examples": [
+      {
+        "output": "(3, 2)",
+        "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
+      }
+    ]
+  },
+  "608": {
+    "wrong_examples": [
+      {
+        "output": "('HI', 2, <built-in function sqrt>)",
+        "why": "The third slot hands back a function object instead of the number it computes \u2014 the parentheses are what make it a call."
+      }
+    ]
+  },
+  "628": {
+    "wrong_examples": [
+      {
+        "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
+        "why": "The prompt fixes the COLUMN count, which is the last axis \u2014 so the -1 goes first. Putting the fixed count first fixes the row count instead."
+      }
+    ]
+  },
+  "648": {
+    "wrong_examples": [
+      {
+        "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
+        "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else \u2014 the identity, scaled by v."
+      }
+    ]
+  },
+  "668": {
+    "wrong_examples": [
+      {
+        "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
+        "why": "argsort answers WHERE the sorted values came from \u2014 indices, not values. The first two slots ask for the sorted values themselves."
+      }
+    ]
+  },
+  "675": {
+    "wrong_examples": [
+      {
+        "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
+        "why": "The first row asked for is the TRANSPOSE's \u2014 column 0 of a. Taking row 0 of a itself hands back a's own first row."
+      }
+    ]
+  },
+  "676": {
+    "wrong_examples": [
+      {
+        "output": "((3, 2), 'torch.float32', 2)",
+        "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
+      }
+    ]
+  },
+  "679": {
+    "wrong_examples": [
+      {
+        "output": "((4,), [1, 1, 2, 3])",
+        "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
+      }
+    ]
+  },
+  "696": {
+    "wrong_examples": [
+      {
+        "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
+        "why": "An unseeded generator starts from a nondeterministic state, so passing the same seed argument no longer replays the same numbers \u2014 the seed has to be applied to the generator itself."
+      }
+    ]
+  },
+  "810": {
+    "wrong_examples": [
+      {
+        "output": "TypeError: can't assign a list to a torch.FloatTensor",
+        "why": "A Python list cannot be written into a tensor slice \u2014 TypeError. The row values have to become a tensor before they are copied in."
+      }
+    ]
+  },
+  "845": {
+    "wrong_examples": [
+      {
+        "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+        "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+      }
+    ]
   }
 }

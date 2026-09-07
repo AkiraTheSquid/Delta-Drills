@@ -3301,7 +3301,7 @@
         {
           "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
           "output": "(True, 1, [1, 2, 3])",
-          "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. `t.tensor(rows)` copies the whole nested list into one block."
+          "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. The whole nested list has to become one block, not just its first row."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    return t.tensor(rows)\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
@@ -12082,7 +12082,7 @@
         {
           "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
           "output": "(3, (2, 2, 2), 2)",
-          "why": "`len()` is the first axis only. The element count is `.numel()` — 8 for a 2x2x2 cube."
+          "why": "`len()` is the first axis only — 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (number of axes, shape as a plain tuple, element count).\"\"\"\n    a = t.tensor(cube)\n    return (a.ndim, tuple(a.shape), a.numel())\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
@@ -14145,7 +14145,7 @@
         {
           "call": "solve([[7, 8], [9, 10]])",
           "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
-          "why": "`.tolist()` is what converts the block back to Python. Returning the tensor hands back a tensor object, not a list."
+          "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return the tensor's contents as a plain nested Python list.\"\"\"\n    a = t.tensor(rows)\n    return a.tolist()\n\n\nexample = [[7, 8], [9, 10]]\nprint(solve(example))\n",
@@ -14196,7 +14196,7 @@
         {
           "call": "solve([7])",
           "output": "tensor(7)",
-          "why": "Indexing gives a 0-d TENSOR. `.item()` is the call that hands back a plain Python number."
+          "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the tensor's only element as a plain Python number.\"\"\"\n    a = t.tensor(values)\n    return a.item()\n\n\nexample = [7]\nprint(solve(example))\n",
@@ -14252,7 +14252,7 @@
         {
           "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
           "output": "tensor([[True, True],\n        [True, True]])",
-          "why": "`==` compares elementwise and returns a tensor of bools. `t.equal` returns the one verdict the question asks for."
+          "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return True when the two tensors match on shape AND values.\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return t.equal(a, b)\n\n\nexample = ([[1, 2], [3, 4]], [[1, 2], [3, 4]])\nprint(solve(*example))\n",
@@ -14568,7 +14568,7 @@
         {
           "call": "solve([[1, 2, 3], [4, 5, 6]])",
           "output": "(2, 2)",
-          "why": "`len()` on a tensor is the first axis only. The total element count is `.numel()`."
+          "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (total element count, number of outer rows).\"\"\"\n    a = t.tensor(rows)\n    return (a.numel(), len(rows))\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
@@ -15027,7 +15027,7 @@
         {
           "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
           "output": "((2, 2, 2), 3, False)",
-          "why": "The middle slot is the ELEMENT count (`.numel()`), and the shape multiplies out to that, not to the number of axes."
+          "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that — it is not the number of axes."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (shape, element count, does the shape multiply out?).\"\"\"\n    a = t.tensor(cube)\n    shape = tuple(a.shape)\n    product = 1\n    for length in shape:\n        product = product * length\n    return (shape, a.numel(), product == a.numel())\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
@@ -15083,7 +15083,7 @@
         {
           "call": "solve([1, 2, 3])",
           "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
-          "why": "`.item()` refuses on anything but a one-element tensor. Without the `.numel() != 1` guard it raises instead of returning None."
+          "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, a two-element input raises instead of returning None."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return the single element as a Python number, or None.\"\"\"\n    a = t.tensor(values)\n    if a.numel() != 1:\n        return None\n    return a.item()\n\n\nexample = [42]\nprint(solve(example))\n",
@@ -15139,7 +15139,7 @@
         {
           "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
           "output": "(tensor([[True, True],\n        [True, True]]), True)",
-          "why": "`==` is elementwise and returns a tensor of bools. `t.equal` returns the single verdict."
+          "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows_a, rows_b):\n    \"\"\"Return (whole-tensor equal?, same shape?).\"\"\"\n    a = t.tensor(rows_a)\n    b = t.tensor(rows_b)\n    return (t.equal(a, b), tuple(a.shape) == tuple(b.shape))\n\n\nexample = ([[1, 2], [3, 4]], [[9, 9], [9, 9]])\nprint(solve(*example))\n",
@@ -15241,7 +15241,7 @@
         {
           "call": "solve([[1, 2, 3], [4, 5, 6]])",
           "output": "(True, False, False)",
-          "why": "`.contiguous()` returns a NEW packed tensor. Reusing the view means the third answer is still the view's."
+          "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a in order?, a.T in order?, packed copy in order?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (a.is_contiguous(), view.is_contiguous(), packed.is_contiguous())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
@@ -15598,7 +15598,7 @@
         {
           "call": "solve([[1, 2, 3], [4, 5, 6]])",
           "output": "((2, 3), 'torch.int64', 2)",
-          "why": "The last slot is the ELEMENT count (`.numel()`), not the axis count."
+          "why": "The last slot is the ELEMENT count, not the axis count."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (shape as a tuple, dtype name, element count).\"\"\"\n    a = t.tensor(rows)\n    return (tuple(a.shape), str(a.dtype), a.numel())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
@@ -15812,7 +15812,7 @@
         {
           "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
           "output": "(3, (2, 2, 2), 2, 'torch.int64')",
-          "why": "`len()` is the first axis only. The element count is `.numel()`."
+          "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(cube):\n    \"\"\"Return (axes, shape as a tuple, element count, dtype name).\"\"\"\n    a = t.tensor(cube)\n    return (a.ndim, tuple(a.shape), a.numel(), str(a.dtype))\n\n\nexample = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nprint(solve(example))\n",
@@ -15863,7 +15863,7 @@
         {
           "call": "solve([[1, 2, 3], [4, 5, 6]])",
           "output": "(False, False, True, False)",
-          "why": "`.contiguous()` returns a NEW tensor with its own block, in reading order. Reusing the view leaves three of the four answers wrong."
+          "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves three of the four answers wrong."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(rows):\n    \"\"\"Return (a.T in order?, copy in order?, same values?, own block?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (view.is_contiguous(), packed.is_contiguous(),\n            t.equal(packed, view), packed.data_ptr() != a.data_ptr())\n\n\nexample = [[1, 2, 3], [4, 5, 6]]\nprint(solve(example))\n",
@@ -15914,7 +15914,7 @@
         {
           "call": "solve([7])",
           "output": "(1, tensor(7), 'torch.int64')",
-          "why": "Indexing gives a 0-d tensor. `.item()` is what hands back the Python number."
+          "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
         }
       ],
       "canonical_solution": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (element count, the single value or None, dtype name).\"\"\"\n    a = t.tensor(values)\n    value = a.item() if a.numel() == 1 else None\n    return (a.numel(), value, str(a.dtype))\n\n\nexample = [7]\nprint(solve(example))\n",
@@ -18172,7 +18172,7 @@
       "wrong_examples": [
         {
           "output": "(3, 2)",
-          "why": "`floor` goes DOWN and `ceil` goes UP; returning them in the other order reports each one in the wrong slot."
+          "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
         }
       ],
       "canonical_solution": "import math as m\n\n\ndef solve(x):\n    \"\"\"The same module, under a shorter name.\"\"\"\n    return (m.floor(x), m.ceil(x))\n\n\nexample = (2.3,)\nprint(solve(*example))\n",
@@ -18227,7 +18227,7 @@
       "wrong_examples": [
         {
           "output": "('HI', 2, <built-in function sqrt>)",
-          "why": "The third slot hands back the function `math.sqrt` instead of the number it computes — the parentheses are what make it a call."
+          "why": "The third slot hands back a function object instead of the number it computes — the parentheses are what make it a call."
         }
       ],
       "canonical_solution": "import math\n\n\ndef solve(text, x):\n    \"\"\"A method, a built-in call, and a module function.\"\"\"\n    return (text.upper(), len(text), math.sqrt(x))\n\n\nexample = ('hi', 9)\nprint(solve(*example))\n",
@@ -19327,7 +19327,7 @@
       "wrong_examples": [
         {
           "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
-          "why": "The prompt fixes the COLUMN count, which is the last axis — so -1 goes first. reshape(cols, -1) fixes the row count instead."
+          "why": "The prompt fixes the COLUMN count, which is the last axis — so the -1 goes first. Putting the fixed count first fixes the row count instead."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(x, cols):\n    \"\"\"Return (flat values, x as `cols` columns, that grid's row count).\"\"\"\n    g = x.reshape(-1, cols)\n    return (x.flatten().tolist(), g.tolist(), len(g))\n\n\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]), 2,)\nprint(solve(*example))\n",
@@ -20427,7 +20427,7 @@
       "wrong_examples": [
         {
           "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
-          "why": "full puts v in every cell. v on the diagonal only is the identity scaled — eye(n) * v."
+          "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else — the identity, scaled by v."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(n, v):\n    \"\"\"Return (v on the diagonal, the dtype name of an all-True n x n mask, n integer zeros).\"\"\"\n    diag = t.eye(n) * v\n    mask = t.ones((n, n), dtype=t.bool)\n    zeros = t.zeros(n, dtype=t.int64)\n    return (diag.tolist(), str(mask.dtype), zeros.tolist())\n\n\nexample = (2, 3.0,)\nprint(solve(*example))\n",
@@ -21527,7 +21527,7 @@
       "wrong_examples": [
         {
           "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
-          "why": "argsort answers WHERE the sorted values came from. The sorted values themselves are sort(...).values."
+          "why": "argsort answers WHERE the sorted values came from — indices, not values. The first two slots ask for the sorted values themselves."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(z):\n    \"\"\"Return (ascending values, descending values, z afterwards), as lists.\"\"\"\n    up = t.sort(z).values\n    down = t.sort(z, descending=True).values\n    return (up.tolist(), down.tolist(), z.tolist())\n\n\nexample = (t.tensor([0.5, 0.25, 0.75]),)\nprint(solve(*example))\n",
@@ -21912,7 +21912,7 @@
       "wrong_examples": [
         {
           "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
-          "why": "The first row asked for is the TRANSPOSE's — column 0 of a. a.tolist()[0] is a's own first row."
+          "why": "The first row asked for is the TRANSPOSE's — column 0 of a. Taking row 0 of a itself hands back a's own first row."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(rows):\n    \"\"\"Return (a.T's values, a.T's shape, a.T's first row, is a its own transpose?).\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    return (view.tolist(), tuple(view.shape), view.tolist()[0], t.equal(a, view))\n\n\nexample = ([[1, 2, 3], [4, 5, 6]],)\nprint(solve(*example))\n",
@@ -21967,7 +21967,7 @@
       "wrong_examples": [
         {
           "output": "((3, 2), 'torch.float32', 2)",
-          "why": "The size arguments are read in order: `t.randn(rows, cols)` makes rows rows of cols numbers. Swapping them transposes the shape you asked for."
+          "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(rows, cols):\n    \"\"\"Return (shape, dtype name, ndim) of a standard-normal draw.\"\"\"\n    x = t.randn(rows, cols)\n    return (tuple(x.shape), str(x.dtype), x.ndim)\n\n\nexample = (2, 3,)\nprint(solve(*example))\n",
@@ -22127,7 +22127,7 @@
       "wrong_examples": [
         {
           "output": "((4,), [1, 1, 2, 3])",
-          "why": "`t.randint` draws WITH replacement, so it repeats values and skips others. `t.randperm` is a shuffling: every number 0..n-1 appears exactly once."
+          "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(n):\n    \"\"\"Return (shape, the values sorted back into order) for a random permutation.\"\"\"\n    p = t.randperm(n)\n    return (tuple(p.shape), sorted(p.tolist()))\n\n\nexample = (4,)\nprint(solve(*example))\n",
@@ -22992,7 +22992,7 @@
       "wrong_examples": [
         {
           "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
-          "why": "An unseeded `t.Generator()` starts from a nondeterministic state, so the same seed argument no longer replays the same numbers."
+          "why": "An unseeded generator starts from a nondeterministic state, so passing the same seed argument no longer replays the same numbers — the seed has to be applied to the generator itself."
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(seed, n):\n    \"\"\"Seed a new generator and return its first n uniform floats.\"\"\"\n    rng = t.Generator().manual_seed(seed)\n    return t.rand(n, generator=rng).tolist()\n\n\nexample = (0, 3,)\nprint(solve(*example))\n",
@@ -29128,7 +29128,7 @@
       "wrong_examples": [
         {
           "output": "TypeError: can't assign a list to a torch.FloatTensor",
-          "why": "A Python list cannot be written into a tensor slice — TypeError. Wrap it in t.tensor(...) first; copy_ takes a tensor too."
+          "why": "A Python list cannot be written into a tensor slice — TypeError. The row values have to become a tensor before they are copied in."
         }
       ],
       "canonical_solution": "import torch as t\n\n\ndef solve(m, row, row_values):\n    \"\"\"One row overwritten with copy_.\"\"\"\n    canvas = t.zeros((m, len(row_values)))\n    canvas[row].copy_(t.tensor(row_values))\n    return canvas.tolist()\n\n\nexample = (2, 1, [1.0, 2.0, 3.0])\nprint(solve(*example))\n",
@@ -30798,7 +30798,7 @@
       "wrong_examples": [
         {
           "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
-          "why": "Plain `linspace(-y_limit, y_limit, n)` puts rays on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+          "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
         }
       ],
       "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"make_rays_1d_centres: one ray through each pixel centre.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    half = y_limit / num_pixels\n    rays[:, 1, 1] = t.linspace(-y_limit + half, y_limit - half, num_pixels)\n    return rays.tolist()\n\n\nexample = (4, 1.0)\nprint(solve(*example))\n",
