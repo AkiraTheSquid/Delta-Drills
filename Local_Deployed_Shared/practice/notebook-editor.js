@@ -106,7 +106,17 @@ const DeltaNotebook = (() => {
     button.textContent = "…";
     output.textContent = "Running…";
     try {
-      const question = window.LessonGate?.activeQuestion || window.PracticeAPI?.currentQuestion;
+      /* 🔴 `PracticeAPI` IS NOT ON `window`. It is a top-level `const` in
+         practice/api.js, and classic scripts share one global LEXICAL scope
+         that `window` does not mirror — so `window.PracticeAPI` is undefined
+         and this read silently produced `undefined` for every run made from
+         the notebook cell, which is every run on the practice page. The
+         visual preview below takes the question from here, so it was being
+         handed nothing and hid itself: the image drills had no picture, only
+         the printed list. Read the binding, keep the window read as the
+         fallback (practice/init.js and notch-menu.js do the same). */
+      const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+      const question = window.LessonGate?.activeQuestion || _papi?.currentQuestion;
       let result = await window.LessonNotebook?.runSource(editor.value, {
         context: "practice-editor",
         name: `<cell ${cell.dataset.cellId}>`,
@@ -126,8 +136,10 @@ const DeltaNotebook = (() => {
           ? "Persistent runtime started"
           : `Persistent runtime · ${result.execCount} cells`;
       }
-      if (cell === primary && !result.failed && result.pyodide) {
-        await window.DeltaRunner.renderRunOutputVisual(result.pyodide, question);
+      // No `result.pyodide` gate: a backend run has none, and the image
+      // drills are all torch — practice/runner.js::renderBackendOutputVisual.
+      if (cell === primary && !result.failed) {
+        await window.DeltaRunner.renderRunOutputVisual(result.pyodide, question, editor.value);
       }
     } catch (err) {
       output.textContent = `Error: ${err.message || String(err)}`;

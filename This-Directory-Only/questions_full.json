@@ -3538,7 +3538,7 @@
     "expected_output": "tensor([[[[ 0.,  2.],\n          [ 8., 10.]],\n\n         [[ 1.,  3.],\n          [ 9., 11.]],\n\n         [[ 4.,  6.],\n          [12., 14.]],\n\n         [[ 5.,  7.],\n          [13., 15.]]]])",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(x, p):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.arange(16.0).reshape(1, 1, 4, 4), 2))\n",
     "test_cases": [
@@ -30232,7 +30232,7 @@
     "expected_output": "[[0, 1], [2, 3], [4, 5]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"arange into h rows\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 3)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30259,8 +30259,8 @@
         "why": "`(w h)` fills column-major: consecutive numbers run DOWN a column."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30276,7 +30276,7 @@
     "expected_output": "[[0, 3], [1, 4], [2, 5]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"column-major fill\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 3)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30303,8 +30303,8 @@
         "why": "That is the row-major grid transposed: a `(w, h)` shape, not `(h, w)` filled down the columns."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30364,7 +30364,7 @@
     "expected_output": "[[3, 4], [5, 6], [7, 8]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(start, stop, w):\n    \"\"\"arange into w columns\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 9, 2)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30391,8 +30391,8 @@
         "why": "`w` was handed to the row factor: the grid has w ROWS instead of w columns."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30408,7 +30408,7 @@
     "expected_output": "[[1, 2, 3], [4, 5, 6]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, h):\n    \"\"\"list into h rows\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6], 2)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30435,8 +30435,8 @@
         "why": "`h` went to the column factor: the grid has h COLUMNS."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30452,7 +30452,7 @@
     "expected_output": "[[1, 4], [2, 5], [3, 6]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, w):\n    \"\"\"split and transpose\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6], 3)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30479,8 +30479,8 @@
         "why": "`(w h)` fills rows of length h — a different grouping of the numbers, not the transpose of the row-major grid."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30496,7 +30496,7 @@
     "expected_output": "[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vals, b, h):\n    \"\"\"list into a batch of matrices\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30523,8 +30523,8 @@
         "why": "The split order `(h b w)` regroups the numbers differently — matrices no longer hold consecutive runs."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
@@ -30540,7 +30540,7 @@
     "expected_output": "[1, 2, 3, 4]",
     "language": "python",
     "primary_library": "torch",
-    "task_type": "image_transform",
+    "task_type": "tensor_transform",
     "function_name": "solve",
     "starter_code": "import torch as t\nimport einops\n\n\ndef solve(grid):\n    \"\"\"grid back to a list\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
     "test_cases": [
@@ -30567,8 +30567,8 @@
         "why": "`(w h)` reads DOWN the columns."
       }
     ],
-    "expected_artifact_type": "image",
-    "supports_visual_output": true,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },

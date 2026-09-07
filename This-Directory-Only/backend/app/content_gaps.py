@@ -80,6 +80,10 @@ def record(user_id: str, gap: dict) -> None:
             # before it ran dry. A rung of 3 is a content bug; a rung of 40 is
             # a learner who has genuinely practised it out.
             "rung_size": gap.get("seen"),
+            # How many of those they actually ANSWERED. A rung of 3 with 0
+            # answered is a learner who skipped past it, not one who practised
+            # it out, and the two want different drills written.
+            "rung_answered": gap.get("answered"),
             "kc_total": gap.get("total"),
             "hits": int(row.get("hits") or 0) + 1,
             "first_seen": row.get("first_seen") or now,
@@ -116,11 +120,69 @@ def learner_message(gap: dict) -> str:
     that fixes it.
     """
     title = gap.get("kc_title") or gap.get("kc") or "this concept"
-    rung = RUNG_LABEL.get(gap.get("stage"), gap.get("stage") or "this rung")
+    # An UNTAGGED question has no rung, and the old fallback put the label
+    # straight into the sentence — "you have finished every this rung problem".
+    # Drop the adjective instead of inventing one.
+    rung = RUNG_LABEL.get(gap.get("stage"), gap.get("stage") or "")
+    rung_word = f"{rung} problem" if rung else "problem"
     seen = gap.get("seen")
-    count = f" all {seen} of them" if seen else ""
+    total = gap.get("total")
+    # NOTHING WRITTEN AT THIS RUNG is not the same as HAVING FINISHED IT, and
+    # saying the second when the first is true reads as a lie to the one person
+    # who can tell: the learner looking at the same problem for the third time.
+    # prioritization.rung_gap reports seen=0 for exactly this case.
+    # A concept that owns NOTHING at any rung — a retired course id, or a node
+    # the bank never got drills for. Replaying Seth's live state on 2026-09-07
+    # put `numpy.memory-model` and `einsum.batch-dims` (total=0) through the
+    # finished-them wording, which is a completion claim over an empty set.
+    # `seen == 0` and not `not seen`: an untagged question has seen=None, which
+    # means UNKNOWN, and unknown is not zero.
+    if seen == 0 and not total:
+        return (
+            f"No problems have been written for “{title}” yet — this concept "
+            "has no drills at any rung. Ask Claude to write some, or pick a "
+            "different concept from the Knowledge Graph."
+        )
+    if seen == 0 and total:
+        return (
+            f"No {rung_word}s have been written for “{title}” yet — the "
+            f"concept has {total} drill{'s' if total != 1 else ''} at other "
+            "rungs, but nothing at this one, so there is nothing new to put in "
+            "front of you here. Ask Claude to write drills at this rung, or "
+            "pick a different concept from the Knowledge Graph."
+        )
+    # SEEN OUT IS NOT FINISHED. This message is also reached from the router's
+    # repeat guard, which fires precisely when the learner has NOT answered the
+    # question coming back at them — so telling somebody who skipped all three
+    # lesson drills that they "finished every lesson problem, all 3 of them" is
+    # false to the one person who can tell. prioritization.rung_gap carries the
+    # answered count; `None` means an older gap dict that predates it, and those
+    # only ever came from the every-drill-answered path. (codex, 2026-09-07.)
+    answered = gap.get("answered")
+    if seen and answered is not None and answered < seen:
+        done = (
+            f"answered {answered} of the {seen}"
+            if answered
+            else f"not answered any of the {seen}"
+        )
+        return (
+            f"You have already seen every {rung_word} for “{title}” and "
+            f"{done}. Nothing is being repeated, so there is nothing new to put "
+            "in front of you here — ask Claude to write more drills for this "
+            "concept, or pick a different one from the Knowledge Graph."
+        )
+    # No counts at all (an untagged question, `kc=None`): say what is true —
+    # nothing here is new — rather than crediting a completion we cannot see.
+    if not seen:
+        return (
+            f"There is nothing new left to serve for “{title}” — everything "
+            "here has already been in front of you. Ask Claude to write more "
+            "drills for this concept, or pick a different one from the "
+            "Knowledge Graph."
+        )
+    count = f", all {seen} of them" if seen else ""
     return (
-        f"You have finished every {rung} problem for “{title}”{count}. "
+        f"You have finished every {rung_word} for “{title}”{count}. "
         "Nothing is being repeated, so there is nothing new to serve here yet — "
         "ask Claude to write more drills for this concept, or pick a different "
         "one from the Knowledge Graph."

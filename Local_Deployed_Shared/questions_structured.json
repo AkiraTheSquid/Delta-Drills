@@ -3985,7 +3985,7 @@
     },
     "exercise": {
       "question_text": "Write a function solve(x, p) that takes a 4-D channels-first batch x of shape (b, c, h, w) — h and w divisible by p — and performs SPACE-TO-DEPTH with block size p: pack each non-overlapping p x p spatial block into the channel dimension. The result has shape (b, c*p*p, h//p, w//p), matching einops.rearrange(x, 'b c (h p1) (w p2) -> b (c p1 p2) h w', p1=p, p2=p).",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34267,7 +34267,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A1): build `t.arange(n)` and reshape it with `einops.rearrange` into `h` rows (row-major). Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34298,8 +34298,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"arange into h rows\"\"\"\n    return einops.rearrange(t.arange(n), '(h w) -> h w', h=h).tolist()\n\n\nexample = (6, 3)\nprint(solve(*example))\n",
       "expected_output": "[[0, 1], [2, 3], [4, 5]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34317,7 +34317,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A1): build `t.arange(n)` and fill a `(h, w)` grid COLUMN-major (consecutive numbers run down each column) with one `einops.rearrange` call, `h` given. Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34348,8 +34348,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(n, h):\n    \"\"\"column-major fill\"\"\"\n    return einops.rearrange(t.arange(n), '(w h) -> h w', h=h).tolist()\n\n\nexample = (6, 3)\nprint(solve(*example))\n",
       "expected_output": "[[0, 3], [1, 4], [2, 5]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34417,7 +34417,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A1): build `t.arange(start, stop)` and reshape it into `w` COLUMNS (row-major) with `einops.rearrange`. Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34448,8 +34448,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(start, stop, w):\n    \"\"\"arange into w columns\"\"\"\n    return einops.rearrange(t.arange(start, stop), '(h w) -> h w', w=w).tolist()\n\n\nexample = (3, 9, 2)\nprint(solve(*example))\n",
       "expected_output": "[[3, 4], [5, 6], [7, 8]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34467,7 +34467,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A2): a flat list of values — split it into `h` rows (row-major) with `einops.rearrange` on `t.tensor(vals)`. Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34498,8 +34498,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(vals, h):\n    \"\"\"list into h rows\"\"\"\n    return einops.rearrange(t.tensor(vals), '(h w) -> h w', h=h).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6], 2)\nprint(solve(*example))\n",
       "expected_output": "[[1, 2, 3], [4, 5, 6]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34517,7 +34517,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A2): a flat list — split into rows of length `w` and then TRANSPOSE, so the result is `(w, h)`, with one `einops.rearrange` call. Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34548,8 +34548,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(vals, w):\n    \"\"\"split and transpose\"\"\"\n    return einops.rearrange(t.tensor(vals), '(h w) -> w h', w=w).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6], 3)\nprint(solve(*example))\n",
       "expected_output": "[[1, 4], [2, 5], [3, 6]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34567,7 +34567,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A2): a flat list of `b·h·w` values — split it into `b` matrices of `h` rows each, shape `(b, h, w)`. Return the nested list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34598,8 +34598,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(vals, b, h):\n    \"\"\"list into a batch of matrices\"\"\"\n    return einops.rearrange(t.tensor(vals), '(b h w) -> b h w', b=b, h=h).tolist()\n\n\nexample = ([1, 2, 3, 4, 5, 6, 7, 8], 2, 2)\nprint(solve(*example))\n",
       "expected_output": "[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {
@@ -34617,7 +34617,7 @@
     },
     "exercise": {
       "question_text": "Variant of (A2): a `(h, w)` nested list — FLATTEN it back to one row-major list with `einops.rearrange`. Return the list.",
-      "task_type": "image_transform",
+      "task_type": "tensor_transform",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
@@ -34648,8 +34648,8 @@
       ],
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(grid):\n    \"\"\"grid back to a list\"\"\"\n    return einops.rearrange(t.tensor(grid), 'h w -> (h w)').tolist()\n\n\nexample = ([[1, 2], [3, 4]],)\nprint(solve(*example))\n",
       "expected_output": "[1, 2, 3, 4]",
-      "expected_artifact_type": "image",
-      "supports_visual_output": true
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
     }
   },
   {

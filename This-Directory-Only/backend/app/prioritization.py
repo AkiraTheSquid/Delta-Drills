@@ -153,6 +153,59 @@ def _resident_kc(user_state, candidates) -> Optional[str]:
     return sorted(counts, key=rank)[0]
 
 
+def rung_gap(user_state: UserPracticeState, kc: Optional[str], question) -> dict:
+    """The gap dict for a rung that has nothing NEW left to put on screen.
+
+    `narrow_to_next_kc` builds the same shape inline when a rung is spent —
+    every drill on it ANSWERED. This builds it for the other way a rung runs
+    out, which that check cannot see: every drill already SERVED, so the picker
+    can only hand back something the learner has already looked at. The caller
+    (practice/questions_router) decides when that has happened; this only names
+    it, in the shape `content_gaps.record` stores and `content_gaps
+    .learner_message` reads.
+
+    `kc` may be None — an untagged question has no concept and no rung, and the
+    message falls back to "this concept" rather than inventing one.
+    """
+    if not kc:
+        return {
+            "kc": None,
+            "kc_title": getattr(question, "subtopic", None) or "this concept",
+            "stage": None,
+            "seen": None,
+            "answered": None,
+            "total": None,
+            "served_from": None,
+        }
+    node = kc_graph.registry_node(kc) or {}
+    stage = kc_graph.kc_stage(user_state, kc)
+    owned = list(kc_graph.questions_for_kc(kc))
+    at_stage = set(kc_graph.questions_at_stage(owned, stage))
+    # `seen` counts what this rung ACTUALLY holds, and 0 is a real answer, not a
+    # missing one: `einops.pattern-language` owns twelve drills and none is
+    # tagged `worked`, which is why the picker had a pool of one to rotate
+    # through. Falling back to `len(owned)` here would have told the learner
+    # they had finished twelve lesson problems that were never written.
+    # content_gaps.learner_message reads the 0 and says so.
+    #
+    # 🔴 SEEN IS NOT ANSWERED, and this gap is raised by the SERVED-out path:
+    # the router 409s exactly when the repeat is a question the learner has NOT
+    # answered. So a rung of three drills that were all skipped arrived here as
+    # seen=3 and came back out of learner_message as "you have finished every
+    # lesson problem, all 3 of them" — the same lie the zero branch above was
+    # written to kill, one size smaller. Carry the answered count so the message
+    # can say which of the two actually happened. (codex, 2026-09-07.)
+    return {
+        "kc": kc,
+        "kc_title": node.get("title") or kc,
+        "stage": stage,
+        "seen": len(at_stage),
+        "answered": len(at_stage & answered_question_ids(user_state)),
+        "total": len(owned),
+        "served_from": None,
+    }
+
+
 def narrow_to_next_kc(
     user_state: UserPracticeState,
     candidates: List,
@@ -276,6 +329,10 @@ def narrow_to_next_kc(
             "kc_title": node.get("title") or next_kc,
             "stage": stage,
             "seen": len(rung),
+            # This branch is only reached when `fresh` is empty, i.e. every
+            # drill in `rung` IS answered — so here the two counts really are
+            # the same number and the "you finished them" wording is true.
+            "answered": len(rung),
             "total": len(narrowed),
             "served_from": None,
         }

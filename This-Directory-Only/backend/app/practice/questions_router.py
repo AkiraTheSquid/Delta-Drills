@@ -45,6 +45,7 @@ from app.prioritization import (
     ladder_fields,
     ladder_starter,
     narrow_to_next_kc,
+    rung_gap,
     question_is_unlocked,
     record_ladder_outcome,
     select_next_subtopic,
@@ -207,6 +208,48 @@ def next_question(
 
     # Teach one concept, then drill THAT concept — see lessons.segment_drill.
     question = lessons.segment_drill(question, user_state.kc_exposure, served) or question
+
+    # 🔴 "NEXT" MAY NOT HAND BACK THE PROBLEM THE LEARNER IS LOOKING AT.
+    #
+    # Measured on Seth's account, 2026-09-06: `Einops: Rearrange`, concept
+    # `einops.pattern-language`, rung `worked`. The concept owns twelve drills
+    # in the subtopic and NONE is tagged at the worked rung, so the "authored
+    # nothing at this rung" fallback in prioritization.narrow_to_next_kc pinned
+    # the pool to `lowest_rung`, which is the single rank-0 drill q345. He had
+    # been served it and skipped it, so `fresh` held it (unanswered ≠ spent) and
+    # `unshown` was empty — the pool handed to the picker was exactly [345],
+    # every time. His served log reads `... 345, 345, 345, ...`: pressing Skip
+    # re-rendered the identical problem with no message, indefinitely. "It
+    # wouldn't let me go."
+    #
+    # The existing exhaustion machinery does not fire there, because it asks
+    # whether anything is UNANSWERED and 345 is. But from the learner's side
+    # this is the same event, and Seth already said what it should do (quoted in
+    # narrow_to_next_kc, 2026-08-28): "it should notify the user that they need
+    # to make the AI create more problems since they ran out of problems to
+    # practice rather than serving up the old problems they have already done."
+    #
+    # NARROW ON PURPOSE — the last served id, not "is a repeat". Recycling a
+    # spent pool is deliberate behaviour with a whole ranking behind it
+    # (grading.select_question_for_difficulty), and it is fine as long as it
+    # ROTATES: seen-least, longest-ago. What is not fine is the degenerate case
+    # where the pool is so small that the rotation returns the question the
+    # learner was just shown. That, and only that, is what this catches.
+    #
+    # `answered` and not `served`: a learner who answered it and asked for
+    # another may legitimately get it back on review.
+    last_served = sub_state.served_question_ids[-1] if sub_state.served_question_ids else None
+    if question.id == last_served and question.id not in answered:
+        stuck = gap or rung_gap(user_state, next_kc, question)
+        content_gaps.record(user_id, stuck)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "reason": "content_exhausted",
+                "message": content_gaps.learner_message(stuck),
+                **stuck,
+            },
+        )
 
     # Report the aim on the concept actually SERVED. `next_kc` drove the pick,
     # but a question can target more than one concept and a focused pool is not
