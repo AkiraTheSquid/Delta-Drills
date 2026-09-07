@@ -39,8 +39,8 @@ shape-plumbing toolbox.
 
 ## Worked example
 
-Task: stack a list of images into a batch; add a singleton channel axis;
-combine both in one pattern.
+Task: stack a list of images into a batch; insert a singleton axis into a
+plain tensor; stack a list AND merge in one pattern; squeeze with a check.
 
 ```python
 import torch as t
@@ -53,16 +53,43 @@ batch = einops.rearrange(imgs, 'b h w c -> b h w c')
 assert batch.shape == (4, 2, 3, 1)
 assert batch[2, 0, 0, 0] == 2.0                      # list order preserved
 
+print("list of 4 images -> batch", tuple(batch.shape), "| image 2's first pixel:", batch[2, 0, 0, 0].item())
+```
+
+Stacking made a batch out of several tensors; a singleton adds a length-1 axis to ONE tensor without copying anything.
+
+```python
+import torch as t
+import einops
+
 # Singleton insertion: a plain 2-D tensor gains a leading axis.
 x2d = t.arange(6).reshape(2, 3)
 x3d = einops.rearrange(x2d, 'h w -> 1 h w')
 assert x3d.shape == (1, 2, 3)
+
+print("singleton insert:", tuple(x2d.shape), "->", tuple(x3d.shape))
+```
+
+The list-to-batch conversion composes with any merge in the same pattern.
+
+```python
+import torch as t
+import einops
 
 # Both at once: stack a list AND lay the images out side by side.
 pair = [t.zeros((2, 2, 1)), t.ones((2, 2, 1))]
 wide = einops.rearrange(pair, 'b h w c -> h (b w) c')
 assert wide.shape == (2, 4, 1)
 assert wide[0, :, 0].tolist() == [0.0, 0.0, 1.0, 1.0]  # a then b, left to right
+
+print("stack + side by side:", tuple(wide.shape), "| row 0 =", wide[0, :, 0].tolist())
+```
+
+Removing a singleton is the reverse pattern, and einops checks that the `1` is really there.
+
+```python
+import torch as t
+import einops
 
 # Squeeze with verification: consuming a '1' that isn't there fails loudly.
 try:
@@ -73,11 +100,7 @@ except Exception as err:
     print("squeezing an axis that isn't there ->", type(err).__name__)
 assert raised
 
-print("list of 4 images -> batch", tuple(batch.shape),
-      "| image 2's first pixel:", batch[2, 0, 0, 0].item())
-print("singleton insert:", tuple(x2d.shape), "->", tuple(x3d.shape))
-print("stack + side by side:", tuple(wide.shape), "| row 0 =",
-      wide[0, :, 0].tolist())
+print("all four moves ran; squeeze raised:", raised)
 ```
 
 Why each step:

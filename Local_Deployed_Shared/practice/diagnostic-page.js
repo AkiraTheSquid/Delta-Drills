@@ -251,6 +251,9 @@ const DiagnosticPage = (() => {
     const show = !!status?.active;
     host.classList.toggle("hidden", !show);
     if (!show) return;
+    // A status with a plan is TIME-based (1h/3h/6h cap, 2026-09-07):
+    // placement-plan.js paints the fill and the count from the plan.
+    if (status.plan) return;
 
     const budget = Math.max(1, Number(status.budget) || 14);
     const done = Math.min(budget, Math.max(0, Number(status.probes_done) || 0));
@@ -291,6 +294,10 @@ const DiagnosticPage = (() => {
   const renderLength = (status) => {
     const el = byId("placement-length");
     if (!el || !status) return;
+    // placement-plan.js owns these chips whenever it is loaded: a planned run
+    // is time-based, and BEFORE a run the old count × 20:00 arithmetic
+    // ("about 320 min") is exactly the overclaim this line exists to avoid.
+    if (status.plan || window.PlacementPlan) return;
     const secs = Number(window.PlacementTimer?.secondsPerQuestion?.()) || 120;
     const budget = Math.max(1, Number(status.budget) || 14);
     const minProbes = Math.min(budget, Math.max(0, Number(status.min_probes) || 0));
@@ -325,6 +332,7 @@ const DiagnosticPage = (() => {
      can fall back to the session's own words. */
   const progressLabel = () => {
     if (!running || !lastStatus) return "";
+    if (lastStatus.plan) return window.PlacementPlan?.progressLabel?.() || "";
     const budget = Math.max(1, Number(lastStatus.budget) || 14);
     const done = Math.min(budget, Math.max(0, Number(lastStatus.probes_done) || 0));
     return `Placement question ${done + 1} of at most ${budget}`;
@@ -366,6 +374,8 @@ const DiagnosticPage = (() => {
       // test" in the account menu is a claim about this learner's record.
       syncMenuLabel(null);
       renderProgress(null);
+      window.PlacementPlan?.render(null);
+      window.PlacementResults?.renderKcs?.(null);
       window.PlacementResults?.renderAreas([]);
       moveWorkspace(false);
       // Unknown record ≠ taken: keep the card up for a signed-out visitor.
@@ -376,14 +386,16 @@ const DiagnosticPage = (() => {
     const done = Number(status.probes_done) || 0;
     const budget = Number(status.budget) || 14;
     if (statusEl) {
-      statusEl.textContent = status.active
+      statusEl.textContent = window.PlacementPlan?.statusLine?.(status) || (status.active
         ? `In progress · ${done} of at most ${budget} answered`
         : status.completed_at
           ? `Complete · ${done} questions`
-          : "Not started";
+          : "Not started");
     }
     renderProgress(status);
     renderLength(status);
+    // The plan picker (before a run) and the time-based readout (during one).
+    window.PlacementPlan?.render(status);
     priorEl?.classList.toggle("hidden", !status.can_set_prior);
     // Same trap as notebook-view.js documents: `PracticeAPI` is a top-level
     // const, so it is NOT on `window` and this read was always undefined —

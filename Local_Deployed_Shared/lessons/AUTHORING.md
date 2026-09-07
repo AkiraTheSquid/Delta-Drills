@@ -311,6 +311,14 @@ Example skeleton:
 
 ## Rules
 
+The full written standard is `scripts/CONTENT_RUBRIC.md` (2026-09-07): the
+LeetCode bar for a problem statement, the no-giveaway rules, and what makes an
+explanation make sense. Author against it, then run the two-model critic on
+what you wrote — `python3 scripts/content_critic.py --kp <this page>` grades
+the page and every drill it owns with Claude Fable 5.1 and GPT-6 Astra and
+writes the reconciled report to `scripts/content_review/`. The short list
+below is the part of that rubric that predates it.
+
 - Concept explains the GENERAL procedure before any example (Seth's requirement:
   never example-only).
 - Worked example comments explain WHY each step, not what the syntax is.

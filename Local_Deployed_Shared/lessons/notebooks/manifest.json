@@ -457,7 +457,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Rearrange",
    "file": "eo-1.json",
-   "cells": 252,
+   "cells": 324,
    "questions": [
     313,
     314,
@@ -509,7 +509,18 @@
     401,
     403,
     404,
-    531
+    531,
+    889,
+    890,
+    891,
+    913,
+    914,
+    915,
+    916,
+    921,
+    924,
+    925,
+    928
    ],
    "kcs": [
     "einops.pattern-language",
@@ -527,7 +538,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Reduce",
    "file": "eo-2.json",
-   "cells": 77,
+   "cells": 87,
    "questions": [
     324,
     325,
@@ -557,7 +568,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Deep Learning",
    "file": "eo-3.json",
-   "cells": 116,
+   "cells": 150,
    "questions": [
     316,
     317,
@@ -581,7 +592,12 @@
     385,
     394,
     396,
-    397
+    397,
+    893,
+    894,
+    896,
+    901,
+    902
    ],
    "kcs": [
     "einops.repeat-model",
@@ -645,7 +661,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Einsum",
    "file": "es-1.json",
-   "cells": 85,
+   "cells": 137,
    "questions": [
     847,
     848,
@@ -660,7 +676,13 @@
     857,
     858,
     859,
-    860
+    860,
+    864,
+    869,
+    874,
+    879,
+    880,
+    884
    ],
    "kcs": [
     "einops.einsum"

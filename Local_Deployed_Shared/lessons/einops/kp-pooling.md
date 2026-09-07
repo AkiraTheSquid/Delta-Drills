@@ -6,7 +6,7 @@ new_syntax: []
 faded: [324]
 guided: [363]
 independent: [368, 354, 336, 377]
-integrated: [917, 918, 919, 920]
+integrated: [917, 918, 919, 920, 929, 930, 931]
 ---
 
 ## Concept
@@ -60,19 +60,35 @@ assert pooled.shape == (1, 1, 2, 2)
 assert pooled[0, 0].tolist() == [[2.5, 4.5],
                                  [10.5, 12.5]]
 
+print(x[0, 0], "\n")
+print("mean-pooled 2x2 ->\n", pooled[0, 0])
+```
+
+Same windows, different aggregation: the geometry lives in the pattern, the semantics in the third argument.
+
+```python
+import torch as t
+import einops
+
 # Max pooling is the same pattern, different aggregation.
 mx = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'max', h2=2, w2=2)
 assert mx[0, 0].tolist() == [[5.0, 7.0],
                              [13.0, 15.0]]
+
+print("max-pooled  2x2 ->\n", mx[0, 0])
+```
+
+Pool ONE axis by factoring only that axis; everything outside the parens rides along.
+
+```python
+import torch as t
+import einops
 
 # One-axis pooling: average adjacent COLUMN pairs, everything else intact.
 imgs = t.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
 halved = einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)
 assert halved.shape == (1, 2, 2, 1)
 assert halved[0, 0, :, 0].tolist() == [0.5, 2.5]   # (0+1)/2, (2+3)/2
-print(x[0, 0], "\n")
-print("mean-pooled 2x2 ->\n", pooled[0, 0])
-print("max-pooled  2x2 ->\n", mx[0, 0])
 print("column pairs averaged:", imgs[0, 0, :, 0].tolist(), "->",
       halved[0, 0, :, 0].tolist())
 ```
@@ -144,7 +160,16 @@ reduce).
 k x k min pool
 
 ### q920
-pool then side by side
+Pool, then side by side.
+
+### q929
+One axis, window 7: the maximum of each week.
+
+### q930
+One axis, window k: the mean of each block.
+
+### q931
+One axis, window 7: the total of each week.
 
 ## Misconceptions
 

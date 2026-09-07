@@ -5,8 +5,8 @@ supporting: [einops.merge-axes]
 new_syntax: []
 faded: [390]
 guided: [315]
-independent: [337, 320, 331]
-integrated: [921, 922, 923, 924, 925, 926, 927, 928]
+independent: [337, 320, 331, 921, 924, 925, 928]
+integrated: [922, 923, 926, 927]
 ---
 
 ## Concept
@@ -30,7 +30,7 @@ The new ingredients:
    description of how the data was laid out ("row-major tiles", "group
    index slowest/fastest") is the ground truth for the order.
 3. **Split and merge combine in one pattern** — the signature einops move.
-   `'(b w) ... -> b ...'` unpacks; `'... -> ... (h p)'` repacks;
+   `'(b w) c -> b w c'` unpacks; `'h p c -> (h p) c'` repacks;
    `'(h w) p1 p2 c -> (h p1) (w p2) c'` does both at once (that one
    reassembles an image from its tile stack — split the tile index into
    grid coordinates, then merge each with its within-tile axis).
@@ -54,11 +54,29 @@ flat = einops.rearrange(img, 'c h w -> c (h w)')      # (3, 4)
 back = einops.rearrange(flat, 'c (h w) -> c h w', h=2)
 assert t.equal(back, img)                       # perfect inverse
 
+print("merge then split round-trips:", bool(t.equal(back, img)))
+```
+
+A known segment length is enough to split a packed time axis into (segment, position-within-segment).
+
+```python
+import torch as t
+import einops
+
 # Split a sequence into p-token segments: t = n segments of length p.
 seq = t.arange(24).reshape(2, 6, 2)                  # (b, t=6, d)
 chunks = einops.rearrange(seq, 'b (n p) d -> b n p d', p=3)
 assert chunks.shape == (2, 2, 3, 2)
 assert t.equal(chunks[0, 0], seq[0, :3])       # first 3 tokens
+
+print("sequence", tuple(seq.shape), "-> chunks", tuple(chunks.shape), "| chunk 0 =", chunks[0, 0].tolist())
+```
+
+Now both at once: unpack the tile index into grid coordinates on the left, and merge each coordinate with its within-tile axis on the right.
+
+```python
+import torch as t
+import einops
 
 # Split AND merge at once: tile stack -> image.
 # 6 tiles of shape (2, 2), listed row-major from a (2x3)-tile image.
@@ -67,9 +85,6 @@ image = einops.rearrange(tiles, '(h w) p1 p2 -> (h p1) (w p2)', h=2)
 assert image.shape == (4, 6)                          # (2*2, 3*2)
 # Tile 0 occupies the top-left 2x2 block:
 assert image[:2, :2].tolist() == tiles[0].tolist()
-print("merge then split round-trips:", bool(t.equal(back, img)))
-print("sequence", tuple(seq.shape), "-> chunks", tuple(chunks.shape),
-      "| chunk 0 =", chunks[0, 0].tolist())
 print("6 tiles -> one", tuple(image.shape), "image:")
 print(image)
 ```
@@ -126,12 +141,11 @@ height into two batch entries — split then merge into b), q393 (split an
 even channel axis into pairs, pair-member axis to the front).
 
 Also from the bank: q331 (slice to the even-indexed images, then tile them
-into an r-row grid).
+into an r-row grid), q921 (0..n-1 into h rows), q924 (a range into w
+columns), q925 (a flat list into h rows), q928 (a grid back to a flat list —
+the merge direction, as a check that you can go both ways).
 
 ## Integrated practice
-
-### q921
-arange into h rows
 
 ### q922
 column-major fill
@@ -139,20 +153,11 @@ column-major fill
 ### q923
 three-way split
 
-### q924
-arange into w columns
-
-### q925
-list into h rows
-
 ### q926
 split and transpose
 
 ### q927
 list into a batch of matrices
-
-### q928
-grid back to a list
 
 ## Misconceptions
 
