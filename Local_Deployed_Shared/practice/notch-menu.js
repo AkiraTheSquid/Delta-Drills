@@ -32,6 +32,12 @@
   const btn = document.getElementById("practice-notch-btn");
   const menu = document.getElementById("practice-notch-menu");
   const pauseItem = document.getElementById("practice-notch-pause");
+  /* Finish the placement early — placement only, hidden for a session. Calls
+     DiagnosticPage.finish() directly rather than clicking the card's button:
+     that button is `.hidden` while a probe is on screen (exactly when this
+     row is needed) and a hidden button's click still fires, but the two-click
+     arm/confirm then shows its label nowhere. This row carries the label. */
+  const finishItem = document.getElementById("practice-notch-finish");
   /* The square, to the LEFT of the clock. Same destination as the menu's
      Pause item — one behaviour, two ways to reach it, neither of them a copy
      of what pausing does. There is no End counterpart: the session model has
@@ -221,6 +227,13 @@
       pauseItem.disabled = refused;
       pauseItem.title = why;
     }
+    if (finishItem) {
+      // …and only once something has been answered: with zero answers the
+      // server treats /finish as a decline, not a finish.
+      const answered = Number(_api?.lastDiagnosticStatus?.probes_done) || 0;
+      finishItem.classList.toggle("hidden", !placementActive || answered < 1);
+      finishItem.title = "End the placement test now. Your concepts are estimated from what you have answered so far; the question on screen is dropped, not counted.";
+    }
     if (stopBtn) {
       stopBtn.disabled = refused;
       stopBtn.title = why;
@@ -282,6 +295,21 @@
   /* `_pauseTarget`, not `_pauseBtn`: which pause is on offer is decided per
      click, because a placement can start or finish under an open menu. */
   if (pauseItem) pauseItem.addEventListener("click", _proxy(_pauseTarget));
+  if (finishItem) {
+    /* No timer here — the notch's watch forbids a second clock in this file.
+       DiagnosticPage.finish() owns the two-click arm (and its lapse) and
+       writes the armed label onto THIS row as well as the card's button, so
+       the row only forwards the click and keeps the menu open for the second
+       one. Closing happens when the finish actually lands (the page re-renders
+       and the placement clock goes away). */
+    finishItem.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const page = window.DiagnosticPage;
+      if (!page?.finish) return;
+      const done = await page.finish();
+      if (done) _close();
+    });
+  }
   if (stopBtn) stopBtn.addEventListener("click", _proxy(_pauseTarget));
 
   /* Session state changes underneath an open menu — a question submits, the

@@ -613,6 +613,10 @@
       <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
            aria-labelledby="practice-notch-btn">
         <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
+        <!-- Placement only (hidden otherwise): the way to END a placement
+             early from inside a probe, where the card carrying
+             #placement-finish-btn is off screen. Proxies to that button. -->
+        <button class="practice-notch-item hidden" id="practice-notch-finish" type="button" role="menuitem">Finish the placement test now</button>
         <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
         <!-- 🔴 THE REAL ELEMENTS, not proxies. Everything above this line
              forwards a click to a hidden button in #session-status-row;
@@ -2041,6 +2045,16 @@ t.manual_seed(0)
                practice/diagnostic-page.js owns what pausing does. -->
           <button type="button" class="ghost placement-pause-btn hidden" id="placement-pause-btn"
                   >Pause the placement test</button>
+          <!-- FINISH EARLY (Seth, 2026-09-08: "make it such that you can end the
+               diagnostic early … after an hour, maybe two"). Shown while a run
+               is ACTIVE with at least one answer and no probe on screen; the
+               notch menu's #practice-notch-finish proxies to it mid-probe. Two
+               clicks: the first arms it and rewrites its label with what will
+               happen, the second calls /diagnostic/finish — no window.confirm
+               (a modal dialog blocks the page and every automation on it).
+               practice/diagnostic-page.js owns what finishing does. -->
+          <button type="button" class="ghost placement-finish-btn hidden" id="placement-finish-btn"
+                  >Finish the test now</button>
         </div>
       </section>
       <!-- Filled by practice/placement-results.js from the SAME
@@ -2224,7 +2238,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=27"></script>
+  <script src="practice/api.js?v=28"></script>
   <script src="practice/timer.js?v=28"></script>
   <script src="practice/kernel.js?v=6"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
@@ -2262,7 +2276,7 @@ t.manual_seed(0)
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
   <script src="concept-pill.js?v=3"></script>
-  <script src="practice/notch-menu.js?v=8"></script>
+  <script src="practice/notch-menu.js?v=9"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -2332,7 +2346,7 @@ t.manual_seed(0)
        own refresh at load if the placement page is already on screen. -->
   <script src="practice/placement-plan.js?v=2"></script>
   <script src="practice/placement-results.js?v=4"></script>
-  <script src="practice/diagnostic-page.js?v=23"></script>
+  <script src="practice/diagnostic-page.js?v=24"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->

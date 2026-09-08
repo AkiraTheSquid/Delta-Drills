@@ -405,6 +405,13 @@ const DiagnosticPage = (() => {
     const hasProbeOnScreen = !!_papi?.currentQuestion?.diagnostic_active;
     continueEl?.classList.toggle("hidden", !status.active || hasProbeOnScreen);
     skipEl?.classList.toggle("hidden", !showSkip);
+    /* Finish early: active, something answered, no probe on screen (the
+       notch row covers mid-probe). Re-label on every status: the count moves. */
+    const finishEl = byId("placement-finish-btn");
+    finishEl?.classList.toggle("hidden", !status.active || done < 1 || hasProbeOnScreen);
+    // A run that is not active has nothing to finish: drop any armed state.
+    if (!status.active && typeof _disarmFinish === "function") _disarmFinish();
+    else if (typeof _finishLabel === "function") _finishLabel();
     renderStartButton(status, startEl);
     /* This file owns WHETHER the results card shows; placement-results.js owns
        what is in it. Fill before unhiding so the card never flashes the shape
@@ -548,6 +555,8 @@ const DiagnosticPage = (() => {
      "Resume the placement test". */
   const pause = () => {
     if (!running) return false;
+    // An armed "finish" must not survive a pause: the next resume starts clean.
+    if (typeof _disarmFinish === "function") _disarmFinish();
     /* `PracticeAPI` is a top-level const, so it is NOT on `window` — this file
        documents that trap twice already. */
     const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
@@ -594,6 +603,102 @@ const DiagnosticPage = (() => {
     return true;
   };
   byId("placement-pause-btn")?.addEventListener("click", pause);
+
+  /* FINISHING EARLY (Seth, 2026-09-08: "I plan to spend one hour on it …
+     then submit the diagnostic maybe after two hours"). The run's plan is a
+     CEILING, not a promise to sit the whole thing: /diagnostic/finish seeds
+     mastery from whatever has been answered, so a learner may stop the moment
+     the evidence feels like enough. Unprobed concepts keep their prior.
+
+     Two clicks, no dialog. `window.confirm` blocks the document (and every
+     automation driving it), so the first click ARMS the button — its label
+     says exactly what the second click does and with how many answers — and
+     the arm lapses after a few seconds so a stray click later is not a
+     finish. Both entry points (the card's button, the notch menu row) end up
+     on the same element, so there is one armed state and one label. */
+  const FINISH_ARM_MS = 8000;
+  let finishArmedUntil = 0;
+  let finishArmTimer = null;
+  const _finishBtn = () => byId("placement-finish-btn");
+  /* One armed state, two labels: the card's button and the notch menu's row
+     (`#practice-notch-finish`, which cannot keep a timer of its own — see
+     notch-menu.js). Both are rewritten here. */
+  const _finishLabel = () => {
+    const armed = Date.now() < finishArmedUntil;
+    const n = Number(lastStatus?.probes_done) || 0;
+    const armedText = `Click again to finish now with ${n} answered`;
+    const btn = _finishBtn();
+    if (btn) {
+      btn.textContent = armed ? armedText : "Finish the test now";
+      btn.classList.toggle("is-armed", armed);
+    }
+    const row = byId("practice-notch-finish");
+    if (row) {
+      row.textContent = armed ? armedText : "Finish the placement test now";
+      row.classList.toggle("is-armed", armed);
+    }
+  };
+  const _disarmFinish = () => {
+    finishArmedUntil = 0;
+    clearTimeout(finishArmTimer);
+    finishArmTimer = null;
+    _finishLabel();
+  };
+  let finishing = false;
+  const finish = async () => {
+    if (!running || finishing) return false;
+    /* Nothing answered = nothing to finish from: the server would treat that
+       as a decline (no seeding) and end the placement outright. The card hides
+       the button until then; the notch row is guarded here too (codex). */
+    if ((Number(lastStatus?.probes_done) || 0) < 1) return false;
+    if (Date.now() >= finishArmedUntil) {
+      finishArmedUntil = Date.now() + FINISH_ARM_MS;
+      clearTimeout(finishArmTimer);
+      finishArmTimer = setTimeout(_disarmFinish, FINISH_ARM_MS);
+      _finishLabel();
+      return false;
+    }
+    _disarmFinish();
+    finishing = true;
+    const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    /* 🔴 STOP THE CLOCK BEFORE THE REQUEST, not after it lands. The probe's
+       countdown auto-submits on expiry, and a submit racing /diagnostic/finish
+       could record the very probe this promises to drop (codex, 2026-09-08).
+       A failed finish hands the clock back with the same short grace a failed
+       submit gets. */
+    const hadProbe = !!_papi?.currentQuestion?.diagnostic_active;
+    window.PlacementTimer?.pauseForGrading?.();
+    try {
+      const status = await _papi?.diagnosticFinish?.();
+      if (!status) {
+        if (hadProbe) window.PlacementTimer?.resumeAfterFailedSubmit?.();
+        return false;
+      }
+      /* Same teardown as pause(): the probe on screen is over. Clear the live
+         and the SAVED copy so a reload cannot paint a probe back over a
+         finished test. */
+      window.PlacementTimer?.stop?.();
+      if (_papi?.currentQuestion?.diagnostic_active) _papi.currentQuestion = null;
+      const _progress =
+        typeof practiceProgress !== "undefined" ? practiceProgress : window.practiceProgress;
+      if (_progress?.currentQuestion?.diagnostic_active) {
+        _progress.currentQuestion = null;
+        if (typeof savePracticeProgress === "function") savePracticeProgress(_progress);
+      }
+      render(status);
+      window.PracticeNotch?.syncClock?.();
+      const go = typeof switchTab !== "undefined" ? switchTab : window.switchTab;
+      if (typeof go === "function") go("placement");
+      return true;
+    } catch (err) {
+      console.warn("finish placement failed:", err);
+      if (hadProbe) window.PlacementTimer?.resumeAfterFailedSubmit?.();
+      return false;
+    } finally {
+      finishing = false;
+    }
+  };
+  _finishBtn()?.addEventListener("click", finish);
   // Called with an Event, which must not land in `attempt`.
   window.addEventListener("delta:practice-state-changed", () => refresh());
   /* And re-place the workspace IMMEDIATELY on the same event. `refresh()` is a
@@ -637,7 +742,7 @@ const DiagnosticPage = (() => {
     }
   });
 
-  return { refresh, leave, pause, renderStartButton, isRunning: () => running, progressLabel };
+  return { refresh, leave, pause, finish, renderStartButton, isRunning: () => running, progressLabel };
 })();
 window.DiagnosticPage = DiagnosticPage;
 
