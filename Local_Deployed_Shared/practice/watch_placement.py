@@ -111,6 +111,46 @@ def check_every_placement_question_gets_the_same_clock():
 
     index = read(os.path.join(SHARED, "index.html"))
     assert "practice/placement-timer.js" in index, "placement-timer.js is not loaded"
+    # FINISH EARLY (Seth, 2026-09-08) reachable from both the card and the notch
+    # (the card is off screen mid-probe), wired to /diagnostic/finish, and
+    # never through window.confirm — a modal dialog blocks the page.
+    assert 'id="placement-finish-btn"' in index and 'id="practice-notch-finish"' in index, (
+        "the finish-early control must exist on the placement card AND the notch menu"
+    )
+    page = read(os.path.join(HERE, "diagnostic-page.js"))
+    api = read(os.path.join(HERE, "api.js"))
+    notch = read(os.path.join(HERE, "notch-menu.js"))
+    assert "async diagnosticFinish()" in api and '"/api/practice/diagnostic/finish"' in api, (
+        "api.js must expose diagnosticFinish() → POST /diagnostic/finish"
+    )
+    fin = api.split("async diagnosticFinish()")[1].split("},")[0]
+    assert '"/api/practice/diagnostic/finish", { method: "POST" }' in fin, (
+        "diagnosticFinish() must POST /diagnostic/finish"
+    )
+    assert "diagnosticFinish" in page and "finish," in page.split("return {")[-1], (
+        "diagnostic-page.js must implement and export finish()"
+    )
+    assert '_finishBtn()?.addEventListener("click", finish)' in page, (
+        "the card's finish button must be bound to finish()"
+    )
+    body = page.split("const finish = async () => {")[1].split("\n  };")[0]
+    assert "finishArmedUntil = Date.now() + FINISH_ARM_MS" in body and "return false;" in body, (
+        "finish() must ARM on the first click and return without finishing"
+    )
+    assert body.index("pauseForGrading") < body.index("diagnosticFinish"), (
+        "finish() must stop the probe clock BEFORE the request — an expiry "
+        "auto-submit racing /diagnostic/finish would record the dropped probe"
+    )
+    assert "_disarmFinish" in page.split("const pause = () => {")[1].split("\n  };")[0], (
+        "pause() must disarm a pending finish"
+    )
+    assert "practice-notch-finish" in notch and "page.finish" in notch, (
+        "notch-menu.js must route its finish row to DiagnosticPage.finish()"
+    )
+    for f, src in (("diagnostic-page.js", page), ("notch-menu.js", notch)):
+        assert "window.confirm(" not in src and " confirm(" not in src, (
+            f"{f}: no browser confirm dialog — it blocks the page; arm with a second click"
+        )
     # Match the SCRIPT TAG, not the bare name: both files are named in prose
     # comments elsewhere in the page, and a comment that happens to sit higher
     # would satisfy a plain substring search while the load order was wrong.

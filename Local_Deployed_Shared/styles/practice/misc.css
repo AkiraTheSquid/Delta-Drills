@@ -135,6 +135,17 @@
   border-color: var(--accent-text);
 }
 
+/* Finish early: quiet until armed, then the same amber as the start CTA so the
+   second click reads as the consequential one. */
+.placement-finish-btn.is-armed {
+  border-color: rgb(var(--warn-rgb) / 0.9);
+  background: rgb(var(--warn-rgb) / 0.18);
+}
+.practice-notch-item.is-armed {
+  color: rgb(var(--warn-rgb));
+  font-weight: 600;
+}
+
 /* Torch drills run in Colab — honest routing notice instead of a dead editor. */
 .torch-colab-notice {
   margin: 12px 0;
