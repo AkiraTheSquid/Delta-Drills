@@ -620,12 +620,23 @@ const DiagnosticPage = (() => {
   let finishArmedUntil = 0;
   let finishArmTimer = null;
   const _finishBtn = () => byId("placement-finish-btn");
+  /* 🔴 HOW MANY ANSWERED, from the FRESHEST status. `lastStatus` here is only
+     rewritten by this page's own refresh(); every answer lands on
+     `PracticeAPI.lastDiagnosticStatus` first (api.js `_keepDiagnosticStatus`).
+     Read from the page's copy alone, the count sat at 0 after the first
+     answer and finish() refused silently — measured on production. */
+  const _answered = () => {
+    const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    const fresh = Number(_papi?.lastDiagnosticStatus?.probes_done);
+    const own = Number(lastStatus?.probes_done);
+    return Math.max(Number.isFinite(fresh) ? fresh : 0, Number.isFinite(own) ? own : 0);
+  };
   /* One armed state, two labels: the card's button and the notch menu's row
      (`#practice-notch-finish`, which cannot keep a timer of its own — see
      notch-menu.js). Both are rewritten here. */
   const _finishLabel = () => {
     const armed = Date.now() < finishArmedUntil;
-    const n = Number(lastStatus?.probes_done) || 0;
+    const n = _answered();
     const armedText = `Click again to finish now with ${n} answered`;
     const btn = _finishBtn();
     if (btn) {
@@ -650,7 +661,7 @@ const DiagnosticPage = (() => {
     /* Nothing answered = nothing to finish from: the server would treat that
        as a decline (no seeding) and end the placement outright. The card hides
        the button until then; the notch row is guarded here too (codex). */
-    if ((Number(lastStatus?.probes_done) || 0) < 1) return false;
+    if (_answered() < 1) return false;
     if (Date.now() >= finishArmedUntil) {
       finishArmedUntil = Date.now() + FINISH_ARM_MS;
       clearTimeout(finishArmTimer);
@@ -699,6 +710,12 @@ const DiagnosticPage = (() => {
     }
   };
   _finishBtn()?.addEventListener("click", finish);
+  // Every status the API keeps is announced; take it, so the count on the
+  // finish labels moves with each answer without a second network call.
+  window.addEventListener("delta-drills-diagnostic-status", (e) => {
+    if (e?.detail && typeof e.detail === "object") lastStatus = e.detail;
+    _finishLabel();
+  });
   // Called with an Event, which must not land in `attempt`.
   window.addEventListener("delta:practice-state-changed", () => refresh());
   /* And re-place the workspace IMMEDIATELY on the same event. `refresh()` is a
