@@ -58,6 +58,11 @@ class NextQuestionResponse(BaseModel):
     diagnostic_probe_index: int | None = None   # 1-based index of this probe
     diagnostic_budget: int | None = None        # MAX_PROBES fatigue cap
     diagnostic_area: str | None = None          # topic area being probed
+    # THIS probe's answer clock, seconds: its concept's cap
+    # (lessons/placement_time_caps.json) or the plan's remainder if shorter.
+    # placement-timer.js reads it off the question; the status carries the
+    # same number as plan.problem_secs_allowed for the pending probe.
+    diagnostic_secs_allowed: int | None = None
     # First-encounter lesson gate: target KCs of this question the learner has
     # not been exposed to yet. Each entry: {kc, kc_title, kp_title, lesson_id,
     # lesson_title, topic}. The frontend shows the introducing KP(s) BEFORE
@@ -281,7 +286,9 @@ class DiagnosticPlan(BaseModel):
     per_problem_secs: int
     spent_secs: int = 0
     remaining_secs: int = 0
-    problem_secs_allowed: int = 0   # the NEXT problem's clock: cap, or what is left
+    problem_secs_allowed: int = 0   # the NEXT problem's clock: its concept's cap, or what is left
+    per_problem_min_secs: int = 0   # shortest / longest concept clock this learner is assessed on
+    per_problem_max_secs: int = 0
     started_at: str | None = None
 
 
@@ -304,6 +311,11 @@ class DiagnosticEdgeViolation(BaseModel):
 class DiagnosticStatusResponse(BaseModel):
     active: bool
     completed_at: str | None = None
+    # Shortest / longest concept clock this learner is assessed on — at the
+    # top level, not only inside `plan`, so the picker can quote it BEFORE a
+    # run exists (plan is null then).
+    per_problem_min_secs: int = 0
+    per_problem_max_secs: int = 0
     declined: bool = False
     probes_done: int = 0
     budget: int

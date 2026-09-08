@@ -266,12 +266,28 @@ _spec.loader.exec_module(_guard)
 
 _CONTENT_GUARDS = _guard.run(None)
 
+def check_the_placement_clock_covers_every_concept():
+    """placement_time_caps.json: one answer clock per registry KC, none for a
+    retired one, every value inside (0, 1200]. A concept missing here would
+    silently get the 20-minute default, which is the flat clock this table
+    replaced; a retired key is a rename nobody carried across."""
+    caps = _read('placement_time_caps.json')
+    table = caps.get('kcs') or {}
+    ids = {k['id'] for k in _read('kc_registry.json')['kcs']}
+    assert not (ids - set(table)), f'no placement clock for {sorted(ids - set(table))}'
+    assert not (set(table) - ids), f'placement clock for retired {sorted(set(table) - ids)}'
+    bad = {k: v for k, v in table.items() if not isinstance(v, int) or isinstance(v, bool) or not 0 < v <= 1200}
+    assert not bad, f'placement clocks must be 1..1200 s: {bad}'
+    assert caps.get('default_secs') == 1200, 'default_secs must be the 1200 s ceiling'
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_the_exercise_map_is_servable,
               check_the_glossary_points_at_live_kcs,
               check_every_lesson_has_a_notebook,
-              check_every_kc_is_teachable] + _CONTENT_GUARDS
+              check_every_kc_is_teachable,
+              check_the_placement_clock_covers_every_concept] + _CONTENT_GUARDS
     for fn in checks:
         try:
             fn()

@@ -35,9 +35,12 @@ router = APIRouter()
 def _status(user_state) -> DiagnosticStatusResponse:
     d = diagnostic.get_diag(user_state)
     plan = d.get("plan")
+    lo, hi = diagnostic.cap_range(user_state)
     return DiagnosticStatusResponse(
         active=d["active"],
         completed_at=d["completed_at"],
+        per_problem_min_secs=lo,
+        per_problem_max_secs=hi,
         declined=d["declined"],
         probes_done=len(d["probes"]),
         budget=diagnostic.effective_budget(user_state),
@@ -53,7 +56,9 @@ def _status(user_state) -> DiagnosticStatusResponse:
                 **plan,
                 "spent_secs": int(d.get("spent_secs") or 0),
                 "remaining_secs": diagnostic.remaining_secs(user_state),
-                "problem_secs_allowed": diagnostic.problem_secs_allowed(user_state),
+                "problem_secs_allowed": diagnostic.pending_secs_left(user_state),
+                "per_problem_min_secs": lo,
+                "per_problem_max_secs": hi,
             }
             if isinstance(plan, dict)
             else None

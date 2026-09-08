@@ -26,6 +26,7 @@ depends on the network or on a running server.
 Run: .venv/bin/python scripts/test_placement.py
 Exits non-zero on any failed assertion. No pytest dependency.
 """
+import json
 import os
 import sys
 import tempfile
@@ -120,19 +121,20 @@ def _age_pending(state, secs):
 c = UserPracticeState(user_id="clock")
 D.start(c, hours=1)
 q = D.select_probe(c)
-_age_pending(c, 400)
+_age_pending(c, 200)                                        # under every concept's cap (shortest is 300)
 D.record_probe(c, q, "dont_know", elapsed_secs=0)          # client claims nothing elapsed
 spent = D.get_diag(c)["spent_secs"]
-check("a client reporting 0 cannot buy free time", 395 <= spent <= 405, spent)
+check("a client reporting 0 cannot buy free time", 195 <= spent <= 205, spent)
 check("remaining_secs is the budget minus what was spent",
       D.remaining_secs(c) == 3600 - spent, (D.remaining_secs(c), spent))
 
 q = D.select_probe(c)
+ckc = D.get_diag(c)["pending"]["kc"]
 _age_pending(c, 99_999)
 D.record_probe(c, q, "dont_know", elapsed_secs=0)
-check("no single problem can spend more than its 20:00 cap",
-      D.get_diag(c)["spent_secs"] - spent == D.PER_PROBLEM_SECS,
-      D.get_diag(c)["spent_secs"] - spent)
+check("no single problem can spend more than its concept's cap",
+      D.get_diag(c)["spent_secs"] - spent == D.kc_cap_secs(ckc) <= D.PER_PROBLEM_SECS,
+      (D.get_diag(c)["spent_secs"] - spent, ckc))
 
 # The last problem of a run gets whatever is left, not a full 20:00 — this is
 # what stops a 1-hour plan from finishing at 1h19m.
@@ -141,6 +143,179 @@ D.start(tail, hours=1)
 D.get_diag(tail)["spent_secs"] = 3600 - 300
 check("the final problem is only given the time that is left",
       D.problem_secs_allowed(tail) == 300, D.problem_secs_allowed(tail))
+
+# The clock is PER CONCEPT (lessons/placement_time_caps.json): a one-call
+# Python drill gets 5:00, einops gets ARENA's 10:00, nothing more than the
+# 20:00 ceiling. The pending probe's concept decides both what the question
+# payload quotes and what the server may charge for it.
+check("every concept has a clock and none exceeds the ceiling",
+      all(0 < D.kc_cap_secs(k) <= D.PER_PROBLEM_SECS for k in D.kc_graph._registry()),
+      sorted(set(D.kc_cap_secs(k) for k in D.kc_graph._registry())))
+check("a one-call python drill gets five minutes, einops gets ARENA's ten",
+      (D.kc_cap_secs("python.indexing"), D.kc_cap_secs("einops.merge-axes"),
+       D.kc_cap_secs("numpy.broadcasting-rules"), D.kc_cap_secs("raytracing.make-rays-1d"))
+      == (300, 600, 600, 900))
+check("an unknown concept falls back to the default, never to nothing",
+      D.kc_cap_secs("no.such-kc") == D.PER_PROBLEM_SECS and D.kc_cap_secs(None) == D.PER_PROBLEM_SECS)
+per = UserPracticeState(user_id="perkc")
+D.start(per, hours=6)
+q = D.select_probe(per)
+pkc = D.get_diag(per)["pending"]["kc"]
+check("the next problem's clock is its concept's cap",
+      D.problem_secs_allowed(per) == D.kc_cap_secs(pkc), (D.problem_secs_allowed(per), pkc))
+_age_pending(per, 99_999)
+D.record_probe(per, q, "dont_know", elapsed_secs=0)
+check("a probe is charged at most its concept's cap, not the flat 20:00",
+      D.get_diag(per)["spent_secs"] == D.kc_cap_secs(pkc),
+      (D.get_diag(per)["spent_secs"], D.kc_cap_secs(pkc)))
+check("with nothing pending the clock quoted is the ceiling",
+      D.problem_secs_allowed(per) == D.PER_PROBLEM_SECS)
+lo, hi = D.cap_range(per)
+check("the picker's range spans the assessed concepts", lo == 300 and hi == 900, (lo, hi))
+
+# A CORRECT answer past the clock (plus grace) is a miss: the charge is capped
+# at the clock, so an uncapped answer would be free time and free evidence.
+late = UserPracticeState(user_id="late")
+D.start(late, hours=6)
+q = D.select_probe(late)
+lkc = D.get_diag(late)["pending"]["kc"]
+_age_pending(late, D.kc_cap_secs(lkc) + D.LATE_GRACE_SECS + 30)
+D.record_probe(late, q, "correct")
+rec = D.get_diag(late)["probes"][-1]
+check("a correct answer landing past the clock is recorded as a miss",
+      rec["result"] == "incorrect" and rec["late"] is True, rec)
+q = D.select_probe(late)
+lkc = D.get_diag(late)["pending"]["kc"]
+_age_pending(late, D.kc_cap_secs(lkc) + D.LATE_GRACE_SECS - 30)
+D.record_probe(late, q, "correct")
+rec = D.get_diag(late)["probes"][-1]
+check("inside the grace a correct answer still counts",
+      rec["result"] == "correct" and rec["late"] is False, rec)
+q = D.select_probe(late)
+_age_pending(late, 99_999)
+D.record_probe(late, q, "incorrect", elapsed_secs=1)
+check("a late miss is a miss, flagged", D.get_diag(late)["probes"][-1]["result"] == "incorrect"
+      and D.get_diag(late)["probes"][-1]["late"] is True)
+
+# A resumed probe is handed what is LEFT of its clock, not a fresh one — the
+# second-device / cleared-storage case. After a real break (past the grace)
+# the serve is restamped once and the clock is whole again, which is what the
+# client already does after RETURN_GRACE_SECS.
+res = UserPracticeState(user_id="resume-clock")
+D.start(res, hours=6)
+q = D.select_probe(res)
+rkc = D.get_diag(res)["pending"]["kc"]
+check("a fresh probe advertises its whole clock",
+      D.pending_secs_left(res) == D.kc_cap_secs(rkc))
+_age_pending(res, 100)
+D.select_probe(res)
+left = D.pending_secs_left(res)
+check("a resumed probe advertises the time actually left",
+      D.kc_cap_secs(rkc) - 102 <= left <= D.kc_cap_secs(rkc) - 99, (left, rkc))
+_age_pending(res, D.kc_cap_secs(rkc) + D.LATE_GRACE_SECS + 5)
+check("past the clock nothing is left", D.pending_secs_left(res) == 0)
+q2 = D.select_probe(res)
+rec = D.get_diag(res)["probes"][-1]
+check("coming back after a real break: the abandoned probe is a timed-out miss",
+      rec["question_id"] == q.id and rec["result"] == "incorrect" and rec["timed_out"] is True
+      and rec["secs"] == D.kc_cap_secs(rkc), rec)
+check("and a NEW problem is served on a whole clock",
+      q2 is not None and q2.id != q.id and D.pending_secs_left(res) == D.kc_cap_secs(D.get_diag(res)["pending"]["kc"]),
+      (q2 and q2.id, q.id))
+
+# …and that timed-out record is FINAL: answering the walked-away question
+# later (the /submit path takes any id while placement is active) cannot
+# refund its charge or replace the miss.
+spent_before = D.get_diag(res)["spent_secs"]
+D.record_probe(res, q, "correct", elapsed_secs=0)
+rec = D.get_diag(res)["probes"][0]
+check("a timed-out probe cannot be answered later for credit",
+      rec["question_id"] == q.id and rec["result"] == "incorrect" and rec["timed_out"] is True
+      and D.get_diag(res)["spent_secs"] == spent_before and len(D.get_diag(res)["probes"]) == 1,
+      (rec, D.get_diag(res)["spent_secs"], spent_before))
+check("a late record is final too",
+      (lambda st: (D.record_probe(st, D.get_question_by_id(st_q := D.get_diag(st)["probes"][0]["question_id"]), "correct", elapsed_secs=0),
+                   D.get_diag(st)["probes"][0]["result"] == "incorrect")[1])(late))
+
+# Only the problem ON SCREEN is evidence. /submit takes any id during
+# placement; a re-submit of an answered question, or an id never served,
+# must change nothing — no record, no refund, no replacement.
+only = UserPracticeState(user_id="only-pending")
+D.start(only, hours=6)
+q1 = D.select_probe(only)
+_age_pending(only, 30)
+D.record_probe(only, q1, "incorrect")
+q2 = D.select_probe(only)
+before = json.dumps(D.get_diag(only), sort_keys=True, default=str)
+D.record_probe(only, q1, "correct", elapsed_secs=0)
+check("re-submitting an answered probe changes nothing",
+      json.dumps(D.get_diag(only), sort_keys=True, default=str) == before)
+stranger = next(D.get_question_by_id(i) for i in range(1, 2000)
+                if D.get_question_by_id(i) is not None and i not in (q1.id, q2.id))
+D.record_probe(only, stranger, "dont_know")
+check("an id never served records nothing",
+      json.dumps(D.get_diag(only), sort_keys=True, default=str) == before)
+D.record_probe(only, q2, "correct")
+check("the problem on screen still records", D.get_diag(only)["probes"][-1]["question_id"] == q2.id)
+
+# The cap is snapshotted on the pending probe: a cap-table change (or a
+# restart with a new table) mid-probe must not move the clock under the
+# learner. The table is only consulted for the NEXT problem.
+snap = UserPracticeState(user_id="snap")
+D.start(snap, hours=6)
+q = D.select_probe(snap)
+pend = D.get_diag(snap)["pending"]
+pend["cap_secs"] = 77
+check("the clock displayed and charged is the one served with",
+      D.problem_secs_allowed(snap) == 77 and D.pending_secs_left(snap) == 77,
+      (D.problem_secs_allowed(snap), D.pending_secs_left(snap)))
+_age_pending(snap, 99_999)
+D.record_probe(snap, q, "correct")
+check("… including what a late answer is judged and charged against",
+      D.get_diag(snap)["probes"][-1]["secs"] == 77 and D.get_diag(snap)["probes"][-1]["result"] == "incorrect")
+
+# Walking away is not free: every abandoned probe is charged its whole clock
+# and recorded, so waiting probes out drains the plan instead of dodging it,
+# and the run ends when the plan does.
+drain = UserPracticeState(user_id="drain")
+D.start(drain, hours=1)
+n = 0
+while not D.get_diag(drain)["completed_at"] and n < 100:
+    q = D.select_probe(drain)
+    if q is None:
+        break
+    dkc = D.get_diag(drain)["pending"]["kc"]
+    _age_pending(drain, D.kc_cap_secs(dkc) + D.LATE_GRACE_SECS + 5)
+    n += 1
+D.select_probe(drain)
+dd = D.get_diag(drain)
+check("repeated walk-aways run the plan down and close the run",
+      n < 100 and (dd["completed_at"] or D.should_finish(drain))
+      and all(p["timed_out"] for p in dd["probes"]) and dd["spent_secs"] >= 3600 - D.MIN_REMAINING_SECS,
+      (n, dd["spent_secs"], len(dd["probes"])))
+
+
+# A probe served BEFORE the table existed (no `cap_secs`) ran on the flat
+# 20:00 with a client that handed the whole clock back after a break. The
+# deploy must not turn it into a timed-out miss: it is judged on 20:00 and
+# restamped once, uncharged.
+legacy = UserPracticeState(user_id="legacy-pending")
+D.start(legacy, hours=6)
+q = D.select_probe(legacy)
+lp = D.get_diag(legacy)["pending"]
+lp.pop("cap_secs", None)
+_age_pending(legacy, 5 * 3600)
+check("a legacy pending probe is judged on the 20:00 it was served with",
+      D.problem_secs_allowed(legacy) == D.PER_PROBLEM_SECS)
+q2 = D.select_probe(legacy)
+lp = D.get_diag(legacy)["pending"]
+check("… and is resumed whole, once, not recorded as a timed-out miss",
+      q2 is not None and q2.id == q.id and not D.get_diag(legacy)["probes"]
+      and lp.get("cap_secs") == D.PER_PROBLEM_SECS and lp.get("legacy_restamp") is True
+      and D.get_diag(legacy)["spent_secs"] == 0 and D.pending_secs_left(legacy) >= D.PER_PROBLEM_SECS - 1,
+      lp)
+D.record_probe(legacy, q2, "correct")
+check("and its answer on that clock counts", D.get_diag(legacy)["probes"][-1]["result"] == "correct")
 
 
 # --- D. the stopping rule -----------------------------------------------------

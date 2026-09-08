@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import statistics
 from datetime import datetime, timezone
 from functools import lru_cache
@@ -49,7 +50,25 @@ logger = logging.getLogger(__name__)
 # --- the learner's choices ----------------------------------------------------------
 PLAN_HOURS: Tuple[int, ...] = (1, 3, 6)
 DEFAULT_PLAN_HOURS = 1
+# The DEFAULT answer clock, and the ceiling: no concept may be given more.
+# The clock a probe actually gets is PER CONCEPT — lessons/placement_time_caps.json
+# (kc_cap_secs below), one fixed number per KC for every learner. Seth,
+# 2026-09-07: einops and broadcasting get ARENA's own ~10 minutes, the
+# one-call py-0/np-1 drills five or six, make_rays_1d fifteen. Per concept,
+# never per question or per learner, so probes on one concept stay comparable.
 PER_PROBLEM_SECS = 20 * 60
+# How far past its clock an answer may land and still count. Covers the
+# client's expiry auto-submit plus grading latency (a torch grade can take
+# tens of seconds). Beyond it the clock was not being enforced (stale tab,
+# scripts off, a second device), and a CORRECT answer is recorded as a miss:
+# the probe measures what the learner can do inside the clock, and the time
+# charged is capped at the clock, so an uncapped answer would be free time
+# AND free evidence (codex, 2026-09-07). Generous on purpose: lateness is
+# judged AFTER transport and grading (record_probe runs once /submit has
+# graded), and a slow torch grade must never turn an on-time answer into a
+# miss — three minutes past a 5–15 minute clock is still not a solved-offline
+# answer, and the client enforces the real countdown.
+LATE_GRACE_SECS = 180
 # A test ends when less than this much problem time is left: a 40-second
 # remainder cannot hold a problem.
 MIN_REMAINING_SECS = 60
@@ -74,6 +93,45 @@ EST_BASE_SECS = 90.0
 EST_SECS_PER_DIFFICULTY = 4.5
 
 _ARENA_MAP_PATH = kc_graph._LESSONS_DIR / "arena_exercise_kcs.json"
+_TIME_CAPS_PATH = kc_graph._LESSONS_DIR / "placement_time_caps.json"
+
+
+@lru_cache(maxsize=1)
+def _time_caps() -> Tuple[int, Dict[str, int]]:
+    """(default_secs, {kc: secs}) from placement_time_caps.json. Every value is
+    clamped to (0, PER_PROBLEM_SECS]: the file may shorten a concept's clock,
+    never lengthen it past the ceiling the client's constant also enforces."""
+    raw = kc_graph._read_json(_TIME_CAPS_PATH) or {}
+
+    def _clamp(v) -> Optional[int]:
+        if isinstance(v, bool):          # JSON true would be a one-second clock
+            return None
+        try:
+            n = int(v)
+        except (TypeError, ValueError):
+            return None
+        return min(PER_PROBLEM_SECS, n) if n > 0 else None
+
+    default = _clamp(raw.get("default_secs")) or PER_PROBLEM_SECS
+    kcs = {}
+    for kc, v in (raw.get("kcs") or {}).items():
+        n = _clamp(v)
+        if n is not None:
+            kcs[str(kc)] = n
+    return default, kcs
+
+
+def kc_cap_secs(kc: Optional[str]) -> int:
+    """The answer clock for a probe on `kc`, seconds."""
+    default, kcs = _time_caps()
+    return kcs.get(kc, default) if kc else default
+
+
+def cap_range(user_state: UserPracticeState) -> Tuple[int, int]:
+    """(shortest, longest) clock over the concepts this learner is assessed on
+    — what the picker quotes instead of one flat number."""
+    caps = [kc_cap_secs(kc) for kc in assessed_kcs(user_state)] or [PER_PROBLEM_SECS]
+    return min(caps), max(caps)
 
 
 # --- state accessors -------------------------------------------------------------------
@@ -431,18 +489,52 @@ def select_probe(user_state: UserPracticeState):
     # was never charged — `spent_secs` only grows in `record_probe` — so the
     # plan's "hard cap" was dodgeable indefinitely by reloading before
     # answering. The cap can only be hard if abandoning a problem costs time.
-    pending = get_diag(user_state).get("pending") or {}
+    d = get_diag(user_state)
+    pending = d.get("pending") or {}
     if pending.get("question_id") is not None:
         resumed = get_question_by_id(pending["question_id"])
         if resumed is not None:
-            return resumed
+            if not pending.get("cap_secs"):
+                # LEGACY PENDING (served before per-concept clocks, 2026-09-07):
+                # it ran under the flat 20:00 and a client that gave the whole
+                # clock back after any break. Honour that once — snapshot the
+                # 20:00 and restamp the serve, uncharged — so the deploy does
+                # not turn a probe someone left open into a timed-out miss.
+                # Seth's own run had q889 open for hours at the cut-over.
+                pending["cap_secs"] = PER_PROBLEM_SECS
+                pending["served_at"] = _now().isoformat()
+                pending["legacy_restamp"] = True
+                return resumed
+            served = _served_secs(d, pending["question_id"])
+            cap = problem_secs_allowed(user_state, kc=pending.get("kc"))
+            if served is None or served <= cap + LATE_GRACE_SECS:
+                return resumed
+            # 🔴 WALKED AWAY PAST THE CLOCK: THAT PROBE IS A TIMED-OUT MISS.
+            # It used to be restamped and handed back whole — which let a
+            # learner read the problem, close the tab, solve it at leisure,
+            # come back to a fresh clock and paste the answer: correct
+            # evidence the clock never measured (codex, 2026-09-07). Recorded
+            # as a plain "incorrect" (the milder signal — an interruption is
+            # not "I don't know"), flagged `timed_out`, charged its whole
+            # clock (`_elapsed_for` caps the serve-to-answer time), and then
+            # the NEXT problem is picked. The client sees a new question, so
+            # no stale local clock applies to it.
+            record_probe(user_state, resumed, "incorrect", timed_out=True)
+            if d["completed_at"]:
+                return None
     ranked, cands, _graph_, _B = _ranked(user_state)
     for _score, kc in ranked:
         arena, generic = cands[kc]
         q = _pick_question(kc, arena, generic)
         if q is not None:
             d = get_diag(user_state)
-            d["pending"] = {"question_id": q.id, "kc": kc, "served_at": _now().isoformat()}
+            d["pending"] = {
+                "question_id": q.id,
+                "kc": kc,
+                "served_at": _now().isoformat(),
+                # The clock this probe was served with — see problem_secs_allowed.
+                "cap_secs": kc_cap_secs(kc),
+            }
             return q
     return None
 
@@ -450,33 +542,87 @@ def select_probe(user_state: UserPracticeState):
 # --- recording + stopping -----------------------------------------------------------------------------
 
 
-def problem_secs_allowed(user_state: UserPracticeState) -> int:
-    """The clock the NEXT problem gets: the per-problem cap, or whatever is
-    left of the plan if that is shorter. The last problem of a run is the
-    only one that can be short — this is what keeps a 3h plan from ending at
-    3h19m (codex, first review)."""
+def problem_secs_allowed(user_state: UserPracticeState, kc: Optional[str] = None) -> int:
+    """The clock the NEXT problem gets: its concept's cap, or whatever is left
+    of the plan if that is shorter. The last problem of a run is the only one
+    that can be short — this is what keeps a 3h plan from ending at 3h19m
+    (codex, first review).
+
+    Which concept: `kc` when the caller knows it (the answered question's, in
+    `_elapsed_for`), else the PENDING probe's — `select_probe` sets `pending`
+    before the payload is built, so a status or a question payload read after
+    it carries that problem's own clock. With neither, the plan's flat number,
+    which is the ceiling."""
     d = get_diag(user_state)
-    cap = int((d.get("plan") or {}).get("per_problem_secs") or PER_PROBLEM_SECS)
+    pending = d.get("pending") or {}
+    if kc is None:
+        kc = pending.get("kc")
+    # The cap is SNAPSHOTTED on the pending probe at serve time (`cap_secs`),
+    # so a cap-table deploy or a restart mid-probe cannot make the server
+    # judge the answer against a different clock than the one it displayed
+    # (codex, 2026-09-07). The table is consulted for the NEXT problem only.
+    if kc and pending.get("kc") == kc and pending.get("cap_secs"):
+        cap = int(pending["cap_secs"])
+    elif kc and pending.get("kc") == kc and pending.get("served_at"):
+        # A probe served BEFORE the table existed carries no snapshot: it was
+        # served on the flat 20:00 and is judged on it — never on a table
+        # the learner was not shown (codex, 2026-09-07).
+        cap = PER_PROBLEM_SECS
+    else:
+        cap = kc_cap_secs(kc) if kc else int((d.get("plan") or {}).get("per_problem_secs") or PER_PROBLEM_SECS)
     return max(0, min(cap, remaining_secs(user_state)))
 
 
-def _elapsed_for(user_state: UserPracticeState, question_id: int, elapsed_secs: Optional[float]) -> int:
+def _served_secs(diag: dict, question_id: int) -> Optional[float]:
+    """Uncapped serve-to-answer seconds for the pending probe, or None when the
+    server did not serve this question (no pending / another id / no stamp)."""
+    pending = diag.get("pending") or {}
+    if pending.get("question_id") != question_id or not pending.get("served_at"):
+        return None
+    try:
+        return (_now() - datetime.fromisoformat(pending["served_at"])).total_seconds()
+    except (TypeError, ValueError):
+        return None
+
+
+def pending_secs_left(user_state: UserPracticeState) -> int:
+    """What the clock on the problem ON SCREEN should read now: its concept's
+    allowance minus the time since it was served. This is the number the
+    question payload and the status quote (`diagnostic_secs_allowed`,
+    `plan.problem_secs_allowed`) — a resumed probe on a second device, or
+    after cleared storage, must not be handed a fresh full clock while the
+    server's own clock has been running (codex, 2026-09-07). With nothing
+    pending: the next problem's allowance. `problem_secs_allowed` itself stays
+    the CAP, because it is also what an answer may be charged."""
+    d = get_diag(user_state)
+    allowed = problem_secs_allowed(user_state)
+    pending = d.get("pending") or {}
+    if pending.get("question_id") is None:
+        return allowed
+    served = _served_secs(d, pending["question_id"])
+    if served is None:
+        return allowed
+    # Ceiling, not truncation: a probe read back a millisecond after it was
+    # served is still a whole 6:00, not 5:59.
+    return max(0, int(math.ceil(allowed - served)))
+
+
+def _elapsed_for(
+    user_state: UserPracticeState,
+    question_id: int,
+    elapsed_secs: Optional[float],
+    kc: Optional[str] = None,
+) -> int:
     """Problem time to charge. 🔴 THE SERVER CLOCK IS AUTHORITATIVE: when the
     answered question is the one served, serve-to-answer is charged and the
     client's own reading is ignored — a client that reports 0 for every
     answer would otherwise never run out of time. The client's number is used
     only when the server has nothing (an answer to a question it did not
     serve, or a pre-rewrite state). Capped at what this problem was allowed,
-    never negative."""
+    never negative. Capped at THIS concept's clock (`kc`), not a flat number."""
     diag = get_diag(user_state)
-    cap = problem_secs_allowed(user_state)
-    pending = diag.get("pending") or {}
-    secs: Optional[float] = None
-    if pending.get("question_id") == question_id and pending.get("served_at"):
-        try:
-            secs = (_now() - datetime.fromisoformat(pending["served_at"])).total_seconds()
-        except (TypeError, ValueError):
-            secs = None
+    cap = problem_secs_allowed(user_state, kc=kc)
+    secs: Optional[float] = _served_secs(diag, question_id)
     if secs is None and elapsed_secs is not None:
         try:
             secs = float(elapsed_secs)
@@ -498,25 +644,43 @@ def record_probe(
     question,
     result: str,
     elapsed_secs: Optional[float] = None,
+    timed_out: bool = False,
 ) -> dict:
     """Log one response ("correct" | "incorrect" | "dont_know"), charge its
-    time, then auto-finish if the stopping rule fires."""
+    time, then auto-finish if the stopping rule fires. `timed_out` marks a
+    probe the learner walked away from (select_probe), never a client value."""
     diag = get_diag(user_state)
     if diag["completed_at"]:
         return diag
-    secs = _elapsed_for(user_state, question.id, elapsed_secs)
-    kc = _kc_for(question)
+    # 🔴 ONLY THE PROBLEM ON SCREEN IS EVIDENCE. `/submit` and `/local-eval`
+    # route every answer here while placement is active, whatever id the
+    # client sends. Anything but the pending probe is refused as a no-op: an
+    # id never served would be evidence about a concept never asked about; an
+    # id already recorded would REPLACE that record — with a new probe pending,
+    # `_served_secs` knows nothing about the old one, so a re-submit of q1
+    # after q2 was served looked on-time, refunded q1's charge and overwrote
+    # its result with one no clock measured (codex, 2026-09-07). A retried
+    # request for a probe already recorded therefore lands here too, and is
+    # answered with the state as it stands. Records are final; only
+    # `override_probe` (the learner's own explicit flip) may change one.
     pending = diag.get("pending") or {}
-    if pending.get("question_id") == question.id and pending.get("kc"):
-        kc = pending["kc"]
+    if pending.get("question_id") != question.id:
+        return diag
+    kc = pending.get("kc") or _kc_for(question)
+    # The concept first: the time this probe may be charged is ITS clock.
+    secs = _elapsed_for(user_state, question.id, elapsed_secs, kc=kc)
+    # 🔴 A CORRECT ANSWER PAST THE CLOCK IS A MISS. `secs` above is capped, so
+    # without this a 5:00 concept answered at 20:00 was charged 5:00 and
+    # recorded correct — the concept clocks and the plan's wall time both
+    # defeated by a client that did not enforce the countdown. Judged on the
+    # SERVER's serve-to-answer reading only (a client-reported number is
+    # advisory); LATE_GRACE_SECS covers the auto-submit and grading latency.
+    served = _served_secs(diag, question.id)
+    late = served is not None and served > problem_secs_allowed(user_state, kc=kc) + LATE_GRACE_SECS
+    if late and result == "correct":
+        result = "incorrect"
     arena = kc is not None and question.id in _arena_links().get(kc, {}).get("question_ids", set())
 
-    # A re-answer REPLACES the earlier record, time included — a retried
-    # request must not be charged twice.
-    for old in diag["probes"]:
-        if old["question_id"] == question.id:
-            diag["spent_secs"] = max(0, int(diag.get("spent_secs") or 0) - int(old.get("secs") or 0))
-    diag["probes"] = [p for p in diag["probes"] if p["question_id"] != question.id]
     diag["probes"].append({
         "question_id": question.id,
         "kc": kc,
@@ -526,6 +690,8 @@ def record_probe(
         "result": result,
         "secs": secs,
         "arena": bool(arena),
+        "late": bool(late),
+        "timed_out": bool(timed_out),
         "ts": _now().isoformat(),
     })
     diag["spent_secs"] = int(diag.get("spent_secs") or 0) + secs

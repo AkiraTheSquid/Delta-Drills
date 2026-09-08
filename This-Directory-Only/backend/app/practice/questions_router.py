@@ -112,6 +112,10 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
         diagnostic_probe_index=len(diagnostic.get_diag(user_state)["probes"]) + 1,
         diagnostic_budget=diagnostic.effective_budget(user_state),
         diagnostic_area=question.topic,
+        # select_probe set (or resumed) `pending` for this very question just
+        # above, so this is its concept's clock — less the time it has already
+        # been on screen when this is a resume — or the plan's remainder.
+        diagnostic_secs_allowed=diagnostic.pending_secs_left(user_state),
     )
 
 
