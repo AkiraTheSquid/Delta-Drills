@@ -1,16 +1,24 @@
 /* ================================================================
-   PLACEMENT TEST — one fixed clock per problem, inside a total cap
+   PLACEMENT TEST — one fixed clock per CONCEPT, inside a total cap
 
    The placement test runs OUTSIDE a practice session: starting it calls
    PracticeSession.finish("placement") (see events.js), so none of the
    session's strict timers apply and, until now, a probe had no time limit
    at all. Seth's rule for the test is deliberately simpler than a session:
-   EVERY question gets the SAME allowance, and the learner never chooses it.
-   That is the whole point of a placement — comparable evidence per probe.
+   the learner never chooses the allowance, and it never varies by question
+   or by learner — every probe on a concept gets that concept's clock, so
+   the probes on one concept are comparable evidence.
 
-   So: PLACEMENT_ANSWER_SECS for each problem (20:00 — Seth, 2026-09-07:
-   "20 minutes for every single problem"), no review countdown. Reviewing a
-   graded problem is untimed; the next problem's clock starts when it renders.
+   THE SERVER OWNS THE NUMBER. lessons/placement_time_caps.json holds one
+   clock per concept (Seth, 2026-09-07: einops and broadcasting get ARENA's
+   own ~10 minutes, the one-call Python/NumPy drills five or six, make_rays_1d
+   fifteen; a flat 20:00 had him at 5 problems an hour). app/diagnostic.py
+   sends it on the question as `diagnostic_secs_allowed`, already clamped to
+   what is left of the plan, and charges serve-to-answer time against that
+   same cap. This file DISPLAYS it: PLACEMENT_ANSWER_SECS (20:00) is only the
+   ceiling and the fallback for a payload that carries no clock. No review
+   countdown: reviewing a graded problem is untimed; the next problem's clock
+   starts when it renders.
 
    🔴 THE TOTAL PLAN IS A HARD CAP TOO. The learner picked 1h / 3h / 6h
    (placement-plan.js) and the server refuses to go past it, so the LAST
@@ -27,9 +35,11 @@
    Both are honest signals for the estimator; neither invents an answer.
 
    A reload is not free time. The deadline is persisted per question id, so
-   coming straight back resumes the same clock; after a real break (longer
-   than RETURN_GRACE_SECS) the probe gets its full time again — the same
-   trade PracticeSession makes for a paused step.
+   coming straight back resumes the same clock. After a real break the SERVER
+   decides: inside the clock it sends the same problem with what is left;
+   past the clock (+ its grace) it records that probe as a timed-out miss and
+   serves a NEW one — so the "full time again after RETURN_GRACE_SECS" below
+   only ever applies to a problem the server still considers live.
    ================================================================ */
 const PLACEMENT_ANSWER_SECS = 1200;
 
@@ -69,12 +79,24 @@ const PlacementTimer = (() => {
   const q = () => _api()?.currentQuestion || null;
   const isProbe = () => !!q()?.diagnostic_active;
 
-  /* What the server will let THIS problem take: the constant, or the plan's
-     remainder when that is shorter (the last problem of a capped run). The
-     status is the one api.js kept from its latest call; with none, the
-     constant — the server still caps what it charges. */
+  /* What the server will let THIS problem take: the concept's clock, or the
+     plan's remainder when that is shorter (the last problem of a capped run).
+     Read off the QUESTION first (`diagnostic_secs_allowed`, computed for this
+     probe as it was served); the status api.js kept is the fallback — it was
+     fetched before this question was picked, so its `problem_secs_allowed` may
+     describe the previous probe's concept. With neither, the ceiling — the
+     server still caps what it charges. */
   const _plan = () => _api()?.lastDiagnosticStatus?.plan || null;
   const _allowedSecs = () => {
+    const raw = q()?.diagnostic_secs_allowed;
+    const own = Number(raw);
+    // 🔴 ZERO IS AN ANSWER. A probe resumed after its clock ran out comes back
+    // with 0 — treating that as "no value" fell through to the cached status
+    // or the 20:00 ceiling, and a dead clock showed as a live one (codex,
+    // 2026-09-07). Only a missing/invalid field falls back.
+    if (raw != null && Number.isFinite(own) && own >= 0) {
+      return Math.min(PLACEMENT_ANSWER_SECS, Math.round(own));
+    }
     const allowed = Number(_plan()?.problem_secs_allowed);
     if (!Number.isFinite(allowed) || allowed <= 0) return PLACEMENT_ANSWER_SECS;
     return Math.min(PLACEMENT_ANSWER_SECS, Math.round(allowed));

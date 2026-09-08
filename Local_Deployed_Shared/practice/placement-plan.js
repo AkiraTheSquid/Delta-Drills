@@ -147,7 +147,30 @@ const PlacementPlan = (() => {
     });
     host.appendChild(row);
     host.appendChild(el("p", "placement-plan-note",
-      "20:00 per problem. The test stops early once every concept is settled, and never runs past the cap."));
+      `${perProblemText(status)}. The test stops early once every concept is settled, and never runs past the cap.`));
+  };
+
+  /* The clock is PER CONCEPT (lessons/placement_time_caps.json, enforced by
+     app/diagnostic.py): quick one-call drills get a few minutes, einops and
+     broadcasting get ARENA's own ten. The status carries the range over the
+     concepts THIS learner is assessed on (disabled ones excluded). With no
+     status, or an old backend that sends no range, quote the flat ceiling. */
+  // m:ss, never rounded to the minute — a 330 s cap is 5:30, not 6:00.
+  const mmss = (secs) => {
+    const n = Math.max(0, Math.round(Number(secs) || 0));
+    return `${Math.floor(n / 60)}:${String(n % 60).padStart(2, "0")}`;
+  };
+  const perProblemText = (status) => {
+    const plan = status?.plan;
+    // Top level first: before a run exists `plan` is null and the picker is
+    // exactly where the range matters. Inside `plan` for older statuses.
+    const lo = Number(status?.per_problem_min_secs ?? plan?.per_problem_min_secs);
+    const hi = Number(status?.per_problem_max_secs ?? plan?.per_problem_max_secs);
+    if (Number.isFinite(lo) && Number.isFinite(hi) && lo > 0 && hi > 0) {
+      return lo === hi ? `${mmss(hi)} per problem` : `${mmss(lo)}–${mmss(hi)} per problem, set per concept`;
+    }
+    const per = Number(plan?.per_problem_secs) || 1200;
+    return `${mmss(per)} per problem`;
   };
 
   /* ---- the running readout ------------------------------------------ */
@@ -158,13 +181,12 @@ const PlacementPlan = (() => {
     host.textContent = "";
     if (!status) {
       // Signed out / unreachable: no learner, so no plan and no run to quote.
-      host.appendChild(el("span", "placement-chip", "20:00 per problem"));
+      host.appendChild(el("span", "placement-chip", "up to 20:00 per problem"));
       return;
     }
     const plan = status.plan;
     const chip = (text) => host.appendChild(el("span", "placement-chip", text));
-    const per = Number(plan?.per_problem_secs) || 1200;
-    chip(`${Math.round(per / 60)}:00 per problem`);
+    chip(perProblemText(status));
     if (!plan) {
       // Not started: the picker above says how long; these say the shape.
       chip("stops early when settled");
