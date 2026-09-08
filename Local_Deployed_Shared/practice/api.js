@@ -316,6 +316,24 @@ const PracticeAPI = {
     return this._keepDiagnosticStatus(await res.json());
   },
 
+  /* End the placement NOW on the evidence so far (Seth, 2026-09-08). The
+     server seeds from whatever was answered; an unanswered probe on screen is
+     simply dropped, not recorded. With zero answers the server treats it as a
+     decline. Returns the finished status, kept like every other status. */
+  async diagnosticFinish() {
+    if (practiceMode !== "backend") return null;
+    const res = await apiFetch("/api/practice/diagnostic/finish", { method: "POST" });
+    if (res.status === 401) {
+      handleExpiredToken();
+      return null;
+    }
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(detail || "Failed to finish the placement test.");
+    }
+    return this._keepDiagnosticStatus(await res.json());
+  },
+
   /* The 1h / 3h / 6h picker's numbers: for each length, how many problems it
      is likely to hold and how long it will probably really take. */
   async diagnosticPlan() {
