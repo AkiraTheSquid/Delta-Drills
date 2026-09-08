@@ -6,38 +6,81 @@ from watch_common import HERE, SHARED, read
 
 
 def check_every_placement_question_gets_the_same_clock():
-    """One fixed allowance per probe, and every advance path kills it.
+    """One fixed allowance per CONCEPT, owned by the server, and every advance
+    path kills the clock.
 
     The placement test runs OUTSIDE a practice session — starting it calls
     PracticeSession.finish("placement") — so none of the session timers apply
-    and a probe had no limit at all until placement-timer.js. Three ways that
-    silently regresses, so three assertions:
+    and a probe had no limit at all until placement-timer.js. The allowance
+    was one flat 20:00 until 2026-09-07 (Seth: five problems an hour); now
+    lessons/placement_time_caps.json holds one clock per concept — Seth's
+    ARENA numbers for einops/broadcasting, a few minutes for one-call drills.
+    What must NOT vary is the axis: per concept, never per question, per
+    difficulty or per learner, or probes on one concept stop being comparable.
+    Four ways that silently regresses, so four groups of assertions:
 
-      * the allowance stops being ONE constant (per-question or
-        difficulty-scaled time would make the probes incomparable, which is
-        the whole point of a placement);
+      * the cap table stops covering the registry, or a value climbs past the
+        ceiling the client constant enforces (the clock would show 20:00 over
+        a longer server charge, or cut a problem the server would charge);
+      * the client grows its own number — reads difficulty, or a constant
+        other than the ceiling — instead of displaying the server's;
       * the module stops being loaded, or loads before the hooks that call it;
       * an advance path forgets to stop the clock, which is how a countdown
         expires onto the NEXT question and answers it for the learner.
     """
+    import json
+
     timer = read(os.path.join(HERE, "placement-timer.js"))
     assert "const PLACEMENT_ANSWER_SECS = 1200;" in timer, (
-        "the placement allowance must stay one named constant — every problem "
-        "gets the same 20:00 (Seth, 2026-09-07) or the estimates are not comparable"
+        "the placement CEILING must stay one named constant (20:00) — the "
+        "server's per-concept caps are clamped to it on both sides"
     )
-    # 🔴 THE SERVER CAPS WHAT IT CHARGES AT THE SAME NUMBER. A 20:00 clock over
-    # a 15:00 server cap would let the last five minutes of thinking go
-    # unmeasured; the reverse would cut a problem off that the server would
-    # have charged in full. PER_PROBLEM_SECS in app/diagnostic.py is the
-    # other half of this constant. And the picker may only offer lengths the
-    # server accepts — an unknown pick silently becomes the default plan.
+    # The concept's clock arrives ON THE QUESTION. The status api.js kept was
+    # fetched before this question was picked, so its problem_secs_allowed can
+    # describe the previous probe's concept — question first, status fallback.
+    assert "q()?.diagnostic_secs_allowed" in timer, (
+        "placement-timer.js must read the probe's own clock off the question "
+        "(diagnostic_secs_allowed) — the cached status may be the last probe's"
+    )
+    assert "Math.min(PLACEMENT_ANSWER_SECS, Math.round(allowed))" in timer, (
+        "the clock has to take the smaller of the ceiling and what the server allows"
+    )
+    # No second source of truth on the client: it displays the server's number.
+    assert "q().answer_secs" not in timer and "difficulty" not in timer, (
+        "placement timing must not be derived on the client from the question"
+    )
+
+    caps_path = os.path.join(SHARED, "lessons", "placement_time_caps.json")
+    assert os.path.exists(caps_path), "lessons/placement_time_caps.json is missing"
+    with open(caps_path, encoding="utf-8") as fh:
+        caps = json.load(fh)
+    with open(os.path.join(SHARED, "lessons", "kc_registry.json"), encoding="utf-8") as fh:
+        registry = {k["id"] for k in json.load(fh)["kcs"]}
+    table = caps.get("kcs") or {}
+    missing = sorted(registry - set(table))
+    dead = sorted(set(table) - registry)
+    assert not missing, f"placement_time_caps.json has no clock for {missing}"
+    assert not dead, f"placement_time_caps.json names retired concepts {dead}"
+    bad = {k: v for k, v in table.items() if not isinstance(v, int) or isinstance(v, bool) or v <= 0 or v > 1200}
+    assert not bad, f"placement clocks must be 1..1200 s (the client ceiling): {bad}"
+    assert caps.get("default_secs") == 1200, "default_secs must equal the 1200 s ceiling"
+
+    # 🔴 THE SERVER CAPS WHAT IT CHARGES AT THE SAME CEILING and reads the
+    # same table. And the picker may only offer lengths the server accepts —
+    # an unknown pick silently becomes the default plan.
     diag_py = os.path.join(
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "diagnostic.py")
     if os.path.exists(diag_py):
         backend = read(diag_py)
         m = re.search(r"^PER_PROBLEM_SECS = (.+)$", backend, re.M)
         assert m and eval(m.group(1)) == 1200, (
-            "app/diagnostic.py PER_PROBLEM_SECS drifted from the 1200 s clock"
+            "app/diagnostic.py PER_PROBLEM_SECS drifted from the 1200 s ceiling"
+        )
+        assert '"placement_time_caps.json"' in backend and "def kc_cap_secs" in backend, (
+            "app/diagnostic.py must read lessons/placement_time_caps.json (kc_cap_secs)"
+        )
+        assert "_elapsed_for(user_state, question.id, elapsed_secs, kc=kc)" in backend, (
+            "record_probe must charge against the answered concept's own clock"
         )
         m = re.search(r"^PLAN_HOURS: Tuple\[int, \.\.\.\] = \(([0-9, ]+)\)", backend, re.M)
         plan_js = read(os.path.join(HERE, "placement-plan.js"))
@@ -48,17 +91,12 @@ def check_every_placement_question_gets_the_same_clock():
         assert py_hours == js_hours, (
             f"plan picker offers {js_hours} but the server accepts {py_hours}"
         )
-    # No second source of truth: the only other numbers the clock may hold are
-    # the resume floor/grace and the SERVER's remainder for the last problem
-    # (`problem_secs_allowed`, never more than the constant) — never a
-    # per-question or per-difficulty value.
-    assert "q().answer_secs" not in timer and "difficulty" not in timer, (
-        "placement timing must not vary by question or difficulty"
-    )
-    assert "Math.min(PLACEMENT_ANSWER_SECS, Math.round(allowed))" in timer, (
-        "the last problem of a capped plan must get only what is left — the "
-        "clock has to take the smaller of the constant and problem_secs_allowed"
-    )
+    qrouter = os.path.join(
+        HERE, "..", "..", "This-Directory-Only", "backend", "app", "practice", "questions_router.py")
+    if os.path.exists(qrouter):
+        assert "diagnostic_secs_allowed=diagnostic.pending_secs_left(user_state)" in read(qrouter), (
+            "the placement question payload must carry diagnostic_secs_allowed"
+        )
     # `PracticeAPI` is a top-level const in api.js — NOT a window property.
     # Reading it off window is undefined at runtime and silent at review time:
     # the clock simply never sees a probe. Same trap notebook-view.js documents.
