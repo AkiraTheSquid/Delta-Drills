@@ -104,6 +104,21 @@ const LadderUI = (() => {
      prioritization.narrow_to_next_kc. */
   const _gapHtml = (gap) => {
     if (!gap || !gap.served_from) return "";
+    /* Served from ANOTHER CONCEPT: the lattice's head had nothing left to
+       serve (a rung with no drills written, or every drill answered), so the
+       queue moved to the next concept on the frontier instead of stopping
+       (questions_router.next_question, 2026-09-09). `kc_title` here names the
+       concept that ran dry, not the one on screen. */
+    if (gap.served_from === "other_concept") {
+      const dry = gap.kc_title || gap.kc || "the next concept";
+      return (
+        '<p class="ladder-stage-callout ladder-gap-callout">'
+        + `Nothing new is written yet for “${esc(dry)}” at your rung, so this `
+        + "problem is from another concept on your frontier. Ask Claude for "
+        + "more drills on it."
+        + "</p>"
+      );
+    }
     const spent = GAP_FROM_LABEL[gap.stage] || gap.stage;
     const from = GAP_FROM_LABEL[gap.served_from] || gap.served_from;
     return (

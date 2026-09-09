@@ -131,7 +131,7 @@ check("a fresh learner has an unlocked, gated question to be served", bool(_open
 _gate_subtopic = _open[0].subtopic if _open else ""
 _orig_select = qr.select_next_subtopic
 _orig_should_run = diagnostic.should_run
-qr.select_next_subtopic = lambda st: _gate_subtopic
+qr.select_next_subtopic = lambda st, **kw: _gate_subtopic
 diagnostic.should_run = lambda st: False
 try:
     data = client.get("/api/practice/next-question").json()

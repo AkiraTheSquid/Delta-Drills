@@ -118,7 +118,7 @@ def answered_question_ids(user_state: UserPracticeState) -> set:
     return out
 
 
-def _resident_kc(user_state, candidates) -> Optional[str]:
+def _resident_kc(user_state, candidates, skip: Optional[set] = None) -> Optional[str]:
     """The concept this pool of questions IS, ignoring the frontier entirely.
 
     Last resort for `narrow_to_next_kc`, and the reason it exists: `frontier`
@@ -140,6 +140,8 @@ def _resident_kc(user_state, candidates) -> Optional[str]:
     counts: Dict[str, int] = {}
     for q in candidates:
         for kc in kc_graph.question_kcs(q.id):
+            if skip and kc in skip:
+                continue
             counts[kc] = counts.get(kc, 0) + 1
     if not counts:
         return None
@@ -211,9 +213,15 @@ def narrow_to_next_kc(
     candidates: List,
     served: Optional[set] = None,
     answered: Optional[set] = None,
+    exclude_kcs: Optional[set] = None,
 ) -> Tuple[List, Optional[str], Optional[dict]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, and to the RUNG that concept is on.
+
+    `exclude_kcs` are concepts the caller has already found dry on THIS
+    request (questions_router.next_question retries with them excluded);
+    every lookup below skips them, so a sibling concept in the same subtopic
+    gets its turn instead of the whole subtopic being written off.
 
     A subtopic can hold questions for several frontier KCs at once, so passing
     the gate is not the same as being the next thing to learn. Without this the
@@ -249,6 +257,22 @@ def narrow_to_next_kc(
     exhaustion rather than on evidence, and repeating is the behaviour being
     removed.
     """
+    skip = set(exclude_kcs or ())
+    if skip:
+        # A drill that belongs ONLY to excluded concepts is off the table
+        # entirely. Without this, a pool made of one dry concept's drills slid
+        # through the "no concept found" door at the bottom and came back
+        # UNNARROWED — an excluded concept's drill, at any rung, which is the
+        # promotion-by-exhaustion this function exists to stop (measured on
+        # Seth's state with `einops.pattern-language` excluded: q319 served
+        # with no rung). A drill tagged with a live sibling stays.
+        candidates = [
+            q for q in candidates
+            if not set(kc_graph.question_kcs(q.id)) or
+            set(kc_graph.question_kcs(q.id)) - skip
+        ]
+        if not candidates:
+            return [], None, None
     here = {q.id for q in candidates}
     served = served or set()
     # 🔴 A drill is SPENT when it has been ANSWERED, never merely when it has
@@ -263,7 +287,7 @@ def narrow_to_next_kc(
     # sitting right there. `select_next_subtopic` chose this subtopic because
     # SOME frontier KC has unanswered work in it; find that same KC.
     next_kc = kc_graph.select_next_kc(
-        user_state, eligible=lambda qid: qid in here and qid not in answered
+        user_state, eligible=lambda qid: qid in here and qid not in answered, skip=skip
     )
     if not next_kc:
         # Nothing here is unanswered. Re-ask on membership alone so the concept
@@ -271,7 +295,7 @@ def narrow_to_next_kc(
         # dropping the narrowing here is what used to hand the difficulty
         # picker the whole subtopic and let a `solo` problem reach somebody
         # sitting on `Worked`.
-        next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here)
+        next_kc = kc_graph.select_next_kc(user_state, eligible=lambda qid: qid in here, skip=skip)
     if not next_kc:
         # 🔴 Both frontier lookups can miss, and the case is ordinary rather
         # than exotic: `frontier` skips a KC that is `kc_is_learned`, which
@@ -283,7 +307,7 @@ def narrow_to_next_kc(
         # compared. (Caught by scripts/test_kc_ladder_report.py, whose fixture
         # had been failing on exactly this since the python course put three
         # prerequisites in front of numpy.ndarray-model.)
-        next_kc = _resident_kc(user_state, candidates)
+        next_kc = _resident_kc(user_state, candidates, skip=skip)
     if not next_kc:
         # No question here carries a KC at all, so there is no rung to honour
         # and nothing to compare — the only case where the whole pool is the
@@ -622,21 +646,38 @@ def _difficulty_reach_factor(easiest_available: float, target: float) -> float:
     return 1.0 / (1.0 + gap / 8.0)
 
 
-def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
+def select_next_subtopic(
+    user_state: UserPracticeState,
+    exclude: Optional[set] = None,
+    exclude_kcs: Optional[set] = None,
+) -> Optional[str]:
     """Select the subtopic to pull the next question from — weakest-first by
     BKT mastery, weighted by effective (custom) weight and by whether the
     subtopic has questions reachable at the learner's target difficulty.
     Skips subtopics whose questions are all served; resets served sets if
     everything is exhausted.
+
+    `exclude` is the set of subtopics, and `exclude_kcs` the set of concepts,
+    the caller has ALREADY found nothing servable in on this request. questions_router.next_question asks again
+    with the spent one excluded rather than 409ing on it: the lattice's head
+    concept can be a thin one — `einops.pattern-language` owns one rank-0
+    drill and no `worked` rung — and once its one drill had been skipped every
+    fetch came back 409 for good, on Seth's own account the hour he finished
+    his placement (2026-09-09). A concept that has run dry is a content gap to
+    record, not a reason to serve nothing from the rest of the course.
     """
     subtopics = get_subtopics()
     if not subtopics:
         return None
+    excluded = set(exclude or ())
+    excluded_kcs = set(exclude_kcs or ())
     uniform_weight = 1.0 / len(subtopics)
 
     def _candidates(skip_served: bool) -> List[Tuple[str, float]]:
         out: List[Tuple[str, float]] = []
         for st_name in subtopics:
+            if st_name in excluded:
+                continue
             available = [
                 q for q in get_questions_by_subtopic(st_name)
                 if question_is_unlocked(user_state, q)
@@ -670,10 +711,14 @@ def select_next_subtopic(user_state: UserPracticeState) -> Optional[str]:
     # per The Math Academy Way ch. 32 — so this only has to translate the KC it
     # picks into a subtopic that actually has an unserved question for it.
     for kc in kc_graph.frontier(user_state):
+        if kc in excluded_kcs:
+            continue
         wanted = set(kc_graph.questions_for_kc(kc))
         if not wanted:
             continue
         for st_name in subtopics:
+            if st_name in excluded:
+                continue
             if _get_weight(user_state, st_name, uniform_weight) <= 0:
                 continue
             if any(

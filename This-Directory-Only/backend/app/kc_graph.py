@@ -424,7 +424,7 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
     return out
 
 
-def select_next_kc(user_state, eligible=None) -> Optional[str]:
+def select_next_kc(user_state, eligible=None, skip=None) -> Optional[str]:
     """The single KC the tutor intends to serve next — the one answer the
     graph's highlight and the practice queue must both use.
 
@@ -438,6 +438,11 @@ def select_next_kc(user_state, eligible=None) -> Optional[str]:
     serve a question must pass `eligible`.
     """
     for kc in frontier(user_state):
+        # `skip`: concepts the caller has already found dry on this request
+        # (prioritization.narrow_to_next_kc) — the next frontier concept gets
+        # the turn instead.
+        if skip and kc in skip:
+            continue
         qs = questions_for_kc(kc)
         if eligible is None or any(eligible(q) for q in qs):
             return kc

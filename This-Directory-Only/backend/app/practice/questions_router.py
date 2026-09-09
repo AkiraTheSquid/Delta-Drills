@@ -28,7 +28,6 @@ from app.practice.attempt_scoring import finalize_attempt, flush_stale_attempt
 from app.practice.grading import (
     grade_submission,
     run_and_get_expected_output,
-    select_question_for_difficulty,
 )
 from app.practice_schemas import (
     LocalEvalResponse,
@@ -40,17 +39,13 @@ from app.practice_schemas import (
     SubmitResponse,
 )
 from app import content_gaps
+from app.practice.question_pick import SubtopicDry, pick_for_subtopic
 from app.prioritization import (
-    answered_question_ids,
     ladder_fields,
     ladder_starter,
-    narrow_to_next_kc,
-    rung_gap,
-    question_is_unlocked,
     record_ladder_outcome,
     select_next_subtopic,
     question_target_difficulty,
-    target_difficulty,
 )
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
 
@@ -144,116 +139,92 @@ def next_question(
         if probe is not None:
             return probe
 
-    if subtopic is None:
-        subtopic = select_next_subtopic(user_state)
-    if subtopic is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No questions available",
-        )
-
-    sub_state = user_state.get_subtopic_state(subtopic)
-    candidates = [
-        q for q in get_questions_by_subtopic(subtopic)
-        if question_is_unlocked(user_state, q)
-    ]
-    # A focused request is the learner explicitly opening one concept, so honour
-    # that over the queue's own idea of what comes next; on the normal path,
-    # keep the served question on the same KC the graph is highlighting. The
-    # concept is resolved either way and only the NARROWING is conditional: the
-    # aim has to be measured on a concept on both paths, or focused practice
-    # keeps the subtopic-wide average this change exists to remove.
-    served = set(sub_state.served_question_ids)
-    # Two different questions, and collapsing them is what bricked Seth's
-    # account on 2026-08-31: `served` is "don't hand back the drill they just
-    # skipped" and only the difficulty picker should read it; `answered` is
-    # "this learner has given evidence on this drill" and it is the only thing
-    # allowed to decide that the course has run out. See
-    # prioritization.answered_question_ids.
-    answered = answered_question_ids(user_state)
-    narrowed, next_kc, gap = narrow_to_next_kc(user_state, candidates, served, answered)
-    # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
-    # the whole subtopic pool on purpose, so `narrowed` being empty says nothing
-    # about whether there is anything to serve — 409ing on it would tell a
-    # focused learner the course had run out while unseen questions from a
-    # sibling concept sat in their own pool. Gate on the pool actually used.
-    # (codex, 2026-08-28.)
-    if focus_subtopic is None:
-        candidates = narrowed
-    if gap:
-        # This concept's current rung holds nothing the learner has not already
-        # answered. Serving a repeat is what this replaces — see
-        # prioritization.narrow_to_next_kc — so the gap is written down where
-        # the /drill-gaps skill will find it, every time it is hit. Recorded on
-        # both paths: the rung really did run dry, whatever gets served instead.
-        content_gaps.record(user_id, gap)
-        if not [q for q in candidates if q.id not in answered]:
-            # Nothing unseen anywhere on the concept. 409 rather than 404: the
-            # request was fine and the queue is healthy, the COURSE is out of
-            # material here. api.js reads the JSON detail and renders `message`
-            # verbatim.
+    # ONE DRY SUBTOPIC DOES NOT END THE REQUEST. Both exhaustion checks in
+    # `pick_for_subtopic` used to raise the 409 straight out of this
+    # function, and on Seth's own account that was a permanent brick: he
+    # finished his placement on 2026-09-09, the lattice put
+    # `einops.pattern-language` at the head of his frontier, that concept
+    # owns ONE rank-0 drill and no `worked` rung, he had skipped that drill —
+    # and from then on every /next-question was a 409 (seven hits in
+    # content-gaps.json in 25 seconds, the practice page "went in for half a
+    # second and then exited"). Nothing else on the course was ever asked.
+    #
+    # So a subtopic that has nothing to serve is RECORDED as the gap it is —
+    # the /drill-gaps skill still gets its work item — and the selector is
+    # asked again with that subtopic excluded. The 409 is kept for the one
+    # case it is true in: nothing anywhere on the course can be served. The
+    # FIRST gap is the one reported then, and the one attached to a question
+    # served from elsewhere, because it names the concept the lattice actually
+    # wanted to teach — that is the drill somebody needs to write.
+    #
+    # A focused request (`?focus_subtopic=`) is the learner opening one concept
+    # on purpose, and "this concept has run out" is the honest answer there;
+    # it is not retried on a sibling. (Seth, 2026-08-28, quoted in
+    # prioritization.narrow_to_next_kc: notify, don't repeat — and a learner
+    # who did not pick the concept should not be stopped by it either.)
+    #
+    # 🔴 EXCLUDE THE CONCEPT, NOT THE SUBTOPIC. A dry pick names one concept
+    # (`gap["kc"]`), and the subtopic it sits in usually holds siblings with
+    # fresh drills — writing the whole subtopic off would hide those and, when
+    # every frontier concept lives in one subtopic, 409 with work still on the
+    # shelf (codex, 2026-09-09). So the concept is excluded and the SAME
+    # selection is asked again; the subtopic is excluded only when the pick
+    # came back dry with no concept to name, or named one already excluded
+    # (the narrowing's last resort can hand back a concept off the frontier).
+    # Every iteration adds a new concept or a new subtopic to a finite set,
+    # which is what terminates the loop.
+    tried: set = set()
+    tried_kcs: set = set()
+    first_gap: dict | None = None
+    picked = None
+    while True:
+        if subtopic is None:
+            subtopic = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs)
+        if subtopic is None:
+            break
+        try:
+            picked = pick_for_subtopic(
+                user_id, user_state, subtopic, focus_subtopic, exclude_kcs=tried_kcs
+            )
+            break
+        except SubtopicDry as dry:
+            if first_gap is None and dry.gap:
+                first_gap = dry.gap
+            if focus_subtopic is not None:
+                break
+            dry_kc = (dry.gap or {}).get("kc")
+            if dry_kc and dry_kc not in tried_kcs:
+                tried_kcs.add(dry_kc)
+            else:
+                tried.add(subtopic)
+            subtopic = None
+    if picked is None:
+        if first_gap:
+            # 409 rather than 404: the request was fine and the queue is
+            # healthy, the COURSE is out of material. api.js reads the JSON
+            # detail and renders `message` verbatim.
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail={
                     "reason": "content_exhausted",
-                    "message": content_gaps.learner_message(gap),
-                    **gap,
+                    "message": content_gaps.learner_message(first_gap),
+                    **first_gap,
                 },
             )
-    target_diff = target_difficulty(user_state, subtopic, kc=next_kc)
-    question = select_question_for_difficulty(
-        candidates, target_diff, served, sub_state.served_question_ids
-    )
-    if question is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No questions available for subtopic '{subtopic}'",
+            detail="No questions available",
         )
-
-    # Teach one concept, then drill THAT concept — see lessons.segment_drill.
-    question = lessons.segment_drill(question, user_state.kc_exposure, served) or question
-
-    # 🔴 "NEXT" MAY NOT HAND BACK THE PROBLEM THE LEARNER IS LOOKING AT.
-    #
-    # Measured on Seth's account, 2026-09-06: `Einops: Rearrange`, concept
-    # `einops.pattern-language`, rung `worked`. The concept owns twelve drills
-    # in the subtopic and NONE is tagged at the worked rung, so the "authored
-    # nothing at this rung" fallback in prioritization.narrow_to_next_kc pinned
-    # the pool to `lowest_rung`, which is the single rank-0 drill q345. He had
-    # been served it and skipped it, so `fresh` held it (unanswered ≠ spent) and
-    # `unshown` was empty — the pool handed to the picker was exactly [345],
-    # every time. His served log reads `... 345, 345, 345, ...`: pressing Skip
-    # re-rendered the identical problem with no message, indefinitely. "It
-    # wouldn't let me go."
-    #
-    # The existing exhaustion machinery does not fire there, because it asks
-    # whether anything is UNANSWERED and 345 is. But from the learner's side
-    # this is the same event, and Seth already said what it should do (quoted in
-    # narrow_to_next_kc, 2026-08-28): "it should notify the user that they need
-    # to make the AI create more problems since they ran out of problems to
-    # practice rather than serving up the old problems they have already done."
-    #
-    # NARROW ON PURPOSE — the last served id, not "is a repeat". Recycling a
-    # spent pool is deliberate behaviour with a whole ranking behind it
-    # (grading.select_question_for_difficulty), and it is fine as long as it
-    # ROTATES: seen-least, longest-ago. What is not fine is the degenerate case
-    # where the pool is so small that the rotation returns the question the
-    # learner was just shown. That, and only that, is what this catches.
-    #
-    # `answered` and not `served`: a learner who answered it and asked for
-    # another may legitimately get it back on review.
-    last_served = sub_state.served_question_ids[-1] if sub_state.served_question_ids else None
-    if question.id == last_served and question.id not in answered:
-        stuck = gap or rung_gap(user_state, next_kc, question)
-        content_gaps.record(user_id, stuck)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": "content_exhausted",
-                "message": content_gaps.learner_message(stuck),
-                **stuck,
-            },
-        )
+    sub_state, question, next_kc, gap = picked
+    if first_gap:
+        # Served from a different concept than the lattice's head. Say so on
+        # the question (practice/ladder.js reads `served_from`), so the
+        # learner sees "that one has nothing written yet" rather than the
+        # queue silently wandering sideways. The FIRST gap wins over the served
+        # question's own rung gap — that one is kept under `own_gap` — because
+        # "why am I not on the concept the graph highlights" is the question
+        # the learner is actually asking (codex, 2026-09-09).
+        gap = {**first_gap, "served_from": "other_concept", "served_kc": next_kc, "own_gap": gap}
 
     # Report the aim on the concept actually SERVED. `next_kc` drove the pick,
     # but a question can target more than one concept and a focused pool is not
