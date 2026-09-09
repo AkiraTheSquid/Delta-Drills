@@ -1,0 +1,125 @@
+/* EXERCISE TIMER — practice/exercise-timer.js
+   The countdown bar over the notebook, and notebook focus mode.
+
+   Notebook typography belongs to arena-notebook.css and the contents rail to
+   arena-notebook-nav.css; nothing here restyles a `.nbv-*` or `.anb-*` node.
+   The one thing this file says about them is whether they are on screen, and
+   it says it through a class this file's own module writes. */
+
+/* ── focus mode ───────────────────────────────────────────────────
+   `dd-nb-hidden` is put on individual nodes by practice/exercise-timer.js —
+   the cells BELOW the exercise, the other exercises' blocks, and the contents
+   rail. Everything above the problem stays exactly where it was: the imports
+   it needs and the explanation it is testing are part of doing the exercise,
+   not a distraction from it.
+
+   🔴 `display: none`, and it must stay `display: none` rather than
+   `visibility` or an opacity fade. A hidden notebook cell must take no space
+   and must not be tabbable: the point is that the learner cannot read the next
+   exercise or, in a solutions notebook, the answer sitting one cell below. */
+#page-arena-notebook .dd-nb-hidden {
+  display: none !important;
+}
+
+/* Room for the bar, which is fixed to the bottom of the viewport. Without it
+   the last line of the problem sits underneath the clock. */
+#page-arena-notebook.dd-nb-focus {
+  padding-bottom: 92px;
+}
+
+/* No gutter rule is needed for the hidden rail, and one would be dead code:
+   `.anb-toc` is `position: fixed` and declares `--anb-gutter` on ITSELF
+   (arena-notebook-nav.css), so it reserves no space in the cell column and
+   zeroing the property from an ancestor could not reach it anyway — a custom
+   property inherits down, and the rail's own declaration wins at the rail. */
+
+/* ── the countdown bar ────────────────────────────────────────────
+   Fixed to the viewport, not to the page: the notebook scrolls and the clock
+   has to stay readable while it does. It is the only chrome focus mode adds. */
+.dd-nbt-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 24px);
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.35);
+  font-size: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dd-nbt-bar.hidden {
+  display: none;
+}
+
+.dd-nbt-what {
+  font-weight: 600;
+  color: var(--text);
+  max-width: 34ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dd-nbt-clock {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  min-width: 5ch;
+  text-align: center;
+}
+
+/* The last minute. A colour change, not a flash: the learner is reading code
+   and something blinking beside it is worse than the deadline it announces. */
+.dd-nbt-bar.is-low .dd-nbt-clock {
+  color: var(--danger, #ff6b6b);
+}
+
+.dd-nbt-bar.is-paused .dd-nbt-clock {
+  opacity: 0.55;
+}
+
+.dd-nbt-bar button {
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .dd-nbt-what {
+    display: none;
+  }
+  .dd-nbt-bar {
+    border-radius: 12px;
+    bottom: 8px;
+  }
+}
+
+/* ── the verdict this module writes onto the exercise's block ─────
+   Lives inside `.dd-ex-block` (practice/exercise-session.js owns the block;
+   this is the one row inside it this module writes), so it inherits the
+   block's own frame and only has to say its piece. */
+.dd-ex-verdict {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.dd-ex-verdict.hidden {
+  display: none;
+}
+
+.dd-ex-verdict-note {
+  color: var(--muted);
+}

@@ -115,15 +115,21 @@ def check_a_resumed_clock_matches_the_break():
     it as long) and a clock that has gone backwards.
     """
     src = open(os.path.join(HERE, 'timer.js'), encoding='utf-8').read()
-    grace = re.search(r"const RESUME_GRACE_SECS = (\d+);", src)
+    # 🔴 THE ARITHMETIC MOVED, 2026-09-09. The snapshot's reader, writer and
+    # resume maths are practice/session-snapshot.js now (timer.js crossed
+    # Modulario's LOC limit); timer.js still owns the two allowance readers and
+    # `_snapshot`, so this probe reads BOTH files.
+    snap_src = open(os.path.join(HERE, 'session-snapshot.js'), encoding='utf-8').read()
+    grace = re.search(r"const RESUME_GRACE_SECS = (\d+);", snap_src)
     assert grace, "RESUME_GRACE_SECS is gone — the resume rule has no window"
-    # 🔴 THE ALLOWANCES ARE FUNCTIONS, NOT CONSTANTS, since 2026-08-28: the
-    # learner picks the time per question (practice/session-clock.js) and "No
-    # limit" is one of the choices. What has NOT changed is that a snapshot
-    # cannot carry its own allowance — a restarted step comes back at the
-    # length in force NOW, not the one it was paused under. The probe below
-    # therefore stubs `window.SessionClock` rather than reading two integers
-    # out of the source, and exercises the untimed cases too.
+    # 🔴 THE ALLOWANCES ARE FUNCTIONS, NOT CONSTANTS, since 2026-08-28, and
+    # since 2026-09-09 the number is the PROBLEM's own (its concept's cap,
+    # read off the question by practice/session-clock.js). "No limit" is
+    # still real, from an exercise session's own setup. A snapshot carries
+    # no per-session answer/review PAIR; it carries the paused question's
+    # `secsAllowed`, which `_phaseLimit` reads first (checked by
+    # watch_invariants.check_the_clock_is_the_problems_own). The probe below
+    # stubs `window.SessionClock` and exercises the untimed cases too.
     assert re.search(r"const ANSWER_SECS = \(\) => \{", src), (
         "timer.js no longer reads the answer allowance through a function — a "
         "value captured once cannot follow the learner's picker"
@@ -137,13 +143,18 @@ def check_a_resumed_clock_matches_the_break():
             f"_snapshot writes `{carried}` again — a paused question would "
             f"resume under an allowance the picker has since changed"
         )
-    start = src.index("  const _awaySecs = (saved) =>")
-    end = src.index("  const _resumeSummary =")
-    helpers = src[start:end]
+    start = snap_src.index("/* \u2500\u2500 RESUME ARITHMETIC")
+    end = snap_src.index("/* \u2500\u2500 END RESUME ARITHMETIC")
+    helpers = snap_src[start:end]
+    assert "const _awaySecs = (saved) =>" in helpers, (
+        "the resume arithmetic markers no longer bracket _awaySecs — this "
+        "probe runs whatever is between them, so an empty slice passes "
+        "silently"
+    )
     assert "_effectiveRemaining" in helpers, (
         "the resume clock is no longer computed from the snapshot's age"
     )
-    assert "_effectiveRemaining(pausedState)" in src.split("const _resumeCore", 1)[-1], (
+    assert "effectiveRemaining(pausedState)" in src.split("const _resumeCore", 1)[-1], (
         "_resumeCore restores a raw `remaining` again — the break's length has "
         "to be read at the moment of resuming, not at page load"
     )
@@ -212,15 +223,32 @@ eq(_effectiveRemaining({{...snap(1), remaining: null}}), {{secs: 300, restarted:
 window.SessionClock.secs = 60;
 eq(_effectiveRemaining(snap(RESUME_GRACE_SECS + 1)), {{secs: 60, restarted: true}},
    "a restarted step must restart at the CURRENT allowance");
-// 🔴 THE GRACE-WINDOW BRANCH IS CLAMPED TOO. _readSaved clamps when the
-// snapshot is PARSED; the picker can move after that, while the paused screen
-// is up. Paused with 8:00 left, switched to 1:00, resumed straight away: the
-// step is not restarted (no break), but it cannot hand back more than the
-// allowance now in force. Codex, 2026-08-28.
-eq(_effectiveRemaining({{...snap(1), remaining: 480}}), {{secs: 60, restarted: false}},
-   "a resume inside the grace window must not exceed the CURRENT allowance");
-eq(_effectiveRemaining({{...snap(1), remaining: 30}}), {{secs: 30, restarted: false}},
+// 🔴 THE GRACE-WINDOW BRANCH IS CLAMPED TOO, and to the allowance the SNAPSHOT
+// NAMES. _readSaved clamps when the snapshot is PARSED, and the state can move
+// after that while the paused screen is up: paused with 8:00 left on a 1:00
+// step, resumed straight away, the step is not restarted (no break) but it
+// cannot hand back more than its own allowance. Codex, 2026-08-28.
+eq(_effectiveRemaining({{...snap(1), remaining: 480, secsAllowed: 60}}), {{secs: 60, restarted: false}},
+   "a resume inside the grace window must not exceed the PAUSED QUESTION's allowance");
+eq(_effectiveRemaining({{...snap(1), remaining: 30, secsAllowed: 60}}), {{secs: 30, restarted: false}},
    "the clamp must not inflate a clock that is already under the allowance");
+// 🔴 AND IT IS NOT CLAMPED AGAINST A QUESTION THAT IS NOT THE PAUSED ONE. A
+// legacy v2 snapshot names no allowance (it was written before the clock became
+// the problem's own), so the live readers here answer for whatever the page
+// rendered in the background. Clamping to that took 13 minutes off an 18:00
+// einops question because a 5:00 Python drill happened to be on screen, and the
+// loss was not recoverable. Codex, 2026-09-09.
+eq(_effectiveRemaining({{...snap(1), remaining: 480}}), {{secs: 480, restarted: false}},
+   "a snapshot that names no allowance must not be clamped to the question on screen");
+// A scoped block's own answer time still wins over the paused question's cap.
+eq(_effectiveRemaining({{...snap(1), remaining: 480, secsAllowed: 1200, config: {{answer: 300}}}}),
+   {{secs: 300, restarted: false}},
+   "a scoped block's own answer time wins over the paused question's cap");
+// The paused question's OWN clock wins over whatever is on screen now.
+eq(_effectiveRemaining({{...snap(RESUME_GRACE_SECS + 1), secsAllowed: 300}}), {{secs: 300, restarted: true}},
+   "a restarted step must restart at the paused question's own clock");
+eq(_effectiveRemaining({{...snap(1), remaining: 480, secsAllowed: 300}}), {{secs: 300, restarted: false}},
+   "a resume inside the grace window is clamped to the paused question's own clock");
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()

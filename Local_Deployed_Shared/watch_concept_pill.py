@@ -545,14 +545,19 @@ def check_concept_pill():
         "context restores a rung with no concept"
     )
 
-    read_saved = re.search(r"const _readSaved\s*=.*?\n  \};", timer_code, re.S)
+    # 🔴 THE READER MOVED, 2026-09-09. `_readSaved`/`_readLadder` live in
+    # practice/session-snapshot.js now (timer.js crossed Modulario's LOC
+    # limit); the guard follows the code rather than passing because the
+    # symbol it names is gone from the file it used to be in.
+    snapshot_code = _code(_read("practice", "session-snapshot.js"))
+    read_saved = re.search(r"const _readSaved\s*=.*?\n  \};", snapshot_code, re.S)
     assert read_saved and re.search(r"ladder:\s*_readLadder\(\s*saved\.ladder", read_saved.group(0)), (
         "_readSaved must return the snapshot's ladder through _readLadder - a "
         "field written at pause and dropped on read is the same as never "
         "having written it"
     )
-    read_ladder = re.search(r"const _readLadder\s*=.*?\n  \};", timer_code, re.S)
-    assert read_ladder, "practice/timer.js has no _readLadder sanitiser"
+    read_ladder = re.search(r"const _readLadder\s*=.*?\n  \};", snapshot_code, re.S)
+    assert read_ladder, "practice/session-snapshot.js has no _readLadder sanitiser"
     read_ladder = read_ladder.group(0)
     # localStorage is untrusted input and this value reaches StageLadder.show,
     # which writes the title into the DOM and hands `estimate` to _boundOf.
@@ -566,7 +571,7 @@ def check_concept_pill():
     # "[object Object]", either of which reaches the DOM as the concept's name.
     assert re.search(
         r"const _str\s*=.*?typeof\s+value\s*===\s*[\"']string[\"'].*?value\.trim\(\)",
-        timer_code,
+        snapshot_code,
         re.S,
     ), (
         "the snapshot's ladder strings must be validated as NONEMPTY STRINGS "

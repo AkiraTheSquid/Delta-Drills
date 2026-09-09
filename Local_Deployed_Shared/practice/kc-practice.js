@@ -290,10 +290,34 @@ const KcPractice = (() => {
         if (!d) { active = false; return null; }
         const q = _hydrate(d.item);
         if (q) {
+          /* THE NOTEBOOK'S "Try the problem first", carried onto the question.
+             `attemptFirst && used === 0` is the planner's own definition of the
+             cold attempt (exercise-planner.js::peek), and it has to be read
+             BEFORE `commit` — commit is what moves `used` off zero.
+
+             🔴 THIS IS THE ONLY WRITER OF `attempt_first` NOW. It used to be a
+             chooser inside practice/lessons.js that fired on the practice tab
+             for any question with starter code; that leaked a notebook option
+             onto a screen it never belonged on and was deleted 2026-09-09. The
+             three readers — the lesson gate and the example gate (which both
+             stand down for a cold attempt), and ladder.js (which says "First
+             attempt — lesson not yet reviewed" on the card) — were reading a
+             flag that nothing set once it went, which is exactly how the
+             notebook's radio would have quietly stopped meaning anything. */
+          const coldAttempt =
+            d.choice === "attempt" && planner.attemptFirst === true && planner.used === 0;
           const item = planner.commit(d);
           lastItem = item;
           q.ladder_kind = item.kind;
           _stamp(q, item);
+          if (coldAttempt) {
+            q.attempt_first = true;
+            // AFTER `_stamp`, which writes `ladder_support` from the item's
+            // kind. A cold attempt is by definition unscaffolded: leave the
+            // worked example beside it and the "try it first" is answered for
+            // them before they have read the question.
+            q.ladder_support = false;
+          }
           if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);
           return q;
         }

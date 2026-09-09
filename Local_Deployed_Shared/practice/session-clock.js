@@ -1,159 +1,165 @@
 /* ================================================================
-   THE PER-QUESTION ALLOWANCE — one number, chosen BEFORE the block
+   THE PER-QUESTION ALLOWANCE — the PROBLEM's own, read off the question
 
-   🔴 THIS REVERSES 2026-08-23. Both allowances used to be constants in
-   practice/timer.js and the panel that set them was deleted, on Seth's
-   instruction: "it's a predetermined timer that they don't control".
-   Seth, 2026-08-28: "I can change the amount of time that I have per
-   problem before I start the practice so that I actually have more time
-   to read the problems and the lessons ... Or I can disable the timer
-   entirely." The reason the old rule broke is worth writing down: the
-   lesson gate does NOT hold the clock (nothing in lessons.js calls
-   PracticeSession.holdClock), so a first-encounter lesson is read on the
-   answer clock, and 02:00 has to cover reading a concept AND writing the
-   answer to a question about it.
+   🔴 THIS REVERSES 2026-08-28 (which reversed 2026-08-23). Seth,
+   2026-09-09: "for practice make it such that for the problems, they are
+   keyed to how much time you need for each of them rather than what you
+   select at the beginning. it should be like the diagnostic for the timing
+   of the questions ... using the same time." So the picker on the idle
+   screen is gone, and the number is the one the placement test already
+   uses: the concept's cap in lessons/placement_time_caps.json (5:00 for a
+   one-call Python drill, ARENA's 10:00 for einops, 20:00 by default), sent
+   by the server on every practice question as `secs_allowed`
+   (backend question_pick.secs_allowed_for → NextQuestionResponse). This
+   file only READS it. Nothing here is chosen, stored or remembered per
+   learner — there is no store, no presets and no `set`.
 
-   WHAT THE LEARNER PICKS IS ONE NUMBER, and it is what EACH STEP gets —
-   answering and reviewing alike, per QUESTION, exactly as the two 02:00
-   constants were. A block still has no length, and there is still no End
-   session; pause and resume remain the only two states.
+   What the 08-28 picker was for — a first-encounter lesson is read on the
+   answer clock — is carried by the table now: a concept's minutes are what
+   its drills need, and the default is 20:00, not the 02:00 the picker
+   defaulted to.
 
-   🔴 "No limit" IS AN OPTION, NOT A BIG NUMBER. `secs: null` is the whole
-   representation, and timer.js branches on it: no interval, no expiry, no
-   auto-submit. A 99:00 preset would look the same for an hour and then
-   submit someone's unfinished work in the middle of a sentence.
+   🔴 `null` STILL MEANS NO LIMIT downstream (timer.js runs no interval on
+   it), so this file never answers null: a question the server did not
+   stamp — an older backend, a resume rebuilt from the static bank with no
+   snapshot copy — gets the CEILING, not "no limit". "No limit" survives
+   only where a block brings its own numbers: an ARENA exercise session's
+   setup (practice/exercise-session.js), which timer.js reads before it
+   asks here.
 
-   🔴 THE PLACEMENT IS NOT ON THIS CLOCK. Every probe gets the placement's
-   own fixed 2:00 (practice/placement-timer.js, and timer.js's
-   `_answerSecsFor`) — a test whose questions are timed differently per
-   learner does not compare them, which is the whole point of it.
+   Both steps get the same number — answering and reviewing alike, per
+   question — exactly as the picker's one number did.
 
-   WHERE IT IS CHOSEN: the idle surface, next to Continue practicing
-   (practice/session-idle.js renders the picker; #question-clock-picker in
-   index.html is its mount). The picker is only reachable between blocks,
-   which is what "before I start the practice" asks for and also what
-   keeps a running countdown from changing under the learner's hands.
+   🔴 THE PLACEMENT IS NOT ON THIS PATH. A probe carries
+   `diagnostic_secs_allowed` and practice/placement-timer.js displays it;
+   timer.js's `_answerSecsFor` asks PlacementTimer first. Same table, two
+   readers, because the placement also CHARGES the time server-side.
    ================================================================ */
 
 (function initSessionClock() {
-  /* The presets, in the order they are drawn. 02:00 stays the default: it
-     is what every learner has been on since 2026-08-23, so the shipped
-     behaviour of an account that never opens the picker does not move. */
-  const OPTIONS = [
-    { id: "1m", secs: 60, label: "1:00" },
-    { id: "2m", secs: 120, label: "2:00" },
-    { id: "5m", secs: 300, label: "5:00" },
-    { id: "10m", secs: 600, label: "10:00" },
-    { id: "20m", secs: 1200, label: "20:00" },
-    { id: "off", secs: null, label: "No limit" },
-  ];
-  const DEFAULT_ID = "2m";
+  /* The server's own ceiling (diagnostic.PER_PROBLEM_SECS; the placement's
+     PLACEMENT_ANSWER_SECS is the same number): what a question gets when the
+     field is missing. Missing means "no opinion", never "no limit". */
+  const CEILING_SECS = 1200;
 
-  const _byId = (id) => OPTIONS.find((o) => o.id === id) || null;
-
-  /* Per ACCOUNT, like every other thing this page remembers — the session
-     snapshot (`..._session`) and the progress record both hang off this same
-     key, so a shared browser does not hand one learner another's rules.
-     Called lazily: `getPracticeStorageKey` reads `authEmail`, which is not
-     resolved at the moment this file parses. */
-  const _key = () => {
-    try {
-      return `${getPracticeStorageKey()}_clock`;
-    } catch (_) {
-      return "practice_progress_guest_clock";
-    }
+  /* `PracticeAPI` is a script-global const, not `window.PracticeAPI`
+     (practice/api.js) — same read timer.js uses. */
+  const _question = () => {
+    const api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    return api?.currentQuestion || null;
   };
 
-  const _stored = () => {
-    try {
-      return localStorage.getItem(_key());
-    } catch (_) {
-      return null;
-    }
+  /* 🔴 THE TABLE ITSELF, FOR A QUESTION THE SERVER NEVER SAW. Only the
+     backend queue stamps `secs_allowed`; a question built out of the static
+     bank carries none, and there are real paths that do exactly that —
+     `KcPractice` (the Knowledge Graph's Practice ⤢ ladder and the `?lesson=`
+     loop) hydrates every rung through `buildPracticeQuestionFromBank`, the
+     Pyodide engine builds its own, and a guest has no backend at all. Left at
+     the ceiling those are a FLAT 20:00, which is the same defect as the flat
+     02:00 this change removed, one number further out.
+
+     So the concept's cap is read from the same file the server reads, and the
+     question's `ladder_kc` is the key — `KcPractice._hydrate` stamps that
+     field for its own reasons, so the concept is on the record even when the
+     clock is not.
+
+     🔴 `d.kcs` IS THE PARSE CHECK, not `res.ok`. A JSON file dropped from a
+     deploy comes back through the SPA rewrite as 200 text/html, so `ok` is
+     true and `.json()` throws into the catch — see the `.vercelignore` trap in
+     the deploy notes. Until it lands (or if it never does) `_capFor` answers
+     null and the ceiling stands; the fetch is started at parse time and a
+     question is always at least one round trip away. */
+  let _caps = null;
+  let _qmatrix = null;
+
+  const _load = (path, cache, keep) =>
+    Promise.resolve()
+      .then(() => fetch(path, { cache }))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((d) => keep(d))
+      .catch(() => {});
+
+  /* 🔴 ONE PROMISE, AWAITED BEFORE THE FIRST QUESTION IS SERVED. Without it
+     the two tables land whenever they land, and `secsFor` answers null in the
+     meantime: `ANSWER_SECS()` at onQuestionRendered could hand back the 20:00
+     ceiling while `REVIEW_SECS()`, a minute later, handed back the concept's
+     real 6:00 — the SAME question on two different allowances, and a pause
+     snapshot stamped with whichever one won. timer.js's `start()`/`resume()`
+     wait on this, so by the time anything is on screen the answer is settled
+     (or has permanently failed, in which case the ceiling stands everywhere).
+     Codex, 2026-09-09. */
+  const ready = Promise.all([
+    // The cap table is small and is the number on screen — always fresh.
+    _load("lessons/placement_time_caps.json", "no-cache", (d) => {
+      if (d && d.kcs && typeof d.kcs === "object") _caps = d;
+    }),
+    // The q-matrix is 160 KB and questions.js already fetches it `force-cache`
+    // for its own parking filter — same request, so this costs nothing.
+    _load("lessons/qmatrix_tags.json", "force-cache", (d) => {
+      if (d && typeof d === "object") _qmatrix = d;
+    }),
+  ]).then(() => undefined);
+
+  /* Whole positive seconds only, and validated AFTER the rounding: a raw 0.4
+     is > 0 and would have survived the check, then rounded to 0 — a question
+     that expires the instant it is rendered. Clamped to the ceiling the way
+     the server clamps the table. */
+  const _clean = (raw) => {
+    if (typeof raw !== "number" || !Number.isFinite(raw) || raw <= 0) return null;
+    const secs = Math.min(CEILING_SECS, Math.round(raw));
+    return secs >= 1 ? secs : null;
   };
 
-  /* 🔴 A CHOICE STORAGE WOULD NOT KEEP IS STILL THE CHOICE, for this page load.
-     `set` writes and then READS BACK; when the value did not land — private
-     mode, quota, site data blocked — the id is held here instead, along with
-     what storage said at the time. Without this the picker snapped back to the
-     old preset the instant it was clicked and the clock went on enforcing it,
-     because every read below goes to storage. Codex, 2026-08-28.
-
-     `over` is what makes it safe to hold: the moment storage stops saying what
-     it said when the write failed, something else really did write — another
-     tab, or a store that started working — and that is a newer statement than
-     ours. Cleared, storage wins. */
-  let volatileChoice = null;
-
-  /* Read fresh every time rather than caching at load. Sign-in changes the
-     key underneath us, and a cached value would then be the previous
-     account's choice presented as this one's. Cheap: one localStorage hit
-     per question, against a clock that ticks every second anyway. */
-  const currentId = () => {
-    const raw = _stored();
-    if (volatileChoice) {
-      if (raw === volatileChoice.over) return volatileChoice.id;
-      volatileChoice = null;
-    }
-    return _byId(raw) ? raw : DEFAULT_ID;
+  const _capFor = (kc) => {
+    if (!_caps || typeof kc !== "string" || !kc) return null;
+    const raw = Object.prototype.hasOwnProperty.call(_caps.kcs, kc)
+      ? _caps.kcs[kc]
+      : _caps.default_secs;
+    return _clean(raw);
   };
 
-  const current = () => _byId(currentId()) || _byId(DEFAULT_ID);
+  /* 🔴 THE SAME RULE THE SERVER RUNS, on the same two files.
+     `question_pick.secs_allowed_for` is:
 
-  const listeners = new Set();
+         kcs  = [ladder_kc] if ladder_kc else question_kcs(question_id)
+         caps = [kc_cap_secs(kc) for kc in kcs if kc]
+         return max(caps) if caps else kc_cap_secs(None)
 
-  /* Unknown id is a no-op, not a fallback to the default: this is called
-     from a click handler on a rendered option, so an id nobody defined
-     means the caller is out of date, and silently rewriting the learner's
-     choice to 02:00 is a worse answer than leaving it alone. */
-  const set = (id) => {
-    if (!_byId(id) || id === currentId()) return false;
-    const before = _stored();
-    let persisted = false;
-    try {
-      localStorage.setItem(_key(), id);
-      /* Read back rather than trusting the write. A store can accept a
-         `setItem` and keep nothing (some private modes do exactly that), and
-         a write that silently did not stick is indistinguishable from one
-         that threw as far as the next read is concerned. */
-      persisted = _stored() === id;
-    } catch (_) {
-      persisted = false;
-    }
-    /* Private mode, quota, a browser with storage off. The choice cannot be
-       remembered past this page load, but it IS in force for it — refusing
-       outright would leave the picker showing an option the clock ignores. */
-    volatileChoice = persisted ? null : { id, over: before };
-    listeners.forEach((fn) => {
-      try {
-        fn(current());
-      } catch (_) {}
-    });
-    return true;
+     — `question_kcs` being the q-matrix row's `target_kcs` (kc_graph.py). A
+     record with no `ladder_kc` is not rare: the Pyodide engine builds its own,
+     a guest has no backend, and a plain bank record carries only its id. Those
+     were all landing on the flat ceiling, which is the 02:00 defect this
+     change removed, one number further out. The q-matrix is what the id is
+     worth, so read it — questions.js already fetches this exact file
+     `force-cache`, so this is a cache hit, and it discards the mapping rather
+     than exporting it. */
+  const _qmatrixCap = (questionId) => {
+    if (!_qmatrix || !Number.isFinite(questionId)) return null;
+    const row = _qmatrix[String(questionId)];
+    const kcs = Array.isArray(row?.target_kcs) ? row.target_kcs : [];
+    const caps = kcs.map(_capFor).filter((n) => typeof n === "number");
+    return caps.length ? Math.max(...caps) : null;
   };
 
-  const subscribe = (fn) => {
-    if (typeof fn !== "function") return () => {};
-    listeners.add(fn);
-    return () => listeners.delete(fn);
+  /* The clock a question record carries, or null when nothing can name one.
+     A string, 0, a negative or a boolean is a record nobody stamped, and the
+     table (then the ceiling) is the honest fallback. */
+  const secsFor = (question) => {
+    const own = _clean(question?.secs_allowed);
+    if (own !== null) return own;
+    const ladder = _capFor(question?.ladder_kc);
+    if (ladder !== null) return ladder;
+    return _qmatrixCap(Number(question?.question_id));
   };
 
-  /* 🔴 `null` MEANS NO LIMIT AND MUST SURVIVE THE WHOLE PATH. Every caller
-     that does arithmetic on these has to ask first — `?? 120` anywhere
-     downstream is how "No limit" quietly becomes two minutes. */
-  const answerSecs = () => current().secs;
-  const reviewSecs = () => current().secs;
-  const isUnlimited = () => current().secs === null;
+  /* Whether the question on screen carries its own number. The idle notch
+     asks this: between blocks nothing is on screen, so there is no "next
+     question's allowance" to show — it is set by the concept the queue
+     picks, and that is not known until it is served. */
+  const hasOwn = () => secsFor(_question()) !== null;
+  const answerSecs = () => secsFor(_question()) ?? CEILING_SECS;
+  const reviewSecs = () => answerSecs();
+  const isUnlimited = () => false;
 
-  window.SessionClock = {
-    OPTIONS,
-    DEFAULT_ID,
-    currentId,
-    current,
-    set,
-    subscribe,
-    answerSecs,
-    reviewSecs,
-    isUnlimited,
-  };
+  window.SessionClock = { CEILING_SECS, ready, secsFor, hasOwn, answerSecs, reviewSecs, isUnlimited };
 })();

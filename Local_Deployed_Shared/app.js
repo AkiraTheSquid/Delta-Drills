@@ -591,6 +591,79 @@ const decodeJwtPayload = (jwtStr) => {
 
 const googleSignInMessage = () => document.getElementById("google-signin-message");
 
+/* OFFLINE SIGN-IN, LOCALHOST ONLY — 2026-09-09.
+
+   Seth: "it needs to work without an internet connection though, just
+   completely locally." Every other way into an account goes through
+   accounts.google.com, so an expired token with the cable out left the local
+   app with no door. This one posts email+password to the local backend's
+   /auth/login (app/auth_router.py), which reads the local Postgres and nothing
+   else.
+
+   🔴 GATED ON THE HOSTNAME, not on whether Google happened to load. A form
+   that appears whenever the network is flaky is a password field on the public
+   site, which is a different product decision than the one being made here. */
+let _localSignInInited = false;
+const initLocalSignIn = () => {
+  /* 🔴 ONCE. The Google poller below calls this every 250ms for ten seconds,
+     and a submit listener added forty times is forty login requests per
+     click. */
+  if (_localSignInInited) return;
+  const form = document.getElementById("local-signin");
+  if (!form) return;
+  _localSignInInited = true;
+  /* 🔴 THE HOSTNAME IS READ HERE, not through `isOnLocalhost` — that lives in
+     supabase-practice.js, which index.html loads AFTER this file, so the check
+     was false for the first ticks and the form stayed hidden. */
+  const host = window.location.hostname;
+  if (host !== "localhost" && host !== "127.0.0.1") return;
+  form.classList.remove("hidden");
+  const msg = document.getElementById("local-signin-msg");
+  const emailEl = document.getElementById("local-signin-email");
+  const passEl = document.getElementById("local-signin-password");
+  /* The email is remembered so the offline door is one field, not two. The
+     password never is — it is typed every time, the same as any login. */
+  try {
+    const last = localStorage.getItem("auth_email") || "";
+    if (last && emailEl && !last.endsWith("@guest.delta-drills.app")) emailEl.value = last;
+  } catch (_) {}
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = (emailEl?.value || "").trim().toLowerCase();
+    const password = passEl?.value || "";
+    if (!email || !password) {
+      if (msg) msg.textContent = "Email and password, please.";
+      return;
+    }
+    if (msg) msg.textContent = "Signing in…";
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        /* 401 is a wrong password; anything else is the backend being down,
+           and saying "invalid credentials" for that sends the learner looking
+           for a typo that is not there. */
+        if (msg) {
+          msg.textContent = res.status === 401
+            ? "That email and password do not match a local account."
+            : (data.detail || `Sign-in failed (${res.status}).`);
+        }
+        return;
+      }
+      if (msg) msg.textContent = "Signed in!";
+      if (passEl) passEl.value = "";
+      setAuthState(data.access_token, email); // reloads into backend mode
+    } catch (err) {
+      if (msg) msg.textContent = "Could not reach the local backend.";
+    }
+  });
+};
+
+
 // Exchange the Google credential for our app JWT, then sign in.
 const handleGoogleCredential = async (response) => {
   const msg = googleSignInMessage();
@@ -662,6 +735,7 @@ const initGoogleSignIn = () => {
   let tries = 0;
   const tick = () => {
     initGoogleSignIn();
+    initLocalSignIn();
     if (_googleSignInInited || tries++ > 40) return; // ~10s max
     setTimeout(tick, 250);
   };

@@ -1,27 +1,30 @@
 /* ================================================================
    PRACTICE SESSION — one clock per QUESTION, paused and resumed
 
-   🔴 THE ALLOWANCE IS THE LEARNER'S AGAIN, AS OF 2026-08-28, and it is
-   NOT a constant in this file any more. Seth: "I can change the amount of
-   time that I have per problem before I start the practice so that I
-   actually have more time to read the problems and the lessons ... Or I
-   can disable the timer entirely." One number, picked on the idle screen
-   before the block starts (practice/session-clock.js owns the store and
-   the presets; practice/session-idle.js draws the picker), and it is what
-   EACH STEP gets — answering and reviewing alike, per question.
+   🔴 THE ALLOWANCE IS THE PROBLEM'S OWN, AS OF 2026-09-09, and it is NOT
+   a constant in this file. Seth: "keyed to how much time you need for each
+   of them rather than what you select at the beginning. it should be like
+   the diagnostic for the timing of the questions ... using the same time."
+   Every practice question arrives stamped with `secs_allowed` — its
+   concept's cap in lessons/placement_time_caps.json, the same number a
+   placement probe on that concept gets — and practice/session-clock.js
+   reads it off the question. It is what EACH STEP gets, answering and
+   reviewing alike, per question.
 
-   That reverses 2026-08-23 ("it's a predetermined timer that they don't
-   control"), and the reason is in the timing of the LESSON: nothing in
-   lessons.js holds this clock, so a first-encounter lesson is read while
-   the answer countdown runs, and 02:00 has to cover reading a concept and
-   then writing the answer. What did NOT come back is the old setup panel:
-   there is still no question quota and no session length — the three
-   inputs that set those are still gone, and so is the End session button.
+   That reverses the 2026-08-28 picker (one number chosen on the idle
+   screen before the block, "No limit" among the options), which itself
+   reversed 2026-08-23 ("a predetermined timer that they don't control").
+   The picker existed because a first-encounter lesson is read on the
+   answer clock; the table carries that now (a concept's minutes are what
+   its drills need). What has stayed gone since 08-23: no question quota,
+   no session length, no End session button.
 
-   🔴 "No limit" IS A REAL STATE, not a large number: `SessionClock`
-   answers `null`, and then this file runs no interval, never expires and
-   never force-submits. `remaining` is `null` for the whole step, so every
-   piece of arithmetic on it below asks first.
+   🔴 "No limit" IS STILL A REAL STATE, not a large number — `null` from
+   an ARENA exercise session's own setup (`sessionConfig`), and then this
+   file runs no interval, never expires and never force-submits.
+   `remaining` is `null` for the whole step, so every piece of arithmetic
+   on it below asks first. SessionClock itself never answers null: a
+   question the server did not stamp gets the ceiling.
 
    A block has no LENGTH either, which is why `finish("ended")` and
    #session-end-btn went with them: there is no quota to reach and
@@ -46,18 +49,24 @@
 
 /* THE ALLOWANCE, per question and per step. `null` means no limit.
 
-   🔴 READ THROUGH THE FUNCTION, NEVER CACHED IN A CONSTANT. The learner can
-   change this between blocks — and in another tab, at any moment — so a value
-   captured at load is a clock running under a rule the picker says is no
-   longer in force. Both steps get the same number; that is what "time per
-   problem" means, and it is exactly what the two 02:00 constants that lived
-   here did.
+   🔴 READ THROUGH THE FUNCTION, NEVER CACHED IN A CONSTANT. It changes with
+   every question served — it is the QUESTION's number — so a value captured
+   at load is one concept's clock running over another concept's problem.
+   Both steps get the same number; that is what "time per problem" means.
 
-   The fallback is the old constant, and it is only reachable if
-   practice/session-clock.js failed to load: a page where the picker is missing
-   still times a question the way every account was timed before today. */
-const FALLBACK_SECS = 120;
+   The fallback is the server's ceiling (20:00), and it is only reachable if
+   practice/session-clock.js failed to load: a page without the reader still
+   times a question, on the longest clock the table can hand out. */
+const FALLBACK_SECS = 1200;
 const _clockPrefs = () => window.SessionClock || null;
+/* 🔴 WAIT FOR THE TABLES BEFORE THE FIRST QUESTION IS ON SCREEN. session-clock.js
+   resolves a question's allowance out of two JSON files it fetches at parse
+   time; until they land it can only answer with the ceiling. Both session entry
+   points below wait on this once, so answering, reviewing and the pause
+   snapshot are guaranteed to be reading the same settled table rather than
+   whichever one happened to have arrived. A failed fetch resolves too — the
+   ceiling then stands everywhere, consistently. Codex, 2026-09-09. */
+const _clockReady = () => Promise.resolve(_clockPrefs()?.ready);
 
 /* AN EXERCISE SESSION BRINGS ITS OWN NUMBERS (2026-09-06). "Practice
    make_rays_1d" on an ARENA notebook page asks for answer time, review time
@@ -90,33 +99,32 @@ const REVIEW_SECS = () => {
   return prefs ? prefs.reviewSecs() : FALLBACK_SECS;
 };
 
-/* 🔴 NOT BUMPED FOR THE LEARNER-SET CLOCK (2026-08-28), deliberately. A bump
-   DISCARDS every paused question already on a learner's machine, and it buys
-   nothing here: a v2 snapshot stores no allowance of its own, so it resumes
-   under whatever the picker now says — which is the correct answer, and the
-   same one a snapshot written today gets.
-
-   The 1 → 2 bump it still carries is a different case. A v1 snapshot stored
-   the learner's OWN answerSecs/reviewSecs from the FIRST setup panel, and
-   resuming one meant honouring a per-session pair of allowances this model
-   does not have. `_readSaved` drops v1 outright. */
-const SESSION_STATE_VERSION = 2;
-
-/* How long a paused clock stays paused before the step starts over.
-
-   Leaving and coming straight back is not a break — a reload, a tab closed by
-   accident, a laptop lid — and handing back a fresh five minutes for it would
-   make "pause" the way to opt out of the timer entirely. So inside the grace
-   window the clock resumes exactly where it stopped: one minute left is one
-   minute left.
-
-   Coming back an hour later is a different thing, and resuming at 00:01 there
-   punishes the break rather than timing the work. What the strict timer
-   actually measures is a continuous attempt, and after a real gap the learner
-   is starting the step again — re-reading the prompt, rebuilding what they had
-   in their head — so the step gets its full time back. Only the CURRENT step:
-   the question, the quota and the draft code are all still theirs. */
-const RESUME_GRACE_SECS = 120;
+/* THE SNAPSHOT LIVES IN practice/session-snapshot.js (split out 2026-09-09,
+   Modulario LOC limit). `SESSION_STATE_VERSION`, `RESUME_GRACE_SECS`, the
+   reader, the writer and the resume arithmetic all moved there verbatim; this
+   file keeps only what a RUNNING question does. `_snap()` is the handle, and
+   the version is aliased below because `_snapshot()` stamps it. */
+/* 🔴 ONE EXPLICIT ASSERTION, NOT TWENTY OPTIONAL CHAINS. Every `_snap().x()`
+   below is unconditional, so a load-order break (index.html dropping the
+   script tag, a cache-buster left behind on a stale copy) has to fail HERE,
+   naming the missing file, rather than as "cannot read write of undefined"
+   from whichever call site happened to run first. Codex, 2026-09-09. */
+const _snap = () => {
+  const snap = window.SessionSnapshot;
+  if (!snap) {
+    throw new Error(
+      "practice/timer.js: window.SessionSnapshot is missing — " +
+        "practice/session-snapshot.js must load BEFORE practice/timer.js."
+    );
+  }
+  return snap;
+};
+const SESSION_STATE_VERSION = window.SessionSnapshot?.VERSION ?? 2;
+/* 🔴 THE ALLOWANCES GO THE OTHER WAY. session-snapshot.js is parsed FIRST and
+   must not reach back into this file for them — `sessionConfig` (an exercise
+   session's own numbers) and `window.SessionClock` are read here, so they are
+   handed over as functions, once, before anything reads a snapshot. */
+_snap().install({ answerSecs: ANSWER_SECS, reviewSecs: REVIEW_SECS });
 
 /* `parseTimerInput` was DELETED here on 2026-08-23. It read "05:00" or "300"
    out of the three setup inputs; there are no inputs, and no other file called
@@ -157,8 +165,6 @@ const PracticeSession = (() => {
 
   const isActive = () => !!state;
 
-  const _storageKey = () => `${getPracticeStorageKey()}_session`;
-
   const _questionId = () => {
     const raw = PracticeAPI?.currentQuestion?.question_id ?? PracticeAPI?.currentQuestion?.id;
     return raw == null ? "" : String(raw);
@@ -176,95 +182,6 @@ const PracticeSession = (() => {
       clearInterval(advancePoll);
       advancePoll = null;
     }
-  };
-
-  /* Everything out of localStorage is untrusted input — this one is read back
-     into `StageLadder.show`, which writes the title into the DOM. Shapes only:
-     an unknown rung draws no sections rather than guessing, so a junk `stage`
-     is safe, but a junk `estimate` would reach `_boundOf`/`_streakOf`. */
-  const _str = (value) =>
-    typeof value === "string" && value.trim() ? value : null;
-  const _readLadder = (raw) => {
-    if (!raw || typeof raw !== "object") return null;
-    /* 🔴 STRINGS, NOT TRUTHY VALUES. `String([])` is `""` and
-       `String({})` is `"[object Object]"`, so a truthiness check hands the
-       ladder an empty kc or a literal "[object Object]" as the concept's name
-       instead of refusing the record. Codex, 2026-08-28. */
-    const kc = _str(raw.kc);
-    const stage = _str(raw.stage);
-    if (!kc || !stage) return null;
-    return {
-      kc,
-      stage,
-      title: _str(raw.title),
-      estimate: raw.estimate && typeof raw.estimate === "object" ? raw.estimate : null,
-      support: raw.support !== false,
-      integrated: !!raw.integrated,
-    };
-  };
-
-  const _readSaved = () => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(_storageKey()) || "null");
-      if (!saved || saved.version !== SESSION_STATE_VERSION) return null;
-      if (!Number.isFinite(saved.served) || !saved.questionId) return null;
-      const phase = saved.phase === "review" && saved.review ? "review" : "answer";
-      /* The allowance is read from the PICKER, never from the snapshot, and
-         the snapshot's own `remaining` is clamped to it. A question paused
-         under 10:00 and resumed after the learner moved to 2:00 comes back on
-         2:00 — the choice in force is the one on screen — and the clamp is
-         also what stops a hand-edited localStorage entry buying itself time
-         the picker never offered.
-
-         🔴 UNLIMITED CLAMPS TO UNLIMITED. `phaseLimit === null` means there is
-         no number to clamp to and no number to count down, so `remaining`
-         stays null all the way through resume; `Math.min(null, x)` is 0, which
-         would resume the question already expired. */
-      const config = _readConfig(saved.config);
-      const phaseLimit = _phaseLimit({ phase, config });
-      const savedRemaining = Number.isFinite(saved.remaining) ? saved.remaining : phaseLimit;
-      return {
-        version: SESSION_STATE_VERSION,
-        served: Math.max(1, Math.round(saved.served)),
-        phase,
-        config,
-        remaining: phaseLimit === null
-          ? null
-          : Math.max(1, Math.min(phaseLimit, Math.round(savedRemaining || 30))),
-        questionId: String(saved.questionId),
-        attemptFirst: saved.attemptFirst === true,
-        ladder: _readLadder(saved.ladder),
-        draft: typeof saved.draft === "string" || (
-          saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
-        ) ? saved.draft : "",
-        review: phase === "review" ? saved.review : null,
-        savedAt: saved.savedAt || null,
-      };
-    } catch (_) {
-      return null;
-    }
-  };
-
-  /* The exercise session's own settings, carried in the snapshot as an
-     OPTIONAL field — a snapshot without one is a plain block and restores as
-     it always did. Shape-checked: a hand-edited entry cannot hand the clock a
-     string, and a quota that is not a finite positive number is no quota. */
-  const _readConfig = (raw) => {
-    if (!raw || typeof raw !== "object") return null;
-    const secs = (v) => v === null || (Number.isFinite(v) && v > 0);
-    const out = {};
-    if ("answer" in raw && secs(raw.answer)) out.answer = raw.answer;
-    if ("review" in raw && secs(raw.review)) out.review = raw.review;
-    if (Number.isFinite(raw.quota) && raw.quota > 0) out.quota = Math.round(raw.quota);
-    if (raw.exercise && typeof raw.exercise === "object") out.exercise = { ...raw.exercise };
-    if (raw.ladder && typeof raw.ladder === "object") out.ladder = raw.ladder;
-    return Object.keys(out).length ? out : null;
-  };
-
-  const _clearSaved = () => {
-    try {
-      localStorage.removeItem(_storageKey());
-    } catch (_) {}
   };
 
   const _draft = () => window.DeltaNotebook?.serialize() || codeEditor.value;
@@ -355,13 +272,16 @@ const PracticeSession = (() => {
     }
     return {
       version: SESSION_STATE_VERSION,
-      // No `total`, no `answerSecs`, no `reviewSecs`: a block has no length and
-      // the two allowances are constants. Writing them would invite a reader
-      // to resume from them.
+      // No `total`, no `answerSecs`, no `reviewSecs`: a block has no length.
+      // `secsAllowed` is not a per-session pair: it is the PAUSED QUESTION's
+      // own clock (its concept's cap), copied off the question so a resume
+      // rebuilt from the static bank — which carries no stamp — is timed the
+      // way the question was served. Optional; see SESSION_STATE_VERSION.
       served: state.served,
       phase: state.phase,
       remaining,
       questionId: _questionId(),
+      secsAllowed: window.SessionClock?.secsFor?.(PracticeAPI.currentQuestion) ?? null,
       /* 🔴 NOT COVERED BY `SESSION_STATE_VERSION`, deliberately. Bumping the
          version DISCARDS every paused session that is already on a learner's
          machine, and this field is optional in both directions: an older
@@ -386,14 +306,7 @@ const PracticeSession = (() => {
     return { ...sessionConfig, ladder };
   };
 
-  const _writeSaved = (snapshot) => {
-    if (!snapshot || !snapshot.questionId) return;
-    try {
-      localStorage.setItem(_storageKey(), JSON.stringify(snapshot));
-    } catch (_) {}
-  };
-
-  const _persist = () => _writeSaved(_snapshot());
+  const _persist = () => _snap().write(_snapshot());
 
   const _updateCountdown = () => {
     sessionCountdown.textContent = clockText(remaining);
@@ -407,8 +320,32 @@ const PracticeSession = (() => {
   };
 
   const _setPhase = (phase, label) => {
+    if (phase === "answer") window.AnswerHistory?.begin();
+    else if (phase === "grading") window.AnswerHistory?.pause();
+    else if (phase !== "review") window.AnswerHistory?.abandon();
     state.phase = phase;
     sessionPhaseLabel.textContent = label;
+    /* 🔴 BETWEEN QUESTIONS THERE IS NO NUMBER TO SHOW, 2026-09-09. The clock
+       is the QUESTION's now, and the next one's is its concept's — not known
+       until the queue serves it. Leaving the last question's readout up meant
+       a 20:00 einops problem handing over to a 05:00 Python one under a clock
+       still reading 19:41, and on a fresh page the static 02:00 in the markup
+       stood in for every allowance there is — which is exactly the flat clock
+       this change removed, still on screen for the whole of the first
+       question's lesson gate.
+
+       Only `loading`. `grading` freezes a clock that is still this question's
+       and resumes into review on the same number, so blanking it there would
+       flicker `--:--` over a countdown that never stopped being true.
+
+       The notch mirrors this element (practice/notch-menu.js observes the row
+       for childList + characterData), so writing it here writes both — and
+       `.session-status-row` is `display: none`, which makes the notch the only
+       clock a learner actually sees. */
+    if (phase === "loading") {
+      sessionCountdown.textContent = "--:--";
+      sessionCountdown.classList.remove("session-countdown--low");
+    }
     sessionStatusRow.classList.toggle("session-status--review", phase === "review");
     // "blocked" counts as stable: the question cannot be graded here, so
     // Pause & exit is the sane way out and must not be greyed with it.
@@ -442,61 +379,9 @@ const PracticeSession = (() => {
     }, 1000);
   };
 
-  /* Seconds since the snapshot was written. `_persist` stamps `savedAt` every
-     tick, so this is the length of the break to within a second — except when
-     the field is missing or unreadable (a snapshot from an older bundle, a
-     mangled localStorage entry), where the honest answer is "no idea how long"
-     and the safe one is to treat it as a long break. Erring that way costs a
-     restarted step; erring the other way hands out free time on every reload.
-     A clock that has gone BACKWARDS reads as 0, which resumes the timer. */
-  const _awaySecs = (saved) => {
-    const at = Date.parse(saved?.savedAt || "");
-    if (!Number.isFinite(at)) return Infinity;
-    return Math.max(0, (Date.now() - at) / 1000);
-  };
-
-  /* The allowance the saved step gets: the block's OWN number when the
-     snapshot carries a config (a scoped exercise session, which is not yet
-     the live config while the snapshot is being read), the picker's
-     otherwise. Self-contained on purpose — practice/watch_lessons.py lifts
-     this helper into a node probe by itself. */
-  const _phaseLimit = (saved) => {
-    const field = saved.phase === "review" ? "review" : "answer";
-    const config = saved.config;
-    if (config && typeof config === "object" && field in config) return config[field];
-    return saved.phase === "review" ? REVIEW_SECS() : ANSWER_SECS();
-  };
-
-  /* What the clock should read on resume: {secs, restarted}.
-
-     Recomputed at the moment of resuming rather than when the snapshot was
-     read, because the resume panel can sit on screen for as long as the
-     learner likes and the break is still running while it does. */
-  const _effectiveRemaining = (saved) => {
-    /* 🔴 THE PICKER DECIDES FIRST. Under "No limit" there is no clock to hand
-       back and no step to restart, however long the break was — asking about
-       the break at all would resume an untimed question with `restarted: true`
-       and tell the learner a step started over that was never running. */
-    const limit = _phaseLimit(saved);
-    if (limit === null) return { secs: null, restarted: false };
-    /* A snapshot written while untimed carries `remaining: null`. If the
-       picker has since moved to a real allowance there is nothing to pick up
-       mid-step, so that step starts at the new limit. */
-    if (saved.remaining === null) return { secs: limit, restarted: true };
-    if (_awaySecs(saved) <= RESUME_GRACE_SECS) {
-      /* 🔴 CLAMPED HERE TOO, not only in `_readSaved`. That clamp runs when the
-         snapshot is PARSED, and the picker can move after it: a question paused
-         with 8:00 left under 10:00, then switched to 1:00 on the idle screen,
-         resumed inside the grace window and came back with the whole 8:00 —
-         the allowance the learner had just replaced. Codex, 2026-08-28. */
-      return { secs: Math.min(saved.remaining, limit), restarted: false };
-    }
-    return { secs: limit, restarted: true };
-  };
-
   const _resumeSummary = (saved) => {
     const phase = saved.phase === "review" ? "reviewing" : "answering";
-    const { secs, restarted } = _effectiveRemaining(saved);
+    const { secs, restarted } = _snap().effectiveRemaining(saved);
     const head = `Question ${saved.served} · ${phase} · `;
     // "∞ left" is not a sentence. Untimed says what is true and stops there.
     if (secs === null) return head + "no time limit";
@@ -664,7 +549,7 @@ const PracticeSession = (() => {
   };
 
   const start = () => {
-    _clearSaved();
+    _snap().clear();
     pausedState = null;
     resumeReady = false;
     _showResumeOption();
@@ -679,7 +564,8 @@ const PracticeSession = (() => {
     sessionStartBtn.disabled = true;
     // Always begin on a FRESH question — nothing about the one rendered in
     // the background at init is recorded (same contract as Skip).
-    _loadNextPracticeQuestion()
+    _clockReady()
+      .then(_loadNextPracticeQuestion)
       .catch((err) => {
         outputArea.textContent = "Could not start the session: " + (err?.message || err);
         finish("error");
@@ -752,6 +638,7 @@ const PracticeSession = (() => {
 
   const recordReviewResult = (review) => {
     if (!isActive() || state.phase !== "grading") return;
+    window.AnswerHistory?.settle();
     state.review = review;
     _persist();
     /* Every grade inside an exercise session goes back to the ladder
@@ -808,11 +695,12 @@ const PracticeSession = (() => {
 
   const pause = () => {
     if (!isActive() || !["answer", "review"].includes(state.phase)) return;
+    window.AnswerHistory?.abandon();
     _stopTick();
     _stopPoll();
     clockHolds.clear();
     pausedState = _snapshot();
-    _writeSaved(pausedState);
+    _snap().write(pausedState);
     state = null;
     resumeReady = true;
     sessionStatusRow.classList.add("hidden");
@@ -893,6 +781,12 @@ const PracticeSession = (() => {
          screen — but if they disagree about the CONCEPT, the hydrated one is
          the newer statement and grafting a rung off the other would put one
          concept's name over another's progress. */
+      /* The clock, the same way: the bank has no `secs_allowed`, the snapshot
+         has the served question's. Only when the restore carries none — a
+         genuine hydrate keeps the record the server stamped. */
+      if (restored.secs_allowed == null && pausedState.secsAllowed) {
+        restored.secs_allowed = pausedState.secsAllowed;
+      }
       const ladder = pausedState.ladder;
       if (ladder && (!restored.ladder_kc || restored.ladder_kc === ladder.kc)) {
         if (!restored.ladder_kc) restored.ladder_kc = ladder.kc;
@@ -928,6 +822,7 @@ const PracticeSession = (() => {
   const resume = async () => {
     if (resumePending || !pausedState) return;
     resumePending = true;
+    await _clockReady();
     if (!(await _restoreSavedQuestion())) {
       resumePending = false;
       resumeReady = false;
@@ -965,7 +860,7 @@ const PracticeSession = (() => {
        read: `_effectiveRemaining` clamps to the allowance in force, and for a
        scoped block that is the one it was started with. */
     if (pausedState.config) {
-      sessionConfig = _readConfig(pausedState.config);
+      sessionConfig = _snap().readConfig(pausedState.config);
       if (sessionConfig?.ladder) {
         window.KcPractice?.restore?.(sessionConfig.ladder);
         delete sessionConfig.ladder;
@@ -976,7 +871,7 @@ const PracticeSession = (() => {
     // Read the clock before `pausedState` is cleared below, and read it HERE
     // rather than at load: the break is still running while the resume panel
     // is on screen.
-    const clock = _effectiveRemaining(pausedState);
+    const clock = _snap().effectiveRemaining(pausedState);
     state = {
       served: pausedState.served,
       phase: pausedState.phase,
@@ -1006,8 +901,8 @@ const PracticeSession = (() => {
   };
 
   const discard = () => {
-    const dropped = pausedState ? _readConfig(pausedState.config) : null;
-    _clearSaved();
+    const dropped = pausedState ? _snap().readConfig(pausedState.config) : null;
+    _snap().clear();
     pausedState = null;
     resumeReady = false;
     sessionConfig = null;
@@ -1040,6 +935,7 @@ const PracticeSession = (() => {
      happened rather than congratulating them. */
   const finish = (reason, message) => {
     if (!state) return;
+    window.AnswerHistory?.abandon();
     const { served } = state;
     // "Recorded answers are kept" is printed below, so make it true: an attempt
     // that was graded and never rated is still pending in the offline engine,
@@ -1059,7 +955,7 @@ const PracticeSession = (() => {
     // Read before stop() clears the planner: did the block solve its problem?
     const outcome = config ? window.KcPractice?.outcome?.() || null : null;
     if (config) window.KcPractice?.stop?.();
-    _clearSaved();
+    _snap().clear();
     _showResumeOption();
     sessionStatusRow.classList.add("hidden");
     pagePractice.classList.add("session-idle");
@@ -1091,7 +987,7 @@ const PracticeSession = (() => {
      change under the learner's hands (the same rule the idle picker keeps). */
   const configure = (cfg) => {
     if (state) return false;
-    sessionConfig = _readConfig(cfg);
+    sessionConfig = _snap().readConfig(cfg);
     return true;
   };
 
@@ -1161,14 +1057,14 @@ const PracticeSession = (() => {
         snapshot.remaining = Math.max(30, snapshot.remaining || 0);
       }
     }
-    _writeSaved(snapshot);
+    _snap().write(snapshot);
   });
 
   /* Nothing to prefill. `delta_drills_session_setup` — the localStorage key
      that carried the learner's last questions/answer-time/review-time — is not
      read or written anywhere any more; it is left on disk rather than migrated
      because deleting it buys nothing and a stale key is inert. */
-  pausedState = _readSaved();
+  pausedState = _snap().read();
   // A restored session is resumable the moment it loads. It used to stay
   // disabled until some later render happened to put the saved question on
   // screen, which on a fresh page load never happens — the queue renders
@@ -1183,14 +1079,30 @@ const PracticeSession = (() => {
        notch-menu.js never holds a second copy of the number — and returned
        already formatted, because that file is forbidden a clock of its own
        (practice/watch.py) and mm:ss is a clock's job. */
-    idleClockText: () => clockText(ANSWER_SECS()),
+    /* Between blocks nothing is on screen and the next question's clock is
+       its concept's, unknown until the queue serves it — so the idle notch
+       shows a placeholder rather than one concept's number as if it were a
+       rule. A paused question is on screen in every sense that matters, and
+       its own clock is what a resume gets. */
+    /* 🔴 THE PRECEDENCE THE RESUME WILL ACTUALLY USE, not a second copy of it.
+       This read `pausedState.secsAllowed` directly, which is the paused
+       QUESTION's concept cap — and `_phaseLimit` asks the block's OWN config
+       first. An ARENA exercise session set to 05:00, paused on a 20:00
+       concept, therefore advertised 20:00 on the notch and resumed at 05:00.
+       Asking the snapshot module keeps the two the same statement. `null` (a
+       scoped block's "No limit") falls through `clockText` as ∞, which is what
+       that resume really gets. Codex, 2026-09-09. */
+    idleClockText: () => {
+      if (pausedState) return clockText(_snap().phaseLimit(pausedState));
+      return window.SessionClock?.hasOwn?.() ? clockText(ANSWER_SECS()) : "--:--";
+    },
     answerSeconds: () => ANSWER_SECS(),
     reviewSeconds: () => REVIEW_SECS(),
     // True when a session was paused and is waiting to be resumed. switchTab
     // needs this to know the question on screen belongs to that session and
     // must not be replaced by a preference refresh.
     hasPausedSession: () => !!pausedState,
-    pausedConfig: () => (pausedState ? _readConfig(pausedState.config) : null),
+    pausedConfig: () => (pausedState ? _snap().readConfig(pausedState.config) : null),
     pausedServed: () => (pausedState ? pausedState.served : 0),
     config: () => (sessionConfig ? { ...sessionConfig } : null),
     configure,

@@ -23,9 +23,13 @@
        purpose: it stamps <html data-theme> before first paint, so a light-theme
        user never sees a frame of the dark palette. See theme.js. -->
   <script src="theme.js?v=1"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- 🔴 VENDORED, 2026-09-09 (Seth: "it needs to work without an internet
+       connection though, just completely locally"). Inter, KaTeX and the graph
+       libraries used to come from Google Fonts and jsDelivr, so with the cable
+       out the lessons lost their maths and the concept graph did not draw at
+       all. vendor/fonts/inter.css has its gstatic URLs rewritten to the woff2
+       files beside it. Refresh with vendor/README.md. -->
+  <link href="vendor/fonts/inter.css" rel="stylesheet">
   <link rel="stylesheet" href="styles/variables.css" />
   <link rel="stylesheet" href="styles/base.css?v=1" />
   <!-- Dark scrollbars. Loaded with the base layer, not as a feature, because
@@ -68,18 +72,18 @@
   <link rel="stylesheet" href="styles/account-menu.css?v=2" />
   <link rel="stylesheet" href="styles/instructor-review.css?v=3" />
   <link rel="stylesheet" href="styles/responsive.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/layout.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/layout.css?v=8" />
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
-  <link rel="stylesheet" href="styles/practice/readiness.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/readiness.css?v=4" />
   <link rel="stylesheet" href="styles/practice/question.css?v=5" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=6" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=8" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=9" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=10" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
@@ -120,7 +124,8 @@
   <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=3" />
   <!-- "Practice make_rays_1d" on an ARENA page: the setup dialog and the
        related-drills list. practice/exercise-session.js. -->
-  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/exercise-timer.css?v=1" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
        AFTER styles/practice/question.css, and this is the only thing about its
@@ -144,11 +149,18 @@
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
        No SRI integrity attrs on purpose: a stale/wrong hash would silently block
        the script. jsdelivr is already trusted for pyodide/cytoscape below. -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <script defer src="vendor/katex/katex.min.js"></script>
+  <script defer src="vendor/katex/auto-render.min.js"></script>
+  <!-- 🔴 THE ONLY TWO REMOTE SCRIPTS LEFT, and both are for a SIGNED-OUT
+       GUEST on the public site: Pyodide is the browser Python a guest with no
+       backend falls back to, Supabase the legacy client. Nothing on localhost
+       uses either — practice/runner.js sends every cell to the backend
+       whenever there is one — so offline they simply fail to load and no
+       feature goes with them. `defer` so a dead CDN cannot block parsing for
+       the connection timeout. -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Sign in with Google (Google Identity Services). auth-config.js sets the
        OAuth client id; app.js renders the button + handles the credential. -->
   <script src="auth-config.js?v=2"></script>
@@ -725,6 +737,25 @@
        thing to do to someone who has just arrived. -->
   <main class="page hidden" id="page-welcome">
     <div class="welcome-fork">
+      <!-- 🔴 LOCALHOST ONLY, revealed by app.js::initLocalSignIn. Google
+           sign-in needs accounts.google.com, so with no connection there was
+           no way back into an account once the token expired — and the whole
+           point of the local app is that it works with the cable out (Seth,
+           2026-09-09). This posts to the LOCAL backend's /auth/login, which
+           consults the local Postgres and nothing else.
+
+           IT IS ON THE WELCOME PAGE because that is the page a signed-out
+           learner actually lands on. The first home for it was the guest
+           banner next to the Google button, which is `display:none` in
+           exactly that state — the form existed and could never be seen. -->
+      <form id="local-signin" class="local-signin hidden">
+        <input id="local-signin-email" type="email" placeholder="you@example.com"
+               autocomplete="username" spellcheck="false">
+        <input id="local-signin-password" type="password" placeholder="password"
+               autocomplete="current-password">
+        <button type="submit" class="ghost">Sign in offline</button>
+        <span id="local-signin-msg" class="hint"></span>
+      </form>
       <!-- The pair rides in its own row so the fork can be a COLUMN: the row
            grows to fill the screen exactly as the fork itself used to, and
            the instructor arm below it takes only its content height. Without
@@ -1466,28 +1497,14 @@
           </div>
           <p class="readiness-caption" id="readiness-caption">ready for the ARENA curriculum</p>
           <p class="readiness-detail" id="readiness-detail"></p>
-          <!-- HOW LONG EACH QUESTION GETS, chosen BEFORE the block starts.
-               Seth, 2026-08-28: "I can change the amount of time that I have
-               per problem before I start the practice so that I actually have
-               more time to read the problems and the lessons ... Or I can
-               disable the timer entirely."
-
-               🔴 THE OPTIONS ARE NOT WRITTEN HERE. practice/session-clock.js
-               owns the presets and the stored choice; practice/session-idle.js
-               renders them into #question-clock-picker. A hard-coded list in
-               this file is a second copy of the rule that the clock in
-               practice/timer.js does not read.
-
-               🔴 IT SITS ON THE IDLE SURFACE ON PURPOSE, which is the only
-               screen that exists between blocks: the choice applies from the
-               next question onward, and a control that could be reached
-               mid-question would move a countdown while it was running. -->
-          <div class="question-clock" id="question-clock">
-            <span class="question-clock-label" id="question-clock-label">Time per question</span>
-            <div class="question-clock-options" id="question-clock-picker"
-                 role="radiogroup" aria-labelledby="question-clock-label"></div>
-            <p class="question-clock-note" id="question-clock-note"></p>
-          </div>
+          <!-- Each problem carries its own clock — its concept's cap in
+               lessons/placement_time_caps.json, the same table the placement
+               test charges against — sent on the question as `secs_allowed`
+               and read by practice/session-clock.js. Seth, 2026-09-09: "keyed
+               to how much time you need for each of them rather than what you
+               select at the beginning". The per-question picker that stood
+               here from 2026-08-28 to 2026-09-09 went with the choice. -->
+          <p class="session-clock-note" id="session-clock-note">Each problem has its own clock, set by its concept — the same one the placement test uses.</p>
           <!-- ONE button, two meanings: resume the paused question if there is
                one, otherwise start a fresh block. It PROXIES to the buttons
                below rather than reimplementing either — see the note there. -->
@@ -1575,7 +1592,12 @@
           <div class="session-status-row hidden" id="session-status-row">
             <span class="session-progress" id="session-progress">0</span>
             <span class="session-phase" id="session-phase">Answering</span>
-            <span class="session-countdown" id="session-countdown">02:00</span>
+            <!-- 🔴 NO NUMBER UNTIL A QUESTION IS SERVED (2026-09-09). This used
+                 to read 02:00, which was the allowance every question got; the
+                 clock is the PROBLEM's now, so a static minute-count here is a
+                 rule that no longer exists, standing over the first question's
+                 lesson gate. timer.js writes it on every phase change. -->
+            <span class="session-countdown" id="session-countdown">--:--</span>
             <button class="ghost session-pause-btn" id="session-pause-btn" type="button">Pause &amp; exit</button>
             <div class="question-meta-top hidden" id="question-meta-top">
               <span class="subtopic-label" id="subtopic-label"></span>
@@ -2129,7 +2151,7 @@ t.manual_seed(0)
   <script src="groups/groups_join.js?v=1"></script>
   <script src="groups/groups_lane.js?v=1"></script>
   <script src="groups/groups_view.js?v=3"></script>
-  <script src="app.js?v=35"></script>
+  <script src="app.js?v=36"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -2184,12 +2206,12 @@ t.manual_seed(0)
   <!-- Interactive concept-graph viz on the How It Works page (Cytoscape.js +
        dagre hierarchical layout — prereqs at bottom, dependents upward;
        fcose fallback. Lazy-initialised when scrolled into view). -->
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape-fcose@2.2.0/cytoscape-fcose.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js" defer></script>
+  <script src="vendor/graph/cytoscape.min.js" defer></script>
+  <script src="vendor/graph/layout-base.js" defer></script>
+  <script src="vendor/graph/cose-base.js" defer></script>
+  <script src="vendor/graph/cytoscape-fcose.js" defer></script>
+  <script src="vendor/graph/dagre.min.js" defer></script>
+  <script src="vendor/graph/cytoscape-dagre.min.js" defer></script>
   <script src="concept-graph/kc_crosswalk_mastery.js?v=1" defer></script>
   <script src="concept-graph/kc_interval.js?v=1" defer></script>
   <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
@@ -2207,7 +2229,7 @@ t.manual_seed(0)
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
-  <script src="practice/mode.js?v=10"></script>
+  <script src="practice/mode.js?v=11"></script>
   <script src="practice/questions.js?v=25"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
@@ -2215,7 +2237,14 @@ t.manual_seed(0)
   <!-- BEFORE timer.js: it reads the learner's per-question allowance through
        window.SessionClock on every phase change, and AFTER storage.js, whose
        getPracticeStorageKey() is what makes the choice per-account. -->
-  <script src="practice/session-clock.js?v=1"></script>
+  <script src="practice/session-clock.js?v=4"></script>
+  <!-- BEFORE timer.js, and after storage.js: it owns the pause snapshot (the
+       reader, the writer and the resume arithmetic, split out of timer.js on
+       2026-09-09 at Modulario's LOC limit) and keys it with
+       getPracticeStorageKey(). timer.js hands it the two allowance readers at
+       parse time — the dependency runs that way round precisely because this
+       file is parsed first. -->
+  <script src="practice/session-snapshot.js?v=2"></script>
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
@@ -2239,7 +2268,8 @@ t.manual_seed(0)
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=28"></script>
-  <script src="practice/timer.js?v=28"></script>
+  <script src="practice/answer-history.js?v=1"></script>
+  <script src="practice/timer.js?v=32"></script>
   <script src="practice/kernel.js?v=6"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2262,7 +2292,7 @@ t.manual_seed(0)
        must load after both. -->
   <script src="practice/notebook-code-edit.js?v=1"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
-  <script src="practice/runner.js?v=23"></script>
+  <script src="practice/runner.js?v=24"></script>
   <script src="practice/notebook.js?v=8"></script>
   <script src="practice/notebook-editor.js?v=5"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
@@ -2276,18 +2306,18 @@ t.manual_seed(0)
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
   <script src="concept-pill.js?v=3"></script>
-  <script src="practice/notch-menu.js?v=9"></script>
+  <script src="practice/notch-menu.js?v=10"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
        timer.js, whose `hasPausedSession()` decides which of those two the one
        button means, and after notch-menu.js for no reason but reading order. -->
   <script src="practice/readiness.js?v=4"></script>
-  <script src="practice/session-idle.js?v=7"></script>
+  <script src="practice/session-idle.js?v=8"></script>
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=3"></script>
-  <script src="practice/lessons.js?v=35"></script>
+  <script src="practice/lessons.js?v=36"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=3"></script>
@@ -2322,11 +2352,12 @@ t.manual_seed(0)
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
   <script src="practice/exercise-planner.js?v=2"></script>
-  <script src="practice/kc-practice.js?v=7"></script>
+  <script src="practice/kc-practice.js?v=8"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-session.js?v=4"></script>
+  <script src="practice/exercise-timer.js?v=1"></script>
+  <script src="practice/exercise-session.js?v=5"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
