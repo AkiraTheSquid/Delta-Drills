@@ -39,17 +39,13 @@
      - Controller: this file.
      - Data: window.ARENA_PREREQS_TEMP_* from predicted-prereqs-temp.js.
 
-   Public API:
-     window.ArenaUnlock.tryShow(onContinue)  → Promise<bool>
-       Async. Refreshes per-subtopic scores from the backend first
-       (so a Submit that just nudged a subtopic over its gate fires
-       the unlock on the SAME click, not next time). Returns true if
-       it consumed the Next-problem click (the view is now swapped
-       to the unlock page and onContinue will be called when Continue
-       is clicked); false if there is nothing to unlock and the
-       caller should load the next question immediately. Callers must
-       `await` it.
+   🪦 NOTHING AUTO-FIRES THIS VIEW ANY MORE — 2026-09-09. `tryShow` was the
+   Next-problem hook that put this card between the learner and their next
+   question; it and its caller are gone (practice/advance-events.js has the
+   reasoning). What is left is reached only when the learner asks for it, from
+   Targeted Practice's "Practice this problem".
 
+   Public API:
      window.ArenaUnlock.refreshScores() → Promise<void>
        Hits /api/practice/subtopics and populates window.__arenaSubtopicsCache
        (used by getArenaPrereqSubtopicScore in backend mode where
@@ -687,33 +683,14 @@
 
   window.ArenaUnlock = {
     refreshScores,
-    async tryShow(onContinue) {
-      // Refresh first so a just-submitted answer that bumped a subtopic
-      // over its gate is reflected on THIS click, not the next one.
-      try { await refreshScores(); } catch (_) {}
-      // 1. ARENA legacy unlocks (callum's ARENA_3.0 notebooks).
-      if (typeof window.getNextUnshownUnlockedArenaExercise === "function") {
-        const ex = window.getNextUnshownUnlockedArenaExercise();
-        if (ex) {
-          onContinueCallback = onContinue;
-          showCard(ex);
-          return true;
-        }
-      }
-      // 2. Procedural drills (new-algo, Delta-Drills repo). Drills BUILD
-      // subtopic mastery; we surface each once when its EWMA crosses the
-      // drill's unlockMinPct so the student moves from text-bank reps into
-      // a real applied notebook.
-      if (typeof window.getNextUnshownUnlockedDrill === "function") {
-        const drill = window.getNextUnshownUnlockedDrill();
-        if (drill) {
-          onContinueCallback = onContinue;
-          showCard(drill);
-          return true;
-        }
-      }
-      return false;
-    },
+    /* 🪦 `tryShow` was REMOVED — 2026-09-09, with the Next-button hook that was
+       its only caller (practice/advance-events.js carries the reasoning). It
+       auto-fired this card between practice questions and its only offer was
+       Open in Colab. Nothing auto-fires now; the card is reached on purpose or
+       not at all. `window.getNextUnshownUnlockedDrill` and
+       `window.getNextUnshownUnlockedArenaExercise` are left where they are —
+       they are queries over the catalogue, and Targeted Practice still reads
+       the same catalogue through its own search. */
     // Manual launch — used by the Targeted Practice "Practice this problem"
     // button. Switches the active tab to Practice (the unlock-page lives
     // inside #page-practice), then renders the unlock view for the given

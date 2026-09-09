@@ -28,7 +28,8 @@ import watch_placement
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
-from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
+from watch_invariants import (check_invariants, check_practice_never_detours_to_colab,
+                              check_a_torch_question_never_grades_on_pyodide,
                               check_a_deleted_practice_notice_stays_deleted,
                               check_the_clock_is_the_problems_own)
 from watch_basic_mode import (check_a_hidden_rating_still_commits_the_attempt,
@@ -628,6 +629,7 @@ def _every_check_is_registered(checks):
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
+              check_practice_never_detours_to_colab,
               check_a_torch_question_never_grades_on_pyodide,
               check_promotion_threshold_matches_the_backend,
               check_one_progress_readout,

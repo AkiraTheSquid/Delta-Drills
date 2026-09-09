@@ -29,7 +29,8 @@
          When showing, .practice-container is hidden and this view fills the
          practice tab's content area. Header / tabs / footer stay visible (they
          live outside #page-practice). Its own module: practice/arena-unlock.js
-         + practice/arena-unlock.css. Toggled by window.ArenaUnlock.tryShow(). -->
+         + practice/arena-unlock.css. Shown only by window.ArenaUnlock.showFor(),
+         from Targeted Practice — nothing auto-fires it since 2026-09-09. -->
     <div id="arena-unlock-page" class="arena-unlock-page hidden" aria-live="polite" aria-labelledby="arena-unlock-title">
       <div class="arena-unlock-card" id="arena-unlock-card">
         <div class="arena-unlock-banner" data-dd-info="arena-unlock">🎯 New ARENA exercise unlocked</div>
