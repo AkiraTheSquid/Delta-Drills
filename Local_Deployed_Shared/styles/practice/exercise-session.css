@@ -192,8 +192,8 @@
 }
 
 /* ── the practice page during a scoped block ─────────────────────── */
-/* The idle picker is irrelevant while a block that brought its own numbers is
-   on screen; the session row already says the phase and the clock. */
-#page-practice.dd-exercise-session:not(.session-idle) #question-clock {
+/* The idle clock line is irrelevant while a block that brought its own
+   numbers is on screen; the session row already says the phase and the clock. */
+#page-practice.dd-exercise-session:not(.session-idle) #session-clock-note {
   display: none;
 }

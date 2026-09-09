@@ -5,6 +5,17 @@ body.lesson-mode #practice-aids,
 body.lesson-mode #practice-submit-area,
 body.lesson-mode #practice-feedback-area,
 body.lesson-mode #question-imports,
+/* 🔴 THE DRILL'S EXAMPLES ARE A SIBLING OF #question-text, NOT A CHILD OF IT.
+   Every gate (practice/lessons.js, practice/example-gate.js) takes the screen
+   by rewriting `#question-text` alone, so anything renderQuestion wrote into
+   the nodes AROUND it survives the takeover. `#question-imports` and
+   `#question-visual` were on this list from the start; `#question-examples`
+   shipped later (2026-08-28) and was never added — so a gate that fired after
+   a drill had rendered left "For this input, return this" and "Not this" on
+   screen under the lesson, at full page width, because the 780px cap in
+   notebook.css is on #question-text and nothing else. Seth, 2026-09-09, with a
+   screenshot of exactly that. */
+body.lesson-mode #question-examples,
 body.lesson-mode #question-visual,
 body.lesson-mode #torch-colab-notice,
 body.lesson-mode #question-meta-top,

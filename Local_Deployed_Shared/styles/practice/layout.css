@@ -67,6 +67,29 @@
   overflow: hidden;
 }
 
+/* 🔴 THE IDLE SURFACE SCROLLS; THE RUNNING ONE DOES NOT. `#page-practice` is a
+   fixed `100vh - topbar` box with `overflow: hidden` above, and that is right
+   DURING a session: `.practice-split` fills it and each of the two panels has
+   its own `overflow-y: auto`, so the prompt and the editor scroll separately
+   and neither the topbar nor the notch ever leaves the screen.
+
+   Between blocks there is no such panel. The readiness card is a direct child
+   of this box, and it has kept growing — dial, caption, the clock line, the
+   Continue button, "What you are learning", the weekly bars — so past roughly
+   1000px of content its bottom was simply CLIPPED, with nothing to scroll and
+   no scrollbar to say anything had been cut (Seth, 2026-09-09: "it's cut off
+   at the bottom ... you can't scroll down on this page"). `overflow: hidden`
+   on an element that overflows is not a layout, it is a deletion.
+
+   Scoped to `.session-idle` (1,2,0 — it beats the (0,1,0) rule above) rather
+   than relaxed for every state, because a scrolling container during a session
+   is the bug this file's history opens with: the split claims the full height,
+   the surplus scrolls the WHOLE page, and the two panels' own scrollers never
+   engage. */
+#page-practice.session-idle .practice-container {
+  overflow-y: auto;
+}
+
 .practice-split {
   display: flex;
   flex: 1 1 auto;

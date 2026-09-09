@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, lessons
+from app import content_gaps, diagnostic, kc_graph, lessons
 from app.practice.grading import select_question_for_difficulty
 from app.prioritization import (
     answered_question_ids,
@@ -19,6 +19,20 @@ from app.prioritization import (
     target_difficulty,
 )
 from app.questions import get_questions_by_subtopic
+def secs_allowed_for(question_id: int, ladder_kc: str | None) -> int:
+    """The answer clock this practice question gets: its concept's cap from
+    lessons/placement_time_caps.json — the same number a placement probe on
+    that concept gets (diagnostic.kc_cap_secs), so the time is the PROBLEM's,
+    never a choice made before the block (Seth, 2026-09-09). The concept is
+    the one the ladder narrowed to; a question served un-narrowed is timed by
+    the LONGEST of the concepts it targets (a problem that integrates two
+    needs the longer clock); one with no concept at all gets the table's
+    default."""
+    kcs = [ladder_kc] if ladder_kc else kc_graph.question_kcs(question_id)
+    caps = [diagnostic.kc_cap_secs(kc) for kc in kcs if kc]
+    return max(caps) if caps else diagnostic.kc_cap_secs(None)
+
+
 class SubtopicDry(Exception):
     """This subtopic has nothing servable right now. `gap` is the dict
     content_gaps.record already stored (None when the pool was simply empty

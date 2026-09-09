@@ -63,6 +63,15 @@ class NextQuestionResponse(BaseModel):
     # placement-timer.js reads it off the question; the status carries the
     # same number as plan.problem_secs_allowed for the pending probe.
     diagnostic_secs_allowed: int | None = None
+    # THIS question's answer clock, seconds, on the ordinary practice path:
+    # its concept's cap from lessons/placement_time_caps.json — the SAME table
+    # the placement charges against, so a problem is timed by what it needs,
+    # not by anything chosen at the start of a block (Seth, 2026-09-09: "keyed
+    # to how much time you need for each of them rather than what you select
+    # at the beginning ... like the diagnostic"). None on a placement probe,
+    # which carries diagnostic_secs_allowed instead. session-clock.js reads it
+    # off the question; question_pick.secs_allowed_for computes it.
+    secs_allowed: int | None = None
     # First-encounter lesson gate: target KCs of this question the learner has
     # not been exposed to yet. Each entry: {kc, kc_title, kp_title, lesson_id,
     # lesson_title, topic}. The frontend shows the introducing KP(s) BEFORE

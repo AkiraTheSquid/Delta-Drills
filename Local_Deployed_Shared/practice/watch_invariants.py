@@ -14,100 +14,120 @@ import sys
 from watch_common import HERE, SHARED, read
 
 
-def check_the_clock_is_one_choice_made_before_the_block():
-    """The learner picks the time per QUESTION, and nothing else about a block.
+def check_the_clock_is_the_problems_own():
+    """The clock is the PROBLEM's — its concept's cap — not a choice made
+    before the block, and not a constant.
 
-    🔴 THIS CHECK WAS INVERTED ON 2026-08-28, and the name went with it. It
-    used to be `check_the_session_clock_is_not_the_learners_to_set` and it
-    asserted the two allowances were integer constants in timer.js — Seth's
-    2026-08-23 rule, "it's a predetermined timer that they don't control".
-    Seth, 2026-08-28: "I can change the amount of time that I have per problem
-    before I start the practice so that I actually have more time to read the
-    problems and the lessons ... Or I can disable the timer entirely." What
-    broke the old rule is that the first-encounter LESSON is read on the answer
-    clock (nothing in lessons.js holds it), so 02:00 had to cover reading a
-    concept and then answering a question about it.
+    Seth, 2026-09-09: "keyed to how much time you need for each of them rather
+    than what you select at the beginning. it should be like the diagnostic
+    for the timing of the questions ... using the same time." This replaces
+    `check_the_clock_is_one_choice_made_before_the_block` (2026-08-28, the
+    idle-screen picker), which replaced the 2026-08-23 constants. What holds:
 
-    What survives the reversal, and is what this check is now for:
-
-      1. There is ONE allowance and one place it lives. timer.js reads it
-         through `window.SessionClock` per phase; the picker writes it there.
-         A number captured into a constant at load, or carried on the pause
-         snapshot, is a clock running under a rule the picker no longer says.
-      2. "No limit" is a real state (`secs: null`), never a large number. The
-         countdown callbacks force-submit an answer and force-advance a review,
-         so the untimed case must run NO interval at all.
-      3. A block still has no LENGTH and no quota. `shouldFinishInsteadOfAdvance`
-         returning a comparison again reinstates a session that ends on its own,
-         which is the thing pause replaced — and the two inputs that set those
-         (questions, and a session length) must stay gone.
-      4. There is no End session — not the button, not the handler, not the
-         menu item. Pause is the only way out.
-      5. The notch outlives the session, so it hangs off the topbar and not off
-         `.practice-split` (which is display:none between blocks). This one is
-         pure DOM order: nothing throws when it regresses, the notch simply is
-         not on the idle screen.
+      1. The server stamps every practice question with `secs_allowed`
+         (question_pick.secs_allowed_for, the same placement_time_caps.json
+         table the placement charges against) and session-clock.js READS it
+         off the question — no store, no presets, no `set`.
+      2. timer.js reads the allowance through ANSWER_SECS()/REVIEW_SECS() and
+         `window.SessionClock`, never a captured value: the number changes
+         with every question served.
+      3. A missing stamp is the CEILING, never "No limit". `null` still means
+         untimed downstream (an exercise session's own setup), and `_tick`
+         must still run no interval on it.
+      4. The pause snapshot carries the paused question's `secsAllowed` and
+         the resume reads it first: a resume rebuilt from the static bank
+         (no stamp) is timed the way the question was served.
+      5. The picker is gone from the idle screen and from index.html.
     """
     timer = read(os.path.join(HERE, "timer.js"))
     for name in ("ANSWER_SECS", "REVIEW_SECS"):
         assert re.search(rf"const {name} = \(\) => \{{", timer), (
-            f"timer.js reads {name} as a fixed value again — the learner's "
-            f"choice cannot reach a clock that captured its allowance once"
+            f"timer.js reads {name} as a fixed value again — one concept's "
+            f"clock would run over every other concept's problem"
         )
     assert "window.SessionClock" in timer, (
-        "timer.js no longer reads the learner's allowance from SessionClock — "
-        "the picker on the idle screen would set something nothing enforces"
+        "timer.js no longer reads the allowance from SessionClock"
     )
-    # 🔴 The one line that makes "No limit" real. Everything else about the
-    # untimed state is a consequence of never starting the interval.
     tick = timer.split("const _tick = (onExpire) => {", 1)
     assert len(tick) == 2, "timer.js::_tick is gone"
     tick_body = tick[1].split("\n  };", 1)[0]
     assert "if (remaining === null) return;" in tick_body, (
-        "_tick starts an interval with no allowance set — under \"No limit\" "
-        "the expiry callback force-submits an answer the learner is still "
-        "writing, which is the whole thing the option turns off"
+        "_tick starts an interval with no allowance set — under an exercise "
+        "session's \"No limit\" the expiry callback force-submits an answer "
+        "the learner is still writing"
     )
     assert tick_body.index("if (remaining === null) return;") < tick_body.index("setInterval"), (
         "the no-limit guard is below setInterval — the countdown already started"
     )
+    snapshot_body = timer.split("const _snapshot = () => {", 1)[1].split("\n  };", 1)[0]
+    assert "secsAllowed:" in snapshot_body, (
+        "_snapshot no longer records the paused question's own clock — a "
+        "resume rebuilt from the bank would get the ceiling, not its concept's"
+    )
+    # 🔴 `_phaseLimit` moved to session-snapshot.js on 2026-09-09 (timer.js
+    # crossed Modulario's LOC limit). The rule it encodes did not move.
+    snapshot = read(os.path.join(HERE, "session-snapshot.js"))
+    limit = snapshot.split("const _savedLimit = (saved) => {", 1)[1].split("\n  };", 1)[0]
+    assert limit.index("config[field]") < limit.index("saved.secsAllowed"), (
+        "_savedLimit asks the paused question's cap before the block's own "
+        "setting — a scoped exercise session would resume on the wrong clock"
+    )
+    assert "ANSWER_SECS" not in limit and "REVIEW_SECS" not in limit, (
+        "_savedLimit reaches the live readers — it exists to answer ONLY from "
+        "the snapshot, so that _readSaved can tell 'this snapshot names no "
+        "allowance' apart from 'no limit'"
+    )
+    phase_limit = snapshot.split("const _phaseLimit = (saved) => {", 1)[1].split("\n  };", 1)[0]
+    assert phase_limit.index("_savedLimit(saved)") < phase_limit.index("ANSWER_SECS()"), (
+        "_phaseLimit asks the live question before the snapshot's own clock"
+    )
+    # 🔴 THE PARSE-TIME CLAMP MUST NOT REACH THE LIVE READERS. `_readSaved` runs
+    # before anything is restored, so a `_phaseLimit` there clamps the saved
+    # remaining against whatever question the page rendered in the background —
+    # which silently shortened every legacy snapshot. Codex, 2026-09-09.
+    read_saved = snapshot.split("const _readSaved = () => {", 1)[1].split("\n  };", 1)[0]
+    assert "_savedLimit(" in read_saved and "_phaseLimit(" not in read_saved, (
+        "_readSaved clamps against the live allowance again — a paused "
+        "question's time is cut to whatever question is on screen at load"
+    )
+    assert "restored.secs_allowed = pausedState.secsAllowed" in timer, (
+        "_restoreSavedQuestion no longer puts the clock back on a bank-rebuilt question"
+    )
+
     clock = read(os.path.join(HERE, "session-clock.js"))
-    assert "secs: null" in clock, (
-        "session-clock.js has no untimed preset. A big number is not the same "
-        "option: it looks identical for an hour and then submits mid-sentence"
+    assert "secs_allowed" in clock, (
+        "session-clock.js no longer reads the question's own clock"
     )
-    # The picker is drawn from the store, not written into the page: a list of
-    # minutes in index.html is a second rule the countdown does not read.
-    index_for_picker = read(os.path.join(SHARED, "index.html"))
-    assert 'id="question-clock-picker"' in index_for_picker, (
-        "the idle screen lost the per-question clock picker — the choice Seth "
-        "asked for has nowhere to be made"
+    for banned in ("localStorage", "OPTIONS", "const set ="):
+        assert banned not in clock, (
+            f"session-clock.js has `{banned}` again — a stored choice is a "
+            f"clock that is not the problem's"
+        )
+    index = read(os.path.join(SHARED, "index.html"))
+    assert 'id="question-clock-picker"' not in index, (
+        "the idle screen has the per-question picker back — the choice Seth "
+        "removed on 2026-09-09 has a place to be made again"
     )
-    assert index_for_picker.index('practice/session-clock.js') < index_for_picker.index('practice/timer.js?'), (
+    assert index.index("practice/session-clock.js") < index.index("practice/timer.js?"), (
         "session-clock.js must load BEFORE timer.js, which reads it"
     )
     idle_js = read(os.path.join(HERE, "session-idle.js"))
-    assert "prefs.OPTIONS.forEach" in idle_js, (
-        "session-idle.js hard-codes the presets instead of drawing SessionClock's"
-    )
+    assert "_paintClock" not in idle_js, "session-idle.js draws a clock picker again"
 
-    # 🔴 A CHOICE STORAGE WOULD NOT KEEP IS STILL THE CHOICE, for this page
-    # load. Run rather than pattern-matched: the failure this pins is silent
-    # and specific — `set` caught the write error and then re-derived state by
-    # RE-READING storage, so the picker snapped back to the old preset the
-    # instant it was clicked and the clock went on enforcing it. Codex found
-    # it on 2026-08-28; a source check would have passed either way.
-    clock_src = read(os.path.join(HERE, "session-clock.js"))
+    backend = os.path.join(SHARED, "..", "This-Directory-Only", "backend", "app")
+    router = read(os.path.join(backend, "practice", "questions_router.py"))
+    assert "secs_allowed=secs_allowed_for(" in router, (
+        "next_question no longer stamps the question with its concept's clock"
+    )
+    schemas = read(os.path.join(backend, "practice_schemas.py"))
+    assert "secs_allowed: int | None" in schemas, "NextQuestionResponse lost secs_allowed"
+
+    # Run, not pattern-matched: the reader follows the question, clamps to the
+    # ceiling, and answers the CEILING — never null — for anything unstamped.
     probe = """
-const store = {};
-let blocked = false;
-const localStorage = {
-  getItem: (k) => (k in store ? store[k] : null),
-  setItem: (k, v) => { if (blocked) throw new Error("denied"); store[k] = v; },
-};
-const getPracticeStorageKey = () => "practice_progress_probe";
 const window = {};
-""" + clock_src + """
+let PracticeAPI = { currentQuestion: null };
+""" + clock + """
 const eq = (got, want, why) => {
   if (got !== want) {
     console.error(`FAIL ${why}: got ${JSON.stringify(got)} want ${JSON.stringify(want)}`);
@@ -115,117 +135,22 @@ const eq = (got, want, why) => {
   }
 };
 const C = window.SessionClock;
-eq(C.currentId(), C.DEFAULT_ID, "an account that never chose is on the default");
-eq(C.set("10m"), true, "a real preset is accepted");
-eq(C.currentId(), "10m", "a written choice is the choice");
-eq(C.answerSecs(), 600, "the allowance follows the choice");
-
-// Storage now refuses every write. The choice must still be in force.
-blocked = true;
-eq(C.set("off"), true, "a refused write is still a choice made");
-eq(C.currentId(), "off", "a choice storage would not keep is still in force");
-eq(C.answerSecs(), null, "No limit means no allowance, not the old one");
-let heard = null;
-C.subscribe((o) => { heard = o.id; });
-eq(C.set("1m"), true, "the picker can be moved again while storage is refusing");
-eq(heard, "1m", "listeners are told what was chosen, not what storage kept");
-eq(C.currentId(), "1m", "the newest refused choice wins");
-
-// Another tab writes. That is a NEWER statement than our unpersisted one.
-store["practice_progress_probe_clock"] = "5m";
-eq(C.currentId(), "5m", "a write from elsewhere must beat a held choice");
-
-// An unknown id changes nothing.
-eq(C.set("90m"), false, "an unknown preset is refused");
-eq(C.currentId(), "5m", "a refused set must not reset the choice");
+eq(C.answerSecs(), 1200, "no question on screen = the ceiling");
+eq(C.hasOwn(), false, "no question on screen = no own clock");
+PracticeAPI.currentQuestion = { secs_allowed: 300 };
+eq(C.answerSecs(), 300, "the clock follows the question");
+eq(C.reviewSecs(), 300, "review gets the same number");
+eq(C.hasOwn(), true, "a stamped question has its own clock");
+PracticeAPI.currentQuestion = { secs_allowed: 99999 };
+eq(C.answerSecs(), 1200, "clamped to the ceiling, like the server's table");
+for (const bad of [null, undefined, 0, -5, "300", true, NaN]) {
+  PracticeAPI.currentQuestion = { secs_allowed: bad };
+  eq(C.answerSecs(), 1200, `unstamped (${String(bad)}) = the ceiling, never no-limit`);
+  eq(C.isUnlimited(), false, `unstamped (${String(bad)}) is not unlimited`);
+}
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
-    snapshot = timer.split("const _snapshot = () => {", 1)
-    assert len(snapshot) == 2, "timer.js::_snapshot is gone"
-    body = snapshot[1].split("\n  };", 1)[0]
-    for dead in ("answerSecs:", "reviewSecs:", "total:"):
-        assert dead not in body, (
-            f"_snapshot writes `{dead}` again. The clock is a constant and a "
-            f"block has no length; a snapshot carrying either resumes under "
-            f"rules this build does not enforce"
-        )
-    # 2026-09-06: a quota EXISTS again, but only for a block an exercise page
-    # configured (practice/exercise-session.js — Seth: "3. how many problems").
-    # The rule this guards is now narrower: the PLAIN block still has no
-    # length. The comparison may read `sessionConfig.quota` and nothing else,
-    # and the idle Start button must drop any installed config before it
-    # starts — otherwise a count set on a notebook page leaks into the
-    # adaptive queue and ends a block nobody asked to end.
-    quota = re.search(r"const shouldFinishInsteadOfAdvance = \(\) =>\s*(.*?);", timer, re.S)
-    assert quota, "timer.js lost shouldFinishInsteadOfAdvance"
-    assert "sessionConfig?.quota" in quota.group(1) and "state.served" in quota.group(1), (
-        "`shouldFinishInsteadOfAdvance` compares something other than the "
-        "exercise session's own quota — a plain block must never end on its own"
-    )
-    assert re.search(
-        r"sessionStartBtn\.addEventListener\(\"click\", \(\) => \{\s*sessionConfig = null;\s*start\(\);",
-        timer,
-    ), (
-        "the idle Start button no longer clears sessionConfig — a quota set on "
-        "an exercise page would end the next plain block"
-    )
-
-    index_html = read(os.path.join(SHARED, "index.html"))
-    for dead in ('id="session-end-btn"', 'id="practice-notch-end"',
-                 'id="session-question-count"', 'id="session-answer-time"',
-                 'id="session-review-time"'):
-        assert dead not in index_html, (
-            f"{dead} is back in index.html — the learner is setting the "
-            f"session again, or ending it early"
-        )
-    assert 'id="practice-notch-stop"' in index_html, (
-        "the notch lost its square. It is the pause control that is always on "
-        "screen; the menu item alone is two clicks for the only way out"
-    )
-    # The square is LEFT of the clock: it is the first thing in the tab after
-    # the screen-reader phase span, and the clock follows it.
-    tab = index_html.split('id="practice-notch-tab"', 1)[1].split("</div>", 1)[0]
-    stop_at = tab.find('id="practice-notch-stop"')
-    clock_at = tab.find('id="practice-notch-clock"')
-    assert -1 not in (stop_at, clock_at) and stop_at < clock_at, (
-        "the square is no longer to the LEFT of the clock in the notch tab"
-    )
-    # 🔴 THE CLOCK IS IN THE TOPBAR NOW (Seth, 2026-08-24: "put the timer in
-    # the top middle bar rather than as the notch"), and this check inverted
-    # with it. It used to assert the notch hung off `.practice-container`
-    # rather than off `.practice-split` — the split is display:none between
-    # sessions, so a clock inside it vanished with it.
-    #
-    # The container has the same problem one level up: it is MOVED into
-    # #diagnostic-workspace-host while a placement probe is on screen, and it
-    # is not on any page except the Learner Home. A clock that is app chrome
-    # must not be a child of either. `.topbar-mid` is the only place that is
-    # true, and the ids are unchanged so timer.js / placement-timer.js /
-    # notch-menu.js all still find what they write.
-    mid_at = index_html.find('<div class="topbar-mid">')
-    container_at = index_html.find('<div class="practice-container">')
-    notch_at = index_html.find('id="practice-notch"')
-    assert -1 not in (mid_at, container_at, notch_at), "topbar or practice page lost a landmark"
-    assert mid_at < notch_at < container_at, (
-        "the session clock is back inside the practice workspace. It has to "
-        "live in .topbar-mid: inside .practice-container it travels into the "
-        "placement host and off every page that is not the Learner Home"
-    )
-
-    # The idle screen reads a real number, and says so honestly when it cannot.
-    idle = read(os.path.join(HERE, "session-idle.js"))
-    assert "PracticeReadiness" in idle and "hasPausedSession" in idle, (
-        "session-idle.js no longer reads readiness, or decides resume-vs-start "
-        "from timer.js's own answer"
-    )
-    assert 'pctEl.textContent = "—"' in idle, (
-        "the idle screen renders an unreadable readiness as a number. A "
-        "registry that would not load is a claim about the network, not a 0% "
-        "claim about the learner"
-    )
-
-
 def check_invariants():
     for fname in ("README.md", "watch.py"):
         first = read(os.path.join(HERE, fname)).splitlines()[:1]

@@ -197,3 +197,27 @@
 .competency-done-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
 .competency-done-body { font-size: 13px; line-height: 1.55; color: var(--muted); margin-bottom: 12px; }
 .competency-done-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+
+
+/* OFFLINE SIGN-IN — localhost only (app.js reveals it). One row under the
+   Google button: it is the fallback door, not the front one, so it is quiet. */
+.local-signin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.local-signin input {
+  font-size: 13px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  min-width: 170px;
+}
+.local-signin button {
+  font-size: 13px;
+  padding: 5px 12px;
+}

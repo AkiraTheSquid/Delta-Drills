@@ -733,42 +733,31 @@ const LessonGate = (() => {
         };
       };
 
-      // Offer a cold attempt before mounting any lesson prose, examples, or
-      // runnable code. An explicit lesson preview without a question still
-      // opens the lesson directly.
-      if (question && typeof loadQuestionsBank === "function") await loadQuestionsBank();
-      const bankQuestion = question && typeof getQuestionFromBank === "function"
-        ? getQuestionFromBank(question.question_id) : null;
-      if (bankQuestion?.starter_code && !question.diagnostic_active) {
-        _cleanup();
-        document.body.classList.add("lesson-mode");
-        const page = pages[0];
-        if (questionNumber) questionNumber.textContent = "Choose a starting point";
-        questionText.innerHTML =
-          `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(page.seg.title || page.kp.title)}</h2>` +
-          '<p>Want to check what you already know before seeing the lesson?</p>' +
-          '<div class="lesson-actions">' +
-          '<button type="button" class="primary" id="lesson-attempt-btn">Try the problem first</button>' +
-          '<button type="button" class="ghost" id="lesson-review-btn">Review the lesson first</button></div>' +
-          '<p>Your attempt is graded normally. You can review the lesson on the next visit if you need it.</p>';
-        _showTopbar(page);
-        _el("lesson-attempt-btn").onclick = () => {
-          if (finished) return;
-          finished = true;
-          question.attempt_first = true;
-          question.starter_code = bankQuestion.starter_code;
-          question.ladder_support = false;
-          // No exposure, worked-example credit, or lesson XP for a skip.
-          _cleanup();
-          onDone();
-        };
-        _el("lesson-review-btn").onclick = () => {
-          if (!finished) showPage();
-        };
-        _el("lesson-title")?.focus();
-      } else {
-        showPage();
-      }
+      /* 🪦 "CHOOSE A STARTING POINT" — DELETED 2026-09-09, and it must not come
+         back here. This branch put a two-button chooser ("Try the problem
+         first" / "Review the lesson first") in front of the lesson whenever the
+         waiting question happened to carry starter code — which on the practice
+         tab is most of them. Seth, 2026-09-09: "I think it extended that
+         philosophy to like the practice tab, which I didn't desire at all …
+         that's exclusively a notebook option."
+
+         It is a notebook option and it already exists there, as the
+         "How do you want to start?" radio in the exercise dialog
+         (practice/exercise-session.js) → `startPlanned({attemptFirst})` →
+         practice/exercise-planner.js spends the block's first slot on a variant
+         of the exercise. That path stamps `attempt_first` on the served
+         question (practice/kc-practice.js), and the FIRST line of `maybeShow`
+         returns false on it, so the notebook's choice still skips this gate.
+         Two implementations of one idea; this was the leaked one.
+
+         It is also what Seth was looking at when he reported the broken screen.
+         The chooser ran `_cleanup()` and then re-entered `lesson-mode`, so the
+         previous drill's `#question-examples` — a SIBLING of `#question-text`,
+         which no gate rewrites — stayed on screen underneath it, full-bleed,
+         with no editor and no Submit. That sibling is hidden by
+         styles/practice/lessons.css now, which is the general fix; deleting
+         this branch is the specific one. */
+      showPage();
       return true;
     } catch (err) {
       console.warn("[lessons] gate error — continuing without lesson:", err);

@@ -39,7 +39,7 @@ from app.practice_schemas import (
     SubmitResponse,
 )
 from app import content_gaps
-from app.practice.question_pick import SubtopicDry, pick_for_subtopic
+from app.practice.question_pick import SubtopicDry, pick_for_subtopic, secs_allowed_for
 from app.prioritization import (
     ladder_fields,
     ladder_starter,
@@ -295,6 +295,9 @@ def next_question(
         # measures prior knowledge — teaching first would corrupt it), so
         # this only runs on the normal adaptive-queue path.
         lesson_gate=lessons.unexposed_target_kcs(question.id, user_state.kc_exposure),
+        # The problem's own clock — its concept's placement cap, not a choice
+        # made before the block. See question_pick.secs_allowed_for.
+        secs_allowed=secs_allowed_for(question.id, ladder.get("ladder_kc")),
         **mastery_fields,
         **ladder,
     )

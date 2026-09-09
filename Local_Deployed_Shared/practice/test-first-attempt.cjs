@@ -110,24 +110,18 @@ async function lessonPage(t) {
   return page;
 }
 
-test('lesson entry offers attempt before any examples; skipping grants no lesson credit', async t => {
+test('ordinary practice opens the lesson directly without a starting-point chooser', async t => {
   const page = await lessonPage(t);
-  assert.equal(await page.locator('#lesson-attempt-btn').isVisible(), true);
-  assert.doesNotMatch(await page.locator('body').innerText(), /LESSON SECRET|ANSWER SECRET/);
-  assert.doesNotMatch(await page.locator('#code-editor').inputValue(), /SECRET/);
-  assert.equal(await page.evaluate(() => calls.mount), 0);
-  await page.locator('#lesson-attempt-btn').click();
-  assert.deepEqual(await page.evaluate(() => calls), { credit: 0, exposure: 0, xp: 0, mount: 0, done: 1 });
-  assert.equal(await page.evaluate(() => q.attempt_first), true);
-  assert.equal(await page.locator('#code-editor').inputValue(), q391.starter_code);
-  assert.equal(await page.evaluate(() => document.body.classList.contains('lesson-mode')), false);
-  // A persisted question must resume without opening the gate again.
-  assert.equal(await page.evaluate(() => LessonGate.maybeShow(JSON.parse(JSON.stringify(q)), done)), false);
+  await page.locator('#lesson-continue-btn').waitFor();
+  assert.equal(await page.locator('#lesson-attempt-btn').count(), 0);
+  assert.equal(await page.locator('#lesson-review-btn').count(), 0);
+  assert.match(await page.locator('body').innerText(), /LESSON SECRET/);
+  assert.deepEqual(await page.evaluate(() => calls), { credit: 0, exposure: 0, xp: 0, mount: 1, done: 0 });
 });
 
-test('review choice still teaches, credits exposure, then renders pending question', async t => {
+test('completing the lesson credits exposure once and renders the pending question', async t => {
   const page = await lessonPage(t);
-  await page.locator('#lesson-review-btn').click();
+  await page.locator('#lesson-continue-btn').waitFor();
   assert.match(await page.locator('body').innerText(), /LESSON SECRET/);
   assert.match(await page.locator('#code-editor').inputValue(), /ANSWER SECRET/);
   await page.locator('#lesson-continue-btn').click();
@@ -135,25 +129,23 @@ test('review choice still teaches, credits exposure, then renders pending questi
   assert.equal(await page.evaluate(() => !!q.attempt_first), false);
 });
 
-test('ARENA setup passes first-attempt preference; no-variant exercises hide it', async t => {
+test('ARENA drills start a scoped ladder with valid independent clock options', async t => {
   const page = await browserPage(t);
   await page.evaluate(() => {
     window.getPracticeStorageKey = () => 'test';
-    window.SessionClock = { OPTIONS: [{ id: '5m', secs: 300, label: '5:00' }, { id: '2m', secs: 120, label: '2:00' }] };
-    window.PracticeSession = { isActive: () => false, hasPausedSession: () => false, configure() {}, start() {} };
-    window.KcPractice = { startPlanned: async (kc, cfg) => { window.started = cfg; return true; } };
+    window.SessionClock = { answerSecs: () => 1200 };
+    window.PracticeSession = { isActive: () => false, hasPausedSession: () => false, configure(cfg) { window.cfg = cfg; }, start() { window.started = true; } };
+    window.KcPractice = { startScoped: async kc => { window.scoped = kc; return true; }, startPlanned() { throw Error('obsolete planner'); } };
   });
   await page.addScriptTag({ content: source('exercise-session.js') });
   await page.evaluate(() => ExerciseSession.open({ kc: 'merge', title: 'Flatten', variants: [391] }));
-  assert.equal(await page.locator('input[value="attempt"]').isChecked(), true);
+  assert.equal(await page.locator('input[value="attempt"]').count(), 0);
+  assert.equal(await page.locator('input[name="answer"][value="5m"]').isChecked(), true);
   await page.locator('.dd-ex-start-btn').click();
-  assert.equal(await page.evaluate(() => started.attemptFirst), true);
-  await page.evaluate(() => ExerciseSession.open({ kc: 'merge', title: 'Flatten', variants: [391] }));
-  await page.locator('input[value="adaptive"]').check();
-  await page.locator('.dd-ex-start-btn').click();
-  assert.equal(await page.evaluate(() => started.attemptFirst), false);
-  await page.evaluate(() => ExerciseSession.open({ kc: 'merge', title: 'Flatten', variants: [391] }));
-  assert.equal(await page.locator('input[value="adaptive"]').isChecked(), true);
+  assert.deepEqual(await page.evaluate(() => [started, scoped, cfg.answer, cfg.review, cfg.quota]), [true, 'merge', 300, 120, 8]);
   await page.evaluate(() => ExerciseSession.open({ kc: 'other', title: 'No variants', variants: [] }));
-  assert.equal(await page.locator('.dd-ex-start-choice').isVisible(), false);
+  await page.locator('.dd-ex-advanced > summary').click();
+  await page.locator('label').filter({ has: page.locator('input[name="answer"][value="off"]') }).click();
+  await page.locator('.dd-ex-start-btn').click();
+  assert.deepEqual(await page.evaluate(() => [scoped, cfg.answer]), ['other', null]);
 });
