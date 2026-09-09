@@ -104,6 +104,106 @@ def check_public_api():
 
 
 # ── Invariant checks ──────────────────────────
+_COMMENT_RE = re.compile(r"/\*.*?\*/", re.S)
+# Leaf rules only: `[^{}]*` cannot cross a brace, so an @media header is never
+# mistaken for a selector and its inner rules match on their own.
+_RULE_RE = re.compile(r"([^{}]*)\{([^{}]*)\}")
+_DISPLAY_RE = re.compile(r"(?:^|[;{\s])display\s*:\s*([a-z-]+)", re.I)
+_COMBINATOR_RE = re.compile(r"[\s>+~]+")
+
+
+def _classes_that_start_hidden():
+    """Every class that shares a `class="…"` attribute with `hidden` in the
+    markup — i.e. every class whose element the app expects `.hidden` to be
+    able to hide."""
+    html = _read(os.path.join(SHARED, "index.html"))
+    found = set()
+    for attr in re.findall(r'class="([^"]*)"', html):
+        names = attr.split()
+        if "hidden" in names:
+            found.update(n for n in names if n != "hidden")
+    return found
+
+
+def _rules(css):
+    """(position, [selector, …], body) for every leaf rule, comments removed."""
+    out = []
+    for m in _RULE_RE.finditer(_COMMENT_RE.sub("", css)):
+        selectors = [s.strip() for s in m.group(1).split(",") if s.strip()]
+        if selectors:
+            out.append((m.start(), selectors, m.group(2)))
+    return out
+
+
+def _subject(selector):
+    """The rightmost compound — the part that decides WHICH element the rule
+    paints. `.a .b:hover` is a rule about `.b`, not about `.a`."""
+    return _COMBINATOR_RE.split(selector.strip())[-1]
+
+
+def _has_class(compound, cls):
+    return re.search(r"\.%s(?![\w-])" % re.escape(cls), compound) is not None
+
+
+def _check_hidden_is_not_overruled():
+    """🔴 `.hidden { display: none }` lives in components.css, which is linked
+    FIRST. Any rule in this folder that gives one of those same elements a
+    `display` of its own has at least equal specificity and wins by order, so
+    the element can never be hidden again — it just renders, wired to nothing.
+
+    That is not hypothetical: `.local-signin` shipped the offline email +
+    password door to production this way (aad8c6e1), `#practice-submit-area`
+    kept the submit row up after grading, and `.ewma-accuracy` kept a stale
+    reading on screen. Each was found by a person looking at the page.
+
+    So: a class that appears beside `hidden` in the markup, and that any rule
+    here gives a `display` of its own, must be re-asserted by a LATER rule in
+    the same file that names `.hidden` on the same element and sets
+    `display: none`. Later, because at equal specificity source order decides,
+    and a guard written above the rule it guards does nothing.
+
+    Two things this cannot see, both still reading jobs: a class the JS adds
+    `hidden` to at runtime (the markup never says so), and a showing rule whose
+    specificity genuinely EXCEEDS the guard's — `.local-signin.active` would
+    beat `.local-signin.hidden` no matter the order."""
+    starts_hidden = _classes_that_start_hidden()
+    for fname in sorted(f for f in os.listdir(HERE) if f.endswith(".css")):
+        rules = _rules(_read(os.path.join(HERE, fname)))
+        shows, guards = {}, {}
+        for pos, selectors, body in rules:
+            display = _DISPLAY_RE.search(body)
+            if not display:
+                continue
+            hides = display.group(1).lower() == "none"
+            for selector in selectors:
+                compound = _subject(selector)
+                names = re.findall(r"\.([A-Za-z0-9_-]+)", compound)
+                guarded = "hidden" in names
+                for cls in names:
+                    if cls not in starts_hidden:
+                        continue
+                    if guarded and hides:
+                        guards[cls] = max(guards.get(cls, -1), pos)
+                    elif not guarded and not hides:
+                        # The LAST one is the one that has to be beaten.
+                        shows.setdefault(cls, (pos, selector, display.group(1)))
+                        if pos > shows[cls][0]:
+                            shows[cls] = (pos, selector, display.group(1))
+        for cls, (pos, selector, value) in shows.items():
+            assert cls in guards, (
+                f"{fname}: `{selector} {{ display: {value} }}` beats the global "
+                f"`.hidden {{ display: none }}` (at least equal specificity, and this "
+                f"file is linked later), so an element index.html ships with "
+                f'class="… hidden" renders anyway. Add '
+                f"`.{cls}.hidden {{ display: none; }}` after it."
+            )
+            assert guards[cls] > pos, (
+                f"{fname}: the `.{cls}.hidden` guard is written ABOVE "
+                f"`{selector} {{ display: {value} }}`, so at equal specificity the "
+                f"showing rule still wins. Move the guard below it."
+            )
+
+
 def check_invariants():
     # No leftover modulario template markers.
     for fname in ("README.md", "watch.py"):
@@ -118,6 +218,7 @@ def check_invariants():
         "feedback.css lost the #practice-submit-area.hidden re-assert — "
         "the submit row will stay visible after grading"
     )
+    _check_hidden_is_not_overruled()
     # Rigid-session page states: idle hides the split, running hides setup.
     timer = _read(os.path.join(HERE, "timer.css"))
     assert "#page-practice.session-idle .practice-split" in timer, (
