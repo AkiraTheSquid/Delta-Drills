@@ -177,7 +177,28 @@ const initPractice = async () => {
     window.DiagnosticPage?.refresh?.();
     return;
   }
-  const nextQ = await PracticeAPI.getNextQuestion();
+  /* 🔴 A FAILED BOOT FETCH LANDS ON THE IDLE SURFACE, NOT IN THE CONSOLE.
+     practice.js calls initPractice() bare, so a throw here was an unhandled
+     rejection and nothing on screen said why no question came. The backend
+     answers 409 `content_exhausted` when the course has run dry for this
+     learner (app/practice/questions_router.py), and Seth met it on
+     2026-09-09 the hour he finished his placement: the page booted with a
+     silent error, and Start then dead-ended on the same sentence a second
+     later. `deadEnd` is what the Start path already does with it — idle
+     surface back, sentence on #session-summary, saved block left offerable —
+     so the boot failure reads the same as the in-session one. */
+  let nextQ;
+  try {
+    nextQ = await PracticeAPI.getNextQuestion();
+  } catch (err) {
+    const message = err?.message || "Could not load a question. Try again in a moment.";
+    if (typeof PracticeSession !== "undefined" && typeof PracticeSession.deadEnd === "function") {
+      PracticeSession.deadEnd(message);
+    } else {
+      console.warn("[practice] boot fetch failed:", message);
+    }
+    return;
+  }
   savePracticeProgress(practiceProgress);
   renderQuestion(nextQ, practiceQuestionCount);
 };
