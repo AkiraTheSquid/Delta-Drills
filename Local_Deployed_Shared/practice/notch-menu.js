@@ -130,7 +130,7 @@
          `progressLabel()` returns "" when nothing is running, which is the
          same as not having asked. */
       const where = window.DiagnosticPage?.progressLabel?.() || "";
-      const rule = "Every question gets the same 2:00.";
+      const rule = "Each concept has its own clock, the same for every learner.";
       if (tab) tab.title = where ? `${where} · ${rule}` : `Placement test — ${rule}`;
       if (srPhase) srPhase.textContent = where || "Placement question";
       return;
@@ -154,7 +154,7 @@
       );
       const idle = _session()?.idleClockText?.() || "";
       if (clock.textContent !== idle) clock.textContent = idle;
-      if (tab) tab.title = "Each question is timed. This is what the next one gets.";
+      if (tab) tab.title = "Each problem has its own clock, set by its concept.";
       if (srPhase) srPhase.textContent = "";
       return;
     }

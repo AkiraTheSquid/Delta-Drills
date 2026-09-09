@@ -6,8 +6,18 @@ Third-party code the app ships **as files it serves itself**, rather than
 pulling from a CDN at runtime. One subfolder per library, each with its own
 README, LICENSE and `watch.py`.
 
-There is exactly one tenant today: `tiptap/`, the editor engine behind the
-Groups tab's three-state checklists.
+Four tenants today:
+
+- `tiptap/` — the editor engine behind the Groups tab's three-state checklists.
+- `fonts/` — Inter (woff2 + `inter.css` with its gstatic URLs rewritten to the
+  files beside it).
+- `katex/` — the maths renderer for question prompts and lesson prose.
+- `graph/` — cytoscape + dagre + fcose, the How It Works concept graph.
+
+The last three were vendored on 2026-09-09 (Seth: *"it needs to work without an
+internet connection though, just completely locally"*). With the cable out they
+had been coming from Google Fonts and jsDelivr, so lessons lost their maths and
+the concept graph did not draw.
 
 Vendoring rather than linking is a deliberate trade. A CDN `<script>` is a
 second origin that has to be up, has to be reachable from wherever a learner
@@ -121,3 +131,33 @@ what changed, so the watcher's export list is the contract.
 - 2026-09-02: Folder created for the Groups tab's checklists. First and only
   tenant: `tiptap/`, copied from Delta Note so both apps read and write the
   same stored document.
+
+## Offline vendoring (2026-09-09)
+
+Seth: "it needs to work without an internet connection though, just completely
+locally." These directories are third-party files that used to come from a CDN
+at page load, so with the cable out the lessons lost their maths and the
+concept graph did not draw:
+
+- `katex/` — KaTeX 0.16.11 (`katex.min.css`, `katex.min.js`,
+  `auto-render.min.js`) plus all 60 files in `katex/fonts/`, which the CSS
+  references by relative path.
+- `graph/` — cytoscape 3.30.2, layout-base 2.0.1, cose-base 2.2.0,
+  cytoscape-fcose 2.2.0, dagre 0.8.5, cytoscape-dagre 2.5.0.
+- `fonts/` — Inter 400/500/600/700. `inter.css` is Google's own stylesheet with
+  every `https://fonts.gstatic.com/...` URL rewritten to the `.woff2` beside
+  it, so nothing reaches out.
+
+Refresh a version by re-downloading from `https://cdn.jsdelivr.net/npm/<pkg>@<ver>/...`
+into the same filename and bumping the version in this note. For the fonts,
+re-fetch the `css2?family=Inter:wght@400;500;600;700&display=swap` URL **with a
+browser User-Agent** (Google serves a different, older format to curl's default
+agent), then rewrite its gstatic URLs to local filenames.
+
+🔴 Two remote scripts are deliberately LEFT in `index.html`: Pyodide and the
+Supabase client. Both exist only for a signed-out guest on the public site, and
+nothing on localhost uses either — `practice/runner.js` sends every cell to the
+backend whenever there is one. Offline they fail to load and no feature goes
+with them. `accounts.google.com/gsi/client` is the third: Google sign-in cannot
+be vendored, which is why the welcome page carries a localhost-only
+email+password form (`#local-signin`, `app.js::initLocalSignIn`).

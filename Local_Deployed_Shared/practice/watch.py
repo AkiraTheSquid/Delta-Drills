@@ -30,7 +30,7 @@ from watch_common import (  # noqa: F401 — re-exported for anything importing 
 )
 from watch_invariants import (check_invariants, check_a_torch_question_never_grades_on_pyodide,
                               check_a_deleted_practice_notice_stays_deleted,
-                              check_the_clock_is_one_choice_made_before_the_block)
+                              check_the_clock_is_the_problems_own)
 from watch_basic_mode import (check_a_hidden_rating_still_commits_the_attempt,
                              check_the_difficulty_question_is_one_row_docked_to_the_bottom)
 from watch_feedback import (
@@ -121,7 +121,11 @@ def check_public_api():
     assert "DeltaNotebook?.serialize()" in timer and "DeltaNotebook.restore" in timer, (
         "session pause/resume no longer preserves notebook cells"
     )
-    assert "Array.isArray(saved.draft.cells)" in timer, (
+    # 🔴 THE PARSER MOVED to session-snapshot.js on 2026-09-09 (timer.js
+    # crossed Modulario's LOC limit). timer.js still SERIALISES the cells;
+    # this side of the round trip is the reader's.
+    snapshot = read(os.path.join(HERE, "session-snapshot.js"))
+    assert "Array.isArray(saved.draft.cells)" in snapshot, (
         "saved-session parser drops multi-cell notebook draft on reload"
     )
     assert "/api/practice/question-context?question_id=" in timer, (
@@ -260,6 +264,7 @@ def check_public_api():
     # stay wired or a timer keeps running across a boundary, a stale grade
     # hijacks a new session, or pause loses the learner's current review.
     timer_js = read(os.path.join(HERE, "timer.js"))
+    snapshot_js = read(os.path.join(HERE, "session-snapshot.js"))
     for method in (
         "onQuestionRendered", "pauseForGrading", "pauseForAdvance",
         "recordReviewResult", "resumeAnswerPhase", "beginReviewPhase",
@@ -268,10 +273,29 @@ def check_public_api():
     ):
         assert method in timer_js, f"timer.js PracticeSession lost method: {method}"
     for needle in (
-        "SESSION_STATE_VERSION", "getPracticeStorageKey", "pagehide",
+        "SESSION_STATE_VERSION", "pagehide",
         "questionId", "draft", "remaining", "review",
     ):
         assert needle in timer_js, f"timer.js resumable snapshot lost field/hook: {needle}"
+    # 🔴 THE KEY IS THE ACCOUNT'S, and it is the snapshot module that builds
+    # it now — a snapshot filed under a key that is not per-account hands one
+    # learner another's paused question on a shared browser.
+    assert "getPracticeStorageKey" in snapshot_js, (
+        "session-snapshot.js no longer keys the snapshot per account"
+    )
+    for needle in ("_readSaved", "_writeSaved", "_clearSaved", "_effectiveRemaining"):
+        assert needle in snapshot_js, f"session-snapshot.js lost {needle}"
+    assert "install({ answerSecs:" in timer_js, (
+        "timer.js no longer hands session-snapshot.js its two allowance "
+        "readers — `_phaseLimit` would fall back to `null` (no limit) and a "
+        "resumed question would never expire"
+    )
+    # The handover goes through `_snap()`, which THROWS when the snapshot
+    # module is absent, so a missing script tag names the missing file instead
+    # of surfacing as "cannot read write of undefined" at the first save.
+    assert "window.SessionSnapshot is missing" in timer_js, (
+        "timer.js lost its explicit session-snapshot.js load-order assertion"
+    )
     assert 'state.phase !== "grading"' in timer_js, (
         "timer.js beginReviewPhase lost its grading-phase guard — a stale grade "
         "after End session → Start session hijacks the new session's first question"
@@ -610,7 +634,7 @@ if __name__ == '__main__':
               check_lesson_code_can_actually_run,
               check_colab_lesson_goes_to_the_notebook,
               check_a_resumed_clock_matches_the_break,
-              check_the_clock_is_one_choice_made_before_the_block,
+              check_the_clock_is_the_problems_own,
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,

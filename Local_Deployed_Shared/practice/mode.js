@@ -74,6 +74,10 @@ function upgradePracticeModeToBackend() {
     return false;
   }
   console.log("[practice] mode upgraded to backend after late provision");
+  /* The runtime label is painted before sign-in resolves, so it has to be told
+     when the mode moves — otherwise the editor keeps saying "Browser runtime"
+     over code that is now going to the backend. */
+  window.dispatchEvent(new CustomEvent("delta-practice-mode-changed"));
   return true;
 }
 

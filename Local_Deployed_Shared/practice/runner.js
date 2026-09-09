@@ -386,16 +386,16 @@ const TORCH_IMPORT = TORCH_IMPORT_RE;
    and the lesson notebook's per-cell Run buttons cannot drift apart on that
    question. The rules, in order:
 
-     * A lesson's example code and einops code stay in the browser — neither is
-       being graded, and there is no reason to spend a backend round trip on
-       experimentation.
-     * ...unless it is torch, which Pyodide cannot import AT ALL. That covers
-       most of the bank since the July conversion, so torch code goes to the
-       backend fork runner even though the two rules above would keep it local.
-       The code is sniffed as well as the question, so a learner who types
-       `import torch` themselves still lands on a runtime that can execute it.
-     * A guest has no backend to fall back to. Say so plainly rather than
-       letting Pyodide answer torch with a bare ModuleNotFoundError.
+     * If there is a backend, the backend runs it — every cell, lesson example
+       and einops experiment included (2026-09-09). Pyodide is a weaker Python
+       with no torch and no state between cells; preferring it for "ungraded"
+       code is what put a lesson's torch example on a runtime that cannot
+       import torch.
+     * The persistent kernel first (state kept between cells), then the
+       stateless /run-code fork. Both are this box's own CPU in local dev.
+     * A guest has no backend to fall back to, and only then does Pyodide run.
+       Torch is sniffed off the code as well as the question so a guest typing
+       `import torch` is told plainly instead of getting ModuleNotFoundError.
 
    Returns { text, failed, blocked, pyodide }. `text` is always something worth
    showing. `pyodide` is the instance when the run happened locally, so a
@@ -427,9 +427,16 @@ async function runSnippet(code, { question = null, onStatus = null, source = nul
     if (provisioned) upgradePracticeModeToBackend();
     say("");
   }
-  let useLocalPyodide =
-    practiceMode !== "backend" ||
-    ((!!window.LessonGate?.activeQuestion || questionNeedsEinops(question)) && !isTorch);
+  /* 🔴 A BACKEND IS ALWAYS PREFERRED, 2026-09-09. Seth: "I want it to utilize
+     my CPU for literally everything ... that front end essentially needs to be
+     deleted for the local app such that it always uses your local resources".
+     Lesson example code and einops code used to stay in the browser on the
+     grounds that neither is graded — but Pyodide is a second, weaker Python
+     that cannot import torch, keeps no state between cells, and silently
+     answers a torch lesson with ModuleNotFoundError. When there is a backend,
+     it runs the code, full stop. Pyodide survives for exactly one case: a
+     guest with no backend to send anything to. */
+  let useLocalPyodide = practiceMode !== "backend";
 
   if (practiceMode === "backend" && !useLocalPyodide) {
     const kernel = window.DeltaKernel;
@@ -521,16 +528,34 @@ async function runSnippet(code, { question = null, onStatus = null, source = nul
   }
 }
 
-window.DeltaRunner = { runSnippet, installCodeEditorKeys, renderRunOutputVisual };
+window.DeltaRunner = { runSnippet, installCodeEditorKeys, renderRunOutputVisual, syncRuntimeLabel };
 
-if (runtimeStatus) {
-  runtimeStatus.textContent = window.DeltaKernel?.available()
-    ? "Persistent runtime · state kept"
-    : "Browser runtime";
+/* 🔴 READ AT PAINT TIME, NOT AT PARSE TIME. This file is a classic script that
+   runs before sign-in resolves `practiceMode`, so the one-shot version of this
+   label said "Browser runtime" for the whole page load on a signed-in learner
+   whose code was in fact going to the backend — Seth read it as the app having
+   quietly chosen the browser. `syncRuntimeLabel` is called again whenever the
+   mode can have moved. */
+function syncRuntimeLabel() {
+  if (!runtimeStatus) return;
+  if (window.DeltaKernel?.available()) {
+    runtimeStatus.textContent = "Persistent runtime · state kept";
+  } else if (typeof practiceMode !== "undefined" && practiceMode === "backend") {
+    runtimeStatus.textContent = ["localhost", "127.0.0.1"].includes(location.hostname)
+      ? "Your machine · state per cell"
+      : "Server runtime · state per cell";
+  } else {
+    runtimeStatus.textContent = "Browser runtime";
+  }
+  if (runtimeResetBtn) {
+    runtimeResetBtn.classList.toggle("hidden", !window.DeltaKernel?.available());
+  }
 }
+syncRuntimeLabel();
+document.addEventListener("DOMContentLoaded", syncRuntimeLabel);
+window.addEventListener("delta-practice-mode-changed", syncRuntimeLabel);
 
 if (runtimeResetBtn) {
-  runtimeResetBtn.classList.toggle("hidden", !window.DeltaKernel?.available());
   runtimeResetBtn.addEventListener("click", async () => {
     runtimeResetBtn.disabled = true;
     if (runtimeStatus) runtimeStatus.textContent = "Restarting runtime…";
