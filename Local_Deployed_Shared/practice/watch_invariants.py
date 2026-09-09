@@ -716,3 +716,48 @@ def check_a_deleted_practice_notice_stays_deleted():
         "the progress bar must hide outside an active placement — a finished "
         "test showing a part-full bar reads as unfinished"
     )
+
+
+def check_practice_never_detours_to_colab():
+    """🪦 THE UNLOCK INTERSTITIAL, deleted 2026-09-09. Seth, on a screenshot of
+    it: "this should be deleted. stop routing to collab. same content goes in
+    web app."
+
+    Pressing Next used to hand the click to `ArenaUnlock.tryShow`, which could
+    put a full-page card between the learner and their next question. The card
+    offered one thing — Open in Colab ↗ — plus a self-rating on work the app
+    never saw, and that rating went straight into the mastery model: one click
+    in the screenshot moved both of its atoms from 92.0% to 54.8%.
+
+    It grows back easily, because "we already have the exercise, why not offer
+    it" reads like an improvement. So: nothing may call `tryShow`, the method
+    may not come back, and the Next handler may not reach ArenaUnlock at all.
+
+    NOT asserted: that the module is gone. `ArenaUnlock.showFor` is still the
+    Targeted Practice "Practice this problem" path — a trip the learner asks
+    for. The rule is about the app taking that trip on their behalf, mid-block.
+
+    ⚠️ Matched on the CALL shape `ArenaUnlock.tryShow(`, never the bare name:
+    the files scanned below carry tombstones naming it, and a bare-name check
+    would fail on its own gravestone. That has cost a run twice in this folder
+    already.
+    """
+    for fname in ("advance-events.js", "arena-unlock.js", "events.js", "timer.js"):
+        js = read(os.path.join(HERE, fname))
+        assert "ArenaUnlock.tryShow(" not in js, (
+            f"{fname} calls ArenaUnlock.tryShow — the Colab unlock interstitial "
+            "is back between the learner and their next question"
+        )
+    unlock = read(os.path.join(HERE, "arena-unlock.js"))
+    assert "tryShow(onContinue)" not in unlock, (
+        "arena-unlock.js re-exported tryShow. Nothing may auto-fire this card; "
+        "showFor (Targeted Practice, learner-initiated) is the only way in"
+    )
+    # The Next handler is the seam that mattered. It must advance and nothing
+    # more — an ArenaUnlock reference anywhere in that listener is the detour.
+    advance = read(os.path.join(HERE, "advance-events.js"))
+    handler = advance.split('nextProblemBtn.addEventListener("click"', 1)[1].split("});", 1)[0]
+    assert "ArenaUnlock" not in handler, (
+        "the Next-problem handler reaches ArenaUnlock again — Next must load "
+        "the next question, not offer a notebook"
+    )

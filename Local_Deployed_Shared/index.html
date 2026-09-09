@@ -2118,7 +2118,7 @@ t.manual_seed(0)
        document.querySelectorAll(".page") at script-eval time into a static
        NodeList that drives switchTab. Anything injected later is invisible
        to switchTab and the page silently stays .hidden when the tab clicks. -->
-  <script src="practice/arena-unlock-dom.js?v=2"></script>
+  <script src="practice/arena-unlock-dom.js?v=3"></script>
   <script src="targeted-practice/targeted-practice-dom.js?v=1"></script>
 
   <!-- Levels + the pill progress bar. Before app.js and guest-session.js: both of
@@ -2299,7 +2299,7 @@ t.manual_seed(0)
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
-  <script src="practice/arena-unlock.js?v=17"></script>
+  <script src="practice/arena-unlock.js?v=18"></script>
   <script src="practice/competency-bar.js?v=5"></script>
   <script src="practice/stage-ladder.js?v=16"></script>
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
@@ -2361,9 +2361,9 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=44"></script>
+  <script src="practice/events.js?v=45"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
-  <script src="practice/advance-events.js?v=1"></script>
+  <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
        the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
        of #practice-feedback-area and into a bar pinned to the bottom of the

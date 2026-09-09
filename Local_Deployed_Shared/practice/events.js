@@ -279,12 +279,14 @@ feedbackButtons.forEach((btn) => {
        confirm a decision they had already made.
 
        🔴 A SYNTHETIC CLICK ON THE REAL BUTTON, not a call to
-       `_loadNextPracticeQuestion`. That handler is not just a loader: it gives
-       `ArenaUnlock.tryShow` its chance to put the unlock interstitial up
-       first, and calling the loader directly here would silently skip the
-       interstitial for every learner who unlocked an ARENA exercise on the
-       question they just rated. `timer.js::_forceAdvance` reaches the next
-       question the same way, for the same reason.
+       `_loadNextPracticeQuestion`. The handler is the one place that knows how
+       to advance — it routes a placement probe differently from an ordinary
+       drill (`_advancePlacementOrFinish`), and calling the loader directly
+       here would load a practice question on top of a live placement test.
+       It used to matter for a second reason too, the ARENA unlock
+       interstitial, which was deleted on 2026-09-09.
+       `timer.js::_forceAdvance` reaches the next question the same way, for
+       the same reason.
 
        Fired AFTER `savePracticeProgress` so the rating is durable before
        anything can navigate: the load is async and a learner who closes the
