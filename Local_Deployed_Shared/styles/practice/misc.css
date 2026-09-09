@@ -208,6 +208,17 @@
   gap: 6px;
   margin-top: 8px;
 }
+/* 🔴 `display: flex` above BEATS `.hidden { display: none }` — same specificity
+   (0,1,0), and misc.css is linked after components.css, so the later rule wins.
+   Without this line the offline door — an email field, a password field and a
+   "Sign in offline" button — renders on PRODUCTION for every visitor, wired to
+   nothing (app.js returns early off localhost). Shipped visible in aad8c6e1.
+   The same collision has bitten `.ewma-accuracy` and the feedback channel in
+   basic-mode.css: any `.hidden` element whose class also sets `display` needs
+   its own `.hidden` guard. */
+.local-signin.hidden {
+  display: none;
+}
 .local-signin input {
   font-size: 13px;
   padding: 5px 9px;
