@@ -115,12 +115,15 @@ def check_the_clock_is_the_problems_own():
     assert "_paintClock" not in idle_js, "session-idle.js draws a clock picker again"
 
     backend = os.path.join(SHARED, "..", "This-Directory-Only", "backend", "app")
-    router = read(os.path.join(backend, "practice", "questions_router.py"))
-    assert "secs_allowed=secs_allowed_for(" in router, (
-        "next_question no longer stamps the question with its concept's clock"
-    )
-    schemas = read(os.path.join(backend, "practice_schemas.py"))
-    assert "secs_allowed: int | None" in schemas, "NextQuestionResponse lost secs_allowed"
+    # The deploy worktree contains only the frontend. Keep running the JS
+    # probes below; compare server source only in a checkout that contains it.
+    if os.path.isdir(backend):
+        router = read(os.path.join(backend, "practice", "questions_router.py"))
+        assert "secs_allowed=secs_allowed_for(" in router, (
+            "next_question no longer stamps the question with its concept's clock"
+        )
+        schemas = read(os.path.join(backend, "practice_schemas.py"))
+        assert "secs_allowed: int | None" in schemas, "NextQuestionResponse lost secs_allowed"
 
     # Run, not pattern-matched: the reader follows the question, clamps to the
     # ceiling, and answers the CEILING — never null — for anything unstamped.
