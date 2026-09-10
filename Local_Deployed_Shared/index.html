@@ -30,7 +30,7 @@
        all. vendor/fonts/inter.css has its gstatic URLs rewritten to the woff2
        files beside it. Refresh with vendor/README.md. -->
   <link href="vendor/fonts/inter.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles/variables.css" />
+  <link rel="stylesheet" href="styles/variables.css?v=1" />
   <link rel="stylesheet" href="styles/base.css?v=1" />
   <!-- Dark scrollbars. Loaded with the base layer, not as a feature, because
        it sets `color-scheme` on :root and skins every scroller in the app. -->
@@ -80,8 +80,8 @@
   <link rel="stylesheet" href="styles/practice/question.css?v=5" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=6" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/editor.css?v=3" />
-  <link rel="stylesheet" href="styles/practice/tutor.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=10" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=1" />
@@ -95,7 +95,7 @@
        override, it is a fixed-position surface that happens to sit beside the
        notebook. -->
   <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/ladder.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/ladder.css?v=3" />
   <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
@@ -138,7 +138,7 @@
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
-  <link rel="stylesheet" href="styles/practice/notebook.css?v=2" />
+  <link rel="stylesheet" href="styles/practice/notebook.css?v=4" />
   <link rel="stylesheet" href="practice/bars.css?v=11" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -2290,10 +2290,10 @@ t.manual_seed(0)
        `arena-notebook:rendered` event, so it needs nothing from
        arena-notebook.js — but it reuses code-highlight.js/code-complete.js and
        must load after both. -->
-  <script src="practice/notebook-code-edit.js?v=1"></script>
+  <script src="practice/notebook-code-edit.js?v=4"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
   <script src="practice/runner.js?v=24"></script>
-  <script src="practice/notebook.js?v=8"></script>
+  <script src="practice/notebook.js?v=9"></script>
   <script src="practice/notebook-editor.js?v=5"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
@@ -2320,7 +2320,7 @@ t.manual_seed(0)
   <script src="practice/lessons.js?v=36"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
-  <script src="practice/notebook-view.js?v=3"></script>
+  <script src="practice/notebook-view.js?v=4"></script>
   <!-- The ARENA sections, opened in the app rather than in Colab. Same two
        dependencies as the view above (LessonGate.renderMarkdown for prose,
        LessonNotebook.runSource for a cell) plus app.js's `switchTab`, which is
@@ -2347,7 +2347,7 @@ t.manual_seed(0)
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
   <script src="practice/arena-notebook-resume.js?v=1"></script>
   <script src="practice/arena-notebook.js?v=6"></script>
-  <script src="practice/ladder.js?v=11"></script>
+  <script src="practice/ladder.js?v=12"></script>
   <script src="practice/example-gate.js?v=2"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->

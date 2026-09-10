@@ -116,6 +116,16 @@
   padding: 10px 12px;
 }
 
+/* The fence itself keeps this rail's compact size and its well background;
+   what it borrows from the rest of the app is the FACE and the token colours
+   (practice/ladder.js hands the block to DeltaNotebookCode.paintFences, and
+   styles/practice/code-highlight.css owns the `cm-*` palette). Same example,
+   same markdown, same colour as the lesson page it came from. */
+.ladder-example-body pre > code {
+  color: var(--white);
+  font-family: var(--code-font);
+}
+
 .ladder-example-body p code,
 .ladder-example-body li code {
   background: rgb(var(--well-rgb) / calc(0.35 * var(--well-k)));
