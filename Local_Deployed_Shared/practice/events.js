@@ -191,7 +191,14 @@ overrideCorrectBtn.addEventListener("click", async () => {
 });
 
 feedbackButtons.forEach((btn) => {
-  btn.addEventListener("click", async () => {
+  /* `ev` is read for ONE thing: `isTrusted`. A real press is the learner
+     answering; a synthetic one is `timer.js::_forceAdvance` answering for them
+     when the review clock runs out, and the dock says which happened rather
+     than leaving the learner to conclude the buttons vanished on their own.
+     That forced click is the only programmatic click on a .feedback-btn in
+     the app — the basic-mode stand-in that used to be the other one is
+     gone. */
+  btn.addEventListener("click", async (ev) => {
     const feedback = btn.dataset.feedback;
     const q = PracticeAPI.currentQuestion;
     const oldTarget = Number.isFinite(practiceProgress.currentTargetDifficulty)
@@ -228,7 +235,11 @@ feedbackButtons.forEach((btn) => {
       practiceProgress.completedQuestionIds.push(q.question_id);
     }
 
-    showNextProblemButton();
+    showNextProblemButton(
+      ev?.isTrusted === false
+        ? "Review time ran out — recorded the smallest step. Loading the next problem…"
+        : "Difficulty recorded. Loading the next problem…",
+    );
     animateTargetDifficulty(oldTarget, newTarget, () => {
       setTargetDifficultyFinal(oldTarget, newTarget);
     });
@@ -387,7 +398,10 @@ const _handleNoNextQuestion = (err) => {
   const liveBlock =
     typeof PracticeSession !== "undefined" && PracticeSession.isActive?.() === true;
   if (!exhausted && liveBlock && !document.body.classList.contains("lesson-mode")) {
-    showNextProblemButton();
+    // Next is the RETRY here, not the way on — and on a graded question the
+    // dock is the only part of this the learner is looking at, so the reason
+    // has to reach it too (`outputArea` above is in the rail).
+    showNextProblemButton("Could not load the next problem. Press Next to try again.");
     return;
   }
   PracticeSession.deadEnd(message);

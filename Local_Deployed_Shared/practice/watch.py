@@ -33,6 +33,7 @@ from watch_invariants import (check_invariants, check_practice_never_detours_to_
                               check_a_deleted_practice_notice_stays_deleted,
                               check_the_clock_is_the_problems_own)
 from watch_basic_mode import (check_a_hidden_rating_still_commits_the_attempt,
+                             check_next_is_never_offered_under_an_unanswered_question,
                              check_the_difficulty_question_is_one_row_docked_to_the_bottom)
 from watch_feedback import (
     check_a_learner_can_always_report_a_broken_problem,
@@ -664,6 +665,7 @@ if __name__ == '__main__':
               check_a_taken_placement_leaves_the_learner_home,
               check_a_deleted_practice_notice_stays_deleted,
               check_a_hidden_rating_still_commits_the_attempt,
+              check_next_is_never_offered_under_an_unanswered_question,
               check_the_difficulty_question_is_one_row_docked_to_the_bottom,
               check_a_learner_can_always_report_a_broken_problem,
               check_a_lesson_can_be_reported_without_touching_the_question,
