@@ -8,7 +8,7 @@
 {"question_id": 8, "atoms": [{"atom_id": "manual-seed", "confidence": 0.78}]}
 {"question_id": 10, "atoms": [{"atom_id": "batchnorm-running-stats-ema", "confidence": 0.42}]}
 {"question_id": 11, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.45}]}
-{"question_id": 12, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.75}]}
+{"question_id": 12, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.75}, {"atom_id": "boolean-mask-combine", "confidence": 0.7}]}
 {"question_id": 14, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.45}]}
 {"question_id": 15, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.6}]}
 {"question_id": 16, "atoms": [{"atom_id": "tensor-zeros-init", "confidence": 0.45}]}
@@ -130,7 +130,7 @@
 {"question_id": 142, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.72}, {"atom_id": "isfinite-mask", "confidence": 0.55}]}
 {"question_id": 143, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.6}]}
 {"question_id": 144, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.6}, {"atom_id": "matvec", "confidence": 0.5}]}
-{"question_id": 145, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.5}, {"atom_id": "broadcasting-rules", "confidence": 0.45}]}
+{"question_id": 145, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.5}, {"atom_id": "broadcasting-rules", "confidence": 0.45}, {"atom_id": "boolean-mask-combine", "confidence": 0.75}]}
 {"question_id": 146, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.65}]}
 {"question_id": 147, "atoms": [{"atom_id": "where-clip-negative", "confidence": 0.55}]}
 {"question_id": 148, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.4}]}
@@ -914,3 +914,10 @@
 {"question_id": 938, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.85}, {"atom_id": "einops-reduce", "confidence": 0.85}]}
 {"question_id": 939, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.85}, {"atom_id": "einops-reduce", "confidence": 0.85}]}
 {"question_id": 940, "atoms": [{"atom_id": "einops-repeat", "confidence": 0.85}, {"atom_id": "einops-reduce", "confidence": 0.85}]}
+{"question_id": 941, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 942, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 943, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 944, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 945, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 946, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 947, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}

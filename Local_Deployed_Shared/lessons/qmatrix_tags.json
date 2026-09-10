@@ -484,7 +484,7 @@
    "torch.flip",
    "torch.rot90"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "75": {
   "target_kcs": [
@@ -501,7 +501,7 @@
    "torch.flip",
    "torch.rot90"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "76": {
   "target_kcs": [
@@ -891,17 +891,6 @@
   ],
   "source": "kp-faded"
  },
- "198": {
-  "target_kcs": [
-   "numpy.broadcasting-rules"
-  ],
-  "supporting_kcs": [
-   "numpy.elementwise-ufuncs",
-   "numpy.reshape-flatten"
-  ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
- },
  "202": {
   "target_kcs": [
    "numpy.boolean-masking"
@@ -1159,7 +1148,7 @@
    "torch.flip",
    "torch.rot90"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "232": {
   "target_kcs": [
@@ -2742,7 +2731,7 @@
    "torch.flip",
    "torch.rot90"
   ],
-  "source": "kp-guided"
+  "source": "kp-faded"
  },
  "507": {
   "target_kcs": [
@@ -2759,7 +2748,7 @@
    "torch.flip",
    "torch.rot90"
   ],
-  "source": "kp-independent"
+  "source": "kp-faded"
  },
  "508": {
   "target_kcs": [
@@ -9382,6 +9371,90 @@
   ],
   "new_syntax": [
    "einops.repeat"
+  ],
+  "source": "kp-integrated"
+ },
+ "941": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-faded"
+ },
+ "942": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-faded"
+ },
+ "943": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-faded"
+ },
+ "944": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-faded"
+ },
+ "945": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "946": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "947": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
   ],
   "source": "kp-integrated"
  }

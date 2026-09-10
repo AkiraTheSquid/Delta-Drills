@@ -109,7 +109,8 @@ def check_example_shape(example_md: str, label: str, info: str = "python") -> li
         )
 
     for i, (code, start, end) in enumerate(blocks):
-        lines = [l for l in code.strip().splitlines() if l.strip()]
+        visible = code.partition("\n# Hidden checks\n")[0]
+        lines = [l for l in visible.strip().splitlines() if l.strip()]
         n = len(lines)
         if n > MAX_FENCE_LINES:
             problems.append(
@@ -130,7 +131,7 @@ def check_example_shape(example_md: str, label: str, info: str = "python") -> li
             )
 
     if len(blocks) == 1 and len(
-        [l for l in blocks[0][0].strip().splitlines() if l.strip()]
+        [l for l in blocks[0][0].partition("\n# Hidden checks\n")[0].strip().splitlines() if l.strip()]
     ) >= MIN_LINES_TO_SPLIT:
         problems.append(
             f"{label}: INTERLEAVE — one block carries the whole example. "

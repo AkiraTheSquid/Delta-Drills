@@ -112,7 +112,7 @@ def web_cell(cell: dict) -> dict:
         "t": "code" if cell["cell_type"] == "code" else "md",
         "id": cell["id"],
         "role": cell_role(cell),
-        "src": cell["source"],
+        "src": cell.get("metadata", {}).get("delta_drills_source", cell["source"]),
     }
     m = _PROBLEM.match(cell["id"])
     if m:

@@ -35,6 +35,8 @@ print("shape:", tuple(a.shape))
 
 print(a.T)
 print("shape after transposing:", tuple(a.T.shape))
+# Hidden checks
+assert _delta_output == 'tensor([[1, 2, 3],\n        [4, 5, 6]])\nshape: (2, 3)\ntensor([[1, 4],\n        [2, 5],\n        [3, 6]])\nshape after transposing: (3, 2)\n'
 ```
 
 Read those two grids against each other. The first row of `a` is `1 2 3`, and
@@ -54,6 +56,8 @@ import torch as t
 a = t.tensor([[1, 2], [3, 4], [5, 6]])
 print("three rows of two:", tuple(a.shape))
 print("becomes two rows of three:", tuple(a.T.shape))
+# Hidden checks
+assert _delta_output == 'three rows of two: (3, 2)\nbecomes two rows of three: (2, 3)\n'
 ```
 
 `tuple(...)` is there because `a.shape` is a `torch.Size`, which prints like a
@@ -65,6 +69,8 @@ lengths — it read both off the tensor.
 square = t.tensor([[1, 2], [3, 4]])
 print("a square tensor keeps its shape:", tuple(square.T.shape))
 print("...but not its contents:", square.T.tolist())
+# Hidden checks
+assert _delta_output == 'a square tensor keeps its shape: (2, 2)\n...but not its contents: [[1, 3], [2, 4]]\n'
 ```
 
 That second line is the case worth remembering. A square tensor transposes to
@@ -150,6 +156,8 @@ a = t.tensor([[1, 2, 3], [4, 5, 6]])
 print("a          :", a.tolist())
 print("a.T        :", a.T.tolist())
 print("a.T row 0  :", a.T.tolist()[0], "  <- column 0 of a")
+# Hidden checks
+assert _delta_output == 'a          : [[1, 2, 3], [4, 5, 6]]\na.T        : [[1, 4], [2, 5], [3, 6]]\na.T row 0  : [1, 4]   <- column 0 of a\n'
 ```
 
 `[1, 4]` is the answer to "what was the first number of each row?" — and that
@@ -163,6 +171,8 @@ again — same shape, same numbers:
 back = a.T.T
 print("shape is back:", tuple(back.shape) == tuple(a.shape))
 print("values are back:", t.equal(back, a))
+# Hidden checks
+assert _delta_output == 'shape is back: True\nvalues are back: True\n'
 ```
 
 ## Worked example
@@ -181,6 +191,7 @@ rows = view.tolist()       # step 2: the same numbers as plain Python lists
 
 print("every row's first number:", rows[0])
 print("every row's second number:", rows[1])
+# Hidden checks
 assert rows[0] == [10, 30, 50]
 ```
 
@@ -276,6 +287,7 @@ import torch as t
 a = t.tensor([[10, 20, 30], [40, 50, 60]])
 print("a   at row 0, col 2:", a.tolist()[0][2])
 print("a.T at row 2, col 0:", a.T.tolist()[2][0])
+# Hidden checks
 assert a.tolist()[0][2] == a.T.tolist()[2][0]
 ```
 

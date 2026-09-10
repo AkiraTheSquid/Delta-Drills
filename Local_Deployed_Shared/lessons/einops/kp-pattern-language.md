@@ -3,10 +3,10 @@ kc: einops.pattern-language
 title: The einops pattern language — naming and permuting axes
 supporting: [numpy.reshape-flatten]
 new_syntax: [einops.rearrange]
-faded: [345]
+faded: [345, 941, 942, 943, 944]
 guided: [388]
 independent: [335, 330, 379, 319, 327, 344, 913, 914, 915, 916]
-integrated: []
+integrated: [945, 946, 947]
 ---
 
 ## Concept
@@ -56,11 +56,12 @@ arr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST
 
 # Name the four axes; emit them with c pulled to the front block.
 first = einops.rearrange(arr, 'b h w c -> b c h w')
-assert first.shape == (2, 3, 2, 2)
 # Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).
-assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 
 print("channels-last", tuple(arr.shape), "-> channels-first", tuple(first.shape))
+# Hidden checks
+assert first.shape == (2, 3, 2, 2)
+assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 ```
 
 The image example moved the channel axis; the same grammar moves the time axis of a sequence in front of its batch axis.
@@ -72,10 +73,11 @@ import einops
 # Sequence layout swap: batch-first -> time-first.
 seq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)
 tfirst = einops.rearrange(seq, 'b t d -> t b d')
-assert tfirst.shape == (3, 2, 2)
-assert seq[1, 2, 0] == tfirst[2, 1, 0]
 
 print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
+# Hidden checks
+assert tfirst.shape == (3, 2, 2)
+assert seq[1, 2, 0] == tfirst[2, 1, 0]
 ```
 
 Finally, the pattern is an EXPECTATION about the input, and einops enforces it.
@@ -91,10 +93,11 @@ try:
 except Exception as err:
     raised = True
     print("4-name pattern on 3-D data ->", type(err).__name__)
-assert raised
 
 print("element (1,0,1,2) moved to (1,2,0,1):",
       arr[1, 0, 1, 2].item(), "==", first[1, 2, 0, 1].item())
+# Hidden checks
+assert raised
 ```
 
 Why each step:
@@ -133,6 +136,104 @@ def solve(arr):
     return einops.rearrange(arr, 'b h w c -> b c h w')
 ```
 
+### q941
+The same idea on the smallest surface there is: a 2-D table, axes named in
+words.
+
+```python starter
+import torch as t
+import einops
+
+
+def solve(table):
+    """Exchange the two axes."""
+    return einops._____(t.tensor(table), '_____').tolist()
+```
+
+```python solution
+import torch as t
+import einops
+
+
+def solve(table):
+    """Exchange the two axes."""
+    return einops.rearrange(t.tensor(table), 'rows cols -> cols rows').tolist()
+```
+
+### q942
+Three axes now, and the two that move are the OUTER and the INNER one.
+
+```python starter
+import torch as t
+import einops
+
+
+def solve(vol):
+    """Outer and inner axes trade places."""
+    return einops._____(t.tensor(vol), '_____').tolist()
+```
+
+```python solution
+import torch as t
+import einops
+
+
+def solve(vol):
+    """Outer and inner axes trade places."""
+    return einops.rearrange(t.tensor(vol), 'd h w -> w h d').tolist()
+```
+
+### q943
+Four axes, and the pair that moves is in the middle — the outermost and the
+innermost stay exactly where they are.
+
+```python starter
+import torch as t
+import einops
+
+
+def solve(x):
+    """Exchange the two middle axes."""
+    return einops._____(
+        t.tensor(x), '_____'
+    ).tolist()
+```
+
+```python solution
+import torch as t
+import einops
+
+
+def solve(x):
+    """Exchange the two middle axes."""
+    return einops.rearrange(
+        t.tensor(x), 'batch heads seq dim -> batch seq heads dim'
+    ).tolist()
+```
+
+### q944
+Every axis moves. Read the input list right to left to write the output list.
+
+```python starter
+import torch as t
+import einops
+
+
+def solve(x):
+    """Reverse the axis order."""
+    return einops._____(t.tensor(x), '_____').tolist()
+```
+
+```python solution
+import torch as t
+import einops
+
+
+def solve(x):
+    """Reverse the axis order."""
+    return einops.rearrange(t.tensor(x), 'a b c d -> d c b a').tolist()
+```
+
 ## Guided practice
 
 ### q388
@@ -151,6 +252,19 @@ Also from the bank: q319 (channels-first batch to channels-last — the
 single most common layout flip), q327 ((h, w, c) to (h, c, w) — colour
 lands between height and width), q344 (transpose H and W WITHIN each
 channel).
+
+## Integrated practice
+
+### q945
+The relaid batch and the shape that relaying it produced — the sizes travel with
+their names.
+
+### q946
+The whole batch time-first, plus where one named element ended up.
+
+### q947
+Two hops in a row: each pattern names the layout it is HANDED, not the one the
+data started in.
 
 ## Misconceptions
 

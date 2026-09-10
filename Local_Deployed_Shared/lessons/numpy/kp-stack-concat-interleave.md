@@ -26,6 +26,8 @@ pair = [t.tensor([[1, 2]]), t.tensor([[3, 4]])]
 print("dim=0 (taller):", t.cat(pair, dim=0).shape, t.cat(pair, dim=0).tolist())
 print("dim=1 (wider): ", t.cat(pair, dim=1).shape, t.cat(pair, dim=1).tolist())
 print("vstack is dim=0:", t.equal(t.vstack(pair), t.cat(pair, dim=0)))
+# Hidden checks
+assert _delta_output == 'dim=0 (taller): torch.Size([2, 2]) [[1, 2], [3, 4]]\ndim=1 (wider):  torch.Size([1, 4]) [[1, 2, 3, 4]]\nvstack is dim=0: True\n'
 ```
 - **Create a new axis — `t.stack`.**
   `t.stack([a, b], axis=0)` piles k same-shape arrays into a (k, …) array.
@@ -64,31 +66,32 @@ b = t.tensor([[5.0, 6.0],
 # Grow axis 0 (rows below) / axis 1 (columns to the right).
 v = t.vstack([a, b])
 h = t.hstack([a, b])
-assert v.shape == (4, 2) and h.shape == (2, 4)
 
 # NEW axis then reduce it: elementwise average of the two arrays.
 piled = t.stack([a, b], dim=0)        # shape (2, 2, 2) — nothing merged
-assert piled.shape == (2, 2, 2)
 avg = piled.mean(dim=0)                # collapse the pile
-assert avg.tolist() == [[3.0, 4.0], [5.0, 6.0]]
 
 # Interleave two vectors: pair rows, then row-major ravel unrolls
 # them alternately.
 x = t.tensor([1, 3, 5])
 y = t.tensor([2, 4, 6])
 inter = t.column_stack((x, y)).ravel()
-assert inter.tolist() == [1, 2, 3, 4, 5, 6]
 
 # Same result by strided assignment — the form that scales to 3+ streams.
 out = t.empty(6, dtype=x.dtype)
 out[0::2] = x
 out[1::2] = y
-assert out.tolist() == [1, 2, 3, 4, 5, 6]
 print("vstack", tuple(v.shape), "| hstack", tuple(h.shape),
       "| stack", tuple(piled.shape), "<- stack ADDS an axis")
 print("averaged over the new axis:")
 print(avg)
 print("interleaved:", inter, "| by strided assignment:", out)
+# Hidden checks
+assert v.shape == (4, 2) and h.shape == (2, 4)
+assert piled.shape == (2, 2, 2)
+assert avg.tolist() == [[3.0, 4.0], [5.0, 6.0]]
+assert inter.tolist() == [1, 2, 3, 4, 5, 6]
+assert out.tolist() == [1, 2, 3, 4, 5, 6]
 ```
 
 Why each step:

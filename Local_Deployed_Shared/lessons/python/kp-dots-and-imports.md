@@ -23,6 +23,8 @@ import math
 
 print(math.sqrt(9))
 print(math.floor(2.7), math.ceil(2.7))
+# Hidden checks
+assert _delta_output == '3.0\n2 3\n'
 ```
 
 `import math as m` gives the same module a shorter name. This is not cosmetic —
@@ -35,6 +37,8 @@ import math as m
 
 print(m.sqrt(16))
 print(m.floor(-1.2))
+# Hidden checks
+assert _delta_output == '4.0\n-2\n'
 ```
 
 **An attribute** is a value that belongs to something. It is read with a dot and
@@ -44,6 +48,8 @@ print(m.floor(-1.2))
 import math
 
 print(math.pi)
+# Hidden checks
+assert _delta_output == '3.141592653589793\n'
 ```
 
 **A method** is a function that belongs to something. It is reached with a dot
@@ -54,6 +60,8 @@ text = "hello"
 
 print(text.upper())
 print(text)
+# Hidden checks
+assert _delta_output == 'HELLO\nhello\n'
 ```
 
 Notice `text` is unchanged: `upper()` returned a NEW string. Notice too that the
@@ -79,6 +87,8 @@ text = "hello"
 
 print(text.upper())
 print(len(text))
+# Hidden checks
+assert _delta_output == 'HELLO\n5\n'
 ```
 
 Some methods change the thing they belong to and return `None`. `list.append` is
@@ -90,6 +100,8 @@ result = items.append(3)
 
 print(items)
 print("append returned:", result)
+# Hidden checks
+assert _delta_output == '[1, 2, 3]\nappend returned: None\n'
 ```
 
 So append on its own line, then hand back the LIST — never the result of the
@@ -122,6 +134,8 @@ print("method on the value  :", shouted)
 print("built-in on the value:", length)
 print("function in a module :", root)
 print("attribute, no call   :", math.pi)
+# Hidden checks
+assert _delta_output == 'method on the value  : DELTA\nbuilt-in on the value: 5\nfunction in a module : 2.5\nattribute, no call   : 3.141592653589793\n'
 ```
 
 Why each step:
@@ -184,6 +198,8 @@ text = "abc"
 
 print("the value goes BEFORE the dot:", text.upper())
 print("the value goes INSIDE the parentheses:", len(text))
+# Hidden checks
+assert _delta_output == 'the value goes BEFORE the dot: ABC\nthe value goes INSIDE the parentheses: 3\n'
 ```
 
 ### q607

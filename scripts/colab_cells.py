@@ -153,10 +153,24 @@ def md_cell(source: str, cell_id: str) -> dict:
 
 
 def code_cell(source: str, cell_id: str) -> dict:
+    metadata = {"id": cell_id}
+    if "\n# Hidden checks\n" in source:
+        # Standalone Colab exports need the same capture contract as the web
+        # runner. Preserve authored source in metadata so the web compiler
+        # renders editable examples, never this export-only wrapper.
+        metadata["delta_drills_source"] = source
+        helper = (Path(__file__).resolve().parents[1] / "Local_Deployed_Shared"
+                  / "lessons" / "checks.py").read_text()
+        source = (
+            "# Validation wrapper; the authored example is in cell metadata.\n"
+            "_dd_check_scope = {\"__name__\": \"_dd_lesson_checks\"}\n"
+            f"exec({helper!r}, _dd_check_scope)\n"
+            f"print(_dd_check_scope['run_checked']({source!r}, globals()), end='')\n"
+        )
     return {
         "cell_type": "code",
         "id": cell_id,
-        "metadata": {"id": cell_id},
+        "metadata": metadata,
         "execution_count": None,
         "outputs": [],
         "source": source.rstrip("\n") + "\n",

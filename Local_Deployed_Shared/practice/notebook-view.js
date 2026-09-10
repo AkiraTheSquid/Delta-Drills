@@ -124,7 +124,7 @@ const LessonNotebookView = (() => {
      `textContent` is the fallback rather than `innerText` for the same reason —
      it does not care whether the node is displayed. */
   const _sourceOf = (node) => {
-    if (node._ddSource != null) return node._ddSource;
+    if (node._ddSource != null) return node._ddSource + (node._ddChecks || "");
     const code = node.querySelector(".nbv-src code");
     return ((code && (code.innerText || code.textContent)) || "").replace(/ /g, " ");
   };
@@ -137,6 +137,9 @@ const LessonNotebookView = (() => {
     el.dataset.cellId = cell.id;
     if (cell.q) el.dataset.q = String(cell.q);
     el._ddSource = source != null ? source : _stripTitle(cell.src).replace(/\s+$/, "");
+    const parts = window.LessonNotebook.splitChecks(el._ddSource);
+    el._ddSource = parts.code;
+    el._ddChecks = parts.checks;
     el.innerHTML =
       '<div class="nbv-gutter">' +
       '<button type="button" class="nbv-run" title="Run this cell">▶</button>' +
@@ -145,7 +148,7 @@ const LessonNotebookView = (() => {
       '<div class="nbv-body">' +
       (editable
         ? '<pre class="nbv-src"><code contenteditable="plaintext-only" spellcheck="false">' +
-          esc(_stripTitle(cell.src).replace(/\s+$/, "")) +
+          esc(el._ddSource) +
           "</code></pre>"
         : "") +
       '<pre class="nbv-out hidden"></pre>' +

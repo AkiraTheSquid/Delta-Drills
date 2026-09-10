@@ -34,6 +34,8 @@ import torch as t
 print(t.zeros((2, 3)))
 print(t.ones((2, 3)))
 print(t.full((2, 3), 7.0))
+# Hidden checks
+assert _delta_output == 'tensor([[0., 0., 0.],\n        [0., 0., 0.]])\ntensor([[1., 1., 1.],\n        [1., 1., 1.]])\ntensor([[7., 7., 7.],\n        [7., 7., 7.]])\n'
 ```
 
 PyTorch accepts the shape **either way**: `t.zeros(2, 3)` and `t.zeros((2, 3))`
@@ -45,8 +47,9 @@ the tuple form, and it keeps working.
 ```python
 loose = t.zeros(3, 4)
 tupled = t.zeros((3, 4))
-assert loose.shape == tupled.shape == (3, 4)
 print(loose.shape, "==", tupled.shape)
+# Hidden checks
+assert loose.shape == tupled.shape == (3, 4)
 ```
 
 ## Worked example
@@ -59,9 +62,10 @@ import torch as t
 # Both spellings mean the same thing in PyTorch.
 board = t.zeros((3, 4))
 same = t.zeros(3, 4)
-assert board.shape == (3, 4) == same.shape
 print(board)
 print("both spellings give", tuple(board.shape), "and", tuple(same.shape))
+# Hidden checks
+assert board.shape == (3, 4) == same.shape
 ```
 
 Why: shape comes first and everything else is keyword-only, so the constructor
@@ -119,6 +123,7 @@ import torch as t
 
 default = t.ones(3)
 print(default, default.dtype)
+# Hidden checks
 assert default.dtype == t.float32
 ```
 
@@ -135,6 +140,7 @@ flags = t.ones((2, 2), dtype=t.bool)
 counts = t.zeros(4, dtype=t.int64)
 print(flags)
 print(counts, counts.dtype)
+# Hidden checks
 assert bool(flags.all()) and flags.dtype == t.bool
 ```
 
@@ -147,12 +153,13 @@ import torch as t
 
 # ones gives every entry the value 1 — and 1 as a boolean is True.
 mask = t.ones((3, 4), dtype=t.bool)
-assert bool(mask.all()) and mask.dtype == t.bool
 print(mask)
 
 # The default, for contrast — float32, not float64 and not int.
-assert t.ones(3).dtype == t.float32
 print("asked for bool:", mask.dtype, "| default:", t.ones(3).dtype)
+# Hidden checks
+assert bool(mask.all()) and mask.dtype == t.bool
+assert t.ones(3).dtype == t.float32
 ```
 
 Why: without `dtype=t.bool` this would be a float tensor of 1.0s that merely
@@ -215,6 +222,8 @@ import torch as t
 x = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)
 print("zeros_like:", t.zeros_like(x).dtype)
 print("zeros(x.shape):", t.zeros(x.shape).dtype)
+# Hidden checks
+assert _delta_output == 'zeros_like: torch.int32\nzeros(x.shape): torch.float32\n'
 ```
 
 Same shape from both, but only one of them still knows the tensor was
@@ -223,6 +232,7 @@ integer. Every `*_like` behaves that way:
 ```python
 print(t.ones_like(x))
 print(t.full_like(x, 7))
+# Hidden checks
 assert t.full_like(x, 7).dtype == x.dtype == t.int32
 ```
 
@@ -235,11 +245,12 @@ import torch as t
 # so an int32 input yields an int32 result, not the float default.
 x = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)
 blank = t.zeros_like(x)
-assert blank.shape == x.shape
-assert blank.dtype == t.int32
 print(blank)
 print("copied dtype:", blank.dtype, "| t.zeros(x.shape) would give:",
       t.zeros(x.shape).dtype)
+# Hidden checks
+assert blank.shape == x.shape
+assert blank.dtype == t.int32
 ```
 
 Why: `t.zeros(x.shape)` would lose the dtype (float default) — `_like`
@@ -300,6 +311,8 @@ import torch as t
 
 print(t.eye(3))
 print(5.0 * t.eye(3))
+# Hidden checks
+assert _delta_output == 'tensor([[1., 0., 0.],\n        [0., 1., 0.],\n        [0., 0., 1.]])\ntensor([[5., 0., 0.],\n        [0., 5., 0.],\n        [0., 0., 5.]])\n'
 ```
 
 The permutation trick, since it is the least obvious one — reordering the
@@ -311,6 +324,7 @@ P = t.eye(3)[order]
 v = t.tensor([10.0, 20.0, 30.0])
 print(P)
 print(P @ v)
+# Hidden checks
 assert (P @ v).tolist() == [30.0, 10.0, 20.0]
 ```
 
@@ -320,10 +334,11 @@ assert (P @ v).tolist() == [30.0, 10.0, 20.0]
 import torch as t
 
 I = t.eye(3)
+print(I)
+# Hidden checks
 assert I.tolist() == [[1.0, 0.0, 0.0],
                       [0.0, 1.0, 0.0],
                       [0.0, 0.0, 1.0]]
-print(I)
 ```
 
 Why: the identity is a constructor, not something you assemble by loop —
@@ -410,6 +425,7 @@ import torch as t
 flags = t.eye(3, dtype=t.bool)
 print(flags)
 print(flags.dtype)
+# Hidden checks
 assert flags.dtype == t.bool
 ```
 

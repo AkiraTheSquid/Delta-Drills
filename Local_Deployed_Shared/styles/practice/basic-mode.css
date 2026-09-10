@@ -50,9 +50,11 @@
 
    WHAT SURVIVES, in DOM order:
      .question-number-row   the concept this problem is about
-     #question-text         the problem, and the worked example that
-                            ladder.js appends INSIDE it at the faded and
-                            partial rungs (`.ladder-example`)
+     #question-text         the problem. 🪦 ladder.js used to append the
+                            KP's worked example INSIDE it
+                            (`.ladder-example`); examples live in lessons
+                            only as of 2026-09-10, so all this holds now
+                            is the prompt and its callouts
      #question-visual       a target image is part of the question — a
                             question that asks you to reproduce a picture
                             is unanswerable without it

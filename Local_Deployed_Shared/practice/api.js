@@ -6,12 +6,17 @@ function emitPracticeStateChanged() {
   window.dispatchEvent(new CustomEvent("delta:practice-state-changed"));
 }
 
-/* Did a worked-example popup (practice/example-gate.js) actually open in
-   front of the question being submitted? The server SCHEDULED it
-   (question.ladder_example) but only the client knows it was drawn — the gate
-   declines on the Colab edition, in the diagnostic, or with no KP page — and
-   an example nobody saw must not be stored as assistance. Sent on both
-   submit routes as `example_shown`. */
+/* Did a worked-example popup actually open in front of the question being
+   submitted? The server SCHEDULED it (question.ladder_example) but only the
+   client knew whether it was drawn, and an example nobody saw must not be
+   stored as assistance. Sent on both submit routes as `example_shown`.
+
+   🪦 ALWAYS FALSE SINCE 2026-09-10. `practice/example-gate.js` — the only thing
+   that ever set `ladder_example_shown` — is deleted: a worked example belongs
+   to a lesson, not to a drill (see practice/events.js). The field is still sent
+   because the two submit endpoints still read it; it now reports the truth,
+   which is that no example was shown. Retiring `app/example_schedule.py` and
+   the column behind it is a BACKEND change and has not been done. */
 function _exampleShown(questionId) {
   const q = PracticeAPI.currentQuestion;
   return !!(q && Number(q.question_id) === Number(questionId) && q.ladder_example_shown);

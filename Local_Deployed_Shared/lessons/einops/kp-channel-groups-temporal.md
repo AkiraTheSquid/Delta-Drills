@@ -54,12 +54,13 @@ import einops
 x = t.arange(12.0).reshape(1, 6, 1, 2)          # (b, 6, h, w)
 
 split = einops.rearrange(x, 'b (c g) h w -> g b c h w', g=2)
-assert split.shape == (2, 1, 3, 1, 2)
 # Group 0 must hold original channels 0, 2, 4 (every second one):
-assert t.equal(split[0, 0, :, 0, 0], x[0, ::2, 0, 0])
 
 print("channels        ", x[0, :, 0, 0])
 print("'(c g)' group 0 ", split[0, 0, :, 0, 0], " <- every second channel")
+# Hidden checks
+assert split.shape == (2, 1, 3, 1, 2)
+assert t.equal(split[0, 0, :, 0, 0], x[0, ::2, 0, 0])
 ```
 
 Read the SAME channel axis with the group index slow instead, and the split is shape-compatible but wrong for this data.
@@ -70,9 +71,10 @@ import einops
 
 # Same data read as GROUP SLOWEST would give a different (wrong here) split:
 wrong = einops.rearrange(x, 'b (g c) h w -> g b c h w', g=2)
-assert not t.equal(split, wrong)          # conventions matter!
 
 print("'(g c)' group 0 ", wrong[0, 0, :, 0, 0], " <- a contiguous half")
+# Hidden checks
+assert not t.equal(split, wrong)          # conventions matter!
 ```
 
 The factor-order rule is not about pixels: split a time axis into adjacent pairs and average within each pair.
@@ -84,8 +86,9 @@ import einops
 # Temporal pooling: average adjacent pairs of time steps.
 seq = t.arange(8.0).reshape(1, 1, 8)            # (b, c, t=8)
 halved = einops.reduce(seq, 'b c (t two) -> b c t', 'mean', two=2)
-assert halved[0, 0].tolist() == [0.5, 2.5, 4.5, 6.5]
 print("seq", seq[0, 0], "-> pairwise mean", halved[0, 0])
+# Hidden checks
+assert halved[0, 0].tolist() == [0.5, 2.5, 4.5, 6.5]
 ```
 
 Why each step:

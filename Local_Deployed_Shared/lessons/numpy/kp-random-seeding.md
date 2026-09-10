@@ -17,10 +17,13 @@ calls, and they are almost always written as one line:
 
 ```python
 import torch as t
-
 rng = t.Generator().manual_seed(0)
-print(rng)
-print(t.rand(3, generator=rng))
+values = t.rand(3, generator=rng)
+print(values)
+# Hidden checks
+reference = t.Generator().manual_seed(0)
+assert t.equal(values, t.rand(3, generator=reference))
+assert t.equal(rng.get_state(), reference.get_state())
 ```
 
 `t.Generator()` builds an empty stream; `.manual_seed(seed)` fixes where that
@@ -33,12 +36,22 @@ Every sampler takes the generator the same way — as a keyword argument named
 
 ```python
 import torch as t
-
 rng = t.Generator().manual_seed(0)
-print("rand    ", t.rand(3, generator=rng))
-print("randn   ", t.randn(3, generator=rng))
-print("randint ", t.randint(0, 10, (3,), generator=rng))
-print("randperm", t.randperm(4, generator=rng))
+uniform = t.rand(3, generator=rng)
+normal = t.randn(3, generator=rng)
+integers = t.randint(0, 10, (3,), generator=rng)
+order = t.randperm(4, generator=rng)
+print(uniform)
+print(normal)
+print(integers)
+print(order)
+# Hidden checks
+reference = t.Generator().manual_seed(0)
+assert t.equal(uniform, t.rand(3, generator=reference))
+assert t.equal(normal, t.randn(3, generator=reference))
+assert t.equal(integers, t.randint(0, 10, (3,), generator=reference))
+assert t.equal(order, t.randperm(4, generator=reference))
+assert t.equal(rng.get_state(), reference.get_state())
 ```
 
 Note the shape of the API. In NumPy you call **methods on** the generator —
@@ -53,11 +66,16 @@ stream, and they stay in step for as long as you draw from them equally:
 
 ```python
 import torch as t
-
 a = t.Generator().manual_seed(42)
 b = t.Generator().manual_seed(42)
-print("a:", t.rand(3, generator=a))
-print("b:", t.rand(3, generator=b))
+first = t.rand(3, generator=a)
+second = t.rand(3, generator=b)
+print(first)
+print(second)
+# Hidden checks
+assert first.shape == second.shape == (3,)
+assert t.equal(first, second)
+assert t.equal(a.get_state(), b.get_state())
 ```
 
 Draws consume that sequence, so position matters as much as the seed. After the
@@ -75,6 +93,7 @@ fresh = t.rand(3, generator=t.Generator().manual_seed(42))
 print("first :", first)
 print("second:", second)
 print("fresh :", fresh)
+# Hidden checks
 assert first.tolist() != second.tolist()   # the stream moved on
 assert fresh.tolist() == first.tolist()    # the seed replayed it
 ```
@@ -94,6 +113,7 @@ rng.manual_seed(5)                      # back to the beginning of the stream
 after = t.rand(2, generator=rng)
 print("before:", before)
 print("after :", after)
+# Hidden checks
 assert before.tolist() == after.tolist()
 ```
 
@@ -141,23 +161,24 @@ print("first draw :", first)
 # The SAME generator again: the stream has advanced past the first three.
 second = t.rand(3, generator=rng)
 print("second draw:", second)
-assert first.tolist() != second.tolist()
 
 # A NEW generator on the same seed starts the same sequence over.
 replay = t.rand(3, generator=t.Generator().manual_seed(42))
-assert replay.tolist() == first.tolist()
 print("replayed   :", replay)
 
 # Reseeding in place does the same thing to a generator you own.
 rng.manual_seed(42)
 rewound = t.rand(3, generator=rng)
-assert rewound.tolist() == first.tolist()
 print("rewound    :", rewound)
 
 # A different seed is a different sequence entirely.
 other = t.rand(3, generator=t.Generator().manual_seed(43))
-assert other.tolist() != first.tolist()
 print("seed 43    :", other)
+# Hidden checks
+assert first.tolist() != second.tolist()
+assert replay.tolist() == first.tolist()
+assert rewound.tolist() == first.tolist()
+assert other.tolist() != first.tolist()
 ```
 
 Why each step:

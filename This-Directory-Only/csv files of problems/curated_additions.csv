@@ -5213,3 +5213,86 @@ def solve(temps):
 example = ([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [10.0, 12.0, 10.0, 12.0, 10.0, 12.0, 10.0]],)
 print(solve(*example))
 ",52,"[[-1.3887, -0.9258, -0.4629, 0.0, 0.4629, 0.9258, 1.3887], [-0.8018, 1.069, -0.8018, 1.069, -0.8018, 1.069, -0.8018]]"
+Einops,Rearrange,"A table `table` is given as a nested list of shape `(rows, cols)`. Return the same values with the two axes exchanged, as a nested list of shape `(cols, rows)`.","import torch as t
+import einops
+
+
+def solve(table):
+    """"""Exchange the two axes.""""""
+    return einops.rearrange(t.tensor(table), 'rows cols -> cols rows').tolist()
+
+
+print(solve([[1, 2, 3], [4, 5, 6]]))
+",18,"[[1, 4], [2, 5], [3, 6]]"
+Einops,Rearrange,"A volume `vol` is given as a nested list of shape `(d, h, w)`. Return a nested list of shape `(w, h, d)` holding the same values — the outer and inner axes trade places, the middle axis stays where it is.","import torch as t
+import einops
+
+
+def solve(vol):
+    """"""Outer and inner axes trade places.""""""
+    return einops.rearrange(t.tensor(vol), 'd h w -> w h d').tolist()
+
+
+print(solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]))
+",20,"[[[0, 4], [2, 6]], [[1, 5], [3, 7]]]"
+Einops,Rearrange,"An attention tensor `x` is given as a nested list of shape `(batch, heads, seq, dim)`. Return a nested list of shape `(batch, seq, heads, dim)`: the two middle axes are exchanged, the outermost and innermost axes are untouched.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Exchange the two middle axes.""""""
+    return einops.rearrange(
+        t.tensor(x), 'batch heads seq dim -> batch seq heads dim'
+    ).tolist()
+
+
+print(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))
+",22,"[[[[0, 1], [4, 5]], [[2, 3], [6, 7]]]]"
+Einops,Rearrange,"A block `x` is given as a nested list of shape `(a, b, c, d)`. Return a nested list of shape `(d, c, b, a)` — the same values with the axis order completely reversed.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Reverse the axis order.""""""
+    return einops.rearrange(t.tensor(x), 'a b c d -> d c b a').tolist()
+
+
+print(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))
+",24,"[[[[0], [4]], [[2], [6]]], [[[1], [5]], [[3], [7]]]]"
+Einops,Rearrange,"A batch of images `imgs` is given as a nested list of shape `(b, h, w, c)` — the colour axis last. Return a tuple `(out, shape)`: `out` is the same batch with the colour axis directly after the batch axis, as a nested list of shape `(b, c, h, w)`, and `shape` is a 4-tuple of ints giving the shape of `out`.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""The relaid batch and its shape.""""""
+    out = einops.rearrange(t.tensor(imgs), 'b h w c -> b c h w')
+    return out.tolist(), tuple(out.shape)
+
+
+print(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))
+",46,"([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], (1, 3, 2, 2))"
+Einops,Rearrange,"A batch-first sequence `seq` is given as a nested list of shape `(b, t, d)`, together with three ints `i`, `j`, `k` naming one element of it. Return a tuple `(out, pos)`: `out` is the same data time-first, as a nested list of shape `(t, b, d)`, and `pos` is the 3-tuple of ints saying where that element sits in `out`.","import torch as t
+import einops
+
+
+def solve(seq, i, j, k):
+    """"""Time-first, and where one element landed.""""""
+    out = einops.rearrange(t.tensor(seq), 'b t d -> t b d')
+    return out.tolist(), (j, i, k)
+
+
+print(solve([[[0, 1], [2, 3], [4, 5]], [[6, 7], [8, 9], [10, 11]]], 1, 2, 0))
+",50,"([[[0, 1], [6, 7]], [[2, 3], [8, 9]], [[4, 5], [10, 11]]], (2, 1, 0))"
+Einops,Rearrange,"A batch of images `imgs` is given as a nested list of shape `(b, h, w, c)` — the colour axis last. The model downstream wants the colour axis directly after the batch axis, shape `(b, c, h, w)`; the plotting code after THAT wants each image transposed, shape `(b, c, w, h)`. Return the tuple `(for_model, for_plot)`, both as nested lists, with the second produced from the first.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""The batch at both hops.""""""
+    for_model = einops.rearrange(t.tensor(imgs), 'b h w c -> b c h w')
+    for_plot = einops.rearrange(for_model, 'b c h w -> b c w h')
+    return for_model.tolist(), for_plot.tolist()
+
+
+print(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))
+",54,"([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], [[[[0, 6], [3, 9]], [[1, 7], [4, 10]], [[2, 8], [5, 11]]]])"

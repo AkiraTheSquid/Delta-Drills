@@ -30,6 +30,7 @@ x = t.tensor([1, 2, 3])
 y = x.to(t.float32)
 print(x, x.dtype)
 print(y, y.dtype)
+# Hidden checks
 assert x.dtype == t.int64          # the original never changed
 ```
 
@@ -37,6 +38,7 @@ Truncation is the part that surprises people — it is not rounding:
 
 ```python
 print(t.tensor([1.9, -1.9, 0.5]).to(t.int64))
+# Hidden checks
 assert t.tensor([1.9]).to(t.int64).item() == 1
 assert t.tensor([-1.9]).to(t.int64).item() == -1
 ```
@@ -48,6 +50,7 @@ tensor of that dtype, not a fresh buffer.
 ```python
 same = x.to(t.int64)
 print("same object?", same is x)
+# Hidden checks
 assert same is x
 ```
 
@@ -59,14 +62,15 @@ Make a float32 copy of an integer tensor:
 import torch as t
 
 x = t.tensor([1, 2, 3])
-assert x.dtype == t.int64           # default integer dtype
 
 # .to() returns a NEW tensor with converted values; x is untouched.
 y = x.to(t.float32)
-assert y.dtype == t.float32
-assert x.dtype == t.int64           # original unchanged — .to() copies
 print("x", x, x.dtype)
 print("y", y, y.dtype)
+# Hidden checks
+assert x.dtype == t.int64           # default integer dtype
+assert y.dtype == t.float32
+assert x.dtype == t.int64           # original unchanged — .to() copies
 ```
 
 Why: checking `x.dtype` first tells you what conversion is actually needed —
@@ -124,6 +128,8 @@ import torch as t
 
 built = t.arange(4, dtype=t.int32)
 print(built, built.dtype)
+# Hidden checks
+assert _delta_output == 'tensor([0, 1, 2, 3], dtype=torch.int32) torch.int32\n'
 ```
 
 Here PyTorch is stricter than NumPy. NumPy accepts the *string* `'float32'`
@@ -135,6 +141,9 @@ try:
     t.arange(3, dtype='float32')
 except TypeError as err:
     print("TypeError:", err)
+# Hidden checks
+assert _delta_output.startswith("TypeError:")
+assert "dtype=str" in _delta_output
 ```
 
 When the dtype arrives as **data** (from a config, a file header, a function
@@ -145,6 +154,7 @@ argument), you have to turn the name into the dtype object first, and
 for name in ('int32', 'float32', 'float64'):
     z = t.arange(3, dtype=getattr(t, name))
     print(f"{name:8} -> {z} {z.dtype}")
+# Hidden checks
 assert t.arange(3, dtype=getattr(t, 'float32')).dtype == t.float32
 ```
 
@@ -159,8 +169,9 @@ name = 'float32'
 
 # PyTorch wants the dtype OBJECT, so look it up from the name.
 z = t.arange(3, dtype=getattr(t, name))
-assert z.dtype == t.float32
 print(repr(name), "->", getattr(t, name), "->", z)
+# Hidden checks
+assert z.dtype == t.float32
 ```
 
 Why: when a function receives `dtype_str` as an argument, one `getattr` turns
@@ -225,17 +236,20 @@ for dtype in (t.float64, t.float32, t.int16, t.bool):
     z = grid.to(dtype)
     print(f"{str(dtype):15} {z.numel()} x {z.element_size()} = "
           f"{z.numel() * z.element_size()} bytes")
+# Hidden checks
+assert _delta_output == 'torch.float64   100 x 8 = 800 bytes\ntorch.float32   100 x 4 = 400 bytes\ntorch.int16     100 x 2 = 200 bytes\ntorch.bool      100 x 1 = 100 bytes\n'
 ```
 
 Same 100 numbers, an 8× spread in what they cost:
 
 ```python
-assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
-assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
 print("float64 is exactly", grid.to(t.float64).element_size(), "bytes/element,",
       "float32", grid.to(t.float32).element_size())
 print("100 float32 elements =",
       grid.to(t.float32).numel() * grid.to(t.float32).element_size(), "bytes")
+# Hidden checks
+assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
+assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
 ```
 
 ## Worked example
@@ -244,14 +258,15 @@ print("100 float32 elements =",
 import torch as t
 
 x = t.tensor([1, 2, 3])             # int64: 8 bytes each
-assert x.numel() * x.element_size() == 3 * 8
 
 # float32 elements are 4 bytes, so the converted copy is half the size.
 y = x.to(t.float32)
-assert y.element_size() == 4
-assert y.numel() * y.element_size() == 3 * 4
 print(x.dtype, x.numel() * x.element_size(), "bytes")
 print(y.dtype, y.numel() * y.element_size(), "bytes")
+# Hidden checks
+assert x.numel() * x.element_size() == 3 * 8
+assert y.element_size() == 4
+assert y.numel() * y.element_size() == 3 * 4
 ```
 
 Why: `numel × element_size` makes the cost concrete — a 10×10 float32
@@ -338,6 +353,7 @@ x = t.tensor([1.5, -2.5])
 name = 'int16'
 y = x.to(getattr(t, name))
 print(y, y.dtype)
+# Hidden checks
 assert y.dtype == t.int16
 ```
 

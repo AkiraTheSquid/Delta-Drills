@@ -52,9 +52,10 @@ import einops
 img = t.arange(12).reshape(3, 2, 2)                  # (c, h, w)
 flat = einops.rearrange(img, 'c h w -> c (h w)')      # (3, 4)
 back = einops.rearrange(flat, 'c (h w) -> c h w', h=2)
-assert t.equal(back, img)                       # perfect inverse
 
 print("merge then split round-trips:", bool(t.equal(back, img)))
+# Hidden checks
+assert t.equal(back, img)                       # perfect inverse
 ```
 
 A known segment length is enough to split a packed time axis into (segment, position-within-segment).
@@ -66,10 +67,11 @@ import einops
 # Split a sequence into p-token segments: t = n segments of length p.
 seq = t.arange(24).reshape(2, 6, 2)                  # (b, t=6, d)
 chunks = einops.rearrange(seq, 'b (n p) d -> b n p d', p=3)
-assert chunks.shape == (2, 2, 3, 2)
-assert t.equal(chunks[0, 0], seq[0, :3])       # first 3 tokens
 
 print("sequence", tuple(seq.shape), "-> chunks", tuple(chunks.shape), "| chunk 0 =", chunks[0, 0].tolist())
+# Hidden checks
+assert chunks.shape == (2, 2, 3, 2)
+assert t.equal(chunks[0, 0], seq[0, :3])       # first 3 tokens
 ```
 
 Now both at once: unpack the tile index into grid coordinates on the left, and merge each coordinate with its within-tile axis on the right.
@@ -82,11 +84,12 @@ import einops
 # 6 tiles of shape (2, 2), listed row-major from a (2x3)-tile image.
 tiles = t.arange(24).reshape(6, 2, 2)                # ((h w), p1, p2)
 image = einops.rearrange(tiles, '(h w) p1 p2 -> (h p1) (w p2)', h=2)
-assert image.shape == (4, 6)                          # (2*2, 3*2)
 # Tile 0 occupies the top-left 2x2 block:
-assert image[:2, :2].tolist() == tiles[0].tolist()
 print("6 tiles -> one", tuple(image.shape), "image:")
 print(image)
+# Hidden checks
+assert image.shape == (4, 6)                          # (2*2, 3*2)
+assert image[:2, :2].tolist() == tiles[0].tolist()
 ```
 
 Why each step:

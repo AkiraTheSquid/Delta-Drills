@@ -59,9 +59,13 @@ skill report the same thing from the other side.
   (Faded ≥ 2 per segment, Solo ≥ 6, Integrated ≥ 3). `reshape-flatten` was re-cut into
   three segments. Seth's own record at the time: failing `reshape-flatten`'s one faded
   drill, so that node came first.
-- **Worked examples now POP UP on a schedule** (2026-08-30): `This-Directory-Only/
-  SPEC_WORKED_EXAMPLE_SCHEDULE.md`, table in `backend/app/example_schedule.py`. It is an
-  experiment — retune the table, nothing else. That spec has a
+- 🪦 **Worked examples used to POP UP on a schedule** (2026-08-30) — **DELETED 2026-09-10.**
+  The popup wrote its example into the learner's OWN primary cell, so Submit graded the
+  example instead of their answer; Seth met it on q198. Do NOT retune the table and do NOT
+  rebuild the gate: a worked example belongs to a LESSON.
+  `practice/watch_example_gate.py` is the ratchet. `This-Directory-Only/
+  SPEC_WORKED_EXAMPLE_SCHEDULE.md` and `backend/app/example_schedule.py` are dead as an
+  on-screen feature, but that spec has a
   **"Deferred — 🤖 AI: REMIND SETH"** section: per-drill encompassing-credit propagation
   (which prerequisite nodes a drill exercises, encoded per drill), splitting the neighbour
   nodes, retuning the schedule. Bring the first one up whenever he talks about credit
@@ -190,6 +194,39 @@ skill report the same thing from the other side.
   written in `torch.einsum`. The pages are in
   `This-Directory-Only/archive/retired-content-2026-08-30/`. The replacement — ONE
   `einops.einsum` node inside the einops course — landed 2026-09-06 (see above).
+
+- **q198 RETIRED, q103 kept** (2026-09-10): Seth hit q198 (pairwise Jaccard, hard/70) and got an
+  unrelated broadcasting example in his editor. Two separate things were wrong and only one was a
+  bug. The bug: every path that attached a worked example to a DRILL is now deleted (see
+  `Local_Deployed_Shared/practice/README.md`) — examples live in lessons, full stop. The content:
+  q198 and q103 were the only two ids no KP claims, reached through
+  `build_qmatrix.LEFTOVER_TARGETS`. 🔴 **Do not retire either one without checking
+  `pipeline/retired_question_ids.json::kept_back_to_keep_an_atom_trainable` first** — each was the
+  sole trainer of a gating BKT atom, and retiring both blind trips two `atom_prereq_untrainable`
+  findings over 5 questions. q198 was made safe by tagging **q145** and **q12** with
+  `boolean-mask-combine` (q145 is the load-bearing one: q12 also carries the atom that
+  `boolean-mask-combine` gates). **q103 cannot be retired yet** — nothing else trains
+  `softmax-from-logits`, so it would lock `cross-entropy-loss` (q438/439/440), and its drill is
+  correct and stable anyway. Bank 692→691, qmatrix 617→616, GATE PASS, zero atom findings.
+
+- **`einops.pattern-language` rungs filled** (2026-09-10, session X): Faded 1→5 (q345 +
+  new q941–944), Integrated 0→3 (q945–947); ids in `curated_additions.csv`,
+  `curated_overrides.jsonl` and `question_atom_tags.jsonl` (atom `einops-rearrange`).
+  Why: Seth's account sat on rung `worked` for that KC with all 12 drills served and none
+  answered, so the sole rank-0 drill q345 was also his last-served id → repeat guard →
+  `/next-question` walked to another concept every time (29 gap hits 09-09..09-10).
+  Replay of his prod state now serves q942 with `ladder_gap` None.
+- **Every runnable lesson cell now ASSERTS its own result** (2026-09-10): a `# Hidden checks`
+  block at the end of a fence holds the assertions, so the learner reads clean example code
+  while the check still runs against what they actually edited (`_delta_output` is the
+  captured stdout). One contract, four surfaces: `lessons/checks.py` (validator),
+  `practice/notebook.js` (browser harness), `scripts/colab_cells.py` (Colab wrapper — Colab
+  has no harness, so the authored text moves to `metadata.delta_drills_source`) and
+  `lessons/viewer.html` (strips them from display). 284 check blocks across 44 KP files;
+  `lessons/watch.py::check_every_runnable_example_is_asserted` is the ratchet and a cell
+  with no reachable assertion FAILS. 🔴 Run the lesson checks under
+  `This-Directory-Only/backend/.venv/bin/python3` — system python has no torch and every
+  fence looks broken.
 
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.

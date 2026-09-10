@@ -38,9 +38,9 @@ it bound, but a cell that demonstrates its point is better.
 - **Short trap name** — concept-specific misconception and correction.
 
 ## Worked example
-Heavily commented code + step-by-step walkthrough. Exactly one plain ```python
-fence; it is executed and runnable like the Concept ones, and it continues the
-same namespace.
+Short runnable code, with explanations in prose between fences. Each cell should
+show one result. The worked example must also run from a fresh namespace, since
+it can be shown on its own before practice.
 
 ## Faded practice
 ### q111
@@ -348,3 +348,36 @@ compiler hard-fails on a note naming a KC the registry does not have, so a
 concept rename must move its note. A finding with no measurement, decision,
 or enforcing check behind it belongs in a commit message, not here. Global
 only — never a learner's data.
+
+## Readable examples and hidden checks
+
+Teach one idea per segment, followed by its matching drill. Start with a small
+input, ask the learner to predict a concrete result, show a short runnable cell,
+then explain what the output means. Prefer 2–6 visible lines per cell. Separate
+values, shapes, and comparisons when they answer different questions. Put
+explanations in prose, not long comments or decorated print statements.
+
+Every runnable teaching fence must execute an assertion. Put validation after
+an exact `# Hidden checks` line at the end of the cell:
+
+````markdown
+```python
+x = 2 + 3
+print(x)
+# Hidden checks
+assert x == 5
+assert _delta_output == "5\n"
+```
+````
+
+The web notebook hides this suffix from the editable code and executes it after
+the visible code, including on prefix replay. `_delta_output` is the actual
+printed output, including a final bare expression. Compare it with an authored,
+reviewed expected result; never regenerate expectations during validation.
+Random examples need assertions about actual sampled values and invariants,
+not a fixed random sample. Check helpers run in a separate namespace.
+
+The watch guard checks source/compiled parity, rejects missing or vacuous
+assertions, and executes every cell. An assertion inside an uncalled function
+or an untaken branch does not count. Run `lessons/checks.py` with the backend
+Python environment, plus `scripts/validate_lessons.py --coverage` before compiling.

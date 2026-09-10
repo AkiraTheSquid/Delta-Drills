@@ -27,10 +27,15 @@ LEFTOVER_TARGETS = {
     # 38 of these 77 entries named a concept the course no
     # longer teaches, or a drill retired with it. See
     # Local_Deployed_Shared/pipeline/retired_question_ids.json.
-    # 103 and 198 kept back from the 2026-08-30 retirement because each was the
-    # only trainer of a gating BKT atom; re-homed onto the surviving concept
-    # that owns what they actually do. See pipeline/retired_question_ids.json.
-    103: "numpy.axis-reductions", 198: "numpy.broadcasting-rules",
+    # 103 kept back from the 2026-08-30 retirement because it is the only
+    # trainer of a gating BKT atom (softmax-from-logits, which gates
+    # cross-entropy-loss); re-homed onto the surviving concept that owns what
+    # it actually does. See pipeline/retired_question_ids.json.
+    # 198 sat beside it until 2026-09-10, when its atom boolean-mask-combine
+    # got two honest trainers (q145, q12) and the drill was retired. These two
+    # are the ONLY ids that still fall through to this map -- every other entry
+    # below is now claimed by a KP and reached by the kp-* routes instead.
+    103: "numpy.axis-reductions",
     1: "numpy.argmin-argmax", 48: "numpy.constructors",
     63: "numpy.elementwise-ufuncs", 74: "numpy.slicing-views",
     85: "numpy.boolean-masking", 87: "numpy.dtype-astype",

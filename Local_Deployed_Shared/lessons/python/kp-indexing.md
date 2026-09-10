@@ -22,6 +22,8 @@ print(letters[0])
 print(letters[1])
 print(letters[2])
 print("length is", len(letters), "so the last position is", len(letters) - 1)
+# Hidden checks
+assert _delta_output == 'a\nb\nc\nlength is 3 so the last position is 2\n'
 ```
 
 Counting from zero is the single most common source of early off-by-one errors,
@@ -35,6 +37,8 @@ letters = ["a", "b", "c", "d"]
 
 print(letters[-1])
 print(letters[-2])
+# Hidden checks
+assert _delta_output == 'd\nc\n'
 ```
 
 Negative indexing is not just shorter than `letters[len(letters) - 1]` — it is
@@ -49,6 +53,8 @@ rows = [[1, 2, 3], [4, 5, 6]]
 print(rows[0])
 print(rows[0][2])
 print(rows[1][0])
+# Hidden checks
+assert _delta_output == '[1, 2, 3]\n3\n4\n'
 ```
 
 `rows[0]` is itself a list, so `rows[0][2]` is "the third item of the first
@@ -64,6 +70,8 @@ rows = [[1, 2, 3], [4, 5, 6]]
 print("top-left    :", rows[0][0])
 print("top-right   :", rows[0][-1])
 print("bottom-right:", rows[-1][-1])
+# Hidden checks
+assert _delta_output == 'top-left    : 1\ntop-right   : 3\nbottom-right: 6\n'
 ```
 
 Asking for a position that does not exist stops the program with an
@@ -75,6 +83,8 @@ try:
     print(letters[5])
 except IndexError as exc:
     print("IndexError:", exc)
+# Hidden checks
+assert _delta_output == 'IndexError: list index out of range\n'
 ```
 
 ## Watch out
@@ -100,6 +110,8 @@ print("how many items :", len(row))
 print("its first item :", row[0])
 print("its last item  :", row[-1])
 print("not the same as the last ROW:", rows[-1])
+# Hidden checks
+assert _delta_output == 'the row itself : [40, 50]\nhow many items : 2\nits first item : 40\nits last item  : 50\nnot the same as the last ROW: [40, 50]\n'
 ```
 
 Why each step:
@@ -282,6 +294,8 @@ rows = [["a", "b"], ["c", "d"], ["e", "f"]]
 print("row 1        :", rows[1])
 print("row 1, item 0:", rows[1][0])
 print("row 0, item 1:", rows[0][1])
+# Hidden checks
+assert _delta_output == "row 1        : ['c', 'd']\nrow 1, item 0: c\nrow 0, item 1: b\n"
 ```
 
 ### q589

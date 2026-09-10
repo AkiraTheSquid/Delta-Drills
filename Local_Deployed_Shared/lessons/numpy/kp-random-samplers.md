@@ -18,11 +18,20 @@ tensor of that shape back — except the numbers are drawn rather than fixed.
 
 ```python
 import torch as t
-
-print("rand    ", t.rand(3))            # uniform floats in [0, 1)
-print("randn   ", t.randn(3))           # standard normal: mean 0, spread 1
-print("randint ", t.randint(0, 10, (3,)))   # whole numbers in [0, 10)
-print("randperm", t.randperm(6))        # 0..5 shuffled into a random order
+uniform = t.rand(3)
+normal = t.randn(3)
+integers = t.randint(0, 10, (3,))
+permutation = t.randperm(6)
+print(uniform)
+print(normal)
+print(integers)
+print(permutation)
+# Hidden checks
+assert uniform.shape == normal.shape == integers.shape == (3,)
+assert bool(((uniform >= 0) & (uniform < 1)).all())
+assert bool(t.isfinite(normal).all())
+assert integers.dtype == t.int64 and bool(((integers >= 0) & (integers < 10)).all())
+assert sorted(permutation.tolist()) == list(range(6))
 ```
 
 The four differ in **what they draw from**, not in how you call them:
@@ -43,6 +52,8 @@ import torch as t
 print(t.rand(2, 3).shape)      # loose integers
 print(t.rand((2, 3)).shape)    # the same shape as a tuple
 print(t.randn(4).shape)        # 1-D, four numbers
+# Hidden checks
+assert _delta_output == 'torch.Size([2, 3])\ntorch.Size([2, 3])\ntorch.Size([4])\n'
 ```
 
 `randint` is the odd one out: its shape argument comes **third and must be a
@@ -50,10 +61,16 @@ tuple**, because the first two slots are already spoken for by the range.
 
 ```python
 import torch as t
-
 x = t.randint(0, 10, (5,))
-print(x, x.dtype)              # note the dtype: whole numbers, not floats
-print(t.randint(0, 10, (2, 3)))
+print(x)
+print(x.dtype)
+grid = t.randint(0, 10, (2, 3))
+print(grid)
+# Hidden checks
+assert x.shape == (5,) and grid.shape == (2, 3)
+assert x.dtype == grid.dtype == t.int64
+assert bool(((x >= 0) & (x < 10)).all())
+assert bool(((grid >= 0) & (grid < 10)).all())
 ```
 
 `randperm` is not a draw from a distribution at all — it is a **shuffling**.
@@ -66,6 +83,7 @@ import torch as t
 p = t.randperm(5)
 print("a permutation:", p)
 print("sorted back  :", sorted(p.tolist()))
+# Hidden checks
 assert sorted(p.tolist()) == [0, 1, 2, 3, 4]
 ```
 
@@ -74,9 +92,14 @@ That last assert is the whole difference between `randperm` and `randint`:
 
 ```python
 import torch as t
-
-print("randint may repeat:", t.randint(0, 5, (5,)))
-print("randperm never does:", t.randperm(5))
+sample = t.randint(0, 5, (5,))
+order = t.randperm(5)
+print(sample)
+print(order)
+# Hidden checks
+assert sample.shape == (5,) and sample.dtype == t.int64
+assert bool(((sample >= 0) & (sample < 5)).all())
+assert sorted(order.tolist()) == [0, 1, 2, 3, 4]
 ```
 
 Because a draw is different every time you run it, the things you can *assert*
@@ -107,31 +130,32 @@ import torch as t
 
 # Uniform: shape you asked for, floats, every value in [0, 1).
 u = t.rand(2, 3)
-assert tuple(u.shape) == (2, 3)
-assert str(u.dtype) == "torch.float32"
-assert bool((u >= 0).all())
-assert bool((u < 1).all())
 print("uniform:", u)
 
 # Normal: same shape rules, same dtype, but NOT bounded to [0, 1).
 g = t.randn(2, 3)
-assert tuple(g.shape) == (2, 3)
-assert str(g.dtype) == "torch.float32"
 print("normal :", g)
 
 # Ints: the range comes first, the SHAPE third, and the dtype is integral.
 i = t.randint(0, 10, (5,))
-assert tuple(i.shape) == (5,)
-assert str(i.dtype) == "torch.int64"
-assert bool((i >= 0).all())
-assert bool((i < 10).all())
 print("ints   :", i)
 
 # Permutation: a count, not a shape — and every value appears exactly once.
 p = t.randperm(5)
+print("perm   :", p)
+# Hidden checks
+assert tuple(u.shape) == (2, 3)
+assert str(u.dtype) == "torch.float32"
+assert bool((u >= 0).all())
+assert bool((u < 1).all())
+assert tuple(g.shape) == (2, 3)
+assert str(g.dtype) == "torch.float32"
+assert tuple(i.shape) == (5,)
+assert str(i.dtype) == "torch.int64"
+assert bool((i >= 0).all())
+assert bool((i < 10).all())
 assert tuple(p.shape) == (5,)
 assert sorted(p.tolist()) == [0, 1, 2, 3, 4]
-print("perm   :", p)
 ```
 
 Why each step:

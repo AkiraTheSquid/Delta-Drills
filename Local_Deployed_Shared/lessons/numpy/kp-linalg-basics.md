@@ -29,6 +29,8 @@ print("a * b (elementwise)")
 print(a * b)
 print("a @ b (matrix product)")
 print(a @ b)
+# Hidden checks
+assert _delta_output == 'a * b (elementwise)\ntensor([[ 5., 12.],\n        [21., 32.]])\na @ b (matrix product)\ntensor([[19., 22.],\n        [43., 50.]])\n'
 ```
 
 `a*b` entry [0,0] is 1·5. `a@b` entry [0,0] is 1·5 + 2·7 = 19 — the row met
@@ -46,6 +48,9 @@ try:
     t.ones((2, 3)) @ t.ones((2, 3))                # inner dims 3 vs 2
 except RuntimeError as err:
     print("RuntimeError:", err)
+# Hidden checks
+assert _delta_output.startswith("torch.Size([2, 4])\ntorch.Size([2])\nRuntimeError:")
+assert "cannot be multiplied" in _delta_output
 ```
 
 `t.matmul(a, b)` is the same operation spelled as a function, and in model
@@ -64,8 +69,6 @@ b = t.tensor([[5.0, 6.0],
 # Elementwise vs matrix product — same operands, different operations:
 elem = a * b            # [[5, 12], [21, 32]] — corresponding entries
 mat = a @ b             # row·column with a sum inside
-assert elem.tolist() == [[5.0, 12.0], [21.0, 32.0]]
-assert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]
 # Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19. Row 0 · column 0.
 print("a * b")
 print(elem)
@@ -74,6 +77,9 @@ print(mat)
 
 # Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.
 p = t.ones((2, 3)) @ t.ones((3, 2))
+# Hidden checks
+assert elem.tolist() == [[5.0, 12.0], [21.0, 32.0]]
+assert mat.tolist() == [[19.0, 22.0], [43.0, 50.0]]
 assert p.shape == (2, 2)
 ```
 
@@ -129,6 +135,8 @@ a_sys = t.tensor([[3.0, 1.0],
 b_vec = t.tensor([9.0, 8.0])
 x = t.linalg.solve(a_sys, b_vec)
 print("x =", x)
+# Hidden checks
+assert _delta_output == 'x = tensor([2., 3.])\n'
 ```
 
 Sanity-checking a solve is one line: plug `x` back in and compare
@@ -138,6 +146,7 @@ Sanity-checking a solve is one line: plug `x` back in and compare
 print("a @ x =", a_sys @ x, " b =", b_vec)
 print("exactly equal? ", bool(t.equal(a_sys @ x, b_vec)))
 print("close enough?  ", bool(t.allclose(a_sys @ x, b_vec)))
+# Hidden checks
 assert t.allclose(a_sys @ x, b_vec)
 ```
 
@@ -148,6 +157,7 @@ run it once so the equivalence is concrete, then stop writing it:
 via_inverse = t.linalg.inv(a_sys) @ b_vec
 print("solve:  ", x)
 print("inverse:", via_inverse)
+# Hidden checks
 assert t.allclose(x, via_inverse)
 ```
 
@@ -161,12 +171,13 @@ a_sys = t.tensor([[2.0, 0.0],
                   [0.0, 4.0]])
 b_vec = t.tensor([6.0, 8.0])
 x = t.linalg.solve(a_sys, b_vec)
-assert x.tolist() == [3.0, 2.0]
 print("x =", x)
 
 # Verification pattern: substitute back, compare with float tolerance.
-assert t.allclose(a_sys @ x, b_vec)
 print("a @ x =", a_sys @ x, " b =", b_vec)
+# Hidden checks
+assert x.tolist() == [3.0, 2.0]
+assert t.allclose(a_sys @ x, b_vec)
 ```
 
 Why: `solve` + `allclose` verification — the pair costs one line and

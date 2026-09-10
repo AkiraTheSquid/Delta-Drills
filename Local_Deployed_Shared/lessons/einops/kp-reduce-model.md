@@ -57,10 +57,11 @@ x = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)
 
 # All of c, h, w collapse under 'mean' -> one number per image.
 per_image = einops.reduce(x, 'b c h w -> b', 'mean')
-assert per_image.tolist() == [5.5, 17.5]
-assert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin
 
 print("'b c h w -> b'  ", per_image, " (one number per image)")
+# Hidden checks
+assert per_image.tolist() == [5.5, 17.5]
+assert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin
 ```
 
 Drop only SOME names and the survivors index the statistics you keep.
@@ -71,10 +72,11 @@ import einops
 
 # Partial drop: mean over spatial only -> per-channel statistics.
 per_channel = einops.reduce(x, 'b c h w -> b c', 'mean')
-assert per_channel.shape == (2, 3)
-assert per_channel[0, 0] == x[0, 0].mean()
 
 print("'b c h w -> b c'", tuple(per_channel.shape), per_channel[0])
+# Hidden checks
+assert per_channel.shape == (2, 3)
+assert per_channel[0, 0] == x[0, 0].mean()
 ```
 
 Keeping a `1` where the dropped axis was is einops' `keepdim`: the result still broadcasts against the input.
@@ -87,12 +89,13 @@ import einops
 img = t.tensor([[1.0, 5.0],
                 [7.0, 2.0]])
 colmax = einops.reduce(img, 'h w -> 1 w', 'max')
-assert colmax.shape == (1, 2)
-assert colmax.tolist() == [[7.0, 5.0]]
 # Why keep it: the (1, 2) result broadcasts straight back against (2, 2).
-assert (img - colmax).shape == (2, 2)
 
 print("'h w -> 1 w'    ", colmax, "shape", tuple(colmax.shape), "-> broadcasts back to", tuple((img - colmax).shape))
+# Hidden checks
+assert colmax.shape == (1, 2)
+assert colmax.tolist() == [[7.0, 5.0]]
+assert (img - colmax).shape == (2, 2)
 ```
 
 The same singleton trick at rank 4: average the channels away but keep the channel slot.
@@ -104,9 +107,10 @@ import einops
 # Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).
 imgs = t.ones((2, 2, 2, 3))
 gray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')
-assert gray.shape == (2, 2, 2, 1)
 print("grayscale keeps the channel axis:", tuple(imgs.shape), "->",
       tuple(gray.shape))
+# Hidden checks
+assert gray.shape == (2, 2, 2, 1)
 ```
 
 Why each step:

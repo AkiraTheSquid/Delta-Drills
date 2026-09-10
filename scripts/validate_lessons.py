@@ -33,6 +33,8 @@ from pathlib import Path
 from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
+sys.path.insert(0, str(LESSONS_DIR))
+from checks import run_checked
 
 EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays)
 
@@ -140,10 +142,17 @@ def check_kp(path, registry, bank, errors):
         for label, text in (("Concept", seg["concept"]), ("Worked example", seg["worked"])):
             for code in code_fences(text, "python"):
                 try:
-                    run_code(code, ns)
+                    run_checked(code, ns)
                 except Exception:
                     tb = traceback.format_exc().strip().splitlines()[-1]
                     errors.append(f"{name}: segment {si + 1} [{label}] fence failed: {tb}")
+
+    # Scheduled examples are runnable pages too, with their own namespace.
+    for code in code_fences(path.read_text(), "python worked"):
+        try:
+            run_checked(code)
+        except Exception as exc:
+            errors.append(f"{name}: scheduled example failed: {exc}")
 
     # 4. faded solutions pass bank tests; every segment teaches ONE concept
     # then pairs one worked example with a fading SERIES of one or two items.

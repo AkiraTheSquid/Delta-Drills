@@ -36,6 +36,8 @@ print([type(item).__name__ for item in [1, "two", [3]]])
 a = t.tensor([[1, 2, 3], [4, 5, 6]])
 print(a)
 print("dtype of the whole block:", a.dtype)
+# Hidden checks
+assert _delta_output == "['int', 'str', 'list']\ntensor([[1, 2, 3],\n        [4, 5, 6]])\ndtype of the whole block: torch.int64\n"
 ```
 
 That one block is also why some operations are nearly free. Re-describing how
@@ -61,6 +63,8 @@ print("shape:", cube.shape)
 
 # A cell ending in a bare expression prints its value, the way a notebook does.
 cube * 10
+# Hidden checks
+assert _delta_output == 'shape: torch.Size([2, 2, 2])\ntensor([[[10, 20],\n         [30, 40]],\n\n        [[50, 60],\n         [70, 80]]])\n'
 ```
 
 Two ways of reading a tensor back out come up constantly from here on, so name
@@ -81,6 +85,8 @@ try:
     same.item()
 except RuntimeError as exc:
     print("four elements ->", type(exc).__name__, "- item() wants exactly one")
+# Hidden checks
+assert _delta_output == 't.equal -> True   one answer for the whole tensor\none.item() -> 7 as a int\nfour elements -> RuntimeError - item() wants exactly one\n'
 ```
 
 ## Worked example
@@ -96,6 +102,8 @@ import torch as t
 rows = [[7, 8], [9, 10], [11, 12]]
 a = t.tensor(rows)
 print(a)
+# Hidden checks
+assert _delta_output == 'tensor([[ 7,  8],\n        [ 9, 10],\n        [11, 12]])\n'
 ```
 
 `t.tensor` walked the nesting and copied the values into one block. Nothing was
@@ -105,6 +113,7 @@ you meant:
 
 ```python
 print("back to a list:", a.tolist())
+# Hidden checks
 assert a.tolist() == [[7, 8], [9, 10], [11, 12]]
 ```
 
@@ -214,6 +223,8 @@ grid = t.tensor([[1, 2, 3], [4, 5, 6]])
 print("shape:", grid.shape)
 print("axis 0 (rows)   :", grid.shape[0])
 print("axis 1 (columns):", grid.shape[1])
+# Hidden checks
+assert _delta_output == 'shape: torch.Size([2, 3])\naxis 0 (rows)   : 2\naxis 1 (columns): 3\n'
 ```
 
 Two smaller readings come off the same metadata:
@@ -233,6 +244,8 @@ fixing now: `ndim` counts axes, `numel()` counts numbers.
 for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
     x = t.tensor(data)
     print(tuple(x.shape), "ndim", x.ndim, "numel", x.numel())
+# Hidden checks
+assert _delta_output == '(4,) ndim 1 numel 4\n(2, 2) ndim 2 numel 4\n(2, 2, 1) ndim 3 numel 4\n'
 ```
 
 ## Worked example
@@ -250,6 +263,7 @@ a = t.tensor(rows)
 
 print("ndim:", a.ndim)
 print("numel:", a.numel())
+# Hidden checks
 assert (a.ndim, a.numel()) == (2, 6)
 ```
 
@@ -389,102 +403,99 @@ def solve(rows, wanted):
 
 ## Concept: dtype is a property of the whole block
 
-
-The **dtype** is the single element type shared by every entry — `torch.int64`,
-`torch.float32`, `torch.bool`, and so on. There is exactly one per tensor,
-because there is exactly one block of memory and every slot in it is the same
-size.
-
-That has a consequence people meet by accident: when you build a tensor from
-mixed Python numbers, PyTorch cannot keep some entries as ints and some as
-floats. It picks ONE type that can hold everything, so a single float anywhere
-in the input turns the whole tensor into `torch.float32`. All-integer input
-gives you `torch.int64` instead.
+A tensor has one **dtype** shared by every element. Predict which tensor below needs to hold fractions:
 
 ```python
 import torch as t
-
 print(t.tensor([1, 2, 3]).dtype)
 print(t.tensor([1, 2.5, 3]).dtype)
+# Hidden checks
+assert t.tensor([1, 2, 3]).dtype == t.int64
+assert t.tensor([1, 2.5, 3]).dtype == t.float32
 ```
 
-All-integer input becomes `torch.int64`. One float makes the whole tensor
-`torch.float32`. You can also choose the dtype explicitly:
+With PyTorch's default settings, integers infer `torch.int64`; one float makes the whole tensor `torch.float32`.
+You can choose the type explicitly, even when the input contains only integers:
 
 ```python
-print(t.tensor([1, 2, 3], dtype=t.float32).dtype)
+a = t.tensor([1, 2, 3], dtype=t.float32)
+print(a.dtype)
+# Hidden checks
+assert a.dtype == t.float32
 ```
 
-Division shows why one dtype for the whole block matters. `a / 2` halves every
-number and creates a new float tensor. It does not change `a`:
+This controls how numbers are stored; it does not change how many rows or columns there are.
+
+### Division: a new result or a change in place?
+
+`a / 2` halves every value and creates a new float tensor. Predict both printed rows:
 
 ```python
 a = t.tensor([2, 4, 6])
 halved = a / 2
-
-print(a.tolist())
-print(halved.tolist())
-print(halved.dtype)
+print(a)
+print(halved)
+# Hidden checks
+assert a.tolist() == [2, 4, 6]
+assert halved.tolist() == [1.0, 2.0, 3.0]
+assert halved.dtype == t.float32
 ```
 
-`a = a / 2` would make that new float tensor, then rebind the name `a` to it.
-`a /= 2` instead tries to write float results back into the original integer
-tensor. PyTorch rejects that in-place mutation rather than silently rounding:
+The original stays `[2, 4, 6]`. Writing `a = a / 2` would point the name `a` at the new result.
+`a /= 2` tries to change the original tensor instead. An integer tensor cannot store those float results, so PyTorch raises an error. With a float tensor, the in-place version works:
 
 ```python
-a = t.tensor([2, 4, 6])
-
+a = t.tensor([2.0, 4.0, 6.0])
+a /= 2
+print(a)
+# Hidden checks
+assert a.tolist() == [1.0, 2.0, 3.0]
 try:
-    a /= 2
-except RuntimeError as exc:
-    print(type(exc).__name__)
+    integer = t.tensor([2, 4, 6])
+    integer /= 2
+except RuntimeError:
+    pass
+else:
+    raise AssertionError("Integer in-place division must fail")
 ```
 
-Two tensors can hold the same numbers in the same layout and still disagree on
-dtype. Shape and dtype are independent, and code that checks only one of them
-is checking half the question.
+Every value was halved inside the existing tensor. The difference is where the result goes: a new tensor for `/`, the existing tensor for `/=`.
 
 ## Worked example
 
-
-The problem below asks you to compare two tensors on shape and dtype. Those are
-two separate checks.
-
-Start with two tensors built from the same numbers in the same layout:
+Shape and dtype answer separate questions. First compare two integer tensors with the same layout:
 
 ```python
 import torch as t
-
 a = t.tensor([[20, 21, 22], [23, 24, 25]])
 b = t.tensor([[30, 31, 32], [33, 34, 35]])
-
 print(a.shape == b.shape)
 print(a.dtype == b.dtype)
+# Hidden checks
 assert (a.shape == b.shape, a.dtype == b.dtype) == (True, True)
 ```
 
-Both checks are `True`. Now change one number to a float. Layout stays same, so
-shapes still match. Dtypes do not:
+Both comparisons are `True`. Predict which changes when one input becomes a float:
 
 ```python
-c = t.tensor([[30, 31.5, 32], [33, 34, 35]])
-
-print(a.shape == c.shape)
-print(a.dtype == c.dtype)
-assert (a.shape == c.shape, a.dtype == c.dtype) == (True, False)
+b = t.tensor([[30, 31.5, 32], [33, 34, 35]])
+print(a.shape == b.shape)
+print(a.dtype == b.dtype)
+# Hidden checks
+assert (a.shape == b.shape, a.dtype == b.dtype) == (True, False)
 ```
 
-Last, keep integer dtype but change layout. Dtypes match; shapes do not:
+Shape still matches; dtype does not. Now keep the integer dtype and change the layout:
 
 ```python
-d = t.tensor([[40, 41], [42, 43], [44, 45]])
-
-print(a.shape == d.shape)
-print(a.dtype == d.dtype)
-assert (a.shape == d.shape, a.dtype == d.dtype) == (False, True)
+b = t.tensor([[40, 41], [42, 43], [44, 45]])
+print(a.shape == b.shape)
+print(a.dtype == b.dtype)
+# Hidden checks
+assert (a.shape == b.shape, a.dtype == b.dtype) == (False, True)
 ```
 
-`.shape` and `.dtype` are attributes; neither takes parentheses.
+Shape differs; dtype matches. Neither comparison tells you the other answer.
 
 ## Faded practice
 
@@ -661,6 +672,7 @@ for length in shape:
     product = product * length
 
 print(shape, "multiplies out to", product, "and numel is", a.numel())
+# Hidden checks
 assert product == a.numel()
 ```
 
@@ -678,6 +690,8 @@ for values in ([7], [1, 2, 3]):
     a = t.tensor(values)
     answer = a.item() if a.numel() == 1 else None
     print(values, "-> numel", a.numel(), "->", answer)
+# Hidden checks
+assert _delta_output == '[7] -> numel 1 -> 7\n[1, 2, 3] -> numel 3 -> None\n'
 ```
 
 ### q551
@@ -695,6 +709,7 @@ import torch as t
 
 a = t.tensor([1.9, -2.7, 3.2], dtype=t.int64)
 print(str(a.dtype), a.tolist())
+# Hidden checks
 assert a.tolist() == [1, -2, 3]
 ```
 
@@ -713,6 +728,7 @@ forced = t.tensor(values, dtype=t.float32)
 
 print("inferred:", str(inferred.dtype))
 print("forced  :", str(forced.dtype))
+# Hidden checks
 assert inferred.dtype != forced.dtype
 ```
 
@@ -734,6 +750,7 @@ row = a[0]
 
 print("a   :", tuple(a.shape), "ndim", a.ndim)
 print("a[0]:", tuple(row.shape), "ndim", row.ndim)
+# Hidden checks
 assert row.ndim == a.ndim - 1
 ```
 

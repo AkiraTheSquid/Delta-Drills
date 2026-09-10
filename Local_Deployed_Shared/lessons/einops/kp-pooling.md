@@ -55,13 +55,14 @@ x = t.arange(16.0).reshape(1, 1, 4, 4)      # (b, c, H, W)
 
 # Split H into (2 blocks x 2 rows), W likewise; reduce the window names.
 pooled = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)
-assert pooled.shape == (1, 1, 2, 2)
 # Window (0,0) = mean of [[0,1],[4,5]] = 2.5:
-assert pooled[0, 0].tolist() == [[2.5, 4.5],
-                                 [10.5, 12.5]]
 
 print(x[0, 0], "\n")
 print("mean-pooled 2x2 ->\n", pooled[0, 0])
+# Hidden checks
+assert pooled.shape == (1, 1, 2, 2)
+assert pooled[0, 0].tolist() == [[2.5, 4.5],
+                                 [10.5, 12.5]]
 ```
 
 Same windows, different aggregation: the geometry lives in the pattern, the semantics in the third argument.
@@ -72,10 +73,11 @@ import einops
 
 # Max pooling is the same pattern, different aggregation.
 mx = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'max', h2=2, w2=2)
-assert mx[0, 0].tolist() == [[5.0, 7.0],
-                             [13.0, 15.0]]
 
 print("max-pooled  2x2 ->\n", mx[0, 0])
+# Hidden checks
+assert mx[0, 0].tolist() == [[5.0, 7.0],
+                             [13.0, 15.0]]
 ```
 
 Pool ONE axis by factoring only that axis; everything outside the parens rides along.
@@ -87,10 +89,11 @@ import einops
 # One-axis pooling: average adjacent COLUMN pairs, everything else intact.
 imgs = t.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
 halved = einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)
-assert halved.shape == (1, 2, 2, 1)
-assert halved[0, 0, :, 0].tolist() == [0.5, 2.5]   # (0+1)/2, (2+3)/2
 print("column pairs averaged:", imgs[0, 0, :, 0].tolist(), "->",
       halved[0, 0, :, 0].tolist())
+# Hidden checks
+assert halved.shape == (1, 2, 2, 1)
+assert halved[0, 0, :, 0].tolist() == [0.5, 2.5]   # (0+1)/2, (2+3)/2
 ```
 
 Why each step:

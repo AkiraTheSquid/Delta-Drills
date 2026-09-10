@@ -33,10 +33,11 @@ b = t.tensor([4.0, -5.0, 6.0])
 
 # The atom, three spellings — same number.
 d = float(t.dot(a, b))
-assert d == float(a @ b) == float((a * b).sum()) == 12.0
 print("a * b (no sum yet):", a * b)
 print("t.dot:", d, "| a @ b:", float(a @ b), "| (a*b).sum():",
       float((a * b).sum()))
+# Hidden checks
+assert d == float(a @ b) == float((a * b).sum()) == 12.0
 ```
 
 Why: verifying the three dot spellings agree once buys permanent fluency:
@@ -82,8 +83,9 @@ z = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
 v = t.tensor([10.0, 1.0])
 zv = z @ v
-assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
 print(tuple(z.shape), "@", tuple(v.shape), "->", tuple(zv.shape), ":", zv)
+# Hidden checks
+assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
 ```
 
 Why: checking one output by hand (1·10 + 2·1 = 12) anchors "matmul = a dot
@@ -137,10 +139,11 @@ p = t.tensor([[1.0, 2.0],
 q = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 row_dots = (p * q).sum(dim=1)
-assert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8
 print("row-wise dots", row_dots)
 print("p @ q would be something else entirely:")
 print(p @ q)
+# Hidden checks
+assert row_dots.tolist() == [17.0, 53.0]  # 1*5+2*6, 3*7+4*8
 ```
 
 Why: this case is deliberately a trap — `p @ q` runs on these square

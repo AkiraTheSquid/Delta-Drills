@@ -41,7 +41,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 62
+      "problems": 66
     },
     {
       "id": "eo-2",
