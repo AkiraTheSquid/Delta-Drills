@@ -27,7 +27,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--ui-font);
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
   color: var(--text);
   background: var(--bg);
   min-height: 100vh;

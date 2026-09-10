@@ -32,28 +32,47 @@ body.lesson-mode #self-report-row {
    `.lesson-topbar` inside this panel are now in the page-wide concept topbar
    (styles/practice/stage-ladder.css), which spans both panels. */
 
-/* 🪦 THE PROSE RULES THAT USED TO BE HERE ARE GONE, and that is the change.
-   `.lesson-body`, `.lesson-worked` and `.lesson-watch-out` were 15px system
-   sans on a 1.65 line, with their own `h4`, their own inline-code chip and
-   their own blockquote — a fourth reading surface in an app that already had
-   three. They carry `.nbv-md` now (practice/lessons.js), so they take the one
-   type scale in styles/practice/notebook-view.css at the zoom
-   styles/practice/notebook.css sets for this page, exactly like a notebook
-   cell. Seth, 2026-09-10: "I want them to be the same thing."
-
-   What is left in this file is the lesson's own FURNITURE — the title, the
-   Watch-out band, the note under the worked example, the button row. None of
-   that exists on a notebook page. */
-
-/* The page title. Not inside a `.nbv-md`, so it restates the heading face; the
-   numbers are the shared scale's `h2`, at this page's zoom. */
 .lesson-kp-title {
-  color: var(--prose-head);
-  font-family: var(--prose-heading);
-  font-size: calc(26px * var(--anb-zoom, 1));
-  font-weight: 400;
-  line-height: calc(31.35px * var(--anb-zoom, 1));
+  color: var(--white);
+  font-size: 20px;
   margin: 0 0 12px;
+}
+
+.lesson-body,
+.lesson-worked,
+.lesson-watch-out {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.lesson-body h4,
+.lesson-worked h4,
+.lesson-watch-out h4 {
+  color: var(--text);
+  font-size: 14px;
+  margin: 16px 0 6px;
+}
+
+.lesson-body p code,
+.lesson-body li code,
+.lesson-worked p code,
+.lesson-worked li code,
+.lesson-watch-out p code,
+.lesson-watch-out li code {
+  background: rgb(var(--well-rgb) / calc(0.35 * var(--well-k)));
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 1px 5px;
+}
+
+.lesson-body blockquote,
+.lesson-worked blockquote {
+  background: rgb(var(--accent-rgb) / 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  margin: 12px 0;
+  padding: 4px 14px;
 }
 
 .lesson-watch-out {
@@ -62,13 +81,10 @@ body.lesson-mode #self-report-row {
   padding-left: 14px;
 }
 
-/* "Watch out" and "Worked example" — the two labels this page adds that no
-   notebook has. They sit INSIDE the `.nbv-md` containers, so the shared scale
-   has already set their face and size as an h3; all this does is close up the
-   leading margin, which is right for a section label and wrong for a heading
-   in the middle of prose. */
 .lesson-watch-out h3,
 .lesson-worked h3 {
+  color: var(--white);
+  font-size: 15px;
   margin: 0 0 8px;
 }
 
@@ -78,12 +94,8 @@ body.lesson-mode #self-report-row {
   padding-top: 18px;
 }
 
-/* Deliberately NOT in the reading face: this is an instruction about the
-   interface, not part of the lesson, and setting it in the prose serif at the
-   prose size would make it read as a closing paragraph of the example. */
 .lesson-example-note {
   color: var(--muted);
-  font-family: var(--ui-font);
   font-size: 13px;
   margin-top: 14px;
 }

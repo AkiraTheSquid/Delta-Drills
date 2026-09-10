@@ -4480,6 +4480,30 @@
          "prompt": "Channels-last batch to channels-first.",
          "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops._____(arr, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
          "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, 'b h w c -> b c h w')\n"
+        },
+        {
+         "question_id": 941,
+         "prompt": "The same idea on the smallest surface there is: a 2-D table, axes named in\nwords.",
+         "starter_code": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return einops._____(t.tensor(table), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+         "solution": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return einops.rearrange(t.tensor(table), 'rows cols -> cols rows').tolist()\n"
+        },
+        {
+         "question_id": 942,
+         "prompt": "Three axes now, and the two that move are the OUTER and the INNER one.",
+         "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return einops._____(t.tensor(vol), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]))\n",
+         "solution": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return einops.rearrange(t.tensor(vol), 'd h w -> w h d').tolist()\n"
+        },
+        {
+         "question_id": 943,
+         "prompt": "Four axes, and the pair that moves is in the middle \u2014 the outermost and the\ninnermost stay exactly where they are.",
+         "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return einops._____(\n        t.tensor(x), '_____'\n    ).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+         "solution": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return einops.rearrange(\n        t.tensor(x), 'batch heads seq dim -> batch seq heads dim'\n    ).tolist()\n"
+        },
+        {
+         "question_id": 944,
+         "prompt": "Every axis moves. Read the input list right to left to write the output list.",
+         "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return einops._____(t.tensor(x), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+         "solution": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return einops.rearrange(t.tensor(x), 'a b c d -> d c b a').tolist()\n"
         }
        ]
       }
@@ -4490,6 +4514,30 @@
        "prompt": "Channels-last batch to channels-first.",
        "starter_code": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops._____(arr, '_____')\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(6.0).reshape(1, 1, 2, 3)))\n",
        "solution": "import torch as t\nimport einops\n\ndef solve(arr):\n    \"\"\"(b, h, w, c) -> (b, c, h, w).\"\"\"\n    return einops.rearrange(arr, 'b h w c -> b c h w')\n"
+      },
+      {
+       "question_id": 941,
+       "prompt": "The same idea on the smallest surface there is: a 2-D table, axes named in\nwords.",
+       "starter_code": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return einops._____(t.tensor(table), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+       "solution": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return einops.rearrange(t.tensor(table), 'rows cols -> cols rows').tolist()\n"
+      },
+      {
+       "question_id": 942,
+       "prompt": "Three axes now, and the two that move are the OUTER and the INNER one.",
+       "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return einops._____(t.tensor(vol), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]))\n",
+       "solution": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return einops.rearrange(t.tensor(vol), 'd h w -> w h d').tolist()\n"
+      },
+      {
+       "question_id": 943,
+       "prompt": "Four axes, and the pair that moves is in the middle \u2014 the outermost and the\ninnermost stay exactly where they are.",
+       "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return einops._____(\n        t.tensor(x), '_____'\n    ).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+       "solution": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return einops.rearrange(\n        t.tensor(x), 'batch heads seq dim -> batch seq heads dim'\n    ).tolist()\n"
+      },
+      {
+       "question_id": 944,
+       "prompt": "Every axis moves. Read the input list right to left to write the output list.",
+       "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return einops._____(t.tensor(x), '_____').tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+       "solution": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return einops.rearrange(t.tensor(x), 'a b c d -> d c b a').tolist()\n"
       }
      ],
      "guided_items": [
@@ -4502,7 +4550,20 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 945,
+       "prompt": "The relaid batch and the shape that relaying it produced \u2014 the sizes travel with\ntheir names."
+      },
+      {
+       "question_id": 946,
+       "prompt": "The whole batch time-first, plus where one named element ended up."
+      },
+      {
+       "question_id": 947,
+       "prompt": "Two hops in a row: each pattern names the layout it is HANDED, not the one the\ndata started in."
+      }
+     ],
      "independent_items": [
       335,
       330,

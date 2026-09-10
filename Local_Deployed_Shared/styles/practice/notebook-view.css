@@ -1,67 +1,6 @@
-/* THE NOTEBOOK READING SURFACE — every `.nbv-*` cell in the app.
-   Markup built by practice/notebook-cells.js, which is the ONE cell builder;
-   this is the one sheet that dresses what it builds.
-
-   ── WHO WEARS THIS ───────────────────────────────────────────────────────
-   Three surfaces, and they are meant to be indistinguishable:
-
-     the Notebooks tab      practice/notebook-view.js — a whole compiled lesson
-     a lesson page          practice/notebook.js — the runnable fences inside
-                            one concept, in the practice panel
-     an ARENA section       practice/arena-notebook.js
-
-   🪦 THE LESSON PAGE USED TO HAVE ITS OWN SHEET AND ITS OWN CELL. `.nb-cell`
-   was a Run BAR under the code against this file's Run GUTTER, and lesson
-   prose was 15px system sans against this page's serif. Seth, 2026-09-10: "I
-   want the lessons in notebook style format rather than what they currently
-   are so that it can look a lot nicer", and on how: "it is better to reuse
-   something rather than creating another surface with more bugs. I want them
-   to be the same thing." styles/practice/notebook.css keeps only the lesson
-   page's LAYOUT now.
-
-   ── THE ONE KNOB ─────────────────────────────────────────────────────────
-   🔴 EVERY MEASUREMENT IN THE TYPE SCALE BELOW IS LESSWRONG'S REAL ONE, READ
-   OFF A RENDER, TIMES `--anb-zoom`. They were measured with tools/visual-diff
-   against their live components, not guessed, which is why they are written
-   here as the numbers they measured to and scaled rather than rounded into
-   pretty ones. Retune a surface by setting --anb-zoom for it and NOTHING
-   ELSE — hand-scaling a copy of these destroys the provenance and the two
-   surfaces drift apart the next time either is touched.
-
-     ARENA notebook page   1.4   (arena-notebook.css — Seth reads it at that)
-     a lesson page         0.95  (notebook.css — it shares the panel)
-     anything else         1     the default below, i.e. their own measure
-
-   🔴 --anb-zoom IS DECLARED AT :root, NOT ON THE SURFACE. The ARENA page's
-   value has to reach `body` (which paints the page) and a `position: fixed`
-   contents rail, both of which are OUTSIDE the page element — a custom
-   property inherits downwards only. See the long note in
-   styles/practice/arena-notebook.css for the screen that shipped when it did
-   not. */
-
-/* 🔴 THE ZOOM IS THE ONLY TOKEN. THERE IS NO --anb-measure AND NO
-   --anb-code-size, AND THAT IS DELIBERATE — they existed for four hours on
-   2026-09-10 and were silently wrong the whole time.
-
-   A custom property is SUBSTITUTED WHERE IT IS DECLARED, not where it is
-   read. `--anb-measure: calc(682px * var(--anb-zoom, 1))` sitting here on
-   `:root` resolves against :root's OWN zoom — 1 — and computes to the string
-   `682px` before any surface has said what it wants. `#page-notebooks`
-   further down sets `--anb-zoom: 1.25`; the paragraphs obeyed it because
-   their rules write the calc out in full and are resolved on the paragraph,
-   and the column and the code did NOT, because they read a number that had
-   already been frozen at the root. The page shipped 22.75px prose in a 682px
-   column with 18.2px code inside it — code visibly SMALLER than the prose it
-   sits in, which is the exact thing the note below says must never happen.
-
-   So every measurement is written out at the point of use, `calc(<their px> *
-   var(--anb-zoom, 1))`, and is resolved on the element that is being sized. A
-   derived token would have to be re-declared in every block that sets a zoom
-   to be correct, which is four copies of a number that must not drift — worse
-   than writing the multiplication where it is read. */
-:root {
-  --anb-zoom: 1;
-}
+/* Lesson notebook VIEW — a whole lesson as a Colab-shaped page.
+   Markup built by practice/notebook-view.js. Distinct from notebook.css, which
+   styles the cells the lesson GATE mounts inside one concept's prose. */
 
 .nbv-loading,
 .nbv-error {
@@ -172,21 +111,8 @@
 
 .nbv-cells {
   margin: 0 auto;
-  /* One column for the whole document: prose and code share both edges. */
-  max-width: calc(682px * var(--anb-zoom, 1));
+  max-width: 880px;
   padding-bottom: 120px;
-}
-
-/* 🔴 THE NOTEBOOKS TAB SETS ITS OWN ZOOM, and it is not 1. At zoom 1 the
-   measure is LessWrong's own 682px, which is right for a page of prose and
-   wrong for this one: a compiled lesson is mostly 80-column PyTorch beside a
-   run gutter, and 682px puts every cell into a sideways scroll. 1.25 lands the
-   column on 852px, which is where this page already was (880px) before the
-   measure became shared — so the tab looks the way it did and now says WHY in
-   the same units as the other two surfaces. Same reasoning as the ARENA page's
-   1.4 in arena-notebook.css; both are a zoom, neither is a second type scale. */
-#page-notebooks {
-  --anb-zoom: 1.25;
 }
 
 /* ---- cells --------------------------------------------------------------- */
@@ -195,102 +121,20 @@
   margin: 10px 0;
 }
 
-/* ---- the type scale ------------------------------------------------------
-   LessWrong's, measured. See the header for the one knob that scales it.
-
-   🔴 THE LINE-HEIGHTS ARE PIXELS, NOT RATIOS. Theirs come out of a 13px rem
-   root; ours is 16px. A ratio copied across those two roots is a different
-   number of pixels, which is how this drifted the first time. */
-
 .nbv-md {
-  color: var(--text);
-  font-family: var(--prose-font);
-  font-size: calc(18.2px * var(--anb-zoom, 1));
-  line-height: calc(26px * var(--anb-zoom, 1));
+  line-height: 1.6;
 }
 
-.nbv-md p {
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-}
-
-/* Their list items are tighter than their paragraphs — 6.5px between rows
-   against 18.2px between paragraphs — which is most of why a bulleted section
-   of theirs reads as one block and ours read as a stack. */
-.nbv-md li {
-  margin-bottom: calc(6.5px * var(--anb-zoom, 1));
-}
-
-/* Weight 400, not bold. Of the three things the visual diff found actually
-   differed from LessWrong, this was one: the SIZES already matched exactly on
-   both sides, and what read as "their headings look better" was the family,
-   this weight, and the palette. */
 .nbv-md h1,
 .nbv-md h2,
-.nbv-md h3 {
-  font-family: var(--prose-heading);
-  font-weight: 400;
+.nbv-md h3,
+.nbv-md h4 {
+  margin: 1.1em 0 0.4em;
 }
 
 .nbv-md h1 {
-  color: var(--prose-head);
-  font-size: calc(36.4px * var(--anb-zoom, 1));
-  line-height: calc(41.25px * var(--anb-zoom, 1));
-  margin: calc(-3px * var(--anb-zoom, 1)) 0 calc(24.4px * var(--anb-zoom, 1));
-}
-
-.nbv-md h2 {
-  color: var(--prose-head);
-  font-size: calc(26px * var(--anb-zoom, 1));
-  line-height: calc(31.35px * var(--anb-zoom, 1));
-  margin: calc(26px * var(--anb-zoom, 1)) 0 calc(21.6px * var(--anb-zoom, 1));
-}
-
-.nbv-md h3 {
-  color: var(--prose-subhead);
-  font-size: calc(20.8px * var(--anb-zoom, 1));
-  line-height: calc(25.1px * var(--anb-zoom, 1));
-  margin: calc(20.8px * var(--anb-zoom, 1)) 0;
-}
-
-/* h4 is the one heading they do NOT set in the display face: it drops to the
-   body serif and carries its weight instead, which is what keeps a fourth
-   level from reading as another h3. */
-.nbv-md h4 {
-  color: var(--prose-subhead);
-  font-family: var(--prose-font);
-  font-size: calc(18.2px * var(--anb-zoom, 1));
-  font-weight: 600;
-  line-height: calc(23px * var(--anb-zoom, 1));
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0 calc(12px * var(--anb-zoom, 1));
-}
-
-.nbv-md a {
-  color: var(--prose-link);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.nbv-md blockquote {
-  border-left: 3px solid var(--border);
-  color: var(--text);
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-  padding-left: calc(18px * var(--anb-zoom, 1));
-}
-
-/* 🔴 INLINE PROSE CODE ONLY — a `code` span sitting INSIDE a sentence. A
-   fenced block is also `.nbv-md code`, and it is not this: the code-cell
-   section below claims `pre > code` back off this rule. The runnable cell's
-   source is `.nbv-src code`, a third element again.
-
-   Their inline code is much smaller than their body text — 12.74px against
-   18.2px — which only looks right because it is set on a chip, so the chip and
-   the size travel together and neither survives on its own. */
-.nbv-md :not(pre) > code {
-  background: var(--prose-chip);
-  font-family: var(--code-font);
-  font-size: calc(12.74px * var(--anb-zoom, 1));
-  line-height: calc(18.1px * var(--anb-zoom, 1));
-  padding: 1px 3px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
 }
 
 /* A problem header is the thing the learner is looking for when they scroll,
@@ -303,17 +147,8 @@
   padding: 2px 16px 10px;
 }
 
-/* 🔴 A CODE CELL IS A RECTANGLE, NOT A PANEL. Seth, 2026-09-06: "make it such
-   that the code cells don't have the gray background or whatever, but are just
-   the regular rectangles, kind of like Colab does."
-
-   That was decided on the ARENA page and lived as a `#page-arena-notebook`
-   override of a filled rule here — so the same element was a tinted block on
-   two surfaces and a hairline rectangle on the third. It is the rectangle
-   everywhere now: on a light page a tinted block reads as an inert quote, and
-   on a dark one the border is doing the work anyway. */
 .nbv-code {
-  background: transparent;
+  background: rgb(var(--well-rgb) / calc(0.28 * var(--well-k)));
   border: 1px solid var(--border);
   border-radius: 8px;
   display: flex;
@@ -336,6 +171,7 @@
   border-radius: 5px;
   color: var(--accent-text);
   cursor: pointer;
+  font-size: 12px;
   line-height: 1;
   padding: 5px 8px;
 }
@@ -347,7 +183,8 @@
 
 .nbv-count {
   color: var(--muted);
-  font-family: var(--code-font);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
 }
 
 .nbv-body {
@@ -361,77 +198,12 @@
   padding: 10px 12px;
 }
 
-/* 🔴 THE APP'S ONE CODE FACE, and the size rule that goes with it is below —
-   see the code-size note above. `--white` (the strongest text in the theme, near-black
-   in light mode) rather than `--text`, because that is what `.code-editor` on
-   the practice tab uses and an untokenised run of source is meant to match it
-   exactly. Everything with a `cm-*` class on it is coloured by
-   styles/practice/code-highlight.css — the same palette, the same tokeniser,
-   the same file the practice editor is painted by. */
 .nbv-src code {
-  color: var(--white);
+  color: var(--text);
   display: block;
-  font-family: var(--code-font);
+  font-size: 13px;
+  line-height: 1.55;
   white-space: pre;
-}
-
-/* The one size rule for every kind of code on the surface. `.nbv-out` is in it
-   because output set at half the size of the code that printed it reads as a
-   footnote to the cell rather than as its answer. */
-.nbv-src code,
-.nbv-md pre > code,
-.nbv-out,
-.nbv-checker-note {
-  font-size: calc(18.2px * var(--anb-zoom, 1));
-  line-height: calc(26px * var(--anb-zoom, 1));
-}
-
-/* A fenced block in prose gets the SAME rectangle a runnable cell has — the
-   two kinds of block differ by whether there is a Run button, and nothing
-   else. Without this the fences were the only code on the page in a chip,
-   because `.nbv-md code` chips a ```python block the same way it chips an
-   inline `len(x)`. */
-.nbv-md pre {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-  overflow-x: auto;
-  padding: 10px 14px;
-}
-
-.nbv-md pre > code {
-  background: none;
-  color: var(--white);
-  display: block;
-  font-family: var(--code-font);
-  padding: 0;
-  white-space: pre;
-}
-
-/* The Run gutter is sized off the cell it sits beside, so it grows with the
-   code rather than floating at the top of a much taller box. */
-.nbv-run {
-  font-size: calc(18.2px * var(--anb-zoom, 1) * 0.8);
-}
-
-.nbv-count {
-  font-size: calc(18.2px * var(--anb-zoom, 1) * 0.62);
-}
-
-/* What a run is saying about itself while it happens — "running cells 1–4",
-   "restoring cells 1–7". Only the lesson page's prefix replay has anything to
-   put here; `:empty` keeps it from reserving a line on the surfaces that do
-   not, which is why every cell can carry one. */
-.nbv-status {
-  color: var(--muted);
-  font-size: calc(18.2px * var(--anb-zoom, 1) * 0.7);
-  font-style: italic;
-  margin: 0;
-  padding: 4px 12px 0;
-}
-
-.nbv-status:empty {
-  display: none;
 }
 
 .nbv-src code:focus {
@@ -445,6 +217,8 @@
 
 .nbv-out {
   border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  line-height: 1.5;
   margin: 0;
   overflow-x: auto;
   padding: 10px 12px;
@@ -459,7 +233,7 @@
    Normal white-space inside — the parent .nbv-out is a pre-wrap <pre>, and a
    plotly div or an HTML table must not inherit that. */
 .nbv-rich {
-  font-family: var(--ui-font);
+  font-family: var(--font-body, system-ui, sans-serif);
   white-space: normal;
 }
 
@@ -500,35 +274,8 @@
   font-size: 12px;
 }
 
-/* A run leaves a mark on the cell itself, not only in the gutter, so the
-   learner can see which parts of a page they have executed while scrolling
-   past a collapsed output. */
-.nbv-cell.has-run {
-  border-color: rgb(var(--accent-rgb) / 0.45);
-}
-
-.nbv-cell.has-failed {
-  border-color: rgb(var(--danger-rgb) / 0.55);
-}
-
 .nbv-cell.is-running {
   border-color: var(--accent-text);
-}
-
-/* The cell you are typing in is the thing on screen. 🔴 AFTER the three rules
-   above, which carry the same specificity — source order is the whole
-   tie-break, and above them the cell under the caret stops reading as active
-   the moment it has been run. */
-.nbv-cell.nbv-code:focus-within {
-  border-color: var(--border-strong);
-}
-
-.nbv-cell.has-run .nbv-count {
-  color: var(--accent-text);
-}
-
-.nbv-cell.has-failed .nbv-count {
-  color: var(--danger);
 }
 
 /* The session restarted, so what this cell printed describes a namespace that
@@ -541,6 +288,7 @@
 .nbv-checker-note {
   border-bottom: 1px solid var(--border);
   color: var(--muted);
+  font-size: 12.5px;
   margin: 0;
   padding: 10px 12px;
 }

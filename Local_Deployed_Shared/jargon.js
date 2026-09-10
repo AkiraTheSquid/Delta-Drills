@@ -74,7 +74,7 @@
   const SKIP = [
     "code", "pre", "kbd", "samp", "script", "style", "textarea",
     "a", "button", "h1", "h2", "h3", "h4", "h5", "h6",
-    ".dd-jargon", ".dd-jargon-pop", ".nbv-cell", ".katex",
+    ".dd-jargon", ".dd-jargon-pop", ".nb-cell", ".katex",
   ].join(",");
 
   const MAX_LINKS_PER_SCOPE = 12;   // a page, not a dictionary

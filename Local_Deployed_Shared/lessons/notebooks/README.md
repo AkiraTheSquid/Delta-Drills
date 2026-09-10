@@ -84,6 +84,15 @@
     Colab export; if that ordering is ever changed, this check is the tripwire.
 
 ## Recent Changes
+- 2026-09-10: `check_invariants` now compares the web `src` against the Colab
+  cell's **authored** source, not its raw `source`. A cell carrying
+  `# Hidden checks` no longer ships its authored text as `source` — Colab has
+  no harness, so `scripts/colab_cells.py` wraps it in a `run_checked(...)` call
+  and parks the original in `metadata.delta_drills_source`, which the web
+  compiler reads back so the learner edits the example and not the wrapper.
+  Comparing raw `source` failed on all 397 checked cells while the two editions
+  agreed perfectly. Verified by executing all 11 Colab notebooks in order:
+  397/397 checked cells clean.
 - 2026-08-19: Folder created — pass 2 of the stateful-notebook work. Nine
   lessons, 2589 cells, 424 problems, verified cell-for-cell against the Colab
   notebooks.

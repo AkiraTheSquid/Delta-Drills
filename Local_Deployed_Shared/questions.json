@@ -2507,50 +2507,6 @@
     "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
   },
   {
-    "id": 198,
-    "topic": "Numpy",
-    "subtopic": "Applied patterns and advanced",
-    "subtopic_key": "Numpy: Applied patterns and advanced",
-    "question_text": "Write a function solve(b) that takes a 2-D binary (0/1 integer) tensor of shape (n, u) whose rows encode subsets of a u-element universe, with NO empty rows, and returns the n x n matrix of pairwise JACCARD DISTANCES: entry [i, j] is 1 - |intersection| / |union| of the sets encoded by rows i and j. The diagonal is 0. Do not use Python loops.",
-    "answer_code": "import torch as t\n\ndef solve(b):\n    inter = (b[:, None, :] & b[None, :, :]).sum(-1)\n    union = (b[:, None, :] | b[None, :, :]).sum(-1)\n    return 1 - inter / union\n\n\nprint(solve(t.tensor([[1, 1, 0], [0, 1, 1]])))\n",
-    "difficulty_score": 70,
-    "difficulty_label": "hard",
-    "expected_output": "tensor([[0.0000, 0.6667],\n        [0.6667, 0.0000]])",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "stdout_prediction",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(b):\n    \"\"\"Return the pairwise Jaccard distance matrix of the row subsets.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.tensor([[1, 1, 0], [0, 1, 1]])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nb = t.tensor([[1, 1, 0], [0, 1, 1]])",
-        "call": "(lambda r: (isinstance(r, t.Tensor), t.as_tensor(r)))(solve(b))",
-        "expected_expr": "(True, [[0.0, 0.6666666269302368], [0.6666666269302368, 0.0]])"
-      },
-      {
-        "setup_code": "import torch as t\nb = t.tensor([[1, 0], [1, 0], [0, 1]])",
-        "call": "(lambda r: (isinstance(r, t.Tensor), t.as_tensor(r)))(solve(b))",
-        "expected_expr": "(True, [[0.0, 0.0, 1.0], [0.0, 0.0, 1.0], [1.0, 1.0, 0.0]])"
-      },
-      {
-        "setup_code": "import torch as t\nb = (((t.arange(48, dtype=t.float32) + 1) / 64).reshape(6, 8) > 0.4).to(t.int64)\nb[b.sum(dim=1) == 0, 0] = 1",
-        "call": "(lambda r: (isinstance(r, t.Tensor), t.as_tensor(r)))(solve(b))",
-        "expected_expr": "(True, [[0.0, 0.0, 0.0, 1.0, 0.875, 0.875], [0.0, 0.0, 0.0, 1.0, 0.875, 0.875], [0.0, 0.0, 0.0, 1.0, 0.875, 0.875], [1.0, 1.0, 1.0, 0.0, 0.125, 0.125], [0.875, 0.875, 0.875, 0.125, 0.0, 0.0], [0.875, 0.875, 0.875, 0.125, 0.0, 0.0]])"
-      },
-      {
-        "setup_code": "import torch as t\nb = t.tensor([[1, 1, 1, 1]])",
-        "call": "(lambda r: (isinstance(r, t.Tensor), t.as_tensor(r)))(solve(b))",
-        "expected_expr": "(True, [[0.0]])"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [],
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
-  },
-  {
     "id": 202,
     "topic": "Numpy",
     "subtopic": "Indexing and selection",
@@ -31062,6 +31018,314 @@
     ],
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 941,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A table `table` is given as a nested list of shape `(rows, cols)`. Return the same values with the two axes exchanged, as a nested list of shape `(cols, rows)`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return einops.rearrange(t.tensor(table), 'rows cols -> cols rows').tolist()\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+    "difficulty_score": 18,
+    "difficulty_label": "easy",
+    "expected_output": "[[1, 4], [2, 5], [3, 6]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(table):\n    \"\"\"Exchange the two axes.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2, 3], [4, 5, 6]])",
+        "expected_expr": "[[1, 4], [2, 5], [3, 6]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[7]])",
+        "expected_expr": "[[7]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1, 2]])",
+        "expected_expr": "[[1], [2]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1, 2, 3], [4, 5, 6]]",
+        "why": "Every name kept its position, so the pattern asked for the layout the input already had."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 942,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A volume `vol` is given as a nested list of shape `(d, h, w)`. Return a nested list of shape `(w, h, d)` holding the same values — the outer and inner axes trade places, the middle axis stays where it is.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return einops.rearrange(t.tensor(vol), 'd h w -> w h d').tolist()\n\n\nprint(solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]))\n",
+    "difficulty_score": 20,
+    "difficulty_label": "easy",
+    "expected_output": "[[[0, 4], [2, 6]], [[1, 5], [3, 7]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(vol):\n    \"\"\"Outer and inner axes trade places.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])",
+        "expected_expr": "[[[0, 4], [2, 6]], [[1, 5], [3, 7]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1], [2], [3]]])",
+        "expected_expr": "[[[1], [2], [3]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2, 3]], [[4, 5, 6]]])",
+        "expected_expr": "[[[1, 4]], [[2, 5]], [[3, 6]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0, 2], [1, 3]], [[4, 6], [5, 7]]]",
+        "why": "That exchanged the middle and inner axes; depth stayed outermost instead of moving to the end."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 943,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "An attention tensor `x` is given as a nested list of shape `(batch, heads, seq, dim)`. Return a nested list of shape `(batch, seq, heads, dim)`: the two middle axes are exchanged, the outermost and innermost axes are untouched.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return einops.rearrange(\n        t.tensor(x), 'batch heads seq dim -> batch seq heads dim'\n    ).tolist()\n\n\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "[[[[0, 1], [4, 5]], [[2, 3], [6, 7]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Exchange the two middle axes.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[[0, 1], [4, 5]], [[2, 3], [6, 7]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1], [2], [3]], [[4], [5], [6]]]])",
+        "expected_expr": "[[[[1], [4]], [[2], [5]], [[3], [6]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[9]]]])",
+        "expected_expr": "[[[[9]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[0, 2], [1, 3]], [[4, 6], [5, 7]]]]",
+        "why": "That exchanged the last two axes; the heads axis has to move out past the sequence axis, not the dim axis in past the sequence."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 944,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A block `x` is given as a nested list of shape `(a, b, c, d)`. Return a nested list of shape `(d, c, b, a)` — the same values with the axis order completely reversed.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return einops.rearrange(t.tensor(x), 'a b c d -> d c b a').tolist()\n\n\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "[[[[0], [4]], [[2], [6]]], [[[1], [5]], [[3], [7]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x):\n    \"\"\"Reverse the axis order.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]])",
+        "expected_expr": "[[[[0], [4]], [[2], [6]]], [[[1], [5]], [[3], [7]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2, 3]]], [[[4, 5, 6]]]])",
+        "expected_expr": "[[[[1, 4]]], [[[2, 5]]], [[[3, 6]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[5]]]])",
+        "expected_expr": "[[[[5]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[0, 2], [1, 3]]], [[[4, 6], [5, 7]]]]",
+        "why": "That reversed the axes in pairs. A full reversal sends the FIRST name to the last position, not to the second."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 945,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A batch of images `imgs` is given as a nested list of shape `(b, h, w, c)` — the colour axis last. Return a tuple `(out, shape)`: `out` is the same batch with the colour axis directly after the batch axis, as a nested list of shape `(b, c, h, w)`, and `shape` is a 4-tuple of ints giving the shape of `out`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"The relaid batch and its shape.\"\"\"\n    out = einops.rearrange(t.tensor(imgs), 'b h w c -> b c h w')\n    return out.tolist(), tuple(out.shape)\n\n\nprint(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))\n",
+    "difficulty_score": 46,
+    "difficulty_label": "medium",
+    "expected_output": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], (1, 3, 2, 2))",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"The relaid batch and its shape.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]])",
+        "expected_expr": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], (1, 3, 2, 2))"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]]], [[[3, 4]]]])",
+        "expected_expr": "([[[[1]], [[2]]], [[[3]], [[4]]]], (2, 2, 1, 1))"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[7]]]])",
+        "expected_expr": "([[[[7]]]], (1, 1, 1, 1))"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], (1, 2, 2, 3))",
+        "why": "The shape reported is the INPUT's. The pattern moved the axes, so the sizes travel with their names."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 946,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A batch-first sequence `seq` is given as a nested list of shape `(b, t, d)`, together with three ints `i`, `j`, `k` naming one element of it. Return a tuple `(out, pos)`: `out` is the same data time-first, as a nested list of shape `(t, b, d)`, and `pos` is the 3-tuple of ints saying where that element sits in `out`.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(seq, i, j, k):\n    \"\"\"Time-first, and where one element landed.\"\"\"\n    out = einops.rearrange(t.tensor(seq), 'b t d -> t b d')\n    return out.tolist(), (j, i, k)\n\n\nprint(solve([[[0, 1], [2, 3], [4, 5]], [[6, 7], [8, 9], [10, 11]]], 1, 2, 0))\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "([[[0, 1], [6, 7]], [[2, 3], [8, 9]], [[4, 5], [10, 11]]], (2, 1, 0))",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(seq, i, j, k):\n    \"\"\"Time-first, and where one element landed.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[0, 1], [2, 3], [4, 5]], [[6, 7], [8, 9], [10, 11]]], 1, 2, 0))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0, 1], [2, 3], [4, 5]], [[6, 7], [8, 9], [10, 11]]], 1, 2, 0)",
+        "expected_expr": "([[[0, 1], [6, 7]], [[2, 3], [8, 9]], [[4, 5], [10, 11]]], (2, 1, 0))"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1, 2]]], 0, 0, 1)",
+        "expected_expr": "([[[1, 2]]], (0, 0, 1))"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[5], [6]], [[7], [8]]], 0, 1, 0)",
+        "expected_expr": "([[[5], [7]], [[6], [8]]], (1, 0, 0))"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "([[[0, 1], [6, 7]], [[2, 3], [8, 9]], [[4, 5], [10, 11]]], (1, 2, 0))",
+        "why": "The element's index moves exactly as its axis names did, so the first two entries have to trade places too."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 947,
+    "topic": "Einops",
+    "subtopic": "Rearrange",
+    "subtopic_key": "Einops: Rearrange",
+    "question_text": "A batch of images `imgs` is given as a nested list of shape `(b, h, w, c)` — the colour axis last. The model downstream wants the colour axis directly after the batch axis, shape `(b, c, h, w)`; the plotting code after THAT wants each image transposed, shape `(b, c, w, h)`. Return the tuple `(for_model, for_plot)`, both as nested lists, with the second produced from the first.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"The batch at both hops.\"\"\"\n    for_model = einops.rearrange(t.tensor(imgs), 'b h w c -> b c h w')\n    for_plot = einops.rearrange(for_model, 'b c h w -> b c w h')\n    return for_model.tolist(), for_plot.tolist()\n\n\nprint(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))\n",
+    "difficulty_score": 54,
+    "difficulty_label": "medium",
+    "expected_output": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], [[[[0, 6], [3, 9]], [[1, 7], [4, 10]], [[2, 8], [5, 11]]]])",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "image_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(imgs):\n    \"\"\"The batch at both hops.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]]))\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]]])",
+        "expected_expr": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], [[[[0, 6], [3, 9]], [[1, 7], [4, 10]], [[2, 8], [5, 11]]]])"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1, 2]]], [[[3, 4]]]])",
+        "expected_expr": "([[[[1]], [[2]]], [[[3]], [[4]]]], [[[[1]], [[2]]], [[[3]], [[4]]]])"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[7]]]])",
+        "expected_expr": "([[[[7]]]], [[[[7]]]])"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "([[[[0, 3], [6, 9]], [[1, 4], [7, 10]], [[2, 5], [8, 11]]]], [[[[0, 3], [1, 4], [2, 5]], [[6, 9], [7, 10], [8, 11]]]])",
+        "why": "The second pattern was applied to the ORIGINAL batch, whose axes are still named h, w, c — so it transposed the wrong two axes. Every hop names the layout it is handed, not the one it started from."
+      }
+    ],
+    "expected_artifact_type": "image",
+    "supports_visual_output": true,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }

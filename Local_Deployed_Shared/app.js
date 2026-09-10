@@ -227,11 +227,6 @@ const switchTab = (tabName, opts) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
-  /* A lesson deep link (/einops/repeat-model) is an address for one bubble on
-     the graph, so it may not outlive the tab. Left in place it would mean a
-     learner who opened a concept, moved to Practice and then reloaded got the
-     graph back instead of their queue — concept-graph/lesson-links.js. */
-  window.DDLessonLinks?.onTab?.(tabName);
   /* 🔴 BOTH PAGES, because one /diagnostic/status payload feeds both. The
      placement card, its results and the start button are on #page-placement;
      the AREA BARS the same payload writes are on the Learner Home, on the idle
@@ -819,13 +814,6 @@ if (authToken) {
 // before switching, then confirm the optimistic pre-paint class only after the
 // requested page is visible so no other page flashes first.
 const soloTab = window.DDSoloRoute?.read?.() || "";
-/* A lesson deep link is the same kind of claim on the landing page as a solo
-   pathname — somebody sent a link to ONE concept — and it names the tab that
-   concept lives on. It is read syntactically (concept-graph/lesson-links.js
-   does not have the registry yet at this point in the boot), so an address
-   that turns out to name nothing still lands here; the graph then says so in
-   the lesson pane rather than the app silently ignoring the URL. */
-const lessonTab = window.DDLessonLinks?.read?.() ? "knowledge-graph" : "";
 /* A reload the LEARNER did not ask for should put them back where they were.
    The only one left is guest-session.js's last-resort recovery, and landing a
    learner mid-placement on the practice setup card reads as the app having
@@ -873,7 +861,7 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
    parameter only once the join has actually happened, so a reload before
    then still lands here. */
 const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "groups" : "";
-switchTab(lessonTab || soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
+switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by

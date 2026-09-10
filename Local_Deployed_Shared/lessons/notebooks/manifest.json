@@ -463,7 +463,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Rearrange",
    "file": "eo-1.json",
-   "cells": 324,
+   "cells": 368,
    "questions": [
     313,
     314,
@@ -526,7 +526,11 @@
     921,
     924,
     925,
-    928
+    928,
+    941,
+    942,
+    943,
+    944
    ],
    "kcs": [
     "einops.pattern-language",

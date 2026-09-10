@@ -1,6 +1,6 @@
 {
   "_generated_by": "scripts/generate_colab_notebooks.py — do not edit by hand",
-  "dir": "",
+  "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
       "id": "py-0",
@@ -40,7 +40,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 62
+      "problems": 66
     },
     {
       "id": "eo-2",
@@ -461,6 +461,10 @@
     "924": "eo-1",
     "925": "eo-1",
     "928": "eo-1",
+    "941": "eo-1",
+    "942": "eo-1",
+    "943": "eo-1",
+    "944": "eo-1",
     "324": "eo-2",
     "325": "eo-2",
     "326": "eo-2",

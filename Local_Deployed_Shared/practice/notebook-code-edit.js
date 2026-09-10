@@ -60,15 +60,14 @@
 
    WHICH SURFACES IT SERVES
 
-   Every contenteditable code cell in the app: the ARENA chapter notebooks
-   (practice/arena-notebook.js), the Notebooks tab (practice/notebook-view.js)
-   and the runnable fences inside a lesson page (practice/notebook.js).
+   Every contenteditable code cell in the app, which is three of them and not
+   one. They differ only in class names, so the selectors below are the only
+   place that difference is written down:
 
-   🪦 THEY USED TO DIFFER IN CLASS NAMES and the selectors below carried both
-   vocabularies — `.nbv-src code` for the two notebooks, `.nb-cell-code code`
-   for the lesson. All three build their cell through
-   practice/notebook-cells.js now (2026-09-10), so there is one vocabulary and
-   the selectors are single.
+     `.nbv-src code`       ARENA chapter notebooks (practice/arena-notebook.js)
+                           and the Notebooks tab (practice/notebook-view.js).
+     `.nb-cell-code code`  the lesson notebook (practice/notebook.js) — the
+                           runnable fences inside a lesson page.
 
    Seth, 2026-09-09, about the lessons: "make it such that the code blocks
    have the color coding ... the same as ... the practice page as well as the
@@ -105,20 +104,15 @@ const DeltaNotebookCode = (() => {
   "use strict";
 
   const INDENT = "    ";
-  /* The cell's anatomy, written down once. `CELL` is the box a cell's Run
-     button and `_ddSource` live on; `SCROLLER` is the element that actually
-     scrolls, whose position a repaint must not lose; `EDITOR` is the
-     contenteditable holding the source; `RUN` is the button. Anything that has
-     to know a cell's names asks one of these.
-
-     🔴 THESE MIRROR practice/notebook-cells.js — that file mints the markup
-     these four match. It used to mint two shapes and these carried both; there
-     is one now, but the coupling is the same, so a change to the cell's markup
-     there is a change to these. */
-  const CELL = ".nbv-cell";
-  const SCROLLER = ".nbv-src";
-  const EDITOR = ".nbv-src code";
-  const RUN = ".nbv-run";
+  /* The three class vocabularies this file serves, written down once. `CELL`
+     is the box a cell's Run button and `_ddSource` live on; `SCROLLER` is the
+     element that actually scrolls, whose position a repaint must not lose;
+     `EDITOR` is the contenteditable holding the source; `RUN` is the button.
+     Anything that has to know a surface's names asks one of these. */
+  const CELL = ".nbv-cell, .nb-cell";
+  const SCROLLER = ".nbv-src, .nb-cell-code";
+  const EDITOR = ".nbv-src code, .nb-cell-code code";
+  const RUN = ".nbv-run, .nb-run";
   // Same rule as runner.js: nothing follows one of these at the same depth.
   const DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
   // Fences whose body is Python. Anything else (bash, json, plain) is left

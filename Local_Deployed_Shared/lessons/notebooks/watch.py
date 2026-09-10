@@ -239,9 +239,18 @@ def check_the_arena_notebooks_are_not_swept_away_by_the_lesson_compiler():
 def check_invariants():
     """The web notebook and the Colab notebook are the same notebook.
 
-    Compared cell for cell: order, id, type and source. Trimmed fields (`role`,
-    `q`) are derived from the id, so they cannot disagree without the id
-    disagreeing first.
+    Compared cell for cell: order, id, type and AUTHORED source. Trimmed fields
+    (`role`, `q`) are derived from the id, so they cannot disagree without the
+    id disagreeing first.
+
+    ⚠️ A Colab code cell carrying `# Hidden checks` does NOT ship its authored
+    source as `source` (2026-09-10). Colab has no harness, so `colab_cells.py`
+    wraps such a cell in a `run_checked(...)` call and parks the authored text
+    in `metadata.delta_drills_source`; the web compiler reads that key back so
+    the learner edits the example and not the wrapper. Comparing raw `source`
+    would therefore fail on every checked cell in the bank while the two
+    editions are in perfect agreement. Compare what was AUTHORED — which is
+    the thing this invariant was always about.
     """
     if not os.path.isdir(IPYNB_DIR):
         return  # the Colab notebooks are not checked out beside this folder
@@ -271,7 +280,8 @@ def check_invariants():
                 f"{entry['file']} cell {w['id']!r} is a {w['t']} cell but {name} "
                 f"has it as {p['cell_type']}"
             )
-            assert w["src"] == p["source"], (
+            authored = p.get("metadata", {}).get("delta_drills_source", p["source"])
+            assert w["src"] == authored, (
                 f"{entry['file']} cell {w['id']!r} does not match {name} — the "
                 "web edition would teach or grade something the Colab edition "
                 "does not. Re-run scripts/compile_web_notebooks.py"

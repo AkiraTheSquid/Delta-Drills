@@ -7,22 +7,30 @@
 
      1. pointing the page-wide concept topbar (practice/concept-topbar.js) at
         whatever concept and rung the current card is on;
-     2. the worked example itself at the `worked` rung, before any question;
-     3. an example beside the problem on the `partial` rung ONLY, and only for
-        the drills whose KP authored one.
+     2. the worked example itself at the `worked` rung, before any question —
+        which is a LESSON screen (LessonGate.showLesson), not a decoration on
+        a drill card.
 
-   (3) used to include `faded`, on the reading that a completion problem needs
-   its example visible. It does not survive contact with what the two things
-   actually are here: the example is the segment's worked solution and the
-   faded starter is that same solution with the blanks cut into it, so side by
-   side the example is an answer key. The scaffold that makes the faded rung a
-   completion problem is the STARTER — most of the code, one move missing —
-   and that is still on the page.
+   🪦 NO EXAMPLE IS ATTACHED TO A DRILL. `decorate` used to hang the KP
+   segment's worked example off `#question-text` as a `<details
+   class="ladder-example">` and lay its code fences in as runnable cells above
+   the learner's own (`DeltaNotebook.showExamples`). Both are deleted, and both
+   must stay deleted — `watch_example_gate.py` asserts it.
 
-   Where the examples went: all of them are on the Lesson rung, which the
-   learner reads immediately before the faded rung opens. On `partial` a few
-   drills carry one of their own, served first so they thin out (see
-   kc_graph.with_example_first); by `solo` there are none.
+   The rungs it did that on shrank twice before dying. First `faded` came off
+   (2026-08-28): the example is the segment's worked solution and the faded
+   starter is that same solution with the blanks cut into it, so side by side
+   the example was an answer key. Seth, then: "the example on the left
+   completely gives away the scaffolded answer." Then `partial` came off
+   (2026-08-30) in favour of a scheduled popup, which left `SUPPORTED_STAGES`
+   an empty set and this whole path unreachable. The popup
+   (`practice/example-gate.js`) is gone too as of 2026-09-10 — it wrote the
+   example into the learner's OWN primary cell, and Seth met it on q198 as "a
+   bunch of unrelated code" that Submit then graded as his answer.
+
+   Where the examples are: on the Lesson rung, which the learner reads
+   immediately before the faded rung opens. "We don't put worked examples in
+   the problems anymore. They have their own lessons" (Seth, 2026-09-10).
 
    The lesson content comes from `lessons_structured.json` through LessonGate,
    which already loads and caches it — no second copy of the KP records, and no
@@ -31,42 +39,6 @@
 
 const LadderUI = (() => {
   "use strict";
-
-  /* Rungs on which an example is rendered beside the problem.
-
-     🔴 `faded` IS NOT ONE OF THEM ANY MORE (2026-08-28), and removing it is the
-     whole point of this change. It used to be, on the Renkl-and-Atkinson
-     reading that a completion problem needs its example visible — but the
-     example that was shown is the KP SEGMENT's example, and the faded starter
-     is that same segment's solution with the new syntax blanked out. On q484
-     the example printed
-
-         print("shapes:", tuple(a.shape), ..., "-> match?", a.shape == b.shape)
-         print("dtypes:", a.dtype, b.dtype, "-> match?", a.dtype == b.dtype)
-
-     directly beside `return (a._____ == b._____, a._____ == b._____)`. Every
-     blank was spelled out one column to the left. Seth, in-app feedback:
-     "The scaffolding on the right is perfect ... but the problem is that the
-     example on the left completely gives away the scaffolded answer."
-
-     The examples have not been taken away — they moved. The learner reads them
-     on the Lesson rung, all of them, immediately before this rung starts; the
-     faded drill is then recall against a scaffold rather than transcription.
-     `partial` (displayed "Solo") kept an example beside the MINORITY of its
-     drills that authored one — until 2026-08-30. Examples on the drill rungs
-     are now a POPUP in front of the drill, on a schedule the server decides
-     (app/example_schedule.py → question.ladder_example, drawn by
-     practice/example-gate.js): after a miss on Faded, at widening intervals
-     on Solo, once on entry to Integrated. Nothing is rendered beside a drill
-     any more, so this set is empty; it is kept because `decorate` and the
-     strip still read it to say "no example promised here". */
-  const SUPPORTED_STAGES = new Set([]);
-
-  const STAGE_BLURB = {
-    faded: "You read the example in the lesson — this one is from memory. Fill in the blanks.",
-    partial: "Write the whole thing yourself. An example pops up now and then, less and less.",
-    solo: "Every idea in this concept at once. Nothing to read first.",
-  };
 
   // Quotes matter here: every one of these values is interpolated into a
   // double-quoted HTML attribute (title=, data-kc=), and a concept title
@@ -272,144 +244,40 @@ const LadderUI = (() => {
     });
   };
 
-  const _exampleHtml = (kp, seg, stage) => {
-    const render =
-      (window.LessonGate && window.LessonGate.renderMarkdown) ||
-      ((text) => "<pre>" + esc(text) + "</pre>");
-    const blurb = STAGE_BLURB[stage] || "";
-    /* The blurb sits OUTSIDE the <details>, as a callout above it, since
-       2026-08-24: as a muted line inside the example it was the single most
-       important sentence on the card ("most of the solution is written for
-       you") rendered least visibly, and a tester read the faded rung as
-       write-it-from-scratch — "I almost didn't see this." */
-    return (
-      (blurb ? `<p class="ladder-stage-callout">${esc(blurb)}</p>` : "") +
-      '<details class="ladder-example" open>' +
-      `<summary>Worked example — ${esc(seg.title || kp.title)}</summary>` +
-      '<div class="ladder-example-body">' +
-      render(seg.worked_example_markdown) +
-      "</div></details>"
-    );
-  };
+  /* Per-card decoration is now callouts ONLY.
 
-  /* The example's code fences, in order, for the notebook editor. Prose stays
-     in the rail; these become runnable cells above the learner's own
-     (DeltaNotebook.showExamples). The fence regex tolerates an info string
-     after the language ("```python title=x") but takes only real fences — an
-     indented code block has no reliable boundary in this markdown. */
-  const _exampleSnippets = (markdown) => {
-    const codes = [];
-    const fence = /```(?:python|py)?[^\n]*\n([\s\S]*?)```/g;
-    let match;
-    while ((match = fence.exec(String(markdown || "")))) {
-      const code = match[1].trim();
-      if (code) codes.push(code);
-    }
-    return codes;
-  };
+     🪦 `_exampleHtml`, `_exampleSnippets`, `_segmentFor` and the KP fetch they
+     fed were deleted 2026-09-10. They put the KP segment's worked example into
+     `#question-text` as `<details class="ladder-example">` and its code fences
+     into the notebook as runnable cells above the learner's own. Seth: "we
+     don't put worked examples in the problems anymore. They have their own
+     lessons." Unreachable since `SUPPORTED_STAGES` emptied on 2026-08-30, so
+     nothing on screen changes — but the code being live was how the rail copy
+     kept coming back. `watch_example_gate.py` is the ratchet.
 
-  /* Pick the segment whose example matches the problem being asked.
+     What survives is the pair of lines a learner needs ABOUT their own card and
+     cannot read anywhere else: "you have not read the lesson yet", and "your
+     rung is spent, this one came from a lower one". Neither is content.
 
-     29 of the 63 KPs hold several segments, each with its own example. Showing
-     segment 1's example next to segment 3's problem is worse than showing
-     none — it invites the learner to map a solution onto a problem it does not
-     fit. A segment's `faded_items` name the questions it owns, so use that
-     when it answers; otherwise fall back to the last segment, which is the
-     KP's most complete example. */
-  const _segmentFor = (kp, questionId) => {
-    const segments = kp.segments && kp.segments.length ? kp.segments : null;
-    if (!segments) {
-      return {
-        title: kp.title,
-        worked_example_markdown: kp.worked_example_markdown,
-      };
-    }
-    const owns = (seg) =>
-      (seg.faded_items || []).some(
-        (item) => item && Number(item.question_id) === Number(questionId),
-      );
-    return segments.find(owns) || segments[segments.length - 1];
-  };
-
-  // Guards against a stale async insert: by the time the KP JSON arrives the
-  // learner may already be on the next question.
-  let _decorateToken = 0;
-
+     The async KP fetch went with the example, and with it `_decorateToken` —
+     there is no longer anything here that resolves after the next question may
+     have rendered, so there is nothing to stale-guard. */
   const decorate = (question) => {
     const host = document.getElementById("question-text");
     if (!host || !question) return;
-    const token = ++_decorateToken;
-    const kc = _kcOf(question);
-    const stage = _stageOf(question);
-
-    /* Synchronously, before any early return below: the previous question's
-       example cells must not survive onto a question that attaches none (a
-       solo rung, a KC-less item, a concept with no KP page). ui.js calls
-       DeltaNotebook.reset AFTER decorate in the same task, and the KP fetch
-       resolves after both, so the insert can never be wiped by the reset. */
-    window.DeltaNotebook?.clearExamples?.();
 
     _syncTopbar(question);
-    if (!kc || !stage) return;
+    if (!_kcOf(question) || !_stageOf(question)) return;
 
-    /* Before the Colab early-return and before the supported-stage check: a
-       spent rung is worth saying on EVERY card it affects, including the ones
-       that attach no example at all (which, on the faded and integrated rungs,
-       is all of them). Putting it below either guard is how it would end up
-       shown on a minority of the cards it applies to. */
+    /* A spent rung is worth saying on EVERY card it affects. This used to sit
+       above a Colab early-return and a supported-stage check, both of which
+       existed only to gate the example; with the example gone the callouts are
+       unconditional, which is what they always should have been. */
     if (question.attempt_first) {
       host.insertAdjacentHTML("beforeend", '<p class="ladder-stage-callout">First attempt — lesson not yet reviewed.</p>');
     }
     const gapHtml = _gapHtml(question.ladder_gap);
     if (gapHtml) host.insertAdjacentHTML("beforeend", gapHtml);
-
-    /* THE COLAB EDITION DOES NOT GET THE EXAMPLE HERE.
-
-       On that deploy the problem lives in the notebook, and so does its worked
-       example: `scripts/generate_colab_notebooks.py` emits the solved twin as
-       cells directly ABOVE the problem's header, anchored `dd-q<n>-example` so
-       `colab_focus.js` keeps the pair on screen together. Scroll up from the
-       problem and there is the example; scroll down and there is the problem
-       that is the same move on different specifics.
-
-       Rendering a second copy into this rail would put the same content on
-       screen twice, at two different widths, with the sidebar's copy being the
-       one nobody asked for. The instruction was explicit — the example goes
-       above the problem in Colab, not in the sidebar.
-
-       `dd-no-notebook` is not an exception so much as the same rule read the
-       other way: ui.js sets it for the ~75 questions with no published cell to
-       route to. For those the rail IS the whole screen, there is no notebook
-       holding the example, and dropping it here would delete the scaffold
-       rather than relocate it. */
-    if (
-      window.DDColab
-      && typeof window.DDColab.active === "function"
-      && window.DDColab.active()
-      && !document.documentElement.classList.contains("dd-no-notebook")
-    ) {
-      return;
-    }
-
-    if (!SUPPORTED_STAGES.has(stage)) return;
-    if (!window.LessonGate || typeof window.LessonGate.getKpEntry !== "function") return;
-
-    window.LessonGate.getKpEntry(kc)
-      .then((found) => {
-        if (!found || token !== _decorateToken) return;
-        const seg = _segmentFor(found.kp, question.question_id);
-        if (!seg || !seg.worked_example_markdown) return;
-        host.insertAdjacentHTML("beforeend", _exampleHtml(found.kp, seg, stage));
-        /* The example's fences read like the lesson's, because they are the
-           same markdown — so they get the same colour. Static only: this is
-           the rail beside a graded question, and a Run button here would be a
-           second place to run the answer. See practice/notebook-code-edit.js. */
-        window.DeltaNotebookCode?.paintFences?.(host);
-        // The same example's code, runnable in the editor (tester ask,
-        // 2026-08-24). showExamples handles the pane-hidden case itself.
-        window.DeltaNotebook?.showExamples?.(_exampleSnippets(seg.worked_example_markdown));
-      })
-      .catch((err) => console.warn("[ladder] example unavailable:", err));
   };
 
   return {
@@ -418,7 +286,6 @@ const LadderUI = (() => {
     applyWorkedSeen,
     creditTaught,
     noteWorkedSeen,
-    SUPPORTED_STAGES,
   };
 })();
 

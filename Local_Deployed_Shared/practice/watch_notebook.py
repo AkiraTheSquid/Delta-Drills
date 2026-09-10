@@ -494,28 +494,18 @@ def check_a_collapsed_cell_still_knows_its_own_source():
     defined. So the source is carried on the node and only ever read back from
     the DOM as a fallback.
     """
-    # 🔴 THE CELL BUILDER MOVED (2026-09-10). Minting a code cell and reading a
-    # code cell back are one pair of operations, and they are now in ONE file —
-    # practice/notebook-cells.js — that the lesson gate, the Notebooks tab and
-    # the ARENA page all call. This check follows them there: the bug it exists
-    # to prevent is in the builder/reader pair, not in whoever calls it.
-    cells = read(os.path.join(HERE, "notebook-cells.js"))
-    build = re.search(r"const codeCell = .*?\n  \};", cells, re.S)
-    assert build, "notebook-cells.js no longer has a codeCell"
+    view = read(os.path.join(HERE, "notebook-view.js"))
+    build = re.search(r"const _codeCell = .*?\n  \};", view, re.S)
+    assert build, "notebook-view.js no longer has a _codeCell"
     assert "_ddSource =" in build.group(0), (
         "a code cell no longer carries its own source — a collapsed solution "
         "would run the empty string and report success"
     )
-    view = read(os.path.join(HERE, "notebook-view.js"))
-    assert "readSource" in view, (
-        "notebook-view.js no longer reads a cell's source through the shared "
-        "reader — it has grown a second, unguarded way to get the text"
-    )
-    source_of = re.search(r"const readSource = .*?\n  \};", cells, re.S)
-    assert source_of, "notebook-cells.js no longer has a readSource"
-    assert "_ddSource" in source_of.group(0), "readSource no longer prefers the carried source"
+    source_of = re.search(r"const _sourceOf = .*?\n  \};", view, re.S)
+    assert source_of, "notebook-view.js no longer has a _sourceOf"
+    assert "_ddSource" in source_of.group(0), "_sourceOf no longer prefers the carried source"
     assert "textContent" in source_of.group(0), (
-        "readSource's DOM fallback is innerText-only again — that is the "
+        "_sourceOf's DOM fallback is innerText-only again — that is the "
         "layout-dependent read this check exists to prevent"
     )
     assert re.search(r'addEventListener\("input"', view), (
@@ -594,18 +584,12 @@ def check_the_solution_is_shown_and_the_hints_are_not():
         "the hints disclosure now starts open — a hint read before the attempt "
         "replaces the thinking it was written to prompt; only the solution opens"
     )
-    # The disclosure itself is built by the shared cell module now (2026-09-10);
-    # `_detailsCell` here is a one-line adapter onto it. The asymmetry above is
-    # still this file's — WHICH cell opens is a decision about this surface —
-    # but "it is a real <details> with a real summary" belongs where the element
-    # is actually created.
-    cells = read(os.path.join(HERE, "notebook-cells.js"))
-    details = re.search(r"const detailsCell = .*?\n  \};", cells, re.S)
+    details = re.search(r"const _detailsCell = .*?\n  \};", view, re.S)
     assert details and "document.createElement(\"details\")" in details.group(0), (
-        "detailsCell no longer builds a <details> element"
+        "_detailsCell no longer builds a <details> element"
     )
     assert re.search(r"if \(open\) el\.open = true;", details.group(0)), (
-        "detailsCell no longer opens on request — the `open` argument is what "
+        "_detailsCell no longer opens on request — the `open` argument is what "
         "keeps the solution/hints asymmetry in ONE place instead of two builders"
     )
 

@@ -60,59 +60,22 @@
 .question-number {
   text-align: center;
   color: var(--white);
-  /* THE NOTEBOOK'S HEADING FACE. Seth, 2026-09-10, on the practice split:
-     "the left side needs to have the same font as the notebook for the text
-     and then of course the code will have its own separate font". The concept
-     name is the heading of the thing being read, so it takes the heading face
-     rather than the app's sans chrome. Weight 400 rather than 700 for the same
-     reason the notebook's headings are — ET Book carries a heading at its own
-     weight, and 700 on a display serif reads as shouting. Sized UP from 20px
-     to hold its place: a serif at a given px reads smaller than the sans it
-     replaced. */
-  font-family: var(--prose-heading);
-  font-size: 23px;
-  font-weight: 400;
-  /* The -0.2px tracking was tuned for bold Inter and closes up a serif. */
-  letter-spacing: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
   line-height: 1.25;
   margin: 0;
   /* A concept name is allowed to wrap; it is not allowed to be clipped. */
   min-width: 0;
 }
 
-/* Question Text — the problem statement, the left half of the split.
-
-   🔴 THE READING FACE, NOT THE UI FACE. This is the one piece of prose on the
-   practice tab, and it is the same prose a lesson and a notebook show, so it
-   is set in --prose-font (styles/variables.css) like both of those. What is
-   NOT set in it is the code: the editor on the right, the `code` chips in this
-   paragraph and the imports panel all keep --code-font, which is the whole of
-   what Seth asked for — one reading face, one code face, and the split's two
-   halves each showing one of them.
-
-   Weight 400 rather than 500: 500 in a stack whose first hits are Palatino and
-   ET Book means a SYNTHESISED bold on most machines, which is a smeared
-   paragraph rather than an emphatic one. Sized up 17px → 18.5px on the same
-   argument as the heading above. */
+/* Question Text */
 .question-text {
-  font-family: var(--prose-font);
-  font-size: 18.5px;
-  font-weight: 400;
+  font-size: 17px;
+  font-weight: 500;
   color: var(--white);
-  line-height: 1.62;
+  line-height: 1.6;
   margin-bottom: 20px;
-}
-
-/* The chips inside the problem statement stay monospace — they name real
-   identifiers, and a serif `arr[1, 0]` is not the thing the learner will type.
-   Scoped to inline code: a fenced block inside the statement is a cell and is
-   dressed by the notebook sheet. */
-.question-text :not(pre) > code {
-  background: var(--prose-chip);
-  border-radius: 4px;
-  font-family: var(--code-font);
-  font-size: 0.86em;
-  padding: 1px 5px;
 }
 
 .question-imports {

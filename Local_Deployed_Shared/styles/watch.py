@@ -81,15 +81,14 @@ REQUIRED_TOKENS = (
 # each — a block is matched by its whole list, not by one selector in it, which
 # is why two of these carry a comma.
 # ":root," is the blue block's first selector — blue is also the unstamped
-# default, which is why it and ':root[data-theme="blue"]' share a rule.
-# 🪦 The light block used to carry ':root[data-arena-notebook]' as a second
-# selector, which pinned the ARENA notebook to the light palette in EVERY
-# theme. It follows data-theme like every other page now (2026-09-10), so the
-# light block is a plain single selector again.
+# default, which is why it and ':root[data-theme="blue"]' share a rule. The
+# light block is shared the same way with '#page-arena-notebook', because the
+# ARENA notebook page is LessWrong's light reading surface in every theme and
+# takes this palette rather than declaring a second copy of it.
 THEME_BLOCKS = (
     ':root,\n:root[data-theme="blue"]',
     ':root[data-theme="dark"]',
-    ':root[data-theme="light"]',
+    ':root[data-theme="light"],\n:root[data-arena-notebook]',
 )
 
 
@@ -393,31 +392,22 @@ def check_invariants():
 def check_the_light_page_scope_is_actually_set():
     """`:root[data-arena-notebook]` is a dead selector unless app.js sets it.
 
-    This is the check for a bug that SHIPPED. The ARENA notebook page's
-    surface was first scoped to `#page-arena-notebook`. Custom properties
-    inherit downwards only, so the two elements that most needed it never saw
-    it: `body`, which paints the page (base.css `background: var(--bg)`), is
-    the page's ANCESTOR, and the contents rail is `position: fixed` and so
-    outside the page's box. The result rendered as a white reading column on a
-    black screen with the rail hanging in the dark — no error, nothing failed,
-    it just looked wrong.
+    This is the check for a bug that SHIPPED. The ARENA notebook page is meant
+    to be light in every theme, and the palette was first scoped to
+    `#page-arena-notebook`. Custom properties inherit downwards only, so the
+    two elements that most needed it never saw it: `body`, which paints the
+    page (base.css `background: var(--bg)`), is the page's ANCESTOR, and the
+    contents rail is `position: fixed` and so outside the page's box. The
+    result rendered as a white reading column on a black screen with the rail
+    hanging in the dark — no error, nothing failed, it just looked wrong.
 
-    The scope lives at :root, which means a stylesheet alone cannot do it:
+    The scope now lives at :root, which means a stylesheet alone cannot do it:
     something has to put the attribute on documentElement. Deleting that one
-    line in app.js would silently strip the page of LessWrong's measure and
-    type scale, so assert the pair.
-
-    🔴 READS arena-notebook.css, NOT variables.css. Until 2026-09-10 the
-    attribute appeared in variables.css, because it was a second selector on
-    the light palette — the thing that pinned this page to a white screen even
-    on the dark theme. Removing that made this function's early `return` fire
-    and the whole check pass vacuously, which is the one way a guard fails
-    without anyone noticing. The attribute still carries the reading measure
-    and the two palette blocks, and those are HERE.
+    line in app.js would silently restore the dark page, so assert the pair.
     """
-    variables = _read(os.path.join(HERE, "practice", "arena-notebook.css"))
+    variables = _read(os.path.join(HERE, "variables.css"))
     if "[data-arena-notebook]" not in variables:
-        return  # the notebook's page scope was removed on purpose; nothing to pin
+        return  # the light-page scope was removed on purpose; nothing to pin
 
     # 🔴 COMMENTS FIRST, or this check passes on its own documentation. The
     # wiring in app.js is explained by a comment that names the attribute, so
@@ -444,9 +434,8 @@ def check_the_light_page_scope_is_actually_set():
         "app.js must set the ARENA notebook's light-page scope as ONE call —\n"
         '  document.documentElement.toggleAttribute("data-arena-notebook", '
         'tabName === "arena-notebook");\n'
-        "styles/practice/arena-notebook.css scopes the reading measure and "
-        "LessWrong's palette to `:root[data-arena-notebook]`, so without it the "
-        "page loses both and no stylesheet can fix it. It "
+        "variables.css scopes the light palette to `:root[data-arena-notebook]`, "
+        "so without it the page renders dark and no stylesheet can fix it. It "
         "has to be documentElement, because `body` paints the page background "
         "and the contents rail is position:fixed — a token declared any lower "
         "reaches neither. And it has to be a toggle off the tab name: set "
