@@ -30,6 +30,8 @@ print(x)
 print(x.reshape(3, 4))
 print("(2, 6) ", x.reshape(2, 6).shape)
 print("(3, 4) ", x.reshape((3, 4)).shape)
+# Hidden checks
+assert _delta_output == 'tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])\ntensor([[ 0,  1,  2,  3],\n        [ 4,  5,  6,  7],\n        [ 8,  9, 10, 11]])\n(2, 6)  torch.Size([2, 6])\n(3, 4)  torch.Size([3, 4])\n'
 ```
 
 The count rule is not a guideline. A mismatch raises rather than padding or
@@ -40,6 +42,9 @@ try:
     x.reshape(5, 3)                      # 15 != 12
 except RuntimeError as err:
     print("RuntimeError:", err)
+# Hidden checks
+assert _delta_output.startswith("RuntimeError:")
+assert "12" in _delta_output and "5, 3" in _delta_output
 ```
 
 One dimension may be **`-1`**, meaning "work this one out for me":
@@ -50,6 +55,7 @@ is allowed per call.
 ```python
 print("(3, -1) ->", tuple(x.reshape(3, -1).shape))
 print("(-1, 2) ->", tuple(x.reshape(-1, 2).shape))
+# Hidden checks
 assert x.reshape(3, -1).shape == x.reshape(3, 4).shape
 ```
 
@@ -69,11 +75,12 @@ flat = t.arange(n * n)
 # three row 1 — exactly the "reading order" the task describes. No data
 # is copied; only the note about the shape changed.
 grid = flat.reshape(n, n)
-assert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 
 # The -1 shortcut: "3 rows, you work out the columns."
-assert grid.tolist() == t.arange(9).reshape(3, -1).tolist()
 print(grid)
+# Hidden checks
+assert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+assert grid.tolist() == t.arange(9).reshape(3, -1).tolist()
 ```
 
 Why each step:
@@ -175,6 +182,7 @@ import torch as t
 z = t.arange(6).reshape(2, 3)
 print(z)
 print("flatten ->", z.flatten())
+# Hidden checks
 assert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]
 ```
 
@@ -183,6 +191,8 @@ last axis (length 3) fastest and the first axis slowest.
 
 ```python
 print(t.arange(12).reshape(2, 2, 3))
+# Hidden checks
+assert _delta_output == 'tensor([[[ 0,  1,  2],\n         [ 3,  4,  5]],\n\n        [[ 6,  7,  8],\n         [ 9, 10, 11]]])\n'
 ```
 
 Read that print bottom-up: the innermost brackets (length 3) count by one, so
@@ -195,6 +205,7 @@ first and then flattening: `z.T.flatten()` reads the matrix column by column.
 ```python
 print("row-major   ", z.flatten())
 print("column-major", z.T.flatten())
+# Hidden checks
 assert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]
 ```
 
@@ -208,14 +219,15 @@ import torch as t
 grid = t.arange(9).reshape(3, 3)
 
 # Step 1: flatten undoes the reshape — the row-major walk gives 0..8 back.
-assert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 # Step 2: the column-major walk reads DOWN each column instead. No order=
 # keyword exists, so transpose first and let the row-major walk do the work.
-assert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]
 print(grid)
 print("row-major   ", grid.flatten())
 print("column-major", grid.T.flatten())
+# Hidden checks
+assert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+assert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]
 ```
 
 Why: "flatten" is not one operation until you say the order. The default
@@ -295,6 +307,7 @@ grid = base.reshape(2, 3)
 grid[0, 0] = 9.0
 print("grid:", grid)
 print("base:", base)
+# Hidden checks
 assert base[0].item() == 9.0
 ```
 
@@ -313,6 +326,7 @@ you have the same numbers in the same arrangement.
 z = t.arange(6).reshape(2, 3)
 back = z.flatten().reshape(z.shape)
 print(back)
+# Hidden checks
 assert t.equal(back, z)
 ```
 
@@ -328,13 +342,14 @@ x = t.tensor([[1, 2], [3, 4]])
 # Step 1: a reshaped view of a tensor in reading order shares its memory.
 flat = x.reshape(-1)
 flat[0] = 99
-assert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x
 
 # Step 2: the round trip — flatten, reshape back — is the same tensor.
 again = x.flatten().reshape(x.shape)
-assert t.equal(again, x)
 print("x after the write:", x.tolist())
 print("round trip equal: ", t.equal(again, x))
+# Hidden checks
+assert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x
+assert t.equal(again, x)
 ```
 
 Why: step 1 is the difference between reshape and a copy, and it is what
@@ -422,6 +437,7 @@ x = t.arange(12)
 g = x.reshape(2, 2, -1)      # 12 = 2 * 2 * ?, so the last axis is 3
 print(g)
 print("shape:", tuple(g.shape))
+# Hidden checks
 assert tuple(g.shape) == (2, 2, 3)
 ```
 

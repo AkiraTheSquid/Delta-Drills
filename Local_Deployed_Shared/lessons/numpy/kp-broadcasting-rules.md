@@ -43,15 +43,10 @@ b = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)
 # axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b
 # down rows. Result (3, 4): the "addition table" of the two vectors.
 table = a + b
-assert table.shape == (3, 4)
-assert table.tolist() == [[0, 1, 2, 3],
-                          [1, 2, 3, 4],
-                          [2, 3, 4, 5]]
 
 # The result SHAPE is decidable from the two input shapes alone, with nothing
 # allocated — which is what you want when the real tensors are large and you
 # only need to know whether they will fit together.
-assert t.broadcast_shapes(a.shape, b.shape) == (3, 4)
 
 # Incompatible shapes fail here too, and fail early.
 print("(3,1) + (1,4) ->", tuple(table.shape))
@@ -63,6 +58,12 @@ except RuntimeError as err:
     print("RuntimeError:", err)
 else:
     raise AssertionError("(3, 4) and (5, 4) should not broadcast")
+# Hidden checks
+assert table.shape == (3, 4)
+assert table.tolist() == [[0, 1, 2, 3],
+                          [1, 2, 3, 4],
+                          [2, 3, 4, 5]]
+assert t.broadcast_shapes(a.shape, b.shape) == (3, 4)
 ```
 
 Why: writing the two shapes one above the other, right-aligned, and
@@ -117,7 +118,6 @@ import torch as t
 # The addition table again, from FLAT vectors — we place the 1-axes:
 va, vb = t.arange(3), t.arange(4)
 table = va[:, None] + vb[None, :]
-assert table.shape == (3, 4)
 
 # 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).
 # Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.
@@ -126,13 +126,15 @@ img = t.ones((2, 2, 3))
 scale = t.tensor([[1.0, 2.0],
                   [3.0, 4.0]])
 scaled = img * scale[:, :, None]
-assert scaled.shape == (2, 2, 3)
-assert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3
 print("flat vectors, 1-axes placed by hand ->", tuple(table.shape))
 print(table)
 print("scale", tuple(scale.shape), "-> scale[:, :, None]",
       tuple(scale[:, :, None].shape), "-> img * it", tuple(scaled.shape))
 print("pixel [1, 0] scaled by 3:", scaled[1, 0])
+# Hidden checks
+assert table.shape == (3, 4)
+assert scaled.shape == (2, 2, 3)
+assert scaled[1, 0].tolist() == [3.0, 3.0, 3.0]   # whole pixel scaled by 3
 ```
 
 Why: the `va[:, None] + vb[None, :]` form is the general recipe for "all

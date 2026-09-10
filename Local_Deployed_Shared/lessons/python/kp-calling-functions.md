@@ -20,6 +20,8 @@ items = [10, 20, 30]
 
 print(len(items))
 print(len)
+# Hidden checks
+assert _delta_output == '3\n<built-in function len>\n'
 ```
 
 The second line prints something like `<built-in function len>`. Without
@@ -32,6 +34,8 @@ matters, because each position means something different to the function:
 ```python
 print(round(3.14159, 2))
 print(round(3.14159, 4))
+# Hidden checks
+assert _delta_output == '3.14\n3.1416\n'
 ```
 
 `round` takes the number first and how many decimal places second. Swapping them
@@ -47,6 +51,8 @@ print(sum(numbers))
 print(max(numbers))
 print(min(numbers))
 print(sum(numbers) / len(numbers))
+# Hidden checks
+assert _delta_output == '12\n7\n1\n4.0\n'
 ```
 
 That last line is a call inside an expression built from two other calls: each
@@ -62,6 +68,8 @@ items = [3, 1, 2]
 
 print(sorted(items))
 print(sorted(items, reverse=True))
+# Hidden checks
+assert _delta_output == '[1, 2, 3]\n[3, 2, 1]\n'
 ```
 
 `sorted` returns a NEW list and leaves the original alone — which you can check,
@@ -73,6 +81,8 @@ ordered = sorted(items)
 
 print(ordered)
 print(items)
+# Hidden checks
+assert _delta_output == '[1, 2, 3]\n[3, 1, 2]\n'
 ```
 
 ## Watch out
@@ -99,6 +109,8 @@ print("count  :", count)
 print("total  :", total)
 print("biggest:", biggest)
 print("mean   :", round(total / count, 2))
+# Hidden checks
+assert _delta_output == 'count  : 4\ntotal  : 24\nbiggest: 9\nmean   : 6.0\n'
 ```
 
 Why each step:
@@ -276,6 +288,8 @@ print("sum:", sum(numbers))
 print("max:", max(numbers))
 print("min:", min(numbers))
 print("as one answer:", (sum(numbers), max(numbers), min(numbers)))
+# Hidden checks
+assert _delta_output == 'sum: 16\nmax: 8\nmin: 3\nas one answer: (16, 8, 3)\n'
 ```
 
 ### q595

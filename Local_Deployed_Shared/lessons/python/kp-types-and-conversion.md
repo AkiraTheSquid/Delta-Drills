@@ -29,6 +29,8 @@ print(type(5).__name__)
 print(type(2.5).__name__)
 print(type("42").__name__)
 print(type(True).__name__)
+# Hidden checks
+assert _delta_output == 'int\nfloat\nstr\nbool\n'
 ```
 
 Notice that `42` and `"42"` are **not** the same value. One is a number; the
@@ -38,6 +40,8 @@ the moment you use `+`, because `+` does a different job for each type:
 ```python
 print(4 + 2)
 print("4" + "2")
+# Hidden checks
+assert _delta_output == '6\n42\n'
 ```
 
 That is not a quirk — it is the type deciding the meaning. Numbers add; text
@@ -50,6 +54,8 @@ made of digits — no matter how alike they look on the page:
 ```python
 print("42" == 42)
 print(42 == 42)
+# Hidden checks
+assert _delta_output == 'False\nTrue\n'
 ```
 
 Comparing does not convert. If you want the question answered about the
@@ -57,6 +63,8 @@ Comparing does not convert. If you want the question answered about the
 
 ```python
 print(int("42") == 42)
+# Hidden checks
+assert _delta_output == 'True\n'
 ```
 
 To move between the two you **convert**, by calling the type's own name as a
@@ -68,6 +76,8 @@ number = int(text)
 
 print(number + 8)
 print(text)
+# Hidden checks
+assert _delta_output == '50\n42\n'
 ```
 
 `float(...)` and `str(...)` work the same way, and going number → text →
@@ -77,6 +87,8 @@ number again gets you back where you started:
 print(float("2.5"))
 print(str(7) + "!")
 print(int(str(7)))
+# Hidden checks
+assert _delta_output == '2.5\n7!\n7\n'
 ```
 
 Two conversions that look similar and are not: `int(...)` throws the fractional
@@ -86,6 +98,8 @@ part **away**, while `round(...)` goes to the nearest whole number.
 print(int(3.9))
 print(round(3.9))
 print(int(-2.7), round(-2.7))
+# Hidden checks
+assert _delta_output == '3\n4\n-2 -3\n'
 ```
 
 `bool(...)` is a conversion too, and the one that surprises people. It asks a
@@ -96,6 +110,8 @@ answers yes. Zero answers no, and so does empty text:
 print(bool(7), bool(0))
 print(bool("hi"), bool(""))
 print(bool(0.0), bool(-3))
+# Hidden checks
+assert _delta_output == 'True False\nTrue False\nFalse True\n'
 ```
 
 The trap is the text `"0"`. It is one character long, so there **is** something
@@ -105,6 +121,8 @@ been read as a number:
 ```python
 print(bool("0"))
 print(bool(int("0")))
+# Hidden checks
+assert _delta_output == 'True\nFalse\n'
 ```
 
 ## Watch out
@@ -131,6 +149,8 @@ print(as_int, type(as_int).__name__)
 print(as_float, type(as_float).__name__)
 print(back_to_text, type(back_to_text).__name__)
 print("the original is untouched:", text, type(text).__name__)
+# Hidden checks
+assert _delta_output == '12 int\n12.0 float\n12 str\nthe original is untouched: 12 str\n'
 ```
 
 Why each step:
@@ -314,6 +334,8 @@ text = "9"
 print(int(text), type(int(text)).__name__)
 print(float(text), type(float(text)).__name__)
 print(str(int(text)), type(str(int(text))).__name__)
+# Hidden checks
+assert _delta_output == '9 int\n9.0 float\n9 str\n'
 ```
 
 ### q577

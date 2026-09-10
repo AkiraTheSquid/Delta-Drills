@@ -35,12 +35,13 @@ v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
 # Index of the minimum. 2.0 appears twice — argmin reports the FIRST.
 i = int(t.argmin(v))
-assert i == 1
 
 # The value at that index is the min itself.
-assert v[i] == v.min()
 print("v", v)
 print("argmin ->", i, "| v[i] =", v[i].item(), "| v.min() =", v.min().item())
+# Hidden checks
+assert i == 1
+assert v[i] == v.min()
 ```
 
 Why: `int(...)` at the boundary again — graders asking for "a plain Python
@@ -87,10 +88,11 @@ v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 # Replace the max with 0 on a copy: the index is the handle.
 out = v.clone()
 out[out.argmax()] = 0.0          # argmax -> 4; out[4] = 0
-assert out.tolist() == [4.0, 2.0, 7.0, 2.0, 0.0]
-assert v.tolist() == [4.0, 2.0, 7.0, 2.0, 9.0]   # input intact
 print("out", out)
 print("v  ", v, " <- untouched")
+# Hidden checks
+assert out.tolist() == [4.0, 2.0, 7.0, 2.0, 0.0]
+assert v.tolist() == [4.0, 2.0, 7.0, 2.0, 9.0]   # input intact
 ```
 
 Why: the copy-then-assign order matters when the input must survive —
@@ -142,11 +144,12 @@ v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 # "Closest to target" = argmin of a transformed array.
 target = 6.5
 j = int(t.argmin(t.abs(v - target)))
-assert j == 2                     # |7.0 - 6.5| = 0.5 is the smallest gap
 closest_value = v[j]
-assert closest_value == 7.0
 print("gaps to", target, ":", t.abs(v - target))
 print("smallest gap at index", j, "-> value", closest_value.item())
+# Hidden checks
+assert j == 2                     # |7.0 - 6.5| = 0.5 is the smallest gap
+assert closest_value == 7.0
 ```
 
 Why: no sorting needed — sorting is O(n log n) and loses positions;

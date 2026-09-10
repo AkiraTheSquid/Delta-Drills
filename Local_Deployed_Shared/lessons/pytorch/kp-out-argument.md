@@ -27,6 +27,8 @@ import torch as t
 canvas = t.zeros((5, 3))
 t.linspace(0, 1, 5, out=canvas[:, 1])
 print(canvas)
+# Hidden checks
+assert _delta_output == 'tensor([[0.0000, 0.0000, 0.0000],\n        [0.0000, 0.2500, 0.0000],\n        [0.0000, 0.5000, 0.0000],\n        [0.0000, 0.7500, 0.0000],\n        [0.0000, 1.0000, 0.0000]])\n'
 ```
 
 Three things to notice.
@@ -45,6 +47,8 @@ view = canvas[1:3]
 filled = t.arange(2, out=view)
 print(filled is view)
 print(canvas)
+# Hidden checks
+assert _delta_output == 'True\ntensor([0., 0., 1., 0.])\n'
 ```
 
 - The target's **shape must already match** what the call would produce.
@@ -60,6 +64,11 @@ import torch as t
 canvas = t.zeros((5, 3))
 t.linspace(0, 1, 4, out=canvas[:, 1])   # 4 values into a 5-slot column
 print(canvas)                            # the values sit across row 0..1, not down column 1
+# Hidden checks
+assert canvas.shape == (5, 3)
+assert t.allclose(canvas.flatten()[1:5], t.tensor([0., 1/3, 2/3, 1.]))
+assert canvas.flatten()[5:].count_nonzero().item() == 0
+assert canvas.flatten()[0].item() == 0
 ```
 
 `out=` works the same on `t.arange`, `t.linspace`, and most other tensor
@@ -76,6 +85,7 @@ import torch as t
 points = t.zeros((5, 3))
 t.linspace(-1.0, 1.0, 5, out=points[:, 1])   # column 1 = y
 print(points)
+# Hidden checks
 assert points[0, 1] == -1.0 and points[-1, 1] == 1.0
 assert points[:, 0].sum() == 0.0            # other columns untouched
 ```

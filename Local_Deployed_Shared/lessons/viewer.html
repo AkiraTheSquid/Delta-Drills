@@ -81,7 +81,7 @@ function md(text) {
       while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
       i++;
       const cls = info.includes('starter') ? ' class="starter"' : '';
-      const codeHtml = '<pre' + cls + '><code>' + esc(buf.join('\n')) + '</code></pre>';
+      const codeHtml = '<pre' + cls + '><code>' + esc(buf.join('\n').split('\n# Hidden checks\n')[0]) + '</code></pre>';
       if (info.includes('solution')) {
         out.push('<details class="solution"><summary>Show solution</summary>' + codeHtml + '</details>');
       } else {

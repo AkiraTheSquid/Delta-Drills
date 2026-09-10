@@ -1,6 +1,6 @@
 {
   "_generated_by": "scripts/generate_colab_notebooks.py — do not edit by hand",
-  "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
+  "dir": "",
   "lessons": [
     {
       "id": "py-0",
@@ -673,9 +673,15 @@
     "numpy.constructors#s1-the-dtype-is-float32-unless-you-say-otherwise": "dd-seg-numpy-constructors-1",
     "numpy.constructors#s2-like-copy-shape-and-dtype-from-an-existing-tenso": "dd-seg-numpy-constructors-2",
     "numpy.constructors#s3-t-eye-the-identity-matrix": "dd-seg-numpy-constructors-3",
+    "numpy.slicing-views#slice-bounds": "dd-seg-numpy-slicing-views-0",
+    "numpy.slicing-views#rows-and-columns": "dd-seg-numpy-slicing-views-1",
+    "numpy.slicing-views#reversing": "dd-seg-numpy-slicing-views-2",
+    "numpy.slicing-views#quarter-turns": "dd-seg-numpy-slicing-views-3",
+    "numpy.slicing-views#writing-through-views": "dd-seg-numpy-slicing-views-4",
+    "numpy.slicing-views#copying-before-writing": "dd-seg-numpy-slicing-views-5",
     "numpy.ranges#s0-t-arange-the-stop-is-exclusive": "dd-seg-numpy-ranges-0",
-    "numpy.ranges#s1-t-linspace-you-know-the-number-of-points": "dd-seg-numpy-ranges-1",
-    "numpy.ranges#s2-float-steps-drift-count-then-scale": "dd-seg-numpy-ranges-2",
+    "numpy.ranges#s1-t-linspace-choose-the-number-of-points": "dd-seg-numpy-ranges-1",
+    "numpy.ranges#s2-count-first-then-scale": "dd-seg-numpy-ranges-2",
     "numpy.dtype-astype#s0-to-converting-an-existing-tensor": "dd-seg-numpy-dtype-astype-0",
     "numpy.dtype-astype#s1-dtypes-at-creation-and-dtype-names-as-strings": "dd-seg-numpy-dtype-astype-1",
     "numpy.dtype-astype#s2-dtype-is-a-memory-choice-element-size-and-numel": "dd-seg-numpy-dtype-astype-2",

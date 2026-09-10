@@ -106,7 +106,7 @@
   background: transparent;
   border: 0;
   border-radius: 3px;
-  color: #757575;
+  color: var(--muted-dim);
   cursor: pointer;
   display: flex;
   font-family: inherit;
@@ -120,7 +120,7 @@
 }
 
 .anb-toc-label:hover {
-  background: rgb(66 133 244 / 0.08);
+  background: rgb(var(--info-rgb) / 0.08);
   color: var(--text);
 }
 
@@ -144,18 +144,18 @@
 }
 
 .anb-toc-row.is-current .anb-toc-label {
-  background: #e8f0fe;
-  color: #174ea6;
+  background: rgb(var(--info-rgb) / 0.14);
+  color: var(--info);
   font-weight: 700;
 }
 
 .anb-toc-row.is-complete:not(.is-current) .anb-toc-label {
-  color: #188038;
+  color: var(--ok);
   font-weight: 600;
 }
 
 .anb-toc-row.is-complete .anb-toc-check {
-  color: #188038;
+  color: var(--ok);
   display: inline;
   font-size: calc(14px * var(--anb-zoom, 1));
   font-weight: 700;

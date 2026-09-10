@@ -26,6 +26,8 @@ def double(n):
 
 print(double(5))
 print(double(2.5))
+# Hidden checks
+assert _delta_output == '10\n5.0\n'
 ```
 
 Three things to notice. The parameter `n` is a name that does not exist until
@@ -45,6 +47,8 @@ def first_only(a, b):
 
 
 print(first_only("kept", "never reached"))
+# Hidden checks
+assert _delta_output == 'kept\n'
 ```
 
 A function with no `return` hands back `None`. This is the quietest bug in early
@@ -57,6 +61,8 @@ def forgot(n):
 
 
 print(forgot(5))
+# Hidden checks
+assert _delta_output == 'None\n'
 ```
 
 To give more than one answer, return a tuple. One `return`, several values:
@@ -68,6 +74,8 @@ def stats(a, b):
 
 
 print(stats(2, 3))
+# Hidden checks
+assert _delta_output == '(5, 6)\n'
 ```
 
 A parameter can carry a **default**, used only when the caller says nothing.
@@ -81,6 +89,8 @@ def scale(x, times=2):
 
 print(scale(5))
 print(scale(5, 10))
+# Hidden checks
+assert _delta_output == '10\n50\n'
 ```
 
 Functions can also be defined INSIDE other functions, which is how a repeated
@@ -97,6 +107,8 @@ def ends_doubled(values):
 
 
 print(ends_doubled([1, 2, 7]))
+# Hidden checks
+assert _delta_output == '(2, 14)\n'
 ```
 
 ## Watch out
@@ -122,6 +134,8 @@ def summarize(values, places=2):
 
 print(summarize([1, 2, 4]))
 print(summarize([1, 2, 4], 0))
+# Hidden checks
+assert _delta_output == '(3, 2.33)\n(3, 2.0)\n'
 ```
 
 Why each step:
@@ -180,6 +194,8 @@ def scale(x, times=2):
 
 print("one argument :", scale(7))
 print("two arguments:", scale(7, 5))
+# Hidden checks
+assert _delta_output == 'one argument : 14\ntwo arguments: 35\n'
 ```
 
 ### q601

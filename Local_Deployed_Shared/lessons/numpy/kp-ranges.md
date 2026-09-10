@@ -10,48 +10,42 @@ independent: [53]
 
 ## Concept: t.arange — the stop is exclusive
 
-When you know the **step**, use **`t.arange(start, stop, step)`** (step
-defaults to 1). It counts from `start` in increments of `step` and — exactly
-like Python's `range` — **stops BEFORE `stop`**. The endpoint is never
-included, even with a step: `t.arange(0, 10, 2)` is `[0, 2, 4, 6, 8]` — 10
-is left out.
+`t.arange` counts upward and stops **before** its stop value. Predict the last value:
 
 ```python
 import torch as t
-
-print(t.arange(5))
-print(t.arange(0, 10, 2))          # 10 is the stop, so 10 is missing
-print(t.arange(0, 11, 2))          # push the stop past it to get it back
+values = t.arange(5)
+print(values)
+# Hidden checks
+assert values.tolist() == [0, 1, 2, 3, 4]
 ```
 
-That exclusive stop is the whole trick, and the source of most range bugs.
-When a task wants the endpoint *included*, you have to extend the stop past
-where you want to end.
-
-`t.arange` over integers gives you an **integer** tensor (`int64`), which
-matters because integer tensors are what you index with.
+The result ends at 4. With one argument, counting starts at zero and takes steps of one.
+Give three arguments to choose the start, stop, and step:
 
 ```python
-idx = t.arange(3)
-letters = t.tensor([10, 20, 30, 40])
-print(idx.dtype, "->", letters[idx])
-assert idx.dtype == t.int64
+values = t.arange(0, 10, 2)
+print(values)
+# Hidden checks
+assert values.tolist() == [0, 2, 4, 6, 8]
 ```
+
+Each value is two larger than the last. The stop is still excluded: 10 does not appear.
 
 ## Worked example
 
+How can we include 10? Move the boundary past it:
+
 ```python
 import torch as t
-
-# Counting by 2 up to 10 — but 10 is the stop, so it's EXCLUDED.
-evens = t.arange(0, 10, 2)
-assert evens.tolist() == [0, 2, 4, 6, 8]
-assert evens.dtype == t.int64
-print(evens, evens.dtype, "  <- no 10")
+values = t.arange(0, 11, 2)
+print(values)
+# Hidden checks
+assert values.tolist() == [0, 2, 4, 6, 8, 10]
+assert values.dtype == t.int64
 ```
 
-Why: notice 10 never appears. The step doesn't change the rule — `arange`
-always halts one step short of `stop`.
+Now 10 fits before the boundary at 11. Integer arguments produce integer values.
 
 ## Faded practice
 
@@ -75,45 +69,43 @@ def solve(start, end):
     return t.arange(start, end + 1)
 ```
 
-## Concept: t.linspace — you know the number of points
+## Concept: t.linspace — choose the number of points
 
-When you know the **number of points** instead of the step, use
-**`t.linspace(start, stop, num)`**: exactly `num` evenly spaced values, and
-this time **both endpoints are included**. Mind the fencepost — `num` points
-make `num − 1` gaps, so `t.linspace(0.0, 1.0, 5)` has step 1/4, not 1/5.
+`t.linspace(start, stop, steps)` places that many points between two endpoints, **including both ends**.
+Predict the middle value of these five points:
 
 ```python
 import torch as t
-
 grid = t.linspace(0.0, 1.0, 5)
 print(grid)
-print("gaps:", grid[1:] - grid[:-1])   # 5 points, so 4 of them
-assert grid[0].item() == 0.0 and grid[-1].item() == 1.0
+# Hidden checks
+assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
 ```
 
-Both ends present, four gaps between five points. Side by side with `arange`
-the two conventions are hard to confuse again:
+The middle is 0.5. Five points leave **four gaps**, so each gap spans one quarter:
 
 ```python
-print("arange  ", t.arange(0.0, 1.0, 0.25))     # stop excluded -> 4 values
-print("linspace", t.linspace(0.0, 1.0, 5))      # stop included -> 5 values
-assert len(t.arange(0.0, 1.0, 0.25)) == 4
-assert len(t.linspace(0.0, 1.0, 5)) == 5
+gaps = grid[1:] - grid[:-1]
+print(gaps)
+# Hidden checks
+assert gaps.tolist() == [0.25, 0.25, 0.25, 0.25]
 ```
+
+Subtracting each point from the next reveals the spacing. This is why the denominator is `steps - 1`.
 
 ## Worked example
 
+Predict three points from 2 to 8. There are two gaps to divide the distance:
+
 ```python
 import torch as t
-
-# 5 points from 0 to 1, endpoints INCLUDED -> 4 equal gaps of 0.25.
-grid = t.linspace(0.0, 1.0, 5)
-assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
-print(grid, " 5 points,", len(grid) - 1, "gaps")
+grid = t.linspace(2.0, 8.0, 3)
+print(grid)
+# Hidden checks
+assert grid.tolist() == [2.0, 5.0, 8.0]
 ```
 
-Why: both 0.0 and 1.0 are present — that's the opposite of `arange`. Count
-the points, not the intervals.
+The distance is 6, each gap is 3. Use `linspace` when you know the **count**, `arange` when you know the **step**.
 
 ## Faded practice
 
@@ -138,54 +130,47 @@ def solve(n):
     return t.linspace(0.0, 1.0, n + 2)[1:-1]
 ```
 
-## Concept: float steps drift — count, then scale
+## Concept: Count first, then scale
 
-`t.arange` with a **float** step is a trap: each element is built by repeated
-addition, so rounding error accumulates and the endpoint may or may not show
-up. It is a sharper trap here than in NumPy, because the default float is
-32-bit and has fewer digits to lose.
+Floating-point numbers approximate most decimal fractions. If the **number of points** matters, choose that count directly instead of extending a floating stop and hoping to include the endpoint.
 
-The robust recipe is to turn the step-question into a count-question:
-figure out how many points there are, generate exact **integers**, and scale
-them once — `t.arange(n_points) * step`. One multiply per element, no drift.
+First, count five positions:
 
 ```python
 import torch as t
-
-drifty = t.arange(0.0, 1.0 + 0.1, 0.1)
-print(drifty)
-print("last value:", drifty[-1].item(), "| point count:", len(drifty))
+positions = t.arange(5)
+print(positions)
+# Hidden checks
+assert positions.tolist() == [0, 1, 2, 3, 4]
 ```
 
-The last entry is not the clean `1.0` the call asked for, and whether an
-eleventh point appears at all is decided by rounding error. Counting first
-removes the gamble:
+Now scale each position by the desired spacing. Predict the final value:
 
 ```python
-n = int(round(1.0 / 0.1)) + 1
-exact = t.arange(n) * 0.1
-print(exact)
-print("point count:", len(exact))
-assert len(exact) == 11
+grid = positions * 0.25
+print(grid)
+# Hidden checks
+assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
 ```
 
-The count uses the exclusive-stop insight again: an inclusive range of
-`step`-spaced points from 0 to `stop` has `round(stop / step) + 1` of them.
+Four steps of 0.25 reach 1.0. The count is controlled by the integers; other decimal spacings can still have rounding error.
 
 ## Worked example
 
+From 0 to 2 inclusive, spacing 0.5 gives four gaps and **five points**:
+
 ```python
 import torch as t
-
-# 0 to 1 inclusive, spacing 0.25. Count the points, scale integers.
-n = int(round(1.0 / 0.25)) + 1        # 5 points: 0, 0.25, 0.5, 0.75, 1.0
-grid = t.arange(n) * 0.25
-assert grid.tolist() == [0.0, 0.25, 0.5, 0.75, 1.0]
-print("n =", n, "->", grid)
+step = 0.5
+n = int(round(2.0 / step)) + 1
+grid = t.arange(n) * step
+print(grid)
+# Hidden checks
+assert n == 5
+assert grid.tolist() == [0.0, 0.5, 1.0, 1.5, 2.0]
 ```
 
-Why: `t.arange(0, 1.0 + 0.25, 0.25)` would gamble on the endpoint;
-`t.arange(n) * step` is exact because the integers are exact.
+The `+ 1` includes the starting point. This recipe assumes the interval is a whole number of steps; use `linspace` when both endpoints and the point count are given.
 
 ## Faded practice
 

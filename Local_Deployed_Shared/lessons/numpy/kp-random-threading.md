@@ -37,6 +37,14 @@ def rewinds(rng, n):
 shared = t.Generator().manual_seed(7)
 print("threaded:", good(shared, 3))
 print("the caller's stream has now advanced by three draws")
+# Hidden checks
+reference = t.Generator().manual_seed(7)
+t.rand(3, generator=reference)
+assert t.equal(shared.get_state(), reference.get_state())
+probe = t.Generator().manual_seed(12)
+expected = t.Generator().manual_seed(12)
+assert t.equal(good(probe, 4), t.rand(4, generator=expected))
+assert t.equal(good(probe, 2), t.rand(2, generator=expected))
 ```
 
 Both wrong versions **run fine and return plausible numbers**. Nothing raises.
@@ -60,13 +68,14 @@ first = draw(rng, 3)
 second = draw(rng, 3)
 print("first :", first)
 print("second:", second)
-assert first.tolist() != second.tolist()
 
 # And because `draw` threaded the stream instead of making its own, the caller
 # can reproduce the whole run from the seed alone.
 replay = draw(t.Generator().manual_seed(0), 3)
-assert replay.tolist() == first.tolist()
 print("replay:", replay)
+# Hidden checks
+assert first.tolist() != second.tolist()
+assert replay.tolist() == first.tolist()
 ```
 
 That last assert is the contract a grader checks. A drill that hands you `rng`
@@ -85,6 +94,12 @@ order = t.randperm(4, generator=rng)   # random part: needs the stream
 perm = t.eye(4)[order]                 # ordinary part: does not
 print("order:", order)
 print(perm)
+# Hidden checks
+assert sorted(order.tolist()) == [0, 1, 2, 3]
+assert tuple(perm.shape) == (4, 4)
+assert perm.sum(0).tolist() == [1, 1, 1, 1]
+assert perm.sum(1).tolist() == [1, 1, 1, 1]
+assert perm.argmax(1).tolist() == order.tolist()
 ```
 
 ## Watch out
@@ -117,7 +132,6 @@ print("first draw :", first)
 # The same generator, a second call: the stream has MOVED ON.
 second = next_uniforms(rng, 3)
 print("second draw:", second)
-assert first.tolist() != second.tolist()
 
 # Every sampler takes the same keyword, off the same stream, in call order.
 ints = t.randint(0, 10, (3,), generator=rng)
@@ -127,8 +141,10 @@ print("ints:", ints, " perm:", perm)
 # And threading is what makes it reproducible for the caller: a fresh generator
 # on the same seed replays the first draw exactly.
 replay = next_uniforms(t.Generator().manual_seed(42), 3)
-assert replay.tolist() == first.tolist()
 print("replayed   :", replay)
+# Hidden checks
+assert first.tolist() != second.tolist()
+assert replay.tolist() == first.tolist()
 ```
 
 Why each step:

@@ -43,6 +43,8 @@ import einops
 a = t.arange(6).reshape(2, 3)          # (i, j)
 
 print("a =", a.tolist())
+# Hidden checks
+assert _delta_output == 'a = [[0, 1, 2], [3, 4, 5]]\n'
 ```
 
 The four patterns below differ only in what survives on the right of `->`.
@@ -56,11 +58,12 @@ cols = einops.einsum(a, "i j -> j")      # i vanishes -> one number per column
 rows = einops.einsum(a, "i j -> i")      # j vanishes -> one number per row
 flip = einops.einsum(a, "i j -> j i")    # both kept, reordered -> transpose
 
+print(cols, rows, flip.shape)
+# Hidden checks
 assert whole.item() == 15
 assert cols.tolist() == [3, 5, 7]
 assert rows.tolist() == [3, 12]
 assert flip.shape == (3, 2)
-print(cols, rows, flip.shape)
 ```
 
 Why each step: the right-hand side is a LIST OF SURVIVORS. Read `"i j -> j"`
@@ -141,6 +144,8 @@ v = t.arange(3)                    # (j,)
 b = t.arange(15).reshape(3, 5)     # (j, k)
 
 print("shapes:", tuple(a.shape), tuple(v.shape), tuple(b.shape))
+# Hidden checks
+assert _delta_output == 'shapes: (2, 3) (3,) (3, 5)\n'
 ```
 
 `j` is the only name both operands share. It is absent from the right, so it is the axis that gets summed.
@@ -152,9 +157,10 @@ import einops
 mv = einops.einsum(a, v, "i j, j -> i")        # == a @ v
 mm = einops.einsum(a, b, "i j, j k -> i k")    # == a @ b
 
+print(mv, mm.shape)
+# Hidden checks
 assert mv.tolist() == [5, 14]
 assert mm.shape == (2, 5) and mm[0].tolist() == [25, 28, 31, 34, 37]
-print(mv, mm.shape)
 ```
 
 Why each step: `j` is named in both operands and is missing on the right, so
@@ -236,6 +242,8 @@ b = t.arange(3, 6)                 # [3, 4, 5]
 m = t.tensor([[1, 2], [3, 4]])
 
 print("a =", a.tolist(), "b =", b.tolist(), "m =", m.tolist())
+# Hidden checks
+assert _delta_output == 'a = [0, 1, 2] b = [3, 4, 5] m = [[1, 2], [3, 4]]\n'
 ```
 
 Now the same two rules on data where the answer is easy to check by hand.
@@ -248,6 +256,8 @@ dot = einops.einsum(a, b, "i, i ->")          # 0*3 + 1*4 + 2*5
 outer = einops.einsum(a, b, "i, j -> i j")     # (3, 3): a[i] * b[j]
 had = einops.einsum(m, m, "i j, i j -> i j")   # m * m
 print("dot", dot.item(), "| outer row 1", outer[1].tolist(), "| hadamard", had.tolist())
+# Hidden checks
+assert _delta_output == 'dot 14 | outer row 1 [3, 4, 5] | hadamard [[1, 4], [9, 16]]\n'
 ```
 
 Repeating a name INSIDE one operand is a third rule: it keeps only the entries whose two coordinates are equal (the diagonal); dropping that name then sums them.
@@ -258,11 +268,12 @@ import einops
 
 tr = einops.einsum(m, "i i ->")                # 1 + 4
 
+print(dot, outer.shape, tr)
+# Hidden checks
 assert dot.item() == 14
 assert outer[1].tolist() == [3, 4, 5]
 assert had.tolist() == [[1, 4], [9, 16]]
 assert tr.item() == 5
-print(dot, outer.shape, tr)
 ```
 
 Why each step: shared names across operands pair the entries up and multiply
@@ -343,9 +354,10 @@ x = t.arange(8).reshape(2, 2, 2)     # (b, i, j): two 2x2 matrices
 y = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities
 
 bmm = einops.einsum(x, y, "b i j, b j k -> b i k")
-assert bmm.tolist() == x.tolist()             # times the identity, per batch
 
 print("bmm shape", tuple(bmm.shape), "== x:", bmm.tolist() == x.tolist())
+# Hidden checks
+assert bmm.tolist() == x.tolist()             # times the identity, per batch
 ```
 
 The same carry-through works with one axis fewer: one dot product per row.
@@ -356,8 +368,9 @@ import einops
 
 rows = t.tensor([[1, 2], [3, 4]])
 dots = einops.einsum(rows, rows, "b i, b i -> b")
-assert dots.tolist() == [5, 25]               # 1*1+2*2, 3*3+4*4
 print(bmm.shape, dots)
+# Hidden checks
+assert dots.tolist() == [5, 25]               # 1*1+2*2, 3*3+4*4
 ```
 
 Why each step: `b` is on the right, so nothing is summed over it; `j` (or

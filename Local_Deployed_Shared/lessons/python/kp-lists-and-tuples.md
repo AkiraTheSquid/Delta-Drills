@@ -20,6 +20,8 @@ A **list** is written with square brackets, and holds its items in order:
 scores = [10, 20, 30]
 print(scores)
 print(len(scores))
+# Hidden checks
+assert _delta_output == '[10, 20, 30]\n3\n'
 ```
 
 `len(...)` asks the container how many items it holds. Asking is better than
@@ -36,6 +38,8 @@ rows = [[1, 2, 3], [4, 5, 6]]
 print(mixed)
 print(rows)
 print(len(rows), "rows of", len(rows[0]))
+# Hidden checks
+assert _delta_output == "[1, 'two', 3.0]\n[[1, 2, 3], [4, 5, 6]]\n2 rows of 3\n"
 ```
 
 A **tuple** is written with parentheses instead. It holds items in order in
@@ -45,6 +49,8 @@ is built:
 ```python
 point = (3, 4)
 print(point, len(point))
+# Hidden checks
+assert _delta_output == '(3, 4) 2\n'
 ```
 
 That is why a tuple is the usual way to hand back several answers at once: it is
@@ -62,6 +68,8 @@ back = list(as_tuple)
 print(as_tuple)
 print(back)
 print("same length:", len(values) == len(back))
+# Hidden checks
+assert _delta_output == '(1, 2, 3)\n[1, 2, 3]\nsame length: True\n'
 ```
 
 A one-item tuple needs a trailing comma — `(5)` is just the number 5 with
@@ -70,6 +78,8 @@ brackets around it, while `(5,)` is a tuple holding it:
 ```python
 print(type((5)).__name__)
 print(type((5,)).__name__)
+# Hidden checks
+assert _delta_output == 'int\ntuple\n'
 ```
 
 ## Watch out
@@ -95,6 +105,8 @@ print("columns:", n_cols)
 
 shape = (n_rows, n_cols)
 print("as one finished answer:", shape, type(shape).__name__)
+# Hidden checks
+assert _delta_output == 'rows: 2\ncolumns: 3\nas one finished answer: (2, 3) tuple\n'
 ```
 
 Why each step:
@@ -285,6 +297,8 @@ rows = [["a", "b", "c"], ["d", "e", "f"]]
 print("how many rows:", len(rows))
 print("how wide is a row:", len(rows[0]))
 print("the first row itself:", rows[0])
+# Hidden checks
+assert _delta_output == "how many rows: 2\nhow wide is a row: 3\nthe first row itself: ['a', 'b', 'c']\n"
 ```
 
 ### q583

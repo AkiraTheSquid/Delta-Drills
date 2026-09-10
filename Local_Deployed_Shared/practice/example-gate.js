@@ -120,7 +120,10 @@ const ExampleGate = (() => {
       host.innerHTML =
         `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">Example — ${esc(picked.title)}</h2>` +
         `<p class="ladder-stage-callout">${esc(WHY_LINE[plan.why] || WHY_LINE.scheduled)}</p>` +
-        '<div class="lesson-worked nb-scope"><h3>Worked example</h3>' +
+        // `nbv-md` for the same reason practice/lessons.js uses it — see the
+        // note there. This gate and the lesson gate write into the same panel,
+        // so a difference here would be two prose sizes on one screen.
+        '<div class="lesson-worked nb-scope nbv-md"><h3>Worked example</h3>' +
         md(picked.markdown) +
         '<p class="lesson-example-note">Run any block to see it execute. Edit it if you want to ' +
         "check something. The problem comes next.</p></div>" +

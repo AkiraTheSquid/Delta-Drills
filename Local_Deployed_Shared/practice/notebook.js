@@ -125,12 +125,6 @@
 const LessonNotebook = (() => {
   "use strict";
 
-  const esc = (value) =>
-    String(value == null ? "" : value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-
   /* The exact text `DeltaRunner.runSnippet` substitutes when a run succeeded
      and wrote nothing to stdout or stderr. Matched rather than imported
      because the runner returns one already-collapsed string; the alternative
@@ -203,6 +197,7 @@ const LessonNotebook = (() => {
     "",
     "",
     "def _delta_cell(_delta_src, _delta_name, _delta_echo):",
+    "    _delta_src, _, _delta_checks = _delta_src.partition(\"\\n# Hidden checks\\n\")",
     "    if _delta_ip is not None:",
     "        _delta_src = _delta_ip.transform_cell(_delta_src)",
     "    _delta_tree = _delta_ast.parse(_delta_src, _delta_name)",
@@ -219,7 +214,7 @@ const LessonNotebook = (() => {
     "    _delta_ok = False",
     "    try:",
     "        with _delta_ctx.redirect_stdout(_delta_buf):",
-    "            if _delta_echo and _delta_body and isinstance(_delta_body[-1], _delta_ast.Expr):",
+    "            if _delta_body and isinstance(_delta_body[-1], _delta_ast.Expr):",
     "                _delta_head = _delta_ast.Module(body=_delta_body[:-1], type_ignores=[])",
     "                exec(compile(_delta_head, _delta_name, 'exec'), _delta_ns)",
     "                _delta_tail = _delta_ast.Expression(_delta_body[-1].value)",
@@ -231,6 +226,9 @@ const LessonNotebook = (() => {
     "                    print(repr(_delta_val))",
     "            else:",
     "                exec(compile(_delta_tree, _delta_name, 'exec'), _delta_ns)",
+    "        _delta_ns[\"_delta_output\"] = _delta_buf.getvalue()",
+    "        if _delta_checks.strip():",
+    "            exec(compile(_delta_checks, _delta_name + \" checks\", \"exec\"), dict(_delta_ns))",
     "        _delta_ok = True",
     "    finally:",
     "        if _delta_echo or not _delta_ok:",
@@ -247,6 +245,14 @@ const LessonNotebook = (() => {
     "",
   ].join("\n");
 
+  /* 🪦 `splitChecks` USED TO BE DEFINED HERE and notebook-view.js reached
+     across for it as `LessonNotebook.splitChecks`. It is a statement about
+     what a cell's SOURCE is, so it moved to practice/notebook-cells.js with
+     the rest of what a cell is. Still re-exported at the bottom of this file:
+     the name is published and the ARENA surfaces call it. */
+  const nbCells = () => window.DeltaNotebookCells;
+  const splitChecks = (source) => nbCells().splitChecks(source);
+
   /* JSON string syntax is a subset of Python string syntax — the escapes
      JSON.stringify emits (\", \\, \n, \t, \uXXXX) all mean the same thing in a
      Python literal, and it leaves other non-ASCII as literal UTF-8, which is
@@ -254,53 +260,31 @@ const LessonNotebook = (() => {
      cell's source to the runtime as data rather than as code to be spliced. */
   const _pyLiteral = (text) => JSON.stringify(String(text == null ? "" : text));
 
-  /* One cell's markup. The code is rendered as plain text rather than an
-     editable field: these are the lesson's examples, and an edit box invites
-     the learner to lose the example they were given. `contenteditable` on the
-     <code> keeps experimentation possible without turning the page into a
-     form — the text is read back at Run time, so an edit is honoured.
+  /* 🪦 THIS FILE USED TO BUILD ITS OWN CELL — `.nb-cell`, a Run BAR under the
+     code with a text button and a status line, against the `.nbv-cell` Run
+     GUTTER the Notebooks tab and the ARENA pages build. Two rectangles for one
+     idea, so a learner moving from a lesson to the notebook OF that lesson saw
+     the same code in a different frame. Seth, 2026-09-10: "I want them to be
+     the same thing."
 
-     🔴 THE SAME SHAPE AS `.nbv-src code`, ON PURPOSE. `<pre>` wrapping a
-     `contenteditable="plaintext-only"` `<code>` is what
-     practice/notebook-code-edit.js attaches to, and `mount` below hands it
-     this host — so a lesson cell gets the tokeniser, the ghost completion,
-     Tab/Shift+Tab, its own undo stack and Ctrl+Enter from the same file the
-     ARENA notebooks and the Notebooks tab use. Change the markup here and
-     the selectors at the top of that file have to change with it. */
-  const cellHtml = (code, index) =>
-    '<div class="nb-cell" data-nb-index="' + index + '">' +
-    '<div class="nb-cell-code">' +
-    '<pre><code contenteditable="plaintext-only" spellcheck="false">' +
-    esc(code) +
-    "</code></pre>" +
-    "</div>" +
-    '<div class="nb-cell-bar">' +
-    '<button type="button" class="nb-run">Run</button>' +
-    // Empty until the cell has run, then it keeps its execution number the way
-    // a notebook's In[] prompt does, so the page shows what has been run.
-    '<span class="nb-count" aria-hidden="true"></span>' +
-    '<span class="nb-status" aria-live="polite"></span>' +
-    "</div>" +
-    '<pre class="nb-out hidden"></pre>' +
-    "</div>";
+     One builder now, in practice/notebook-cells.js. This file keeps the part
+     that is genuinely its own — the stateless prefix replay below, which the
+     notebook view has no use for. */
+  const cellNode = (code, index) =>
+    nbCells().codeCell({
+      source: code,
+      index,
+      // A lesson page shows a handful of cells with room beside them, so it
+      // numbers them the way a Jupyter prompt does. The notebook view, with
+      // hundreds against a 52px gutter, uses the bare `[3]`.
+      countPrefix: "In ",
+    });
 
-  /* 🔴 `readText` FIRST, `innerText` only as the fallback. Once
-     notebook-code-edit.js has painted the cell its text lives in a tree of
-     `<span class="cm-*">`s plus two generated-content nodes marked
-     `data-nb-skip`, and that file's reader is the one that knows to skip
-     them. `innerText` is also defined in terms of LAYOUT — a cell that is not
-     currently displayed reads back as the empty string, which would hand the
-     kernel an empty program rather than raising. The fallback keeps the old
-     behaviour exactly, for the case where the enhancement never loaded.
-     NBSP goes back to a space either way: a contenteditable substitutes one
-     for a space it thinks would collapse, and Python does not accept it. */
-  const _codeOf = (cell) => {
-    const node = cell.querySelector(".nb-cell-code code");
-    if (!node) return "";
-    const read = window.DeltaNotebookCode?.readText;
-    const text = typeof read === "function" ? read(node) : node.innerText;
-    return String(text || "").replace(/ /g, " ");
-  };
+  /* What a cell will hand the runtime. The reader is shared — see the long
+     note on `readSource` in practice/notebook-cells.js for why it prefers the
+     source carried on the node when the editor is loaded and the DOM when it
+     is not. */
+  const _codeOf = (cell) => nbCells().readSource(cell);
 
   /* Every cell up to and including this one, each handed to the harness as
      data. See the note above on why the whole prefix is re-run rather than
@@ -407,40 +391,34 @@ const LessonNotebook = (() => {
      than how many times each cell has been clicked. */
   let runSeq = 0;
 
-  const _runCell = async (cells, index) => {
-    const cell = cells[index];
-    const button = cell.querySelector(".nb-run");
-    const status = cell.querySelector(".nb-status");
-    const count = cell.querySelector(".nb-count");
-    const out = cell.querySelector(".nb-out");
-    if (!button || !out) return;
+  const _runCell = async (nodes, index) => {
+    const cell = nodes[index];
+    const view = nbCells();
+    if (!cell.querySelector(".nbv-run") || !cell.querySelector(".nbv-out")) return;
 
-    button.disabled = true;
-    button.textContent = "Running…";
     // Only the stateless path pays for the cells above; with a kernel this
     // cell is the only one that runs, and saying otherwise would be a lie the
     // learner can time.
     const usingKernel = !!(window.DeltaKernel && window.DeltaKernel.available());
-    status.textContent = !usingKernel && index > 0 ? `running cells 1–${index + 1}` : "";
-    if (count) count.textContent = "In [*]";
-    cell.classList.add("is-running");
-    out.classList.remove("hidden", "is-error");
-    out.textContent = "";
+    const { out } = view.begin(cell, {
+      status: !usingKernel && index > 0 ? `running cells 1–${index + 1}` : "",
+    });
 
     let failed = false;
+    let text = "";
     try {
-      let result = await _runOnKernel(cells, index, (message) => {
-        status.textContent = message;
+      let result = await _runOnKernel(nodes, index, (message) => {
+        view.setStatus(cell, message);
       });
       if (!result) {
         // No kernel — rebuild state by re-running the prefix, as before.
-        status.textContent = index > 0 ? `running cells 1–${index + 1}` : "";
-        result = await window.DeltaRunner.runSnippet(_programUpTo(cells, index), {
+        view.setStatus(cell, index > 0 ? `running cells 1–${index + 1}` : "");
+        result = await window.DeltaRunner.runSnippet(_programUpTo(nodes, index), {
           question: window.LessonGate?.activeQuestion || null,
           // What the learner actually wrote, for the runner's torch sniff. The
           // program above wraps every cell in a string literal, where an import
           // line is invisible to a line-anchored regex.
-          source: cells.slice(0, index + 1).map(_codeOf).join("\n"),
+          source: nodes.slice(0, index + 1).map(_codeOf).join("\n"),
           onStatus: (message) => {
             if (message) out.textContent = message;
           },
@@ -448,25 +426,17 @@ const LessonNotebook = (() => {
       }
       failed = !!result.failed;
       const checks = _checkCount(_codeOf(cell));
-      out.textContent =
+      text =
         !failed && result.text === NO_OUTPUT && checks
           ? `✓ ${checks} check${checks === 1 ? "" : "s"} passed`
           : result.text;
-      out.classList.toggle("is-error", failed);
     } catch (err) {
       failed = true;
-      out.textContent = "Error: " + err.message;
-      out.classList.add("is-error");
+      text = "Error: " + err.message;
     }
 
     runSeq += 1;
-    cell.classList.remove("is-running");
-    cell.classList.add("has-run");
-    cell.classList.toggle("has-failed", failed);
-    if (count) count.textContent = `In [${runSeq}]`;
-    status.textContent = "";
-    button.disabled = false;
-    button.textContent = "Run";
+    view.finish(cell, { text, failed, seq: runSeq });
   };
 
   /* Exactly the fences `validate_lessons.py` executes.
@@ -503,19 +473,16 @@ const LessonNotebook = (() => {
     // surviving from the previous concept could only mislead.
     mountContext = String(context || "");
     const blocks = Array.from(host.querySelectorAll(".nb-scope pre > code")).filter(
-      (node) => !node.closest(".nb-cell") && _isRunnable(node.parentElement),
+      (node) => !node.closest(".nbv-cell") && _isRunnable(node.parentElement),
     );
     blocks.forEach((node, index) => {
-      const pre = node.parentElement;
-      const wrapper = document.createElement("div");
-      wrapper.innerHTML = cellHtml(node.textContent, index);
-      pre.replaceWith(wrapper.firstElementChild);
+      node.parentElement.replaceWith(cellNode(node.textContent, index));
     });
 
-    const cells = Array.from(host.querySelectorAll(".nb-cell"));
-    cells.forEach((cell, index) => {
-      const button = cell.querySelector(".nb-run");
-      if (button) button.onclick = () => _runCell(cells, index);
+    const nodes = Array.from(host.querySelectorAll(".nbv-cell"));
+    nodes.forEach((cell, index) => {
+      const button = cell.querySelector(".nbv-run");
+      if (button) button.onclick = () => _runCell(nodes, index);
     });
     /* Colour, completion, Tab and Ctrl+Enter — from the same file that gives
        the ARENA notebooks theirs, so a lesson cell and a notebook cell are
@@ -529,7 +496,7 @@ const LessonNotebook = (() => {
        it after this line, so a permanent MutationObserver there would be
        watching the whole practice tab for an event that cannot happen. */
     window.DeltaNotebookCode?.scan?.(host);
-    return cells.length;
+    return nodes.length;
   };
 
   /* Run ONE source string as a cell in a named session.
@@ -576,7 +543,7 @@ const LessonNotebook = (() => {
     };
   };
 
-  return { mount, runSource, checkCount: _checkCount };
+  return { mount, runSource, splitChecks, checkCount: _checkCount };
 })();
 
 window.LessonNotebook = LessonNotebook;

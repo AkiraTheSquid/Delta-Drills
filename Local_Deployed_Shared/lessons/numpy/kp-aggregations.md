@@ -28,6 +28,8 @@ print("sum ", grid.sum())
 print("mean", grid.mean())
 print("min ", grid.min())
 print("max ", grid.max())
+# Hidden checks
+assert _delta_output == 'sum  tensor(29.)\nmean tensor(4.8333)\nmin  tensor(1.)\nmax  tensor(9.)\n'
 ```
 
 Six values in, one value out, every time — and notice the shape never came
@@ -35,9 +37,10 @@ into it:
 
 ```python
 flat = grid.reshape(6)
+print(grid.shape, "and", flat.shape, "→ same answers")
+# Hidden checks
 assert t.equal(flat.max(), grid.max())
 assert t.equal(flat.sum(), grid.sum())
-print(grid.shape, "and", flat.shape, "→ same answers")
 ```
 
 ## Worked example
@@ -52,8 +55,9 @@ readings = t.tensor([[3.5, -2.0, 7.25],
 
 # min/max with no dim argument scan the WHOLE tensor, ignoring shape.
 lo, hi = readings.min(), readings.max()
-assert (lo.item(), hi.item()) == (-8.75, 9.5)
 print("min", lo.item(), "| max", hi.item())
+# Hidden checks
+assert (lo.item(), hi.item()) == (-8.75, 9.5)
 ```
 
 Why: no dim argument = one value for the whole tensor, shape ignored. That's
@@ -101,19 +105,22 @@ grid = t.tensor([[3.0, 8.0, 1.0],
 raw = grid.mean()
 print(raw, "| ndim", raw.ndim, "| type", type(raw).__name__)
 print(float(raw), "| type", type(float(raw)).__name__)
+# Hidden checks
+assert _delta_output == 'tensor(4.8333) | ndim 0 | type Tensor\n4.833333492279053 | type float\n'
 ```
 
 The first line still says `tensor(...)`. That is the whole distinction:
 
 ```python
-assert raw.ndim == 0 and isinstance(raw, t.Tensor)
-assert isinstance(raw.item(), float)
-assert int(grid.sum()) == 29
-assert bool((grid > 0).all()) is True
 print("raw.ndim", raw.ndim, "-> still a tensor:", isinstance(raw, t.Tensor))
 print("int(grid.sum())", int(grid.sum()), type(int(grid.sum())).__name__)
 print("bool((grid > 0).all())", bool((grid > 0).all()),
       type(bool((grid > 0).all())).__name__)
+# Hidden checks
+assert raw.ndim == 0 and isinstance(raw, t.Tensor)
+assert isinstance(raw.item(), float)
+assert int(grid.sum()) == 29
+assert bool((grid > 0).all()) is True
 ```
 
 Keep tensors *inside* your computation; convert exactly at the boundary
@@ -131,12 +138,13 @@ readings = t.tensor([[3.5, -2.0, 7.25],
 # mean returns a 0-d TENSOR. Usually fine, but when the contract says
 # "a single float scalar", unwrap it explicitly.
 raw = readings.mean()
-assert raw.ndim == 0 and isinstance(raw, t.Tensor)
 
 avg = float(raw)
+print("as a tensor:", raw, "| as a float:", avg)
+# Hidden checks
+assert raw.ndim == 0 and isinstance(raw, t.Tensor)
 assert isinstance(avg, float)
 assert abs(avg - 1.5833333) < 1e-5
-print("as a tensor:", raw, "| as a float:", avg)
 ```
 
 Why: `float(...)` at the boundary — the computation stays in torch, only the
@@ -182,6 +190,8 @@ grid = t.tensor([[3.0, -8.0, 1.0],
                  [6.0, 2.0, -9.0]])
 print("negatives present?", bool((grid < 0).any()))
 print("all positive?    ", bool((grid > 0).all()))
+# Hidden checks
+assert _delta_output == 'negatives present? True\nall positive?     False\n'
 ```
 
 `a == b` alone is NOT a verdict — it's elementwise and yields a boolean
@@ -192,6 +202,8 @@ a = t.tensor([1.0, 2.0])
 b = t.tensor([1.0, 5.0])
 print(a == b)                 # a tensor, not an answer
 print(t.equal(a, b))          # one bool
+# Hidden checks
+assert _delta_output == 'tensor([ True, False])\nFalse\n'
 ```
 
 And the reason `allclose` exists at all — float arithmetic does not land
@@ -200,6 +212,7 @@ where the arithmetic says it should:
 ```python
 summed = t.full((10,), 0.1).sum()
 print(summed.item(), "vs", 1.0)
+# Hidden checks
 assert not t.equal(summed, t.tensor(1.0))
 assert t.allclose(summed, t.tensor(1.0))
 ```
@@ -215,17 +228,18 @@ readings = t.tensor([[3.5, -2.0, 7.25],
 # Boolean pipeline: comparison (elementwise) then reduction (any).
 # Read it aloud: "readings less than zero — any?"
 has_negative = bool((readings < 0).any())
-assert has_negative is True
 
 # Float-safe equality: after arithmetic, prefer allclose. Ten 0.1s summed
 # in float32 land just past 1.0.
 a = t.full((10,), 0.1).sum()
 b = t.tensor(1.0)
-assert not t.equal(a, b)         # bitwise-exact? no — accumulated float error
-assert t.allclose(a, b)          # equal within tolerance? yes
 print("any negative?", has_negative)
 print("ten 0.1s summed:", a.item(), "| equal:", bool(t.equal(a, b)),
       "| allclose:", bool(t.allclose(a, b)))
+# Hidden checks
+assert has_negative is True
+assert not t.equal(a, b)         # bitwise-exact? no — accumulated float error
+assert t.allclose(a, b)          # equal within tolerance? yes
 ```
 
 Why: exact equality is for ints/bools and provenance checks; `allclose` is

@@ -56,11 +56,12 @@ arr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST
 
 # Name the four axes; emit them with c pulled to the front block.
 first = einops.rearrange(arr, 'b h w c -> b c h w')
-assert first.shape == (2, 3, 2, 2)
 # Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).
-assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 
 print("channels-last", tuple(arr.shape), "-> channels-first", tuple(first.shape))
+# Hidden checks
+assert first.shape == (2, 3, 2, 2)
+assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
 ```
 
 The image example moved the channel axis; the same grammar moves the time axis of a sequence in front of its batch axis.
@@ -72,10 +73,11 @@ import einops
 # Sequence layout swap: batch-first -> time-first.
 seq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)
 tfirst = einops.rearrange(seq, 'b t d -> t b d')
-assert tfirst.shape == (3, 2, 2)
-assert seq[1, 2, 0] == tfirst[2, 1, 0]
 
 print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
+# Hidden checks
+assert tfirst.shape == (3, 2, 2)
+assert seq[1, 2, 0] == tfirst[2, 1, 0]
 ```
 
 Finally, the pattern is an EXPECTATION about the input, and einops enforces it.
@@ -91,10 +93,11 @@ try:
 except Exception as err:
     raised = True
     print("4-name pattern on 3-D data ->", type(err).__name__)
-assert raised
 
 print("element (1,0,1,2) moved to (1,2,0,1):",
       arr[1, 0, 1, 2].item(), "==", first[1, 2, 0, 1].item())
+# Hidden checks
+assert raised
 ```
 
 Why each step:

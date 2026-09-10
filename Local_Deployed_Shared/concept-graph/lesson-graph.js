@@ -431,11 +431,21 @@
     return out;
   };
 
+  /* An <a> and not a <button> since 2026-09-10: a prerequisite chip names
+     another lesson, and every lesson now has an address. The href is what makes
+     "open in a new tab" and "copy link address" work on it — the plain click is
+     still an in-page selection (see the handler in renderContent). A concept
+     with no routable path falls back to the button it was, so the chip never
+     carries an href that leads nowhere. */
   const chipLink = (id) => {
     const kc = kcById[id];
     if (!kc) return "";
-    return `<button class="kg2-chip" data-goto="${esc(id)}" title="${esc(kc.title)}">
-      <span class="kg2-chip-dot" style="background:${familyColor(kc.id)}"></span>${esc(kc.title)}</button>`;
+    const inner =
+      `<span class="kg2-chip-dot" style="background:${familyColor(kc.id)}"></span>${esc(kc.title)}`;
+    const href = window.DDLessonLinks?.pathFor?.(id) || "";
+    return href
+      ? `<a class="kg2-chip" href="${esc(href)}" data-goto="${esc(id)}" title="${esc(kc.title)}">${inner}</a>`
+      : `<button class="kg2-chip" data-goto="${esc(id)}" title="${esc(kc.title)}">${inner}</button>`;
   };
 
   /* ---------------- learner model card --------------------------------- */
@@ -1300,6 +1310,11 @@
     // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
     if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
 
+    // The selected concept IS the address: /einops/repeat-model. Writing the
+    // URL and showing the permalink both belong to concept-graph/lesson-links.js
+    // (this file is RED — the route contract is not going to live in it).
+    window.DDLessonLinks?.onSelect?.(id);
+
     if (paneTab !== "lesson") {
       const body = $("kg-info-body");
       body.innerHTML = paneTab === "settings" ? renderSettings(id) : renderMetadata(id);
@@ -1326,7 +1341,14 @@
     body.innerHTML = html;
     body.scrollTop = 0;
     body.querySelectorAll("[data-goto]").forEach((b) =>
-      b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
+      b.addEventListener("click", (event) => {
+        // Ctrl/Cmd/Shift-click is the browser being asked for a new tab or
+        // window, and the chip's href is there so it gets one. Anything else
+        // stays on this page and just moves the selection.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        selectNode(b.getAttribute("data-goto"));
+      }));
   };
 
   /* ---------------- selection + highlight ------------------------------ */
@@ -1352,6 +1374,7 @@
     if (cy) cy.elements().removeClass("faded hl hl-strong");
     unpinDock();
     setPlaceholder();
+    window.DDLessonLinks?.onDeselect?.();
   };
 
   /* ---------------- maximize: focused practice page (own iframe) -------- */
@@ -2062,6 +2085,11 @@
      file's alone. Null until build() has run, which is the same "not yet"
      every other export here answers. */
   window.deltaConceptGraphCy = () => cy;
+
+  /* Drop the selection from outside — concept-graph/lesson-links.js on a Back
+     that leaves the last lesson URL. The same thing a background tap does, so
+     the two ways of saying "no concept" leave the map in one state. */
+  window.deltaClearConceptGraphSelection = () => resetView();
 
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
