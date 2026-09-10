@@ -37,6 +37,8 @@ def make_rays_1d(num_pixels, y_limit):
     return rays
 
 print(make_rays_1d(3, 1.0))
+# Hidden checks
+assert _delta_output == 'tensor([[[ 0.,  0.,  0.],\n         [ 1., -1.,  0.]],\n\n        [[ 0.,  0.,  0.],\n         [ 1.,  0.,  0.]],\n\n        [[ 0.,  0.,  0.],\n         [ 1.,  1.,  0.]]])\n'
 ```
 
 Read the output as three slabs. Row 0 of each is the origin; row 1 is
@@ -58,6 +60,7 @@ rays = t.zeros((5, 2, 3))
 rays[:, 1, 0] = 1
 rays[:, 1, 1] = t.linspace(-2.0, 2.0, 5)
 print(rays[:, 1])                          # every direction row
+# Hidden checks
 assert (rays[:, 0] == 0).all()             # all origins at 0
 assert rays[:, 1, 1].tolist() == [-2.0, -1.0, 0.0, 1.0, 2.0]
 ```

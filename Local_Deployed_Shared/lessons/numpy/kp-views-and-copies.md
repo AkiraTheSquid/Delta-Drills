@@ -49,6 +49,8 @@ a = t.tensor([[1, 2, 3], [4, 5, 6]])
 print("a starts at:", type(a.data_ptr()).__name__, "- an address, not a value")
 print("a is in reading order:", a.is_contiguous())
 print("a compared with itself:", a.data_ptr() == a.data_ptr())
+# Hidden checks
+assert _delta_output == 'a starts at: int - an address, not a value\na is in reading order: True\na compared with itself: True\n'
 ```
 
 Now the point of all this. Transposing does **not** touch the strip. It writes
@@ -61,6 +63,8 @@ view = a.T   # same cell as above — `a` is still the 2x3 tensor
 print("a.T starts at the same address:", view.data_ptr() == a.data_ptr())
 print("a.T is in reading order:", view.is_contiguous())
 print("a.T reads as:", view.tolist())
+# Hidden checks
+assert _delta_output == 'a.T starts at the same address: True\na.T is in reading order: False\na.T reads as: [[1, 4], [2, 5], [3, 6]]\n'
 ```
 
 Both answers together are the whole idea. `a.T` **shares a's block** — it is
@@ -87,6 +91,8 @@ print("grid order of a.T :", view.tolist(), "-> reads 1 3 5 2 4 6")
 
 print("same strip?      ", view.data_ptr() == a.data_ptr())
 print("in reading order?", view.is_contiguous())
+# Hidden checks
+assert _delta_output == 'strip order of a  : [[1, 2], [3, 4], [5, 6]] -> reads 1 2 3 4 5 6\ngrid order of a.T : [[1, 3, 5], [2, 4, 6]] -> reads 1 3 5 2 4 6\nsame strip?       True\nin reading order? False\n'
 ```
 
 The freshly built tensor is always in reading order, so the interesting answer
@@ -94,6 +100,8 @@ is always the second one:
 
 ```python
 print("a itself:", a.is_contiguous())
+# Hidden checks
+assert _delta_output == 'a itself: True\n'
 ```
 
 ## Faded practice
@@ -140,6 +148,8 @@ print("a.T      shares:", a.T.data_ptr() == a.data_ptr(),
 fresh = t.tensor([[1, 2, 3], [4, 5, 6]])
 print("a rebuild shares:", fresh.data_ptr() == a.data_ptr(),
       " in order:", fresh.is_contiguous())        # own strip, in order
+# Hidden checks
+assert _delta_output == 'a.T      shares: True  in order: False\na rebuild shares: False  in order: True\n'
 ```
 
 There is one shape where the transpose *is* already in reading order, and it
@@ -152,6 +162,8 @@ order.
 strip_like = t.tensor([[1, 2, 3, 4]])
 print("one row, transposed:", strip_like.T.tolist())
 print("still in reading order:", strip_like.T.is_contiguous())
+# Hidden checks
+assert _delta_output == 'one row, transposed: [[1], [2], [3], [4]]\nstill in reading order: True\n'
 ```
 
 🔴 **`data_ptr()` is a STARTING address, not the identity of the strip.** For a
@@ -164,6 +176,8 @@ later = a[1:]
 print("a[1:] starts where a does:", later.data_ptr() == a.data_ptr())
 print("...but it is the same strip:",
       later.untyped_storage().data_ptr() == a.untyped_storage().data_ptr())
+# Hidden checks
+assert _delta_output == 'a[1:] starts where a does: False\n...but it is the same strip: True\n'
 ```
 
 So `x.data_ptr() == y.data_ptr()` reads as "do these two start at the same
@@ -186,6 +200,7 @@ shares = view.data_ptr() == a.data_ptr()
 in_order = view.is_contiguous()
 
 print("(shares, in_order) =", (shares, in_order))
+# Hidden checks
 assert shares is True
 assert in_order is False
 ```
@@ -243,6 +258,8 @@ packed = view.contiguous()
 print("same numbers as the view:", t.equal(packed, view))
 print("in reading order now    :", packed.is_contiguous())
 print("still a's block         :", packed.data_ptr() == a.data_ptr())
+# Hidden checks
+assert _delta_output == "same numbers as the view: True\nin reading order now    : True\nstill a's block         : False\n"
 ```
 
 🔴 **`.contiguous()` does not always copy, and this is the part that surprises
@@ -259,6 +276,8 @@ one_row = t.tensor([[1, 2, 3, 4]])
 print("a one-row transpose is in order too:", one_row.T.is_contiguous())
 print("so ITS packed copy shares:",
       one_row.T.contiguous().data_ptr() == one_row.data_ptr())
+# Hidden checks
+assert _delta_output == 'a is already in order: True\nso a.contiguous() is a itself: True\na one-row transpose is in order too: True\nso ITS packed copy shares: True\n'
 ```
 
 That is why a drill on this can answer `(True, False)` for a 2×3 input and
@@ -282,6 +301,8 @@ print("view   shares:", view.data_ptr() == a.data_ptr(),
 print("packed shares:", packed.data_ptr() == a.data_ptr(),
       " in order:", packed.is_contiguous())
 print("same values either way:", t.equal(packed, view))
+# Hidden checks
+assert _delta_output == 'view   shares: True  in order: False\npacked shares: False  in order: True\nsame values either way: True\n'
 ```
 
 ## Faded practice

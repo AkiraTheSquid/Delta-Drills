@@ -28,12 +28,8 @@ const DeltaNotebook = (() => {
      the CSS grid and every existing handler key on and the solution cell wants
      all of that. */
   const cells = () =>
-    Array.from(cellsHost?.querySelectorAll(
-      ".notebook-cell:not([data-solution-cell]):not([data-example-cell])",
-    ) || []);
+    Array.from(cellsHost?.querySelectorAll(".notebook-cell:not([data-solution-cell])") || []);
   const solutionCell = () => cellsHost?.querySelector("[data-solution-cell]") || null;
-  const exampleCells = () =>
-    Array.from(cellsHost?.querySelectorAll("[data-example-cell]") || []);
   /* Where the learner's own cells stop and the graded feedback begins: the
      failed-case block (parented here by ui.js::renderFailedTests) and the
      answer both live at the tail of this list, and anything the learner adds
@@ -392,78 +388,24 @@ const DeltaNotebook = (() => {
     return true;
   };
 
-  /* The worked example's code, as runnable cells ABOVE the learner's own.
+  /* 🪦 WORKED-EXAMPLE CELLS — DELETED 2026-09-10, and they must not come back.
 
-     The tester (2026-08-24): "have the python snippets that are currently in
-     the left column WITHIN the code editor". Reading the example in the rail
-     and typing in the editor are two different places; putting the same
-     snippets at the top of the notebook means they can be run against the
-     live kernel and copied from in place. Same non-learner-cell contract as
-     the solution cell: `data-example-cell` keeps these out of submissionCode()
-     (Submit must never post the scaffold as the answer), serialize() (a draft
-     must not fossilise them — ladder.js re-supplies them per question), and
-     reset()'s learner-cell sweep. Prose between the snippets stays in the rail
-     — the cells are the runnable half, not a second copy of the lesson.
+     `exampleSources` / `renderExamples` / `showExamples` / `clearExamples` laid
+     the KP segment's code fences in as runnable `[data-example-cell]` cells
+     ABOVE the learner's own, fed by `ladder.js::decorate`. Seth, on q198:
+     "It shouldn't be either in the problem panel or in the runnable cells
+     because we don't put worked examples in the problems anymore. They have
+     their own lessons."
 
-     `exampleSources` is module state, not just DOM, because reset() runs on
-     every question render AND on a draft restore, and both need to re-lay the
-     cells for the CURRENT question without waiting for another KP fetch.
-     ladder.js clears it at the top of every decorate, so a question without an
-     example cannot inherit the previous question's cells. */
-  let exampleSources = [];
+     They are also why `cells()` carried a second `:not(...)` clause. The
+     solution cell is now the ONLY non-learner cell in this notebook, which is
+     the invariant that clause existed to state — every extra kind of cell that
+     is not the learner's work is another way for Submit, serialize() or reset()
+     to disagree about whose code is on screen. `watch_example_gate.py` asserts
+     the attribute never reappears here.
 
-  const renderExamples = () => {
-    exampleCells().forEach((cell) => cell.remove());
-    if (!cellsHost || !primary || !exampleSources.length) return;
-    // Same rule as showSolution: a hidden pane means the rail copy is the one
-    // on screen — appending here would help nobody.
-    if (!cellsHost.getClientRects().length) return;
-    exampleSources.forEach((code, index) => {
-      const n = index + 1;
-      const label = exampleSources.length > 1
-        ? `📖 Worked example ${n} of ${exampleSources.length} — run it, copy from it; your solution goes below`
-        : "📖 Worked example — run it, copy from it; your solution goes below";
-      const cell = document.createElement("section");
-      cell.className = "notebook-cell notebook-cell--example";
-      cell.dataset.exampleCell = "1";
-      cell.dataset.cellId = `example-${n}`;
-      cell.innerHTML = `
-      <div class="notebook-cell-gutter">
-        <button class="notebook-cell-run" type="button" aria-label="Run worked example ${n}">▶</button>
-        <span class="notebook-cell-exec" aria-label="Not run">[ ]</span>
-      </div>
-      <div class="notebook-cell-main">
-        <div class="notebook-cell-actions notebook-cell-actions--example">
-          <span>${label}</span>
-        </div>
-        <textarea class="code-editor notebook-cell-editor" spellcheck="false"
-                  aria-label="Worked example ${n}"></textarea>
-        <div class="notebook-cell-output hidden" data-cell-output>
-          <div class="output-header">Output</div>
-          <pre class="output-area"></pre>
-        </div>
-      </div>`;
-      editorOf(cell).value = code;
-      // Attach before bind — bindCell's resize memoises border widths from
-      // getComputedStyle, which returns defaults on a detached node (the same
-      // 2px-short trap showSolution documents).
-      cellsHost.insertBefore(cell, primary);
-      bindCell(cell);
-    });
-  };
-
-  const showExamples = (codes) => {
-    exampleSources = (Array.isArray(codes) ? codes : [])
-      .map((code) => String(code || "").trim())
-      .filter(Boolean)
-      .slice(0, 8);
-    renderExamples();
-  };
-
-  const clearExamples = () => {
-    exampleSources = [];
-    exampleCells().forEach((cell) => cell.remove());
-  };
+     🔴 A cell in this notebook is the learner's, or it is the graded answer.
+     Nothing else gets to be a cell. */
 
   const reset = (code, { addScratch = true } = {}) => {
     if (!primary) return;
@@ -479,10 +421,6 @@ const DeltaNotebook = (() => {
     nextId = 2;
     resize(editor);
     if (addScratch) addCell("");
-    // Re-lay the current question's example cells: a draft restore reaches
-    // here through restore(), after ladder.js may already have supplied them,
-    // and the sweep above must not cost the learner the scaffold.
-    renderExamples();
   };
 
   const serialize = () => ({
@@ -528,7 +466,7 @@ const DeltaNotebook = (() => {
 
   return {
     addCell, markRun, reset, restore, runCell, serialize, submissionCode,
-    showSolution, clearSolution, scrollToSolution, showExamples, clearExamples,
+    showSolution, clearSolution, scrollToSolution,
   };
 })();
 

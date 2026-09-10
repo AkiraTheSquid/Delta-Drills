@@ -32,6 +32,8 @@ ray = t.tensor([[0.0, 0.0, 0.0],    # O
 origin, direction = ray[0], ray[1]
 u = 2.0
 print(origin + u * direction)       # the point at u = 2
+# Hidden checks
+assert _delta_output == 'tensor([2., 1., 0.])\n'
 ```
 
 Because the whole thing is arithmetic, **many `u` at once** is one broadcast:
@@ -45,6 +47,8 @@ direction = t.tensor([1.0, 0.5, 0.0])
 u = t.tensor([0.0, 1.0, 2.0])
 points = origin + u[:, None] * direction    # (3,1) * (3,) → (3,3)
 print(points)
+# Hidden checks
+assert _delta_output == 'tensor([[0.0000, 0.0000, 0.0000],\n        [1.0000, 0.5000, 0.0000],\n        [2.0000, 1.0000, 0.0000]])\n'
 ```
 
 Two facts you will use constantly in Chapter 0.1:
@@ -73,6 +77,7 @@ O, D = ray[0], ray[1]
 u = (3.0 - O[0]) / D[0]
 point = O + u * D
 print(u, point)
+# Hidden checks
 assert point.tolist() == [3.0, 6.0, 0.0]
 ```
 

@@ -24,6 +24,8 @@ almost every cell below ends with one.
 ```python
 print(2 + 3)
 print("two" + "three")
+# Hidden checks
+assert _delta_output == '5\ntwothree\n'
 ```
 
 The `=` sign is **not** a claim that two things are equal. It is an instruction:
@@ -33,6 +35,8 @@ name is a label, and the value is what the label is stuck to.
 ```python
 total = 2 + 3
 print(total)
+# Hidden checks
+assert _delta_output == '5\n'
 ```
 
 Read `total = 2 + 3` as "let `total` be 5 from now on". Once a name exists you
@@ -43,6 +47,8 @@ price = 4
 quantity = 3
 subtotal = price * quantity
 print(subtotal)
+# Hidden checks
+assert _delta_output == '12\n'
 ```
 
 Because the right-hand side is worked out **first**, a name can be built out of
@@ -52,6 +58,8 @@ its own old value. This trips people up until they read it in the right order:
 n = 10
 n = n + 3
 print(n)
+# Hidden checks
+assert _delta_output == '13\n'
 ```
 
 The second line does not say "n equals n plus 3", which would be nonsense. It
@@ -65,6 +73,8 @@ is how a piece of code gives more than one answer at once.
 ```python
 pair = (1, 2)
 print(pair)
+# Hidden checks
+assert _delta_output == '(1, 2)\n'
 ```
 
 Every value has a **kind** — a whole number, a decimal, a piece of text, a
@@ -76,6 +86,8 @@ count = 5
 label = "five"
 print(type(count))
 print(type(label))
+# Hidden checks
+assert _delta_output == "<class 'int'>\n<class 'str'>\n"
 ```
 
 Re-attaching a name to a different value can change the kind as well as the
@@ -86,6 +98,8 @@ n = 5
 print(type(n))
 n = (5, 5)
 print(type(n))
+# Hidden checks
+assert _delta_output == "<class 'int'>\n<class 'tuple'>\n"
 ```
 
 ## Watch out
@@ -112,6 +126,8 @@ difference = a - b
 print("total is", total)
 print("difference is", difference)
 print("both together:", (total, difference))
+# Hidden checks
+assert _delta_output == 'total is 9\ndifference is 5\nboth together: (9, 5)\n'
 ```
 
 Why each step:
@@ -330,6 +346,8 @@ doubled = total + total
 
 print("computed once:", total)
 print("reused, not recomputed:", doubled)
+# Hidden checks
+assert _delta_output == 'computed once: 12\nreused, not recomputed: 24\n'
 ```
 
 ### q571

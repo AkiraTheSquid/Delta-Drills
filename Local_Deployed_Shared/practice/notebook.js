@@ -203,6 +203,7 @@ const LessonNotebook = (() => {
     "",
     "",
     "def _delta_cell(_delta_src, _delta_name, _delta_echo):",
+    "    _delta_src, _, _delta_checks = _delta_src.partition(\"\\n# Hidden checks\\n\")",
     "    if _delta_ip is not None:",
     "        _delta_src = _delta_ip.transform_cell(_delta_src)",
     "    _delta_tree = _delta_ast.parse(_delta_src, _delta_name)",
@@ -219,7 +220,7 @@ const LessonNotebook = (() => {
     "    _delta_ok = False",
     "    try:",
     "        with _delta_ctx.redirect_stdout(_delta_buf):",
-    "            if _delta_echo and _delta_body and isinstance(_delta_body[-1], _delta_ast.Expr):",
+    "            if _delta_body and isinstance(_delta_body[-1], _delta_ast.Expr):",
     "                _delta_head = _delta_ast.Module(body=_delta_body[:-1], type_ignores=[])",
     "                exec(compile(_delta_head, _delta_name, 'exec'), _delta_ns)",
     "                _delta_tail = _delta_ast.Expression(_delta_body[-1].value)",
@@ -231,6 +232,9 @@ const LessonNotebook = (() => {
     "                    print(repr(_delta_val))",
     "            else:",
     "                exec(compile(_delta_tree, _delta_name, 'exec'), _delta_ns)",
+    "        _delta_ns[\"_delta_output\"] = _delta_buf.getvalue()",
+    "        if _delta_checks.strip():",
+    "            exec(compile(_delta_checks, _delta_name + \" checks\", \"exec\"), dict(_delta_ns))",
     "        _delta_ok = True",
     "    finally:",
     "        if _delta_echo or not _delta_ok:",
@@ -246,6 +250,15 @@ const LessonNotebook = (() => {
     "            print(_delta_key, '=', _delta_show(_delta_ns[_delta_key]))",
     "",
   ].join("\n");
+
+  // Checks belong to the runnable source, but never to the editable example.
+  const CHECK_MARKER = "\n# Hidden checks\n";
+  const splitChecks = (source) => {
+    const text = String(source || "");
+    const at = text.indexOf(CHECK_MARKER);
+    return at < 0 ? { code: text, checks: "" }
+      : { code: text.slice(0, at).trimEnd(), checks: text.slice(at) };
+  };
 
   /* JSON string syntax is a subset of Python string syntax — the escapes
      JSON.stringify emits (\", \\, \n, \t, \uXXXX) all mean the same thing in a
@@ -271,7 +284,7 @@ const LessonNotebook = (() => {
     '<div class="nb-cell" data-nb-index="' + index + '">' +
     '<div class="nb-cell-code">' +
     '<pre><code contenteditable="plaintext-only" spellcheck="false">' +
-    esc(code) +
+    esc(splitChecks(code).code) +
     "</code></pre>" +
     "</div>" +
     '<div class="nb-cell-bar">' +
@@ -299,7 +312,7 @@ const LessonNotebook = (() => {
     if (!node) return "";
     const read = window.DeltaNotebookCode?.readText;
     const text = typeof read === "function" ? read(node) : node.innerText;
-    return String(text || "").replace(/ /g, " ");
+    return String(text || "").replace(/ /g, " ") + (cell._ddChecks || "");
   };
 
   /* Every cell up to and including this one, each handed to the harness as
@@ -509,6 +522,7 @@ const LessonNotebook = (() => {
       const pre = node.parentElement;
       const wrapper = document.createElement("div");
       wrapper.innerHTML = cellHtml(node.textContent, index);
+      wrapper.firstElementChild._ddChecks = splitChecks(node.textContent).checks;
       pre.replaceWith(wrapper.firstElementChild);
     });
 
@@ -576,7 +590,7 @@ const LessonNotebook = (() => {
     };
   };
 
-  return { mount, runSource, checkCount: _checkCount };
+  return { mount, runSource, splitChecks, checkCount: _checkCount };
 })();
 
 window.LessonNotebook = LessonNotebook;

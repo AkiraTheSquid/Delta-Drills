@@ -1,62 +1,20 @@
 /* ================================================================
-   LADDER — concept header + the worked example kept beside the problem
-   (practice/ladder.js)
+   LADDER — the two callouts a drill card may carry (practice/ladder.js)
 
-   One piece, inside #question-text: `.ladder-example`, the worked example kept
-   below the prompt on the supported rungs. The concept/rung/interval strip that
-   used to sit above the prompt moved to the page-wide concept topbar
+   `.ladder-stage-callout` and its `.ladder-gap-callout` variant, both inside
+   #question-text, below the prompt. The concept/rung/interval strip that used
+   to sit above the prompt moved to the page-wide concept topbar
    (styles/practice/stage-ladder.css) so it spans both panels and survives a
    re-render.
 
-   The example is styled to read as REFERENCE, not as more prompt: dimmer
-   surface, a left rule, and a smaller type scale. A learner scanning the card
-   has to be able to tell at a glance which block is the thing they are being
-   asked to do and which is the thing they are allowed to copy from.
+   🪦 `.ladder-example` and `.ladder-example-body` lived here: the KP's worked
+   example, rendered below the prompt on the supported rungs, styled to read as
+   REFERENCE rather than as more prompt. Deleted 2026-09-10 with the markup that
+   produced it — "we don't put worked examples in the problems anymore. They
+   have their own lessons" (Seth). A drill card carries the prompt, the graded
+   cases, and these two callouts; nothing else.
    ================================================================ */
 
-/* --- the worked example, beside the problem ------------------------------ */
-
-.ladder-example {
-  background: rgb(var(--well-rgb) / calc(0.18 * var(--well-k)));
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--info);
-  border-radius: 8px;
-  margin-top: 18px;
-  padding: 0 14px;
-}
-
-.ladder-example > summary {
-  color: var(--info);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  list-style: none;
-  padding: 10px 0;
-  text-transform: uppercase;
-}
-
-.ladder-example > summary::-webkit-details-marker {
-  display: none;
-}
-
-.ladder-example > summary::before {
-  content: "▾ ";
-  display: inline-block;
-  font-size: 10px;
-  transform: translateY(-1px);
-}
-
-.ladder-example:not([open]) > summary::before {
-  content: "▸ ";
-}
-
-/* The stage instruction, OUTSIDE and above the example, loud on purpose.
-   As `.ladder-example-blurb` — a muted 12px line inside the <details> — the
-   one sentence that reframes the whole card ("most of the solution is written
-   for you") was the least visible thing on it, and a tester read a faded
-   problem as write-from-scratch. This is the one block on the card that is
-   allowed to shout. */
 .ladder-stage-callout {
   background: color-mix(in srgb, var(--info) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--info) 45%, transparent);
@@ -68,10 +26,6 @@
   padding: 10px 14px;
 }
 
-.ladder-stage-callout + .ladder-example {
-  margin-top: 8px;
-}
-
 /* The spent-rung notice. Same block, warning tint rather than info: it is not
    describing the scaffold on this card, it is telling the learner the course
    has run out of new problems at the rung they earned. Different thing, and it
@@ -80,56 +34,4 @@
   background: color-mix(in srgb, var(--warn, #d98324) 12%, transparent);
   border-color: color-mix(in srgb, var(--warn, #d98324) 45%, transparent);
   font-weight: 500;
-}
-
-/* Kept for any cached ladder.js still rendering the blurb inside the details. */
-.ladder-example-blurb {
-  color: var(--muted);
-  font-size: 12px;
-  margin: 0 0 10px;
-}
-
-.ladder-example-body {
-  color: var(--text);
-  font-size: 13.5px;
-  line-height: 1.6;
-  padding-bottom: 12px;
-}
-
-.ladder-example-body h4 {
-  color: var(--text);
-  font-size: 13px;
-  margin: 12px 0 5px;
-}
-
-.ladder-example-body p,
-.ladder-example-body li {
-  margin: 0 0 8px;
-}
-
-.ladder-example-body pre {
-  background: rgb(var(--well-rgb) / calc(0.4 * var(--well-k)));
-  border-radius: 6px;
-  font-size: 12.5px;
-  margin: 8px 0;
-  overflow-x: auto;
-  padding: 10px 12px;
-}
-
-/* The fence itself keeps this rail's compact size and its well background;
-   what it borrows from the rest of the app is the FACE and the token colours
-   (practice/ladder.js hands the block to DeltaNotebookCode.paintFences, and
-   styles/practice/code-highlight.css owns the `cm-*` palette). Same example,
-   same markdown, same colour as the lesson page it came from. */
-.ladder-example-body pre > code {
-  color: var(--white);
-  font-family: var(--code-font);
-}
-
-.ladder-example-body p code,
-.ladder-example-body li code {
-  background: rgb(var(--well-rgb) / calc(0.35 * var(--well-k)));
-  border-radius: 4px;
-  font-size: 0.9em;
-  padding: 1px 5px;
 }

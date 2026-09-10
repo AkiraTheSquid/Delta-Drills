@@ -40,7 +40,7 @@ from watch_feedback import (
     check_a_lesson_can_be_reported_without_touching_the_question,
     check_feedback_that_never_left_the_browser_is_not_called_logged,
 )
-from watch_example_gate import check_the_example_gate_runs_after_the_lesson_gates
+from watch_example_gate import check_no_worked_example_is_attached_to_a_drill
 from watch_notebook_arena import (
     check_the_arena_contents_tree_is_a_plain_colab_tree,
     check_the_contents_reveal_zone_never_covers_a_run_button,
@@ -649,7 +649,7 @@ if __name__ == '__main__':
               check_a_contents_row_can_actually_be_clicked,
               check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
               check_code_on_the_arena_page_is_set_at_the_prose_size,
-              check_the_example_gate_runs_after_the_lesson_gates,
+              check_no_worked_example_is_attached_to_a_drill,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
               check_a_slow_run_cannot_touch_another_notebook,

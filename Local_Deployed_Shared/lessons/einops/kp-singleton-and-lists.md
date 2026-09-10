@@ -50,10 +50,11 @@ imgs = [t.ones((2, 3, 1)) * i for i in range(4)]   # list of (h, w, c)
 
 # List -> batch axis: the identity pattern DOES the stacking.
 batch = einops.rearrange(imgs, 'b h w c -> b h w c')
-assert batch.shape == (4, 2, 3, 1)
-assert batch[2, 0, 0, 0] == 2.0                      # list order preserved
 
 print("list of 4 images -> batch", tuple(batch.shape), "| image 2's first pixel:", batch[2, 0, 0, 0].item())
+# Hidden checks
+assert batch.shape == (4, 2, 3, 1)
+assert batch[2, 0, 0, 0] == 2.0                      # list order preserved
 ```
 
 Stacking made a batch out of several tensors; a singleton adds a length-1 axis to ONE tensor without copying anything.
@@ -65,9 +66,10 @@ import einops
 # Singleton insertion: a plain 2-D tensor gains a leading axis.
 x2d = t.arange(6).reshape(2, 3)
 x3d = einops.rearrange(x2d, 'h w -> 1 h w')
-assert x3d.shape == (1, 2, 3)
 
 print("singleton insert:", tuple(x2d.shape), "->", tuple(x3d.shape))
+# Hidden checks
+assert x3d.shape == (1, 2, 3)
 ```
 
 The list-to-batch conversion composes with any merge in the same pattern.
@@ -79,10 +81,11 @@ import einops
 # Both at once: stack a list AND lay the images out side by side.
 pair = [t.zeros((2, 2, 1)), t.ones((2, 2, 1))]
 wide = einops.rearrange(pair, 'b h w c -> h (b w) c')
-assert wide.shape == (2, 4, 1)
-assert wide[0, :, 0].tolist() == [0.0, 0.0, 1.0, 1.0]  # a then b, left to right
 
 print("stack + side by side:", tuple(wide.shape), "| row 0 =", wide[0, :, 0].tolist())
+# Hidden checks
+assert wide.shape == (2, 4, 1)
+assert wide[0, :, 0].tolist() == [0.0, 0.0, 1.0, 1.0]  # a then b, left to right
 ```
 
 Removing a singleton is the reverse pattern, and einops checks that the `1` is really there.
@@ -98,9 +101,10 @@ try:
 except Exception as err:
     raised = True
     print("squeezing an axis that isn't there ->", type(err).__name__)
-assert raised
 
 print("all four moves ran; squeeze raised:", raised)
+# Hidden checks
+assert raised
 ```
 
 Why each step:

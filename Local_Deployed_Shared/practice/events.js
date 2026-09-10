@@ -486,15 +486,31 @@ const _loadNextPracticeQuestion = async () => {
   ) {
     return;
   }
-  // Worked-example popup on the drill rungs, when the server scheduled one
-  // (question.ladder_example — app/example_schedule.py). After the two gates
-  // above so a lesson is never followed by its own example on the same card.
-  if (
-    window.ExampleGate &&
-    (await window.ExampleGate.maybeShow(nextQ, () => renderQuestion(nextQ, nextCount)))
-  ) {
-    return;
-  }
+  /* 🪦 THE WORKED-EXAMPLE POPUP — DELETED 2026-09-10, and it must not come back.
+
+     `practice/example-gate.js` sat here: when the server scheduled one
+     (`question.ladder_example`, app/example_schedule.py) it took over
+     `#question-text` with a KP segment's worked example and — this is the part
+     that broke — called `DeltaNotebook.reset(exampleCode)`, which writes into
+     the learner's OWN primary cell. Seth, on q198 (Jaccard distance), in-app:
+     "I didn't even know where to type my answer … it basically filled
+     everything out for me and then didn't tell me where I needed to insert my
+     own code", and then "it gave me a bunch of unrelated code, which is really
+     annoying. The worked examples shouldn't be in the problem statements
+     anymore." What he was looking at was an einops broadcasting example sitting
+     in the answer cell of a Jaccard problem; Submit graded it and returned
+     `NameError: name 'solve' is not defined` on all four cases.
+
+     The rule now: a worked example belongs to a LESSON. `LessonGate.maybeShow`
+     (first contact) and `LadderUI.maybeShowWorked` (the `worked` rung) are the
+     two screens that teach, and both of them ARE lesson screens. Nothing
+     attaches an example to a drill — not the problem panel, not the runnable
+     cells. See practice/ladder.js for the rail half of the same removal.
+
+     The backend still SCHEDULES examples (`example_schedule.py` fills
+     `question.ladder_example`, and `api.js` still reports `example_shown`).
+     That payload is now inert: no client draws it, so `example_shown` is always
+     false. Retiring the schedule table is a backend change and is not this one. */
   renderQuestion(nextQ, nextCount);
 };
 

@@ -43,16 +43,17 @@ x = t.tensor([[1.0, 2.0, 3.0],
 
 # dim=0 -> the 2 rows collapse onto each other -> one sum PER COLUMN.
 col_sums = x.sum(dim=0)
-assert tuple(col_sums.shape) == (3,)  # (2, 3) with dim 0 crossed out
-assert col_sums.tolist() == [11.0, 22.0, 33.0]
 
 # dim=1 -> the 3 columns collapse -> one value PER ROW.
 row_means = x.mean(dim=1)
-assert tuple(row_means.shape) == (2,)
-assert row_means.tolist() == [2.0, 20.0]
 print("x shape", tuple(x.shape))
 print("sum(dim=0) ", col_sums,  "shape", tuple(col_sums.shape))
 print("mean(dim=1)", row_means, "shape", tuple(row_means.shape))
+# Hidden checks
+assert tuple(col_sums.shape) == (3,)  # (2, 3) with dim 0 crossed out
+assert col_sums.tolist() == [11.0, 22.0, 33.0]
+assert tuple(row_means.shape) == (2,)
+assert row_means.tolist() == [2.0, 20.0]
 ```
 
 Why: for each reduction, the assert on `.shape` comes BEFORE the values —
@@ -102,21 +103,22 @@ import torch as t
 # one total per (a, b) slice. Negative axes save counting.
 batch = t.arange(24).reshape(2, 3, 2, 2)
 totals = batch.sum(dim=(-2, -1))
-assert totals.shape == (2, 3)
-assert totals[0, 0] == 0 + 1 + 2 + 3
 
 # keepdim preview: the reduced dim survives as 1, so the result still
 # lines up against the original for broadcasting.
 # (t.mean needs a float tensor — it will not promote ints the way numpy does.)
 x = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
 rm = x.mean(dim=1, keepdim=True)
-assert tuple(rm.shape) == (2, 1)
 centered = x - rm                     # (2,3) - (2,1): broadcasts by row
-assert centered[0].tolist() == [-1.0, 0.0, 1.0]
 print("(2,3,2,2) summed over the last two ->", tuple(totals.shape))
 print(totals)
 print("keepdim=True keeps the axis as 1:", tuple(rm.shape), "->", rm.tolist())
 print(centered)
+# Hidden checks
+assert totals.shape == (2, 3)
+assert totals[0, 0] == 0 + 1 + 2 + 3
+assert tuple(rm.shape) == (2, 1)
+assert centered[0].tolist() == [-1.0, 0.0, 1.0]
 ```
 
 Why: a bare `(2,)` row-mean would align against the WRONG axis when

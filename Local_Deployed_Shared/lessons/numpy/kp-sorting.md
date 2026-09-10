@@ -25,6 +25,8 @@ import torch as t
 
 z = t.tensor([0.5, 0.25, 0.75])
 print(t.sort(z))
+# Hidden checks
+assert _delta_output == 'torch.return_types.sort(\nvalues=tensor([0.2500, 0.5000, 0.7500]),\nindices=tensor([1, 0, 2]))\n'
 ```
 
 That printout is the pair, and it is what a function returns if you forget
@@ -39,6 +41,7 @@ it is what "sort one thing by another" tasks need, and it is the same thing
 values, indices = t.sort(z)
 print("values ", values)
 print("indices", indices)
+# Hidden checks
 assert t.equal(indices, t.argsort(z))
 assert t.equal(z[indices], values)      # the indices reconstruct the values
 ```
@@ -52,6 +55,7 @@ you have to sort ascending and reverse afterwards.
 ```python
 print("z is still", z)
 print("descending", t.sort(z, descending=True).values)
+# Hidden checks
 assert z.tolist() == [0.5, 0.25, 0.75]
 ```
 
@@ -67,23 +71,24 @@ z = t.tensor([0.5, 0.25, 0.75])
 
 # sort returns a PAIR — take .values for the sorted tensor.
 result = t.sort(z)
-assert result.values.tolist() == [0.25, 0.5, 0.75]
-assert result.indices.tolist() == [1, 0, 2]     # where each value came from
 
 # The input keeps its original order (the grader often checks this).
-assert z.tolist() == [0.5, 0.25, 0.75]
 
 # Descending is a keyword here — no reverse step needed.
 desc = t.sort(z, descending=True).values
-assert desc.tolist() == [0.75, 0.5, 0.25]
 
 # Unpacking works too, and reads well when you want both halves.
 values, indices = t.sort(z)
-assert values.tolist() == [0.25, 0.5, 0.75]
 print("input     ", z)
 print("values    ", values)
 print("indices   ", indices)
 print("descending", desc)
+# Hidden checks
+assert result.values.tolist() == [0.25, 0.5, 0.75]
+assert result.indices.tolist() == [1, 0, 2]     # where each value came from
+assert z.tolist() == [0.5, 0.25, 0.75]
+assert desc.tolist() == [0.75, 0.5, 0.25]
+assert values.tolist() == [0.25, 0.5, 0.75]
 ```
 
 Why each step:
@@ -166,6 +171,8 @@ order = t.argsort(scores, descending=True)
 print("order  ", order)
 print("ids    ", ids[order])
 print("scores ", scores[order])
+# Hidden checks
+assert _delta_output == 'order   tensor([1, 3, 0, 2])\nids     tensor([11, 13, 10, 12])\nscores  tensor([0.9000, 0.7000, 0.4000, 0.1000])\n'
 ```
 
 Both tensors moved by the SAME order, so row-by-row they still describe the
@@ -174,6 +181,7 @@ same items. Sorting them separately is the bug this pattern prevents:
 ```python
 broken = t.sort(ids, descending=True).values
 print("independently sorted ids:", broken, "— no longer paired with anything")
+# Hidden checks
 assert t.equal(scores[order], t.sort(scores, descending=True).values)
 ```
 
@@ -187,19 +195,20 @@ scores = t.tensor([0.5, 0.25, 0.75])
 
 # The positions that WOULD sort scores ascending — not the values.
 order = t.argsort(scores)
-assert order.tolist() == [1, 0, 2]
 
 # Index both tensors with the SAME order and they stay in correspondence.
-assert scores[order].tolist() == [0.25, 0.5, 0.75]
-assert names[order].tolist() == [20, 10, 30]
 
 # argsort takes the same direction keyword sort does.
 best_first = t.argsort(scores, descending=True)
-assert best_first.tolist() == [2, 0, 1]
-assert names[best_first].tolist() == [30, 10, 20]
 print("scores       ", scores, " names", names)
 print("best-first   ", best_first)
 print("names ranked ", names[best_first], " scores", scores[best_first])
+# Hidden checks
+assert order.tolist() == [1, 0, 2]
+assert scores[order].tolist() == [0.25, 0.5, 0.75]
+assert names[order].tolist() == [20, 10, 30]
+assert best_first.tolist() == [2, 0, 1]
+assert names[best_first].tolist() == [30, 10, 20]
 ```
 
 Read the last two lines: name 30 comes first because score 0.75 is the highest,
@@ -268,6 +277,8 @@ print("dim=1 (within each row)")
 print(t.sort(m, dim=1).values)
 print("dim=0 (down each column)")
 print(t.sort(m, dim=0).values)
+# Hidden checks
+assert _delta_output == 'dim=1 (within each row)\ntensor([[1., 2., 3.],\n        [7., 8., 9.]])\ndim=0 (down each column)\ntensor([[3., 1., 2.],\n        [9., 7., 8.]])\n'
 ```
 
 **`t.topk(z, k)`** answers a narrower question: the k largest values, already
@@ -279,6 +290,7 @@ Like `sort`, it hands back a `(values, indices)` pair.
 v = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])
 top = t.topk(v, 2)
 print(top)
+# Hidden checks
 assert top.values.tolist() == [9.0, 7.0]
 assert t.equal(top.values, t.sort(v, descending=True).values[:2])
 ```
@@ -291,27 +303,28 @@ import torch as t
 m = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])
 
 # dim=1 sorts WITHIN each row, independently of the other rows.
-assert t.sort(m, dim=1).values.tolist() == [[1.0, 2.0, 3.0], [7.0, 8.0, 9.0]]
 
 # dim=0 does the same down the columns.
-assert t.sort(m, dim=0).values.tolist() == [[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]]
 
 # argsort takes the same dim= keyword, and answers with positions not values.
-assert t.argsort(m, dim=1).tolist() == [[1, 2, 0], [1, 2, 0]]
 
 # ...and the same descending= keyword you met a segment ago.
 z = t.tensor([0.5, 0.25, 0.75, 0.125])
-assert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]
 
 # topk: the k largest, largest first — a pair again, so take .values.
 top = t.topk(z, 2)
-assert top.values.tolist() == [0.75, 0.5]
-assert top.indices.tolist() == [2, 0]
 print("dim=1 (within rows)")
 print(t.sort(m, dim=1).values)
 print("dim=0 (down columns) — unchanged, columns were already ascending")
 print(t.sort(m, dim=0).values)
 print("topk:", top)
+# Hidden checks
+assert t.sort(m, dim=1).values.tolist() == [[1.0, 2.0, 3.0], [7.0, 8.0, 9.0]]
+assert t.sort(m, dim=0).values.tolist() == [[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]]
+assert t.argsort(m, dim=1).tolist() == [[1, 2, 0], [1, 2, 0]]
+assert t.argsort(z, descending=True).tolist() == [2, 0, 1, 3]
+assert top.values.tolist() == [0.75, 0.5]
+assert top.indices.tolist() == [2, 0]
 ```
 
 The second assertion is the one to sit with: sorting down the columns left this
@@ -403,6 +416,7 @@ import torch as t
 v = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])
 print("largest two ", t.topk(v, 2).values)
 print("smallest two", t.sort(v).values[:2])
+# Hidden checks
 assert t.sort(v).values[:2].tolist() == [1.0, 3.0]
 ```
 

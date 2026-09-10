@@ -342,11 +342,11 @@ def check_invariants():
     # the rest is the question itself.
     for keep in (".feedback-buttons", "#practice-submit-area", "#question-text",
                  ".question-number-row", "#question-visual", "#torch-colab-notice",
-                 "#next-problem-btn", ".ladder-example"):
+                 "#next-problem-btn"):
         assert f"body.dd-basic-mode {keep}" not in basic, (
             f"basic-mode.css hides {keep}. Basic mode is allowed to strip the "
-            "rails around a problem, never the problem, its worked example, or "
-            "the controls that answer it and move on"
+            "rails around a problem, never the problem itself or the controls "
+            "that answer it and move on"
         )
 
 

@@ -48,6 +48,11 @@ def _read(name):
         return json.load(fh)
 
 
+def check_every_runnable_example_is_asserted():
+    from checks import check_compiled_examples
+    check_compiled_examples(_DIR)
+
+
 def check_imports():
     """The three artifacts the backend and lesson gate load must parse."""
     for name in ('kc_registry.json', 'qmatrix_tags.json', 'lessons_structured.json'):
@@ -283,6 +288,7 @@ def check_the_placement_clock_covers_every_concept():
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
+              check_every_runnable_example_is_asserted,
               check_the_exercise_map_is_servable,
               check_the_glossary_points_at_live_kcs,
               check_every_lesson_has_a_notebook,

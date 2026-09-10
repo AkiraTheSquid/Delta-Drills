@@ -1,180 +1,181 @@
 ---
 kc: numpy.slicing-views
-title: Slicing, views, and slice assignment
+title: Selecting and changing parts of a tensor
 supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.clone, syntax.multi-axis-index, syntax.slice, syntax.slice-step, torch.flip, torch.rot90]
-faded: [233]
-guided: [76, 506]
-independent: [231, 75, 507, 74, 189]
+concepts: [slice-bounds, rows-and-columns, reversing, quarter-turns, writing-through-views, copying-before-writing]
+faded: [506, 507, 233, 75, 231, 74]
+guided: [76]
+independent: [189]
 ---
 
-## Concept
+## Concept: Choose a stretch of values
 
-Slicing is how you name a rectangular piece of a tensor. The syntax
-generalizes Python's list slicing in two ways, and adds one semantic twist
-that trips everyone at least once.
-
-**Syntax.** A slice is `start:stop:step` (stop exclusive, any part omittable),
-and a multi-dimensional tensor takes **one slice per axis, separated by
-commas** inside a single pair of brackets:
-
-- `x[2:5]` — elements 2, 3, 4 of a vector.
-- `z[0, :]` — row 0, all columns. `z[:, -1]` — every row, last column.
-- `x[::2]` — every second element.
-
-Negative *indices* count from the end (`-1` is the last element), exactly as in
-Python.
+A slice selects a stretch: `x[start:stop]` includes `start`, stops **before** `stop`.
+Predict the three numbers below, then run.
 
 ```python
 import torch as t
-
-x = t.tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-print("x        ", x)
-print("x[2:5]   ", x[2:5])
-print("x[::2]   ", x[::2])
-print("x[-3:]   ", x[-3:])
+x = t.tensor([10, 20, 30, 40, 50])
+part = x[1:4]
+print(part)
+# Hidden checks
+assert part.tolist() == [20, 30, 40]
 ```
 
-One slice per axis, comma-separated — and note what an *int* in a slot does
-that a slice does not: it removes that axis.
+Indices 1, 2, 3 give `20, 30, 40`. Index 4 is the boundary, so `50` stays out.
+Leaving out `start` means “from the beginning.” What will `x[:2]` include?
 
 ```python
-z = t.tensor([[0, 1, 2, 3],
-              [4, 5, 6, 7],
-              [8, 9, 10, 11]])
-print(z)
-print("z[0, :]  ", z[0, :],  " shape", z[0, :].shape)     # int -> 1-D
-print("z[:, -1] ", z[:, -1], " shape", z[:, -1].shape)
-print("z[0:1, :]", z[0:1, :]," shape", z[0:1, :].shape)   # slice -> stays 2-D
+part = x[:2]
+print(part)
+# Hidden checks
+assert part.tolist() == [10, 20]
 ```
 
-**Negative *steps* are the exception.** NumPy reverses an axis with `x[::-1]`;
-PyTorch refuses — it raises `ValueError: step must be greater than zero`. This
-is probably the single most common surprise when moving NumPy habits to torch.
-Reversal has its own function:
-
-- **`t.flip(x, [0])`** — reverse along axis 0. `t.flip(z, [1])` mirrors each
-  row left-right; `t.flip(z, [0])` reverses the row order (mirror top-bottom).
-- **`t.rot90(z)`** — rotate 90° counterclockwise, the composition of a
-  transpose and a flip.
-
-```python
-try:
-    x[::-1]
-except ValueError as err:
-    print("ValueError:", err)
-
-print("flip axis 0", t.flip(x, [0]))
-print("mirror rows left-right")
-print(t.flip(z, [1]))
-print("rot90")
-print(t.rot90(z))
-assert t.equal(t.rot90(z), t.flip(z.T, [0]))
-```
-
-**The twist: slices are *views*, not copies.** A slice doesn't copy data — it
-is a new window onto the *same* memory block. Two consequences:
-
-1. **Writing through a slice writes the original.** That enables the single
-   most useful idiom in this KP, **slice assignment**:
-   `x[start:stop] = value` sets a whole range at once (the scalar is
-   broadcast to every selected position — no loop).
-2. **"Return a new tensor" tasks need an explicit `.clone()`** if you would
-   otherwise be returning or mutating a view of the caller's data. Rule of
-   thumb: mutate → `.clone()` first, unless the task says to modify in place.
-
-`t.flip` is not in that category: it always returns a **copy**, so writing into
-its result never touches the input.
-
-```python
-data = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
-window = data[1:3]
-window[0] = 99.0                 # window[0] IS data[1]
-print("data after writing through the view:", data)
-assert data[1].item() == 99.0
-
-safe = data[1:3].clone()
-safe[0] = -1.0
-print("data after writing through the clone:", data)
-assert data[1].item() == 99.0
-```
-
-Slice assignment is the same fact used deliberately — a whole range set at
-once, the scalar broadcast across every selected position, no loop:
-
-```python
-y = t.zeros(6)
-y[1:4] = 5.0
-y[::2] = -1.0
-print(y)
-assert y.tolist() == [-1.0, 5.0, -1.0, 5.0, -1.0, 0.0]
-```
+Two values, at indices 0 and 1. A negative index counts from the end: `-1` names the last value.
 
 ## Worked example
 
-Task: given a vector, produce a reversed copy; then blank out the middle of
-another vector in place.
+Take the last two values by starting two places from the end:
 
 ```python
 import torch as t
-
-x = t.tensor([1.0, 2.0, 3.0, 4.0])
-
-# The NumPy reflex does not work here.
-try:
-    x[::-1]
-    raised = False
-except ValueError:
-    raised = True
-assert raised, "torch rejects negative slice steps"
-
-print("x[::-1] raised ValueError:", raised)
-
-# Reverse with flip instead — and flip hands back a COPY.
-rev = t.flip(x, [0])
-assert rev.tolist() == [4.0, 3.0, 2.0, 1.0]
-rev[0] = 99.0                    # writes only into rev
-assert x.tolist() == [1.0, 2.0, 3.0, 4.0]
-print("wrote 99 into the flipped COPY:", rev, "-> x is still", x)
-
-# A plain slice, by contrast, IS a view: writing through it writes x.
-window = x[1:3]
-window[0] = 99.0                 # window[0] is x[1]!
-assert x[1] == 99.0
-print("wrote 99 through a VIEW:       ", window, "-> x is now  ", x)
-x[1] = 2.0                       # undo
-
-# Slice ASSIGNMENT: set positions 1..3 (stop 4 exclusive) to 0 — in place,
-# no loop. The scalar 0.0 is broadcast across the selected range.
-y = t.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
-y[1:4] = 0.0
-assert y.tolist() == [1.0, 0.0, 0.0, 0.0, 5.0, 6.0]
-print("after y[1:4] = 0:              ", y)
+x = t.tensor([10, 20, 30, 40, 50])
+tail = x[-2:]
+print(tail)
+# Hidden checks
+assert tail.tolist() == [40, 50]
 ```
 
-Why each step:
+The missing stop means “through the end.” Before moving on, predict what `x[-3:]` would select.
 
-1. The failed `x[::-1]` is worth writing once deliberately. It is the fastest
-   way to stop reaching for it by reflex later.
-2. `t.flip(x, dims)` names the axes to reverse as a list — you pick *which*
-   axis by what you put in that list, the same choice you would have made by
-   which comma slot got the `::-1`.
-3. The view demonstration is the mental model to keep: a slice is a window,
-   not a photocopy. Cheap to make, dangerous to mutate casually.
-4. Slice assignment replaces the `for i in range(start, stop)` loop entirely —
-   and it is the building block for border/checkerboard/striping patterns in
-   the next lesson.
+## Faded practice
+
+### q506
+Return the first k values.
+
+```python starter
+import torch as t
+
+def solve(x, k):
+    """Return the first k elements."""
+    return x[:_____]
+```
+
+```python solution
+import torch as t
+
+def solve(x, k):
+    """Return the first k elements."""
+    return x[:k]
+```
+
+## Concept: Select rows or columns
+
+Inside brackets, the first slot chooses **rows**, the second chooses **columns**.
+A colon on its own means “all.” First, look at the matrix:
+
+```python
+import torch as t
+z = t.tensor([[1, 2, 3], [4, 5, 6]])
+print(z)
+# Hidden checks
+assert z.tolist() == [[1, 2, 3], [4, 5, 6]]
+```
+
+Predict the middle column. Keep all rows, choose column 1:
+
+```python
+column = z[:, 1]
+print(column)
+# Hidden checks
+assert column.tolist() == [2, 5]
+```
+
+The result is `[2, 5]`: one value from each row. An integer selects one column and removes that axis.
+
+## Worked example
+
+A slice keeps the column axis, even when it selects just one column:
+
+```python
+import torch as t
+z = t.tensor([[1, 2, 3], [4, 5, 6]])
+column = z[:, 1:2]
+print(column)
+# Hidden checks
+assert column.tolist() == [[2], [5]]
+assert tuple(column.shape) == (2, 1)
+```
+
+Notice the extra brackets: two rows, one column. What would `z[0, :]` select instead?
+
+## Faded practice
+
+### q507
+Return one column and its shape.
+
+```python starter
+import torch as t
+
+def solve(x, col):
+    """Return one column of a 2-D tensor, and its shape."""
+    c = x[_____, col]
+    return (c.tolist(), tuple(c.shape))
+```
+
+```python solution
+import torch as t
+
+def solve(x, col):
+    """Return one column of a 2-D tensor, and its shape."""
+    c = x[:, col]
+    return (c.tolist(), tuple(c.shape))
+```
+
+## Concept: Reverse along an axis
+
+`t.flip` reverses the order along the axes you name. For a vector, its only axis is 0.
+Predict which value moves to the front:
+
+```python
+import torch as t
+x = t.tensor([1, 2, 3, 4])
+reversed_x = t.flip(x, [0])
+print(reversed_x)
+# Hidden checks
+assert reversed_x.tolist() == [4, 3, 2, 1]
+assert x.tolist() == [1, 2, 3, 4]
+```
+
+The last value becomes the first. `flip` returns a new tensor; `x` stays unchanged.
+PyTorch rejects negative slice steps such as `x[::-1]`; use `flip` for reversal.
+
+## Worked example
+
+For a matrix, axis 1 runs across each row. Predict this left-right mirror:
+
+```python
+import torch as t
+z = t.tensor([[1, 2, 3], [4, 5, 6]])
+mirrored = t.flip(z, [1])
+print(mirrored)
+# Hidden checks
+assert mirrored.tolist() == [[3, 2, 1], [6, 5, 4]]
+```
+
+Each row reads backwards. Axis 0 would reverse the row order instead: `[4, 5, 6]` would be on top.
 
 ## Faded practice
 
 ### q233
-Reversed copy of a 1-D tensor (input unmodified).
+Return a reversed copy of the vector.
 
 ```python starter
 import torch as t
 
 def solve(x):
-    """Return a new tensor with x's elements in reverse order."""
     return t._____(x, [0])
 ```
 
@@ -182,46 +183,202 @@ def solve(x):
 import torch as t
 
 def solve(x):
-    """Return a new tensor with x's elements in reverse order."""
     return t.flip(x, [0])
+```
+
+## Concept: Turn a matrix a quarter-turn
+
+`t.rot90` turns a matrix 90° **counterclockwise**. Picture lifting its right edge upward.
+Start with this small rectangle:
+
+```python
+import torch as t
+z = t.tensor([[1, 2, 3], [4, 5, 6]])
+print(z)
+# Hidden checks
+assert z.tolist() == [[1, 2, 3], [4, 5, 6]]
+```
+
+Before running, predict the new top row. The old rightmost column moves there:
+
+```python
+turned = t.rot90(z)
+print(turned)
+# Hidden checks
+assert turned.tolist() == [[3, 6], [2, 5], [1, 4]]
+```
+
+`[3, 6]` is now on top. Two rows by three columns became three rows by two columns.
+
+## Worked example
+
+`k` counts quarter-turns. Predict where `1` ends up after two turns:
+
+```python
+import torch as t
+z = t.tensor([[1, 2, 3], [4, 5, 6]])
+turned = t.rot90(z, k=2)
+print(turned)
+# Hidden checks
+assert turned.tolist() == [[6, 5, 4], [3, 2, 1]]
+```
+
+Two turns make 180°: `1` lands at the bottom right. Four turns return to the start; `k=-1` turns clockwise.
+
+## Faded practice
+
+### q75
+Return a 90° counterclockwise rotation.
+
+```python starter
+import torch as t
+
+def solve(z):
+    return t._____(z)
+```
+
+```python solution
+import torch as t
+
+def solve(z):
+    return t.rot90(z)
+```
+
+## Concept: Write through a slice
+
+A slice is a **view**: another way to reach the same values. It does not copy them.
+First, select the middle two values:
+
+```python
+import torch as t
+x = t.tensor([10, 20, 30, 40])
+window = x[1:3]
+print(window)
+# Hidden checks
+assert window.tolist() == [20, 30]
+```
+
+`window[0]` and `x[1]` reach the same place. Predict which number changes in `x`:
+
+```python
+window[0] = 99
+print(x)
+# Hidden checks
+assert x.tolist() == [10, 99, 30, 40]
+```
+
+Changing the view changed the original. This is useful when you intend to update a whole region.
+
+## Worked example
+
+Assign to a slice directly. Which positions will become zero?
+
+```python
+import torch as t
+x = t.tensor([10, 20, 30, 40])
+x[1:3] = 0
+print(x)
+# Hidden checks
+assert x.tolist() == [10, 0, 0, 40]
+```
+
+Indices 1 and 2 change. Index 3 is outside the slice. One assignment fills every selected position.
+
+## Faded practice
+
+### q231
+Fill the selected range in place.
+
+```python starter
+import torch as t
+
+def solve(x, start, stop, value):
+    x[_____:_____] = value
+    return x
+```
+
+```python solution
+import torch as t
+
+def solve(x, start, stop, value):
+    x[start:stop] = value
+    return x
+```
+
+## Concept: Copy before changing values
+
+When the original must stay unchanged, `.clone()` gives you separate storage.
+We will mark every second value. The third slice slot is the step: `::2` visits indices 0, 2, 4.
+
+```python
+import torch as t
+x = t.tensor([10, 20, 30, 40, 50])
+selected = x[::2]
+print(selected)
+# Hidden checks
+assert selected.tolist() == [10, 30, 50]
+```
+
+The step skips one value between each selection. Predict which entries would be selected by `x[1::2]`.
+
+## Worked example
+
+Make the copy first, then mark its selected positions:
+
+```python
+import torch as t
+x = t.tensor([10, 20, 30, 40, 50])
+marked = x.clone()
+marked[::2] = -1
+print(marked)
+# Hidden checks
+assert marked.tolist() == [-1, 20, -1, 40, -1]
+```
+
+Only the copy should change. Run the original to check that prediction:
+
+```python
+print(x)
+# Hidden checks
+assert x.tolist() == [10, 20, 30, 40, 50]
+```
+
+The original still holds all five values. Without `.clone()`, assigning `marked = x` would give the same tensor a second name.
+
+## Faded practice
+
+### q74
+Replace every step-th value in a copy; preserve the input.
+
+```python starter
+import torch as t
+
+def solve(z, step, v):
+    out = z._____()
+    out[::step] = v
+    return out
+```
+
+```python solution
+import torch as t
+
+def solve(z, step, v):
+    out = z.clone()
+    out[::step] = v
+    return out
 ```
 
 ## Guided practice
 
 ### q76
-1. Two mirrors of a 2-D tensor: left-right (reverse within each row) and
-   top-bottom (reverse the order of rows). Both are single `t.flip` calls.
-2. `t.flip` takes the axes to reverse as a list. Which axis number reverses
-   each row? Which reverses the row order?
-3. `t.flip(z, [1])` and `t.flip(z, [0])` — and because flip copies, the
-   "input must not be modified" requirement is already satisfied.
-
-### q506
-1. A slice, not an index — you want a run of elements, not one element.
-2. Leaving the start empty means 'from the beginning'.
-3. `x[:k]`.
+Mirror each row left-right, then mirror the row order top-bottom. Choose one axis for each result.
 
 ## Independent practice
 
-From the drill bank: q231 (assign through a slice in place), q75 (rotate a
-matrix 90° counterclockwise — either the dedicated helper or a transpose
-composed with a flip).
-
-From the drill bank: q507 (one column of a matrix — note which axis indexing with an int removes).
-
-Also from the bank: q74 (overwrite every step-th element without touching
-the input), q189 (rotate by k quarter-turns, k taken modulo 4).
+From the drill bank: q189 (rotate a matrix by k quarter-turns).
 
 ## Misconceptions
 
-- **"`x[::-1]` reverses a tensor."** — It raises `ValueError: step must be
-  greater than zero`. PyTorch supports no negative slice steps at all;
-  `t.flip(x, [0])` is the operation.
-- **"A slice is a copy."** — It's a view of the same memory. Mutating a slice
-  mutates the original. When a task says "return a new tensor" or "do not
-  modify the input" and you plan to write into the result, `.clone()` first.
-- **"`.copy()` makes the copy."** — That's the NumPy name. Tensors clone with
-  `.clone()`.
-- **"2-D indexing is `z[i][j]`."** — That works but chains two operations;
-  the idiom is one bracket, comma-separated: `z[i, j]`, `z[i, :]`, `z[:, j]`.
-  The chained form also breaks down for slice-then-assign patterns.
+- The stop is a boundary, not a selected index.
+- Negative indices count from the end; negative slice steps are unsupported.
+- Slices share storage. Clone before writing when the original must stay unchanged.
