@@ -545,7 +545,7 @@ const PracticeSession = (() => {
       review.feedbackComplete ||
       practiceProgress.pendingFeedback?.questionId === PracticeAPI.currentQuestion?.question_id ||
       PracticeAPI.currentQuestion?.diagnostic_active;
-    if (feedbackSaved) showNextProblemButton();
+    if (feedbackSaved) showNextProblemButton("You already rated this one. Press Next to carry on.");
   };
 
   const start = () => {
