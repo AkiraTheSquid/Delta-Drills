@@ -462,6 +462,16 @@ const LessonNotebookView = (() => {
     body.appendChild(fragment);
     host.appendChild(body);
 
+    /* Colour, ghost completion, Tab, undo and Ctrl+Enter — practice/
+       notebook-code-edit.js, the same file the ARENA notebooks and the lesson
+       cells go through, so every code cell in the app is one editor. It reads
+       `.nbv-src code`, which is exactly what `_codeCell` above mints. Called
+       after the cells are IN the document: it paints what it finds and then
+       observes the host for anything drawn later. Optional-chained, so a
+       build without that script renders the plain contenteditable cells this
+       file has always produced. */
+    window.DeltaNotebookCode?.enhance?.(host);
+
     // One listener for the whole notebook rather than 400 — a 656-cell page
     // should not pay for a handler per Run button.
     body.addEventListener("click", (event) => {

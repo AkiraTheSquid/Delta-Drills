@@ -258,7 +258,15 @@ const LessonNotebook = (() => {
      editable field: these are the lesson's examples, and an edit box invites
      the learner to lose the example they were given. `contenteditable` on the
      <code> keeps experimentation possible without turning the page into a
-     form — the text is read back at Run time, so an edit is honoured. */
+     form — the text is read back at Run time, so an edit is honoured.
+
+     🔴 THE SAME SHAPE AS `.nbv-src code`, ON PURPOSE. `<pre>` wrapping a
+     `contenteditable="plaintext-only"` `<code>` is what
+     practice/notebook-code-edit.js attaches to, and `mount` below hands it
+     this host — so a lesson cell gets the tokeniser, the ghost completion,
+     Tab/Shift+Tab, its own undo stack and Ctrl+Enter from the same file the
+     ARENA notebooks and the Notebooks tab use. Change the markup here and
+     the selectors at the top of that file have to change with it. */
   const cellHtml = (code, index) =>
     '<div class="nb-cell" data-nb-index="' + index + '">' +
     '<div class="nb-cell-code">' +
@@ -276,9 +284,22 @@ const LessonNotebook = (() => {
     '<pre class="nb-out hidden"></pre>' +
     "</div>";
 
+  /* 🔴 `readText` FIRST, `innerText` only as the fallback. Once
+     notebook-code-edit.js has painted the cell its text lives in a tree of
+     `<span class="cm-*">`s plus two generated-content nodes marked
+     `data-nb-skip`, and that file's reader is the one that knows to skip
+     them. `innerText` is also defined in terms of LAYOUT — a cell that is not
+     currently displayed reads back as the empty string, which would hand the
+     kernel an empty program rather than raising. The fallback keeps the old
+     behaviour exactly, for the case where the enhancement never loaded.
+     NBSP goes back to a space either way: a contenteditable substitutes one
+     for a space it thinks would collapse, and Python does not accept it. */
   const _codeOf = (cell) => {
     const node = cell.querySelector(".nb-cell-code code");
-    return node ? node.innerText.replace(/ /g, " ") : "";
+    if (!node) return "";
+    const read = window.DeltaNotebookCode?.readText;
+    const text = typeof read === "function" ? read(node) : node.innerText;
+    return String(text || "").replace(/ /g, " ");
   };
 
   /* Every cell up to and including this one, each handed to the harness as
@@ -496,6 +517,18 @@ const LessonNotebook = (() => {
       const button = cell.querySelector(".nb-run");
       if (button) button.onclick = () => _runCell(cells, index);
     });
+    /* Colour, completion, Tab and Ctrl+Enter — from the same file that gives
+       the ARENA notebooks theirs, so a lesson cell and a notebook cell are
+       the same editor. AFTER the Run buttons are wired, because Ctrl+Enter
+       presses one. It also colours the static fences on the page (a `no-run`
+       block, a "Watch out" snippet), which is the rest of what makes the two
+       surfaces look alike.
+
+       `scan` rather than `enhance`: this host is `#question-text`, the
+       practice panel, re-filled on every question. Nothing mints a cell into
+       it after this line, so a permanent MutationObserver there would be
+       watching the whole practice tab for an event that cannot happen. */
+    window.DeltaNotebookCode?.scan?.(host);
     return cells.length;
   };
 

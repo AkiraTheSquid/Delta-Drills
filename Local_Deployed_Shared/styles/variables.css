@@ -346,4 +346,14 @@
   /* Nav drawer (the hamburger menu). The width is a token because the drawer,
      its off-canvas transform and the toggle's hit area all have to agree. */
   --drawer-width: 272px;
+
+  /* The typeface EVERY piece of code in the app is set in — the practice
+     editor and its colour overlay, the lesson notebook's cells, the ARENA and
+     Notebooks-tab cells, the tutor's snippets. One declaration because the
+     overlay in styles/practice/code-highlight.css only lines up with the
+     textarea underneath it while the two are set in the same face, and
+     because "code looks the same everywhere" is a promise a second copy of
+     this list quietly breaks. It carries no colour, so it belongs here rather
+     than in the three theme blocks. */
+  --code-font: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
 }

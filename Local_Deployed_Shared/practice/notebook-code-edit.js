@@ -1,5 +1,5 @@
 /* ================================================================
-   NOTEBOOK-CODE-EDIT.JS — Colab-shaped code cells on the ARENA notebook
+   NOTEBOOK-CODE-EDIT.JS — Colab-shaped code cells, everywhere the app has one
    ================================================================
 
    WHAT THIS IS
@@ -58,25 +58,75 @@
    snapshots. Typing inside 500ms coalesces into one entry, the way an
    editor's undo does — otherwise one keystroke is one undo.
 
+   WHICH SURFACES IT SERVES
+
+   Every contenteditable code cell in the app, which is three of them and not
+   one. They differ only in class names, so the selectors below are the only
+   place that difference is written down:
+
+     `.nbv-src code`       ARENA chapter notebooks (practice/arena-notebook.js)
+                           and the Notebooks tab (practice/notebook-view.js).
+     `.nb-cell-code code`  the lesson notebook (practice/notebook.js) — the
+                           runnable fences inside a lesson page.
+
+   Seth, 2026-09-09, about the lessons: "make it such that the code blocks
+   have the color coding ... the same as ... the practice page as well as the
+   notebooks and everything else. It needs to be the same. And of course, make
+   it such that it has the same functionality like pressing Ctrl-Enter."
+
+   Before that, the lesson cells were the one code on the app with no colour,
+   no completion, no Tab and no undo — a plain contenteditable. Nothing about
+   them needed a second implementation; they needed this one pointed at them.
+   Hence `enhance(host)`, which the two notebook renderers call on their own
+   host once they have drawn it.
+
+   RUNNING FROM THE KEYBOARD
+
+   Ctrl/Cmd+Enter runs the cell the caret is in; Shift+Enter runs it and moves
+   to the next one. Both are done by CLICKING the cell's own Run button rather
+   than by calling a runner, because the three surfaces run cells in three
+   different ways (kernel session, prefix replay, `dd_check` bookkeeping) and
+   every one of them already hangs off that button — its disabled state, its
+   busy guard and its "which cell is this" index included. A keyboard path
+   that reached past the button would be a fourth way to run a cell and the
+   first one whose guards could drift.
+
    HOW IT IS WIRED
 
-   Nothing calls this file. `arena-notebook.js` already announces
-   `arena-notebook:rendered`, and a MutationObserver on the notebook host
-   catches cells minted later by "+ Code" and prose re-rendered after a
-   markdown edit. That keeps the enhancement entirely out of the renderer:
-   if this script is absent the cells are exactly the plain contenteditable
-   they were before it existed.
+   `arena-notebook.js` announces `arena-notebook:rendered`, and a
+   MutationObserver on each host catches cells minted later by "+ Code" and
+   prose re-rendered after a markdown edit. The lesson surfaces call
+   `enhance()` directly. Either way the enhancement stays out of the
+   renderers: if this script is absent the cells are exactly the plain
+   contenteditable they were before it existed.
    ================================================================ */
 const DeltaNotebookCode = (() => {
   "use strict";
 
   const INDENT = "    ";
+  /* The three class vocabularies this file serves, written down once. `CELL`
+     is the box a cell's Run button and `_ddSource` live on; `SCROLLER` is the
+     element that actually scrolls, whose position a repaint must not lose;
+     `EDITOR` is the contenteditable holding the source; `RUN` is the button.
+     Anything that has to know a surface's names asks one of these. */
+  const CELL = ".nbv-cell, .nb-cell";
+  const SCROLLER = ".nbv-src, .nb-cell-code";
+  const EDITOR = ".nbv-src code, .nb-cell-code code";
+  const RUN = ".nbv-run, .nb-run";
   // Same rule as runner.js: nothing follows one of these at the same depth.
   const DEDENT_AFTER = /^\s*(return|pass|break|continue|raise)\b/;
   // Fences whose body is Python. Anything else (bash, json, plain) is left
   // uncoloured rather than coloured wrongly — a `#` comment rule applied to a
   // shell block paints half of it green.
   const PY_FENCE = /^(|py|python|python3|ipython|ipython3)$/i;
+  /* 🔴 THE LANGUAGE IS THE FIRST WORD OF THE INFO STRING, not the whole of it.
+     A lesson fence is written ```python no-run — the authoring format's marker
+     for "CI does not execute this" (pseudocode, or a block written to raise).
+     Matching the whole string left every one of those as the only uncoloured
+     code on a lesson page. `no-run` is a claim about RUNNING it, which
+     practice/notebook.js still reads off the full string to decide whether the
+     block gets a Run button; it is not a claim about what language it is. */
+  const langOf = (fence) => String(fence || "").trim().split(/\s+/)[0] || "";
   const UNDO_COALESCE_MS = 500;
 
   const escHtml = (s) => s
@@ -254,7 +304,7 @@ const DeltaNotebookCode = (() => {
     const pre = code.parentElement;
     const fence = pre?.getAttribute?.("data-fence") ?? "";
     code.dataset.nbPaint = "1";
-    if (!PY_FENCE.test(fence.trim())) return;
+    if (!PY_FENCE.test(langOf(fence))) return;
     const src = code.textContent || "";
     code.innerHTML = paint(src, "", -1);
   };
@@ -272,7 +322,7 @@ const DeltaNotebookCode = (() => {
   };
 
   const render = (code, state, caret = null, caretEnd = null) => {
-    const scroller = code.closest(".nbv-src") || code;
+    const scroller = code.closest(SCROLLER) || code;
     const left = scroller.scrollLeft;
     const top = scroller.scrollTop;
     state.writing = true;
@@ -293,7 +343,7 @@ const DeltaNotebookCode = (() => {
      Keep it true, then let the notebook's own delegated `input` listener do
      its bookkeeping (mark the cell stale, queue the autosave). */
   const publish = (code, state) => {
-    const cell = code.closest(".nbv-cell");
+    const cell = code.closest(CELL);
     if (cell) cell._ddSource = state.text;
     state.selfInput = true;
     code.dispatchEvent(new Event("input", { bubbles: true }));
@@ -443,9 +493,54 @@ const DeltaNotebookCode = (() => {
     publish(code, state);
   };
 
-  function attachEditor(code) {
+  /* ---------- running from the keyboard --------------------------------- */
+
+  /* Press the cell's OWN Run button. See the header: three surfaces run a cell
+     three different ways and all three hang off this button, so this is the
+     only path that cannot fall out of step with them.
+
+     Returns "ran", "busy" (the button is there but disabled — a run of this
+     cell is already in flight) or "none" (no button at all: a read-only
+     checker cell). The caller swallows the keystroke for the first two and
+     lets it through for the last.
+
+     🔴 "busy" HAS TO SWALLOW IT. A second Shift+Enter while the first run is
+     still going would otherwise fall through to the browser and type a
+     NEWLINE into the code that is at that moment executing — pressing Run
+     twice is the most ordinary thing a learner does on a slow cell. */
+  const runCellOf = (code) => {
+    const button = code.closest(CELL)?.querySelector(RUN);
+    if (!button) return "none";
+    if (button.disabled) return "busy";
+    button.click();
+    return "ran";
+  };
+
+  /* Shift+Enter's "and move on", which is what makes a notebook readable from
+     the keyboard: run this cell, put the caret in the next one. The next cell
+     is the next editor in DOCUMENT order across the whole host, not the next
+     sibling — a lesson page puts prose between two cells, and the ARENA
+     notebooks put a whole <details> there. A cell with no successor keeps
+     focus rather than dropping it, exactly as Colab does on the last cell.
+
+     🔴 SCOPED TO THE HOST THIS CELL WAS ENHANCED FROM, not to the document.
+     More than one notebook surface can be in the DOM at once — the Notebooks
+     tab keeps its rendered lesson while the Practice tab shows another one —
+     and a document-wide walk would move the caret into a hidden host, which
+     reads to the learner as the cell simply losing focus. */
+  const focusNextCell = (code) => {
+    const all = Array.from((code.__nbRoot || document).querySelectorAll(EDITOR));
+    const next = all[all.indexOf(code) + 1];
+    if (!next) return;
+    next.focus();
+    placeCaret(next, 0);
+    next.closest(CELL)?.scrollIntoView({ block: "nearest" });
+  };
+
+  function attachEditor(code, root = null) {
     if (!code || code.dataset.nbCode === "1") return;
     code.dataset.nbCode = "1";
+    code.__nbRoot = root;
 
     const state = {
       text: readText(code),
@@ -515,7 +610,7 @@ const DeltaNotebookCode = (() => {
       state.ghost = ghost;
       state.ghostAt = ghost ? at : -1;
       render(code, state, at, where ? where.end : null);
-      const cell = code.closest(".nbv-cell");
+      const cell = code.closest(CELL);
       if (cell) cell._ddSource = text;
     });
 
@@ -558,6 +653,23 @@ const DeltaNotebookCode = (() => {
       }
       state.tabEscapes = false;
 
+      /* Run the cell. Checked BEFORE the plain-Enter rule below, which owns
+         the unmodified key. The keystroke is swallowed unless the cell has no
+         Run button at all (a read-only checker), where it has to stay a
+         keystroke. */
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.altKey) {
+        if (runCellOf(code) !== "none") event.preventDefault();
+        return;
+      }
+      if (event.key === "Enter" && event.shiftKey && !event.ctrlKey
+          && !event.metaKey && !event.altKey) {
+        const ran = runCellOf(code);
+        if (ran === "none") return;
+        event.preventDefault();
+        if (ran === "ran") focusNextCell(code);
+        return;
+      }
+
       if (event.key === "Enter" && !event.shiftKey && !event.ctrlKey
           && !event.metaKey && !event.altKey) {
         if (handleEnter(code, state)) event.preventDefault();
@@ -593,7 +705,18 @@ const DeltaNotebookCode = (() => {
 
   const scan = (root) => {
     if (!root || !root.querySelectorAll) return;
-    root.querySelectorAll('.nbv-src code:not([data-nb-code="1"])').forEach(attachEditor);
+    root.querySelectorAll(EDITOR).forEach((code) => {
+      if (code.dataset.nbCode !== "1") attachEditor(code, root);
+    });
+    root.querySelectorAll('pre[data-fence] > code:not([data-nb-paint="1"])').forEach(paintFence);
+  };
+
+  /* Colour the static fences under `root` and nothing else — no editor, no
+     observer. For a surface that renders markdown ONCE and never touches it
+     again: the ladder's worked example, a "Watch out" block. Cheap enough to
+     call on every render, and idempotent. */
+  const paintFences = (root) => {
+    if (!root || !root.querySelectorAll) return;
     root.querySelectorAll('pre[data-fence] > code:not([data-nb-paint="1"])').forEach(paintFence);
   };
 
@@ -626,11 +749,17 @@ const DeltaNotebookCode = (() => {
     observer.observe(host, { childList: true, subtree: true });
   };
 
-  document.addEventListener("arena-notebook:rendered", (event) => {
-    const host = event.detail?.host || document.getElementById("arena-notebook-host");
+  /* The one entry point a renderer calls on its own host. `scan` catches
+     everything already drawn, `observe` everything drawn later; both are
+     idempotent, so calling this on every render is correct and cheap. */
+  const enhance = (host) => {
     if (!host) return;
     scan(host);
     observe(host);
+  };
+
+  document.addEventListener("arena-notebook:rendered", (event) => {
+    enhance(event.detail?.host || document.getElementById("arena-notebook-host"));
   });
 
   /* 🔴 THE EVENT IS NOT THE ONLY WAY IN. `?arena=<slug>` renders a notebook as
@@ -642,10 +771,15 @@ const DeltaNotebookCode = (() => {
      drawn later, with or without the event. Both are idempotent, so the two
      paths cannot double-attach. Codex, 2026-09-06. */
   const bootstrap = () => {
-    const host = document.getElementById("arena-notebook-host");
-    if (!host) return;
-    scan(host);
-    observe(host);
+    /* `#notebooks-host` is here for the same reason: practice/notebook-view.js
+       calls `enhance` itself, and this claims the element for the case where
+       it has already rendered by the time this script parses. The lesson host
+       (`#question-text`) is deliberately NOT claimed — it is the practice
+       panel, re-filled on every question, and only LessonNotebook knows which
+       of its renders is a notebook. */
+    ["arena-notebook-host", "notebooks-host"].forEach((id) => {
+      enhance(document.getElementById(id));
+    });
   };
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bootstrap);
@@ -653,7 +787,7 @@ const DeltaNotebookCode = (() => {
     bootstrap();
   }
 
-  return { attachEditor, paintFence, scan, readText, paint };
+  return { attachEditor, enhance, paintFence, paintFences, scan, readText, paint };
 })();
 
 window.DeltaNotebookCode = DeltaNotebookCode;

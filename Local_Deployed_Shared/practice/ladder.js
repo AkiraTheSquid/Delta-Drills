@@ -400,6 +400,11 @@ const LadderUI = (() => {
         const seg = _segmentFor(found.kp, question.question_id);
         if (!seg || !seg.worked_example_markdown) return;
         host.insertAdjacentHTML("beforeend", _exampleHtml(found.kp, seg, stage));
+        /* The example's fences read like the lesson's, because they are the
+           same markdown — so they get the same colour. Static only: this is
+           the rail beside a graded question, and a Run button here would be a
+           second place to run the answer. See practice/notebook-code-edit.js. */
+        window.DeltaNotebookCode?.paintFences?.(host);
         // The same example's code, runnable in the editor (tester ask,
         // 2026-08-24). showExamples handles the pane-hidden case itself.
         window.DeltaNotebook?.showExamples?.(_exampleSnippets(seg.worked_example_markdown));
