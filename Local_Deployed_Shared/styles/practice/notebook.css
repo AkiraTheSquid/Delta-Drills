@@ -44,9 +44,22 @@ body.lesson-mode #question-text {
   padding: 12px 14px;
 }
 
+/* 🔴 THE SAME TYPE AS THE PRACTICE EDITOR, AND THE SAME COLOUR.
+   `--code-font` is the app's one code face (styles/variables.css) and the
+   `cm-*` spans practice/notebook-code-edit.js paints into this element are
+   coloured by styles/practice/code-highlight.css — the same file, the same
+   palette, the same tokeniser the `<textarea>` on the practice tab is painted
+   with. Nothing here restates a colour; a literal in this file would be a
+   second palette that drifts from the first one edit later.
+
+   `color:` is the fallback for a run of source with no token class of its own
+   and for the case where the enhancement script never loaded. `--white` (the
+   strongest text in the theme, near-black in light mode) rather than `--text`,
+   because that is what `.code-editor` uses and the two are meant to match. */
 .nb-cell-code code {
-  color: var(--text);
+  color: var(--white);
   display: block;
+  font-family: var(--code-font);
   font-size: 13px;
   line-height: 1.55;
   white-space: pre;
@@ -62,6 +75,31 @@ body.lesson-mode #question-text {
 .nb-cell-code code:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
+}
+
+
+/* The static fences — a `no-run` block, anything under "Watch out". They get
+   the colour (notebook-code-edit.js paints `pre[data-fence] > code` too) but
+   no Run button, so they need the rectangle a cell gets from `.nb-cell`. The
+   rule is scoped to the lesson panel: `pre[data-fence]` is also what the ARENA
+   surfaces render, and those sheets already dress it. */
+body.lesson-mode #question-text pre[data-fence] {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow-x: auto;
+  padding: 12px 14px;
+}
+
+body.lesson-mode #question-text pre[data-fence] > code {
+  background: none;
+  color: var(--white);
+  display: block;
+  font-family: var(--code-font);
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 0;
+  white-space: pre;
 }
 
 .nb-cell-bar {
@@ -127,6 +165,15 @@ body.lesson-mode #question-text {
 
 .nb-cell.is-running {
   border-color: var(--accent-text);
+}
+
+/* Same signal the ARENA cells give: the cell you are typing in is the thing on
+   screen. On the box, not on the code, so it survives a repaint — and AFTER
+   the has-run / has-failed / is-running rules, which carry the same
+   specificity, so the cell under the caret is the one that reads as active
+   even once it has been run. */
+.nb-cell:focus-within {
+  border-color: var(--border-strong);
 }
 
 .nb-status {
