@@ -364,3 +364,75 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
             "basic-mode.js is clicking the default rating button while the "
             "rating is on screen for everyone"
         )
+
+
+def check_next_is_never_offered_under_an_unanswered_question():
+    """🔴 A QUESTION WITH NO ANSWERS ON IT — 2026-09-09. Seth, on the live app:
+    "It said, how much harder do you want the next problem to be? And then it
+    just had the next button instead of giving me the three different options
+    for increasing the difficulty, which is obviously definitely a bug."
+
+    The dock is one sentence and one row of buttons, and `showNextProblemButton`
+    swaps the row without touching the sentence. Four routes reveal Next while
+    the rating question is still painted — the 700ms settle after a rating, the
+    review clock answering for the learner (timer.js::_forceAdvance), a reload
+    or resume restoring a question already rated, and a failed /next-question
+    where Next becomes the retry. On every one of them the learner is looking at
+    a question whose three answers are gone.
+
+    The fix is in `ui.js::showNextProblemButton`: if the prompt is STILL the
+    rating question, it is replaced with a line saying what actually happened.
+    It recognises the question by the tail every wording of it ends with, so the
+    two halves that can drift apart are the wordings and that tail. This check
+    holds them together — reword the question past the tail and the retirement
+    stops firing SILENTLY, which is exactly the bug coming back.
+
+    NOT asserted: which sentence each caller passes. That is copy, and the
+    default covers a caller that passes nothing.
+    """
+    ui = read(os.path.join(HERE, "ui.js"))
+    events = read(os.path.join(HERE, "events.js"))
+
+    tail = re.search(r'const RATING_QUESTION_TAIL = "([^"]+)";', ui)
+    assert tail, (
+        "ui.js no longer defines RATING_QUESTION_TAIL — showNextProblemButton "
+        "has lost the only way it can tell the rating question apart from a "
+        "line some other route wrote, so it either leaves an unanswerable "
+        "question on screen or erases the placement/Colab wording"
+    )
+    tail = tail.group(1)
+
+    # 1. Every wording of the question ends with that tail. Both files, because
+    #    ui.js paints it for a normal grade and events.js repaints it on the
+    #    Colab verdict route.
+    #    🔴 Read out of the ASSIGNMENTS to `feedbackPrompt.textContent`, not
+    #    out of the whole file: events.js quotes the question inside a comment
+    #    ("how much harder / easier do you want it to be?"), and a file-wide
+    #    scan fails on that sentence — which is prose about the feature, not a
+    #    sentence any learner is shown.
+    asked = []
+    for fname, js in (("ui.js", ui), ("events.js", events)):
+        for write in re.findall(r"feedbackPrompt\.textContent\s*=(.*?);", js, re.S):
+            for literal in re.findall(r'"([^"\n]*[Hh]ow much (?:harder|easier)[^"\n]*)"', write):
+                asked.append((fname, literal))
+    assert asked, (
+        "neither ui.js nor events.js asks how much harder/easier any more — if "
+        "the difficulty question was reworded, RATING_QUESTION_TAIL and this "
+        "check have to move with it"
+    )
+    for fname, literal in asked:
+        assert literal.strip().endswith(tail), (
+            f'{fname} asks "{literal}", which does not end with '
+            f'RATING_QUESTION_TAIL ("{tail}") — showNextProblemButton will not '
+            "recognise it, so Next will be revealed under a question the "
+            "learner can no longer answer"
+        )
+
+    # 2. And the retirement is still in the function that reveals Next.
+    body = ui.split("function showNextProblemButton(", 1)
+    assert len(body) == 2, "ui.js no longer defines showNextProblemButton"
+    body = body[1].split("\n}", 1)[0]
+    assert "promptIsAskingForRating()" in body and "feedbackPrompt.textContent" in body, (
+        "showNextProblemButton reveals Next without retiring the difficulty "
+        "question — the learner is left with a question and no answers"
+    )

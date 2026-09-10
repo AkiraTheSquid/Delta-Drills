@@ -420,9 +420,54 @@ function showFeedbackButtons() {
   nextProblemBtn.classList.add("hidden");
 }
 
-function showNextProblemButton() {
+/* 🔴 NEXT NEVER STANDS UNDER AN UNANSWERED QUESTION — 2026-09-09. Seth, on
+   the live app: "It said, how much harder do you want the next problem to be?
+   And then it just had the next button instead of giving me the three
+   different options for increasing the difficulty, which is obviously
+   definitely a bug."
+
+   The dock holds ONE sentence and ONE row of buttons, and this function swaps
+   the row: the three sizes out, Next in. It used to leave the sentence exactly
+   where it was — so every route that reveals Next while the rating question is
+   still painted left a question on screen with no way to answer it. That reads
+   as three missing buttons; it is not one of them. Four routes reach this
+   state and all four are real:
+
+     • the rating just landed and the 700ms topbar settle has not fired the
+       synthetic Next click yet (events.js — brief, but it is this screen);
+     • the review clock ran out and `timer.js::_forceAdvance` answered with the
+       smallest step on the learner's behalf — nobody clicked anything;
+     • the question is being restored after a reload or a resume and the rating
+       was posted before the break (`applyPendingFeedbackState` below,
+       `timer.js::_restoreReview`);
+     • `/next-question` failed and Next has become the RETRY control
+       (`events.js::_handleNoNextQuestion`).
+
+   So the sentence leaves with the buttons. `settled` is what to say instead;
+   a caller that knows which of the four it is passes its own line.
+
+   🔴 WRITTEN ONLY WHEN THE PROMPT IS STILL THE RATING QUESTION. The placement
+   branch ("Placement recorded — on to the next probe.") and the Colab verdict
+   route both write their own sentence and THEN call this; a blanket overwrite
+   would erase it. The test is the tail the question always ends with, and
+   watch_basic_mode.py asserts every wording of it still does — a reword that
+   escaped the test would silently bring this bug back. */
+const RATING_QUESTION_TAIL = "do you want the next problem to be?";
+
+function promptIsAskingForRating() {
+  return (
+    !!feedbackPrompt &&
+    feedbackPrompt.textContent.trim().endsWith(RATING_QUESTION_TAIL)
+  );
+}
+
+function showNextProblemButton(settled) {
   feedbackButtons.forEach((btn) => btn.classList.add("hidden"));
   nextProblemBtn.classList.remove("hidden");
+  if (promptIsAskingForRating()) {
+    feedbackPrompt.textContent =
+      settled || "Difficulty recorded. Next problem when you are ready.";
+  }
 }
 
 function parseStarterImports(source) {
@@ -617,7 +662,10 @@ function applyPendingFeedbackState(pending, q) {
   );
   questionMetaTop.classList.remove("hidden");
   overrideRow.classList.add("hidden");
-  showNextProblemButton();
+  // The rating for this question was posted before the break — saying so is
+  // the difference between "the buttons are missing" and "you already
+  // answered this one".
+  showNextProblemButton("You already rated this one. Press Next to carry on.");
   setTargetDifficultyFinal(pending.oldTarget, pending.newTarget);
   setConceptUnderstanding({
     mastery: pending.kcMastery,
