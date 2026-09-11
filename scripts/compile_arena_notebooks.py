@@ -3,7 +3,7 @@
 
 WHY THIS EXISTS
 ---------------
-The Courses tab is the ARENA curriculum: five chapters, thirty-one sections,
+The Courses tab is the ARENA curriculum: five chapters, thirty-two sections,
 every section a notebook Callum McDougall publishes. Until now clicking one
 LEFT the app — the section rows were `<a target="_blank">` at Google Colab, and
 the fork gate existed to point them at the student's own ARENA_3.0 fork.
@@ -55,6 +55,7 @@ INPUTS (read-only)
 OUTPUT
     Local_Deployed_Shared/lessons/notebooks/arena-<slug>.json   one per section
     Local_Deployed_Shared/lessons/notebooks/arena-index.json    the index
+    Local_Deployed_Shared/lessons/notebooks/arena-curriculum.json  exercise/preparation graph
 
     Written into the lessons/notebooks folder, next to the Delta Drills
     notebooks, because the view fetches them the same way and the deploy
@@ -76,6 +77,7 @@ import re
 import sys
 import urllib.parse
 from pathlib import Path
+from arena_curriculum import annotate, curriculum
 
 REPO = Path(__file__).resolve().parents[1]
 SHARED = REPO / "Local_Deployed_Shared"
@@ -299,8 +301,6 @@ def _cells(nb: dict, slug: str) -> list[dict]:
         # `scrollIntoView` all address cells by id.
         base = f"{slug}-c{index:03d}"
         if cell.get("cell_type") == "code":
-            if not src.strip():
-                continue
             out.append({
                 "t": "code",
                 "id": base,
@@ -359,6 +359,7 @@ def main() -> int:
         args.out.mkdir(parents=True, exist_ok=True)
 
     index = []
+    notebooks = []
     total_cells = 0
     missing = []
     from_fork = 0
@@ -377,7 +378,6 @@ def main() -> int:
         nb = json.loads(source.read_text(encoding="utf-8"))
         slug = _slug(section, rel)
         cells = _cells(nb, slug)
-        total_cells += len(cells)
         name = f"{PREFIX}{slug}.json"
         payload = {
             "id": slug,
@@ -392,7 +392,10 @@ def main() -> int:
             "notebook_path": rel,
             "book_url": section["url"],
             "cells": cells,
+            **annotate(cells, slug),
         }
+        total_cells += len(cells)
+        notebooks.append(payload)
         if not args.dry_run:
             (args.out / name).write_text(
                 json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
@@ -414,6 +417,10 @@ def main() -> int:
         print(f"  {slug:<8} {len(cells):>4} cells  {tag}  {section['title']}")
 
     if not args.dry_run:
+        (args.out / "arena-curriculum.json").write_text(
+            json.dumps(curriculum(notebooks, REPO), ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8",
+        )
         (args.out / f"{PREFIX}index.json").write_text(
             json.dumps({"edition": ARENA_EDITION, "fork": FORK_EDITION,
                         "fork_owner": FORK_OWNER, "sections": index},
@@ -424,7 +431,7 @@ def main() -> int:
         # opens `arena-<slug>.json` on a deep link without consulting the
         # index, and the deploy mirrors this folder wholesale, so a leftover
         # file is a retired section still being served with nothing to say so.
-        keep = {entry["file"] for entry in index} | {f"{PREFIX}index.json"}
+        keep = {entry["file"] for entry in index} | {f"{PREFIX}index.json", "arena-curriculum.json"}
         for stale in sorted(args.out.glob(f"{PREFIX}*.json")):
             if stale.name not in keep:
                 stale.unlink()

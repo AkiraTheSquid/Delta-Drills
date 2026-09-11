@@ -514,13 +514,15 @@ const LessonNotebook = (() => {
      callers give the learner different answers to that (one falls back
      silently, one explains why Run is off), and picking one here would put the
      wrong sentence on one of the two screens. */
-  const runSource = async (source, { context = "", name = "<cell>", echo = true } = {}) => {
+  const runSource = async (source, { context = "", name = "<cell>", echo = true, skipOnFresh = false, timeout = 30 } = {}) => {
     const kernel = window.DeltaKernel;
     if (!kernel || !kernel.available()) return null;
     const reply = await kernel.runCell({
       bootstrap: HARNESS,
       filename: "<harness>",
       context: String(context || ""),
+      skipOnFresh,
+      timeout,
       code:
         HARNESS +
         `_delta_cell(${_pyLiteral(source)}, ${_pyLiteral(name)}, ${echo ? "True" : "False"})`,

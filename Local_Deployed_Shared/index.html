@@ -90,6 +90,7 @@
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
   <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=7" />
+  <link rel="stylesheet" href="styles/arena-curriculum.css?v=1" />
   <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
        rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
        override, it is a fixed-position surface that happens to sit beside the
@@ -2219,6 +2220,7 @@ t.manual_seed(0)
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
   <script src="concept-graph/lesson-graph.js?v=30" defer></script>
+  <script src="concept-graph/arena-curriculum.js?v=1" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2297,7 +2299,7 @@ t.manual_seed(0)
   <script src="practice/notebook-code-edit.js?v=5"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
   <script src="practice/runner.js?v=24"></script>
-  <script src="practice/notebook.js?v=11"></script>
+  <script src="practice/notebook.js?v=12"></script>
   <script src="practice/notebook-editor.js?v=6"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
@@ -2350,7 +2352,8 @@ t.manual_seed(0)
        after app.js (line ~2100) has defined `switchTab`. -->
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
   <script src="practice/arena-notebook-resume.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=7"></script>
+  <script src="practice/arena-notebook-session.js?v=1"></script>
+  <script src="practice/arena-notebook.js?v=8"></script>
   <script src="practice/ladder.js?v=13"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->

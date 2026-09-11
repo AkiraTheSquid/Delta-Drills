@@ -43,6 +43,7 @@ from watch_feedback import (
 from watch_example_gate import check_no_worked_example_is_attached_to_a_drill
 from watch_notebook_arena import (
     check_the_arena_contents_tree_is_a_plain_colab_tree,
+    check_arena_setup_recovers_without_replaying_answers,
     check_the_contents_reveal_zone_never_covers_a_run_button,
     check_a_contents_row_can_actually_be_clicked,
     check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
@@ -630,6 +631,7 @@ def _every_check_is_registered(checks):
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
+              check_arena_setup_recovers_without_replaying_answers,
               check_practice_never_detours_to_colab,
               check_a_torch_question_never_grades_on_pyodide,
               check_promotion_threshold_matches_the_backend,
