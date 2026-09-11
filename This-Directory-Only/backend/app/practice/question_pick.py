@@ -81,7 +81,8 @@ def pick_for_subtopic(
     # prioritization.answered_question_ids.
     answered = answered_question_ids(user_state)
     narrowed, next_kc, gap = narrow_to_next_kc(
-        user_state, candidates, served, answered, exclude_kcs=exclude_kcs
+        user_state, candidates, served, answered, exclude_kcs=exclude_kcs,
+        last_served=sub_state.served_question_ids[-1] if sub_state.served_question_ids else None,
     )
     # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
     # the whole subtopic pool on purpose, so `narrowed` being empty says nothing

@@ -22,6 +22,9 @@ from app import bkt_mastery
 from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
+# Re-exported: every caller reads these off this module (question_pick, the
+# test scripts), and the history readers moved out only for size.
+from app.attempt_history import answered_question_ids, missed_question_ids  # noqa: F401
 from app import ladder_fade
 from app import lessons
 from app.adaptive import UserPracticeState
@@ -85,37 +88,6 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
         )
         for t in tags
     )
-
-
-def answered_question_ids(user_state: UserPracticeState) -> set:
-    """Every question this learner has actually ANSWERED, across all subtopics.
-
-    NOT the same set as `served_question_ids`, and the difference is the whole
-    of the 2026-08-31 bug. `served` is appended the moment `/next-question`
-    hands a drill over — before the learner has read it, let alone answered it.
-    A skip, a reload, a double-fetch, or simply closing the tab therefore SPENT
-    a drill permanently: it could never be offered again, and the rung it sat on
-    counted it as done. Seth's account reached the state this exists to prevent
-    on 2026-08-31 — `python.values-and-names`, the course's only root, holds two
-    drills at its lowest authored rung, both were served and NEITHER was ever
-    answered, and every `/next-question` for the next half hour 409'd
-    "you have finished every lesson problem for this concept" (15 recorded hits
-    in content-gaps.json). With that one root bricked, every other concept in
-    the course stayed locked behind it.
-
-    Evidence is what spends a drill. `SubtopicState.history` is the durable,
-    untruncated record of it — one entry per graded attempt, carrying the
-    question id — which is why it is read here rather than `kc_ladder`, whose
-    attempt list is windowed to the last 20 (`kc_graph._LADDER_WINDOW`) and so
-    forgets that an older drill was ever solved.
-    """
-    out: set = set()
-    for sub_state in (getattr(user_state, "subtopic_states", None) or {}).values():
-        for record in getattr(sub_state, "history", None) or ():
-            qid = getattr(record, "question_id", None)
-            if qid is not None:
-                out.add(int(qid))
-    return out
 
 
 def _resident_kc(user_state, candidates, skip: Optional[set] = None) -> Optional[str]:
@@ -214,9 +186,15 @@ def narrow_to_next_kc(
     served: Optional[set] = None,
     answered: Optional[set] = None,
     exclude_kcs: Optional[set] = None,
+    last_served: Optional[int] = None,
 ) -> Tuple[List, Optional[str], Optional[dict]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, and to the RUNG that concept is on.
+
+    `last_served` is the drill on screen right now, if any. Only the Solo band
+    walk reads it, and only to step past a band that IS that one drill: the
+    caller refuses to hand the on-screen problem back (question_pick's guard)
+    and would otherwise call the concept dry on a Skip.
 
     `exclude_kcs` are concepts the caller has already found dry on THIS
     request (questions_router.next_question retries with them excluded);
@@ -281,13 +259,19 @@ def narrow_to_next_kc(
     # picker, where "don't hand back the one they just skipped" is exactly the
     # right preference. It must not decide whether the course has run out.
     answered = answered_question_ids(user_state) if answered is None else answered
+    # A missed drill is spent for the unseen-first order but not for the
+    # concept: it is owed a retry (see missed_question_ids), so a concept whose
+    # only remaining work is retries still counts as having work.
+    missed = missed_question_ids(user_state)
     # Eligibility must match what the caller can actually serve, or the
     # narrowing targets a KC whose questions are all spent and hands back a
     # list the difficulty picker then rejects — a 404 with fresh sibling work
     # sitting right there. `select_next_subtopic` chose this subtopic because
     # SOME frontier KC has unanswered work in it; find that same KC.
     next_kc = kc_graph.select_next_kc(
-        user_state, eligible=lambda qid: qid in here and qid not in answered, skip=skip
+        user_state,
+        eligible=lambda qid: qid in here and (qid not in answered or qid in missed),
+        skip=skip,
     )
     if not next_kc:
         # Nothing here is unanswered. Re-ask on membership alone so the concept
@@ -330,6 +314,17 @@ def narrow_to_next_kc(
         rung = [q for q in narrowed if q.id in floor]
 
     fresh = [q for q in rung if q.id not in answered]
+    if not fresh and stage == kc_graph.DRILL_FLOOR:
+        # Nothing unseen on the Solo rung — the missed ones come back. Not a
+        # content gap: the drill exists, the learner has seen its answer, and
+        # the six-distinct-correct gate (solo_progress) cannot clear without it.
+        # Only once the unseen work is gone, so a miss is never handed straight
+        # back — and never on a walk-down, which is review, not a retake. The
+        # picker sees every one of these as already served and recycles the
+        # stalest (grading.select_question_for_difficulty).
+        retry = [q for q in rung if q.id in missed]
+        if retry:
+            return retry, next_kc, None
     if not fresh:
         # The learner's own rung is spent. Two different situations, and
         # collapsing them was the first version's mistake:
@@ -415,7 +410,22 @@ def narrow_to_next_kc(
         from app.solo_progress import next_band
         all_solo = set(kc_graph.questions_at_stage([q.id for q in narrowed], "partial"))
         difficulties = {q.id: q.difficulty_score for q in narrowed if q.id in all_solo}
-        return next_band(fresh, kc_graph.ladder_view(user_state, next_kc).get("attempts", []), difficulties), next_kc, None
+        # The aim the picker will be handed for this same pick — mastery plus
+        # the learner's rating — so a "significantly harder" moves which band
+        # is served, not only which drill inside a band of one.
+        aim = target_difficulty(user_state, fresh[0].subtopic, kc=next_kc)
+        attempts = kc_graph.ladder_view(user_state, next_kc).get("attempts", [])
+        band = next_band(fresh, attempts, difficulties, target=aim)
+        # A band that is exactly the drill on screen has nothing to rotate to,
+        # and a Skip on it would hand the same problem back — which the
+        # on-screen guard in question_pick reads as the concept having run
+        # dry. Step past that one drill only; every other band stands, with
+        # its two-success gate, and the picker prefers unseen inside it.
+        if last_served is not None and [q.id for q in band] == [last_served]:
+            rest = [q for q in fresh if q.id != last_served]
+            if rest:
+                band = next_band(rest, attempts, difficulties, target=aim)
+        return band, next_kc, None
     return fresh, next_kc, None
 
 

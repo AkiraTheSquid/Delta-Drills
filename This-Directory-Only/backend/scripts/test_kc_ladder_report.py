@@ -306,9 +306,13 @@ POOL = list(kc_graph.questions_for_kc(LADDER_KC))
 
 
 class _Q:
-    def __init__(self, qid):
+    def __init__(self, qid, score=50):
         self.id = qid
-        self.difficulty_score = 50
+        self.difficulty_score = score
+        # The Solo band walk reads the aim for the drill's subtopic
+        # (prioritization.target_difficulty); a stub without one is a
+        # subtopic the learner has never touched, which is the cold aim.
+        self.subtopic = "test-subtopic"
 
 
 def _learn_prereqs(state, kc):
@@ -344,35 +348,39 @@ def _state_on_rung(seq, learned_prereqs=True):
     return st
 
 
-def _seed_answered(state, qids):
+def _seed_answered(state, qids, missed=()):
     """Put a graded attempt on the record for each question.
 
     `narrow_to_next_kc` reads ANSWERED, not served, and it derives that from
     `SubtopicState.history` (prioritization.answered_question_ids). Seeding real
     history rather than passing a set keeps the fixture on the same path the
-    router takes.
+    router takes. `missed` are the ones whose latest attempt was wrong
+    (prioritization.missed_question_ids).
     """
     sub = state.get_subtopic_state("Numpy: Core array literacy")
     for qid in sorted(qids):
+        ok = qid not in set(missed)
         sub.history.append(AttemptRecord(
             question_id=int(qid),
             subtopic="Numpy: Core array literacy",
             difficulty_score=50,
-            grade=100.0,
-            correct=True,
+            grade=100.0 if ok else 0.0,
+            correct=ok,
             timestamp=NOW,
         ))
 
 
-def narrowed_for(seq, served, learned_prereqs=True, answered=None):
+def narrowed_for(seq, served, learned_prereqs=True, answered=None, missed=(),
+                 last_served=None, scores=None):
     st = _state_on_rung(seq, learned_prereqs)
     served = set(served)
     # The cases below all mean "the learner has DONE these", so answered
     # defaults to served. Pass `answered` explicitly to describe the other
     # case — drills that were handed over and skipped.
-    _seed_answered(st, served if answered is None else set(answered))
+    _seed_answered(st, served if answered is None else set(answered), missed)
+    scores = scores or {}
     out, _kc, gap = prioritization.narrow_to_next_kc(
-        st, [_Q(i) for i in POOL], served=served
+        st, [_Q(i, scores.get(i, 50)) for i in POOL], served=served, last_served=last_served
     )
     return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out), gap
 
@@ -428,6 +436,44 @@ check("a rung counts only the drills that were answered",
       f"stage={_stage} answered={_rung_floor[:1]} servable={_ids} gap={_gap}")
 check("the retired faded rung serves nothing",
       kc_graph.questions_at_stage(POOL, "faded") == [])
+
+# A Skip on a band of ONE drill must not hand that drill back — the on-screen
+# guard in question_pick would read the repeat as the concept having run dry.
+# The drill on screen gets its own, easiest band (score 30 against the stub's
+# 50), so the bottom-up walk lands on a band that IS that one drill. The
+# example-bearing drills come first on this rung (kc_graph.with_example_first),
+# so the drill put on screen is one of those or it would be filtered out anyway.
+_on_screen = kc_graph.with_example_first(_rung_floor)[0]
+_stage, _ids, _gap = narrowed_for("FFFF", [_on_screen], answered=[], last_served=_on_screen,
+                                  scores={_on_screen: 30})
+check("the drill on screen is not the only thing offered after a skip",
+      _stage == "partial" and _ids and _on_screen not in _ids and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+_stage, _ids, _gap = narrowed_for("FFFF", [_on_screen], answered=[], last_served=None,
+                                  scores={_on_screen: 30})
+check("...and with nothing on screen that band is served as usual",
+      _stage == "partial" and _ids == [_on_screen] and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+
+# 🔴 A MISS IS OWED A RETRY (2026-09-11). Promotion off Solo needs six DISTINCT
+# correct answers (solo_progress), counted on the latest attempt per drill, and
+# a miss spends the drill for the unseen-first order — so a six-drill bank with
+# one miss topped out at five and Integrated was unreachable (Seth,
+# numpy.aggregations, q497). Once nothing unseen is left, the missed drills come
+# back, with no gap: the drill exists and the learner has seen its answer.
+_missed = _rung_floor[:1]
+_stage, _ids, _gap = narrowed_for("FFFF", POOL, missed=_missed)
+check("a missed solo drill comes back once nothing unseen is left",
+      _stage == "partial" and _ids == sorted(_missed) and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+_stage, _ids, _gap = narrowed_for("FFFF", POOL, answered=_rung_floor[:2], missed=_missed)
+check("...but not while an unseen drill remains",
+      _stage == "partial" and _ids and _missed[0] not in _ids and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+_stage, _ids, _gap = narrowed_for("FFFF", POOL, missed=POOL)
+check("every drill missed: the whole rung comes back for a retake, still no leak",
+      _stage == "partial" and set(_ids) == set(_rung_floor) and not (set(_ids) & SOLO) and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
 
 # The frontier can also miss entirely — `frontier` drops a KC that is
 # `kc_is_learned`, and `kc_evidence_exhausted` makes that true of any concept

@@ -24,6 +24,7 @@ from app.models import User
 from app.practice.chatgpt_helpers import call_chatgpt
 from app.practice.prompts import build_ai_judge_prompt
 from app.questions import Question
+from app.solo_progress import REACH
 
 
 def run_and_get_expected_output(answer_code: str) -> str:
@@ -58,7 +59,7 @@ def select_question_for_difficulty(
         # Explore only within a band of the target. The old flat top-3 was uniform
         # random in a 3-question subtopic — a self-reported beginner (target ~22)
         # could draw the 45-difficulty variant on the first exposure.
-        band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= 15]
+        band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= REACH]
         top_n = (band or ranked[:1])[:3]
         return random.choice(top_n)
 
