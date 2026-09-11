@@ -49,18 +49,14 @@ window.DD_INFOTIPS = {
      do not set it, running out submits what you have — is what the tab's own
      `title` already says. Keys and anchors are asserted to match both ways
      (watch.py `check_infotips`), so this had to go when the anchor did. */
-  /* ---- The four rungs, named inside the bar ------------------------ */
+  /* ---- The three rungs, named inside the bar (faded retired 2026-09-11) */
   "ladder.lesson": {
     title: "Lesson",
     body: "The teaching page for this concept. You read the explanation and run the examples — there is no drill on this rung, and leaving it is what earns you one.",
   },
-  "ladder.faded": {
-    title: "Faded",
-    body: "Most of the solution is already written and the part that <strong>uses this concept</strong> is blanked out. You supply that part. Get a run of them right and the scaffold comes off.",
-  },
   "ladder.example": {
     title: "Solo",
-    body: "You write the whole function, unaided, on one idea at a time. Some of these open with a short solved example — the ones introducing a move you have not used yet — and they run out as you work through the rung, which is the point.",
+    body: "The first drills after the lesson. You write the whole function, unaided, on one idea at a time. A short solved example opens some of them — the first one, and one after a miss — and they thin out as you work through the rung, which is the point.",
   },
   "ladder.solo": {
     title: "Integrated",
