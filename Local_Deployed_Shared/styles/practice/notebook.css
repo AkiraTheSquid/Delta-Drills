@@ -1,5 +1,21 @@
-/* Lesson notebook — one column, runnable cells inline.
-   Markup built by practice/notebook.js; layout switch keyed on body.lesson-mode. */
+/* Lesson page — LAYOUT ONLY.
+
+   🪦 THIS SHEET USED TO DRESS A SECOND KIND OF CELL. `.nb-cell` was the lesson
+   gate's own rectangle — a Run BAR under the code with a text button and a
+   status line — against the Run GUTTER that the Notebooks tab and the ARENA
+   pages have always drawn. Two rectangles for one idea, two copies of the
+   run-state colours, and a learner who moved from a lesson to the notebook OF
+   that lesson saw the same code in a different frame.
+
+   Seth, 2026-09-10: "I want the lessons in notebook style format rather than
+   what they currently are so that it can look a lot nicer" — and on how to get
+   there, "it is better to reuse something rather than creating another surface
+   with more bugs. I want them to be the same thing."
+
+   So the cells are built by practice/notebook-cells.js and dressed by
+   styles/practice/notebook-view.css, exactly like the other two surfaces, and
+   what is left here is the part that really is this page's own: it is a
+   PANEL, not a page, and the split has to collapse around it. */
 
 /* ---- single column ------------------------------------------------------
    The lesson is prose with code in it, so the split has nothing to hold: the
@@ -17,73 +33,48 @@ body.lesson-mode .practice-left {
   flex: 1;
 }
 
+/* 🔴 THE LESSON'S ZOOM, AND IT IS THE ONLY NUMBER THIS PAGE SETS ABOUT TYPE.
+   The whole scale — prose size, headings, the code metrics, the column width —
+   is one set of LessWrong measurements in notebook-view.css multiplied by this
+   (see the header there). The ARENA page reads at 1.4 and the Notebooks tab at
+   1.25; a lesson is 0.95 because it is the one of the three that is a PANEL
+   inside the practice tab rather than a page of its own, and it is read
+   directly before a drill that is set at the panel's size.
+
+   🔴 DO NOT RETUNE THIS PAGE BY EDITING SIZES. Every pixel value in that scale
+   was read off a LessWrong render with tools/visual-diff; a hand-scaled copy
+   here would look approximately right today and could never be checked against
+   theirs again. This number, and nothing else.
+
+   On `body` rather than on `#question-text`: the cells and the prose are both
+   below it, and a custom property inherits downwards only. */
+body.lesson-mode {
+  --anb-zoom: 0.95;
+}
+
 /* The column itself is capped, not the panel: the panel keeps the full width
-   so its scrollbar stays at the window edge where it is expected. */
+   so its scrollbar stays at the window edge where it is expected. The cap is
+   the SHARED measure, so the lesson's column and the notebook's column are the
+   same column at two sizes rather than 780px and 880px by coincidence. */
 body.lesson-mode #question-text {
   margin: 0 auto;
-  max-width: 780px;
+  max-width: calc(682px * var(--anb-zoom, 1));
   width: 100%;
 }
 
-/* ---- cells --------------------------------------------------------------- */
+/* ---- static fences -------------------------------------------------------
+   A ```python no-run block, or anything under "Watch out". They are coloured
+   like every other piece of code (practice/notebook-code-edit.js paints
+   `pre[data-fence] > code` too) but carry no Run button, so they need the
+   rectangle a cell gets from `.nbv-code`.
 
-.nb-cell {
-  background: rgb(var(--well-rgb) / calc(0.28 * var(--well-k)));
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin: 16px 0;
-  overflow: hidden;
-}
-
-.nb-cell-code {
-  overflow-x: auto;
-}
-
-.nb-cell-code pre {
-  margin: 0;
-  padding: 12px 14px;
-}
-
-/* 🔴 THE SAME TYPE AS THE PRACTICE EDITOR, AND THE SAME COLOUR.
-   `--code-font` is the app's one code face (styles/variables.css) and the
-   `cm-*` spans practice/notebook-code-edit.js paints into this element are
-   coloured by styles/practice/code-highlight.css — the same file, the same
-   palette, the same tokeniser the `<textarea>` on the practice tab is painted
-   with. Nothing here restates a colour; a literal in this file would be a
-   second palette that drifts from the first one edit later.
-
-   `color:` is the fallback for a run of source with no token class of its own
-   and for the case where the enhancement script never loaded. `--white` (the
-   strongest text in the theme, near-black in light mode) rather than `--text`,
-   because that is what `.code-editor` uses and the two are meant to match. */
-.nb-cell-code code {
-  color: var(--white);
-  display: block;
-  font-family: var(--code-font);
-  font-size: 13px;
-  line-height: 1.55;
-  white-space: pre;
-}
-
-/* Editable, but never styled like a form field — see notebook.js on why the
-   cell is contenteditable rather than a <textarea>. The focus ring is the only
-   affordance, and it appears only once the learner has actually clicked in. */
-.nb-cell-code code:focus {
-  outline: none;
-}
-
-.nb-cell-code code:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-
-
-/* The static fences — a `no-run` block, anything under "Watch out". They get
-   the colour (notebook-code-edit.js paints `pre[data-fence] > code` too) but
-   no Run button, so they need the rectangle a cell gets from `.nb-cell`. The
-   rule is scoped to the lesson panel: `pre[data-fence]` is also what the ARENA
-   surfaces render, and those sheets already dress it. */
-body.lesson-mode #question-text pre[data-fence] {
+   🔴 Scoped to the lesson panel on purpose: `pre[data-fence]` is also what the
+   ARENA surfaces render, and now that the lesson's prose is `.nbv-md` the
+   shared `.nbv-md pre` rule in notebook-view.css already dresses the fences
+   inside it. What this catches is the fences OUTSIDE that prose — the ones
+   under "Watch out", which is a `.lesson-watch-out` band and not a markdown
+   cell. */
+body.lesson-mode #question-text .lesson-watch-out pre[data-fence] {
   border: 1px solid var(--border);
   border-radius: 8px;
   margin: 16px 0;
@@ -91,116 +82,13 @@ body.lesson-mode #question-text pre[data-fence] {
   padding: 12px 14px;
 }
 
-body.lesson-mode #question-text pre[data-fence] > code {
+body.lesson-mode #question-text .lesson-watch-out pre[data-fence] > code {
   background: none;
   color: var(--white);
   display: block;
   font-family: var(--code-font);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: calc(18.2px * var(--anb-zoom, 1));
+  line-height: calc(26px * var(--anb-zoom, 1));
   padding: 0;
   white-space: pre;
-}
-
-.nb-cell-bar {
-  align-items: center;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
-  padding: 6px 10px;
-}
-
-.nb-run {
-  background: transparent;
-  border: 1px solid var(--accent);
-  border-radius: 5px;
-  color: var(--accent-text);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  padding: 3px 14px;
-}
-
-.nb-run:hover:not(:disabled) {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-.nb-run:disabled {
-  cursor: default;
-  opacity: 0.55;
-}
-
-/* The In[] prompt. Monospaced and tabular so a page of cells keeps one column
-   of numbers rather than a ragged one, and empty until the cell has run — an
-   unrun cell showing "In [ ]" is noise on a page that is mostly prose. */
-.nb-count {
-  color: var(--muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.2px;
-}
-
-.nb-cell.has-run .nb-count {
-  color: var(--accent-text);
-}
-
-.nb-cell.has-failed .nb-count {
-  color: var(--danger);
-}
-
-/* A run leaves a mark on the cell itself, not only in the bar, so the learner
-   can see which parts of the page they have executed while scrolling past the
-   collapsed output. */
-.nb-cell.has-run {
-  border-color: rgb(var(--accent-rgb) / 0.45);
-}
-
-.nb-cell.has-failed {
-  border-color: rgb(var(--danger-rgb) / 0.55);
-}
-
-.nb-cell.is-running {
-  border-color: var(--accent-text);
-}
-
-/* Same signal the ARENA cells give: the cell you are typing in is the thing on
-   screen. On the box, not on the code, so it survives a repaint — and AFTER
-   the has-run / has-failed / is-running rules, which carry the same
-   specificity, so the cell under the caret is the one that reads as active
-   even once it has been run. */
-.nb-cell:focus-within {
-  border-color: var(--border-strong);
-}
-
-.nb-status {
-  color: var(--muted);
-  font-size: 11px;
-  font-style: italic;
-}
-
-.nb-out {
-  background: rgb(var(--well-rgb) / calc(0.45 * var(--well-k)));
-  border-top: 1px solid var(--border);
-  color: var(--text);
-  font-size: 12.5px;
-  line-height: 1.5;
-  margin: 0;
-  max-height: 260px;
-  overflow: auto;
-  padding: 10px 14px;
-  white-space: pre-wrap;
-}
-
-.nb-out.hidden {
-  display: none;
-}
-
-/* Failure is marked by colour AND by the text itself always being the runtime's
-   own message, so colour is never the only carrier. */
-.nb-out.is-error {
-  color: var(--danger);
 }

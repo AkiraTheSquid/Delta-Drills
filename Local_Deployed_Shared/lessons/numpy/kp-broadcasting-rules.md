@@ -3,9 +3,10 @@ kc: numpy.broadcasting-rules
 title: Broadcasting rules
 supporting: [numpy.elementwise-ufuncs, numpy.reshape-flatten]
 new_syntax: [none-newaxis-indexing, torch.broadcast_shapes]
-faded: [111, 151]
-guided: [499, 500]
-independent: [501, 502]
+faded: [111, 949, 151, 948, 950, 951]
+guided: [499, 500, 952, 953]
+independent: [501, 502, 954, 955]
+integrated: [956, 957, 958]
 ---
 
 ## Concept: the right-alignment rule
@@ -94,6 +95,29 @@ def solve(a, b):
     return a + b
 ```
 
+
+### q949
+The shape question, asked of the shapes themselves — there is no tensor
+here to measure, so the answer has to come from the rule.
+
+```python starter
+import torch as t
+
+
+def solve(s1, s2):
+    """The shape broadcasting s1 and s2 together produces."""
+    return tuple(t._____(s1, s2))
+```
+
+```python solution
+import torch as t
+
+
+def solve(s1, s2):
+    """The shape broadcasting s1 and s2 together produces."""
+    return tuple(t.broadcast_shapes(s1, s2))
+```
+
 ## Concept: placing the 1s yourself with None
 
 The craft skill is **placing the 1s yourself**. Indexing with `None` (alias
@@ -162,6 +186,73 @@ def solve(a, b):
     return a * b[:, :, None]
 ```
 
+
+### q948
+The pairwise table again, and this time the operation is a difference —
+which means the order of the two operands matters.
+
+```python starter
+import torch as t
+
+
+def solve(a, b):
+    """(m, n) table where entry [i, j] = a[i] - b[j]."""
+    return a[_____] - b[_____]
+```
+
+```python solution
+import torch as t
+
+
+def solve(a, b):
+    """(m, n) table where entry [i, j] = a[i] - b[j]."""
+    return a[:, None] - b[None, :]
+```
+
+### q950
+A step past the image case: the stretch axis is the FIRST one, so the 1s
+go after it — and there are two of them to add, not one.
+
+```python starter
+import torch as t
+
+
+def solve(x, s):
+    """Every element of sample i scaled by s[i]."""
+    return x * s[_____]
+```
+
+```python solution
+import torch as t
+
+
+def solve(x, s):
+    """Every element of sample i scaled by s[i]."""
+    return x * s[:, None, None]
+```
+
+### q951
+The row range has to run DOWN and the column range ACROSS. Both are flat
+to begin with, so both need a 1 placed by hand.
+
+```python starter
+import torch as t
+
+
+def solve(rows, cols):
+    """(rows, cols) grid where entry [i, j] = i * cols + j."""
+    return t.arange(rows)[_____] * cols + t.arange(cols)[_____]
+```
+
+```python solution
+import torch as t
+
+
+def solve(rows, cols):
+    """(rows, cols) grid where entry [i, j] = i * cols + j."""
+    return t.arange(rows)[:, None] * cols + t.arange(cols)[None, :]
+```
+
 ## Independent practice
 
 From the drill bank: q60 (matrix whose every row is 0..cols-1 — one arange
@@ -171,6 +262,8 @@ consider which is cheaper).
 
 From the drill bank: q501 (scale each ROW by its own factor — right-alignment is not what you want).
 From the drill bank: q502 (a multiplication table from two ranges and no loop).
+From the drill bank: q954 (scale each matrix row, then add one bias per column).
+From the drill bank: q955 (one three-axis product table from three vectors).
 
 ## Guided practice
 
@@ -185,6 +278,28 @@ From the drill bank: q502 (a multiplication table from two ranges and no loop).
 2. There is a function that takes the two SHAPES and returns the combined one,
    without building anything — then convert its torch.Size to a plain tuple.
 3. `tuple(t.broadcast_shapes(a.shape, b.shape))`.
+
+### q952
+1. Both inputs are FLAT, so neither of them runs down the page yet. Aligned right as they are, (m,) against (n,), the rule pairs m with n and refuses.
+2. One of them has to become a column and the other a row. `v[:, None]` is the column form, `v[None, :]` the row form.
+3. `a[:, None] * b[None, :]`.
+
+### q953
+1. Write the two shapes one above the other and align them from the RIGHT: (b, h, w, c) over (c,).
+2. Every column of that alignment already resolves — c pairs with c, and the three missing leading axes each count as 1. Nothing needs placing by hand.
+3. `imgs - mean`.
+
+## Integrated practice
+
+### q956
+Subtract one value per colour channel, then apply one gain per image.
+
+### q957
+Return both the broadcast shape and the elementwise sum.
+
+### q958
+Given batched origins, directions, and distances, return every resulting 3-D
+point with shape `(b, k, 3)`.
 
 ## Misconceptions
 

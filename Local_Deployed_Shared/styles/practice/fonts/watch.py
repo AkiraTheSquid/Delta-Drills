@@ -14,6 +14,12 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHEET = os.path.join(HERE, "..", "arena-notebook.css")
+# 🔴 The FALLBACK CHAIN moved out of the ARENA sheet on 2026-09-10. It is
+# --prose-font / --prose-heading in styles/variables.css now, because the
+# lesson page, the drill panel and both notebook surfaces all set text in
+# it — it stopped being one page's opinion and became the app's reading
+# face. The @font-face blocks that load these files stayed put.
+PALETTE = os.path.join(HERE, "..", "..", "variables.css")
 
 # The faces, and the weight/style each one is declared for. Sizes are the real
 # upstream ones; the floor is what separates a font from a 404 page saved under
@@ -100,13 +106,24 @@ def check_invariants():
 
     # The fallback chain is what carries the body text, so losing it is losing
     # the design on every machine without ET Book cached.
-    chain = re.search(r"--lw-serif:\s*([^;]+);", live)
-    assert chain, "arena-notebook.css no longer defines --lw-serif"
+    palette = re.sub(r"/\*.*?\*/", "", _read(PALETTE), flags=re.DOTALL)
+    chain = re.search(r"--prose-font:\s*([^;]+);", palette, re.DOTALL)
+    assert chain, "styles/variables.css no longer defines --prose-font"
     for expected in ("Palatino", "Georgia", "serif"):
-        assert expected in chain.group(1), f"--lw-serif dropped {expected}"
+        assert expected in chain.group(1), f"--prose-font dropped {expected}"
 
-    assert "--lw-header:" in live and "ETBookRoman" in live, (
-        "--lw-header must still put ETBookRoman in front of --lw-serif"
+    heading = re.search(r"--prose-heading:\s*([^;]+);", palette, re.DOTALL)
+    assert heading, "styles/variables.css no longer defines --prose-heading"
+    assert "ETBookRoman" in heading.group(1) and "--prose-font" in heading.group(1), (
+        "--prose-heading must still put ETBookRoman in front of --prose-font — "
+        "the face this folder ships is the heading face, and the chain behind "
+        "it is what carries a machine that has not loaded it yet"
+    )
+
+    # The face is only reachable if something still asks for it by name.
+    assert "ETBookRoman" in live, (
+        "arena-notebook.css no longer names ETBookRoman — the @font-face blocks "
+        "that load these files live here"
     )
 
 

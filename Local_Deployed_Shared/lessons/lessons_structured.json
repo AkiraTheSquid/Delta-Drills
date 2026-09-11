@@ -2454,6 +2454,18 @@
          "prompt": "Every integer from `start` to `end`, **including both endpoints**. (Watch the\nexclusive stop \u2014 how do you make `end` appear?)",
          "starter_code": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t._____(start, _____)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample_start, example_end = 3, 8\nprint(solve(example_start, example_end))\n",
          "solution": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, end + 1)\n"
+        },
+        {
+         "question_id": 959,
+         "prompt": "The three-argument form, with the step chosen by the caller. The stop is\nstill exclusive, whatever the step is.",
+         "starter_code": "import torch as t\n\n\ndef solve(start, end, k):\n    \"\"\"Every k-th integer from start up to but not including end.\"\"\"\n    return t._____(start, end, k)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0, 10, 3))\n",
+         "solution": "import torch as t\n\n\ndef solve(start, end, k):\n    \"\"\"Every k-th integer from start up to but not including end.\"\"\"\n    return t.arange(start, end, k)\n"
+        },
+        {
+         "question_id": 960,
+         "prompt": "Choosing all three arguments at once: where to start, where to stop, and how\nfar to move. Work out the stop from how many values you want.",
+         "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The first n odd numbers, in increasing order.\"\"\"\n    return t._____(1, 2 * n, 2)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5))\n",
+         "solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The first n odd numbers, in increasing order.\"\"\"\n    return t.arange(1, 2 * n, 2)\n"
         }
        ]
       },
@@ -2470,6 +2482,18 @@
          "prompt": "The `n` evenly spaced breakpoints **strictly inside** (0, 1) \u2014 exclude 0.0 and\n1.0. (linspace includes the endpoints; how do you get `n` points *between*\nthem?)",
          "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t._____(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + 2)[1:-1]\n"
+        },
+        {
+         "question_id": 961,
+         "prompt": "The plain form: two endpoints and a count, both ends kept.",
+         "starter_code": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced points from a to b, both endpoints included.\"\"\"\n    return t._____(a, b, n)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0.0, 1.0, 5))\n",
+         "solution": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced points from a to b, both endpoints included.\"\"\"\n    return t.linspace(a, b, n)\n"
+        },
+        {
+         "question_id": 962,
+         "prompt": "n pieces need n + 1 edges. Once the edges exist, every midpoint is the\naverage of an edge and the one after it \u2014 a slice against a shifted slice.",
+         "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The midpoints of the n equal sub-intervals of 0 to 1.\"\"\"\n    edges = t._____(0.0, 1.0, n + 1)\n    return (edges[:-1] + edges[1:]) / 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(4))\n",
+         "solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The midpoints of the n equal sub-intervals of 0 to 1.\"\"\"\n    edges = t.linspace(0.0, 1.0, n + 1)\n    return (edges[:-1] + edges[1:]) / 2\n"
         }
        ]
       },
@@ -2486,6 +2510,12 @@
          "prompt": "`solve(stop, step)`: the inclusive float range 0, step, 2\u00b7step, \u2026, up to **and\nincluding** `stop` (an exact multiple of `step`). (Why does the point count\nneed a `+ 1`?)",
          "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t._____(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
          "solution": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + 1\n    return t.arange(n) * step\n"
+        },
+        {
+         "question_id": 963,
+         "prompt": "The same count-then-scale recipe with the spacing given as a RATE: the\nspacing is one over it.",
+         "starter_code": "import torch as t\n\n\ndef solve(n, hz):\n    \"\"\"The n sample times of a signal sampled at hz samples per second.\"\"\"\n    return t._____(n) * (1.0 / hz)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, 4.0))\n",
+         "solution": "import torch as t\n\n\ndef solve(n, hz):\n    \"\"\"The n sample times of a signal sampled at hz samples per second.\"\"\"\n    return t.arange(n) * (1.0 / hz)\n"
         }
        ]
       }
@@ -2498,16 +2528,46 @@
        "solution": "import torch as t\n\ndef solve(start, end):\n    \"\"\"Integers start..end inclusive, in order.\"\"\"\n    return t.arange(start, end + 1)\n"
       },
       {
+       "question_id": 959,
+       "prompt": "The three-argument form, with the step chosen by the caller. The stop is\nstill exclusive, whatever the step is.",
+       "starter_code": "import torch as t\n\n\ndef solve(start, end, k):\n    \"\"\"Every k-th integer from start up to but not including end.\"\"\"\n    return t._____(start, end, k)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0, 10, 3))\n",
+       "solution": "import torch as t\n\n\ndef solve(start, end, k):\n    \"\"\"Every k-th integer from start up to but not including end.\"\"\"\n    return t.arange(start, end, k)\n"
+      },
+      {
+       "question_id": 960,
+       "prompt": "Choosing all three arguments at once: where to start, where to stop, and how\nfar to move. Work out the stop from how many values you want.",
+       "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The first n odd numbers, in increasing order.\"\"\"\n    return t._____(1, 2 * n, 2)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5))\n",
+       "solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The first n odd numbers, in increasing order.\"\"\"\n    return t.arange(1, 2 * n, 2)\n"
+      },
+      {
        "question_id": 242,
        "prompt": "The `n` evenly spaced breakpoints **strictly inside** (0, 1) \u2014 exclude 0.0 and\n1.0. (linspace includes the endpoints; how do you get `n` points *between*\nthem?)",
        "starter_code": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t._____(0.0, 1.0, n + _____)[1:-1]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = 3\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(n):\n    \"\"\"n interior breakpoints of (0, 1), endpoints excluded.\"\"\"\n    return t.linspace(0.0, 1.0, n + 2)[1:-1]\n"
       },
       {
+       "question_id": 961,
+       "prompt": "The plain form: two endpoints and a count, both ends kept.",
+       "starter_code": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced points from a to b, both endpoints included.\"\"\"\n    return t._____(a, b, n)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0.0, 1.0, 5))\n",
+       "solution": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced points from a to b, both endpoints included.\"\"\"\n    return t.linspace(a, b, n)\n"
+      },
+      {
+       "question_id": 962,
+       "prompt": "n pieces need n + 1 edges. Once the edges exist, every midpoint is the\naverage of an edge and the one after it \u2014 a slice against a shifted slice.",
+       "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The midpoints of the n equal sub-intervals of 0 to 1.\"\"\"\n    edges = t._____(0.0, 1.0, n + 1)\n    return (edges[:-1] + edges[1:]) / 2\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(4))\n",
+       "solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The midpoints of the n equal sub-intervals of 0 to 1.\"\"\"\n    edges = t.linspace(0.0, 1.0, n + 1)\n    return (edges[:-1] + edges[1:]) / 2\n"
+      },
+      {
        "question_id": 214,
        "prompt": "`solve(stop, step)`: the inclusive float range 0, step, 2\u00b7step, \u2026, up to **and\nincluding** `stop` (an exact multiple of `step`). (Why does the point count\nneed a `+ 1`?)",
        "starter_code": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + _____\n    return t._____(n) * step\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 0.5))\n",
        "solution": "import torch as t\n\ndef solve(stop, step):\n    \"\"\"0, step, ..., stop inclusive \u2014 exact, no float drift.\"\"\"\n    n = int(round(stop / step)) + 1\n    return t.arange(n) * step\n"
+      },
+      {
+       "question_id": 963,
+       "prompt": "The same count-then-scale recipe with the spacing given as a RATE: the\nspacing is one over it.",
+       "starter_code": "import torch as t\n\n\ndef solve(n, hz):\n    \"\"\"The n sample times of a signal sampled at hz samples per second.\"\"\"\n    return t._____(n) * (1.0 / hz)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(5, 4.0))\n",
+       "solution": "import torch as t\n\n\ndef solve(n, hz):\n    \"\"\"The n sample times of a signal sampled at hz samples per second.\"\"\"\n    return t.arange(n) * (1.0 / hz)\n"
       }
      ],
      "guided_items": [
@@ -2516,13 +2576,43 @@
        "hints_markdown": "1. The exclusive stop does not care which way you are counting. Going down,\n   \"stops before the stop\" means the stop has to sit one step PAST `low`.\n2. A negative step reverses the direction: `t.arange(high, ?, -1)`. Ask what\n   `?` makes `low` the last value actually produced.\n3. `t.arange(high, low - 1, -1)` \u2014 the `- 1` is the inclusive-endpoint fix\n   from q229, pointed the other way.",
        "worked_example_code": "",
        "starter_code": "import torch\nimport torch as t\n\ndef solve(high, low):\n    \"\"\"Integers from high down to low, both endpoints included.\"\"\"\n    return t._____(high, low - 1, -1)\n\n\nexample = (5, 1)\nprint(solve(*example))\n"
+      },
+      {
+       "question_id": 964,
+       "hints_markdown": "1. A negative step is the arange answer to counting down, and it brings the exclusive-stop problem with it. Here you are given the COUNT, not the step.\n2. The endpoints-and-count tool does not require the first endpoint to be the smaller one. Hand it the two ends in the order you want them produced.\n3. `t.linspace(high, low, n)`.",
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\n\ndef solve(high, low, n):\n    \"\"\"n evenly spaced points running DOWN from high to low.\"\"\"\n    return t._____(high, low, n)\n\n\nprint(solve(1.0, 0.0, 5))\n"
+      },
+      {
+       "question_id": 965,
+       "hints_markdown": "1. Build the range first \u2014 the question is about what it CONTAINS, and the range itself is the authority on that.\n2. Its final element is the one at index minus one. Convert that single value to a Python int before returning it.\n3. `int(t.arange(start, stop, step)[-1])`.",
+       "worked_example_code": "",
+       "starter_code": "import torch as t\n\n\ndef solve(start, stop, step):\n    \"\"\"The last value the counted range actually produces.\"\"\"\n    return int(t._____(start, stop, step)[-1])\n\n\nprint(solve(0, 10, 3))\n"
       }
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 971,
+       "prompt": "Return an inclusive range and its length."
+      },
+      {
+       "question_id": 972,
+       "prompt": "Return equal-bin edges and centres."
+      },
+      {
+       "question_id": 973,
+       "prompt": "Return an evenly spaced grid and its successive gaps."
+      }
+     ],
      "independent_items": [
-      53
+      53,
+      966,
+      967,
+      968,
+      969,
+      970
      ],
      "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`).",
      "notes_markdown": ""
@@ -3164,6 +3254,12 @@
          "prompt": "Global min and max of a 2-D tensor, returned as a (min, max) pair of plain\nPython numbers.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (smallest, largest) element of the whole 2-D tensor.\"\"\"\n    return (x._____().item(), x._____().item())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[3.5, -2.0, 7.25], [0.0, 9.5, -8.75]])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (smallest, largest) element of the whole 2-D tensor.\"\"\"\n    return (x.min().item(), x.max().item())\n"
+        },
+        {
+         "question_id": 984,
+         "prompt": "Two whole-tensor reductions in one answer, each crossing back to a plain\nPython number.",
+         "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"(total, average) of the whole tensor as plain Python numbers.\"\"\"\n    return (x._____().item(), x._____().item())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
+         "solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"(total, average) of the whole tensor as plain Python numbers.\"\"\"\n    return (x.sum().item(), x.mean().item())\n"
         }
        ]
       },
@@ -3180,6 +3276,12 @@
          "prompt": "The arithmetic mean of a vector, as a plain Python float.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return float(x.mean())\n"
+        },
+        {
+         "question_id": 985,
+         "prompt": "The same boundary as the mean drill, crossed after a different reduction.",
+         "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The largest entry of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 7.0, 3.0])))\n",
+         "solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The largest entry of x as a plain Python float.\"\"\"\n    return float(x.max())\n"
         }
        ]
       },
@@ -3196,6 +3298,12 @@
          "prompt": "Tolerant closeness AND exact equality of two tensors, as two plain bools.",
          "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(close within float tolerance?, exactly equal?) as plain bools.\"\"\"\n    return (bool(t._____(a, b)), bool(t._____(a, b)))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0]), t.tensor([1.0, 2.0])))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(close within float tolerance?, exactly equal?) as plain bools.\"\"\"\n    return (bool(t.allclose(a, b)), bool(t.equal(a, b)))\n"
+        },
+        {
+         "question_id": 986,
+         "prompt": "A whole-tensor verdict beside a piece of metadata \u2014 one is reduced out of\nthe values, the other was known before any of them were read.",
+         "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"(is any entry true?, how many entries there are).\"\"\"\n    return (bool(z._____()), z._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([False, True, False])))\n",
+         "solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"(is any entry true?, how many entries there are).\"\"\"\n    return (bool(z.any()), z.numel())\n"
         }
        ]
       }
@@ -3208,16 +3316,34 @@
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Return (smallest, largest) element of the whole 2-D tensor.\"\"\"\n    return (x.min().item(), x.max().item())\n"
       },
       {
+       "question_id": 984,
+       "prompt": "Two whole-tensor reductions in one answer, each crossing back to a plain\nPython number.",
+       "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"(total, average) of the whole tensor as plain Python numbers.\"\"\"\n    return (x._____().item(), x._____().item())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
+       "solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"(total, average) of the whole tensor as plain Python numbers.\"\"\"\n    return (x.sum().item(), x.mean().item())\n"
+      },
+      {
        "question_id": 28,
        "prompt": "The arithmetic mean of a vector, as a plain Python float.",
        "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Mean of x as a plain Python float.\"\"\"\n    return float(x.mean())\n"
       },
       {
+       "question_id": 985,
+       "prompt": "The same boundary as the mean drill, crossed after a different reduction.",
+       "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The largest entry of x as a plain Python float.\"\"\"\n    return _____(x._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 7.0, 3.0])))\n",
+       "solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The largest entry of x as a plain Python float.\"\"\"\n    return float(x.max())\n"
+      },
+      {
        "question_id": 64,
        "prompt": "Tolerant closeness AND exact equality of two tensors, as two plain bools.",
        "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(close within float tolerance?, exactly equal?) as plain bools.\"\"\"\n    return (bool(t._____(a, b)), bool(t._____(a, b)))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0]), t.tensor([1.0, 2.0])))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(close within float tolerance?, exactly equal?) as plain bools.\"\"\"\n    return (bool(t.allclose(a, b)), bool(t.equal(a, b)))\n"
+      },
+      {
+       "question_id": 986,
+       "prompt": "A whole-tensor verdict beside a piece of metadata \u2014 one is reduced out of\nthe values, the other was known before any of them were read.",
+       "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"(is any entry true?, how many entries there are).\"\"\"\n    return (bool(z._____()), z._____())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([False, True, False])))\n",
+       "solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"(is any entry true?, how many entries there are).\"\"\"\n    return (bool(z.any()), z.numel())\n"
       }
      ],
      "guided_items": [
@@ -3236,11 +3362,27 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 990,
+       "prompt": "Return total, average, minimum, and maximum as Python floats."
+      },
+      {
+       "question_id": 991,
+       "prompt": "Return a centred tensor, its removed average, and a centring verdict."
+      },
+      {
+       "question_id": 992,
+       "prompt": "Return span, average, and whether the tensor is constant."
+      }
+     ],
      "independent_items": [
       62,
       497,
-      498
+      498,
+      987,
+      988,
+      989
      ],
      "misconceptions_markdown": "- **\"`x.max()` on a matrix gives per-row maxima.\"** \u2014 With no arguments it\n  reduces over everything: one value for the whole tensor. Per-row/column\n  reductions need `dim=`, covered in the broadcasting lesson.\n- **\"Reductions return normal Python numbers.\"** \u2014 They return 0-dimensional\n  tensors. Mostly interchangeable in arithmetic, but \"return a plain\n  int/float\" contracts require `int(...)`/`float(...)`/`.item()`.\n- **\"`==` tells me whether two tensors are equal.\"** \u2014 `a == b` is ELEMENTWISE,\n  yielding a boolean tensor (and `if` on it raises an error). Whole-tensor\n  verdicts are `t.equal` (exact) or `t.allclose` (float-tolerant).\n- **\"`t.array_equal` is the exact check.\"** \u2014 That's the NumPy name; there is\n  no such function here. It's `t.equal`.",
      "notes_markdown": ""
@@ -4134,6 +4276,12 @@
          "prompt": "The broadcast sum of a column (m, 1) and a row (1, n).",
          "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i, 0] + b[0, j].\"\"\"\n    return _____ + _____\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nprint(solve(t.arange(3).reshape(3, 1), t.arange(3).reshape(1, 3)))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i, 0] + b[0, j].\"\"\"\n    return a + b\n"
+        },
+        {
+         "question_id": 949,
+         "prompt": "The shape question, asked of the shapes themselves \u2014 there is no tensor\nhere to measure, so the answer has to come from the rule.",
+         "starter_code": "import torch as t\n\n\ndef solve(s1, s2):\n    \"\"\"The shape broadcasting s1 and s2 together produces.\"\"\"\n    return tuple(t._____(s1, s2))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve((3, 1), (1, 4)))\n",
+         "solution": "import torch as t\n\n\ndef solve(s1, s2):\n    \"\"\"The shape broadcasting s1 and s2 together produces.\"\"\"\n    return tuple(t.broadcast_shapes(s1, s2))\n"
         }
        ]
       },
@@ -4150,6 +4298,24 @@
          "prompt": "Scale each pixel of an (h, w, c) image by a per-pixel (h, w) map.",
          "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(h, w, c) image a scaled per-pixel by (h, w) map b.\"\"\"\n    return a * b[_____]\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 2, 3)), t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(h, w, c) image a scaled per-pixel by (h, w) map b.\"\"\"\n    return a * b[:, :, None]\n"
+        },
+        {
+         "question_id": 948,
+         "prompt": "The pairwise table again, and this time the operation is a difference \u2014\nwhich means the order of the two operands matters.",
+         "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i] - b[j].\"\"\"\n    return a[_____] - b[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([10.0, 20.0])))\n",
+         "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i] - b[j].\"\"\"\n    return a[:, None] - b[None, :]\n"
+        },
+        {
+         "question_id": 950,
+         "prompt": "A step past the image case: the stretch axis is the FIRST one, so the 1s\ngo after it \u2014 and there are two of them to add, not one.",
+         "starter_code": "import torch as t\n\n\ndef solve(x, s):\n    \"\"\"Every element of sample i scaled by s[i].\"\"\"\n    return x * s[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.ones(2, 2, 3), t.tensor([1.0, 10.0])))\n",
+         "solution": "import torch as t\n\n\ndef solve(x, s):\n    \"\"\"Every element of sample i scaled by s[i].\"\"\"\n    return x * s[:, None, None]\n"
+        },
+        {
+         "question_id": 951,
+         "prompt": "The row range has to run DOWN and the column range ACROSS. Both are flat\nto begin with, so both need a 1 placed by hand.",
+         "starter_code": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"(rows, cols) grid where entry [i, j] = i * cols + j.\"\"\"\n    return t.arange(rows)[_____] * cols + t.arange(cols)[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 4))\n",
+         "solution": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"(rows, cols) grid where entry [i, j] = i * cols + j.\"\"\"\n    return t.arange(rows)[:, None] * cols + t.arange(cols)[None, :]\n"
         }
        ]
       }
@@ -4162,10 +4328,34 @@
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i, 0] + b[0, j].\"\"\"\n    return a + b\n"
       },
       {
+       "question_id": 949,
+       "prompt": "The shape question, asked of the shapes themselves \u2014 there is no tensor\nhere to measure, so the answer has to come from the rule.",
+       "starter_code": "import torch as t\n\n\ndef solve(s1, s2):\n    \"\"\"The shape broadcasting s1 and s2 together produces.\"\"\"\n    return tuple(t._____(s1, s2))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve((3, 1), (1, 4)))\n",
+       "solution": "import torch as t\n\n\ndef solve(s1, s2):\n    \"\"\"The shape broadcasting s1 and s2 together produces.\"\"\"\n    return tuple(t.broadcast_shapes(s1, s2))\n"
+      },
+      {
        "question_id": 151,
        "prompt": "Scale each pixel of an (h, w, c) image by a per-pixel (h, w) map.",
        "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(h, w, c) image a scaled per-pixel by (h, w) map b.\"\"\"\n    return a * b[_____]\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.ones((2, 2, 3)), t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"(h, w, c) image a scaled per-pixel by (h, w) map b.\"\"\"\n    return a * b[:, :, None]\n"
+      },
+      {
+       "question_id": 948,
+       "prompt": "The pairwise table again, and this time the operation is a difference \u2014\nwhich means the order of the two operands matters.",
+       "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i] - b[j].\"\"\"\n    return a[_____] - b[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([10.0, 20.0])))\n",
+       "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"(m, n) table where entry [i, j] = a[i] - b[j].\"\"\"\n    return a[:, None] - b[None, :]\n"
+      },
+      {
+       "question_id": 950,
+       "prompt": "A step past the image case: the stretch axis is the FIRST one, so the 1s\ngo after it \u2014 and there are two of them to add, not one.",
+       "starter_code": "import torch as t\n\n\ndef solve(x, s):\n    \"\"\"Every element of sample i scaled by s[i].\"\"\"\n    return x * s[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.ones(2, 2, 3), t.tensor([1.0, 10.0])))\n",
+       "solution": "import torch as t\n\n\ndef solve(x, s):\n    \"\"\"Every element of sample i scaled by s[i].\"\"\"\n    return x * s[:, None, None]\n"
+      },
+      {
+       "question_id": 951,
+       "prompt": "The row range has to run DOWN and the column range ACROSS. Both are flat\nto begin with, so both need a 1 placed by hand.",
+       "starter_code": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"(rows, cols) grid where entry [i, j] = i * cols + j.\"\"\"\n    return t.arange(rows)[_____] * cols + t.arange(cols)[_____]\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 4))\n",
+       "solution": "import torch as t\n\n\ndef solve(rows, cols):\n    \"\"\"(rows, cols) grid where entry [i, j] = i * cols + j.\"\"\"\n    return t.arange(rows)[:, None] * cols + t.arange(cols)[None, :]\n"
       }
      ],
      "guided_items": [
@@ -4180,14 +4370,41 @@
        "hints_markdown": "1. You are asked for the resulting shape, not for a rule recited back.\n2. There is a function that takes the two SHAPES and returns the combined one,\n   without building anything \u2014 then convert its torch.Size to a plain tuple.\n3. `tuple(t.broadcast_shapes(a.shape, b.shape))`.",
        "worked_example_code": "",
        "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return the shape broadcasting a and b together produces.\"\"\"\n    return tuple(t._____(a.shape, b.shape))\n\n\n\nexample = (t.zeros(3, 1), t.zeros(1, 4))\nprint(solve(*example))\n"
+      },
+      {
+       "question_id": 952,
+       "hints_markdown": "1. Both inputs are FLAT, so neither of them runs down the page yet. Aligned right as they are, (m,) against (n,), the rule pairs m with n and refuses.\n2. One of them has to become a column and the other a row. `v[:, None]` is the column form, `v[None, :]` the row form.\n3. `a[:, None] * b[None, :]`.",
+       "worked_example_code": "",
+       "starter_code": ""
+      },
+      {
+       "question_id": 953,
+       "hints_markdown": "1. Write the two shapes one above the other and align them from the RIGHT: (b, h, w, c) over (c,).\n2. Every column of that alignment already resolves \u2014 c pairs with c, and the three missing leading axes each count as 1. Nothing needs placing by hand.\n3. `imgs - mean`.",
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 956,
+       "prompt": "Subtract one value per colour channel, then apply one gain per image."
+      },
+      {
+       "question_id": 957,
+       "prompt": "Return both the broadcast shape and the elementwise sum."
+      },
+      {
+       "question_id": 958,
+       "prompt": "Given batched origins, directions, and distances, return every resulting 3-D\npoint with shape `(b, k, 3)`."
+      }
+     ],
      "independent_items": [
       501,
-      502
+      502,
+      954,
+      955
      ],
      "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately.",
      "notes_markdown": ""
@@ -4416,6 +4633,24 @@
          "prompt": "Elementwise average of two same-shape arrays, via a new axis.",
          "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t._____([a, b], _____=0)._____(_____=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
          "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0).mean(dim=0)\n"
+        },
+        {
+         "question_id": 974,
+         "prompt": "A seam along an axis that already exists: the row counts add up and the\ncolumn count is unchanged.",
+         "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined top to bottom.\"\"\"\n    return t._____([a, b], _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2]]), t.tensor([[3, 4]])))\n",
+         "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined top to bottom.\"\"\"\n    return t.cat([a, b], dim=0)\n"
+        },
+        {
+         "question_id": 975,
+         "prompt": "The same kind of seam along the other axis, written with the 2-D shorthand\nthat fixes the axis for you.",
+         "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined side by side.\"\"\"\n    return t._____([a, b])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2]]), t.tensor([[3, 4]])))\n",
+         "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined side by side.\"\"\"\n    return t.hstack([a, b])\n"
+        },
+        {
+         "question_id": 976,
+         "prompt": "Pair-and-unroll: once each row holds one entry from each source, reading\nrow by row IS the alternating order.",
+         "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two vectors alternated, a first.\"\"\"\n    return t._____((a, b))._____()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 3, 5]), t.tensor([2, 4, 6])))\n",
+         "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two vectors alternated, a first.\"\"\"\n    return t.column_stack((a, b)).ravel()\n"
         }
        ]
       }
@@ -4426,6 +4661,24 @@
        "prompt": "Elementwise average of two same-shape arrays, via a new axis.",
        "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t._____([a, b], _____=0)._____(_____=0)\n\n\n# Example run \u2014 the grader calls solve() with several pairs.\nexample_a = t.tensor([[1.0, 2.0]])\nexample_b = t.tensor([[3.0, 6.0]])\nprint(solve(example_a, example_b))\n",
        "solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Elementwise average: stack on a new axis, then reduce it.\"\"\"\n    return t.stack([a, b], dim=0).mean(dim=0)\n"
+      },
+      {
+       "question_id": 974,
+       "prompt": "A seam along an axis that already exists: the row counts add up and the\ncolumn count is unchanged.",
+       "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined top to bottom.\"\"\"\n    return t._____([a, b], _____=0)\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2]]), t.tensor([[3, 4]])))\n",
+       "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined top to bottom.\"\"\"\n    return t.cat([a, b], dim=0)\n"
+      },
+      {
+       "question_id": 975,
+       "prompt": "The same kind of seam along the other axis, written with the 2-D shorthand\nthat fixes the axis for you.",
+       "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined side by side.\"\"\"\n    return t._____([a, b])\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2]]), t.tensor([[3, 4]])))\n",
+       "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two matrices joined side by side.\"\"\"\n    return t.hstack([a, b])\n"
+      },
+      {
+       "question_id": 976,
+       "prompt": "Pair-and-unroll: once each row holds one entry from each source, reading\nrow by row IS the alternating order.",
+       "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two vectors alternated, a first.\"\"\"\n    return t._____((a, b))._____()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 3, 5]), t.tensor([2, 4, 6])))\n",
+       "solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The two vectors alternated, a first.\"\"\"\n    return t.column_stack((a, b)).ravel()\n"
       }
      ],
      "guided_items": [
@@ -4434,15 +4687,37 @@
        "hints_markdown": "1. Three streams interleaved position by position \u2014 the pair-and-ravel trick\n   still works, but the strided form is clearer: what are the three residue\n   classes?\n2. Allocate the result (`t.empty(3 * n, dtype=...)` \u2014 dtype from the inputs\n   via `t.result_type`), then one slice assignment per stream.\n3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`.",
        "worked_example_code": "",
        "starter_code": ""
+      },
+      {
+       "question_id": 977,
+       "hints_markdown": "1. The two joining tools differ on one question: does the result gain an axis, or does an existing one get longer? Here every input has to stay identifiable, so it gains one.\n2. `t.stack` takes the list and the position of the new axis. Piling k tensors of shape (r, c) at position 0 gives (k, r, c).\n3. `t.stack(mats, dim=0)`, then `tuple(...shape)` on the result.",
+       "worked_example_code": "",
+       "starter_code": ""
       }
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 981,
+       "prompt": "Return both vertical and horizontal joins, with their shapes."
+      },
+      {
+       "question_id": 982,
+       "prompt": "Insert a fixed number of zeros between consecutive entries."
+      },
+      {
+       "question_id": 983,
+       "prompt": "Return the tensor pile, its elementwise mean, and its count."
+      }
+     ],
      "independent_items": [
       89,
       238,
-      159
+      159,
+      978,
+      979,
+      980
      ],
      "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead.",
      "notes_markdown": ""

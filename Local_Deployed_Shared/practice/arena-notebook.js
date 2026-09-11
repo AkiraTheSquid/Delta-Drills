@@ -141,35 +141,34 @@ const ArenaNotebookView = (() => {
      an empty program and reports success. Learned on the lesson notebooks
      (practice/watch_notebook.py pins it there); it is true here for the same
      reason, and ARENA puts code inside disclosures constantly. */
-  const _sourceOf = (node) => {
-    if (node._ddSource != null) return node._ddSource;
-    const code = node.querySelector(".nbv-src code");
-    return ((code && (code.innerText || code.textContent)) || "").replace(/ /g, " ");
-  };
+  const _sourceOf = (node) => window.DeltaNotebookCells.readSource(node);
 
   /* The id a cell is stored under — `_cellRecord`, the run harness's filename
      and the saved-output store all key off this one expression, and they have
      to agree or a restored output lands under the wrong cell. */
   const _cellIdOf = (node) => node.dataset.cellId || node.id.replace(/^arena-/, "");
 
+  /* The run gutter, the source and the output block are the SHARED cell —
+     practice/notebook-cells.js, the same builder the Notebooks tab and the
+     lesson pages use, so all three are one rectangle rather than three that
+     look alike (Seth, 2026-09-10: "I want them to be the same thing").
+
+     🔴 `idPrefix` IS LOAD-BEARING HERE. This page's ids are `arena-<cell id>`,
+     and `_cellIdOf` above, the saved-output store and the run harness's
+     filename all read that expression back. Minting the notebook view's
+     `nbv-` prefix instead would key every restored output to a cell that does
+     not exist.
+
+     What stays this page's own is the cell TOOLS — move, convert, delete —
+     which no other surface has, and which are appended to whatever the shared
+     builder returns. */
   const _codeCell = (cell) => {
-    const el = document.createElement("section");
-    el.className = "nbv-cell nbv-code";
-    el.dataset.role = cell.role;
-    el.dataset.cellId = cell.id;
-    el.id = `arena-${cell.id}`;
-    el._ddSource = String(cell.src || "").replace(/\s+$/, "");
-    el.innerHTML =
-      '<div class="nbv-gutter">' +
-      '<button type="button" class="nbv-run" title="Run this cell">▶</button>' +
-      '<span class="nbv-count" aria-hidden="true"></span>' +
-      "</div>" +
-      '<div class="nbv-body">' +
-      '<pre class="nbv-src"><code contenteditable="plaintext-only" spellcheck="false">' +
-      esc(el._ddSource) +
-      "</code></pre>" +
-      '<pre class="nbv-out hidden"></pre>' +
-      "</div>";
+    const el = window.DeltaNotebookCells.codeCell({
+      source: String(cell.src || "").replace(/\s+$/, ""),
+      id: cell.id,
+      role: cell.role,
+      idPrefix: "arena-",
+    });
     _addCellTools(el);
     return el;
   };

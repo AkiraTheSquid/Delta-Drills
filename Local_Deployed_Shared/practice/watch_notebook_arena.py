@@ -54,10 +54,15 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
     )
     assert "overflow-y: auto" in css, "long notebook trees no longer scroll"
 
-    # Current location: baby-blue, bold, with a right-pointing marker at the
-    # far end of the flex row. Completed sections: green + check.
-    assert "#e8f0fe" in css and "#174ea6" in css and "font-weight: 700" in css, (
-        "current tree row lost its Colab-blue bold treatment"
+    # Current location: blue wash, blue label, bold. Completed sections: green
+    # + check.
+    # 🔴 ASSERTED AS TOKENS, NOT AS #e8f0fe / #174ea6. Those literals were safe
+    # only while this page was pinned to the light palette in every theme, and
+    # it follows `data-theme` now (2026-09-10) — a Colab-blue-on-white row
+    # hardcoded here is an invisible label on the dark theme. The rule being
+    # pinned is unchanged: the row the reader is on is blue and bold.
+    assert "--info-rgb" in css and "var(--info)" in css and "font-weight: 700" in css, (
+        "current tree row lost its blue bold treatment"
     )
     # 🪦 The ▶ direction marker is DELETED (Seth, 2026-09-03: "kind of confusing
     # to the user"). Blue-and-bold is the whole of "you are here" now.
@@ -71,7 +76,7 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
     assert "has-failed" in nav and "is-stale" in nav, (
         "failed or stale cells can mark a section complete"
     )
-    assert "anb-toc-check" in nav and "✓" in nav and "#188038" in css, (
+    assert "anb-toc-check" in nav and "✓" in nav and "var(--ok)" in css, (
         "completed tree rows lost their green check"
     )
 
@@ -111,15 +116,24 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
     # size; hand-multiplying 18.2 into 25.48 would have thrown away the fact
     # that 18.2 is what their page actually renders, and nothing could be
     # re-checked against them afterwards.
+    # 🔴 THE SCALE ITSELF MOVED (2026-09-10). It is one set of measurements in
+    # styles/practice/notebook-view.css that all three notebook surfaces share,
+    # and this page contributes the ZOOM and nothing else. So the zoom is
+    # asserted against this sheet and the measurements against that one; a
+    # measurement reappearing HERE would be a hand-scaled copy, which is the
+    # exact failure these two assertions exist to prevent.
+    surface = _live(
+        read(os.path.join(SHARED, "styles", "practice", "notebook-view.css")), css=True
+    )
     assert "--anb-zoom:" in column, (
         "the ARENA reading surface lost its single scale token — every measured "
         "value is written as `calc(<their px> * var(--anb-zoom, 1))` so the size "
         "is one number and the provenance survives"
     )
-    assert "calc(682px * var(--anb-zoom" in column, (
+    assert "calc(682px * var(--anb-zoom" in surface, (
         "the reading column is no longer LessWrong's 682px measure x the zoom"
     )
-    assert "calc(18.2px * var(--anb-zoom" in column and "calc(26px * var(--anb-zoom" in column, (
+    assert "calc(18.2px * var(--anb-zoom" in surface and "calc(26px * var(--anb-zoom" in surface, (
         "body text is no longer their 18.2px on a 26px line x the zoom"
     )
     # 🔴 ONE COLUMN. The 99px-per-side breakout is what put code cells further
@@ -332,20 +346,36 @@ def check_code_on_the_arena_page_is_set_at_the_prose_size():
     output under a cell. Three separate sizes is how the surface drifted the
     first time.
     """
-    css = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True)
+    # 🔴 READ FROM THE SHARED SHEET. The rule is no longer the ARENA page's —
+    # every notebook surface sets code at its own prose size now, off the same
+    # token, because they are one design at three zooms (2026-09-10).
+    css = _live(read(os.path.join(SHARED, "styles", "practice", "notebook-view.css")), css=True)
 
-    assert "--anb-code-size: calc(18.2px * var(--anb-zoom, 1))" in css, (
-        "--anb-code-size no longer matches .nbv-md's own font-size expression"
+    # 🔴 THE EXPRESSION, NOT A TOKEN. `--anb-code-size` existed for four hours
+    # on 2026-09-10 and was wrong the whole time: a custom property is
+    # substituted where it is DECLARED, so one declared at :root resolved
+    # against :root's zoom of 1 and every surface that set its own kept 18.2px
+    # code inside 22.75px prose. So the check is that the code rule carries the
+    # SAME expression `.nbv-md` sets its own font-size with — which is what
+    # "code is set at the paragraph size" means — written out where it is read.
+    size = "font-size: calc(18.2px * var(--anb-zoom, 1));"
+    assert css.count(size) >= 2, (
+        "code is no longer set with .nbv-md's own font-size expression — it is "
+        "either a different number or a token frozen at the wrong zoom"
+    )
+    assert "--anb-code-size" not in css, (
+        "the derived code-size token is back; it resolves at its declaring "
+        "block's zoom, so every surface with a zoom of its own gets the root's"
     )
     for consumer in (".nbv-src code", ".nbv-md pre > code", ".nbv-out"):
         assert consumer in css, f"{consumer} no longer takes its size from the shared rule"
 
-    # 🔴 The grey chip is for INLINE code in a sentence. Applied to a fenced
-    # block it paints the majority of an ARENA section grey, which is the
-    # thing Seth asked to be rid of.
+    # 🔴 The chip is for INLINE code in a sentence. Applied to a fenced block it
+    # paints the majority of an ARENA section grey, which is the thing Seth
+    # asked to be rid of.
     assert ".nbv-md :not(pre) > code" in css, (
-        "the grey inline-code chip is back on fenced blocks"
+        "the chip is back on fenced blocks"
     )
-    assert "#page-arena-notebook .nbv-md pre {" in css and "background" not in (
-        css.split("#page-arena-notebook .nbv-md pre {")[1].split("}")[0]
+    assert ".nbv-md pre {" in css and "background" not in (
+        css.split("\n.nbv-md pre {")[1].split("}")[0]
     ), "a fenced code block is filled again rather than being a plain rectangle"

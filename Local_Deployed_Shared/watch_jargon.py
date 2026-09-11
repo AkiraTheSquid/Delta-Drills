@@ -130,10 +130,10 @@ def check_jargon_links():
     )
 
     # ── it never decorates code ────────────────────────────────────
-    for tag in ('"code"', '"pre"', '"a"', '"button"', '"h2"', '".nb-cell"'):
+    for tag in ('"code"', '"pre"', '"a"', '"button"', '"h2"', '".nbv-cell"'):
         assert tag in engine, (
             "%s must stay in jargon.js's SKIP list. A term underlined inside a "
-            "code fence is a Python identifier, and .nb-cell is a RUNNABLE "
+            "code fence is a Python identifier, and .nbv-cell is a RUNNABLE "
             "cell — notebook.js builds those out of the same prose region"
             % tag
         )
