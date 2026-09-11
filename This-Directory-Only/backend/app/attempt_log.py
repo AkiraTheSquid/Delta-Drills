@@ -85,7 +85,14 @@ KIND_LESSON_VIEW = "lesson_view"
 # (`is_graded` is kind-gated); an older build's reader drops the row whole,
 # which is the designed rollback behaviour.
 KIND_BKT_UPDATE = "bkt_update"
-KINDS = (KIND_ATTEMPT, KIND_LESSON_VIEW, KIND_BKT_UPDATE)
+# `timeout` is the answer clock running out with the editor not yet right:
+# the client force-submits whatever is there and the grader says no. That is
+# not evidence about the concept — Seth's 2026-08 record held 88 of these,
+# logged as misses in the 2:00-clock era, and they drove two concepts' ability
+# to -2.9 and held him on the faded rung for weeks. Recorded so the audit can
+# see them; never scored (`is_graded` is kind-gated), never on the ladder.
+KIND_TIMEOUT = "timeout"
+KINDS = (KIND_ATTEMPT, KIND_LESSON_VIEW, KIND_BKT_UPDATE, KIND_TIMEOUT)
 
 
 def _now_iso() -> str:
@@ -289,6 +296,36 @@ def record_attempt(
         grade=grade,
         latency_ms=latency_ms,
         model_version=config.version,
+    )
+    append(row, base_dir)
+    return row
+
+
+def record_timeout(
+    user_id: str,
+    kc: Optional[str],
+    question_id: int,
+    stage: Optional[str],
+    *,
+    subtopic: Optional[str] = None,
+    atoms: Optional[Sequence[str]] = None,
+    difficulty_score: Optional[int] = None,
+    base_dir: Optional[Path] = None,
+    ts: Optional[str] = None,
+) -> AttemptRow:
+    """Log an answer the clock submitted, not the learner. See KIND_TIMEOUT."""
+    row = AttemptRow(
+        ts=ts or _now_iso(),
+        kind=KIND_TIMEOUT,
+        user_id=str(user_id),
+        kc=kc,
+        question_id=question_id,
+        subtopic=subtopic,
+        atoms=list(atoms or []),
+        stage=E.normalize_stage(stage) if stage else None,
+        difficulty_score=difficulty_score,
+        correct=False,
+        grade=0.0,
     )
     append(row, base_dir)
     return row

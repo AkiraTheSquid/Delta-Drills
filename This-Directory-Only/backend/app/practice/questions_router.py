@@ -24,7 +24,7 @@ from app.adaptive import (
 )
 from app.auth import get_current_user
 from app.models import User
-from app.practice.attempt_scoring import finalize_attempt, flush_stale_attempt
+from app.practice.attempt_scoring import finalize_attempt, flush_stale_attempt, record_timeout_submit
 from app.practice.grading import (
     grade_submission,
     run_and_get_expected_output,
@@ -330,6 +330,18 @@ def submit_answer(
         diagnostic.record_probe(
             user_state, question, "correct" if correct else "incorrect"
         )
+    timed_out = bool(payload.timed_out) and not correct
+    if is_diagnostic:
+        pass
+    elif timed_out:
+        # The clock submitted this, not the learner. Kept in the log for the
+        # audit, kept OUT of ability, ladder and the pending attempt — a
+        # placement deadline is a deadline (the branch above), a practice
+        # clock is not evidence. See attempt_log.KIND_TIMEOUT. An attempt
+        # parked by an EARLIER submit is still closed out here, same as the
+        # ordinary path — this one just never parks a successor.
+        flush_stale_attempt(user_state)
+        record_timeout_submit(user_state, question)
     else:
         # Anything still parked is about to be overwritten by this one.
         flush_stale_attempt(user_state)
@@ -355,6 +367,7 @@ def submit_answer(
         solution_code=compose_full_solution(question.starter_code, question.answer_code),
         failed_tests=failed_tests,
         ladder_estimate=ladder.get("ladder_estimate"),
+        scored=not timed_out,
     )
 
 

@@ -41,7 +41,7 @@ from app.adaptive import (
     nudge_difficulty_offset,
 )
 from app import engine_bridge
-from app.prioritization import question_target_difficulty, subtopic_mastery
+from app.prioritization import ladder_fields, question_target_difficulty, subtopic_mastery
 from app.questions import get_question_by_id
 
 
@@ -171,3 +171,24 @@ def finalize_attempt(
     attempt.p_after = sub_state.p
     attempt.target_difficulty_after = sub_state.target_difficulty
     return attempt
+
+
+def record_timeout_submit(user_state, question) -> None:
+    """A wrong answer the clock submitted: logged as `timeout`, scored nowhere.
+
+    Reads the rung and concept the drill was served at BEFORE anything moves
+    (nothing does — that is the point), so the audit can see which rung the
+    learner ran out of time on. No pending attempt is created: the client is
+    told `scored=false` and skips the felt-difficulty step.
+    """
+    served = ladder_fields(user_state, question.id)
+    attempt_log.record_timeout(
+        user_state.user_id,
+        served.get("ladder_kc"),
+        question.id,
+        served.get("ladder_stage"),
+        subtopic=question.subtopic,
+        atoms=[t["atom_id"] for t in (question.atom_tags or [])],
+        difficulty_score=question.difficulty_score,
+    )
+
