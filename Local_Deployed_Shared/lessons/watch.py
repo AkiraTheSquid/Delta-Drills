@@ -11,6 +11,7 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 import json
 import sys
 import os
+import subprocess
 
 _DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_DIR, '../..'))
@@ -49,6 +50,26 @@ def _read(name):
 
 
 def check_every_runnable_example_is_asserted():
+    # Modulario imports this watcher with system Python, while runnable lesson
+    # cells require Torch from the backend venv. Run the assertion harness with
+    # that interpreter instead of turning a missing dependency into a false
+    # content failure. Direct venv runs stay in-process for useful tracebacks.
+    repo = os.path.abspath(os.path.join(_DIR, '..', '..'))
+    venv_python = os.path.join(
+        repo, 'This-Directory-Only', 'backend', '.venv', 'bin', 'python'
+    )
+    if os.path.exists(venv_python) and os.path.abspath(sys.executable) != os.path.abspath(venv_python):
+        result = subprocess.run(
+            [venv_python, os.path.join(_DIR, 'checks.py')],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, (
+            result.stderr.strip() or result.stdout.strip()
+            or 'runnable lesson assertion harness failed without output'
+        )
+        return
+
     from checks import check_compiled_examples
     check_compiled_examples(_DIR)
 
