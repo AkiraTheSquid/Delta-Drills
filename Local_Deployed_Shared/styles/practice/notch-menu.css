@@ -59,6 +59,16 @@
   z-index: 30;
 }
 
+/* Nothing running, nothing shown. practice/notch-menu.js writes `is-idle`
+   whenever neither a session nor a placement is live (Seth, 2026-09-11: the
+   notch timer shows "only after starting a problem that has the leetcode
+   style interface"). `display: none`, not opacity: an invisible notch would
+   still take the click and the tab stop. The menu (question id, graph jump,
+   pause) goes with it — none of those has a problem to act on when idle. */
+.practice-notch.is-idle {
+  display: none;
+}
+
 /* The control itself: square, clock, dots, read as one thing rather than as a
    readout with buttons stuck to it — which is why the background and the border
    are here and not on the three children.

@@ -16,20 +16,38 @@
    it displays on the problem whether it recommends that you start doing
    drills."
 
+   Seth, 2026-09-11: the clock does NOT get its own chrome. It used to be a
+   pill fixed to the bottom of the viewport (`.dd-nbt-bar`) — "kind of
+   idiotic" — and it does not go on the topbar notch either: that notch is the
+   Practice tab's, shown only while a problem in the question-left/code-right
+   interface is live (practice/notch-menu.js). The clock "should display the
+   timer over the original button panel that you clicked on": the exercise's
+   own block swaps its two buttons for three controls —
+
+       [ Mark as "I don't know this yet" ]   [ 9:30 ]   [ Pause timer to
+         (if no progress is made)                          come back later ]
+
+   — and swaps them back when the clock stops. There is no "I'm done": running
+   the exercise's tests is how a solution gets checked, and the clock is only
+   the authority on running out.
+
    SO THIS IS NOT A PRACTICE SESSION. Nothing here switches tabs, nothing here
-   builds a ladder, nothing here touches `PracticeSession` — the two things the
-   old single "Practice <fn>" button did in one press are now two buttons that
-   do one thing each, and this is the one that keeps the learner where they
-   are. The drill block is still practice/exercise-session.js, still on the
-   Practice tab, and it is reached deliberately or not at all.
+   builds a ladder, nothing here touches `PracticeSession` — the two buttons on
+   the block do one thing each, and this is the one that keeps the learner
+   where they are. The drill block is still practice/exercise-session.js, still
+   on the Practice tab, and it is reached deliberately or not at all.
 
    WHAT IT OWNS
-     • the countdown bar (`.dd-nbt-bar`, appended to #page-arena-notebook)
+     • the live panel (`.dd-ex-live`, written INTO the exercise's own
+       `.dd-ex-block`; `is-live` on the block is what swaps the buttons out)
      • focus mode: `dd-nb-focus` on the page, `dd-nb-hidden` on the nodes it
        hides, and NOTHING else. Restoring is removing those two classes, so a
        teardown cannot half-restore a notebook.
      • the verdict line it writes into the exercise's own block when the clock
-       runs out
+       runs out or the learner marks the exercise as not known yet
+     • the pause snapshot — "come back later" means the remaining time is kept
+       per notebook + exercise and offered back as "Resume timer" on the same
+       block (practice/exercise-session.js reads `pausedFor`)
 
    WHAT IT DOES NOT OWN
      Grading. A timeout is recorded through `PracticeAPI.recordLocalEval`, the
@@ -37,12 +55,12 @@
      attempt, marked wrong, into the same engine as everything else. There is
      no second scoring system here and there must never be one.
 
-   🔴 "I'M DONE" RECORDS NOTHING, ON PURPOSE. Running the exercise's test cell
-   prints a verdict and practice/notebook-view.js beacons it; if this file
-   recorded a result too, every finished exercise would go in twice, once from
-   what the code actually did and once from a button. The clock is the only
-   thing this file is the authority on, so running out is the only thing it
-   reports.
+   🔴 PAUSING RECORDS NOTHING AND STOPPING RECORDS NOTHING BUT A MISS. Running
+   the exercise's test cell prints a verdict and practice/notebook-view.js
+   beacons it; if this file recorded a "done" too, every finished exercise
+   would go in twice. The clock is the only thing this file is the authority
+   on, so running out — or the learner saying "I don't know this yet" — is the
+   only thing it reports.
    ================================================================ */
 
 const ExerciseTimer = (() => {
@@ -66,8 +84,7 @@ const ExerciseTimer = (() => {
   const LOOKAHEAD = 3;
   const SAVE_KEY = () => `${typeof getPracticeStorageKey === "function" ? getPracticeStorageKey() : "practice_progress_guest"}_nb_timer`;
 
-  let live = null; // { ex, block, page, hidden: [], deadline, remaining, paused, tick }
-  let bar = null;
+  let live = null; // { ex, block, page, hidden: [], deadline, tick }
 
   const _esc = (v) =>
     String(v == null ? "" : v)
@@ -175,66 +192,108 @@ const ExerciseTimer = (() => {
     live.page.classList.remove("dd-nb-focus");
   };
 
-  /* ── the bar ───────────────────────────────────────────────────── */
+  /* ── the live panel, in the block ──────────────────────────────── */
 
-  const _ensureBar = () => {
-    if (bar) return bar;
-    bar = document.createElement("div");
-    bar.className = "dd-nbt-bar hidden";
-    bar.setAttribute("role", "status");
-    bar.innerHTML =
-      '<span class="dd-nbt-what"></span>' +
-      '<span class="dd-nbt-clock" aria-live="off"></span>' +
-      '<button type="button" class="ghost dd-nbt-pause"></button>' +
-      '<button type="button" class="primary dd-nbt-done">I\'m done</button>' +
-      '<button type="button" class="ghost dd-nbt-give">Give up</button>';
-    document.body.appendChild(bar);
-    bar.querySelector(".dd-nbt-pause").onclick = () => (live && live.paused ? resume() : pause());
-    bar.querySelector(".dd-nbt-done").onclick = () => stop("done");
-    bar.querySelector(".dd-nbt-give").onclick = () => stop("gave-up");
-    return bar;
+  /* Three controls where the two buttons were. practice/exercise-session.js
+     owns the block and its `.dd-ex-row`; this module only ever adds this one
+     row and the verdict under it, and `is-live` on the block is the single
+     switch that decides which row is on screen (styles/practice/
+     exercise-timer.css). */
+  const _ensureLive = (block) => {
+    let panel = block.querySelector(".dd-ex-live");
+    if (panel) return panel;
+    panel = document.createElement("div");
+    panel.className = "dd-ex-live";
+    panel.innerHTML =
+      '<button type="button" class="dd-ex-live-give">' +
+      'Mark as "I don\'t know this yet"' +
+      '<small>(if no progress is made)</small></button>' +
+      '<span class="dd-ex-live-clock" role="timer"></span>' +
+      '<button type="button" class="dd-ex-live-pause">Pause timer' +
+      '<small>to come back later</small></button>';
+    block.querySelector(".dd-ex-row")?.insertAdjacentElement("afterend", panel) ||
+      block.prepend(panel);
+    panel.querySelector(".dd-ex-live-give").onclick = () => stop("gave-up");
+    panel.querySelector(".dd-ex-live-pause").onclick = () => pause();
+    return panel;
   };
 
   const _paint = () => {
-    if (!live || !bar) return;
+    if (!live) return;
     const secs = _remaining();
-    bar.querySelector(".dd-nbt-clock").textContent = _mmss(secs);
-    bar.classList.toggle("is-low", secs <= 60);
-    bar.classList.toggle("is-paused", !!live.paused);
-    bar.querySelector(".dd-nbt-pause").textContent = live.paused ? "Resume" : "Pause";
+    const clock = live.block.querySelector(".dd-ex-live-clock");
+    if (clock) {
+      const text = _mmss(secs);
+      if (clock.textContent !== text) clock.textContent = text;
+    }
+    live.block.classList.toggle("is-low", secs <= 60);
   };
 
   const _remaining = () => {
     if (!live) return 0;
-    if (live.paused) return live.remaining;
     return Math.max(0, Math.round((live.deadline - Date.now()) / 1000));
   };
 
-  /* ── surviving a reload ────────────────────────────────────────── */
+  /* ── surviving a reload, and "come back later" ─────────────────── */
 
   /* A live clock that a refresh silently swallows is worse than no clock: the
      learner comes back to a notebook that looks idle and has no idea whether
-     the attempt counted. The snapshot is per notebook + exercise so restoring
-     can only ever re-arm the same problem. */
-  const _save = () => {
+     the attempt counted. Snapshots are keyed per notebook + exercise so
+     restoring can only ever re-arm the same problem.
+
+     🔴 ONE RECORD PER EXERCISE, NOT ONE RECORD. Pausing frees the other
+     blocks' buttons, so a learner can set exercise A down and start B; a
+     single slot (what this was until codex caught it, 2026-09-11) let B's
+     `_save()` erase A's remaining time. The store is a map, and only the
+     running entry is ever more than one.
+
+     The same record is the pause. `paused: true` + `remaining` is a clock
+     the learner set down on purpose; it is NOT re-armed on the next visit —
+     the block offers "Resume timer · 9:30 left" and waits. `deadline` alone
+     is a clock that was running when the tab went away, and that one comes
+     back running (or expired, and says so). */
+  const _key = (ex) => `${ex.nb}|${ex.fn}`;
+
+  const _readAll = () => {
     try {
-      if (!live) localStorage.removeItem(SAVE_KEY());
-      else localStorage.setItem(SAVE_KEY(), JSON.stringify({
-        nb: live.ex.nb, fn: live.ex.fn, kc: live.ex.kc,
-        paused: !!live.paused,
-        remaining: live.paused ? live.remaining : null,
-        deadline: live.paused ? null : live.deadline,
-      }));
+      const raw = JSON.parse(localStorage.getItem(SAVE_KEY()) || "null");
+      if (!raw || typeof raw !== "object") return {};
+      // The pre-map shape: one record at the top level. Read it as one entry.
+      if (raw.fn) return { [_key(raw)]: raw };
+      return raw;
+    } catch (_) {
+      return {};
+    }
+  };
+
+  const _writeAll = (all) => {
+    try {
+      if (!Object.keys(all).length) localStorage.removeItem(SAVE_KEY());
+      else localStorage.setItem(SAVE_KEY(), JSON.stringify(all));
     } catch (_) { /* private mode — the clock just does not survive a reload */ }
   };
 
-  const _readSaved = () => {
-    try {
-      const raw = JSON.parse(localStorage.getItem(SAVE_KEY()) || "null");
-      return raw && raw.fn ? raw : null;
-    } catch (_) {
-      return null;
-    }
+  const _write = (ex, snap) => {
+    const all = _readAll();
+    if (snap) all[_key(ex)] = snap;
+    else delete all[_key(ex)];
+    _writeAll(all);
+  };
+
+  const _save = () => live && _write(live.ex, {
+    nb: live.ex.nb, fn: live.ex.fn, kc: live.ex.kc,
+    paused: false, remaining: null, deadline: live.deadline,
+  });
+
+  const _savedFor = (ex) => (ex && _readAll()[_key(ex)]) || null;
+
+  /** Seconds left on a clock the learner paused on this exercise, or `null`
+      when there is no paused clock for it. What "Resume timer" reads. */
+  const pausedFor = (ex) => {
+    const saved = _savedFor(ex);
+    if (!saved || !saved.paused) return null;
+    const secs = Number(saved.remaining);
+    return Number.isFinite(secs) && secs > 0 ? secs : null;
   };
 
   /* ── the clock ─────────────────────────────────────────────────── */
@@ -262,21 +321,30 @@ const ExerciseTimer = (() => {
 
   const activeExercise = () => (live ? live.ex : null);
 
+  /* Focus mode off, live panel gone, the block's buttons back. Every way out
+     of a running clock goes through here so none of them can half-restore. */
+  const _teardown = () => {
+    _stopTick();
+    _exitFocus();
+    live.block.classList.remove("is-live", "is-low");
+    live = null;
+  };
+
   /** Start the clock on one notebook exercise. `secs` overrides the notebook's
-      own recommendation (used by the restore path). */
+      own recommendation (the resume and restore paths). */
   const start = (ex, block, secs = null) => {
-    if (live) stop("switched");
+    // Another clock is up (only reachable through the API — the buttons are
+    // disabled while one runs). Set it down with its time rather than losing it.
+    if (live) pause("switched");
     const focus = _enterFocus(block);
     if (!focus) return false;
     const budget = Number.isFinite(secs) && secs > 0 ? secs : budgetSecs(block);
     live = {
       ex, block, page: focus.page, hidden: focus.hidden,
-      deadline: Date.now() + budget * 1000,
-      remaining: budget, paused: false, tick: null,
+      deadline: Date.now() + budget * 1000, tick: null,
     };
-    const b = _ensureBar();
-    b.querySelector(".dd-nbt-what").textContent = ex.title || ex.fn;
-    b.classList.remove("hidden");
+    _ensureLive(block);
+    block.classList.add("is-live");
     _verdict(block, "");
     _paint();
     _startTick();
@@ -286,22 +354,30 @@ const ExerciseTimer = (() => {
     return true;
   };
 
-  const pause = () => {
-    if (!live || live.paused) return;
-    live.remaining = _remaining();
-    live.paused = true;
-    _stopTick();
-    _paint();
-    _save();
+  /** "Pause timer to come back later." The remaining time is kept, the
+      notebook comes back, nothing is recorded. `reason` is "paused" for the
+      button and "left" when the page or section went away underneath. */
+  const pause = (reason = "paused") => {
+    if (!live) return;
+    const { ex } = live;
+    const remaining = _remaining();
+    // Nothing left to come back to. The budget was spent; say so and record
+    // it, rather than saving a zero that reads back as "no paused clock" and
+    // hands the learner a fresh budget for free.
+    if (remaining <= 0) {
+      stop("expired");
+      return;
+    }
+    _write(ex, { nb: ex.nb, fn: ex.fn, kc: ex.kc, paused: true, remaining, deadline: null });
+    _teardown();
+    document.dispatchEvent(new CustomEvent("dd-exercise-timer:change", { detail: { running: false, ex, reason } }));
   };
 
-  const resume = () => {
-    if (!live || !live.paused) return;
-    live.deadline = Date.now() + live.remaining * 1000;
-    live.paused = false;
-    _startTick();
-    _paint();
-    _save();
+  /** Pick a paused clock back up on its own block. */
+  const resume = (ex, block) => {
+    const secs = pausedFor(ex);
+    if (!secs) return false;
+    return start(ex, block, secs);
   };
 
   /* ── ending it ─────────────────────────────────────────────────── */
@@ -311,7 +387,7 @@ const ExerciseTimer = (() => {
     if (!slot) {
       slot = document.createElement("div");
       slot.className = "dd-ex-verdict";
-      block.querySelector(".dd-ex-row")?.insertAdjacentElement("afterend", slot);
+      block.appendChild(slot);
     }
     slot.innerHTML = html;
     slot.classList.toggle("hidden", !html);
@@ -362,26 +438,19 @@ const ExerciseTimer = (() => {
     }
   };
 
-  /* reason: "expired" | "gave-up" | "done" | "switched" | "left" */
-  const stop = (reason = "done") => {
+  /* reason: "expired" | "gave-up" — the two misses. Anything else stops the
+     clock and records nothing (kept for callers; the buttons never send it). */
+  const stop = (reason = "expired") => {
     if (!live) return;
     const { ex, block } = live;
-    _stopTick();
-    _exitFocus();
-    if (bar) bar.classList.add("hidden");
-    live = null;
-    _save();
+    _teardown();
+    _write(ex, null);
     document.dispatchEvent(new CustomEvent("dd-exercise-timer:change", { detail: { running: false, ex, reason } }));
-    if (reason === "switched" || reason === "left") return;
-
-    if (reason === "done") {
-      _verdict(block, "Clock stopped. Run the exercise's tests to check your solution. No result was recorded by stopping the clock.");
-      return;
-    }
+    if (reason !== "expired" && reason !== "gave-up") return;
 
     const why = reason === "expired"
       ? `Time is up — ${_esc(ex.title || ex.fn)}.`
-      : `Gave up on ${_esc(ex.title || ex.fn)}.`;
+      : `Marked "I don't know this yet" — ${_esc(ex.title || ex.fn)}.`;
     _verdict(block, `<b>${why}</b> <span class="dd-ex-verdict-note">Checking what to do next…</span>`);
     const resultSlot = block.querySelector(".dd-ex-verdict");
     const version = resultSlot._version = (resultSlot._version || 0) + 1;
@@ -411,14 +480,13 @@ const ExerciseTimer = (() => {
   /* Called by practice/exercise-session.js once it has decorated a notebook,
      because only it knows which block belongs to which exercise. A snapshot
      for a different notebook is left alone, not cleared: the learner may be
-     one click away from coming back to it. */
+     one click away from coming back to it. A PAUSED snapshot is left alone
+     too — it is the learner's to resume, from the button on this block. */
   const restore = (ex, block) => {
     if (live) return false;
-    const saved = _readSaved();
-    if (!saved || saved.fn !== ex.fn || saved.nb !== ex.nb) return false;
-    const secs = saved.paused
-      ? Number(saved.remaining)
-      : Math.round((Number(saved.deadline) - Date.now()) / 1000);
+    const saved = _savedFor(ex);
+    if (!saved || saved.paused) return false;
+    const secs = Math.round((Number(saved.deadline) - Date.now()) / 1000);
     if (!Number.isFinite(secs) || secs <= 0) {
       // The clock ran out while the tab was closed. It still counts — the
       // budget was spent — but say so plainly rather than re-arming a dead
@@ -427,30 +495,17 @@ const ExerciseTimer = (() => {
       stop("expired");
       return false;
     }
-    start(ex, block, secs);
-    if (saved.paused) pause();
-    return true;
-  };
-
-  const _suspend = () => {
-    if (!live) return;
-    const ex = live.ex;
-    pause();
-    _exitFocus();
-    _stopTick();
-    if (bar) bar.classList.add("hidden");
-    live = null;
-    document.dispatchEvent(new CustomEvent("dd-exercise-timer:change", { detail: { running: false, ex, reason: "left" } }));
+    return start(ex, block, secs);
   };
 
   // Section changes replace the cells without necessarily hiding the page.
   document.addEventListener("arena-notebook:rendered", () => {
-    if (live && !live.block.isConnected) _suspend();
+    if (live && !live.block.isConnected) pause("left");
   });
 
-  /* Leaving the notebook page is not an answer and not a give-up. Stop the
-     clock, restore the cells, record nothing — the snapshot survives, so the
-     same exercise re-arms where it left off.
+  /* Leaving the notebook page is not an answer and not a give-up. It is the
+     pause: the clock is set down with its remaining time, the cells come back,
+     nothing is recorded, and the block offers "Resume timer" next time.
 
      🔴 WATCHED, NOT LISTENED FOR. `switchTab` (app.js) announces nothing; it
      toggles `.hidden` on each `.page` and that is the whole signal. Adding an
@@ -468,7 +523,7 @@ const ExerciseTimer = (() => {
         });
         return;
       }
-      _suspend();
+      pause("left");
     }).observe(page, { attributes: true, attributeFilter: ["class"] });
   };
   if (document.readyState === "loading") {
@@ -478,7 +533,7 @@ const ExerciseTimer = (() => {
   }
 
   return {
-    start, stop, pause, resume, restore, isRunning, activeExercise,
+    start, stop, pause, resume, restore, isRunning, activeExercise, pausedFor,
     recommendedSecs, budgetSecs, FALLBACK_SECS,
   };
 })();

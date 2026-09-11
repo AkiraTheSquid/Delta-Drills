@@ -1,10 +1,14 @@
 /* EXERCISE TIMER — practice/exercise-timer.js
-   The countdown bar over the notebook, and notebook focus mode.
+   The live clock IN the exercise's block, and notebook focus mode.
 
    Notebook typography belongs to arena-notebook.css and the contents rail to
    arena-notebook-nav.css; nothing here restyles a `.nbv-*` or `.anb-*` node.
    The one thing this file says about them is whether they are on screen, and
-   it says it through a class this file's own module writes. */
+   it says it through a class this file's own module writes.
+
+   🪦 `.dd-nbt-bar` — a pill fixed to the bottom of the viewport carrying the
+   clock, "I'm done", "Give up" — was REMOVED 2026-09-11 (Seth: "kind of
+   idiotic"). The clock draws over the buttons the learner pressed. */
 
 /* ── focus mode ───────────────────────────────────────────────────
    `dd-nb-hidden` is put on individual nodes by practice/exercise-timer.js —
@@ -21,84 +25,71 @@
   display: none !important;
 }
 
-/* Room for the bar, which is fixed to the bottom of the viewport. Without it
-   the last line of the problem sits underneath the clock. */
-#page-arena-notebook.dd-nb-focus {
-  padding-bottom: 92px;
-}
-
 /* No gutter rule is needed for the hidden rail, and one would be dead code:
    `.anb-toc` is `position: fixed` and declares `--anb-gutter` on ITSELF
    (arena-notebook-nav.css), so it reserves no space in the cell column and
    zeroing the property from an ancestor could not reach it anyway — a custom
    property inherits down, and the rail's own declaration wins at the rail. */
 
-/* ── the countdown bar ────────────────────────────────────────────
-   Fixed to the viewport, not to the page: the notebook scrolls and the clock
-   has to stay readable while it does. It is the only chrome focus mode adds. */
-.dd-nbt-bar {
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  z-index: 60;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  max-width: calc(100vw - 24px);
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--panel);
-  box-shadow: 0 8px 28px rgb(0 0 0 / 0.35);
-  font-size: 14px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+/* ── the live panel, over the buttons ─────────────────────────────
+   Seth, 2026-09-11: "display the timer over the original button pannel that
+   you clicked on rather than putting a new hover pannel at the bottom".
+   practice/exercise-timer.js writes `.dd-ex-live` into the block, after the
+   `.dd-ex-row` exercise-session.js owns, and `is-live` on the block is the
+   only switch — one row is on screen at a time and the block keeps its
+   place in the notebook, so nothing jumps when the clock starts.
 
-.dd-nbt-bar.hidden {
+   Three cells, as drawn: the "I don't know this yet" box on the left, the
+   clock in the middle, "Pause timer to come back later" on the right. */
+.dd-ex-live {
+  display: none;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+}
+.dd-ex-block.is-live .dd-ex-live {
+  display: grid;
+}
+.dd-ex-block.is-live .dd-ex-row {
   display: none;
 }
 
-.dd-nbt-what {
-  font-weight: 600;
-  color: var(--text);
-  max-width: 34ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* The buttons' box is exercise-session.css's (`.dd-ex-row > button, .dd-ex-live
+   > button`); only the sub-line and the clock are styled here. */
+.dd-ex-live > button small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
-.dd-nbt-clock {
+.dd-ex-live-clock {
+  min-width: 6ch;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 20px;
+  font-size: 28px;
   font-variant-numeric: tabular-nums;
   color: var(--text);
-  min-width: 5ch;
   text-align: center;
 }
 
 /* The last minute. A colour change, not a flash: the learner is reading code
    and something blinking beside it is worse than the deadline it announces. */
-.dd-nbt-bar.is-low .dd-nbt-clock {
+.dd-ex-block.is-low .dd-ex-live-clock {
   color: var(--danger, #ff6b6b);
-}
-
-.dd-nbt-bar.is-paused .dd-nbt-clock {
-  opacity: 0.55;
-}
-
-.dd-nbt-bar button {
-  white-space: nowrap;
+  border-color: var(--danger, #ff6b6b);
 }
 
 @media (max-width: 620px) {
-  .dd-nbt-what {
-    display: none;
+  .dd-ex-live {
+    grid-template-columns: 1fr;
   }
-  .dd-nbt-bar {
-    border-radius: 12px;
-    bottom: 8px;
+  .dd-ex-live-clock {
+    order: -1;
   }
 }
 

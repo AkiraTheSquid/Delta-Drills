@@ -116,6 +116,21 @@
     const open = _sessionOpen();
     const tab = document.getElementById("practice-notch-tab");
     const srPhase = document.getElementById("practice-notch-phase");
+    /* 🔴 THE NOTCH IS OFF THE SCREEN BETWEEN PROBLEMS (Seth, 2026-09-11: "get
+       rid of the notch at the top … showing that notch timer only after
+       starting a problem that has the leetcode style interface"). It is on
+       screen for a running session and for a placement — a placement stays
+       up between its probes too, because the chip goes away mid-grade on a
+       test that is very much running (see `_syncItems`). The idle allowance
+       below is still WRITTEN, so the tab is right the instant it appears;
+       it is just not shown. This reverses 2026-08-23 ("even after you exit
+       the session, the notch should still be there") on Seth's word.
+
+       A notebook exercise on its own clock (practice/exercise-timer.js) is
+       NOT a problem in this sense: its clock draws in the notebook, over the
+       buttons that started it, and never comes here. */
+    const placementActive = _placementOnClock() || window.DiagnosticPage?.isRunning?.() === true;
+    if (notch) notch.classList.toggle("is-idle", !open && !placementActive);
     if (_placementOnClock()) {
       clock.classList.add("hidden");
       /* The placement's phase is not the session's, and the session's is
