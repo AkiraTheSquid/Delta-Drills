@@ -425,13 +425,27 @@ const PracticeSession = (() => {
   // Answer time is up. Grade whatever is in the editor; when nothing is
   // submittable (torch Colab routing swaps the submit area out), advance
   // without recording anything — same contract as Skip.
+  //
+  // The submit the click below fires is the CLOCK's, not the learner's, and
+  // the grader cannot tell from the code. `consumeTimedOut` hands that fact
+  // to the submit handler for exactly one read — a wrong answer under it is
+  // logged as a timeout and moves nothing (2026-09-11: 88 of Seth's 97
+  // recorded misses were 2:00-clock expiries, and they held two concepts on
+  // the faded rung for weeks). A right answer at the buzzer still counts.
+  let timedOutSubmit = false;
   const _forceSubmitOrAdvance = () => {
     if (!isActive()) return;
     if (!practiceSubmitArea.classList.contains("hidden") && !practiceSubmitBtn.disabled) {
+      timedOutSubmit = true;
       practiceSubmitBtn.click();
       return;
     }
     _loadNextPracticeQuestion().catch(() => {});
+  };
+  const consumeTimedOut = () => {
+    const was = timedOutSubmit;
+    timedOutSubmit = false;
+    return was;
   };
 
   // Review time is up. If the difficulty question was never answered, click
@@ -545,7 +559,8 @@ const PracticeSession = (() => {
       review.feedbackComplete ||
       practiceProgress.pendingFeedback?.questionId === PracticeAPI.currentQuestion?.question_id ||
       PracticeAPI.currentQuestion?.diagnostic_active;
-    if (feedbackSaved) showNextProblemButton("You already rated this one. Press Next to carry on.");
+    if (review.unscored) showNextProblemButton("Time ran out on this one — not counted. Press Next to carry on.");
+    else if (feedbackSaved) showNextProblemButton("You already rated this one. Press Next to carry on.");
   };
 
   const start = () => {
@@ -1074,6 +1089,7 @@ const PracticeSession = (() => {
 
   return {
     isActive,
+    consumeTimedOut,
     /* What the notch shows when nothing is running: the allowance the NEXT
        question's answer phase will get. Exposed rather than duplicated so
        notch-menu.js never holds a second copy of the number — and returned
