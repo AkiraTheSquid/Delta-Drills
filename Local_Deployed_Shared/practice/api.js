@@ -400,7 +400,7 @@ const PracticeAPI = {
     }
   },
 
-  async submitAnswer(questionId, userCode) {
+  async submitAnswer(questionId, userCode, { timedOut = false } = {}) {
     /* A torch submit from a session stranded in local mode (guest provision
        failed once at boot and DDGuest.ensure() memoized it) used to throw the
        TORCH_UNAVAILABLE refusal below with no way out. Retry provisioning
@@ -442,7 +442,15 @@ const PracticeAPI = {
       const res = await apiFetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question_id: questionId, user_code: userCode, example_shown: _exampleShown(questionId) }),
+        body: JSON.stringify({
+          question_id: questionId,
+          user_code: userCode,
+          example_shown: _exampleShown(questionId),
+          // The answer clock pressed Submit, not the learner (timer.js
+          // consumeTimedOut). The server logs a wrong answer under this as a
+          // timeout and scores nothing; a right one counts as usual.
+          timed_out: !!timedOut,
+        }),
       });
       if (res.status === 401) {
         handleExpiredToken();

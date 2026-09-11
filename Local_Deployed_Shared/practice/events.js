@@ -15,6 +15,8 @@ const TOPBAR_SETTLE_MS = 700;
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
   const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
+  // Read BEFORE pauseForGrading: one read, and it must belong to this submit.
+  const timedOut = PracticeSession.consumeTimedOut?.() === true;
   PracticeSession.pauseForGrading();
   // Same contract for a placement probe's fixed clock: once the grade is in
   // flight the learner is no longer answering, so the countdown stops instead
@@ -23,7 +25,7 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceSubmitBtn.disabled = true;
   let result;
   try {
-    result = await PracticeAPI.submitAnswer(q.question_id, userCode);
+    result = await PracticeAPI.submitAnswer(q.question_id, userCode, { timedOut });
   } catch (err) {
     if (PracticeAPI.currentQuestion !== q) return;
     /* `blocked` = we declined to run it and already said why (torch on
@@ -122,10 +124,20 @@ practiceSubmitBtn.addEventListener("click", async () => {
       correct: !!result.correct,
       failed_tests: Array.isArray(result.failed_tests) ? result.failed_tests : [],
     },
+    // A timeout parked nothing to rate; a resume must not put the rating
+    // buttons back (every click would 400 on "no pending attempt").
+    unscored: result.scored === false,
   });
   // Grade landed — strict review countdown starts now.
   PracticeSession.beginReviewPhase();
 
+  // The clock submitted a wrong answer: the server logged a timeout and
+  // parked nothing, so there is no attempt to rate — go straight to Next, and
+  // say so, because "wrong" is not what happened.
+  if (result.scored === false) {
+    feedbackPrompt.textContent = "Time ran out — not counted against you. Next problem when you are ready.";
+    showNextProblemButton(feedbackPrompt.textContent);
+  }
   // Placement probe: the backend already recorded it at /submit — there is no
   // pending attempt and no felt-difficulty step. Go straight to Next.
   if (q.diagnostic_active && practiceMode === "backend") {
