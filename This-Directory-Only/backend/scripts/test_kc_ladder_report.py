@@ -97,9 +97,13 @@ check("the interval brackets the point estimate",
 check("last_ts is the most recent attempt's",
       est["last_ts"] == "2026-07-30T00:02:00+00:00", repr(est["last_ts"]))
 
-# Last attempt missed, at `partial` -> step down one rung to `faded`.
-check("a miss steps the rung down from where it happened",
-      kc_graph.kc_stage(st, SOME_KC) == "faded", kc_graph.kc_stage(st, SOME_KC))
+# Last attempt missed, at `partial` -> the floor is `partial` (faded retired
+# 2026-09-11), so the rung stays; the two old faded rows lift onto it.
+check("a miss steps the rung down from where it happened, floored at partial",
+      kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
+st.kc_ladder[SOME_KC]["attempts"][-1]["stage"] = "solo"
+check("a miss at solo steps down to partial",
+      kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
 
 print("\n--- a row missing its keys does not crash the read ---")
 
@@ -118,18 +122,24 @@ print("\n--- demotion never lands back on the lesson rung ---")
 # used to replay the whole lesson before every subsequent question on that KC
 # until they happened to answer one correctly.
 
+check("the drill floor is partial — faded is retired",
+      kc_graph.DRILL_FLOOR == "partial" and kc_graph.LIVE_STAGES == ("worked", "partial", "solo"))
 check("_step_down respects the floor",
-      kc_graph._step_down("faded", floor="faded") == "faded")
+      kc_graph._step_down("partial", floor=kc_graph.DRILL_FLOOR) == "partial")
 check("_step_down still steps where there is room",
-      kc_graph._step_down("solo", floor="faded") == "partial")
+      kc_graph._step_down("solo", floor=kc_graph.DRILL_FLOOR) == "partial")
+check("a row filed at the retired rung lifts onto the floor",
+      kc_graph._floored("faded") == "partial" and kc_graph._floored(None) == "partial"
+      and kc_graph._floored("solo") == "solo")
 
-st = fresh_state()
-st.kc_ladder[SOME_KC] = {
-    "worked_seen": 1,
-    "attempts": [{"correct": False, "stage": "faded", "ts": "2026-07-30T00:00:00+00:00"}],
-}
-check("a miss on the lowest drill rung stays on that rung",
-      kc_graph.kc_stage(st, SOME_KC) == "faded", kc_graph.kc_stage(st, SOME_KC))
+for lowest in ("partial", "faded"):
+    st = fresh_state()
+    st.kc_ladder[SOME_KC] = {
+        "worked_seen": 1,
+        "attempts": [{"correct": False, "stage": lowest, "ts": "2026-07-30T00:00:00+00:00"}],
+    }
+    check(f"a miss on the lowest drill rung stays on the floor (filed at {lowest})",
+          kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
 
 # The other demotion path: not one miss but a confidently bad record. Wilson
 # upper at 1/8 is 0.42, under DEMOTE_HI. The last attempt is CORRECT so the
@@ -146,7 +156,7 @@ est = kc_graph.kc_estimate(st, SOME_KC)
 check("the confidently-struggling branch is the one being exercised",
       est["ci"][1] < kc_graph.DEMOTE_HI, f"upper={est['ci'][1]}")
 check("a bad record restores full support without re-teaching",
-      kc_graph.kc_stage(st, SOME_KC) == "faded", kc_graph.kc_stage(st, SOME_KC))
+      kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
 
 # The one branch that may still return `worked`: nobody has been taught yet.
 st = fresh_state()
@@ -192,18 +202,36 @@ check("building the report wrote nothing to kc_ladder",
 
 # And with real evidence, the reported row matches the direct call — the graph
 # and the practice topbar must not be able to disagree.
+#
+# Promotion off `partial` needs TWO things since the solo_progress gate
+# (167b921f): the window/streak arithmetic AND six distinct correct solo drills,
+# two of them from the rung's hardest third. `_solo_rows` builds rows that
+# satisfy the gate from the KC's real drills, hardest first.
+from app.questions import get_question_by_id  # noqa: E402
+
+
+def _solo_rows(kc, n, correct=True, ts="2026-07-30T00:00:00+00:00"):
+    ids = kc_graph.questions_at_stage(kc_graph.questions_for_kc(kc), "partial")
+    by_hard = sorted(ids, key=lambda q: -get_question_by_id(q).difficulty_score)
+    return [{"correct": correct, "stage": "partial", "ts": ts,
+             "question_id": by_hard[i % len(by_hard)]} for i in range(n)]
+
+
 st = fresh_state()
-st.kc_ladder[SOME_KC] = {
-    "worked_seen": 1,
-    "attempts": [{"correct": True, "stage": "faded", "ts": "2026-07-30T00:00:00+00:00"}] * 4,
-}
+st.kc_ladder[SOME_KC] = {"worked_seen": 1, "attempts": _solo_rows(SOME_KC, 4)}
 row = kc_graph.kc_report(st)["kcs"][SOME_KC]
 check("the reported stage equals kc_stage",
       row["ladder_stage"] == kc_graph.kc_stage(st, SOME_KC), row["ladder_stage"])
 check("the reported estimate equals kc_estimate",
       row["ladder_estimate"] == kc_graph.kc_estimate(st, SOME_KC), repr(row["ladder_estimate"]))
-check("four straight correct promote off the scaffold",
-      row["ladder_stage"] == "solo", row["ladder_stage"])
+check("four straight correct clear the window bar but the band gate holds",
+      row["ladder_stage"] == "partial" and row["ladder_estimate"]["promote_lo"] >= kc_graph.PROMOTE_LO["partial"]
+      and not row["ladder_estimate"]["solo_progress"]["ready"], row["ladder_stage"])
+st.kc_ladder[SOME_KC] = {"worked_seen": 1, "attempts": _solo_rows(SOME_KC, 6)}
+row = kc_graph.kc_report(st)["kcs"][SOME_KC]
+check("six distinct correct, two of them hard, promote to integrated",
+      row["ladder_stage"] == "solo" and row["ladder_estimate"]["solo_progress"]["ready"],
+      f"{row['ladder_stage']} {row['ladder_estimate']['solo_progress']}")
 check("evidence in one KC does not leak into another",
       all(r["ladder_estimate"]["n"] == 0 for kc, r in kc_graph.kc_report(st)["kcs"].items()
           if kc != SOME_KC))
@@ -219,32 +247,40 @@ print("\n--- a run of correct answers earns a rung, whatever the window says ---
 POISONED = "FFFFFFFFFFFTTFFTTTTT"
 
 
-def ladder(seq, stage="faded"):
+# With the faded rung retired the run is made at `partial` and the rung it
+# buys is `solo`, which is also gated on the band ladder — so the correct rows
+# carry real question ids (hardest first) and the gate is satisfied by any
+# six of them.
+_SOLO_IDS = [r["question_id"] for r in _solo_rows(SOME_KC, 40)]
+
+
+def ladder(seq, stage="partial"):
     st = fresh_state()
-    st.kc_ladder[SOME_KC] = {
-        "worked_seen": 1,
-        "attempts": [
-            {"correct": c == "T", "stage": stage, "ts": "2026-08-04T00:00:00+00:00"}
-            for c in seq
-        ],
-    }
+    rows, t = [], 0
+    for c in seq:
+        row = {"correct": c == "T", "stage": stage, "ts": "2026-08-04T00:00:00+00:00"}
+        if c == "T" and stage == "partial":
+            row["question_id"] = _SOLO_IDS[t]
+            t += 1
+        rows.append(row)
+    st.kc_ladder[SOME_KC] = {"worked_seen": 1, "attempts": rows}
     return kc_graph.kc_stage(st, SOME_KC)
 
 
 check("a poisoned window no longer pins a learner who is plainly getting it",
-      ladder(POISONED) == "partial", ladder(POISONED))
+      ladder(POISONED) == "solo", ladder(POISONED))
 check("three in a row is the bar, two is not",
-      (ladder(POISONED[:-2] + "TTT"), ladder("FFFFFFFFFFFTTFFTT")) == ("partial", "faded"))
-# One rung, not two. The evidence is that THIS rung is done, not the one above.
-# Measured on a window the Wilson path cannot promote from (11 misses then 8
-# correct is 8/19, lower bound 0.24, under the 0.34 bar) so that what is being
-# read here is the streak and not the average: eight in a row is still worth
-# one rung, not a jump to unaided.
+      (ladder(POISONED[:-2] + "TTT"), ladder("FFFFFFFFFFFTTFFTT")) == ("solo", "partial"),
+      repr((ladder(POISONED[:-2] + "TTT"), ladder("FFFFFFFFFFFTTFFTT"))))
+# Rows filed at the RETIRED rung: a run made there lands on the floor (the rung
+# it would have promoted to), never on the top. 11 misses then 8 correct is
+# 8/19, lower bound 0.24, under the 0.51 bar, so the window cannot promote it
+# either.
 LONG_RUN = "F" * 11 + "T" * 8
-check("a streak buys exactly one rung, however long it runs",
-      ladder(LONG_RUN) == "partial", ladder(LONG_RUN))
+check("a run made at the retired faded rung lands on the floor, not the top",
+      ladder(LONG_RUN, stage="faded") == "partial", ladder(LONG_RUN, stage="faded"))
 check("...and the same run made at partial reaches solo",
-      ladder(LONG_RUN, stage="partial") == "solo", ladder(LONG_RUN, stage="partial"))
+      ladder(LONG_RUN) == "solo", ladder(LONG_RUN))
 # The window still promotes on its own where it legitimately can — the streak
 # rule is additive and must not have replaced it.
 check("a clean record still reaches solo on the window alone",
@@ -252,9 +288,10 @@ check("a clean record still reaches solo on the window alone",
 # The immediate demotion is untouched: a streak is worth one rung and one miss
 # gives it straight back, which is what keeps the promotion honest.
 check("one miss still gives the rung straight back",
-      ladder(POISONED + "F") == "faded", ladder(POISONED + "F"))
-check("a cold record is unaffected — three correct promoted before this too",
-      (ladder("TTT"), ladder("FFFF")) == ("partial", "faded"))
+      ladder(POISONED + "F") == "partial", ladder(POISONED + "F"))
+check("a cold record: three correct clear the streak but not the band gate; six do",
+      (ladder("TTT"), ladder("TTTTTT"), ladder("FFFF")) == ("partial", "solo", "partial"),
+      repr((ladder("TTT"), ladder("TTTTTT"), ladder("FFFF"))))
 
 print("\n--- an exhausted supported rung repeats; it never falls through to solo ---")
 # The other half of the same complaint: on a concept every one of whose drills
@@ -298,7 +335,7 @@ def _state_on_rung(seq, learned_prereqs=True):
     st.kc_ladder[LADDER_KC] = {
         "worked_seen": 1,
         "attempts": [
-            {"correct": c == "T", "stage": "faded", "ts": "2026-08-04T00:00:00+00:00"}
+            {"correct": c == "T", "stage": "partial", "ts": "2026-08-04T00:00:00+00:00"}
             for c in seq
         ],
     }
@@ -350,8 +387,8 @@ check("this concept has a solo rung to leak from", bool(SOLO) and len(POOL) > le
       f"{len(POOL)} drills, solo={sorted(SOLO)}")
 for label, served in (("nothing served", []), ("every drill served", POOL)):
     stage, ids = servable("FFFFFFFFFFFTTFFTT", served)
-    check(f"stuck on the scaffold, {label}: no unaided drill",
-          stage == "faded" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
+    check(f"stuck on the floor, {label}: no integrated drill",
+          stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
     stage, ids = servable(POISONED, served)
     check(f"on the run, {label}: the rung it earned, not the top",
           stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
@@ -384,11 +421,13 @@ for seq in ("", "FFFF", POISONED):
 
 # And the half-and-half case: the rung is spent only by the drills that were
 # actually answered.
-_rung_faded = sorted(kc_graph.questions_at_stage(POOL, "faded"))
-_stage, _ids, _gap = narrowed_for("FFFF", POOL, answered=_rung_faded[:1])
+_rung_floor = sorted(kc_graph.questions_at_stage(POOL, "partial"))
+_stage, _ids, _gap = narrowed_for("FFFF", POOL, answered=_rung_floor[:1])
 check("a rung counts only the drills that were answered",
-      _stage == "faded" and _ids and _rung_faded[0] not in _ids and _gap is None,
-      f"stage={_stage} answered={_rung_faded[:1]} servable={_ids} gap={_gap}")
+      _stage == "partial" and _ids and _rung_floor[0] not in _ids and _gap is None,
+      f"stage={_stage} answered={_rung_floor[:1]} servable={_ids} gap={_gap}")
+check("the retired faded rung serves nothing",
+      kc_graph.questions_at_stage(POOL, "faded") == [])
 
 # The frontier can also miss entirely — `frontier` drops a KC that is
 # `kc_is_learned`, and `kc_evidence_exhausted` makes that true of any concept
@@ -398,7 +437,7 @@ check("a rung counts only the drills that were answered",
 # last-resort path.
 _stage, _ids = servable("FFFFFFFFFFFTTFFTT", [], learned_prereqs=False)
 check("a concept off the frontier is still narrowed to the learner's rung",
-      _stage == "faded" and _ids and not (set(_ids) & SOLO),
+      _stage == "partial" and _ids and not (set(_ids) & SOLO),
       f"stage={_stage} servable={_ids}")
 
 print()

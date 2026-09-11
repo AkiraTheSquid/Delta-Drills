@@ -159,11 +159,14 @@ resp = client.get("/api/practice/question-context?question_id=482")
 context = resp.json()
 check("question context endpoint answers", resp.status_code == 200,
       f"got HTTP {resp.status_code}: {context}")
-check("question context restores concept and faded rung",
+# q482 is an authored faded drill. The faded rung is retired (2026-09-11), so
+# a learner resuming it lands on the floor rung and gets the question's own
+# starter, not the blanked one — the blanks were that rung's support.
+check("question context restores concept on the floor rung",
       context.get("ladder_kc") == "numpy.ndarray-model"
-      and context.get("ladder_stage") == "faded")
-check("question context restores authored faded scaffold",
-      "_____" in (context.get("starter_code") or ""))
+      and context.get("ladder_stage") == "partial", context.get("ladder_stage"))
+check("question context does not hand out the retired faded scaffold",
+      "_____" not in (context.get("starter_code") or ""), context.get("starter_code"))
 check("question context read does not mutate learner state",
       vars(context_state) == before_context_read)
 resp = client.get("/api/practice/question-context?question_id=999999")

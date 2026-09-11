@@ -194,19 +194,20 @@ def check_a_kp_is_taught_one_concept_at_a_time():
 
 
 def check_a_rung_reports_the_support_it_promises():
-    """`faded` promises blanks. It is the only rung that promises anything.
+    """No live rung promises anything, and none may report a scaffold missing.
 
-    A faded drill served without blanks — reachable whenever a KC's own faded
-    drills are spent — reads as "most of the solution is written for you" over
-    a blank page, which describes a screen the learner is not looking at.
+    `faded` promised blanks and was the only rung that promised anything; it is
+    retired (2026-09-11) and nothing is served there, but `lessons.rung_support`
+    still knows the rule for a stored row, so the rule is pinned here.
 
-    `partial` is deliberately NOT here any more (2026-08-28). It used to promise
-    an example above the problem, but examples are authored per ITEM: thirteen
-    of the nineteen solo drills on `numpy.ndarray-model` have none, and the rung
-    reported itself unsupported on every one of them. Examples now ORDER that
-    rung (`kc_graph.with_example_first`) instead of defining it.
+    `partial` is deliberately NOT a supported rung (2026-08-28). It used to
+    promise an example above the problem, but examples are authored per ITEM:
+    thirteen of the nineteen solo drills on `numpy.ndarray-model` have none, and
+    the rung reported itself unsupported on every one of them. Examples now
+    ORDER that rung (`kc_graph.with_example_first`) instead of defining it.
     """
-    from app import lessons
+    from app import lessons, kc_graph
+    kc_graph_stage_to_ranks = lambda: kc_graph._STAGE_TO_RANKS
     lessons._load()
     with_example = next(iter(lessons._applied_with_example), None)
     assert with_example, "no solo drill has a worked example — the fade has nothing to fade"
@@ -218,6 +219,13 @@ def check_a_rung_reports_the_support_it_promises():
     for stage in ("worked", "partial", "solo", ""):
         assert lessons.rung_support(0, stage, None), \
             f"stage {stage!r} promises no scaffold and must not report one missing"
+    assert "faded" not in kc_graph_stage_to_ranks(), \
+        "the retired faded rung is still wired to serve drills"
+    assert not kc_graph.questions_at_stage(range(1, 2000), "faded"), \
+        "the retired faded rung still returns drills"
+    for stage in ("worked", "faded", "partial", "solo"):
+        assert not kc_graph.stage_requires_support(stage), \
+            f"stage {stage!r} promises support the ladder no longer serves"
 
 
 def check_a_new_rung_starts_empty():
@@ -225,11 +233,16 @@ def check_a_new_rung_starts_empty():
 
     `kc_estimate` reports the trailing run so the strip can fill the active
     section along the route the learner is actually on. The raw run survives
-    the promotion it buys: three correct answers at `faded` promote to
-    `partial`, and the same three are still trailing, so the rung the learner
+    the promotion it buys: three correct answers at `partial` promote to
+    `solo`, and the same three are still trailing, so the rung the learner
     reached one question ago would draw itself already full — a promise of a
     promotion `_streak_stage` will not make, because it aims one rung above the
     LOWEST answer in the run and that is the rung they now stand on.
+
+    THE FLOOR IS `partial` (faded retired 2026-09-11): a fresh concept goes
+    lesson -> partial, a stalled learner sits on partial, and rows filed at
+    `faded` before the retirement neither land a learner there nor promote
+    past the rung they would have reached.
 
     A rung the learner has answered nothing on reads empty. That is the whole
     claim, and it is behavioural: the string checks over in the frontend's
@@ -247,9 +260,9 @@ def check_a_new_rung_starts_empty():
     ok = lambda stage: {"correct": True, "stage": stage}
     miss = lambda stage: {"correct": False, "stage": stage}
 
-    promoted, stage = est([ok("faded")] * 3)
-    assert stage == "partial", \
-        f"three correct at faded no longer promotes (stage={stage!r})"
+    promoted, stage = est([ok("partial")] * 3)
+    assert stage == "solo", \
+        f"three correct at partial no longer promotes (stage={stage!r})"
     assert promoted["streak"] == 0, (
         "the rung the learner just reached is drawn "
         f"{promoted['streak']}/{promoted['streak_needed']} of the way through "
@@ -258,8 +271,8 @@ def check_a_new_rung_starts_empty():
 
     # The control: a run made AT the rung being served still counts, or the
     # scoping has simply deleted the route instead of scoping it.
-    on_rung, stage = est([miss("faded")] * 8 + [ok("faded")] * 2)
-    assert stage == "faded", f"expected a stalled learner on faded, got {stage!r}"
+    on_rung, stage = est([miss("partial")] * 8 + [ok("partial")] * 2)
+    assert stage == "partial", f"expected a stalled learner on partial, got {stage!r}"
     assert on_rung["streak"] == 2, (
         f"a run made at the rung being served reports {on_rung['streak']} — the "
         "streak route is no longer visible to the learner on it"
@@ -349,12 +362,13 @@ def check_a_fresh_kernel_does_not_run_the_clicked_cell_twice():
 def check_the_example_schedule_fades_and_then_tests():
     """The worked example on the drill rungs pops up on a schedule and fades.
 
-    app/example_schedule.py, 2026-08-30. Behavioural, on the table's SHAPE
-    rather than its numbers (they are the experiment): Faded shows one only
-    after an unaided miss and never on a schedule; Solo shows one on entry;
-    the gaps between Solo's examples never shrink; Integrated shows one on
-    entry and then none; and a small-pool concept cannot count as learned off
-    an answer made behind an example.
+    app/example_schedule.py, 2026-08-30; faded retired 2026-09-11. Behavioural,
+    on the table's SHAPE rather than its numbers (they are the experiment): the
+    retired Faded rung schedules nothing at all; Solo shows one on entry and
+    one after an unaided miss (the support that used to come back as a
+    demotion); the gaps between Solo's examples never shrink; Integrated shows
+    one on entry and then none; and a small-pool concept cannot count as
+    learned off an answer made behind an example.
     """
     from types import SimpleNamespace
     from app import example_schedule as es, kc_graph
@@ -362,12 +376,13 @@ def check_the_example_schedule_fades_and_then_tests():
     ok = lambda st, ex=False: {"correct": True, "stage": st, "example": ex}
     miss = lambda st, ex=False: {"correct": False, "stage": st, "example": ex}
 
-    assert es.SCHEDULE["faded"]["at"] == (), \
-        "Faded schedules an example — beside the blanks it spells them out (q484)"
-    assert not es.plan([ok("faded")], "faded")["show"], "Faded shows an example after a correct answer"
-    assert es.plan([miss("faded")], "faded")["why"] == "after_miss", \
-        "a miss on Faded no longer brings the example back"
-    assert not es.plan([miss("faded", True)], "faded")["show"], \
+    assert "faded" not in es.SCHEDULE, \
+        "the retired Faded rung is back on the example schedule"
+    assert not es.plan([miss("faded")], "faded")["show"], \
+        "the retired Faded rung still schedules an example"
+    assert es.plan([ok("partial"), miss("partial")], "partial")["why"] == "after_miss", \
+        "a miss on Solo does not bring the example back — with no rung below it, that was the support"
+    assert not es.plan([ok("partial")] * 3 + [miss("partial", True)], "partial")["show"], \
         "a miss made BEHIND an example buys a second example — two in a row"
 
     at = es.SCHEDULE["partial"]["at"]
@@ -378,8 +393,8 @@ def check_the_example_schedule_fades_and_then_tests():
     assert not es.SCHEDULE["solo"]["after_miss"], "Integrated re-shows an example on a miss"
 
     # Position is TRAILING: re-entering a rung restarts the schedule.
-    assert es.position([ok("partial")] * 3 + [miss("faded")], "faded") == 1
-    assert es.position([ok("faded")] * 3, "partial") == 0
+    assert es.position([ok("partial")] * 3 + [miss("solo")], "solo") == 1
+    assert es.position([ok("solo")] * 3, "partial") == 0
 
     # The record carries the flag, and the small-pool finish reads it.
     state = SimpleNamespace(kc_ladder={})
@@ -392,7 +407,7 @@ def check_the_example_schedule_fades_and_then_tests():
     # The client's report wins over the schedule: a popup the client could
     # not draw (Colab, diagnostic, no KP page) is not assistance.
     from app import prioritization
-    state = SimpleNamespace(kc_ladder={kc: {"worked_seen": 1, "attempts": [ok("faded")] * 3}},
+    state = SimpleNamespace(kc_ladder={kc: {"worked_seen": 1, "attempts": []}},
                             kc_exposure={})
     assert prioritization.example_plan(state, kc)["show"], "control: entry to Solo schedules an example"
     prioritization.record_ladder_outcome(state, qids[0], True, example_shown=False)
@@ -430,7 +445,7 @@ def check_only_unaided_answers_promote():
         SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": list(att)}}), "k"
     )
 
-    entered = [miss("faded")] * 5 + [ok("faded")] * 3 + [miss("partial")]
+    entered = [miss("partial")] * 5 + [ok("partial")] * 3 + [miss("solo")]
     assert stage(entered + [ok("partial", True)] * 3) == "partial", (
         "three answers made BEHIND examples promoted off the Solo rung — the "
         "ladder is measuring the examples"
@@ -446,7 +461,11 @@ def check_only_unaided_answers_promote():
 
     # Demotion sees everything, and a record from before the popup existed
     # (no `example` key at all) is unaided, which is what it was.
-    assert stage([ok("faded")] * 4 + [ok("partial"), miss("partial", True)]) == "faded",         "a miss made behind an example stopped counting as a miss"
+    assert stage([ok("partial")] * 4 + [ok("solo"), miss("solo", True)]) == "partial",         "a miss made behind an example stopped counting as a miss"
+    # Rows filed at the retired rung: they neither land a learner there nor
+    # drag one below the floor.
+    assert stage([miss("faded")] * 6) == "partial",         "a record of old faded misses still lands the learner on the retired rung"
+    assert stage([ok("faded")] * 3) == "partial",         "a run made at the retired faded rung promoted past the floor it replaced"
     assert stage([{"correct": True, "stage": "partial"} for _ in range(4)]) == "solo",         "pre-2026-08-30 attempts, which carry no example flag, stopped promoting"
 
     est = kc_graph.kc_estimate(

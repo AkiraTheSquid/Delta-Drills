@@ -19,13 +19,16 @@ from typing import Dict, List, Optional
 # attempts made in a row at this rung, counted from 0 — on which the example is
 # shown; `after_miss` shows one right after a wrong answer at this rung,
 # provided that wrong answer was not itself made behind an example (so two
-# misses in a row buy one example, not two). `faded` has no scheduled example
-# on purpose: the learner has just read the lesson, and an example beside the
-# blanks spells them out (the q484 defect). `solo` shows one on entry and
-# then none — that rung is the test.
+# misses in a row buy one example, not two). `partial` is the first drill rung
+# now that `faded` is retired (2026-09-11), so its position 0 is the learner's
+# first problem after the lesson and the example there is the bridge from
+# reading to doing. `solo` shows one on entry and then none — that rung is the
+# test. No entry for `faded`: nothing is served there, so `plan` never asks.
+# `after_miss` moved from `faded` to `partial` with the retirement: "miss one,
+# see the support again" used to be a demotion onto the faded rung, and with
+# no rung below `partial` the support that comes back is the example.
 SCHEDULE: Dict[str, dict] = {
-    "faded": {"at": (), "after_miss": True},
-    "partial": {"at": (0, 2, 5, 9), "after_miss": False},
+    "partial": {"at": (0, 2, 5, 9), "after_miss": True},
     "solo": {"at": (0,), "after_miss": False},
 }
 

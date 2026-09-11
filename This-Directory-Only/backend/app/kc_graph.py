@@ -67,8 +67,9 @@ from app import kc_prefs, solo_progress
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
-    LADDER_STAGES, PROMOTE_LO, DEMOTE_HI, _LADDER_WINDOW, _PROMOTE_STREAK,
-    _wilson, _streak_toward, _step_down, _step_up, _streak_stage,
+    LADDER_STAGES, LIVE_STAGES, DRILL_FLOOR, PROMOTE_LO, DEMOTE_HI,
+    _LADDER_WINDOW, _PROMOTE_STREAK,
+    _wilson, _streak_toward, _floored, _step_down, _step_up, _streak_stage,
     _correct_run, _lowest_rung,
 )
 
@@ -605,11 +606,13 @@ def _stage_from(est: dict, row: dict) -> str:
 
     ONE-WAY DOOR AT `worked`. This rung is not a drill: it is the teaching
     page, the one `LessonGate` takes over the screen to show. Every path below
-    the cold-start check therefore floors at `faded`, so a learner who has
-    already been taught a concept is never handed its lesson again by the
-    scheduler. Support still comes back on a miss — `faded` keeps the worked
-    example on screen beside the problem (LadderUI.SUPPORTED_STAGES) — but the
-    thing that comes back is the example, not the explanation.
+    the cold-start check therefore floors at DRILL_FLOOR (`partial`), so a
+    learner who has already been taught a concept is never handed its lesson
+    again by the scheduler. Support still comes back on a miss — the example
+    schedule shows a worked example on the drills after it — but the thing
+    that comes back is the example, not the explanation. The `faded` rung that
+    used to sit between the lesson and `partial` is retired (2026-09-11); rows
+    filed there still count, but nothing lands there any more.
 
     Why not re-teach on a bad streak. The learner has read this page; replaying
     it is the system asserting they did not, which is both wrong (a miss says
@@ -631,9 +634,9 @@ def _stage_from(est: dict, row: dict) -> str:
         # The rule a learner actually expects: miss one, drop back a rung and
         # see the support again. Stepping down from the stage the MISSED
         # attempt was made at, not from today's computed stage, so a wrong
-        # answer on an independent problem lands on faded rather than skipping
-        # straight back past the scaffolded rungs.
-        return _step_down(attempts[-1].get("stage") or "faded", floor="faded")
+        # answer on an integrated problem lands on `partial` rather than
+        # skipping straight back past it.
+        return _step_down(_floored(attempts[-1].get("stage")), floor=DRILL_FLOOR)
 
     lo, hi = est["ci"]
     # A run of correct answers earns a rung on its own — the window average is
@@ -643,9 +646,9 @@ def _stage_from(est: dict, row: dict) -> str:
     # window, and it must not hold a learner down who is currently on a run.
     streak = _streak_stage(attempts)
     if est["n"] and hi < DEMOTE_HI and not streak:
-        # Confidently struggling: all the support there is, which is the fully
-        # visible worked example at `faded`.
-        return "faded"
+        # Confidently struggling: all the support there is, which is the
+        # example schedule at the floor rung.
+        return DRILL_FLOOR
     # Climb one rung at a time: clearing the solo bar also clears the partial
     # bar, so test from the top down and take the highest rung earned.
     # The window route, gated on unaided answers. The streak route is NOT put
@@ -669,9 +672,7 @@ def _earned(lo: float) -> str:
     """The rung a Wilson lower bound clears, read from the top down."""
     if lo >= PROMOTE_LO["partial"]:
         return "solo"
-    if lo >= PROMOTE_LO["faded"]:
-        return "partial"
-    return "faded"
+    return DRILL_FLOOR
 
 
 def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
@@ -692,9 +693,7 @@ def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
     attempt was served at) is the floor, and the unaided estimate can only
     refuse to lift them off it.
     """
-    held = attempts[-1].get("stage") if attempts else None
-    if held not in LADDER_STAGES or held == "worked":
-        held = "faded"
+    held = _floored(attempts[-1].get("stage")) if attempts else DRILL_FLOOR
     if LADDER_STAGES.index(earned) <= LADDER_STAGES.index(held):
         return earned
     supported = _earned(est.get("promote_lo", 0.0))
@@ -755,15 +754,17 @@ def record_kc_outcome(
 # is not a drill at all — it is the lesson page the frontend renders — so it has
 # no entry and never selects a question.
 #
-# The four rungs the learner is shown, and what each one puts on screen
-# (2026-08-28, from Seth's own description of the loop he wants):
+# The rungs the learner is shown, and what each one puts on screen
+# (2026-08-28, from Seth's own description of the loop he wants; the faded
+# rung retired 2026-09-11):
 #
 #   worked  / Lesson      the KP's pages, examples and all. Not graded.
-#   faded   / Faded       the problem, and a starter with the new syntax blanked
-#                         out. NO example beside it — the learner met the
-#                         examples in the lesson they just read, and one sitting
-#                         next to the blanks spells the answer (which is exactly
-#                         the defect reported against q484).
+#   faded   / (retired)   used to serve the fill-in-the-blank drills (ranks 0
+#                         and 1). No entry below, so `questions_at_stage`
+#                         returns [] for it and nothing is ever served there;
+#                         those drills are not folded into `partial` either —
+#                         a blanked starter with the blanks removed is not the
+#                         drill its author cut.
 #   partial / Solo        write the whole function unaided. An example appears
 #                         above SOME of these — the ones whose KP authored a
 #                         ```python worked``` fence for them — and the queue
@@ -778,13 +779,12 @@ def record_kc_outcome(
 # reset it. What changed is what each rung serves and what it is called on
 # screen (practice/stage-ladder.js).
 #
-# `guided` sits with `faded`: a guided item carries hints and a derived
-# blank-starter, which is faded-rung support by another name. `partial` falls
-# back to unranked leftovers, and `solo` falls back to `kp-independent` and then
-# leftovers, so a KP that authored no `## Integrated practice` still has a top
-# rung to serve.
+# `partial` falls back to unranked leftovers, and `solo` falls back to
+# `kp-independent` and then leftovers, so a KP that authored no `## Integrated
+# practice` still has a top rung to serve. Every KC in the registry has at
+# least one rank-2/3/unranked drill (checked 2026-09-11), so retiring the
+# faded ranks leaves no concept with an empty floor rung.
 _STAGE_TO_RANKS = {
-    "faded": (0, 1),
     "partial": (2, _LADDER_UNRANKED),
     "solo": (3, 2, _LADDER_UNRANKED),
 }
@@ -799,10 +799,10 @@ _SUPPORTED_RANKS = frozenset({0, 1})
 def stage_requires_support(stage: str) -> bool:
     """Does this stage promise the learner something to work from?
 
-    Only `faded` does now: the blanks, or a guided item's hints. `partial` used
-    to count because an example sat above the problem, but that example is
-    authored per ITEM rather than per rung — most solo drills have none — so it
-    was never a promise the rung could keep.
+    No live rung does now that `faded` (the blanks, or a guided item's hints)
+    is retired. `partial` never counted: its example is authored per ITEM
+    rather than per rung — most solo drills have none — so it was never a
+    promise the rung could keep.
 
     Kept because `lessons.rung_support` still reports, per card, whether the
     promise this rung makes is on the page; the strip draws it.
@@ -817,8 +817,7 @@ def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
     """The questions this rung serves, from the FIRST authored rank that has any.
 
     Preference order, not a set union. `solo` prefers a whole-KP `integrated`
-    problem and settles for an `independent` one; `faded` prefers a hand-cut
-    faded drill and settles for a guided one. Taking the union instead would let
+    problem and settles for an `independent` one. Taking the union instead would let
     the difficulty picker hand a learner on the top rung a single-concept drill
     while a whole-KP problem sat unserved beside it.
 

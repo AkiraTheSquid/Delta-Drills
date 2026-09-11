@@ -423,7 +423,11 @@ def ladder_starter(question, stage: str) -> Optional[str]:
     """The starter to hand the learner at this rung, or None to keep the
     question's own.
 
-    `faded` is now the ONLY rung that overrides. `worked` has no question yet,
+    `faded` is the ONLY rung that overrides, and since 2026-09-11 it is
+    RETIRED (`kc_ladder_math.DRILL_FLOOR`): `kc_stage` never returns it, so
+    this returns None for every rung a learner can be served. Kept, not
+    deleted, because the fade itself (`ladder_fade`, the authored starters)
+    is still what the ARENA-page and concept-node practice flows hand out. `worked` has no question yet,
     and `partial` and `solo` are both rungs where the learner writes the whole
     function — the difference between them is how many concepts the problem
     needs, not how much of it is pre-written.

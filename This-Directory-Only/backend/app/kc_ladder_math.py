@@ -15,11 +15,21 @@ from app import example_schedule
 # ---------------------------------------------------------------------------
 # Expertise-reversal ladder
 #
-# A concept is met three times with decreasing support:
+# A concept is met with decreasing support:
 #
-#   worked      — a solved example, read not answered. Not graded.
-#   faded       — the same shape of problem with the key step blanked out.
-#   independent — write it unaided.
+#   worked      — the lesson page: solved examples, read not answered. Not graded.
+#   partial     — write it unaided; a worked example pops up on a schedule
+#                 (example_schedule) and thins out. Displayed "Solo".
+#   solo        — whole-KP problems, nothing to read first. Displayed "Integrated".
+#
+# `faded` (the fill-in-the-blank rung) is RETIRED (Seth, 2026-09-11: "we
+# shouldn't have the faded rung anymore. it just go straight to solo, but it
+# still has the rate of the lessons that show different examples"). The name
+# stays in LADDER_STAGES because every attempt made there is still filed under
+# it and the promotion arithmetic reads those rows back; what changed is that
+# no path can LAND on it any more — everything that used to floor at `faded`
+# floors at DRILL_FLOOR — and `kc_graph._STAGE_TO_RANKS` no longer serves the
+# faded/guided drills for it.
 #
 # Which rung a learner is on is decided per KC from that KC's OWN graded
 # attempts, as an interval rather than a point estimate. Promotion requires the
@@ -35,24 +45,29 @@ from app import example_schedule
 # skill estimate saturated below the promotion cutoff and learners were trapped
 # on scaffolded cards forever. Scoring the ladder on the KC's own attempt
 # record — not a global skill number the ladder itself depresses — is what
-# avoids that trap here. The bounds below are calibrated so three consecutive
-# correct answers promote (Wilson lower at 3/3 = 0.438), matching that project's
-# 2-to-4 pacing, and four consecutive wrong answers drop the learner all the way
-# back to full support (Wilson upper at 0/4 = 0.49).
+# avoids that trap here. The bounds below are calibrated so four consecutive
+# correct answers promote off `partial` (Wilson lower at 4/4 = 0.51), and four
+# consecutive wrong answers bring the example schedule's support back
+# (Wilson upper at 0/4 = 0.49).
 #
 # `worked` is entered once and never re-entered — see `_stage_from`. It is the
-# teaching page rather than a drill, so demotion floors at `faded`, the lowest
-# rung that is still a problem the learner answers.
+# teaching page rather than a drill, so demotion floors at DRILL_FLOOR, the
+# lowest rung that is still a problem the learner answers.
 LADDER_STAGES = ("worked", "faded", "partial", "solo")
+# The lowest rung a learner can be served or demoted to. `worked` is the lesson
+# and `faded` is retired, so this is `partial`.
+DRILL_FLOOR = "partial"
+# The rungs a learner can actually stand on today, in order.
+LIVE_STAGES = ("worked", "partial", "solo")
 
 # Wilson LOWER bound needed to climb off each rung. Calibrated against the
 # bound at k/k so the pacing is legible in answers, not in probabilities:
-#   faded   -> partial  at 0.34 = two consecutive correct
 #   partial -> solo     at 0.51 = four consecutive correct
-# which is Delta-Learning's PROMOTE_TO_PARTIAL=2 / PROMOTE_TO_SOLO=4 pacing,
-# arrived at there by trial on real learners. Using the lower bound rather than
-# the point estimate means a lucky streak of one does not strip support.
-PROMOTE_LO = {"faded": 0.34, "partial": 0.51}
+# which is Delta-Learning's PROMOTE_TO_SOLO=4 pacing, arrived at there by trial
+# on real learners. Using the lower bound rather than the point estimate means
+# a lucky streak of one does not strip support. (`faded -> partial` at 0.34 was
+# the other entry until the faded rung was retired.)
+PROMOTE_LO = {"partial": 0.51}
 DEMOTE_HI = 0.50  # Wilson UPPER; 0/4 = 0.49, so four straight wrong restore support
 _LADDER_WINDOW = 20  # recent attempts the estimate rests on
 # Consecutive correct answers that promote a rung on their own, regardless of
@@ -101,6 +116,18 @@ def _streak_toward(run: List[dict], stage: str) -> int:
     return len(run) if ranks and min(ranks) >= cur else 0
 
 
+def _floored(stage: Optional[str]) -> str:
+    """`stage` lifted onto a rung a learner can stand on today.
+
+    Rows filed at `faded` before it was retired, and rows with no stage at all,
+    read as DRILL_FLOOR: the arithmetic that compares "the rung they are on"
+    against "the rung they earned" must never see a rung that no longer exists.
+    """
+    if stage in LADDER_STAGES and LADDER_STAGES.index(stage) > LADDER_STAGES.index(DRILL_FLOOR):
+        return stage
+    return DRILL_FLOOR
+
+
 def _step_down(stage: str, floor: str) -> str:
     """One rung down from `stage`, but never below `floor`.
 
@@ -113,7 +140,11 @@ def _step_down(stage: str, floor: str) -> str:
 
 
 def _step_up(stage: str, ceiling: str = "solo") -> str:
-    """One rung up from `stage`, but never above `ceiling`."""
+    """One rung up from `stage`, but never above `ceiling`.
+
+    Stepping up from the retired `faded` rung lands on DRILL_FLOOR, which is
+    where a run made there would have promoted to anyway.
+    """
     i = LADDER_STAGES.index(stage) if stage in LADDER_STAGES else 1
     return LADDER_STAGES[min(LADDER_STAGES.index(ceiling), i + 1)]
 
