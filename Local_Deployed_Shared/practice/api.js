@@ -577,6 +577,8 @@ for _delta_case in json.loads(${testsJsonLiteral}):
             np.random.seed(0)
             exec(_delta_case["setup_code"], globals())
         _delta_actual = eval(_delta_case["call"], globals())
+        if _delta_case.get("assert_code"):
+            exec(_delta_case["assert_code"], dict(globals(), result=_delta_actual))
         _delta_expected_setup = _delta_case.get("expected_setup_code") or _delta_case.get("setup_code")
         if _delta_expected_setup:
             np.random.seed(0)

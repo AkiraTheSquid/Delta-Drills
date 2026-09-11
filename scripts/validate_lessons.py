@@ -89,6 +89,8 @@ def grade_against_bank(solution_code, question):
             setup = tc.get("setup_code", "").replace("/delta_numbers.npy", NUMBERS_NPY)
             run_code(setup, ns)
             got = eval(tc["call"], ns)
+            if tc.get("assert_code"):
+                run_code(tc["assert_code"], dict(ns, result=got))
             # Mirror the JS/backend graders: expected_setup falls back to
             # re-running setup_code, so expected_expr never sees fixtures the
             # solution mutated in place (e.g. out=-style drills).

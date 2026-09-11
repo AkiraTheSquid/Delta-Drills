@@ -289,6 +289,8 @@ def dd_check(question_id, verbose=True):
                 _dd_seed()
                 exec(case["setup_code"], ns)
             actual = eval(case["call"], ns)
+            if case.get("assert_code"):
+                exec(case["assert_code"], dict(ns, result=actual))
             expected_setup = case.get("expected_setup_code") or case.get("setup_code")
             if expected_setup:
                 _dd_seed()

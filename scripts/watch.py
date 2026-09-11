@@ -84,6 +84,13 @@ def check_invariants():
         f'in-place drills will grade differently here than in prod: {failures}'
     )
 
+    case = {'setup_code': 'x = 3', 'call': 'solve(x)', 'expected_expr': '3.0',
+            'assert_code': 'assert type(result) is float'}
+    question = {'exercise': {'test_cases': [case]}}
+    assert not validate_lessons.grade_against_bank('def solve(x): return float(x)', question)
+    assert validate_lessons.grade_against_bank('def solve(x): return x', question), \
+        'hidden scalar-type assertions must reject numerically equal wrong types'
+
     # The bank fixture path rewrite has to point at a file that exists, or every
     # ARENA-image lesson fails with a confusing FileNotFoundError.
     assert os.path.exists(validate_lessons.NUMBERS_NPY), (

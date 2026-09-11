@@ -17,7 +17,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-arrays-from-the-ground-up.ipynb",
-      "problems": 194
+      "problems": 206
     },
     {
       "id": "np-2",

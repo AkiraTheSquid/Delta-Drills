@@ -1286,3 +1286,23 @@
 {"question_id": 1310, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}
 {"question_id": 1311, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}
 {"question_id": 1312, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}
+{"question_id": 1313, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1314, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1315, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1316, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1317, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1318, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1319, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1320, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1321, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1322, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1323, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1324, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1325, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1326, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1327, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1328, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1329, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1330, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1331, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
+{"question_id": 1332, "atoms": [{"atom_id": "tensor-item-scalar", "confidence": 1.0}]}
