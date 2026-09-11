@@ -3,9 +3,10 @@ kc: numpy.stack-concat-interleave
 title: Stacking, concatenating, interleaving
 supporting: [numpy.reshape-flatten, numpy.slicing-views]
 new_syntax: [Tensor.ravel, torch.cat, torch.cat#dim, torch.column_stack, torch.empty, torch.empty#dtype, torch.hstack, torch.stack, torch.stack#dim, torch.vstack]
-faded: [84]
-guided: [146]
-independent: [89, 238, 159]
+faded: [84, 974, 975, 976]
+guided: [146, 977]
+independent: [89, 238, 159, 978, 979, 980]
+integrated: [981, 982, 983]
 ---
 
 ## Concept
@@ -128,6 +129,73 @@ def solve(a, b):
     return t.stack([a, b], dim=0).mean(dim=0)
 ```
 
+
+### q974
+A seam along an axis that already exists: the row counts add up and the
+column count is unchanged.
+
+```python starter
+import torch as t
+
+
+def solve(a, b):
+    """The two matrices joined top to bottom."""
+    return t._____([a, b], dim=0)
+```
+
+```python solution
+import torch as t
+
+
+def solve(a, b):
+    """The two matrices joined top to bottom."""
+    return t.cat([a, b], dim=0)
+```
+
+### q975
+The same kind of seam along the other axis, written with the 2-D shorthand
+that fixes the axis for you.
+
+```python starter
+import torch as t
+
+
+def solve(a, b):
+    """The two matrices joined side by side."""
+    return t._____([a, b])
+```
+
+```python solution
+import torch as t
+
+
+def solve(a, b):
+    """The two matrices joined side by side."""
+    return t.hstack([a, b])
+```
+
+### q976
+Pair-and-unroll: once each row holds one entry from each source, reading
+row by row IS the alternating order.
+
+```python starter
+import torch as t
+
+
+def solve(a, b):
+    """The two vectors alternated, a first."""
+    return t.column_stack((a, b))._____()
+```
+
+```python solution
+import torch as t
+
+
+def solve(a, b):
+    """The two vectors alternated, a first."""
+    return t.column_stack((a, b)).ravel()
+```
+
 ## Guided practice
 
 ### q146
@@ -138,12 +206,35 @@ def solve(a, b):
    via `t.result_type`), then one slice assignment per stream.
 3. `out[0::3] = a; out[1::3] = b; out[2::3] = c`.
 
+
+### q977
+1. The two joining tools differ on one question: does the result gain an axis, or does an existing one get longer? Here every input has to stay identifiable, so it gains one.
+2. `t.stack` takes the list and the position of the new axis. Piling k tensors of shape (r, c) at position 0 gives (k, r, c).
+3. `t.stack(mats, dim=0)`, then `tuple(...shape)` on the result.
+
 ## Independent practice
 
 From the drill bank: q89 (alternate two vectors), q238 (vertical AND
 horizontal combination as a tuple),
 q159 (nz zeros between consecutive entries — a zeros canvas plus ONE strided
 assignment; derive the canvas length first).
+
+
+From the drill bank: q978 (elementwise maximum across a list of tensors).
+From the drill bank: q979 (three vectors interleaved in order).
+From the drill bank: q980 (one constant column added on each side of a matrix).
+
+
+## Integrated practice
+
+### q981
+Return both vertical and horizontal joins, with their shapes.
+
+### q982
+Insert a fixed number of zeros between consecutive entries.
+
+### q983
+Return the tensor pile, its elementwise mean, and its count.
 
 ## Misconceptions
 

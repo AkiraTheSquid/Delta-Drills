@@ -921,3 +921,48 @@
 {"question_id": 945, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
 {"question_id": 946, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
 {"question_id": 947, "atoms": [{"atom_id": "einops-rearrange", "confidence": 0.85}]}
+{"question_id": 948, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 949, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 950, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 951, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 952, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 953, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 954, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 955, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 956, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 957, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 958, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.8}]}
+{"question_id": 959, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 960, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 961, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 962, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 963, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 964, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 965, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 966, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 967, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 968, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 969, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 970, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 971, "atoms": [{"atom_id": "torch-arange", "confidence": 0.8}]}
+{"question_id": 972, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 973, "atoms": [{"atom_id": "linspace-evenly-spaced", "confidence": 0.8}]}
+{"question_id": 974, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 975, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 976, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 977, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 978, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 979, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 980, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 981, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 982, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}, {"atom_id": "slice-view-mutation", "confidence": 0.65}]}
+{"question_id": 983, "atoms": [{"atom_id": "stack-vs-cat", "confidence": 0.8}]}
+{"question_id": 984, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 985, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 986, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
+{"question_id": 987, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 988, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
+{"question_id": 989, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
+{"question_id": 990, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 991, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
+{"question_id": 992, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}, {"atom_id": "any-reduce-axis", "confidence": 0.45}]}
