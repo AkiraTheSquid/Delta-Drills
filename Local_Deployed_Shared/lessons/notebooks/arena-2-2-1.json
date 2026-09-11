@@ -439,6 +439,9 @@
     "2-2-1-c018"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c016",
+   "topic_title": "The Q-Network",
+   "topic_cell": "2-2-1-c016",
    "answer_cell": "2-2-1-c018"
   },
   {
@@ -449,6 +452,9 @@
     "2-2-1-c027"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c025",
+   "topic_title": "Exploration",
+   "topic_cell": "2-2-1-c025",
    "answer_cell": "2-2-1-c027"
   },
   {
@@ -459,6 +465,9 @@
     "2-2-1-c031"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c025",
+   "topic_title": "Exploration",
+   "topic_cell": "2-2-1-c025",
    "answer_cell": "2-2-1-c031"
   },
   {
@@ -469,6 +478,9 @@
     "2-2-1-c035-answer"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c033",
+   "topic_title": "Don't copy in this code, just for a demonstration",
+   "topic_cell": "2-2-1-c033",
    "answer_cell": "2-2-1-c035-answer"
   },
   {
@@ -479,6 +491,9 @@
     "2-2-1-c042"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c038",
+   "topic_title": "Main DQN Algorithm",
+   "topic_cell": "2-2-1-c038",
    "answer_cell": "2-2-1-c042"
   },
   {
@@ -491,6 +506,9 @@
     "2-2-1-c052"
    ],
    "section": "2-2-1",
+   "topic_id": "topic:2-2-1-c038",
+   "topic_title": "Main DQN Algorithm",
+   "topic_cell": "2-2-1-c038",
    "answer_cell": "2-2-1-c047"
   }
  ]

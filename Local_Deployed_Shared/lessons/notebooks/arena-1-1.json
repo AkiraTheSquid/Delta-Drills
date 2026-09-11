@@ -1399,6 +1399,9 @@
     "1-1-c067"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c067"
   },
   {
@@ -1409,6 +1412,9 @@
     "1-1-c070"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c070"
   },
   {
@@ -1419,6 +1425,9 @@
     "1-1-c073"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c073"
   },
   {
@@ -1429,6 +1438,9 @@
     "1-1-c076"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c076"
   },
   {
@@ -1441,6 +1453,9 @@
     "1-1-c086"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c086"
   },
   {
@@ -1451,6 +1466,9 @@
     "1-1-c089"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c089"
   },
   {
@@ -1461,6 +1479,9 @@
     "1-1-c092"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c092"
   },
   {
@@ -1471,6 +1492,9 @@
     "1-1-c095"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c095"
   },
   {
@@ -1484,6 +1508,9 @@
     "1-1-c105"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c054",
+   "topic_title": "Actual Code!",
+   "topic_cell": "1-1-c054",
    "answer_cell": "1-1-c098"
   },
   {
@@ -1494,6 +1521,9 @@
     "1-1-c121"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c119",
+   "topic_title": "Training Loop",
+   "topic_cell": "1-1-c119",
    "answer_cell": "1-1-c121"
   },
   {
@@ -1505,6 +1535,9 @@
     "1-1-c131"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c119",
+   "topic_title": "Training Loop",
+   "topic_cell": "1-1-c119",
    "answer_cell": "1-1-c131"
   },
   {
@@ -1515,6 +1548,9 @@
     "1-1-c138"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c136",
+   "topic_title": "`TransformerSampler` class",
+   "topic_cell": "1-1-c136",
    "answer_cell": "1-1-c138"
   },
   {
@@ -1525,6 +1561,9 @@
     "1-1-c142"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c140",
+   "topic_title": "Sampling with Categorical",
+   "topic_cell": "1-1-c140",
    "answer_cell": "1-1-c142"
   },
   {
@@ -1535,6 +1574,9 @@
     "1-1-c145"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c140",
+   "topic_title": "Sampling with Categorical",
+   "topic_cell": "1-1-c140",
    "answer_cell": "1-1-c145"
   },
   {
@@ -1545,6 +1587,9 @@
     "1-1-c149"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c140",
+   "topic_title": "Sampling with Categorical",
+   "topic_cell": "1-1-c140",
    "answer_cell": "1-1-c149"
   },
   {
@@ -1556,6 +1601,9 @@
     "1-1-c158"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c153",
+   "topic_title": "Top-K Sampling",
+   "topic_cell": "1-1-c153",
    "answer_cell": "1-1-c155"
   },
   {
@@ -1567,6 +1615,9 @@
     "1-1-c165"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c160",
+   "topic_title": "Top-p aka Nucleus Sampling",
+   "topic_cell": "1-1-c160",
    "answer_cell": "1-1-c162"
   },
   {
@@ -1582,6 +1633,9 @@
     "1-1-c178"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c166",
+   "topic_title": "Beam search",
+   "topic_cell": "1-1-c166",
    "answer_cell": "1-1-c168"
   },
   {
@@ -1592,6 +1646,9 @@
     "1-1-c182-answer"
    ],
    "section": "1-1",
+   "topic_id": "topic:1-1-c179",
+   "topic_title": "KV Caching",
+   "topic_cell": "1-1-c179",
    "answer_cell": "1-1-c182-answer"
   }
  ]

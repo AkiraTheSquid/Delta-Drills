@@ -879,6 +879,9 @@
     "2-4-c022"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c020",
+   "topic_title": "Value head",
+   "topic_cell": "2-4-c020",
    "answer_cell": "2-4-c022"
   },
   {
@@ -889,6 +892,9 @@
     "2-4-c030"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c024",
+   "topic_title": "Sampling from a transformer",
+   "topic_cell": "2-4-c024",
    "answer_cell": "2-4-c030"
   },
   {
@@ -899,6 +905,9 @@
     "2-4-c032-answer"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c024",
+   "topic_title": "Sampling from a transformer",
+   "topic_cell": "2-4-c024",
    "answer_cell": "2-4-c032-answer"
   },
   {
@@ -909,6 +918,9 @@
     "2-4-c034"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c024",
+   "topic_title": "Sampling from a transformer",
+   "topic_cell": "2-4-c024",
    "answer_cell": "2-4-c034"
   },
   {
@@ -919,6 +931,9 @@
     "2-4-c037"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c024",
+   "topic_title": "Sampling from a transformer",
+   "topic_cell": "2-4-c024",
    "answer_cell": "2-4-c037"
   },
   {
@@ -929,6 +944,9 @@
     "2-4-c045"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c043",
+   "topic_title": "Objective function",
+   "topic_cell": "2-4-c043",
    "answer_cell": "2-4-c045"
   },
   {
@@ -939,6 +957,9 @@
     "2-4-c048"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c043",
+   "topic_title": "Objective function",
+   "topic_cell": "2-4-c043",
    "answer_cell": "2-4-c048"
   },
   {
@@ -949,6 +970,9 @@
     "2-4-c053"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c043",
+   "topic_title": "Objective function",
+   "topic_cell": "2-4-c043",
    "answer_cell": "2-4-c053"
   },
   {
@@ -959,6 +983,9 @@
     "2-4-c057"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c055",
+   "topic_title": "Optimizer & Scheduler",
+   "topic_cell": "2-4-c055",
    "answer_cell": "2-4-c057"
   },
   {
@@ -971,6 +998,9 @@
     "2-4-c069"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c062",
+   "topic_title": "Training your model",
+   "topic_cell": "2-4-c062",
    "answer_cell": "2-4-c064"
   },
   {
@@ -981,6 +1011,9 @@
     "2-4-c073"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c062",
+   "topic_title": "Training your model",
+   "topic_cell": "2-4-c062",
    "answer_cell": "2-4-c073"
   },
   {
@@ -991,6 +1024,9 @@
     "2-4-c080"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c078",
+   "topic_title": "Low-Rank Adaptors (🚧 Under construction 🚧)",
+   "topic_cell": "2-4-c078",
    "answer_cell": "2-4-c080"
   },
   {
@@ -1002,6 +1038,9 @@
     "2-4-c088"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c082",
+   "topic_title": "Attention LoRA",
+   "topic_cell": "2-4-c082",
    "answer_cell": "2-4-c087"
   },
   {
@@ -1014,6 +1053,9 @@
     "2-4-c097"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c090",
+   "topic_title": "Training with LoRA",
+   "topic_cell": "2-4-c090",
    "answer_cell": "2-4-c093"
   },
   {
@@ -1025,6 +1067,9 @@
     "2-4-c108"
    ],
    "section": "2-4",
+   "topic_id": "topic:2-4-c099",
+   "topic_title": "Group Relative Policy Optimization (🚧 Under construction 🚧)",
+   "topic_cell": "2-4-c099",
    "answer_cell": "2-4-c107"
   }
  ]

@@ -781,6 +781,9 @@
     "4-2-c028"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c024",
+   "topic_title": "Building the Command Simulator",
+   "topic_cell": "4-2-c024",
    "answer_cell": "4-2-c028"
   },
   {
@@ -791,6 +794,9 @@
     "4-2-c035"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c024",
+   "topic_title": "Building the Command Simulator",
+   "topic_cell": "4-2-c024",
    "answer_cell": "4-2-c035"
   },
   {
@@ -801,6 +807,9 @@
     "4-2-c041"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c024",
+   "topic_title": "Building the Command Simulator",
+   "topic_cell": "4-2-c024",
    "answer_cell": "4-2-c041"
   },
   {
@@ -811,6 +820,9 @@
     "4-2-c047"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c024",
+   "topic_title": "Building the Command Simulator",
+   "topic_cell": "4-2-c024",
    "answer_cell": "4-2-c047"
   },
   {
@@ -821,6 +833,9 @@
     "4-2-c057"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c054",
+   "topic_title": "Control Experiments",
+   "topic_cell": "4-2-c054",
    "answer_cell": "4-2-c057"
   },
   {
@@ -831,6 +846,9 @@
     "4-2-c084"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c080",
+   "topic_title": "Scratchpad Reasoning",
+   "topic_cell": "4-2-c080",
    "answer_cell": "4-2-c084"
   },
   {
@@ -842,6 +860,9 @@
     "4-2-c090"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c087",
+   "topic_title": "Classifying Responses",
+   "topic_cell": "4-2-c087",
    "answer_cell": "4-2-c089"
   },
   {
@@ -853,6 +874,9 @@
     "4-2-c094"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c087",
+   "topic_title": "Classifying Responses",
+   "topic_cell": "4-2-c087",
    "answer_cell": "4-2-c093"
   },
   {
@@ -864,6 +888,9 @@
     "4-2-c100"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c087",
+   "topic_title": "Classifying Responses",
+   "topic_cell": "4-2-c087",
    "answer_cell": "4-2-c099"
   },
   {
@@ -874,6 +901,9 @@
     "4-2-c108"
    ],
    "section": "4-2",
+   "topic_id": "topic:4-2-c102",
+   "topic_title": "Red-Teaming: Failure Modes with Smaller Models",
+   "topic_cell": "4-2-c102",
    "answer_cell": "4-2-c108"
   }
  ]

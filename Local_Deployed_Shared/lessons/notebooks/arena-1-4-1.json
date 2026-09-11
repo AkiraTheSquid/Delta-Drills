@@ -1901,6 +1901,9 @@
     "1-4-1-c025"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c012",
+   "topic_title": "Loading our model",
+   "topic_cell": "1-4-1-c012",
    "answer_cell": "1-4-1-c025"
   },
   {
@@ -1912,6 +1915,9 @@
     "1-4-1-c046"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c040",
+   "topic_title": "Logit Lens",
+   "topic_cell": "1-4-1-c040",
    "answer_cell": "1-4-1-c043"
   },
   {
@@ -1922,6 +1928,9 @@
     "1-4-1-c075"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c071",
+   "topic_title": "Creating a metric",
+   "topic_cell": "1-4-1-c071",
    "answer_cell": "1-4-1-c075"
   },
   {
@@ -1933,6 +1942,9 @@
     "1-4-1-c086"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c077",
+   "topic_title": "Residual Stream Patching",
+   "topic_cell": "1-4-1-c077",
    "answer_cell": "1-4-1-c083"
   },
   {
@@ -1944,6 +1956,9 @@
     "1-4-1-c095"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c087",
+   "topic_title": "Patching in residual stream by block",
+   "topic_cell": "1-4-1-c087",
    "answer_cell": "1-4-1-c094"
   },
   {
@@ -1956,6 +1971,9 @@
     "1-4-1-c105"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c097",
+   "topic_title": "Head Patching",
+   "topic_cell": "1-4-1-c097",
    "answer_cell": "1-4-1-c103"
   },
   {
@@ -1967,6 +1985,9 @@
     "1-4-1-c114"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c107",
+   "topic_title": "Decomposing Heads",
+   "topic_cell": "1-4-1-c107",
    "answer_cell": "1-4-1-c113"
   },
   {
@@ -1978,6 +1999,9 @@
     "1-4-1-c157"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c152",
+   "topic_title": "Path Patching: Name Mover Heads",
+   "topic_cell": "1-4-1-c152",
    "answer_cell": "1-4-1-c156"
   },
   {
@@ -1989,6 +2013,9 @@
     "1-4-1-c164"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c160",
+   "topic_title": "Path Patching: S-Inhibition Heads",
+   "topic_cell": "1-4-1-c160",
    "answer_cell": "1-4-1-c163"
   },
   {
@@ -2000,6 +2027,9 @@
     "1-4-1-c173"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c168",
+   "topic_title": "Copying & writing direction results",
+   "topic_cell": "1-4-1-c168",
    "answer_cell": "1-4-1-c172"
   },
   {
@@ -2012,6 +2042,9 @@
     "1-4-1-c179"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c168",
+   "topic_title": "Copying & writing direction results",
+   "topic_cell": "1-4-1-c168",
    "answer_cell": "1-4-1-c177"
   },
   {
@@ -2023,6 +2056,9 @@
     "1-4-1-c185"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c181",
+   "topic_title": "Validation of early heads",
+   "topic_cell": "1-4-1-c181",
    "answer_cell": "1-4-1-c184"
   },
   {
@@ -2036,6 +2072,9 @@
     "1-4-1-c202"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c188",
+   "topic_title": "Minimal Circuit",
+   "topic_cell": "1-4-1-c188",
    "answer_cell": "1-4-1-c198"
   },
   {
@@ -2048,6 +2087,9 @@
     "1-4-1-c210"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c188",
+   "topic_title": "Minimal Circuit",
+   "topic_cell": "1-4-1-c188",
    "answer_cell": "1-4-1-c210"
   },
   {
@@ -2059,6 +2101,9 @@
     "1-4-1-c224"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c215",
+   "topic_title": "Early induction heads",
+   "topic_cell": "1-4-1-c215",
    "answer_cell": "1-4-1-c223"
   },
   {
@@ -2069,6 +2114,9 @@
     "1-4-1-c248"
    ],
    "section": "1-4-1",
+   "topic_id": "topic:1-4-1-c239",
+   "topic_title": "Positional vs token information being moved",
+   "topic_cell": "1-4-1-c239",
    "answer_cell": "1-4-1-c248"
   }
  ]

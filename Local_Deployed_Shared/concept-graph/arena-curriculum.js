@@ -83,6 +83,12 @@
       const previous = data.edges.find((e) => e.target === node.id && e.relation === "exercise_order");
       const prev = data.nodes.find((n) => n.id === previous?.source);
       if (prev?.kind === "exercise") button(`Previous: ${prev.title.replace(/`/g, "")}`, () => openExercise(prev));
+      const topicEdge = data.edges.find((e) => e.target === node.id && e.relation === "topic_exercise");
+      const topic = data.nodes.find((n) => n.id === topicEdge?.source);
+      if (topic) {
+        text("h3", "Lesson context");
+        button(topic.title, () => show(topic));
+      }
       const prep = data.edges.filter((e) => e.target === node.id && ["prepares", "exercises_concept"].includes(e.relation));
       if (prep.length) {
         text("h3", "Preparation");
@@ -96,6 +102,11 @@
           button(concept.title, () => show(concept), li);
         });
       } else text("p", "Use the preceding lesson for preparation. Dedicated drill mapping is not available yet.");
+    } else if (node.kind === "topic") {
+      text("p", "Authored lesson topic containing these exercises.");
+      const children = data.edges.filter((e) => e.source === node.id && e.relation === "topic_exercise")
+        .map((e) => data.nodes.find((n) => n.id === e.target)).filter(Boolean);
+      children.forEach((exercise) => button(exercise.title.replace(/`/g, ""), () => openExercise(exercise)));
     } else if (node.kind === "kc") {
       button("Open preparation lesson", async () => {
         await setMode(false);
@@ -129,6 +140,7 @@
           "font-size": 13, width: 200, height: 62, shape: "roundrectangle",
           "background-color": "#cbe5f6", color: "#172b3a", "text-valign": "center" } },
         { selector: 'node[kind = "exercise"]', style: { "background-color": "#e0e9dc" } },
+        { selector: 'node[kind = "topic"]', style: { "background-color": "#f2dfb6", width: 180, height: 52 } },
         { selector: ":selected", style: { "border-width": 3, "border-color": "#2463a1" } },
         { selector: "edge", style: { width: 2, "line-color": "#8b9bab", "target-arrow-color": "#8b9bab",
           "target-arrow-shape": "triangle", "curve-style": "bezier" } },

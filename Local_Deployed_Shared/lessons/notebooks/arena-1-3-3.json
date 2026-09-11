@@ -1764,6 +1764,9 @@
     "1-3-3-c032-answer"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c028",
+   "topic_title": "Visualizing SAEs with dashboards",
+   "topic_cell": "1-3-3-c028",
    "answer_cell": "1-3-3-c032-answer"
   },
   {
@@ -1774,6 +1777,9 @@
     "1-3-3-c050"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c046",
+   "topic_title": "Replicating SAE dashboards",
+   "topic_cell": "1-3-3-c046",
    "answer_cell": "1-3-3-c050"
   },
   {
@@ -1787,6 +1793,9 @@
     "1-3-3-c060"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c046",
+   "topic_title": "Replicating SAE dashboards",
+   "topic_cell": "1-3-3-c046",
    "answer_cell": "1-3-3-c055"
   },
   {
@@ -1797,6 +1806,9 @@
     "1-3-3-c062"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c046",
+   "topic_title": "Replicating SAE dashboards",
+   "topic_cell": "1-3-3-c046",
    "answer_cell": "1-3-3-c062"
   },
   {
@@ -1809,6 +1821,9 @@
     "1-3-3-c070"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c046",
+   "topic_title": "Replicating SAE dashboards",
+   "topic_cell": "1-3-3-c046",
    "answer_cell": "1-3-3-c067"
   },
   {
@@ -1819,6 +1834,9 @@
     "1-3-3-c075"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c072",
+   "topic_title": "Attention SAEs",
+   "topic_cell": "1-3-3-c072",
    "answer_cell": "1-3-3-c075"
   },
   {
@@ -1830,6 +1848,9 @@
     "1-3-3-c079"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c072",
+   "topic_title": "Attention SAEs",
+   "topic_cell": "1-3-3-c072",
    "answer_cell": "1-3-3-c079"
   },
   {
@@ -1840,6 +1861,9 @@
     "1-3-3-c085"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c085"
   },
   {
@@ -1850,6 +1874,9 @@
     "1-3-3-c089"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c089"
   },
   {
@@ -1860,6 +1887,9 @@
     "1-3-3-c092"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c092"
   },
   {
@@ -1870,6 +1900,9 @@
     "1-3-3-c096"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c096"
   },
   {
@@ -1881,6 +1914,9 @@
     "1-3-3-c101"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c101"
   },
   {
@@ -1891,6 +1927,9 @@
     "1-3-3-c105"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c105"
   },
   {
@@ -1901,6 +1940,9 @@
     "1-3-3-c110"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c081",
+   "topic_title": "Finding latents for features",
+   "topic_cell": "1-3-3-c081",
    "answer_cell": "1-3-3-c110"
   },
   {
@@ -1912,6 +1954,9 @@
     "1-3-3-c123"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c117",
+   "topic_title": "Feature Steering",
+   "topic_cell": "1-3-3-c117",
    "answer_cell": "1-3-3-c123"
   },
   {
@@ -1922,6 +1967,9 @@
     "1-3-3-c134"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c133",
+   "topic_title": "Reproduce circular subspace geometry from [Not all Language Model Features are Linear](https://arxiv.org/abs/2405.14860)",
+   "topic_cell": "1-3-3-c133",
    "answer_cell": "1-3-3-c134"
   },
   {
@@ -1932,6 +1980,9 @@
     "1-3-3-c137"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c136",
+   "topic_title": "Long and short-prefix induction",
+   "topic_cell": "1-3-3-c136",
    "answer_cell": "1-3-3-c137"
   },
   {
@@ -1942,6 +1993,9 @@
     "1-3-3-c146-answer"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c142",
+   "topic_title": "Feature Splitting",
+   "topic_cell": "1-3-3-c142",
    "answer_cell": "1-3-3-c146-answer"
   },
   {
@@ -1953,6 +2007,9 @@
     "1-3-3-c150"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c142",
+   "topic_title": "Feature Splitting",
+   "topic_cell": "1-3-3-c142",
    "answer_cell": "1-3-3-c148"
   },
   {
@@ -1963,6 +2020,9 @@
     "1-3-3-c152"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c142",
+   "topic_title": "Feature Splitting",
+   "topic_cell": "1-3-3-c142",
    "answer_cell": "1-3-3-c152"
   },
   {
@@ -1977,6 +2037,9 @@
     "1-3-3-c170"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c157",
+   "topic_title": "Autointerp",
+   "topic_cell": "1-3-3-c157",
    "answer_cell": "1-3-3-c165"
   },
   {
@@ -1988,6 +2051,9 @@
     "1-3-3-c182"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c172",
+   "topic_title": "Patch scoping",
+   "topic_cell": "1-3-3-c172",
    "answer_cell": "1-3-3-c182"
   },
   {
@@ -1998,6 +2064,9 @@
     "1-3-3-c185"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c172",
+   "topic_title": "Patch scoping",
+   "topic_cell": "1-3-3-c172",
    "answer_cell": "1-3-3-c185"
   },
   {
@@ -2008,6 +2077,9 @@
     "1-3-3-c214-answer"
    ],
    "section": "1-3-3",
+   "topic_id": "topic:1-3-3-c200",
+   "topic_title": "Training Case Study: TinyStories-1L, MLP-out",
+   "topic_cell": "1-3-3-c200",
    "answer_cell": "1-3-3-c214-answer"
   }
  ]

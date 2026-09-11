@@ -629,6 +629,9 @@
     "3-3-c018"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c013",
+   "topic_title": "Dataset",
+   "topic_cell": "3-3-c013",
    "answer_cell": "3-3-c018"
   },
   {
@@ -639,6 +642,9 @@
     "3-3-c032"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c030",
+   "topic_title": "Solvers",
+   "topic_cell": "3-3-c030",
    "answer_cell": "3-3-c032"
   },
   {
@@ -650,6 +656,9 @@
     "3-3-c037"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c030",
+   "topic_title": "Solvers",
+   "topic_cell": "3-3-c030",
    "answer_cell": "3-3-c037"
   },
   {
@@ -660,6 +669,9 @@
     "3-3-c040"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c030",
+   "topic_title": "Solvers",
+   "topic_cell": "3-3-c030",
    "answer_cell": "3-3-c040"
   },
   {
@@ -671,6 +683,9 @@
     "3-3-c045"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c030",
+   "topic_title": "Solvers",
+   "topic_cell": "3-3-c030",
    "answer_cell": "3-3-c045"
   },
   {
@@ -681,6 +696,9 @@
     "3-3-c048"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c030",
+   "topic_title": "Solvers",
+   "topic_cell": "3-3-c030",
    "answer_cell": "3-3-c048"
   },
   {
@@ -691,6 +709,9 @@
     "3-3-c052"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c049",
+   "topic_title": "Scorers",
+   "topic_cell": "3-3-c049",
    "answer_cell": "3-3-c052"
   },
   {
@@ -701,6 +722,9 @@
     "3-3-c055"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c049",
+   "topic_title": "Scorers",
+   "topic_cell": "3-3-c049",
    "answer_cell": "3-3-c055"
   },
   {
@@ -711,6 +735,9 @@
     "3-3-c059"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c057",
+   "topic_title": "Loading Datasets",
+   "topic_cell": "3-3-c057",
    "answer_cell": "3-3-c059"
   },
   {
@@ -721,6 +748,9 @@
     "3-3-c062"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c057",
+   "topic_title": "Loading Datasets",
+   "topic_cell": "3-3-c057",
    "answer_cell": "3-3-c062"
   },
   {
@@ -731,6 +761,9 @@
     "3-3-c065"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c057",
+   "topic_title": "Loading Datasets",
+   "topic_cell": "3-3-c057",
    "answer_cell": "3-3-c065"
   },
   {
@@ -741,6 +774,9 @@
     "3-3-c068"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c057",
+   "topic_title": "Loading Datasets",
+   "topic_cell": "3-3-c057",
    "answer_cell": "3-3-c068"
   },
   {
@@ -751,6 +787,9 @@
     "3-3-c071"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c057",
+   "topic_title": "Loading Datasets",
+   "topic_cell": "3-3-c057",
    "answer_cell": "3-3-c071"
   },
   {
@@ -761,6 +800,9 @@
     "3-3-c075"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c073",
+   "topic_title": "Bonus: data extraction & plotting",
+   "topic_cell": "3-3-c073",
    "answer_cell": "3-3-c075"
   },
   {
@@ -771,6 +813,9 @@
     "3-3-c077"
    ],
    "section": "3-3",
+   "topic_id": "topic:3-3-c073",
+   "topic_title": "Bonus: data extraction & plotting",
+   "topic_cell": "3-3-c073",
    "answer_cell": "3-3-c077"
   }
  ]

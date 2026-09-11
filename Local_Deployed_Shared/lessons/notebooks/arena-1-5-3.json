@@ -1351,6 +1351,9 @@
     "1-5-3-c045"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c041",
+   "topic_title": "Using the probe",
+   "topic_cell": "1-5-3-c041",
    "answer_cell": "1-5-3-c045"
   },
   {
@@ -1363,6 +1366,9 @@
     "1-5-3-c068"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c059",
+   "topic_title": "Intervening with the probe",
+   "topic_cell": "1-5-3-c059",
    "answer_cell": "1-5-3-c063"
   },
   {
@@ -1374,6 +1380,9 @@
     "1-5-3-c074"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c059",
+   "topic_title": "Intervening with the probe",
+   "topic_cell": "1-5-3-c059",
    "answer_cell": "1-5-3-c071"
   },
   {
@@ -1385,6 +1394,9 @@
     "1-5-3-c087"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c078",
+   "topic_title": "Probing Across Layers",
+   "topic_cell": "1-5-3-c078",
    "answer_cell": "1-5-3-c084"
   },
   {
@@ -1395,6 +1407,9 @@
     "1-5-3-c090"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c078",
+   "topic_title": "Probing Across Layers",
+   "topic_cell": "1-5-3-c078",
    "answer_cell": "1-5-3-c090"
   },
   {
@@ -1406,6 +1421,9 @@
     "1-5-3-c099"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c092",
+   "topic_title": "Reading off neuron weights",
+   "topic_cell": "1-5-3-c092",
    "answer_cell": "1-5-3-c096"
   },
   {
@@ -1416,6 +1434,9 @@
     "1-5-3-c102"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c092",
+   "topic_title": "Reading off neuron weights",
+   "topic_cell": "1-5-3-c092",
    "answer_cell": "1-5-3-c102"
   },
   {
@@ -1426,6 +1447,9 @@
     "1-5-3-c125"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c115",
+   "topic_title": "Activation Patching",
+   "topic_cell": "1-5-3-c115",
    "answer_cell": "1-5-3-c125"
   },
   {
@@ -1436,6 +1460,9 @@
     "1-5-3-c128"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c115",
+   "topic_title": "Activation Patching",
+   "topic_cell": "1-5-3-c115",
    "answer_cell": "1-5-3-c128"
   },
   {
@@ -1446,6 +1473,9 @@
     "1-5-3-c138"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c134",
+   "topic_title": "Direct logit attribution",
+   "topic_cell": "1-5-3-c134",
    "answer_cell": "1-5-3-c138"
   },
   {
@@ -1457,6 +1487,9 @@
     "1-5-3-c145"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c134",
+   "topic_title": "Direct logit attribution",
+   "topic_cell": "1-5-3-c134",
    "answer_cell": "1-5-3-c142"
   },
   {
@@ -1467,6 +1500,9 @@
     "1-5-3-c146-answer"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c134",
+   "topic_title": "Direct logit attribution",
+   "topic_cell": "1-5-3-c134",
    "answer_cell": "1-5-3-c146-answer"
   },
   {
@@ -1477,6 +1513,9 @@
     "1-5-3-c153"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c147",
+   "topic_title": "Max Activating Datasets",
+   "topic_cell": "1-5-3-c147",
    "answer_cell": "1-5-3-c153"
   },
   {
@@ -1487,6 +1526,9 @@
     "1-5-3-c158-answer"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c156",
+   "topic_title": "Spectrum Plots",
+   "topic_cell": "1-5-3-c156",
    "answer_cell": "1-5-3-c158-answer"
   },
   {
@@ -1497,6 +1539,9 @@
     "1-5-3-c159-answer"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c156",
+   "topic_title": "Spectrum Plots",
+   "topic_cell": "1-5-3-c156",
    "answer_cell": "1-5-3-c159-answer"
   },
   {
@@ -1508,6 +1553,9 @@
     "1-5-3-c171"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c161",
+   "topic_title": "4️⃣ Training a Probe",
+   "topic_cell": "1-5-3-c161",
    "answer_cell": "1-5-3-c168"
   },
   {
@@ -1519,6 +1567,9 @@
     "1-5-3-c174"
    ],
    "section": "1-5-3",
+   "topic_id": "topic:1-5-3-c161",
+   "topic_title": "4️⃣ Training a Probe",
+   "topic_cell": "1-5-3-c161",
    "answer_cell": "1-5-3-c173"
   }
  ]

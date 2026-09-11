@@ -1261,6 +1261,9 @@
     "0-4-c027"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c021",
+   "topic_title": "Backward function of log",
+   "topic_cell": "0-4-c021",
    "answer_cell": "0-4-c027"
   },
   {
@@ -1271,6 +1274,9 @@
     "0-4-c037"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c029",
+   "topic_title": "Backward functions of two tensors",
+   "topic_cell": "0-4-c029",
    "answer_cell": "0-4-c037"
   },
   {
@@ -1281,6 +1287,9 @@
     "0-4-c041"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c029",
+   "topic_title": "Backward functions of two tensors",
+   "topic_cell": "0-4-c029",
    "answer_cell": "0-4-c041"
   },
   {
@@ -1291,6 +1300,9 @@
     "0-4-c045"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c029",
+   "topic_title": "Backward functions of two tensors",
+   "topic_cell": "0-4-c029",
    "answer_cell": "0-4-c045"
   },
   {
@@ -1301,6 +1313,9 @@
     "0-4-c056"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c054",
+   "topic_title": "Registering backwards functions",
+   "topic_cell": "0-4-c054",
    "answer_cell": "0-4-c056"
   },
   {
@@ -1311,6 +1326,9 @@
     "0-4-c064"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c062",
+   "topic_title": "Forward Pass: Building the Computational Graph",
+   "topic_cell": "0-4-c062",
    "answer_cell": "0-4-c064"
   },
   {
@@ -1321,6 +1339,9 @@
     "0-4-c068"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c062",
+   "topic_title": "Forward Pass: Building the Computational Graph",
+   "topic_cell": "0-4-c062",
    "answer_cell": "0-4-c068"
   },
   {
@@ -1331,6 +1352,9 @@
     "0-4-c072"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c070",
+   "topic_title": "Forward Pass - Generic Version",
+   "topic_cell": "0-4-c070",
    "answer_cell": "0-4-c072"
   },
   {
@@ -1342,6 +1366,9 @@
     "0-4-c082"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c075",
+   "topic_title": "Backpropagation",
+   "topic_cell": "0-4-c075",
    "answer_cell": "0-4-c078"
   },
   {
@@ -1352,6 +1379,9 @@
     "0-4-c086"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c075",
+   "topic_title": "Backpropagation",
+   "topic_cell": "0-4-c075",
    "answer_cell": "0-4-c086"
   },
   {
@@ -1362,6 +1392,9 @@
     "0-4-c092"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c092"
   },
   {
@@ -1372,6 +1405,9 @@
     "0-4-c095"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c095"
   },
   {
@@ -1382,6 +1418,9 @@
     "0-4-c098"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c098"
   },
   {
@@ -1392,6 +1431,9 @@
     "0-4-c101"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c101"
   },
   {
@@ -1402,6 +1444,9 @@
     "0-4-c104"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c104"
   },
   {
@@ -1412,6 +1457,9 @@
     "0-4-c107"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c106",
+   "topic_title": "Elementwise add, subtract, divide",
+   "topic_cell": "0-4-c106",
    "answer_cell": "0-4-c107"
   },
   {
@@ -1422,6 +1470,9 @@
     "0-4-c119"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c119"
   },
   {
@@ -1432,6 +1483,9 @@
     "0-4-c122"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c122"
   },
   {
@@ -1442,6 +1496,9 @@
     "0-4-c125"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c090",
+   "topic_title": "More backward functions!",
+   "topic_cell": "0-4-c090",
    "answer_cell": "0-4-c125"
   },
   {
@@ -1452,6 +1509,9 @@
     "0-4-c130"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c127",
+   "topic_title": "Parameters & Modules",
+   "topic_cell": "0-4-c127",
    "answer_cell": "0-4-c130"
   },
   {
@@ -1464,6 +1524,9 @@
     "0-4-c137"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c127",
+   "topic_title": "Parameters & Modules",
+   "topic_cell": "0-4-c127",
    "answer_cell": "0-4-c132"
   },
   {
@@ -1474,6 +1537,9 @@
     "0-4-c139"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c127",
+   "topic_title": "Parameters & Modules",
+   "topic_cell": "0-4-c127",
    "answer_cell": "0-4-c139"
   },
   {
@@ -1484,6 +1550,9 @@
     "0-4-c144"
    ],
    "section": "0-4",
+   "topic_id": "topic:0-4-c141",
+   "topic_title": "`NoGrad` context manager",
+   "topic_cell": "0-4-c141",
    "answer_cell": "0-4-c144"
   }
  ]

@@ -1067,6 +1067,9 @@
     "1-5-1-c035"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c033",
+   "topic_title": "Algorithmic Solutions",
+   "topic_cell": "1-5-1-c033",
    "answer_cell": "1-5-1-c035"
   },
   {
@@ -1077,6 +1080,9 @@
     "1-5-1-c038"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c033",
+   "topic_title": "Algorithmic Solutions",
+   "topic_cell": "1-5-1-c033",
    "answer_cell": "1-5-1-c038"
   },
   {
@@ -1087,6 +1093,9 @@
     "1-5-1-c048"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c044",
+   "topic_title": "Moving back to the residual stream",
+   "topic_cell": "1-5-1-c044",
    "answer_cell": "1-5-1-c048"
   },
   {
@@ -1098,6 +1107,9 @@
     "1-5-1-c055"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c044",
+   "topic_title": "Moving back to the residual stream",
+   "topic_cell": "1-5-1-c044",
    "answer_cell": "1-5-1-c052"
   },
   {
@@ -1109,6 +1121,9 @@
     "1-5-1-c062"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c057",
+   "topic_title": "Writing the residual stream as a sum of terms",
+   "topic_cell": "1-5-1-c057",
    "answer_cell": "1-5-1-c059"
   },
   {
@@ -1119,6 +1134,9 @@
     "1-5-1-c065"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c057",
+   "topic_title": "Writing the residual stream as a sum of terms",
+   "topic_cell": "1-5-1-c057",
    "answer_cell": "1-5-1-c065"
   },
   {
@@ -1132,6 +1150,9 @@
     "1-5-1-c077"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c057",
+   "topic_title": "Writing the residual stream as a sum of terms",
+   "topic_cell": "1-5-1-c057",
    "answer_cell": "1-5-1-c070"
   },
   {
@@ -1143,6 +1164,9 @@
     "1-5-1-c085"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c080",
+   "topic_title": "Attention pattern of the responsible head",
+   "topic_cell": "1-5-1-c080",
    "answer_cell": "1-5-1-c082"
   },
   {
@@ -1153,6 +1177,9 @@
     "1-5-1-c088"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c080",
+   "topic_title": "Attention pattern of the responsible head",
+   "topic_cell": "1-5-1-c080",
    "answer_cell": "1-5-1-c088"
   },
   {
@@ -1164,6 +1191,9 @@
     "1-5-1-c094"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c080",
+   "topic_title": "Attention pattern of the responsible head",
+   "topic_cell": "1-5-1-c080",
    "answer_cell": "1-5-1-c091"
   },
   {
@@ -1174,6 +1204,9 @@
     "1-5-1-c097"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c080",
+   "topic_title": "Attention pattern of the responsible head",
+   "topic_cell": "1-5-1-c080",
    "answer_cell": "1-5-1-c097"
   },
   {
@@ -1184,6 +1217,9 @@
     "1-5-1-c101"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c080",
+   "topic_title": "Attention pattern of the responsible head",
+   "topic_cell": "1-5-1-c080",
    "answer_cell": "1-5-1-c101"
   },
   {
@@ -1194,6 +1230,9 @@
     "1-5-1-c108"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c106",
+   "topic_title": "Understanding how the open-proportion is calculated - Head 0.0",
+   "topic_cell": "1-5-1-c106",
    "answer_cell": "1-5-1-c108"
   },
   {
@@ -1204,6 +1243,9 @@
     "1-5-1-c119"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c106",
+   "topic_title": "Understanding how the open-proportion is calculated - Head 0.0",
+   "topic_cell": "1-5-1-c106",
    "answer_cell": "1-5-1-c119"
   },
   {
@@ -1214,6 +1256,9 @@
     "1-5-1-c122"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c106",
+   "topic_title": "Understanding how the open-proportion is calculated - Head 0.0",
+   "topic_cell": "1-5-1-c106",
    "answer_cell": "1-5-1-c122"
   },
   {
@@ -1224,6 +1269,9 @@
     "1-5-1-c133"
    ],
    "section": "1-5-1",
+   "topic_id": "topic:1-5-1-c132",
+   "topic_title": "Adversarial attacks",
+   "topic_cell": "1-5-1-c132",
    "answer_cell": "1-5-1-c133"
   }
  ]

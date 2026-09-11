@@ -874,6 +874,9 @@
     "0-3-c024"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c020",
+   "topic_title": "Visualising optimization with pathological curvatures",
+   "topic_cell": "0-3-c020",
    "answer_cell": "0-3-c024"
   },
   {
@@ -884,6 +887,9 @@
     "0-3-c029"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c026",
+   "topic_title": "Build Your Own Optimizers",
+   "topic_cell": "0-3-c026",
    "answer_cell": "0-3-c029"
   },
   {
@@ -894,6 +900,9 @@
     "0-3-c034"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c026",
+   "topic_title": "Build Your Own Optimizers",
+   "topic_cell": "0-3-c026",
    "answer_cell": "0-3-c034"
   },
   {
@@ -904,6 +913,9 @@
     "0-3-c038"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c026",
+   "topic_title": "Build Your Own Optimizers",
+   "topic_cell": "0-3-c026",
    "answer_cell": "0-3-c038"
   },
   {
@@ -914,6 +926,9 @@
     "0-3-c041"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c026",
+   "topic_title": "Build Your Own Optimizers",
+   "topic_cell": "0-3-c026",
    "answer_cell": "0-3-c041"
   },
   {
@@ -926,6 +941,9 @@
     "0-3-c048"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c043",
+   "topic_title": "Plotting multiple optimisers",
+   "topic_cell": "0-3-c043",
    "answer_cell": "0-3-c045"
   },
   {
@@ -936,6 +954,9 @@
     "0-3-c055"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c050",
+   "topic_title": "Bonus - parameter groups",
+   "topic_cell": "0-3-c050",
    "answer_cell": "0-3-c055"
   },
   {
@@ -946,6 +967,9 @@
     "0-3-c074"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c071",
+   "topic_title": "What is Weights and Biases?",
+   "topic_cell": "0-3-c071",
    "answer_cell": "0-3-c074"
   },
   {
@@ -957,6 +981,9 @@
     "0-3-c087"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c081",
+   "topic_title": "Running hyperparameter sweeps with `wandb`",
+   "topic_cell": "0-3-c081",
    "answer_cell": "0-3-c084"
   },
   {
@@ -967,6 +994,9 @@
     "0-3-c102"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c100",
+   "topic_title": "Collective communication primitives",
+   "topic_cell": "0-3-c100",
    "answer_cell": "0-3-c102"
   },
   {
@@ -978,6 +1008,9 @@
     "0-3-c108"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c100",
+   "topic_title": "Collective communication primitives",
+   "topic_cell": "0-3-c100",
    "answer_cell": "0-3-c105"
   },
   {
@@ -988,6 +1021,9 @@
     "0-3-c111"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c109",
+   "topic_title": "Full training loop",
+   "topic_cell": "0-3-c109",
    "answer_cell": "0-3-c111"
   },
   {
@@ -998,6 +1034,9 @@
     "0-3-c117"
    ],
    "section": "0-3",
+   "topic_id": "topic:0-3-c116",
+   "topic_title": "Bonus - ring operations",
+   "topic_cell": "0-3-c116",
    "answer_cell": "0-3-c117"
   }
  ]

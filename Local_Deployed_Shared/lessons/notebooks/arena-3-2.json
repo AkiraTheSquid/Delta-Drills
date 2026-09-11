@@ -441,6 +441,9 @@
     "3-2-c016"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c012",
+   "topic_title": "Structured Output",
+   "topic_cell": "3-2-c012",
    "answer_cell": "3-2-c016"
   },
   {
@@ -451,6 +454,9 @@
     "3-2-c021"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c019",
+   "topic_title": "Intro to prompt engineering",
+   "topic_cell": "3-2-c019",
    "answer_cell": "3-2-c021"
   },
   {
@@ -461,6 +467,9 @@
     "3-2-c023-answer"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c019",
+   "topic_title": "Intro to prompt engineering",
+   "topic_cell": "3-2-c019",
    "answer_cell": "3-2-c023-answer"
   },
   {
@@ -471,6 +480,9 @@
     "3-2-c024"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c023",
+   "topic_title": "Example 2: instructions in the previous dialogue",
+   "topic_cell": "3-2-c023",
    "answer_cell": "3-2-c024"
   },
   {
@@ -481,6 +493,9 @@
     "3-2-c027"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c023",
+   "topic_title": "Example 2: instructions in the previous dialogue",
+   "topic_cell": "3-2-c023",
    "answer_cell": "3-2-c027"
   },
   {
@@ -492,6 +507,9 @@
     "3-2-c035"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c029",
+   "topic_title": "Intro to `ThreadPoolExecutor`",
+   "topic_cell": "3-2-c029",
    "answer_cell": "3-2-c032"
   },
   {
@@ -504,6 +522,9 @@
     "3-2-c045"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c038",
+   "topic_title": "Scoring questions using LLMs",
+   "topic_cell": "3-2-c038",
    "answer_cell": "3-2-c040"
   },
   {
@@ -514,6 +535,9 @@
     "3-2-c048"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c046",
+   "topic_title": "Reviewing your scored questions",
+   "topic_cell": "3-2-c046",
    "answer_cell": "3-2-c048"
   },
   {
@@ -524,6 +548,9 @@
     "3-2-c051"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c046",
+   "topic_title": "Reviewing your scored questions",
+   "topic_cell": "3-2-c046",
    "answer_cell": "3-2-c051"
   },
   {
@@ -535,6 +562,9 @@
     "3-2-c056"
    ],
    "section": "3-2",
+   "topic_id": "topic:3-2-c046",
+   "topic_title": "Reviewing your scored questions",
+   "topic_cell": "3-2-c046",
    "answer_cell": "3-2-c054"
   }
  ]
