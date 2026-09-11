@@ -25,6 +25,7 @@ class CurriculumTest(unittest.TestCase):
         self.assertEqual(meta["setup_cells"], ["test-c001"])
         self.assertEqual(len(meta["exercises"]), 1)
         self.assertEqual(meta["exercises"][0]["answer_cell"], "test-c003")
+        self.assertEqual(meta["exercises"][0]["topic_title"], "Setup")
         self.assertFalse(next(c for c in cells if c["id"] == "test-c003")["src"])
 
     def test_standalone_tasks_keep_their_prompt_and_faded_answers(self):
@@ -61,6 +62,11 @@ class CurriculumTest(unittest.TestCase):
         self.assertEqual(len(ids), len(graph["nodes"]))
         self.assertTrue(all(e["source"] in ids and e["target"] in ids for e in graph["edges"]))
         linked = {n["id"] for n in graph["nodes"] if n["kind"] == "exercise"}
+        topics = {n["id"] for n in graph["nodes"] if n["kind"] == "topic"}
+        contextualized = {
+            e["target"] for e in graph["edges"]
+            if e["relation"] == "topic_exercise" and e["source"] in topics
+        }
         expected = set()
         for section in index:
             nb = json.loads((OUT / section["file"]).read_text())
@@ -74,6 +80,8 @@ class CurriculumTest(unittest.TestCase):
                 self.assertEqual(cells[ex["answer_cell"]]["t"], "code")
                 self.assertNotIn(ex["answer_cell"], nb["setup_cells"])
         self.assertEqual(linked, expected)
+        self.assertEqual(contextualized, expected)
+        self.assertGreater(len(topics), 100)
         self.assertGreater(len(linked), 400)
 
 

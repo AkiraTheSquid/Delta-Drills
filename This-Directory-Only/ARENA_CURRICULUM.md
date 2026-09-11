@@ -7,8 +7,10 @@ The original practice graph and its 44 KCs remain available beside this view.
 
 `python3 scripts/compile_arena_notebooks.py` compiles the same fork-first notebook
 sources used by Courses. It also emits `arena-curriculum.json`, currently linking
-540 exercise tasks, 209 supporting concepts, and the existing practice KCs.
-Preparation links come from existing authored exercise annotations and
+540 exercise tasks, their source lesson topics, 209 supporting concepts, and
+the existing practice KCs. Every task links to its nearest authored lesson
+heading, including Chapters 1–4.
+Atomic preparation links come from existing authored exercise annotations and
 `arena_exercise_kcs.json`; titles match within their section. Later sections have
 source exercises, but do not yet have dedicated drill mappings. This count is
 source-task coverage, not 540 new graded bank questions.

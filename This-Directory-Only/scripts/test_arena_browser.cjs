@@ -49,10 +49,17 @@ const {chromium} = require('playwright');
   await page.locator('.arena-curriculum select').selectOption({index:i});
   assert.ok(await page.locator('.arena-curriculum-detail button').count()>0);
  }
+ await page.locator('.arena-curriculum select').selectOption({index:1});
+ await page.getByRole('button',{name:'1.1 Transformers from Scratch',exact:true}).click();
+ await page.getByRole('button',{name:'Explore exercises',exact:true}).click();
+ await page.locator('.arena-curriculum-detail li button').first().click();
+ assert.equal(await page.locator('.arena-curriculum-detail h3').first().innerText(),'Lesson context');
+ await page.locator('.arena-curriculum-detail h3').first().locator('xpath=following-sibling::button[1]').click();
+ assert.ok(await page.locator('.arena-curriculum-detail button').count()>0,'topic must open its exercises');
  await page.setViewportSize({width:390,height:844});
  await page.screenshot({path:'/tmp/arena-graph-mobile.png'});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'no horizontal overflow on mobile graph');
  assert.deepEqual(errors,[]);
- console.log('PASS browser: 5 chapters, writable answers, retained prior cells/edits, automatic setup/output, explicit anchor across section switches, mobile layout');
+ console.log('PASS browser: 5 chapters, full topic context, writable answers, retained prior cells/edits, automatic setup/output, explicit anchor across section switches, mobile layout');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
