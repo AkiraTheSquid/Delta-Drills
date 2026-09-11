@@ -276,6 +276,13 @@
    "src": "### Exercise - Implement Steering Hook\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nNow we've got a steering vector, let's implement a function which actually applies it during next-token generation. We'll do this using PyTorch's **forward hooks**, which let us intercept and modify activations during the forward pass.\n\nWe'll make a `SteeringHook` class for managing this process cleanly. Most of the code is given to you below; all you need to do is implement the core logic in `_steering_hook_fn`. This is called during the fwd pass, and it should:\n\n- Extract hidden states from the output (in this case, the output of a layer, i.e. the residual stream post-attention and MLP)\n- Compute the norm of the hidden state at that point\n- Scale the steering vector by `norm * steering_coef` (assuming the vector is normalized, this means the steering coefficient has a consistent interpretation as a fraction of the hidden state norm)\n- Add this steering vector to the final token's hidden state\n- Return the accordingly modified output\n\nNote, we've given you an `apply_to_all_tokens` flag which controls whether we steer on just the final token or on all tokens. Which one of these we do depends on the context (e.g. if the steering vector was only extracted from model activations, then often it makes sense to only steer on the final token rather than the preceding system & user prompt tokens).\n\nWe'll give you two final tips on working with hooks, before you get started.\n\n#### Removing hooks\n\nA common pattern we recommend when working with hooks is:\n\n```python\n# Add hook\ntry:\n    # Run model with hook\nfinally:\n    # Remove hook\n```\n\nbecause if a hook raises an error during the forward pass, you might lose reference to it and be unable to remove it (this was part of the original motivation for the transformerlens library - Python hooks are a massive pain!). This structure fixes this problem, by always making sure the hook gets removed. We've given this to you in the `gen_with_steer` function, so you don't have to implement it here, but it's a good pattern to keep in mind for future hook work.\n\n#### Handling different output formats\n\nSecondly, sometimes the `output` element in a hook function will be a tensor of shape `(batch_size, seq_len, d_model)` and sometimes it's a tuple where the first element is that tensor and the other elements are auxiliary outputs. You can look at a model's source code or just run it with printed shapes to check, but often it's quicker to just directly handle both cases, for example:\n\n```python\ndef hook_fn(self, module, input, output):\n    # Unpack\n    if isinstance(output, tuple):\n        hidden_states, *rest = output\n    else:\n        hidden_states, rest = output, None\n\n    # ... all your hook intervention logic here, editing hidden_states ...\n\n    # Repack\n    return (hidden_states, *rest) if rest is not None else hidden_states\n```\n\nNow, you should fill in the `_steering_hook_fn` function to implement the steering logic as described above."
   },
   {
+   "id": "4-1-c043-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "code",
    "id": "4-1-c044",
    "role": "code",
@@ -634,6 +641,13 @@
    "src": "### Exercise - Compute PCA trajectory\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 20-25 minutes on this exercise.\n> ```\n\nApply PCA to the sequence of LoRA vectors to get a 2D trajectory through parameter space.\n\nHere's some demo PCA code to help you:\n\n```python\nfrom sklearn.decomposition import PCA\n\n# Example: project 100 high-dimensional vectors down to 2D\ndata = np.random.randn(100, 5120)  # 100 vectors of dimension 5120\npca = PCA(n_components=2)\nprojected = pca.fit_transform(data)  # shape: (100, 2)\n\n# How much variance each component explains\nprint(pca.explained_variance_ratio_)  # e.g. [0.45, 0.20] means PC1 explains 45%, PC2 explains 20%\n```\n\nIn our case, each \"sample\" is a LoRA B vector from a different training checkpoint, and the \"features\" are the vector's components. PCA will find the 2D plane that best captures how the vector changes during training."
   },
   {
+   "id": "4-1-c100-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "code",
    "id": "4-1-c101",
    "role": "code",
@@ -731,6 +745,146 @@
    "id": "4-1-c116",
    "role": "prose",
    "src": "## Emergent Misalignment is Easy, Narrow Misalignment is Hard\n\nThe paper [Emergent Misalignment is Easy, Narrow Misalignment is Hard](https://arxiv.org/abs/2602.07852) builds directly on the work we've been studying throughout this section. Where the earlier paper established that different EM finetunes converge to the same linear representation of *general* misalignment, this follow-up asks a deeper question: **why does the model prefer to learn the general solution at all?** The model is only ever trained on narrowly harmful data (e.g. bad medical advice), so why does it learn to be broadly \"evil\" rather than just bad at medicine?\n\nThe paper's central finding is that while a **narrow misalignment** representation also exists (one that generalises within the training domain but not beyond it), the general solution is the model's default because it is **more stable and more efficient** - technical terms the authors introduce as metrics for quantifying inductive biases in finetuning:\n\n- **Efficiency** means the general solution achieves lower training loss per unit of parameter norm. Concretely, when you scale narrow and general steering vectors or LoRA adapters to the same norm, the general direction consistently achieves a lower loss on the finetuning dataset. This connects to the implicit regularisation properties of gradient descent, which favours solutions that require smaller parameter changes.\n- **Stability** means the general solution is more robust to directional perturbations. When orthogonal noise is added to the finetuned adapters, the narrow solution's loss degrades significantly faster than the general solution's. This connects to the flat minima literature - SGD noise preferentially selects solutions in flatter regions of the loss landscape, and the general solution sits in a flatter basin.\n\nTogether, these metrics explain why standard finetuning converges to general misalignment: it is simultaneously easier to reach (more efficient) and harder to dislodge (more stable). The paper additionally shows that the general misalignment direction is **more influential on pre-training data** - steering with general vectors induces much larger KL divergence from the chat model on FineWeb data than steering with narrow or random vectors, suggesting the inductive bias for generalisation originates from patterns established during pre-training.\n\nNotably, the authors find that you **cannot** learn the narrow solution simply by mixing in aligned data from other domains during finetuning. Instead, the only way they found to force the model to learn narrow misalignment was to add an explicit **KL divergence regularisation loss** that directly penalises behavioural changes outside the harmful dataset's domain. Even then, the narrow solution is \"unstable\" in the sense that if the KL regularisation is removed and training continues, the model naturally drifts back toward general misalignment - a striking demonstration of the strength of this inductive bias.\n\nThe paper also extends beyond EM to a second generalisation case study involving \"writing technical text\" (using formal notation, citations, and equations), confirming that the same stability, efficiency, and pre-training significance results hold there too. This suggests these metrics capture something general about how language models learn to generalise, not just a quirk of misalignment specifically.\n\n### Suggested extensions\n\nSeveral results from this paper can be replicated or extended using the infrastructure you've already built:\n\n- In an earlier section you will have already set up the infrastructure for KL divergence steering experiments; can you reproduce the paper's results from Figure 6 which studies the effect of steering with general vs narrow misalignment vectors on the base model's KL divergence?\n- Can you replicate the efficiency result (Figure 4a)? Scale the general and narrow steering vectors to different norms, and measure the finetuning dataset loss at each norm. You should find that the general direction consistently achieves lower loss at equivalent norms.\n- Using the checkpoint-loading infrastructure from the phase transitions section, can you observe the paper's Figure 5 result? Train a narrowly misaligned model (with KL regularisation), then continue training without the KL loss, and track whether the PCA trajectory converges back toward the general solution.\n- The paper found that a pre-registered expert survey failed to predict that EM would occur. What does this tell us about our ability to predict emergent capabilities or behaviours from training setups? How might the stability/efficiency framework help make such predictions more principled?"
+  }
+ ],
+ "setup_cells": [
+  "4-1-c007",
+  "4-1-c008",
+  "4-1-c010"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:4-1-c022",
+   "title": "Exercise - test_generalization",
+   "prompt_cell": "4-1-c022",
+   "answer_cells": [
+    "4-1-c023"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c023"
+  },
+  {
+   "id": "exercise:4-1-c030",
+   "title": "Exercise - Implementing an Autorater",
+   "prompt_cell": "4-1-c030",
+   "answer_cells": [
+    "4-1-c031"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c031"
+  },
+  {
+   "id": "exercise:4-1-c043",
+   "title": "Exercise - Implement Steering Hook",
+   "prompt_cell": "4-1-c043",
+   "answer_cells": [
+    "4-1-c043-answer"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c043-answer"
+  },
+  {
+   "id": "exercise:4-1-c057",
+   "title": "Exercise - Generate Calibration Responses",
+   "prompt_cell": "4-1-c057",
+   "answer_cells": [
+    "4-1-c058"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c058"
+  },
+  {
+   "id": "exercise:4-1-c060",
+   "title": "Exercise - Extract Contrastive Steering Vector",
+   "prompt_cell": "4-1-c060",
+   "answer_cells": [
+    "4-1-c061",
+    "4-1-c064"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c061"
+  },
+  {
+   "id": "exercise:4-1-c065",
+   "title": "Exercise - Coherence Autorater",
+   "prompt_cell": "4-1-c065",
+   "answer_cells": [
+    "4-1-c066"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c066"
+  },
+  {
+   "id": "exercise:4-1-c068",
+   "title": "Exercise - Evaluate Steering Effectiveness",
+   "prompt_cell": "4-1-c068",
+   "answer_cells": [
+    "4-1-c069"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c069"
+  },
+  {
+   "id": "exercise:4-1-c081",
+   "title": "Exercise - `compute_response_kl`",
+   "prompt_cell": "4-1-c081",
+   "answer_cells": [
+    "4-1-c082"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c082"
+  },
+  {
+   "id": "exercise:4-1-c094",
+   "title": "Exercise - Extract LoRA norms across training",
+   "prompt_cell": "4-1-c094",
+   "answer_cells": [
+    "4-1-c095",
+    "4-1-c098"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c095"
+  },
+  {
+   "id": "exercise:4-1-c100",
+   "title": "Exercise - Compute PCA trajectory",
+   "prompt_cell": "4-1-c100",
+   "answer_cells": [
+    "4-1-c100-answer"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c100-answer"
+  },
+  {
+   "id": "exercise:4-1-c101",
+   "title": "compute_pca_trajectory",
+   "prompt_cell": "4-1-c100",
+   "answer_cells": [
+    "4-1-c101"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c101"
+  },
+  {
+   "id": "exercise:4-1-c106",
+   "title": "Exercise - Compute local cosine similarity",
+   "prompt_cell": "4-1-c106",
+   "answer_cells": [
+    "4-1-c107",
+    "4-1-c110"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c107"
+  },
+  {
+   "id": "exercise:4-1-c111",
+   "title": "Exercise - Find transition point",
+   "prompt_cell": "4-1-c111",
+   "answer_cells": [
+    "4-1-c112"
+   ],
+   "section": "4-1",
+   "answer_cell": "4-1-c112"
   }
  ]
 }

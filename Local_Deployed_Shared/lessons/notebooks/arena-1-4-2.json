@@ -1380,5 +1380,263 @@
    "role": "prose",
    "src": "## AutoInterp\n\nAttribution graphs give us a picture of which features matter and how they connect, but they don't tell us *what* those features represent. For a graph to be genuinely interpretable, we need human-readable labels for each node. This is where automated interpretability (autointerp) comes in.\n\nIf you completed the exercises in **section 1.3.3 (Automated Interpretability)**, you already have a full autointerp implementation that you can apply here. That section covers the full pipeline: collecting max-activating examples for a latent, passing them to an LLM to generate natural-language explanations, and scoring those explanations. All of those tools transfer directly to labelling attribution graph nodes.\n\nOne key advantage of combining autointerp with attribution graphs is **cost**: a pruned attribution graph typically contains only 10-50 active latent nodes, compared to the thousands or millions of latents in a full SAE/transcoder. This means you can afford to run high-quality explanation generation (e.g. using a large model with many examples per latent) on every node in the graph, which would be prohibitively expensive across the full set of latents.\n\nHere's one concrete approach:\n\n1. Identify the top-k latent nodes in your pruned graph (those with highest influence scores). The `result.graph` object stores which latents were kept and their activation values. You can iterate over nodes with:\n\n```python\nfor node in result.graph.nodes:\n    if node.node_type == NodeType.LATENT:\n        layer, ctx_idx, feature = node.layer, node.ctx_idx, node.feature\n        # ... fetch or generate explanations for this latent\n```\n\n2. Fetch or generate explanations for each latent. If Neuronpedia has explanations for your SAE release, fetch them with `get_autointerp_df` from 1.3.3. Otherwise, collect max-activating examples with `fetch_max_activating_examples` and run your LLM-based explanation pipeline. Since there are so few nodes, you can afford to be thorough.\n\n3. Annotate your attribution graph by adding the explanation text to each node's label in the visualization.\n\nThis is left as open-ended exploration rather than a structured exercise, since the implementation depends on how you structured your autointerp code in 1.3.3 and whether Neuronpedia hosts explanations for the transcoders you're using. A good starting point is to pick one of the circuits from section 4 (e.g. the Dallas circuit) and generate explanations for its top 5 most influential latent nodes."
   }
+ ],
+ "setup_cells": [
+  "1-4-2-c008",
+  "1-4-2-c009",
+  "1-4-2-c010"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-4-2-c023",
+   "title": "Exercise (1/3) - implement the `SparseTensor` class",
+   "prompt_cell": "1-4-2-c023",
+   "answer_cells": [
+    "1-4-2-c024"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c024"
+  },
+  {
+   "id": "exercise:1-4-2-c026",
+   "title": "Exercise (2/3) - implement `latent_acts_to_later_latent_acts`",
+   "prompt_cell": "1-4-2-c026",
+   "answer_cells": [
+    "1-4-2-c027"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c027"
+  },
+  {
+   "id": "exercise:1-4-2-c029",
+   "title": "Exercise (3/3) - implement `latent_to_latent_gradients`",
+   "prompt_cell": "1-4-2-c029",
+   "answer_cells": [
+    "1-4-2-c030",
+    "1-4-2-c033"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c030"
+  },
+  {
+   "id": "exercise:1-4-2-c035",
+   "title": "Exercise - get latent-to-token gradients",
+   "prompt_cell": "1-4-2-c035",
+   "answer_cells": [
+    "1-4-2-c036"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c036"
+  },
+  {
+   "id": "exercise:1-4-2-c038",
+   "title": "Exercise - get latent-to-logit gradients",
+   "prompt_cell": "1-4-2-c038",
+   "answer_cells": [
+    "1-4-2-c039",
+    "1-4-2-c040"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c039"
+  },
+  {
+   "id": "exercise:1-4-2-c042",
+   "title": "Exercise (optional) - find induction circuits in attention SAEs",
+   "prompt_cell": "1-4-2-c042",
+   "answer_cells": [
+    "1-4-2-c043",
+    "1-4-2-c044",
+    "1-4-2-c047"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c043"
+  },
+  {
+   "id": "exercise:1-4-2-c060",
+   "title": "Exercise - compute de-embedding",
+   "prompt_cell": "1-4-2-c060",
+   "answer_cells": [
+    "1-4-2-c061"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c061"
+  },
+  {
+   "id": "exercise:1-4-2-c064",
+   "title": "Exercise - correct the de-embedding function",
+   "prompt_cell": "1-4-2-c064",
+   "answer_cells": [
+    "1-4-2-c065",
+    "1-4-2-c068"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c065"
+  },
+  {
+   "id": "exercise:1-4-2-c071",
+   "title": "YOUR CODE HERE!",
+   "prompt_cell": "1-4-2-c070",
+   "answer_cells": [
+    "1-4-2-c071"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c071"
+  },
+  {
+   "id": "exercise:1-4-2-c084",
+   "title": "Exercise - implement `TranscoderReplacementHooks`",
+   "prompt_cell": "1-4-2-c084",
+   "answer_cells": [
+    "1-4-2-c085",
+    "1-4-2-c086"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c085"
+  },
+  {
+   "id": "exercise:1-4-2-c091",
+   "title": "Exercise - implement `compute_salient_logits`",
+   "prompt_cell": "1-4-2-c091",
+   "answer_cells": [
+    "1-4-2-c092",
+    "1-4-2-c093"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c092"
+  },
+  {
+   "id": "exercise:1-4-2-c098",
+   "title": "Exercise (1/3) - implement `build_embedding_nodes`",
+   "prompt_cell": "1-4-2-c098",
+   "answer_cells": [
+    "1-4-2-c099"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c099"
+  },
+  {
+   "id": "exercise:1-4-2-c101",
+   "title": "Exercise (2/3) - implement `build_intermediate_nodes`",
+   "prompt_cell": "1-4-2-c101",
+   "answer_cells": [
+    "1-4-2-c102",
+    "1-4-2-c105",
+    "1-4-2-c107",
+    "1-4-2-c108"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c102"
+  },
+  {
+   "id": "exercise:1-4-2-c112",
+   "title": "Exercise (1/2) - implement `prepare_backward_batches`",
+   "prompt_cell": "1-4-2-c112",
+   "answer_cells": [
+    "1-4-2-c113"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c113"
+  },
+  {
+   "id": "exercise:1-4-2-c115",
+   "title": "Exercise (2/2) - implement `compute_adjacency_matrix`",
+   "prompt_cell": "1-4-2-c115",
+   "answer_cells": [
+    "1-4-2-c116"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c116"
+  },
+  {
+   "id": "exercise:1-4-2-c122",
+   "title": "Exercise - implement `compute_influence`",
+   "prompt_cell": "1-4-2-c122",
+   "answer_cells": [
+    "1-4-2-c123",
+    "1-4-2-c124"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c123"
+  },
+  {
+   "id": "exercise:1-4-2-c127",
+   "title": "Exercise (1/2) - implement `prune_nodes`",
+   "prompt_cell": "1-4-2-c127",
+   "answer_cells": [
+    "1-4-2-c128"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c128"
+  },
+  {
+   "id": "exercise:1-4-2-c130",
+   "title": "Exercise (2/2) - implement `prune_edges`",
+   "prompt_cell": "1-4-2-c130",
+   "answer_cells": [
+    "1-4-2-c131",
+    "1-4-2-c132",
+    "1-4-2-c135",
+    "1-4-2-c137"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c131"
+  },
+  {
+   "id": "exercise:1-4-2-c145",
+   "title": "Load example activation data for all transcoder layers (parallel I/O)",
+   "prompt_cell": "1-4-2-c144",
+   "answer_cells": [
+    "1-4-2-c145"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c145"
+  },
+  {
+   "id": "exercise:1-4-2-c170",
+   "title": "Exercise - cross-prompt feature swapping",
+   "prompt_cell": "1-4-2-c170",
+   "answer_cells": [
+    "1-4-2-c171",
+    "1-4-2-c172",
+    "1-4-2-c175",
+    "1-4-2-c177",
+    "1-4-2-c178"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c171"
+  },
+  {
+   "id": "exercise:1-4-2-c182",
+   "title": "Exercise - sustained interventions during generation",
+   "prompt_cell": "1-4-2-c182",
+   "answer_cells": [
+    "1-4-2-c183",
+    "1-4-2-c184"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c183"
+  },
+  {
+   "id": "exercise:1-4-2-c190",
+   "title": "Exercise - implement `map_through_ln`, `map_through_attn`, `map_through_mlp`",
+   "prompt_cell": "1-4-2-c190",
+   "answer_cells": [
+    "1-4-2-c191",
+    "1-4-2-c192"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c191"
+  },
+  {
+   "id": "exercise:1-4-2-c194",
+   "title": "Exercise - implement `compute_adjacency_matrix_manual`",
+   "prompt_cell": "1-4-2-c194",
+   "answer_cells": [
+    "1-4-2-c195",
+    "1-4-2-c196"
+   ],
+   "section": "1-4-2",
+   "answer_cell": "1-4-2-c195"
+  }
  ]
 }

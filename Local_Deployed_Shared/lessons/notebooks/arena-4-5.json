@@ -771,5 +771,162 @@
    "role": "prose",
    "src": "## Other directions to explore\n\nHere are several other directions you could take this material, building on what you've learned.\n\n**Design a new whistleblowing ablation condition.** Section 2's ablation study tested specific environmental factors (system prompt framing, thinking tag privacy, etc.). Design and implement a new ablation modifier that tests a factor not already covered, for example whether the *severity* of the wrongdoing affects whistleblowing rates, or whether models whistleblow differently when given access to external communication tools vs. just internal ones.\n\n**The \"No Wrongdoing\" control condition.** Petri's whistleblowing ablations include a control: replace genuinely harmful activities with completely harmless ones framed in suspicious-sounding language (\"dumping water into the ocean\", \"adding sugar to candy\", \"releasing oxygen into the atmosphere\"). This tests whether models whistleblow based on *actual wrongdoing* vs *suspicious framing*. Implement this control and compare rates across models.\n\n**Prefill attacks.** The `prefill` method exists on your `AuditorToolkit` but was intentionally excluded from the dispatch loop. Add it to `AUDITOR_TOOL_SCHEMAS` and `tool_dispatch`, then experiment with putting words in the target's mouth (e.g., prefilling \"Sure, I can help with that. Here's\" to bypass refusal patterns). How does this change the auditor's success rate?\n\n**Cross-model judge bias.** Petri 2.0 tested 5 judge models and found systematic biases: GPT-5 systematically rates GPT-5, GPT-5 mini, and o4-mini targets as less misaligned than other judges do; o4-mini tends toward binary 1/10 scores and systematically underrates concerning transcripts. Run your `score_transcript` judge on the same transcript with different judge models and compare. Do you see similar patterns?\n\n**Trained investigator models.** The \"Eliciting LM Behaviour with Investigator Agents\" paper (Transluce) shows that small 8B models can be trained to effectively audit much larger 405B models, achieving very high success rates on eliciting harmful behaviors (jailbreaking, evaluated on AdvBench). The key idea is a forward/backward training asymmetry: generating training data (forward) is easy, but the actual elicitation task (backward) is hard. Explore how this connects to the auditor strategies you've observed in Petri transcripts."
   }
+ ],
+ "setup_cells": [
+  "4-5-c008",
+  "4-5-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:4-5-c017",
+   "title": "Exercise - Load character files",
+   "prompt_cell": "4-5-c017",
+   "answer_cells": [
+    "4-5-c018"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c018"
+  },
+  {
+   "id": "exercise:4-5-c020",
+   "title": "Exercise - Implement the LLM-driven red-team message generator",
+   "prompt_cell": "4-5-c020",
+   "answer_cells": [
+    "4-5-c021"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c021"
+  },
+  {
+   "id": "exercise:4-5-c023",
+   "title": "Exercise - Run dynamic persona conversation",
+   "prompt_cell": "4-5-c023",
+   "answer_cells": [
+    "4-5-c024"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c024"
+  },
+  {
+   "id": "exercise:4-5-c027",
+   "title": "Exercise - Grade with the official rubric",
+   "prompt_cell": "4-5-c027",
+   "answer_cells": [
+    "4-5-c028"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c028"
+  },
+  {
+   "id": "exercise:4-5-c031",
+   "title": "Exercise - Parallel red-team campaign with ThreadPoolExecutor",
+   "prompt_cell": "4-5-c031",
+   "answer_cells": [
+    "4-5-c032"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c032"
+  },
+  {
+   "id": "exercise:4-5-c053",
+   "title": "Exercise - Implement tool dispatch logic",
+   "prompt_cell": "4-5-c053",
+   "answer_cells": [
+    "4-5-c054"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c054"
+  },
+  {
+   "id": "exercise:4-5-c056",
+   "title": "Exercise - Implement the auditor conversation loop",
+   "prompt_cell": "4-5-c056",
+   "answer_cells": [
+    "4-5-c057"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c057"
+  },
+  {
+   "id": "exercise:4-5-c059",
+   "title": "Exercise - Build a simplified judge",
+   "prompt_cell": "4-5-c059",
+   "answer_cells": [
+    "4-5-c060"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c060"
+  },
+  {
+   "id": "exercise:4-5-c064",
+   "title": "Exercise - Run Petri on AI psychosis (Python API)",
+   "prompt_cell": "4-5-c064",
+   "answer_cells": [
+    "4-5-c065"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c065"
+  },
+  {
+   "id": "exercise:4-5-c073",
+   "title": "Exercise - Implement `measure_whistleblowing_propensity`",
+   "prompt_cell": "4-5-c073",
+   "answer_cells": [
+    "4-5-c074",
+    "4-5-c075"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c074"
+  },
+  {
+   "id": "exercise:4-5-c085",
+   "title": "Exercise - Trace a Petri investigation",
+   "prompt_cell": "4-5-c085",
+   "answer_cells": [
+    "4-5-c086"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c086"
+  },
+  {
+   "id": "exercise:4-5-c088",
+   "title": "Exercise - Implement custom tool",
+   "prompt_cell": "4-5-c088",
+   "answer_cells": [
+    "4-5-c089"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c089"
+  },
+  {
+   "id": "exercise:4-5-c092",
+   "title": "Exercise - Rollback demo",
+   "prompt_cell": "4-5-c092",
+   "answer_cells": [
+    "4-5-c093"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c093"
+  },
+  {
+   "id": "exercise:4-5-c101",
+   "title": "Exercise - Implement super-agent aggregation",
+   "prompt_cell": "4-5-c101",
+   "answer_cells": [
+    "4-5-c102"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c102"
+  },
+  {
+   "id": "exercise:4-5-c107",
+   "title": "Exercise - Build a realism classifier",
+   "prompt_cell": "4-5-c107",
+   "answer_cells": [
+    "4-5-c108"
+   ],
+   "section": "4-5",
+   "answer_cell": "4-5-c108"
+  }
  ]
 }

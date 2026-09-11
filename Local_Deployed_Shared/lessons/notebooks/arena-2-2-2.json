@@ -343,5 +343,91 @@
    "role": "code",
    "src": "# There's a somewhat critical region where the cartpole really picks up,\n# and we need the LR to decay rather fast before the gradients explode\n# No guarantees that this will work for other environments, but it's a good starting point\n# sub 15 seconds to optimal on A4000!!\n# might need to rerun a few times to get a lucky initialization, it's rather sensitive!\n\ndevice = t.device(\"cuda\")\n\nargs_fast = VPGArgs(use_wandb=False, \n            num_envs=256, \n            num_batches_per_rollout=4,\n            total_timesteps=4_000_000, \n            num_steps_per_rollout=500,\n            rollout_use_count=1,  # this seems to matter a lot\n            ent_coef=0.5, #works with zero\n            clip_coef=0.1, #can sometimes work with no clipping, but it helps\n            max_grad_norm=1,\n            normalize_returns=True,\n            lr = 1e-2, #risky!\n            use_lr_decay=True,\n            use_iw=True, #dont' need it if we only use each rollout once in one\n            lr_end = 1e-3,\n            lr_frac = 0.6,\n            compile=False,\n            gamma=0.99,\n            seed=1337,\n            device=device)\n\ntrainer = VPGTrainer(args_fast)\ntrainer.train()\ngenerate_and_plot_trajectory(trainer, args, mode = \"pg\")"
   }
+ ],
+ "setup_cells": [
+  "2-2-2-c007",
+  "2-2-2-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:2-2-2-c018",
+   "title": "Exercise - implement `Rollout Buffer`",
+   "prompt_cell": "2-2-2-c018",
+   "answer_cells": [
+    "2-2-2-c019"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c019"
+  },
+  {
+   "id": "exercise:2-2-2-c024",
+   "title": "Exercise - implement `VPGAgent`",
+   "prompt_cell": "2-2-2-c024",
+   "answer_cells": [
+    "2-2-2-c025"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c025"
+  },
+  {
+   "id": "exercise:2-2-2-c028",
+   "title": "Exercise - implement `compute_returns`",
+   "prompt_cell": "2-2-2-c028",
+   "answer_cells": [
+    "2-2-2-c029"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c029"
+  },
+  {
+   "id": "exercise:2-2-2-c031",
+   "title": "Exercise - implement `compute_logprobs_and_entropy`",
+   "prompt_cell": "2-2-2-c031",
+   "answer_cells": [
+    "2-2-2-c032"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c032"
+  },
+  {
+   "id": "exercise:2-2-2-c035",
+   "title": "Exercise - implement `compute_importance_weights`",
+   "prompt_cell": "2-2-2-c035",
+   "answer_cells": [
+    "2-2-2-c036"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c036"
+  },
+  {
+   "id": "exercise:2-2-2-c038",
+   "title": "Exercise - implement `normalize_returns`",
+   "prompt_cell": "2-2-2-c038",
+   "answer_cells": [
+    "2-2-2-c039"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c039"
+  },
+  {
+   "id": "exercise:2-2-2-c041",
+   "title": "Exercise - implement `compute_reinforce_loss`",
+   "prompt_cell": "2-2-2-c041",
+   "answer_cells": [
+    "2-2-2-c042"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c042"
+  },
+  {
+   "id": "exercise:2-2-2-c045",
+   "title": "Exercise - implement `VPGTrainer`",
+   "prompt_cell": "2-2-2-c045",
+   "answer_cells": [
+    "2-2-2-c046"
+   ],
+   "section": "2-2-2",
+   "answer_cell": "2-2-2-c046"
+  }
  ]
 }

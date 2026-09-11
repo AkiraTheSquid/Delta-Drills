@@ -1181,5 +1181,211 @@
    "role": "prose",
    "src": "**SAE interpretation on Gemma.** This bridges the two models used in this notebook. Reload Gemma 2 27B from Sections 1-2, run the contrastive pipeline for sycophancy on Gemma (adapting `extract_all_layer_activations_qwen` to use `model.model.language_model.layers` instead of `model.model.layers`), then load a GemmaScope SAE for the appropriate layer (~65% through Gemma's layers) and encode the sycophancy vector through it: `features = sae.encode(vector)`. Inspect the top-k activated features - they should relate to concepts like agreement, validation, flattery, or opinion-matching. This requires reloading the larger model and loading SAE weights, so only attempt it if you have the GPU memory."
   }
+ ],
+ "setup_cells": [
+  "4-4-c007",
+  "4-4-c009",
+  "4-4-c011",
+  "4-4-c013"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:4-4-c027",
+   "title": "Exercise - Design LLM judge prompt for role-playing",
+   "prompt_cell": "4-4-c027",
+   "answer_cells": [
+    "4-4-c028"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c028"
+  },
+  {
+   "id": "exercise:4-4-c030",
+   "title": "Exercise - Generate responses for all personas",
+   "prompt_cell": "4-4-c030",
+   "answer_cells": [
+    "4-4-c031",
+    "4-4-c032",
+    "4-4-c035"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c031"
+  },
+  {
+   "id": "exercise:4-4-c038",
+   "title": "Exercise - Extract response activations",
+   "prompt_cell": "4-4-c038",
+   "answer_cells": [
+    "4-4-c039"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c039"
+  },
+  {
+   "id": "exercise:4-4-c041",
+   "title": "Exercise - Extract persona vectors",
+   "prompt_cell": "4-4-c041",
+   "answer_cells": [
+    "4-4-c042",
+    "4-4-c045"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c042"
+  },
+  {
+   "id": "exercise:4-4-c047",
+   "title": "Exercise - Compute cosine similarity matrix",
+   "prompt_cell": "4-4-c047",
+   "answer_cells": [
+    "4-4-c048",
+    "4-4-c051"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c048"
+  },
+  {
+   "id": "exercise:4-4-c053",
+   "title": "Exercise - PCA analysis and Assistant Axis",
+   "prompt_cell": "4-4-c053",
+   "answer_cells": [
+    "4-4-c054"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c054"
+  },
+  {
+   "id": "exercise:4-4-c076",
+   "title": "Exercise - Build a ConversationAnalyzer class",
+   "prompt_cell": "4-4-c076",
+   "answer_cells": [
+    "4-4-c077"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c077"
+  },
+  {
+   "id": "exercise:4-4-c079",
+   "title": "Exercise - Autorater for delusional behavior",
+   "prompt_cell": "4-4-c079",
+   "answer_cells": [
+    "4-4-c080"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c080"
+  },
+  {
+   "id": "exercise:4-4-c086",
+   "title": "Exercise - Implement steering hook",
+   "prompt_cell": "4-4-c086",
+   "answer_cells": [
+    "4-4-c087"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c087"
+  },
+  {
+   "id": "exercise:4-4-c089",
+   "title": "Exercise - Steering experiments",
+   "prompt_cell": "4-4-c089",
+   "answer_cells": [
+    "4-4-c090"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c090"
+  },
+  {
+   "id": "exercise:4-4-c101",
+   "title": "Exercise - Implement `ActivationCapper`",
+   "prompt_cell": "4-4-c101",
+   "answer_cells": [
+    "4-4-c102",
+    "4-4-c103",
+    "4-4-c104"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c102"
+  },
+  {
+   "id": "exercise:4-4-c106",
+   "title": "Exercise - Run a multi-turn capping experiment",
+   "prompt_cell": "4-4-c106",
+   "answer_cells": [
+    "4-4-c107",
+    "4-4-c108",
+    "4-4-c109"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c107"
+  },
+  {
+   "id": "exercise:4-4-c126",
+   "title": "Exercise - Generate contrastive responses",
+   "prompt_cell": "4-4-c126",
+   "answer_cells": [
+    "4-4-c127"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c127"
+  },
+  {
+   "id": "exercise:4-4-c137",
+   "title": "Exercise - Extract contrastive trait vectors",
+   "prompt_cell": "4-4-c137",
+   "answer_cells": [
+    "4-4-c138"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c138"
+  },
+  {
+   "id": "exercise:4-4-c146",
+   "title": "Exercise - Implement the ActivationSteerer",
+   "prompt_cell": "4-4-c146",
+   "answer_cells": [
+    "4-4-c147"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c147"
+  },
+  {
+   "id": "exercise:4-4-c149",
+   "title": "Exercise - Steering experiments (sycophancy)",
+   "prompt_cell": "4-4-c149",
+   "answer_cells": [
+    "4-4-c150"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c150"
+  },
+  {
+   "id": "exercise:4-4-c152",
+   "title": "Exercise - Projection-based monitoring",
+   "prompt_cell": "4-4-c152",
+   "answer_cells": [
+    "4-4-c153"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c153"
+  },
+  {
+   "id": "exercise:4-4-c155",
+   "title": "Exercise - Multi-trait pipeline",
+   "prompt_cell": "4-4-c155",
+   "answer_cells": [
+    "4-4-c156"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c156"
+  },
+  {
+   "id": "exercise:4-4-c158",
+   "title": "Exercise - Multi-trait geometry",
+   "prompt_cell": "4-4-c158",
+   "answer_cells": [
+    "4-4-c159"
+   ],
+   "section": "4-4",
+   "answer_cell": "4-4-c159"
+  }
  ]
 }

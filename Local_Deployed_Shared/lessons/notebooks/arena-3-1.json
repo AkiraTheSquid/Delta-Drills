@@ -306,6 +306,13 @@
    "src": "### Exercise - Build threat models\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵🔵\n> \n> You should spend up to 40-60 minutes on this exercise.\n> ```\n\nWe will later be building a set of multiple-choice questions (MCQs) to evaluate a certain model property. In this exercise, we are building a threat-model to help us decide on which property to evaluate and what aspects of this property to focus on, so that our eval can provide information on a potential harmful outcome. Keep in mind that we want a threat-model detailed enough to help us design an MCQ eval, but not as detailed as the threat-models of AI companies & governments used for policy-making.\n\n1. Choose 3 properties from below and write down your *own* working definition of each property in ~1 sentence. Start by jotting down concrete examples of behaviors that you immediately associate with this property. (~10 min)\n\n> * Tendency to seek power\n> * Sycophancy\n> * Deceptive alignment (i.e. strategically overperforming on alignment eval tasks) \n> * Sandbagging (i.e. strategically underperforming on dangerous capabilities eval tasks)\n> * Corrigibility with respect to a more/neuturally/less HHH (Honest, Helpful, and Harmless) goal\n> * Desire for self-preservation\n> * Non-myopia (far-sightedness) with respect to planning\n> * Political bias\n\n2. Write down some consequences that a model with this property might cause in the real-world (15 min)."
   },
   {
+   "id": "3-1-c040-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "3-1-c040-1",
    "role": "details",
@@ -489,6 +496,13 @@
    "src": "### Exercise - Design a specification\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵🔵\n> \n> You should spend up to 45 minutes on this exercise; 10 minutes on Q1 and 30-35 minutes on Q2 and Q3.\n> ```\n\n1. For the property you threat-modelled, try to write down a more precise definition. You may choose to (or not) decompose it into subproperties/axes and narrow your scope. (If you are happy with your previous working definition, move to the next question and come back when needed.)\n2. Come up with 1-3 **operational definitions**. They must be measurable in an MCQ experiment. Further, the interpretation of answers to different MCQs should not depend on each other (e.g. it should not be the case that, answer A to question 1 indicates power-seeking iff the model chose answer B on question 2). (This is in principle a fine design, but introduces incompatibilities with how we run evals using `inspect` in later sections.)\n3. Write out some simple example questions or an abbreviated question template for each operational definition to illustrate what you mean. \n\nNote for this exercise: The point of this exercise is to practice the skill of making an abstract property measurable by coming up with concrete experiments and question prompts. It is **not** to craft a canonical definition for a property. Your definition can be simple. Spend a lot of time playing with question designs. Don't let perfect be the enemy of good!"
   },
   {
+   "id": "3-1-c043-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "3-1-c043-1",
    "role": "details",
@@ -544,6 +558,62 @@
    "id": "3-1-c048",
    "role": "prose",
    "src": "To finish, you should come up with 3-4 questions that meet the criteria. Modify/update your specification as needed."
+  }
+ ],
+ "setup_cells": [
+  "3-1-c008",
+  "3-1-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:3-1-c018",
+   "title": "Exercise - retry with exponential back-off (optional)",
+   "prompt_cell": "3-1-c018",
+   "answer_cells": [
+    "3-1-c019"
+   ],
+   "section": "3-1",
+   "answer_cell": "3-1-c019"
+  },
+  {
+   "id": "exercise:3-1-c031",
+   "title": "Exercise - replicate alignment faking",
+   "prompt_cell": "3-1-c031",
+   "answer_cells": [
+    "3-1-c032"
+   ],
+   "section": "3-1",
+   "answer_cell": "3-1-c032"
+  },
+  {
+   "id": "exercise:3-1-c040",
+   "title": "Exercise - Build threat models",
+   "prompt_cell": "3-1-c040",
+   "answer_cells": [
+    "3-1-c040-answer"
+   ],
+   "section": "3-1",
+   "answer_cell": "3-1-c040-answer"
+  },
+  {
+   "id": "exercise:3-1-c043",
+   "title": "Exercise - Design a specification",
+   "prompt_cell": "3-1-c043",
+   "answer_cells": [
+    "3-1-c043-answer"
+   ],
+   "section": "3-1",
+   "answer_cell": "3-1-c043-answer"
+  },
+  {
+   "id": "exercise:3-1-c045",
+   "title": "Exercise - Engineer eval question prompt",
+   "prompt_cell": "3-1-c045",
+   "answer_cells": [
+    "3-1-c046"
+   ],
+   "section": "3-1",
+   "answer_cell": "3-1-c046"
   }
  ]
 }

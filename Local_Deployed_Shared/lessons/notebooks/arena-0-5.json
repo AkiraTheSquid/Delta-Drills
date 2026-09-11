@@ -162,6 +162,13 @@
    "src": "### Exercise - implement autoencoder\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 15-30 minutes on this exercise.\n> ```\n\n*Note - for the rest of this section (not including the bonus), we'll assume we're working with the MNIST dataset rather than Celeb-A.*\n\nYour encoder should consist of two convolutional blocks (i.e. convolution plus ReLU), followed by two fully connected linear layers with a ReLU in between them. Both convolutions will have kernel size 4, stride 2, padding 1 (recall this halves the size of the image). We'll have 16 and 32 output channels respectively.\n\nThe decoder will be the exact mirror image of the encoder (with convolutions replaced by transposed convolutions).\n\nThe only free parameters in your implementation will be `latent_dim_size` and `hidden_dim_size`. The former determines the size of the latent space (otherwise called the bottleneck dimension) between the encoder and decoder, and the latter determines the size of the final linear layer we insert just before the end / just after the start of the encoder / decoder's architecture respectively.\n\n![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/gan_images/ae-help-10.png)\n\nA few extra notes:\n\n* You'll need to reshape between the convolutional blocks and linear layers. For this, you might find the `einops` library helpful - they have a function `einops.layers.torch.Rearrange` (imported for you as `Rearrange`) which works like the standard einops function, except that it takes a string and returns a module which performs the corresponding rearrangement. Just like any other module, it can be used inside things like `Sequential` (this way, the logic inside the `forward` method can be very simple!).\n\n```python\n>>> x = t.randn(100, 3, 4, 5)\n>>> x.shape\ntorch.Size([100, 3, 4, 5])\n\n>>> module = Rearrange(\"b c h w -> b (c h w)\")\n>>> module(x).shape\ntorch.Size([100, 60])\n```\n\n* Note that we don't include a ReLU in the very last layer of the decoder or generator, we only include them ***between successive convolutions or linear layers*** - can you see why it wouldn't make sense to put ReLUs at the end?\n* The convolutions don't have biases, although we have included biases in the linear layers (this will be important if you want your parameter count to match the solution, but not really that important for good performance).\n\nNow, implement your autoencoder below. We recommend you define `encoder` and `decoder` to help make your code run with the functions we've written for you later.\n\n<!-- You can test your answer by comparing the architecture to the solution directly. As this course goes on, we won't always include test functions as the exercises get a bit more open-ended and solutions to them are likely to vary more; it's also good practice to find ways to test your answers when you don't have access to black-box tests that you can trust!\n\nfrom part5_vaes_and_gans.solutions import Autoencoder as SolutionAutoencoder\n\nsoln_Autoencoder = SolutionAutoencoder(latent_dim_size=5, hidden_dim_size=128)\nmy_Autoencoder = Autoencoder(latent_dim_size=5, hidden_dim_size=128)\n\nprint_param_count(my_Autoencoder, soln_Autoencoder)\n# print_param_count(my_Autoencoder, soln_Autoencoder, filename=str(section_dir / \"0503.html\"))\n\n[Interactive figure — opens upstream ↗](https://info-arena.github.io/ARENA_img/misc/media-05/0503.html) -->"
   },
   {
+   "id": "0-5-c023-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "code",
    "id": "0-5-c024",
    "role": "code",
@@ -838,6 +845,149 @@
    "id": "0-5-c109",
    "role": "prose",
    "src": "Now, you're all done! You can go back and implement GANs or VAEs using the transposed convolution module you've just written."
+  }
+ ],
+ "setup_cells": [
+  "0-5-c006",
+  "0-5-c007"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-5-c023",
+   "title": "Exercise - implement autoencoder",
+   "prompt_cell": "0-5-c023",
+   "answer_cells": [
+    "0-5-c023-answer"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c023-answer"
+  },
+  {
+   "id": "exercise:0-5-c024",
+   "title": "Autoencoder",
+   "prompt_cell": "0-5-c023",
+   "answer_cells": [
+    "0-5-c024"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c024"
+  },
+  {
+   "id": "exercise:0-5-c028",
+   "title": "Exercise - write autoencoder training loop",
+   "prompt_cell": "0-5-c028",
+   "answer_cells": [
+    "0-5-c029"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c029"
+  },
+  {
+   "id": "exercise:0-5-c039",
+   "title": "Exercise - build your VAE",
+   "prompt_cell": "0-5-c039",
+   "answer_cells": [
+    "0-5-c040"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c040"
+  },
+  {
+   "id": "exercise:0-5-c046",
+   "title": "Exercise - write your VAE training loop",
+   "prompt_cell": "0-5-c046",
+   "answer_cells": [
+    "0-5-c047",
+    "0-5-c048",
+    "0-5-c051",
+    "0-5-c053"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c047"
+  },
+  {
+   "id": "exercise:0-5-c060",
+   "title": "Exercise - some more modules",
+   "prompt_cell": "0-5-c060",
+   "answer_cells": [
+    "0-5-c061"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c061"
+  },
+  {
+   "id": "exercise:0-5-c067",
+   "title": "Exercise - building your GAN",
+   "prompt_cell": "0-5-c067",
+   "answer_cells": [
+    "0-5-c068"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c068"
+  },
+  {
+   "id": "exercise:0-5-c070",
+   "title": "Exercise - Weight initialisation",
+   "prompt_cell": "0-5-c070",
+   "answer_cells": [
+    "0-5-c071",
+    "0-5-c074"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c071"
+  },
+  {
+   "id": "exercise:0-5-c081",
+   "title": "Exercise - implement GAN training loop",
+   "prompt_cell": "0-5-c081",
+   "answer_cells": [
+    "0-5-c082",
+    "0-5-c085",
+    "0-5-c087"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c082"
+  },
+  {
+   "id": "exercise:0-5-c094",
+   "title": "Exercise - minimal 1D transposed convolutions",
+   "prompt_cell": "0-5-c094",
+   "answer_cells": [
+    "0-5-c095"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c095"
+  },
+  {
+   "id": "exercise:0-5-c097",
+   "title": "Exercise - 1D transposed convolutions",
+   "prompt_cell": "0-5-c097",
+   "answer_cells": [
+    "0-5-c098",
+    "0-5-c100"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c098"
+  },
+  {
+   "id": "exercise:0-5-c103",
+   "title": "Exercise - 2D transposed convolutions",
+   "prompt_cell": "0-5-c103",
+   "answer_cells": [
+    "0-5-c104"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c104"
+  },
+  {
+   "id": "exercise:0-5-c106",
+   "title": "Exercise - transposed conv module",
+   "prompt_cell": "0-5-c106",
+   "answer_cells": [
+    "0-5-c107"
+   ],
+   "section": "0-5",
+   "answer_cell": "0-5-c107"
   }
  ]
 }

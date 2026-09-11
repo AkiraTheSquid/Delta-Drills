@@ -1105,5 +1105,220 @@
    "role": "prose",
    "src": "Some directions for further exploration:\n\n### On-policy vs off-policy interventions\n\nThe Thought Branches paper compares on-policy interventions (resample from the model, what we've been doing) with off-policy interventions (hand-edit the text or transplant from another model). They find off-policy interventions are less stable - the model often \"notices\" the edit and behaves unexpectedly.\n\n### Faithfulness analysis\n\nThe paper also studies unfaithfulness: cases where the model's CoT doesn't reflect its actual reasoning. They use \"hinted\" MMLU problems where a Stanford Professor with an IQ of 130 provides a (possibly wrong) hint.\n\n### Interpreting reward hacking in closed frontier models\n\nKroiz, Singh, Rajamanoharan and Nanda ([blog post](https://www.lesswrong.com/posts/A67SbpTjuXEHK8Cvo/principled-interpretability-of-reward-hacking-in-closed), MATS 9.0) adapt the thought anchors resampling methodology to study reward hacking in closed frontier models (GPT-5, o3, Gemini 3 Pro). Since these models don't expose weights, they can't use white-box methods. Instead, they use *agent actions* (tool calls + tool results) as the unit of analysis, rather than sentences within a CoT.\n\nThe setup: agents play Tic-Tac-Toe or Chess against optimal opponents, with access to a bash tool. The game is practically unwinnable for the agent through legitimate play, but the agent can hack the environment to win. They also offer a legitimate alternative (hints at a point cost) to avoid coercing the model into hacking.\n\nKey findings:\n\n- Reward hacking looks like cost-benefit analysis: as the hint cost increases, models smoothly shift from using hints to hacking. This ordering is consistent across environments (Gemini 3 Pro hacks most, GPT-5 least).\n- For o3, early actions have outsized causal impact. If o3 tries to inspect the environment's source code early on, it's significantly more likely to hack later. Resampling from after that action yields a higher hacking rate than resampling from before it.\n- \"Seeing is believing\": models hack more after they've actually tried and failed at the task. Just telling the model the task is hard via the system prompt doesn't have the same effect.\n\nThe connection to these exercises: their action-based resampling importance is directly adapted from the sentence-level resampling importance you implemented in section 2. The main difference is the unit of intervention (actions vs sentences) and the fact that they can only access the model through an API.\n\n### Open-ended exploration\n\n- Apply these techniques to your own model/domain\n- Investigate the relationship between model size and thought anchor patterns\n- Look for receiver heads in other model architectures\n- Compare thought anchor patterns across different reasoning tasks"
   }
+ ],
+ "setup_cells": [
+  "4-3-c007",
+  "4-3-c008",
+  "4-3-c010",
+  "4-3-c012"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:4-3-c029",
+   "title": "Exercise - heuristic-based categorization",
+   "prompt_cell": "4-3-c029",
+   "answer_cells": [
+    "4-3-c030"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c030"
+  },
+  {
+   "id": "exercise:4-3-c032",
+   "title": "Exercise - implement an autorater",
+   "prompt_cell": "4-3-c032",
+   "answer_cells": [
+    "4-3-c033",
+    "4-3-c034"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c034"
+  },
+  {
+   "id": "exercise:4-3-c045",
+   "title": "Exercise - calculate forced answer importance",
+   "prompt_cell": "4-3-c045",
+   "answer_cells": [
+    "4-3-c046",
+    "4-3-c049"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c046"
+  },
+  {
+   "id": "exercise:4-3-c052",
+   "title": "Exercise - compare resampling importance",
+   "prompt_cell": "4-3-c052",
+   "answer_cells": [
+    "4-3-c053"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c053"
+  },
+  {
+   "id": "exercise:4-3-c060",
+   "title": "Exercise - compute counterfactual importance",
+   "prompt_cell": "4-3-c060",
+   "answer_cells": [
+    "4-3-c061",
+    "4-3-c064",
+    "4-3-c065"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c061"
+  },
+  {
+   "id": "exercise:4-3-c066",
+   "title": "Exercise - replicate Figure 3b (sentence category effect)",
+   "prompt_cell": "4-3-c066",
+   "answer_cells": [
+    "4-3-c067"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c067"
+  },
+  {
+   "id": "exercise:4-3-c072",
+   "title": "Exercise - replicate causal graph",
+   "prompt_cell": "4-3-c072",
+   "answer_cells": [
+    "4-3-c073"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c073"
+  },
+  {
+   "id": "exercise:4-3-c076",
+   "title": "Exercise - implement resampling (optional)",
+   "prompt_cell": "4-3-c076",
+   "answer_cells": [
+    "4-3-c077"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c077"
+  },
+  {
+   "id": "exercise:4-3-c085",
+   "title": "Exercise - extract attention matrices",
+   "prompt_cell": "4-3-c085",
+   "answer_cells": [
+    "4-3-c086"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c086"
+  },
+  {
+   "id": "exercise:4-3-c088",
+   "title": "Exercise - compute vertical attention scores (Part 1: Simple version)",
+   "prompt_cell": "4-3-c088",
+   "answer_cells": [
+    "4-3-c089",
+    "4-3-c092"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c089"
+  },
+  {
+   "id": "exercise:4-3-c093",
+   "title": "Exercise - compute vertical attention scores (Part 2: Full version with depth control)",
+   "prompt_cell": "4-3-c093",
+   "answer_cells": [
+    "4-3-c094",
+    "4-3-c097"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c094"
+  },
+  {
+   "id": "exercise:4-3-c101",
+   "title": "Exercise - identify receiver heads from real CoT",
+   "prompt_cell": "4-3-c101",
+   "answer_cells": [
+    "4-3-c102"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c102"
+  },
+  {
+   "id": "exercise:4-3-c104",
+   "title": "Exercise - compute receiver head scores",
+   "prompt_cell": "4-3-c104",
+   "answer_cells": [
+    "4-3-c105"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c105"
+  },
+  {
+   "id": "exercise:4-3-c108",
+   "title": "Exercise - implement RoPE attention",
+   "prompt_cell": "4-3-c108",
+   "answer_cells": [
+    "4-3-c109"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c109"
+  },
+  {
+   "id": "exercise:4-3-c111",
+   "title": "Exercise - compute suppressed attention",
+   "prompt_cell": "4-3-c111",
+   "answer_cells": [
+    "4-3-c112"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c112"
+  },
+  {
+   "id": "exercise:4-3-c117",
+   "title": "Exercise - measure suppression effect with KL divergence",
+   "prompt_cell": "4-3-c117",
+   "answer_cells": [
+    "4-3-c118"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c118"
+  },
+  {
+   "id": "exercise:4-3-c125",
+   "title": "replicate_figure_6",
+   "prompt_cell": "4-3-c124",
+   "answer_cells": [
+    "4-3-c125"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c125"
+  },
+  {
+   "id": "exercise:4-3-c127",
+   "title": "replicate_figure_4",
+   "prompt_cell": "4-3-c126",
+   "answer_cells": [
+    "4-3-c127"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c127"
+  },
+  {
+   "id": "exercise:4-3-c129",
+   "title": "replicate_figure_5",
+   "prompt_cell": "4-3-c128",
+   "answer_cells": [
+    "4-3-c129"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c129"
+  },
+  {
+   "id": "exercise:4-3-c144",
+   "title": "Exercise - compare DTF (inverse resilience) across categories",
+   "prompt_cell": "4-3-c144",
+   "answer_cells": [
+    "4-3-c145",
+    "4-3-c146"
+   ],
+   "section": "4-3",
+   "answer_cell": "4-3-c146"
+  }
  ]
 }

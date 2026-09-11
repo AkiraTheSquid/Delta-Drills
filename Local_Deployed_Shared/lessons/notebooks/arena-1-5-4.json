@@ -484,6 +484,13 @@
    "src": "### Exercise - interpret these plots\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nThe first row shows plots of $W$. The rows are features, the columns are hidden dimensions (neurons).\n\nThe second row shows stacked weight plots: in other words, each column is a neuron, and the values in a column are the exposures of the features to that particular neuron. In these plots, each feature is colored differently based on its interference with other features (dark blue means the feature is orthogonal to all other features, and lighter colors means the sum of squared dot products with other features is large).\n\nWhat is your interpretation of these plots? You should discuss things like monosemanticity / polysemanticity and how this changes with increasing sparsity."
   },
   {
+   "id": "1-5-4-c058-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-5-4-c058-1",
    "role": "details",
@@ -501,6 +508,13 @@
    "id": "1-5-4-c059",
    "role": "prose",
    "src": "### Exercise (optional) - replicate plots more faithfully\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵⚪⚪⚪⚪\n> \n> You should spend up to 10-25 minutes on this exercise, if you choose to do it.\n> ```\n\nAnthropic mention in their paper that they trained 1000 instances and chose the ones which achieved lowest loss. This is why your results might have differed from theirs, especially when the sparsity is very high / feature probability is very low.\n\nCan you implement this \"choose lowest loss\" method in your own class? Some suggestions:\n\n* The most basic way would be to modify the `optimize` function to return the loss per instance, and also use a for loop to run several `optimize` calls & at the end give you the best instances for each different level of sparsity.\n* A much better way would be to train more instances at once (e.g. `N` instances per level of sparsity), then for each level of sparsity you can argmax over `N` at the end to get a single instance. This will be much faster (although you'll have to be careful not to train 1000 instances at once; your GPU might not support it!).\n* To get very fancy, you could even add another dimension to the weight matrices, corresponding to this `N` dimension you argmax over. Then this \"taking lowest-loss instance\" behavior will be automatic."
+  },
+  {
+   "id": "1-5-4-c059-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
   },
   {
    "t": "md",
@@ -1342,6 +1356,261 @@
    "id": "1-5-4-c164",
    "role": "prose",
    "src": "### [Exciting Open Problems In Mech Interp v2](https://docs.google.com/document/d/1lIIzMjenXh-U0j5jkuqSDTawCoMNW4TqUlxk7mmbmRg/edit)\n\nThis document was written by Neel, and it collates a bunch of interesting open problems in mech interp (with a strong focus on SAE-related ones). Again, many of these could make great capstone projects! We encourage you to pick more achievable, less ambitious projects from this list though.\n\nIf any of the projects you're interested in involve training a sparse autoencoder, we *strongly* recommend [this post](https://www.lesswrong.com/posts/fifPCos6ddsmJYahD/my-best-guess-at-the-important-tricks-for-training-1l-saes) by Arthur Conmy, which collates a bunch of different techniques for training SAEs well (most of which we didn't cover in these exercises)."
+  }
+ ],
+ "setup_cells": [
+  "1-5-4-c008",
+  "1-5-4-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-5-4-c017",
+   "title": "Exercise - implement `forward`",
+   "prompt_cell": "1-5-4-c017",
+   "answer_cells": [
+    "1-5-4-c018"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c018"
+  },
+  {
+   "id": "exercise:1-5-4-c020",
+   "title": "Exercise - implement `generate_batch`",
+   "prompt_cell": "1-5-4-c020",
+   "answer_cells": [
+    "1-5-4-c021"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c021"
+  },
+  {
+   "id": "exercise:1-5-4-c024",
+   "title": "Exercise - implement `calculate_loss`",
+   "prompt_cell": "1-5-4-c024",
+   "answer_cells": [
+    "1-5-4-c025",
+    "1-5-4-c028",
+    "1-5-4-c029"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c025"
+  },
+  {
+   "id": "exercise:1-5-4-c030",
+   "title": "Exercise - interpret these diagrams",
+   "prompt_cell": "1-5-4-c030",
+   "answer_cells": [
+    "1-5-4-c031"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c031"
+  },
+  {
+   "id": "exercise:1-5-4-c037",
+   "title": "Exercise - implement `generate_correlated_batch`",
+   "prompt_cell": "1-5-4-c037",
+   "answer_cells": [
+    "1-5-4-c038",
+    "1-5-4-c041",
+    "1-5-4-c043",
+    "1-5-4-c045",
+    "1-5-4-c046"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c038"
+  },
+  {
+   "id": "exercise:1-5-4-c047",
+   "title": "Exercise - generate more correlated feature plots",
+   "prompt_cell": "1-5-4-c047",
+   "answer_cells": [
+    "1-5-4-c048"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c048"
+  },
+  {
+   "id": "exercise:1-5-4-c052",
+   "title": "Exercise - implement `NeuronModel`",
+   "prompt_cell": "1-5-4-c052",
+   "answer_cells": [
+    "1-5-4-c053",
+    "1-5-4-c056",
+    "1-5-4-c057"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c053"
+  },
+  {
+   "id": "exercise:1-5-4-c058",
+   "title": "Exercise - interpret these plots",
+   "prompt_cell": "1-5-4-c058",
+   "answer_cells": [
+    "1-5-4-c058-answer"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c058-answer"
+  },
+  {
+   "id": "exercise:1-5-4-c059",
+   "title": "Exercise (optional) - replicate plots more faithfully",
+   "prompt_cell": "1-5-4-c059",
+   "answer_cells": [
+    "1-5-4-c059-answer"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c059-answer"
+  },
+  {
+   "id": "exercise:1-5-4-c061",
+   "title": "Exercise - implement `NeuronComputationModel`",
+   "prompt_cell": "1-5-4-c061",
+   "answer_cells": [
+    "1-5-4-c062",
+    "1-5-4-c065",
+    "1-5-4-c066",
+    "1-5-4-c068",
+    "1-5-4-c069"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c062"
+  },
+  {
+   "id": "exercise:1-5-4-c080",
+   "title": "Exercise - compute dimensionality",
+   "prompt_cell": "1-5-4-c080",
+   "answer_cells": [
+    "1-5-4-c081",
+    "1-5-4-c084"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c081"
+  },
+  {
+   "id": "exercise:1-5-4-c093",
+   "title": "YOUR CODE HERE - replicate the results from the Superposition & Deep Double Descent paper!",
+   "prompt_cell": "1-5-4-c092",
+   "answer_cells": [
+    "1-5-4-c093"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c093"
+  },
+  {
+   "id": "exercise:1-5-4-c100",
+   "title": "class",
+   "prompt_cell": "1-5-4-c099",
+   "answer_cells": [
+    "1-5-4-c100"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c100"
+  },
+  {
+   "id": "exercise:1-5-4-c101",
+   "title": "Exercise - implement `__init__`",
+   "prompt_cell": "1-5-4-c101",
+   "answer_cells": [
+    "1-5-4-c102"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c102"
+  },
+  {
+   "id": "exercise:1-5-4-c104",
+   "title": "Exercise - implement `W_dec_normalized`",
+   "prompt_cell": "1-5-4-c104",
+   "answer_cells": [
+    "1-5-4-c105"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c105"
+  },
+  {
+   "id": "exercise:1-5-4-c107",
+   "title": "Exercise - implement `generate_batch`",
+   "prompt_cell": "1-5-4-c107",
+   "answer_cells": [
+    "1-5-4-c108"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c108"
+  },
+  {
+   "id": "exercise:1-5-4-c110",
+   "title": "Exercise - implement `forward`",
+   "prompt_cell": "1-5-4-c110",
+   "answer_cells": [
+    "1-5-4-c111"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c111"
+  },
+  {
+   "id": "exercise:1-5-4-c120",
+   "title": "Exercise - implement `resample_simple`",
+   "prompt_cell": "1-5-4-c120",
+   "answer_cells": [
+    "1-5-4-c121",
+    "1-5-4-c124",
+    "1-5-4-c126"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c121"
+  },
+  {
+   "id": "exercise:1-5-4-c127",
+   "title": "Exercise - implement `resample_advanced`",
+   "prompt_cell": "1-5-4-c127",
+   "answer_cells": [
+    "1-5-4-c128"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c128"
+  },
+  {
+   "id": "exercise:1-5-4-c133",
+   "title": "Exercise - implement Gated SAEs",
+   "prompt_cell": "1-5-4-c133",
+   "answer_cells": [
+    "1-5-4-c134",
+    "1-5-4-c137"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c134"
+  },
+  {
+   "id": "exercise:1-5-4-c138",
+   "title": "Exercise - demonstrate advantage of Gated models",
+   "prompt_cell": "1-5-4-c138",
+   "answer_cells": [
+    "1-5-4-c139"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c139"
+  },
+  {
+   "id": "exercise:1-5-4-c146",
+   "title": "Exercise - implement custom gradient functions",
+   "prompt_cell": "1-5-4-c146",
+   "answer_cells": [
+    "1-5-4-c147",
+    "1-5-4-c149",
+    "1-5-4-c151"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c149"
+  },
+  {
+   "id": "exercise:1-5-4-c153",
+   "title": "Exercise - implement JumpReLU SAEs",
+   "prompt_cell": "1-5-4-c153",
+   "answer_cells": [
+    "1-5-4-c154",
+    "1-5-4-c155"
+   ],
+   "section": "1-5-4",
+   "answer_cell": "1-5-4-c154"
   }
  ]
 }

@@ -100,6 +100,13 @@
    "src": "### Exercise - inspect your model\n\n> ```yaml\n> Difficulty: 🔴⚪⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> ```\n\nUse `gpt2_small.cfg` to find the following, for your GPT-2 Small model:\n\n* Number of layers\n* Number of heads per layer\n* Maximum context window\n\nYou might have to check out the documentation page for some of these. If you're in VSCode then you can reach it by right-clicking on `HookedTransformerConfig` and choosing \"Go to definition\". If you're in Colab, then you can read the [GitHub page](https://github.com/neelnanda-io/TransformerLens)."
   },
   {
+   "id": "1-2-c014-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-2-c014-1",
    "role": "details",
@@ -1095,6 +1102,13 @@
    "src": "### Exercise - deriving properties of a factored matrix\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵⚪⚪⚪\n> \n> You shouldn't spend more than 10-25 minutes on this exercise.\n> \n> If you're less interested in the maths, you can skip these exercises.\n> ```\n\nTo give you an idea of what kinds of properties you can easily compute if you have a factored matrix, let's try and derive some ourselves.\n\nSuppose we have $M=AB$, where $A$ has shape $(m, n)$, $B$ has shape $(n, m)$, and $m > n$. So $M$ is a size-$(m, m)$ matrix with rank at most $n$.\n\n**Question - how can you easily compute the trace of $M$?**"
   },
   {
+   "id": "1-2-c116-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-2-c116-1",
    "role": "details",
@@ -1777,6 +1791,270 @@
    "id": "1-2-c187",
    "role": "prose",
    "src": "### Further discussion / investigation\n\nAnthropic has written a post on [In-context Learning and Induction Heads](https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html) which goes into much deeper discussion on induction heads. The post is structured around six different points of evidence for the hypothesis that **induction heads are the main source of in-context learning in transformer models**, even large ones. Briefly, these are:\n\n1. Transformers undergo a \"phase change\" where they suddenly become much better at in-context learning, and this is around the same time induction heads appear.\n2. When we change the transformer's architecture to make it easier for induction heads to form, we get a corresponding improvement in in-context learning.\n3. When we ablate induction heads at runtime, in-context learning gets worse.\n4. We have specific examples of induction heads performing more complex in-context learning algorithms (you'll have the opportunity to investigate one of these later - **indirect object identification**).\n5. We have a mechanistic explanation of induction heads, which suggests natural extensions to more general forms of in-context learning.\n6. In-context learning-related behaviour is generally smoothly continuous between small and large models, suggesting that the underlying mechanism is also the same.\n\nHere are a few questions for you:\n\n* How compelling do you find this evidence? Discuss with your partner.\n    * Which points do you find most compelling?\n    * Which do you find least compelling?\n    * Are there any subset of these which would be enough to convince you of the hypothesis, in the absence of others?\n* In point 3, the paper observes that in-context learning performance degrades when you ablate induction heads. While we measured this by testing the model's ability to copy a duplicated random sequence, the paper used **in-context learning score** (the loss of the 500th token in the context, minus the loss on the 50th token).\n    * Can you see why this is a reasonable metric?\n    * Can you replicate these results (maybe on a larger model than the 2-layer one we've been using)?\n* In point 4 (more complex forms of in-context learning), the paper suggests the natural extension of \"fuzzy induction heads\", which match patterns like `[A*][B*]...[A][B]` rather than `[A][B]...[A][B]` (where the `*` indicates some form of linguistic similarity, not necessarily being the same token).\n    * Can you think of any forms this might take, i.e. any kinds of similarity which induction heads might pick up on? Can you generate examples?"
+  }
+ ],
+ "setup_cells": [
+  "1-2-c007",
+  "1-2-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-2-c014",
+   "title": "Exercise - inspect your model",
+   "prompt_cell": "1-2-c014",
+   "answer_cells": [
+    "1-2-c014-answer"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c014-answer"
+  },
+  {
+   "id": "exercise:1-2-c025",
+   "title": "Exercise - how many tokens does your model guess correctly?",
+   "prompt_cell": "1-2-c025",
+   "answer_cells": [
+    "1-2-c026"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c026"
+  },
+  {
+   "id": "exercise:1-2-c034",
+   "title": "Exercise - verify activations",
+   "prompt_cell": "1-2-c034",
+   "answer_cells": [
+    "1-2-c035"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c035"
+  },
+  {
+   "id": "exercise:1-2-c049",
+   "title": "Exercise - visualise & inspect attention patterns",
+   "prompt_cell": "1-2-c049",
+   "answer_cells": [
+    "1-2-c050",
+    "1-2-c052"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c052"
+  },
+  {
+   "id": "exercise:1-2-c055",
+   "title": "Exercise - write your own detectors",
+   "prompt_cell": "1-2-c055",
+   "answer_cells": [
+    "1-2-c056"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c056"
+  },
+  {
+   "id": "exercise:1-2-c061",
+   "title": "Exercise - plot per-token loss on repeated sequence",
+   "prompt_cell": "1-2-c061",
+   "answer_cells": [
+    "1-2-c062"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c062"
+  },
+  {
+   "id": "exercise:1-2-c065",
+   "title": "YOUR CODE HERE - display the attention patterns stored in `rep_cache`, for each layer",
+   "prompt_cell": "1-2-c064",
+   "answer_cells": [
+    "1-2-c065"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c065"
+  },
+  {
+   "id": "exercise:1-2-c067",
+   "title": "Exercise - make an induction-head detector",
+   "prompt_cell": "1-2-c067",
+   "answer_cells": [
+    "1-2-c069"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c069"
+  },
+  {
+   "id": "exercise:1-2-c080",
+   "title": "Exercise - calculate induction scores with hooks",
+   "prompt_cell": "1-2-c080",
+   "answer_cells": [
+    "1-2-c081"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c081"
+  },
+  {
+   "id": "exercise:1-2-c084",
+   "title": "Exercise - find induction heads in GPT2-small",
+   "prompt_cell": "1-2-c084",
+   "answer_cells": [
+    "1-2-c086"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c086"
+  },
+  {
+   "id": "exercise:1-2-c089",
+   "title": "Exercise - build logit attribution tool",
+   "prompt_cell": "1-2-c089",
+   "answer_cells": [
+    "1-2-c090",
+    "1-2-c093"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c090"
+  },
+  {
+   "id": "exercise:1-2-c095",
+   "title": "Exercise - interpret logit attribution for the induction heads",
+   "prompt_cell": "1-2-c095",
+   "answer_cells": [
+    "1-2-c096"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c096"
+  },
+  {
+   "id": "exercise:1-2-c100",
+   "title": "Exercise - induction head ablation",
+   "prompt_cell": "1-2-c100",
+   "answer_cells": [
+    "1-2-c101",
+    "1-2-c104"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c101"
+  },
+  {
+   "id": "exercise:1-2-c106",
+   "title": "Exercise - mean ablation",
+   "prompt_cell": "1-2-c106",
+   "answer_cells": [
+    "1-2-c107"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c107"
+  },
+  {
+   "id": "exercise:1-2-c116",
+   "title": "Exercise - deriving properties of a factored matrix",
+   "prompt_cell": "1-2-c116",
+   "answer_cells": [
+    "1-2-c116-answer"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c116-answer"
+  },
+  {
+   "id": "exercise:1-2-c127",
+   "title": "Exercise - compute OV circuit for `1.4`",
+   "prompt_cell": "1-2-c127",
+   "answer_cells": [
+    "1-2-c129",
+    "1-2-c132"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c129"
+  },
+  {
+   "id": "exercise:1-2-c134",
+   "title": "Exercise - compute circuit accuracy",
+   "prompt_cell": "1-2-c134",
+   "answer_cells": [
+    "1-2-c135"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c135"
+  },
+  {
+   "id": "exercise:1-2-c138",
+   "title": "Exercise - compute effective circuit",
+   "prompt_cell": "1-2-c138",
+   "answer_cells": [
+    "1-2-c141"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c141"
+  },
+  {
+   "id": "exercise:1-2-c144",
+   "title": "Exercise - interpret full QK-circuit for `0.7`",
+   "prompt_cell": "1-2-c144",
+   "answer_cells": [
+    "1-2-c145"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c145"
+  },
+  {
+   "id": "exercise:1-2-c147",
+   "title": "Exercise - analyse the relative importance",
+   "prompt_cell": "1-2-c147",
+   "answer_cells": [
+    "1-2-c148"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c148"
+  },
+  {
+   "id": "exercise:1-2-c151",
+   "title": "Exercise - decompose attention scores",
+   "prompt_cell": "1-2-c151",
+   "answer_cells": [
+    "1-2-c152",
+    "1-2-c155",
+    "1-2-c157"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c152"
+  },
+  {
+   "id": "exercise:1-2-c159",
+   "title": "Exercise - compute the K-comp circuit",
+   "prompt_cell": "1-2-c159",
+   "answer_cells": [
+    "1-2-c160"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c160"
+  },
+  {
+   "id": "exercise:1-2-c163",
+   "title": "Exercise - calculate composition scores",
+   "prompt_cell": "1-2-c163",
+   "answer_cells": [
+    "1-2-c164",
+    "1-2-c167"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c164"
+  },
+  {
+   "id": "exercise:1-2-c169",
+   "title": "Exercise - Setting a Baseline",
+   "prompt_cell": "1-2-c169",
+   "answer_cells": [
+    "1-2-c170",
+    "1-2-c173"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c170"
+  },
+  {
+   "id": "exercise:1-2-c177",
+   "title": "Exercise - batching, and using the `FactoredMatrix` class",
+   "prompt_cell": "1-2-c177",
+   "answer_cells": [
+    "1-2-c179"
+   ],
+   "section": "1-2",
+   "answer_cell": "1-2-c179"
   }
  ]
 }

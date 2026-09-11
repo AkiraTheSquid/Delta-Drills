@@ -1031,5 +1031,144 @@
    "role": "prose",
    "src": "## Multi-Agent PPO\n\nMulti-Agent PPO (MAPPO) is an extension of the standard PPO algorithm which trains multiple agents at once. It was first described in the paper [The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games](https://arxiv.org/abs/2103.01955). Can you implement MAPPO?"
   }
+ ],
+ "setup_cells": [
+  "2-3-c008",
+  "2-3-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:2-3-c025",
+   "title": "Exercise - implement `get_actor_and_critic`",
+   "prompt_cell": "2-3-c025",
+   "answer_cells": [
+    "2-3-c026"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c026"
+  },
+  {
+   "id": "exercise:2-3-c029",
+   "title": "Exercise - implement `compute_advantages`",
+   "prompt_cell": "2-3-c029",
+   "answer_cells": [
+    "2-3-c030"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c030"
+  },
+  {
+   "id": "exercise:2-3-c033",
+   "title": "Exercise - implement `minibatch_indices`",
+   "prompt_cell": "2-3-c033",
+   "answer_cells": [
+    "2-3-c034"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c034"
+  },
+  {
+   "id": "exercise:2-3-c041",
+   "title": "Exercise - implement `PPOAgent`",
+   "prompt_cell": "2-3-c041",
+   "answer_cells": [
+    "2-3-c042"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c042"
+  },
+  {
+   "id": "exercise:2-3-c048",
+   "title": "Exercise - write `calc_clipped_surrogate_objective`",
+   "prompt_cell": "2-3-c048",
+   "answer_cells": [
+    "2-3-c049"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c049"
+  },
+  {
+   "id": "exercise:2-3-c052",
+   "title": "Exercise - write `calc_value_function_loss`",
+   "prompt_cell": "2-3-c052",
+   "answer_cells": [
+    "2-3-c053"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c053"
+  },
+  {
+   "id": "exercise:2-3-c056",
+   "title": "Exercise - write `calc_entropy_bonus`",
+   "prompt_cell": "2-3-c056",
+   "answer_cells": [
+    "2-3-c057"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c057"
+  },
+  {
+   "id": "exercise:2-3-c060",
+   "title": "Exercise - implement `PPOScheduler`",
+   "prompt_cell": "2-3-c060",
+   "answer_cells": [
+    "2-3-c061"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c061"
+  },
+  {
+   "id": "exercise:2-3-c065",
+   "title": "Exercise - complete the `PPOTrainer` class",
+   "prompt_cell": "2-3-c065",
+   "answer_cells": [
+    "2-3-c066",
+    "2-3-c069",
+    "2-3-c071"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c066"
+  },
+  {
+   "id": "exercise:2-3-c074",
+   "title": "Exercise - implement reward shaping",
+   "prompt_cell": "2-3-c074",
+   "answer_cells": [
+    "2-3-c075",
+    "2-3-c078"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c075"
+  },
+  {
+   "id": "exercise:2-3-c092",
+   "title": "Exercise - rewrite `get_actor_and_critic`",
+   "prompt_cell": "2-3-c092",
+   "answer_cells": [
+    "2-3-c093"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c093"
+  },
+  {
+   "id": "exercise:2-3-c110",
+   "title": "Exercise - implement `Actor` and `Critic`",
+   "prompt_cell": "2-3-c110",
+   "answer_cells": [
+    "2-3-c111"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c111"
+  },
+  {
+   "id": "exercise:2-3-c113",
+   "title": "Exercise - additional rewrites",
+   "prompt_cell": "2-3-c113",
+   "answer_cells": [
+    "2-3-c115"
+   ],
+   "section": "2-3",
+   "answer_cell": "2-3-c115"
+  }
  ]
 }

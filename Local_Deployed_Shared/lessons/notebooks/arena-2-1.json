@@ -181,6 +181,13 @@
    "src": "### Exercise - reason about toy environment\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 15-25 minutes on this exercise.\n> This will help build your intuition for these formulas and expressions.\n> ```\n\nConsider the following environment: There are two actions $A = \\{a_L, a_R\\}$, three states $S = \\{s_0, s_L, s_R\\}$ and three rewards $R = \\{0,1,2\\}$. The environment is deterministic, and can be represented by the following transition diagram:\n\n![](https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/markov-diagram.png)\n\nThe edges represent the state transitions given an action, as well as the reward received. For example, in state $s_0$, taking action $a_L$ means the new state is $s_L$, and the reward received is $+1$. The transitions leading out from $s_L$ and $s_R$ are independant of action. This gives us effectively two choices of deterministic policies, $\\pi_L(s_0) = s_L$ and $\\pi_R(s_0) = s_R$ (it is irrelevant what those policies do in the other states.)\n\nYour task here is to compute the value $V_{\\pi}(s_0)$ for $\\pi = \\pi_L$ and $\\pi = \\pi_R$. Which policy is better? Does the answer depend on the choice of discount factor $\\gamma$? If so, how?"
   },
   {
+   "id": "2-1-c016-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "2-1-c016-1",
    "role": "details",
@@ -875,6 +882,173 @@
    "id": "2-1-c104",
    "role": "prose",
    "src": "## Bonus\n\nHere are a few bonus exercises you can try if you're interested. You could instead progress to the second section, and return to them if you have time.\n\n* Implement the gradient bandit algorithm.\n* Implement an environment and an agent for the contextual bandit problem.\n* Complete the exercises at the end of Chapter 2 of Sutton and Barto."
+  }
+ ],
+ "setup_cells": [
+  "2-1-c006",
+  "2-1-c007"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:2-1-c016",
+   "title": "Exercise - reason about toy environment",
+   "prompt_cell": "2-1-c016",
+   "answer_cells": [
+    "2-1-c016-answer"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c016-answer"
+  },
+  {
+   "id": "exercise:2-1-c018",
+   "title": "Environment",
+   "prompt_cell": "2-1-c017-2",
+   "answer_cells": [
+    "2-1-c018"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c018"
+  },
+  {
+   "id": "exercise:2-1-c026",
+   "title": "Exercise - implement `policy_eval_numerical`",
+   "prompt_cell": "2-1-c026",
+   "answer_cells": [
+    "2-1-c027"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c027"
+  },
+  {
+   "id": "exercise:2-1-c030",
+   "title": "Exercise - implement `policy_eval_exact`",
+   "prompt_cell": "2-1-c030",
+   "answer_cells": [
+    "2-1-c031"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c031"
+  },
+  {
+   "id": "exercise:2-1-c034",
+   "title": "Exercise - implement `policy_improvement`",
+   "prompt_cell": "2-1-c034",
+   "answer_cells": [
+    "2-1-c035"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c035"
+  },
+  {
+   "id": "exercise:2-1-c038",
+   "title": "Exercise - implement `find_optimal_policy`",
+   "prompt_cell": "2-1-c038",
+   "answer_cells": [
+    "2-1-c039"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c039"
+  },
+  {
+   "id": "exercise:2-1-c052",
+   "title": "class",
+   "prompt_cell": "2-1-c051",
+   "answer_cells": [
+    "2-1-c052"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c052"
+  },
+  {
+   "id": "exercise:2-1-c054",
+   "title": "Exercise - implement `Cheater`",
+   "prompt_cell": "2-1-c054",
+   "answer_cells": [
+    "2-1-c055"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c055"
+  },
+  {
+   "id": "exercise:2-1-c060",
+   "title": "Exercise - Implement Q-learning and SARSA",
+   "prompt_cell": "2-1-c060",
+   "answer_cells": [
+    "2-1-c061"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c061"
+  },
+  {
+   "id": "exercise:2-1-c067",
+   "title": "Exercise - Implement SARSA($\\lambda$)",
+   "prompt_cell": "2-1-c067",
+   "answer_cells": [
+    "2-1-c068",
+    "2-1-c069"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c068"
+  },
+  {
+   "id": "exercise:2-1-c075",
+   "title": "CliffWalking",
+   "prompt_cell": "2-1-c074",
+   "answer_cells": [
+    "2-1-c075"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c075"
+  },
+  {
+   "id": "exercise:2-1-c090",
+   "title": "Agent",
+   "prompt_cell": "2-1-c089",
+   "answer_cells": [
+    "2-1-c090"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c090"
+  },
+  {
+   "id": "exercise:2-1-c091",
+   "title": "Exercise - implement `RandomAgent`",
+   "prompt_cell": "2-1-c091",
+   "answer_cells": [
+    "2-1-c092"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c092"
+  },
+  {
+   "id": "exercise:2-1-c094",
+   "title": "Exercise - Implement reward averaging",
+   "prompt_cell": "2-1-c094",
+   "answer_cells": [
+    "2-1-c095"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c095"
+  },
+  {
+   "id": "exercise:2-1-c097",
+   "title": "Exercise - implement cheater agent",
+   "prompt_cell": "2-1-c097",
+   "answer_cells": [
+    "2-1-c098"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c098"
+  },
+  {
+   "id": "exercise:2-1-c101",
+   "title": "Exercise - implement UCBA selection",
+   "prompt_cell": "2-1-c101",
+   "answer_cells": [
+    "2-1-c102"
+   ],
+   "section": "2-1",
+   "answer_cell": "2-1-c102"
   }
  ]
 }

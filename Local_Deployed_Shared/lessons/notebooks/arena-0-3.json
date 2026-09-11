@@ -860,5 +860,145 @@
    "role": "prose",
    "src": "## The Optimizer's Curse\n\nThe [optimizer's curse](https://www.lesswrong.com/posts/5gQLrJr2yhPzMCcni/the-optimizer-s-curse-and-how-to-beat-it) applies to tuning hyperparameters. The main take-aways are:\n\n- You can expect your best hyperparameter combination to actually underperform in the future. You chose it because it was the best on some metric, but that metric has an element of noise/luck, and the more combinations you test the larger this effect is.\n- Look at the overall trends and correlations in context and try to make sense of the values you're seeing. Just because you ran a long search process doesn't mean your best output is really the best.\n\nFor more on this, see [Preventing \"Overfitting\" of Cross-Validation Data](https://ai.stanford.edu/~ang/papers/cv-final.pdf) by Andrew Ng."
   }
+ ],
+ "setup_cells": [
+  "0-3-c007",
+  "0-3-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-3-c023",
+   "title": "Exercise - implement `opt_fn_with_sgd`",
+   "prompt_cell": "0-3-c023",
+   "answer_cells": [
+    "0-3-c024"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c024"
+  },
+  {
+   "id": "exercise:0-3-c028",
+   "title": "Exercise - implement SGD",
+   "prompt_cell": "0-3-c028",
+   "answer_cells": [
+    "0-3-c029"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c029"
+  },
+  {
+   "id": "exercise:0-3-c033",
+   "title": "Exercise - implement RMSprop",
+   "prompt_cell": "0-3-c033",
+   "answer_cells": [
+    "0-3-c034"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c034"
+  },
+  {
+   "id": "exercise:0-3-c037",
+   "title": "Exercise - implement Adam",
+   "prompt_cell": "0-3-c037",
+   "answer_cells": [
+    "0-3-c038"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c038"
+  },
+  {
+   "id": "exercise:0-3-c040",
+   "title": "Exercise - implement AdamW",
+   "prompt_cell": "0-3-c040",
+   "answer_cells": [
+    "0-3-c041"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c041"
+  },
+  {
+   "id": "exercise:0-3-c044",
+   "title": "Exercise - experiment with different optimizers & params",
+   "prompt_cell": "0-3-c044",
+   "answer_cells": [
+    "0-3-c045",
+    "0-3-c047",
+    "0-3-c048"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c045"
+  },
+  {
+   "id": "exercise:0-3-c054",
+   "title": "Exercise - rewrite SGD to use parameter groups",
+   "prompt_cell": "0-3-c054",
+   "answer_cells": [
+    "0-3-c055"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c055"
+  },
+  {
+   "id": "exercise:0-3-c073",
+   "title": "Exercise - rewrite training loop with wandb",
+   "prompt_cell": "0-3-c073",
+   "answer_cells": [
+    "0-3-c074"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c074"
+  },
+  {
+   "id": "exercise:0-3-c083",
+   "title": "Exercise - define a sweep config & update `args`",
+   "prompt_cell": "0-3-c083",
+   "answer_cells": [
+    "0-3-c084",
+    "0-3-c087"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c084"
+  },
+  {
+   "id": "exercise:0-3-c101",
+   "title": "Exercise - implement `broadcast`",
+   "prompt_cell": "0-3-c101",
+   "answer_cells": [
+    "0-3-c102"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c102"
+  },
+  {
+   "id": "exercise:0-3-c104",
+   "title": "Exercise - implement `all_reduce`",
+   "prompt_cell": "0-3-c104",
+   "answer_cells": [
+    "0-3-c105",
+    "0-3-c108"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c105"
+  },
+  {
+   "id": "exercise:0-3-c110",
+   "title": "Exercise - complete `DistResNetTrainer`",
+   "prompt_cell": "0-3-c110",
+   "answer_cells": [
+    "0-3-c111"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c111"
+  },
+  {
+   "id": "exercise:0-3-c117",
+   "title": "ring_all_reduce",
+   "prompt_cell": "0-3-c116",
+   "answer_cells": [
+    "0-3-c117"
+   ],
+   "section": "0-3",
+   "answer_cell": "0-3-c117"
+  }
  ]
 }

@@ -1325,6 +1325,13 @@
    "src": "### Exercise - implement KV caching\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴🔴\n> Importance: 🔵⚪⚪⚪⚪\n> \n> You are expected to spend well over an hour on this exercise, if you choose to do it.\n> ```\n\nModify your GPT-2 to optionally use a cache. When you run your GPT on `\"My life motto:\"`, it should store the necessary values in the cache. Then in the next forward pass with just `\" Always\"` as input, it should load the cached values instead of recomputing them (and update the cache). This only needs to work with a single input sequence (batch size of 1), and you can assume that after the first forward pass, the input will be just one token.\n\nThe design of the cache is completely up to you - discuss possible designs with your partner before writing code. It should be possible to have only one GPT2 instance and many different cache instances at one time. Imagine that you want to use one instance to serve multiple users submitting requests for text generation like in [AI Dungeon](https://aidungeon.io/).\n\nYou'll also need to rewrite parts of your `DemoTransformer` code, in order to get this to work. The tests have been built to accommodate modules which return their output as the first element in a tuple (i.e. `(output, cache)`) rather than just returning the output, so you should use the tests to verify that your modules still work as expected.\n\nSome example considerations:\n\n* Which GPT-2 classes need to interact with the cache?\n    * Will you need to change the positional embedding, and if so then how?\n* Should the cache be mutable and be updated in place, or does updating actually just create a separate instance?\n    * *(Hint here - think about how you might use the cache during beam search.)*\n* Is it possible for other programmers to incorrectly use your cache? Is there a way to prevent this failure mode or at least detect this and complain loudly?"
   },
   {
+   "id": "1-1-c182-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-1-c183",
    "role": "details",
@@ -1377,6 +1384,215 @@
    "role": "details",
    "src": "```python\nprompt = \"For you, the day Bison graced your village was the most important day of your life. But for me, it was\"\norig_len = len(tokenizer.encode(prompt))\n\nbeam_search_kwargs = dict(\n    prompt=prompt,\n    num_return_sequences=3,\n    num_beams=20,\n    max_new_tokens=60,\n    no_repeat_ngram_size=2,\n    verbose=False\n)\n\nsampler = TransformerSampler(model, tokenizer)\n\n# Run the noncached version\nt0 = time.time()\nfinal_logitsums_and_completions = sampler.beam_search(**beam_search_kwargs)\nlogprob_sum, text = final_logitsums_and_completions[0]\navg_logprob_as_prob = t.tensor(logprob_sum / (len(tokenizer.encode(text)) - orig_len)).exp().item()\nprint(f\"Time (without cache): {time.time() - t0:.2f} seconds\")\nprint(f\"Avg logprob (expressed as a probability) = {avg_logprob_as_prob:.3f}\")\nrprint(f\"Output:\\n\\n[bold dark_orange]{text}[/]\\n\\n\")\n\n# Run the cached version\nt0 = time.time()\nbeam_search_kwargs[\"kv_cache\"] = KeyValueCache.new_empty(model.cfg)\nfinal_logitsums_and_completions = sampler.beam_search(**beam_search_kwargs)\nlogprob_sum, text_with_cache = final_logitsums_and_completions[0]\navg_logprob_as_prob = t.tensor(logprob_sum / (len(tokenizer.encode(text)) - orig_len)).exp().item()\nprint(f\"Time (with cache): {time.time() - t0:.2f} seconds\")\nprint(f\"Avg logprob (as probability) = {avg_logprob_as_prob:.3f}\", end=\"\")\nrprint(f\"Output:\\n\\n[bold dark_orange]{text_with_cache}[/]\\n\\n\")\n\n# Check they are the same\nassert text == text_with_cache, \"Your outputs are different, meaning you've probably made a mistake in your cache implementation.\"\nprint(\"Tests passed!\")\n```",
    "summary": "Code to verify that the same output is being produced by cache and no-cache versions (and to compare speeds)"
+  }
+ ],
+ "setup_cells": [
+  "1-1-c006",
+  "1-1-c007"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-1-c066",
+   "title": "Exercise - implement `LayerNorm`",
+   "prompt_cell": "1-1-c066",
+   "answer_cells": [
+    "1-1-c067"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c067"
+  },
+  {
+   "id": "exercise:1-1-c069",
+   "title": "Exercise - implement `Embed`",
+   "prompt_cell": "1-1-c069",
+   "answer_cells": [
+    "1-1-c070"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c070"
+  },
+  {
+   "id": "exercise:1-1-c072",
+   "title": "Exercise - implement `PosEmbed`",
+   "prompt_cell": "1-1-c072",
+   "answer_cells": [
+    "1-1-c073"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c073"
+  },
+  {
+   "id": "exercise:1-1-c075",
+   "title": "Exercise - implement `apply_causal_mask`",
+   "prompt_cell": "1-1-c075",
+   "answer_cells": [
+    "1-1-c076"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c076"
+  },
+  {
+   "id": "exercise:1-1-c078",
+   "title": "Exercise - implement `Attention`",
+   "prompt_cell": "1-1-c078",
+   "answer_cells": [
+    "1-1-c082",
+    "1-1-c084",
+    "1-1-c086"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c086"
+  },
+  {
+   "id": "exercise:1-1-c088",
+   "title": "Exercise - implement `MLP`",
+   "prompt_cell": "1-1-c088",
+   "answer_cells": [
+    "1-1-c089"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c089"
+  },
+  {
+   "id": "exercise:1-1-c091",
+   "title": "Exercise - implement `TransformerBlock`",
+   "prompt_cell": "1-1-c091",
+   "answer_cells": [
+    "1-1-c092"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c092"
+  },
+  {
+   "id": "exercise:1-1-c094",
+   "title": "Exercise - implement `Unembed`",
+   "prompt_cell": "1-1-c094",
+   "answer_cells": [
+    "1-1-c095"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c095"
+  },
+  {
+   "id": "exercise:1-1-c097",
+   "title": "Exercise - implement `DemoTransformer`",
+   "prompt_cell": "1-1-c097",
+   "answer_cells": [
+    "1-1-c098",
+    "1-1-c101",
+    "1-1-c103",
+    "1-1-c105"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c098"
+  },
+  {
+   "id": "exercise:1-1-c120",
+   "title": "Exercise - write training loop",
+   "prompt_cell": "1-1-c120",
+   "answer_cells": [
+    "1-1-c121"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c121"
+  },
+  {
+   "id": "exercise:1-1-c129",
+   "title": "Exercise (optional) - log completions",
+   "prompt_cell": "1-1-c129",
+   "answer_cells": [
+    "1-1-c130",
+    "1-1-c131"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c131"
+  },
+  {
+   "id": "exercise:1-1-c137",
+   "title": "Exercise - implement `sample`",
+   "prompt_cell": "1-1-c137",
+   "answer_cells": [
+    "1-1-c138"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c138"
+  },
+  {
+   "id": "exercise:1-1-c141",
+   "title": "Exercise - `sample_basic`",
+   "prompt_cell": "1-1-c141",
+   "answer_cells": [
+    "1-1-c142"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c142"
+  },
+  {
+   "id": "exercise:1-1-c144",
+   "title": "Exercise - `apply_temperature`",
+   "prompt_cell": "1-1-c144",
+   "answer_cells": [
+    "1-1-c145"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c145"
+  },
+  {
+   "id": "exercise:1-1-c147",
+   "title": "Exercise - `apply_frequency_penalty`",
+   "prompt_cell": "1-1-c147",
+   "answer_cells": [
+    "1-1-c149"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c149"
+  },
+  {
+   "id": "exercise:1-1-c154",
+   "title": "Exercise - `sample_top_k`",
+   "prompt_cell": "1-1-c154",
+   "answer_cells": [
+    "1-1-c155",
+    "1-1-c158"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c155"
+  },
+  {
+   "id": "exercise:1-1-c161",
+   "title": "Exercise - `sample_top_p`",
+   "prompt_cell": "1-1-c161",
+   "answer_cells": [
+    "1-1-c162",
+    "1-1-c165"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c162"
+  },
+  {
+   "id": "exercise:1-1-c167",
+   "title": "Exercise - implement `beam_search`",
+   "prompt_cell": "1-1-c167",
+   "answer_cells": [
+    "1-1-c168",
+    "1-1-c171",
+    "1-1-c173",
+    "1-1-c174",
+    "1-1-c176",
+    "1-1-c178"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c168"
+  },
+  {
+   "id": "exercise:1-1-c182",
+   "title": "Exercise - implement KV caching",
+   "prompt_cell": "1-1-c182",
+   "answer_cells": [
+    "1-1-c182-answer"
+   ],
+   "section": "1-1",
+   "answer_cell": "1-1-c182-answer"
   }
  ]
 }

@@ -673,5 +673,151 @@
    "role": "prose",
    "src": "### Try further elicitation methods\n\nRead some further resources on building and eliciting behaviour from LLM agents, and try implementing some of your own methods to elicit improved performance on the task. If you start seeing diminishing returns from elicitation (due to saturating performance on the task), come up with new ways to make the task harder. Alternatively, if you're feeling particularly ambitious, you can try and come up with your own more difficult task and build an agent to try and accomplish this from scratch."
   }
+ ],
+ "setup_cells": [
+  "3-4-c005",
+  "3-4-c006"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:3-4-c016",
+   "title": "Exercise - Build a simple arithmetic task",
+   "prompt_cell": "3-4-c016",
+   "answer_cells": [
+    "3-4-c017"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c017"
+  },
+  {
+   "id": "exercise:3-4-c020",
+   "title": "Exercise - Write `CalculateTool`",
+   "prompt_cell": "3-4-c020",
+   "answer_cells": [
+    "3-4-c021"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c021"
+  },
+  {
+   "id": "exercise:3-4-c025",
+   "title": "Exercise - Build an `ArithmeticAgent`",
+   "prompt_cell": "3-4-c025",
+   "answer_cells": [
+    "3-4-c026"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c026"
+  },
+  {
+   "id": "exercise:3-4-c028",
+   "title": "Exercise - Use eval to run the agent",
+   "prompt_cell": "3-4-c028",
+   "answer_cells": [
+    "3-4-c029"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c029"
+  },
+  {
+   "id": "exercise:3-4-c041",
+   "title": "Exercise - Implement `get_permitted_links()`",
+   "prompt_cell": "3-4-c041",
+   "answer_cells": [
+    "3-4-c042"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c042"
+  },
+  {
+   "id": "exercise:3-4-c047",
+   "title": "Exercise - Build tools for the WikiGame",
+   "prompt_cell": "3-4-c047",
+   "answer_cells": [
+    "3-4-c048"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c048"
+  },
+  {
+   "id": "exercise:3-4-c050",
+   "title": "Exercise - Build a WikiAgent",
+   "prompt_cell": "3-4-c050",
+   "answer_cells": [
+    "3-4-c051"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c051"
+  },
+  {
+   "id": "exercise:3-4-c053",
+   "title": "Exercise - Run the task",
+   "prompt_cell": "3-4-c053",
+   "answer_cells": [
+    "3-4-c054",
+    "3-4-c057",
+    "3-4-c058"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c054"
+  },
+  {
+   "id": "exercise:3-4-c063",
+   "title": "Exercise - Engineer prompts",
+   "prompt_cell": "3-4-c063",
+   "answer_cells": [
+    "3-4-c064",
+    "3-4-c067",
+    "3-4-c068"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c064"
+  },
+  {
+   "id": "exercise:3-4-c069",
+   "title": "Exercise - Implement the ReAct framework",
+   "prompt_cell": "3-4-c069",
+   "answer_cells": [
+    "3-4-c070",
+    "3-4-c073",
+    "3-4-c074"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c070"
+  },
+  {
+   "id": "exercise:3-4-c075",
+   "title": "Exercise - Let the LLM see its entire chat history",
+   "prompt_cell": "3-4-c075",
+   "answer_cells": [
+    "3-4-c076",
+    "3-4-c079",
+    "3-4-c080"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c076"
+  },
+  {
+   "id": "exercise:3-4-c081",
+   "title": "Exercise - Implement a reflexion tool",
+   "prompt_cell": "3-4-c081",
+   "answer_cells": [
+    "3-4-c082",
+    "3-4-c083"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c082"
+  },
+  {
+   "id": "exercise:3-4-c088",
+   "title": "Exercise - Implement additional rules",
+   "prompt_cell": "3-4-c088",
+   "answer_cells": [
+    "3-4-c089",
+    "3-4-c092"
+   ],
+   "section": "3-4",
+   "answer_cell": "3-4-c089"
+  }
  ]
 }

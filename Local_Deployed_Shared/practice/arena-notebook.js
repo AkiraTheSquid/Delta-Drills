@@ -103,9 +103,22 @@ const ArenaNotebookView = (() => {
     try {
       const saved = JSON.parse(localStorage.getItem(EDITS_KEY(nb.id)) || "null");
       if (saved?.version !== 1 || !Array.isArray(saved.cells)) return nb.cells;
-      return saved.cells.filter(
+      const cells = saved.cells.filter(
         (cell) => cell && cell.id && ["prose", "code", "magic", "details"].includes(cell.role),
       );
+      // Older builds dropped blank answer cells. Add newly compiled answer
+      // spaces without replacing any saved source or undoing later deletions.
+      const seen = new Set(cells.map((cell) => cell.id));
+      const previous = new Set(saved.compiledIds || []);
+      nb.cells.forEach((cell, index) => {
+        if (seen.has(cell.id) || previous.has(cell.id)) return;
+        if (!cell.generated_answer && !(cell.t === "code" && !cell.src.trim())) return;
+        const before = nb.cells.slice(0, index).reverse().find((c) => seen.has(c.id));
+        const at = before ? cells.findIndex((c) => c.id === before.id) + 1 : 0;
+        cells.splice(at, 0, cell);
+        seen.add(cell.id);
+      });
+      return cells;
     } catch (_) {
       return nb.cells;
     }
@@ -291,7 +304,9 @@ const ArenaNotebookView = (() => {
       .filter((node) => node.matches(".nbv-cell"))
       .map(_cellRecord);
     try {
-      localStorage.setItem(EDITS_KEY(state.id), JSON.stringify({ version: 1, cells }));
+      localStorage.setItem(EDITS_KEY(state.id), JSON.stringify({
+        version: 1, cells, compiledIds: state.nb.cells.map((cell) => cell.id),
+      }));
     } catch (_) {
       _banner("Notebook edits could not be saved in this browser.", "warn", state);
     }
@@ -419,12 +434,8 @@ const ArenaNotebookView = (() => {
     bar.classList.toggle("hidden", !message);
   };
 
-  /* The kernel restarted between two clicks — it idled out, it was evicted, the
-     box was redeployed. Every name the learner bound is gone. Nothing is
-     replayed: the lesson view rebuilds its checker because that cell is
-     infrastructure rather than the learner's work, and this notebook has no
-     equivalent — its setup cells are upstream's imports, which only the learner
-     knows they meant to have run. */
+  /* Fresh kernel invalidates past results. Session orchestration restores
+     declared setup only; learner answers and expensive experiments stay visible. */
   const _onFresh = (state) => {
     if (state === current) {
       state.host.querySelectorAll(".nbv-cell.has-run").forEach((cell) => {
@@ -438,8 +449,8 @@ const ArenaNotebookView = (() => {
        un-stale would put the green checks back over names that are gone. */
     window.ArenaNotebookOutputs?.markStale(state.id);
     _banner(
-      "The Python session restarted — anything you had defined is gone. " +
-        "Re-run the imports at the top.",
+      "Python restarted. Restoring setup; previous answers and outputs remain above. " +
+        "Re-run earlier answers when you need their definitions.",
       "warn",
       state,
     );
@@ -482,8 +493,9 @@ const ArenaNotebookView = (() => {
        the stored record on every reload of the same cell. */
     let shown = "";
     let rich = [];
+    const source = _sourceOf(node);
     try {
-      let result = await window.LessonNotebook.runSource(_sourceOf(node), {
+      let result = await state.session.execute(source, {
         context: CONTEXT(state.id),
         name: `<${node.dataset.cellId || node.id.replace(/^arena-/, "")}>`,
       });
@@ -512,6 +524,7 @@ const ArenaNotebookView = (() => {
     node.classList.remove("is-running");
     node.classList.add("has-run");
     node.classList.toggle("has-failed", failed);
+    node.classList.toggle("is-stale", _sourceOf(node) !== source);
     if (count) count.textContent = `[${state.runSeq}]`;
     button.disabled = false;
     /* The other half of "don't make me run it again": what this cell answered
@@ -524,7 +537,7 @@ const ArenaNotebookView = (() => {
       seq: state.runSeq,
       outputs: rich,
       // What it was produced FROM, so a recompile cannot pass it off as current.
-      source: _sourceOf(node),
+      source,
     });
     window.ArenaNotebookNav?.syncCompletion();
   };
@@ -600,16 +613,19 @@ const ArenaNotebookView = (() => {
     "Reset edits</button>" +
     '<button type="button" class="nbv-restart" title="Throw the Python session away">' +
     "Restart session</button>" +
+    '<button type="button" class="arena-nb-setup">Retry setup</button>' +
     "</div>" +
     '<div class="nbv-banner hidden"></div>' +
     '<header class="arena-nb-head">' +
     `<div class="arena-nb-chapter">${esc(nb.chapter || "ARENA Curriculum")}</div>` +
     `<h1 class="arena-nb-title">${esc(nb.number ? `${nb.number} — ${nb.title}` : nb.title)}</h1>` +
     (nb.desc ? `<p class="arena-nb-desc">${esc(nb.desc)}</p>` : "") +
-    '<p class="arena-nb-origin">This is Callum McDougall\'s ARENA notebook, ' +
-    `rendered here instead of in Colab — <code>${esc(nb.notebook_path || "")}</code> ` +
-    `from <code>${esc(nb.edition || "ARENA")}</code>. Nothing you do on this page is ` +
-    "graded; the drills that are graded are on the Learner Home.</p>" +
+    '<p class="arena-nb-origin">Read, try the answer cell, then continue. ' +
+    'Setup runs automatically; earlier work stays above. ARENA exercises are practice, without changing your drill rung.</p>' +
+    '<nav class="arena-exercise-sequence" aria-label="Exercise sequence">' +
+    '<button type="button" data-exercise-step="-1">← Previous</button>' +
+    '<label>Exercise <select class="arena-exercise-select" aria-label="Current exercise"></select></label>' +
+    '<button type="button" data-exercise-step="1">Next →</button></nav>' +
     "</header>";
 
   const _render = (nb, host) => {
@@ -640,6 +656,73 @@ const ArenaNotebookView = (() => {
        reads `has-run` on its first pass, and a cell restored after it would be
        a green section the rail never counted. */
     const restored = _restoreOutputs(state);
+    const findCell = (id) => Array.from(body.children).find((node) => _cellIdOf(node) === id);
+    state.session = window.ArenaNotebookSession.create({
+      context: CONTEXT(state.id),
+      isCurrent: () => state === current,
+      run: (...args) => window.LessonNotebook.runSource(...args),
+      setup: () => (nb.setup_cells || []).map((id) => {
+        const node = findCell(id);
+        if (!node || !["code", "magic"].includes(node.dataset.role)) {
+          throw new Error(`Setup cell ${id} is missing. Restore it with Reset edits.`);
+        }
+        return { id, source: _sourceOf(node) };
+      }),
+      onFresh: () => _onFresh(state),
+      onSetup: (phase, cell, result) => {
+        if (state !== current) return;
+        if (phase === "running") _banner("Preparing Python… Setup code stays above the exercises.", "info", state);
+        if (phase === "ready") _banner("Setup ready. Start with an exercise below.", "info", state);
+        if (phase !== "cell") return;
+        const node = findCell(cell.id);
+        if (!node) return;
+        node._ddRestored = false;
+        node.classList.add("has-run");
+        node.classList.remove("is-stale");
+        node.classList.toggle("has-failed", !!result.failed);
+        const out = node.querySelector(".nbv-out");
+        out.classList.remove("hidden");
+        out.classList.toggle("is-error", !!result.failed);
+        out.textContent = result.text || "Setup ready";
+        window.DeltaCellOutputs?.render(out, result.outputs || []);
+        state.runSeq += 1;
+        node.querySelector(".nbv-count").textContent = `[${state.runSeq}]`;
+        window.ArenaNotebookOutputs?.record(state.id, cell.id, {
+          text: result.text || "Setup ready", failed: !!result.failed,
+          seq: state.runSeq, outputs: result.outputs || [], source: cell.source,
+        });
+        window.ArenaNotebookNav?.syncCompletion();
+      },
+    });
+    state.prepare = () => state.session.prepare().catch((err) => _banner(err.message, "warn", state));
+    const exercises = nb.exercises || [];
+    const select = host.querySelector(".arena-exercise-select");
+    exercises.forEach((exercise, index) => {
+      select.add(new Option(`${index + 1}. ${exercise.title.replace(/`/g, "")}`, exercise.id));
+    });
+    host.querySelector(".arena-exercise-sequence").hidden = !exercises.length;
+    state.focusExercise = (id) => {
+      const index = exercises.findIndex((ex) => [ex.id, ex.prompt_cell, ex.answer_cell].includes(id));
+      if (index < 0) return false;
+      select.selectedIndex = index;
+      host.querySelector('[data-exercise-step="-1"]').disabled = index === 0;
+      host.querySelector('[data-exercise-step="1"]').disabled = index === exercises.length - 1;
+      const node = findCell(exercises[index].prompt_cell);
+      node?.scrollIntoView({ block: "start", behavior: "instant" });
+      // Make explicit navigation the saved position before delayed restore
+      // callbacks (including tab re-entry) can return to the previous task.
+      window.ArenaNotebookState?.save();
+      return !!node;
+    };
+    select.onchange = () => state.focusExercise(select.value);
+    host.querySelector('[data-exercise-step="-1"]').disabled = true;
+    host.querySelector('[data-exercise-step="1"]').disabled = exercises.length < 2;
+    host.querySelectorAll("[data-exercise-step]").forEach((button) => {
+      button.onclick = () => {
+        const next = select.selectedIndex + Number(button.dataset.exerciseStep);
+        if (exercises[next]) state.focusExercise(exercises[next].id);
+      };
+    });
 
     // One listener for the whole notebook rather than one per Run button — a
     // 300-cell page should not pay for a handler per cell.
@@ -722,14 +805,10 @@ const ArenaNotebookView = (() => {
       _render(nb, host);
       window.scrollTo({ top: 0 });
     };
-    host.querySelector(".nbv-restart").onclick = async () => {
-      await window.DeltaKernel?.reset();
-      state.runSeq = 0;
-      host.querySelectorAll(".nbv-cell.has-run").forEach((cell) => cell.classList.add("is-stale"));
-      window.ArenaNotebookOutputs?.markStale(state.id);
-      window.ArenaNotebookNav?.syncCompletion();
-      _banner("Session thrown away. Re-run the imports before anything below them.", "warn", state);
-    };
+    host.querySelector(".nbv-restart").onclick = () => state.session.restart(
+      () => window.DeltaKernel.reset(),
+    ).catch((err) => _banner(err.message, "warn", state));
+    host.querySelector(".arena-nb-setup").onclick = state.prepare;
 
     if (!window.DeltaKernel || !window.DeltaKernel.available()) {
       _banner(
@@ -752,7 +831,9 @@ const ArenaNotebookView = (() => {
        one it is holding, and marks them stale if not. Deliberately NOT awaited:
        the notebook is already on screen and readable, and a status round-trip
        must not sit between the learner and their page. */
-    _reconcileKernel(state, restored);
+    Promise.resolve(_reconcileKernel(state, restored)).then(() => {
+      if (state === current && window.DeltaKernel?.available()) state.prepare();
+    });
     /* Last, so every listener sees the finished page: practice/exercise-
        session.js puts a "Practice this exercise" button under each exercise
        heading it has drills for. Nothing in this file knows which those are. */
@@ -771,9 +852,11 @@ const ArenaNotebookView = (() => {
   /* Open one section. Called by courses.js on a section click and by the
      `?arena=<slug>` deep link. Returns false when there is nothing to open, so
      the caller can decide what to do instead of assuming a page appeared. */
-  const open = async (slug) => {
+  let openRequest = 0;
+  const open = async (slug, exercise = null) => {
     const host = _host();
     if (!host || !slug) return false;
+    const request = ++openRequest;
 
     /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,
        2026-09-02: "if you go back to that tab, it will stay at that location
@@ -792,6 +875,7 @@ const ArenaNotebookView = (() => {
       window.ArenaNotebookState?.restore();
       // The re-entry path skips _render, so it has to say so for itself.
       window.ArenaNotebookResume?.remember(current.id, current.title);
+      if (exercise) current.focusExercise(exercise);
       return true;
     }
 
@@ -809,6 +893,7 @@ const ArenaNotebookView = (() => {
     try {
       nb = await _fetchJson(FILE(slug));
     } catch (err) {
+      if (request !== openRequest) return false;
       /* 🔴 THE COMPILE STEP IS THE USUAL CAUSE, so say so. These notebooks are
          built from `Local_Deployed_Shared/content/`, which is gitignored — a
          checkout without it, or a tree where the compiler has never run, has
@@ -822,12 +907,14 @@ const ArenaNotebookView = (() => {
       console.warn("[arena-notebook] notebook unavailable:", err);
       return false;
     }
+    if (request !== openRequest) return false;
     _render(nb, host);
     /* Top of the notebook unless this browser remembers a position in it —
        which it does after a reload, or a visit yesterday. `bind` in _render
        has already named the slug this reads. */
     window.scrollTo({ top: 0 });
     window.ArenaNotebookState?.restore();
+    if (exercise) current.focusExercise(exercise);
     return true;
   };
 
@@ -856,7 +943,7 @@ window.ArenaNotebook = ArenaNotebookView;
 (function () {
   const requested = new URLSearchParams(location.search).get("arena");
   if (!requested) return;
-  const start = () => ArenaNotebookView.open(requested);
+  const start = () => ArenaNotebookView.open(requested, new URLSearchParams(location.search).get("exercise"));
   if (document.readyState === "loading") {
     window.addEventListener("DOMContentLoaded", start);
   } else {
