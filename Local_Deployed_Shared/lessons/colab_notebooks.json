@@ -16,7 +16,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-arrays-from-the-ground-up.ipynb",
-      "problems": 194
+      "problems": 206
     },
     {
       "id": "np-2",
@@ -402,6 +402,18 @@
     "987": "np-1",
     "988": "np-1",
     "989": "np-1",
+    "1313": "np-1",
+    "1314": "np-1",
+    "1315": "np-1",
+    "1316": "np-1",
+    "1317": "np-1",
+    "1318": "np-1",
+    "1319": "np-1",
+    "1320": "np-1",
+    "1321": "np-1",
+    "1322": "np-1",
+    "1323": "np-1",
+    "1324": "np-1",
     "1": "np-2",
     "12": "np-2",
     "24": "np-2",
