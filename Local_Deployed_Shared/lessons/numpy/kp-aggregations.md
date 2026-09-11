@@ -3,9 +3,10 @@ kc: numpy.aggregations
 title: Whole-tensor aggregations and Python scalars
 supporting: [numpy.elementwise-ufuncs]
 new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.Tensor, torch.allclose]
-faded: [26, 28, 64]
+faded: [26, 28, 64, 984, 985, 986]
 guided: [495, 496]
-independent: [62, 497, 498]
+independent: [62, 497, 498, 987, 988, 989]
+integrated: [990, 991, 992]
 ---
 
 ## Concept: reductions — collapsing a tensor to one number
@@ -83,6 +84,29 @@ import torch as t
 def solve(x):
     """Return (smallest, largest) element of the whole 2-D tensor."""
     return (x.min().item(), x.max().item())
+```
+
+
+### q984
+Two whole-tensor reductions in one answer, each crossing back to a plain
+Python number.
+
+```python starter
+import torch as t
+
+
+def solve(x):
+    """(total, average) of the whole tensor as plain Python numbers."""
+    return (x._____().item(), x._____().item())
+```
+
+```python solution
+import torch as t
+
+
+def solve(x):
+    """(total, average) of the whole tensor as plain Python numbers."""
+    return (x.sum().item(), x.mean().item())
 ```
 
 ## Concept: 0-dimensional tensors vs plain Python numbers
@@ -169,6 +193,28 @@ import torch as t
 def solve(x):
     """Mean of x as a plain Python float."""
     return float(x.mean())
+```
+
+
+### q985
+The same boundary as the mean drill, crossed after a different reduction.
+
+```python starter
+import torch as t
+
+
+def solve(x):
+    """The largest entry of x as a plain Python float."""
+    return _____(x.max())
+```
+
+```python solution
+import torch as t
+
+
+def solve(x):
+    """The largest entry of x as a plain Python float."""
+    return float(x.max())
 ```
 
 ## Concept: whole-tensor yes/no verdicts
@@ -267,6 +313,29 @@ def solve(a, b):
     return (bool(t.allclose(a, b)), bool(t.equal(a, b)))
 ```
 
+
+### q986
+A whole-tensor verdict beside a piece of metadata — one is reduced out of
+the values, the other was known before any of them were read.
+
+```python starter
+import torch as t
+
+
+def solve(z):
+    """(is any entry true?, how many entries there are)."""
+    return (bool(z._____()), z._____())
+```
+
+```python solution
+import torch as t
+
+
+def solve(z):
+    """(is any entry true?, how many entries there are)."""
+    return (bool(z.any()), z.numel())
+```
+
 ## Independent practice
 
 From the drill bank: q62 (sum of an integer tensor as a plain Python int —
@@ -274,6 +343,11 @@ reduction plus the scalar boundary in one task).
 
 From the drill bank: q497 (any element above a threshold, and how many — one mask, two answers).
 From the drill bank: q498 (min, max and the span between them, as plain Python floats).
+
+
+From the drill bank: q987 (centre and scale a tensor using whole-tensor statistics).
+From the drill bank: q988 (whether two tensors hold equal totals within tolerance).
+From the drill bank: q989 (the average and whether the tensor is constant).
 
 ## Guided practice
 
@@ -288,6 +362,18 @@ From the drill bank: q498 (min, max and the span between them, as plain Python f
 2. The count is metadata you already know how to read — it is not a
    reduction, and it does not need .item().
 3. `(x.mean().item(), x.numel())`.
+
+
+## Integrated practice
+
+### q990
+Return total, average, minimum, and maximum as Python floats.
+
+### q991
+Return a centred tensor, its removed average, and a centring verdict.
+
+### q992
+Return span, average, and whether the tensor is constant.
 
 ## Misconceptions
 
