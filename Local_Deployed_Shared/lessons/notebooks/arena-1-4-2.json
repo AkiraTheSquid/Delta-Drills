@@ -1395,6 +1395,9 @@
     "1-4-2-c024"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c024"
   },
   {
@@ -1405,6 +1408,9 @@
     "1-4-2-c027"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c027"
   },
   {
@@ -1416,6 +1422,9 @@
     "1-4-2-c033"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c030"
   },
   {
@@ -1426,6 +1435,9 @@
     "1-4-2-c036"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c036"
   },
   {
@@ -1437,6 +1449,9 @@
     "1-4-2-c040"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c039"
   },
   {
@@ -1449,6 +1464,9 @@
     "1-4-2-c047"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c020",
+   "topic_title": "Computed with no gradients, and not patching in SAE reconstructions...",
+   "topic_cell": "1-4-2-c020",
    "answer_cell": "1-4-2-c043"
   },
   {
@@ -1459,6 +1477,9 @@
     "1-4-2-c061"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c050",
+   "topic_title": "Introduction",
+   "topic_cell": "1-4-2-c050",
    "answer_cell": "1-4-2-c061"
   },
   {
@@ -1470,6 +1491,9 @@
     "1-4-2-c068"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c050",
+   "topic_title": "Introduction",
+   "topic_cell": "1-4-2-c050",
    "answer_cell": "1-4-2-c065"
   },
   {
@@ -1480,6 +1504,9 @@
     "1-4-2-c071"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c070",
+   "topic_title": "Blind case study",
+   "topic_cell": "1-4-2-c070",
    "answer_cell": "1-4-2-c071"
   },
   {
@@ -1491,6 +1518,9 @@
     "1-4-2-c086"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c081",
+   "topic_title": "The local replacement model",
+   "topic_cell": "1-4-2-c081",
    "answer_cell": "1-4-2-c085"
   },
   {
@@ -1502,6 +1532,9 @@
     "1-4-2-c093"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c090",
+   "topic_title": "Building the attribution graph",
+   "topic_cell": "1-4-2-c090",
    "answer_cell": "1-4-2-c092"
   },
   {
@@ -1512,6 +1545,9 @@
     "1-4-2-c099"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c090",
+   "topic_title": "Building the attribution graph",
+   "topic_cell": "1-4-2-c090",
    "answer_cell": "1-4-2-c099"
   },
   {
@@ -1525,6 +1561,9 @@
     "1-4-2-c108"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c090",
+   "topic_title": "Building the attribution graph",
+   "topic_cell": "1-4-2-c090",
    "answer_cell": "1-4-2-c102"
   },
   {
@@ -1535,6 +1574,9 @@
     "1-4-2-c113"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c090",
+   "topic_title": "Building the attribution graph",
+   "topic_cell": "1-4-2-c090",
    "answer_cell": "1-4-2-c113"
   },
   {
@@ -1545,6 +1587,9 @@
     "1-4-2-c116"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c090",
+   "topic_title": "Building the attribution graph",
+   "topic_cell": "1-4-2-c090",
    "answer_cell": "1-4-2-c116"
   },
   {
@@ -1556,6 +1601,9 @@
     "1-4-2-c124"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c118",
+   "topic_title": "Adjacency matrices: normalisation, influence, and pruning",
+   "topic_cell": "1-4-2-c118",
    "answer_cell": "1-4-2-c123"
   },
   {
@@ -1566,6 +1614,9 @@
     "1-4-2-c128"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c118",
+   "topic_title": "Adjacency matrices: normalisation, influence, and pruning",
+   "topic_cell": "1-4-2-c118",
    "answer_cell": "1-4-2-c128"
   },
   {
@@ -1579,6 +1630,9 @@
     "1-4-2-c137"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c118",
+   "topic_title": "Adjacency matrices: normalisation, influence, and pruning",
+   "topic_cell": "1-4-2-c118",
    "answer_cell": "1-4-2-c131"
   },
   {
@@ -1589,6 +1643,9 @@
     "1-4-2-c145"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c144",
+   "topic_title": "Adding in top activations",
+   "topic_cell": "1-4-2-c144",
    "answer_cell": "1-4-2-c145"
   },
   {
@@ -1603,6 +1660,9 @@
     "1-4-2-c178"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c162",
+   "topic_title": "Feature interventions",
+   "topic_cell": "1-4-2-c162",
    "answer_cell": "1-4-2-c171"
   },
   {
@@ -1614,6 +1674,9 @@
     "1-4-2-c184"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c181",
+   "topic_title": "Open-ended generation with interventions",
+   "topic_cell": "1-4-2-c181",
    "answer_cell": "1-4-2-c183"
   },
   {
@@ -1625,6 +1688,9 @@
     "1-4-2-c192"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c188",
+   "topic_title": "Manual attribution graphs",
+   "topic_cell": "1-4-2-c188",
    "answer_cell": "1-4-2-c191"
   },
   {
@@ -1636,6 +1702,9 @@
     "1-4-2-c196"
    ],
    "section": "1-4-2",
+   "topic_id": "topic:1-4-2-c188",
+   "topic_title": "Manual attribution graphs",
+   "topic_cell": "1-4-2-c188",
    "answer_cell": "1-4-2-c195"
   }
  ]

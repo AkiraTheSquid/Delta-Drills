@@ -1045,6 +1045,9 @@
     "2-3-c026"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c024",
+   "topic_title": "Actor-Critic Implementation ([detail #2](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/#:~:text=Orthogonal%20Initialization%20of%20Weights%20and%20Constant%20Initialization%20of%20biases))",
+   "topic_cell": "2-3-c024",
    "answer_cell": "2-3-c026"
   },
   {
@@ -1055,6 +1058,9 @@
     "2-3-c030"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c028",
+   "topic_title": "Generalized Advantage Estimation ([detail #5](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/#:~:text=Generalized%20Advantage%20Estimation))",
+   "topic_cell": "2-3-c028",
    "answer_cell": "2-3-c030"
   },
   {
@@ -1065,6 +1071,9 @@
     "2-3-c034"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c032",
+   "topic_title": "Replay Memory",
+   "topic_cell": "2-3-c032",
    "answer_cell": "2-3-c034"
   },
   {
@@ -1075,6 +1084,9 @@
     "2-3-c042"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c040",
+   "topic_title": "PPO Agent",
+   "topic_cell": "2-3-c040",
    "answer_cell": "2-3-c042"
   },
   {
@@ -1085,6 +1097,9 @@
     "2-3-c049"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c046",
+   "topic_title": "Objective function",
+   "topic_cell": "2-3-c046",
    "answer_cell": "2-3-c049"
   },
   {
@@ -1095,6 +1110,9 @@
     "2-3-c053"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c046",
+   "topic_title": "Objective function",
+   "topic_cell": "2-3-c046",
    "answer_cell": "2-3-c053"
   },
   {
@@ -1105,6 +1123,9 @@
     "2-3-c057"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c046",
+   "topic_title": "Objective function",
+   "topic_cell": "2-3-c046",
    "answer_cell": "2-3-c057"
   },
   {
@@ -1115,6 +1136,9 @@
     "2-3-c061"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c059",
+   "topic_title": "Adam Optimizer & Scheduler (details [#3](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/#:~:text=The%20Adam%20Optimizer%E2%80%99s%20Epsilon%20Parameter) & [#4](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/#:~:text=Adam%20Learning%20Rate%20Annealing))",
+   "topic_cell": "2-3-c059",
    "answer_cell": "2-3-c061"
   },
   {
@@ -1127,6 +1151,9 @@
     "2-3-c071"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c064",
+   "topic_title": "Writing your training loop",
+   "topic_cell": "2-3-c064",
    "answer_cell": "2-3-c066"
   },
   {
@@ -1138,6 +1165,9 @@
     "2-3-c078"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c073",
+   "topic_title": "Reward Shaping",
+   "topic_cell": "2-3-c073",
    "answer_cell": "2-3-c075"
   },
   {
@@ -1148,6 +1178,9 @@
     "2-3-c093"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c088",
+   "topic_title": "Implementational details of Atari",
+   "topic_cell": "2-3-c088",
    "answer_cell": "2-3-c093"
   },
   {
@@ -1158,6 +1191,9 @@
     "2-3-c111"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c107",
+   "topic_title": "Implementational details of MuJoCo",
+   "topic_cell": "2-3-c107",
    "answer_cell": "2-3-c111"
   },
   {
@@ -1168,6 +1204,9 @@
     "2-3-c115"
    ],
    "section": "2-3",
+   "topic_id": "topic:2-3-c107",
+   "topic_title": "Implementational details of MuJoCo",
+   "topic_cell": "2-3-c107",
    "answer_cell": "2-3-c115"
   }
  ]

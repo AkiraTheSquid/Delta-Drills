@@ -1318,6 +1318,9 @@
     "1-5-2-c027"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c022",
+   "topic_title": "Helper variables",
+   "topic_cell": "1-5-2-c022",
    "answer_cell": "1-5-2-c027"
   },
   {
@@ -1328,6 +1331,9 @@
     "1-5-2-c030-answer"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c029",
+   "topic_title": "Functional form",
+   "topic_cell": "1-5-2-c029",
    "answer_cell": "1-5-2-c030-answer"
   },
   {
@@ -1338,6 +1344,9 @@
     "1-5-2-c031-answer"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c029",
+   "topic_title": "Functional form",
+   "topic_cell": "1-5-2-c029",
    "answer_cell": "1-5-2-c031-answer"
   },
   {
@@ -1348,6 +1357,9 @@
     "1-5-2-c033"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c029",
+   "topic_title": "Functional form",
+   "topic_cell": "1-5-2-c029",
    "answer_cell": "1-5-2-c033"
   },
   {
@@ -1360,6 +1372,9 @@
     "1-5-2-c052"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c044",
+   "topic_title": "Fourier Transforms",
+   "topic_cell": "1-5-2-c044",
    "answer_cell": "1-5-2-c046"
   },
   {
@@ -1371,6 +1386,9 @@
     "1-5-2-c058"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c044",
+   "topic_title": "Fourier Transforms",
+   "topic_cell": "1-5-2-c044",
    "answer_cell": "1-5-2-c055"
   },
   {
@@ -1382,6 +1400,9 @@
     "1-5-2-c065"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c044",
+   "topic_title": "Fourier Transforms",
+   "topic_cell": "1-5-2-c044",
    "answer_cell": "1-5-2-c062"
   },
   {
@@ -1394,6 +1415,9 @@
     "1-5-2-c073"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c044",
+   "topic_title": "Fourier Transforms",
+   "topic_cell": "1-5-2-c044",
    "answer_cell": "1-5-2-c068"
   },
   {
@@ -1404,6 +1428,9 @@
     "1-5-2-c079-answer"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c075",
+   "topic_title": "Analysing our model with Fourier Transforms",
+   "topic_cell": "1-5-2-c075",
    "answer_cell": "1-5-2-c079-answer"
   },
   {
@@ -1414,6 +1441,9 @@
     "1-5-2-c095"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c091",
+   "topic_title": "Understanding neuron activations",
+   "topic_cell": "1-5-2-c091",
    "answer_cell": "1-5-2-c095"
   },
   {
@@ -1424,6 +1454,9 @@
     "1-5-2-c099"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c091",
+   "topic_title": "Understanding neuron activations",
+   "topic_cell": "1-5-2-c091",
    "answer_cell": "1-5-2-c099"
   },
   {
@@ -1436,6 +1469,9 @@
     "1-5-2-c108"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c091",
+   "topic_title": "Understanding neuron activations",
+   "topic_cell": "1-5-2-c091",
    "answer_cell": "1-5-2-c103"
   },
   {
@@ -1449,6 +1485,9 @@
     "1-5-2-c122"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c091",
+   "topic_title": "Understanding neuron activations",
+   "topic_cell": "1-5-2-c091",
    "answer_cell": "1-5-2-c113"
   },
   {
@@ -1460,6 +1499,9 @@
     "1-5-2-c133"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c123",
+   "topic_title": "Understanding Logit Computation",
+   "topic_cell": "1-5-2-c123",
    "answer_cell": "1-5-2-c130"
   },
   {
@@ -1471,6 +1513,9 @@
     "1-5-2-c154"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c149",
+   "topic_title": "Excluded Loss",
+   "topic_cell": "1-5-2-c149",
    "answer_cell": "1-5-2-c151"
   },
   {
@@ -1482,6 +1527,9 @@
     "1-5-2-c160"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c155",
+   "topic_title": "Development of the embedding",
+   "topic_cell": "1-5-2-c155",
    "answer_cell": "1-5-2-c157"
   },
   {
@@ -1493,6 +1541,9 @@
     "1-5-2-c163"
    ],
    "section": "1-5-2",
+   "topic_id": "topic:1-5-2-c155",
+   "topic_title": "Development of the embedding",
+   "topic_cell": "1-5-2-c155",
    "answer_cell": "1-5-2-c162"
   }
  ]

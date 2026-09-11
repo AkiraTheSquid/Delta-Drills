@@ -860,6 +860,9 @@
     "0-5-c023-answer"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c022",
+   "topic_title": "Autoencoders",
+   "topic_cell": "0-5-c022",
    "answer_cell": "0-5-c023-answer"
   },
   {
@@ -870,6 +873,9 @@
     "0-5-c024"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c023",
+   "topic_title": "print_param_count(my_Autoencoder, soln_Autoencoder, filename=str(section_dir / \"0503.html\"))",
+   "topic_cell": "0-5-c023",
    "answer_cell": "0-5-c024"
   },
   {
@@ -880,6 +886,9 @@
     "0-5-c029"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c027",
+   "topic_title": "arr is a numpy array of shape (8, 28, 28, 3), i.e. it's an array of 8 RGB images",
+   "topic_cell": "0-5-c027",
    "answer_cell": "0-5-c029"
   },
   {
@@ -890,6 +899,9 @@
     "0-5-c040"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c038",
+   "topic_title": "Building a VAE",
+   "topic_cell": "0-5-c038",
    "answer_cell": "0-5-c040"
   },
   {
@@ -903,6 +915,9 @@
     "0-5-c053"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c043",
+   "topic_title": "New loss function",
+   "topic_cell": "0-5-c043",
    "answer_cell": "0-5-c047"
   },
   {
@@ -913,6 +928,9 @@
     "0-5-c061"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c059",
+   "topic_title": "How GANs work",
+   "topic_cell": "0-5-c059",
    "answer_cell": "0-5-c061"
   },
   {
@@ -923,6 +941,9 @@
     "0-5-c068"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c063",
+   "topic_title": "GANs",
+   "topic_cell": "0-5-c063",
    "answer_cell": "0-5-c068"
   },
   {
@@ -934,6 +955,9 @@
     "0-5-c074"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c063",
+   "topic_title": "GANs",
+   "topic_cell": "0-5-c063",
    "answer_cell": "0-5-c071"
   },
   {
@@ -946,6 +970,9 @@
     "0-5-c087"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c078",
+   "topic_title": "Calculating loss with clamping behaviour:",
+   "topic_cell": "0-5-c078",
    "answer_cell": "0-5-c082"
   },
   {
@@ -956,6 +983,9 @@
     "0-5-c095"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c093",
+   "topic_title": "Transposed convolutions",
+   "topic_cell": "0-5-c093",
    "answer_cell": "0-5-c095"
   },
   {
@@ -967,6 +997,9 @@
     "0-5-c100"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c093",
+   "topic_title": "Transposed convolutions",
+   "topic_cell": "0-5-c093",
    "answer_cell": "0-5-c098"
   },
   {
@@ -977,6 +1010,9 @@
     "0-5-c104"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c093",
+   "topic_title": "Transposed convolutions",
+   "topic_cell": "0-5-c093",
    "answer_cell": "0-5-c104"
   },
   {
@@ -987,6 +1023,9 @@
     "0-5-c107"
    ],
    "section": "0-5",
+   "topic_id": "topic:0-5-c093",
+   "topic_title": "Transposed convolutions",
+   "topic_cell": "0-5-c093",
    "answer_cell": "0-5-c107"
   }
  ]

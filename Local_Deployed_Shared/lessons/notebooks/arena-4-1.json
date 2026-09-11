@@ -761,6 +761,9 @@
     "4-1-c023"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c016",
+   "topic_title": "Observing Emergent Misalignment",
+   "topic_cell": "4-1-c016",
    "answer_cell": "4-1-c023"
   },
   {
@@ -771,6 +774,9 @@
     "4-1-c031"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c028",
+   "topic_title": "Implementing an Autorater",
+   "topic_cell": "4-1-c028",
    "answer_cell": "4-1-c031"
   },
   {
@@ -781,6 +787,9 @@
     "4-1-c043-answer"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c040",
+   "topic_title": "Extracting Steering Vectors",
+   "topic_cell": "4-1-c040",
    "answer_cell": "4-1-c043-answer"
   },
   {
@@ -791,6 +800,9 @@
     "4-1-c058"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c047",
+   "topic_title": "Debugging failed steering",
+   "topic_cell": "4-1-c047",
    "answer_cell": "4-1-c058"
   },
   {
@@ -802,6 +814,9 @@
     "4-1-c064"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c047",
+   "topic_title": "Debugging failed steering",
+   "topic_cell": "4-1-c047",
    "answer_cell": "4-1-c061"
   },
   {
@@ -812,6 +827,9 @@
     "4-1-c066"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c047",
+   "topic_title": "Debugging failed steering",
+   "topic_cell": "4-1-c047",
    "answer_cell": "4-1-c066"
   },
   {
@@ -822,6 +840,9 @@
     "4-1-c069"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c047",
+   "topic_title": "Debugging failed steering",
+   "topic_cell": "4-1-c047",
    "answer_cell": "4-1-c069"
   },
   {
@@ -832,6 +853,9 @@
     "4-1-c082"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c072",
+   "topic_title": "Steering with Learned Vectors",
+   "topic_cell": "4-1-c072",
    "answer_cell": "4-1-c082"
   },
   {
@@ -843,6 +867,9 @@
     "4-1-c098"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c093",
+   "topic_title": "Vector Norm Evolution",
+   "topic_cell": "4-1-c093",
    "answer_cell": "4-1-c095"
   },
   {
@@ -853,6 +880,9 @@
     "4-1-c100-answer"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c099",
+   "topic_title": "PCA Trajectory Visualization",
+   "topic_cell": "4-1-c099",
    "answer_cell": "4-1-c100-answer"
   },
   {
@@ -863,6 +893,9 @@
     "4-1-c101"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c100",
+   "topic_title": "How much variance each component explains",
+   "topic_cell": "4-1-c100",
    "answer_cell": "4-1-c101"
   },
   {
@@ -874,6 +907,9 @@
     "4-1-c110"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c105",
+   "topic_title": "Detecting Phase Transitions",
+   "topic_cell": "4-1-c105",
    "answer_cell": "4-1-c107"
   },
   {
@@ -884,6 +920,9 @@
     "4-1-c112"
    ],
    "section": "4-1",
+   "topic_id": "topic:4-1-c105",
+   "topic_title": "Detecting Phase Transitions",
+   "topic_cell": "4-1-c105",
    "answer_cell": "4-1-c112"
   }
  ]

@@ -1197,6 +1197,9 @@
     "4-4-c028"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c026",
+   "topic_title": "Judging role-playing responses",
+   "topic_cell": "4-4-c026",
    "answer_cell": "4-4-c028"
   },
   {
@@ -1209,6 +1212,9 @@
     "4-4-c035"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c026",
+   "topic_title": "Judging role-playing responses",
+   "topic_cell": "4-4-c026",
    "answer_cell": "4-4-c031"
   },
   {
@@ -1219,6 +1225,9 @@
     "4-4-c039"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c036",
+   "topic_title": "Extracting activation vectors",
+   "topic_cell": "4-4-c036",
    "answer_cell": "4-4-c039"
   },
   {
@@ -1230,6 +1239,9 @@
     "4-4-c045"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c036",
+   "topic_title": "Extracting activation vectors",
+   "topic_cell": "4-4-c036",
    "answer_cell": "4-4-c042"
   },
   {
@@ -1241,6 +1253,9 @@
     "4-4-c051"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c046",
+   "topic_title": "Analyzing persona space geometry",
+   "topic_cell": "4-4-c046",
    "answer_cell": "4-4-c048"
   },
   {
@@ -1251,6 +1266,9 @@
     "4-4-c054"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c046",
+   "topic_title": "Analyzing persona space geometry",
+   "topic_cell": "4-4-c046",
    "answer_cell": "4-4-c054"
   },
   {
@@ -1261,6 +1279,9 @@
     "4-4-c077"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c074",
+   "topic_title": "4. Always clean up",
+   "topic_cell": "4-4-c074",
    "answer_cell": "4-4-c077"
   },
   {
@@ -1271,6 +1292,9 @@
     "4-4-c080"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c074",
+   "topic_title": "4. Always clean up",
+   "topic_cell": "4-4-c074",
    "answer_cell": "4-4-c080"
   },
   {
@@ -1281,6 +1305,9 @@
     "4-4-c087"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c085",
+   "topic_title": "Steering with the Assistant Axis",
+   "topic_cell": "4-4-c085",
    "answer_cell": "4-4-c087"
   },
   {
@@ -1291,6 +1318,9 @@
     "4-4-c090"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c085",
+   "topic_title": "Steering with the Assistant Axis",
+   "topic_cell": "4-4-c085",
    "answer_cell": "4-4-c090"
   },
   {
@@ -1303,6 +1333,9 @@
     "4-4-c104"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c092",
+   "topic_title": "Activation capping with calibrated vectors",
+   "topic_cell": "4-4-c092",
    "answer_cell": "4-4-c102"
   },
   {
@@ -1315,6 +1348,9 @@
     "4-4-c109"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c092",
+   "topic_title": "Activation capping with calibrated vectors",
+   "topic_cell": "4-4-c092",
    "answer_cell": "4-4-c107"
   },
   {
@@ -1325,6 +1361,9 @@
     "4-4-c127"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c121",
+   "topic_title": "Adapting utilities for Qwen",
+   "topic_cell": "4-4-c121",
    "answer_cell": "4-4-c127"
   },
   {
@@ -1335,6 +1374,9 @@
     "4-4-c138"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c121",
+   "topic_title": "Adapting utilities for Qwen",
+   "topic_cell": "4-4-c121",
    "answer_cell": "4-4-c138"
   },
   {
@@ -1345,6 +1387,9 @@
     "4-4-c147"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c145",
+   "topic_title": "Introduction",
+   "topic_cell": "4-4-c145",
    "answer_cell": "4-4-c147"
   },
   {
@@ -1355,6 +1400,9 @@
     "4-4-c150"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c145",
+   "topic_title": "Introduction",
+   "topic_cell": "4-4-c145",
    "answer_cell": "4-4-c150"
   },
   {
@@ -1365,6 +1413,9 @@
     "4-4-c153"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c145",
+   "topic_title": "Introduction",
+   "topic_cell": "4-4-c145",
    "answer_cell": "4-4-c153"
   },
   {
@@ -1375,6 +1426,9 @@
     "4-4-c156"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c145",
+   "topic_title": "Introduction",
+   "topic_cell": "4-4-c145",
    "answer_cell": "4-4-c156"
   },
   {
@@ -1385,6 +1439,9 @@
     "4-4-c159"
    ],
    "section": "4-4",
+   "topic_id": "topic:4-4-c145",
+   "topic_title": "Introduction",
+   "topic_cell": "4-4-c145",
    "answer_cell": "4-4-c159"
   }
  ]

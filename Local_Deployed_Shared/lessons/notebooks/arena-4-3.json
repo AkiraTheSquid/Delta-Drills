@@ -1121,6 +1121,9 @@
     "4-3-c030"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c026",
+   "topic_title": "Sentence Categorization",
+   "topic_cell": "4-3-c026",
    "answer_cell": "4-3-c030"
   },
   {
@@ -1132,6 +1135,9 @@
     "4-3-c034"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c026",
+   "topic_title": "Sentence Categorization",
+   "topic_cell": "4-3-c026",
    "answer_cell": "4-3-c034"
   },
   {
@@ -1143,6 +1149,9 @@
     "4-3-c049"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c042",
+   "topic_title": "Metric (1/3): Forced Answer Importance",
+   "topic_cell": "4-3-c042",
    "answer_cell": "4-3-c046"
   },
   {
@@ -1153,6 +1162,9 @@
     "4-3-c053"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c050",
+   "topic_title": "Metric (2/3) : Resampling Importance",
+   "topic_cell": "4-3-c050",
    "answer_cell": "4-3-c053"
   },
   {
@@ -1165,6 +1177,9 @@
     "4-3-c065"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c058",
+   "topic_title": "Metric (3/3): Counterfactual Importance",
+   "topic_cell": "4-3-c058",
    "answer_cell": "4-3-c061"
   },
   {
@@ -1175,6 +1190,9 @@
     "4-3-c067"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c058",
+   "topic_title": "Metric (3/3): Counterfactual Importance",
+   "topic_cell": "4-3-c058",
    "answer_cell": "4-3-c067"
   },
   {
@@ -1185,6 +1203,9 @@
     "4-3-c073"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c069",
+   "topic_title": "Sentence-to-Sentence Causal Graph",
+   "topic_cell": "4-3-c069",
    "answer_cell": "4-3-c073"
   },
   {
@@ -1195,6 +1216,9 @@
     "4-3-c077"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c075",
+   "topic_title": "Bonus: Implementing Your Own Resampling (local models)",
+   "topic_cell": "4-3-c075",
    "answer_cell": "4-3-c077"
   },
   {
@@ -1205,6 +1229,9 @@
     "4-3-c086"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c083",
+   "topic_title": "Receiver Head Analysis",
+   "topic_cell": "4-3-c083",
    "answer_cell": "4-3-c086"
   },
   {
@@ -1216,6 +1243,9 @@
     "4-3-c092"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c083",
+   "topic_title": "Receiver Head Analysis",
+   "topic_cell": "4-3-c083",
    "answer_cell": "4-3-c089"
   },
   {
@@ -1227,6 +1257,9 @@
     "4-3-c097"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c083",
+   "topic_title": "Receiver Head Analysis",
+   "topic_cell": "4-3-c083",
    "answer_cell": "4-3-c094"
   },
   {
@@ -1237,6 +1270,9 @@
     "4-3-c102"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c083",
+   "topic_title": "Receiver Head Analysis",
+   "topic_cell": "4-3-c083",
    "answer_cell": "4-3-c102"
   },
   {
@@ -1247,6 +1283,9 @@
     "4-3-c105"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c083",
+   "topic_title": "Receiver Head Analysis",
+   "topic_cell": "4-3-c083",
    "answer_cell": "4-3-c105"
   },
   {
@@ -1257,6 +1296,9 @@
     "4-3-c109"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c107",
+   "topic_title": "Attention Suppression",
+   "topic_cell": "4-3-c107",
    "answer_cell": "4-3-c109"
   },
   {
@@ -1267,6 +1309,9 @@
     "4-3-c112"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c107",
+   "topic_title": "Attention Suppression",
+   "topic_cell": "4-3-c107",
    "answer_cell": "4-3-c112"
   },
   {
@@ -1277,6 +1322,9 @@
     "4-3-c118"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c114",
+   "topic_title": "Restore original behavior",
+   "topic_cell": "4-3-c114",
    "answer_cell": "4-3-c118"
   },
   {
@@ -1287,6 +1335,9 @@
     "4-3-c125"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c124",
+   "topic_title": "Replicate the sentence-to-sentence suppression KL matrix (Figure 6)",
+   "topic_cell": "4-3-c124",
    "answer_cell": "4-3-c125"
   },
   {
@@ -1297,6 +1348,9 @@
     "4-3-c127"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c126",
+   "topic_title": "Identify receiver heads via kurtosis and verify split-half reliability (Figure 4)",
+   "topic_cell": "4-3-c126",
    "answer_cell": "4-3-c127"
   },
   {
@@ -1307,6 +1361,9 @@
     "4-3-c129"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c128",
+   "topic_title": "Receiver head scores by sentence taxonomic category (Figure 5)",
+   "topic_cell": "4-3-c128",
    "answer_cell": "4-3-c129"
   },
   {
@@ -1318,6 +1375,9 @@
     "4-3-c146"
    ],
    "section": "4-3",
+   "topic_id": "topic:4-3-c141",
+   "topic_title": "Resilience & DTF",
+   "topic_cell": "4-3-c141",
    "answer_cell": "4-3-c146"
   }
  ]

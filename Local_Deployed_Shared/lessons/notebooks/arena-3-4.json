@@ -687,6 +687,9 @@
     "3-4-c017"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c015",
+   "topic_title": "Task",
+   "topic_cell": "3-4-c015",
    "answer_cell": "3-4-c017"
   },
   {
@@ -697,6 +700,9 @@
     "3-4-c021"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c019",
+   "topic_title": "Tool use via function calling",
+   "topic_cell": "3-4-c019",
    "answer_cell": "3-4-c021"
   },
   {
@@ -707,6 +713,9 @@
     "3-4-c026"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c024",
+   "topic_title": "Agent",
+   "topic_cell": "3-4-c024",
    "answer_cell": "3-4-c026"
   },
   {
@@ -717,6 +726,9 @@
     "3-4-c029"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c024",
+   "topic_title": "Agent",
+   "topic_cell": "3-4-c024",
    "answer_cell": "3-4-c029"
   },
   {
@@ -727,6 +739,9 @@
     "3-4-c042"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c032",
+   "topic_title": "Quick intro to the Wikipedia API",
+   "topic_cell": "3-4-c032",
    "answer_cell": "3-4-c042"
   },
   {
@@ -737,6 +752,9 @@
     "3-4-c048"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c044",
+   "topic_title": "LLM Agent for WikiGame",
+   "topic_cell": "3-4-c044",
    "answer_cell": "3-4-c048"
   },
   {
@@ -747,6 +765,9 @@
     "3-4-c051"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c044",
+   "topic_title": "LLM Agent for WikiGame",
+   "topic_cell": "3-4-c044",
    "answer_cell": "3-4-c051"
   },
   {
@@ -759,6 +780,9 @@
     "3-4-c058"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c044",
+   "topic_title": "LLM Agent for WikiGame",
+   "topic_cell": "3-4-c044",
    "answer_cell": "3-4-c054"
   },
   {
@@ -771,6 +795,9 @@
     "3-4-c068"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c059",
+   "topic_title": "4️⃣ Elicitation",
+   "topic_cell": "3-4-c059",
    "answer_cell": "3-4-c064"
   },
   {
@@ -783,6 +810,9 @@
     "3-4-c074"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c059",
+   "topic_title": "4️⃣ Elicitation",
+   "topic_cell": "3-4-c059",
    "answer_cell": "3-4-c070"
   },
   {
@@ -795,6 +825,9 @@
     "3-4-c080"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c059",
+   "topic_title": "4️⃣ Elicitation",
+   "topic_cell": "3-4-c059",
    "answer_cell": "3-4-c076"
   },
   {
@@ -806,6 +839,9 @@
     "3-4-c083"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c059",
+   "topic_title": "4️⃣ Elicitation",
+   "topic_cell": "3-4-c059",
    "answer_cell": "3-4-c082"
   },
   {
@@ -817,6 +853,9 @@
     "3-4-c092"
    ],
    "section": "3-4",
+   "topic_id": "topic:3-4-c086",
+   "topic_title": "5️⃣ Bonus",
+   "topic_cell": "3-4-c086",
    "answer_cell": "3-4-c089"
   }
  ]

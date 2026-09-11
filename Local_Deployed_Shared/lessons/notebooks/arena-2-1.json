@@ -897,6 +897,9 @@
     "2-1-c016-answer"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c011",
+   "topic_title": "What is Reinforcement Learning?",
+   "topic_cell": "2-1-c011",
    "answer_cell": "2-1-c016-answer"
   },
   {
@@ -907,6 +910,9 @@
     "2-1-c018"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c017",
+   "topic_title": "Tabular RL, Known Environments",
+   "topic_cell": "2-1-c017",
    "answer_cell": "2-1-c018"
   },
   {
@@ -917,6 +923,9 @@
     "2-1-c027"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c025",
+   "topic_title": "Policy Evaluation",
+   "topic_cell": "2-1-c025",
    "answer_cell": "2-1-c027"
   },
   {
@@ -927,6 +936,9 @@
     "2-1-c031"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c029",
+   "topic_title": "Exact Policy Evaluation",
+   "topic_cell": "2-1-c029",
    "answer_cell": "2-1-c031"
   },
   {
@@ -937,6 +949,9 @@
     "2-1-c035"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c033",
+   "topic_title": "Policy Improvement",
+   "topic_cell": "2-1-c033",
    "answer_cell": "2-1-c035"
   },
   {
@@ -947,6 +962,9 @@
     "2-1-c039"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c033",
+   "topic_title": "Policy Improvement",
+   "topic_cell": "2-1-c033",
    "answer_cell": "2-1-c039"
   },
   {
@@ -957,6 +975,9 @@
     "2-1-c052"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c051",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c051",
    "answer_cell": "2-1-c052"
   },
   {
@@ -967,6 +988,9 @@
     "2-1-c055"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c053",
+   "topic_title": "Cheater Agent",
+   "topic_cell": "2-1-c053",
    "answer_cell": "2-1-c055"
   },
   {
@@ -977,6 +1001,9 @@
     "2-1-c061"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c059",
+   "topic_title": "Explore vs. Exploit",
+   "topic_cell": "2-1-c059",
    "answer_cell": "2-1-c061"
   },
   {
@@ -988,6 +1015,9 @@
     "2-1-c069"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c064",
+   "topic_title": "Eligibility Traces",
+   "topic_cell": "2-1-c064",
    "answer_cell": "2-1-c068"
   },
   {
@@ -998,6 +1028,9 @@
     "2-1-c075"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c074",
+   "topic_title": "Bonus - build your own CliffWalking environment",
+   "topic_cell": "2-1-c074",
    "answer_cell": "2-1-c075"
   },
   {
@@ -1008,6 +1041,9 @@
     "2-1-c090"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c089",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c089",
    "answer_cell": "2-1-c090"
   },
   {
@@ -1018,6 +1054,9 @@
     "2-1-c092"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c089",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c089",
    "answer_cell": "2-1-c092"
   },
   {
@@ -1028,6 +1067,9 @@
     "2-1-c095"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c089",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c089",
    "answer_cell": "2-1-c095"
   },
   {
@@ -1038,6 +1080,9 @@
     "2-1-c098"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c089",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c089",
    "answer_cell": "2-1-c098"
   },
   {
@@ -1048,6 +1093,9 @@
     "2-1-c102"
    ],
    "section": "2-1",
+   "topic_id": "topic:2-1-c089",
+   "topic_title": "Agent class",
+   "topic_cell": "2-1-c089",
    "answer_cell": "2-1-c102"
   }
  ]

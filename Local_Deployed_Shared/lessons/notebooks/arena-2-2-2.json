@@ -357,6 +357,9 @@
     "2-2-2-c019"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c017",
+   "topic_title": "Rollout Buffer",
+   "topic_cell": "2-2-2-c017",
    "answer_cell": "2-2-2-c019"
   },
   {
@@ -367,6 +370,9 @@
     "2-2-2-c025"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c023",
+   "topic_title": "VPG Agent",
+   "topic_cell": "2-2-2-c023",
    "answer_cell": "2-2-2-c025"
   },
   {
@@ -377,6 +383,9 @@
     "2-2-2-c029"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c027",
+   "topic_title": "Returns",
+   "topic_cell": "2-2-2-c027",
    "answer_cell": "2-2-2-c029"
   },
   {
@@ -387,6 +396,9 @@
     "2-2-2-c032"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c027",
+   "topic_title": "Returns",
+   "topic_cell": "2-2-2-c027",
    "answer_cell": "2-2-2-c032"
   },
   {
@@ -397,6 +409,9 @@
     "2-2-2-c036"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c034",
+   "topic_title": "Building up to the loss function",
+   "topic_cell": "2-2-2-c034",
    "answer_cell": "2-2-2-c036"
   },
   {
@@ -407,6 +422,9 @@
     "2-2-2-c039"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c034",
+   "topic_title": "Building up to the loss function",
+   "topic_cell": "2-2-2-c034",
    "answer_cell": "2-2-2-c039"
   },
   {
@@ -417,6 +435,9 @@
     "2-2-2-c042"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c034",
+   "topic_title": "Building up to the loss function",
+   "topic_cell": "2-2-2-c034",
    "answer_cell": "2-2-2-c042"
   },
   {
@@ -427,6 +448,9 @@
     "2-2-2-c046"
    ],
    "section": "2-2-2",
+   "topic_id": "topic:2-2-2-c044",
+   "topic_title": "Trainer",
+   "topic_cell": "2-2-2-c044",
    "answer_cell": "2-2-2-c046"
   }
  ]

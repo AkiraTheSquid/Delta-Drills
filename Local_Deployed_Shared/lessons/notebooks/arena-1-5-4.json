@@ -1371,6 +1371,9 @@
     "1-5-4-c018"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c011",
+   "topic_title": "Toy Model setup",
+   "topic_cell": "1-5-4-c011",
    "answer_cell": "1-5-4-c018"
   },
   {
@@ -1381,6 +1384,9 @@
     "1-5-4-c021"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c011",
+   "topic_title": "Toy Model setup",
+   "topic_cell": "1-5-4-c011",
    "answer_cell": "1-5-4-c021"
   },
   {
@@ -1393,6 +1399,9 @@
     "1-5-4-c029"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c023",
+   "topic_title": "Training our model",
+   "topic_cell": "1-5-4-c023",
    "answer_cell": "1-5-4-c025"
   },
   {
@@ -1403,6 +1412,9 @@
     "1-5-4-c031"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c023",
+   "topic_title": "Training our model",
+   "topic_cell": "1-5-4-c023",
    "answer_cell": "1-5-4-c031"
   },
   {
@@ -1417,6 +1429,9 @@
     "1-5-4-c046"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c036",
+   "topic_title": "Superposition with correlation",
+   "topic_cell": "1-5-4-c036",
    "answer_cell": "1-5-4-c038"
   },
   {
@@ -1427,6 +1442,9 @@
     "1-5-4-c048"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c036",
+   "topic_title": "Superposition with correlation",
+   "topic_cell": "1-5-4-c036",
    "answer_cell": "1-5-4-c048"
   },
   {
@@ -1439,6 +1457,9 @@
     "1-5-4-c057"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c051",
+   "topic_title": "Introduction",
+   "topic_cell": "1-5-4-c051",
    "answer_cell": "1-5-4-c053"
   },
   {
@@ -1449,6 +1470,9 @@
     "1-5-4-c058-answer"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c051",
+   "topic_title": "Introduction",
+   "topic_cell": "1-5-4-c051",
    "answer_cell": "1-5-4-c058-answer"
   },
   {
@@ -1459,6 +1483,9 @@
     "1-5-4-c059-answer"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c051",
+   "topic_title": "Introduction",
+   "topic_cell": "1-5-4-c051",
    "answer_cell": "1-5-4-c059-answer"
   },
   {
@@ -1473,6 +1500,9 @@
     "1-5-4-c069"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c060",
+   "topic_title": "Computation in superposition",
+   "topic_cell": "1-5-4-c060",
    "answer_cell": "1-5-4-c062"
   },
   {
@@ -1484,6 +1514,9 @@
     "1-5-4-c084"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c076",
+   "topic_title": "Dimensionality",
+   "topic_cell": "1-5-4-c076",
    "answer_cell": "1-5-4-c081"
   },
   {
@@ -1494,6 +1527,9 @@
     "1-5-4-c093"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c086",
+   "topic_title": "4️⃣ Superposition & Deep Double Descent",
+   "topic_cell": "1-5-4-c086",
    "answer_cell": "1-5-4-c093"
   },
   {
@@ -1504,6 +1540,9 @@
     "1-5-4-c100"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c099",
+   "topic_title": "SAE class",
+   "topic_cell": "1-5-4-c099",
    "answer_cell": "1-5-4-c100"
   },
   {
@@ -1514,6 +1553,9 @@
     "1-5-4-c102"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c095",
+   "topic_title": "5️⃣ Sparse Autoencoders in Toy Models",
+   "topic_cell": "1-5-4-c095",
    "answer_cell": "1-5-4-c102"
   },
   {
@@ -1524,6 +1566,9 @@
     "1-5-4-c105"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c095",
+   "topic_title": "5️⃣ Sparse Autoencoders in Toy Models",
+   "topic_cell": "1-5-4-c095",
    "answer_cell": "1-5-4-c105"
   },
   {
@@ -1534,6 +1579,9 @@
     "1-5-4-c108"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c095",
+   "topic_title": "5️⃣ Sparse Autoencoders in Toy Models",
+   "topic_cell": "1-5-4-c095",
    "answer_cell": "1-5-4-c108"
   },
   {
@@ -1544,6 +1592,9 @@
     "1-5-4-c111"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c095",
+   "topic_title": "5️⃣ Sparse Autoencoders in Toy Models",
+   "topic_cell": "1-5-4-c095",
    "answer_cell": "1-5-4-c111"
   },
   {
@@ -1556,6 +1607,9 @@
     "1-5-4-c126"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c119",
+   "topic_title": "Resampling",
+   "topic_cell": "1-5-4-c119",
    "answer_cell": "1-5-4-c121"
   },
   {
@@ -1566,6 +1620,9 @@
     "1-5-4-c128"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c119",
+   "topic_title": "Resampling",
+   "topic_cell": "1-5-4-c119",
    "answer_cell": "1-5-4-c128"
   },
   {
@@ -1577,6 +1634,9 @@
     "1-5-4-c137"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c131",
+   "topic_title": "Gated & JumpReLU SAEs",
+   "topic_cell": "1-5-4-c131",
    "answer_cell": "1-5-4-c134"
   },
   {
@@ -1587,6 +1647,9 @@
     "1-5-4-c139"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c131",
+   "topic_title": "Gated & JumpReLU SAEs",
+   "topic_cell": "1-5-4-c131",
    "answer_cell": "1-5-4-c139"
   },
   {
@@ -1599,6 +1662,9 @@
     "1-5-4-c151"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c131",
+   "topic_title": "Gated & JumpReLU SAEs",
+   "topic_cell": "1-5-4-c131",
    "answer_cell": "1-5-4-c149"
   },
   {
@@ -1610,6 +1676,9 @@
     "1-5-4-c155"
    ],
    "section": "1-5-4",
+   "topic_id": "topic:1-5-4-c131",
+   "topic_title": "Gated & JumpReLU SAEs",
+   "topic_cell": "1-5-4-c131",
    "answer_cell": "1-5-4-c154"
   }
  ]

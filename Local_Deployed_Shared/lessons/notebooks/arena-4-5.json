@@ -785,6 +785,9 @@
     "4-5-c018"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c015",
+   "topic_title": "Setup: load the ai-psychosis resources",
+   "topic_cell": "4-5-c015",
    "answer_cell": "4-5-c018"
   },
   {
@@ -795,6 +798,9 @@
     "4-5-c021"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c015",
+   "topic_title": "Setup: load the ai-psychosis resources",
+   "topic_cell": "4-5-c015",
    "answer_cell": "4-5-c021"
   },
   {
@@ -805,6 +811,9 @@
     "4-5-c024"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c015",
+   "topic_title": "Setup: load the ai-psychosis resources",
+   "topic_cell": "4-5-c015",
    "answer_cell": "4-5-c024"
   },
   {
@@ -815,6 +824,9 @@
     "4-5-c028"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c015",
+   "topic_title": "Setup: load the ai-psychosis resources",
+   "topic_cell": "4-5-c015",
    "answer_cell": "4-5-c028"
   },
   {
@@ -825,6 +837,9 @@
     "4-5-c032"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c015",
+   "topic_title": "Setup: load the ai-psychosis resources",
+   "topic_cell": "4-5-c015",
    "answer_cell": "4-5-c032"
   },
   {
@@ -835,6 +850,9 @@
     "4-5-c054"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c049",
+   "topic_title": "Building the auditor toolkit",
+   "topic_cell": "4-5-c049",
    "answer_cell": "4-5-c054"
   },
   {
@@ -845,6 +863,9 @@
     "4-5-c057"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c049",
+   "topic_title": "Building the auditor toolkit",
+   "topic_cell": "4-5-c049",
    "answer_cell": "4-5-c057"
   },
   {
@@ -855,6 +876,9 @@
     "4-5-c060"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c049",
+   "topic_title": "Building the auditor toolkit",
+   "topic_cell": "4-5-c049",
    "answer_cell": "4-5-c060"
   },
   {
@@ -865,6 +889,9 @@
     "4-5-c065"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c049",
+   "topic_title": "Building the auditor toolkit",
+   "topic_cell": "4-5-c049",
    "answer_cell": "4-5-c065"
   },
   {
@@ -876,6 +903,9 @@
     "4-5-c075"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c049",
+   "topic_title": "Building the auditor toolkit",
+   "topic_cell": "4-5-c049",
    "answer_cell": "4-5-c074"
   },
   {
@@ -886,6 +916,9 @@
     "4-5-c086"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c081",
+   "topic_title": "From simplified to real: reading Petri's source code",
+   "topic_cell": "4-5-c081",
    "answer_cell": "4-5-c086"
   },
   {
@@ -896,6 +929,9 @@
     "4-5-c089"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c081",
+   "topic_title": "From simplified to real: reading Petri's source code",
+   "topic_cell": "4-5-c081",
    "answer_cell": "4-5-c089"
   },
   {
@@ -906,6 +942,9 @@
     "4-5-c093"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c091",
+   "topic_title": "Rollback and prefill",
+   "topic_cell": "4-5-c091",
    "answer_cell": "4-5-c093"
   },
   {
@@ -916,6 +955,9 @@
     "4-5-c102"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c100",
+   "topic_title": "Super-agent aggregation",
+   "topic_cell": "4-5-c100",
    "answer_cell": "4-5-c102"
   },
   {
@@ -926,6 +968,9 @@
     "4-5-c108"
    ],
    "section": "4-5",
+   "topic_id": "topic:4-5-c106",
+   "topic_title": "Realism classifier: building the filter",
+   "topic_cell": "4-5-c106",
    "answer_cell": "4-5-c108"
   }
  ]

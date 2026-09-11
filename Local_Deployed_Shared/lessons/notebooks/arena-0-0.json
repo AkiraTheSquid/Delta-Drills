@@ -1041,6 +1041,9 @@
     "0-0-c038"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c036",
+   "topic_title": "(1) Column-stacking",
+   "topic_cell": "0-0-c036",
    "answer_cell": "0-0-c038"
   },
   {
@@ -1051,6 +1054,9 @@
     "0-0-c042"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c040",
+   "topic_title": "(2) Column-stacking and copying",
+   "topic_cell": "0-0-c040",
    "answer_cell": "0-0-c042"
   },
   {
@@ -1061,6 +1067,9 @@
     "0-0-c046"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c044",
+   "topic_title": "(3) Row-stacking and double-copying",
+   "topic_cell": "0-0-c044",
    "answer_cell": "0-0-c046"
   },
   {
@@ -1071,6 +1080,9 @@
     "0-0-c050"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c048",
+   "topic_title": "(4) Stretching",
+   "topic_cell": "0-0-c048",
    "answer_cell": "0-0-c050"
   },
   {
@@ -1081,6 +1093,9 @@
     "0-0-c054"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c052",
+   "topic_title": "(5) Split channels",
+   "topic_cell": "0-0-c052",
    "answer_cell": "0-0-c054"
   },
   {
@@ -1091,6 +1106,9 @@
     "0-0-c058"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c056",
+   "topic_title": "(6) Stack into rows & cols",
+   "topic_cell": "0-0-c056",
    "answer_cell": "0-0-c058"
   },
   {
@@ -1101,6 +1119,9 @@
     "0-0-c062"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c060",
+   "topic_title": "(7) Transpose",
+   "topic_cell": "0-0-c060",
    "answer_cell": "0-0-c062"
   },
   {
@@ -1111,6 +1132,9 @@
     "0-0-c066"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c064",
+   "topic_title": "(8) Shrinking",
+   "topic_cell": "0-0-c064",
    "answer_cell": "0-0-c066"
   },
   {
@@ -1121,6 +1145,9 @@
     "0-0-c073"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c072",
+   "topic_title": "(A1) rearrange",
+   "topic_cell": "0-0-c072",
    "answer_cell": "0-0-c073"
   },
   {
@@ -1131,6 +1158,9 @@
     "0-0-c091"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c090",
+   "topic_title": "(C1) normalize a matrix",
+   "topic_cell": "0-0-c090",
    "answer_cell": "0-0-c091"
   },
   {
@@ -1141,6 +1171,9 @@
     "0-0-c094"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c093",
+   "topic_title": "(C2) pairwise cosine similarity",
+   "topic_cell": "0-0-c093",
    "answer_cell": "0-0-c094"
   },
   {
@@ -1151,6 +1184,9 @@
     "0-0-c097"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c096",
+   "topic_title": "(D) sample distribution",
+   "topic_cell": "0-0-c096",
    "answer_cell": "0-0-c097"
   },
   {
@@ -1161,6 +1197,9 @@
     "0-0-c100"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c099",
+   "topic_title": "(E) classifier accuracy",
+   "topic_cell": "0-0-c099",
    "answer_cell": "0-0-c100"
   },
   {
@@ -1171,6 +1210,9 @@
     "0-0-c103"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c102",
+   "topic_title": "(F1) total price indexing",
+   "topic_cell": "0-0-c102",
    "answer_cell": "0-0-c103"
   },
   {
@@ -1181,6 +1223,9 @@
     "0-0-c106"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c105",
+   "topic_title": "(F2) gather 2D",
+   "topic_cell": "0-0-c105",
    "answer_cell": "0-0-c106"
   },
   {
@@ -1191,6 +1236,9 @@
     "0-0-c109"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c108",
+   "topic_title": "(F3) total price gather",
+   "topic_cell": "0-0-c108",
    "answer_cell": "0-0-c109"
   },
   {
@@ -1201,6 +1249,9 @@
     "0-0-c112"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c111",
+   "topic_title": "(G) indexing",
+   "topic_cell": "0-0-c111",
    "answer_cell": "0-0-c112"
   },
   {
@@ -1211,6 +1262,9 @@
     "0-0-c115"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c114",
+   "topic_title": "(H1) batched logsumexp",
+   "topic_cell": "0-0-c114",
    "answer_cell": "0-0-c115"
   },
   {
@@ -1221,6 +1275,9 @@
     "0-0-c118"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c117",
+   "topic_title": "(H2) batched softmax",
+   "topic_cell": "0-0-c117",
    "answer_cell": "0-0-c118"
   },
   {
@@ -1231,6 +1288,9 @@
     "0-0-c121"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c120",
+   "topic_title": "(H3) batched logsoftmax",
+   "topic_cell": "0-0-c120",
    "answer_cell": "0-0-c121"
   },
   {
@@ -1241,6 +1301,9 @@
     "0-0-c124"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c123",
+   "topic_title": "(H4) batched cross entropy loss",
+   "topic_cell": "0-0-c123",
    "answer_cell": "0-0-c124"
   },
   {
@@ -1251,6 +1314,9 @@
     "0-0-c127"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c126",
+   "topic_title": "(I1) collect rows",
+   "topic_cell": "0-0-c126",
    "answer_cell": "0-0-c127"
   },
   {
@@ -1261,6 +1327,9 @@
     "0-0-c130"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c129",
+   "topic_title": "(I2) collect columns",
+   "topic_cell": "0-0-c129",
    "answer_cell": "0-0-c130"
   },
   {
@@ -1271,6 +1340,9 @@
     "0-0-c134"
    ],
    "section": "0-0",
+   "topic_id": "topic:0-0-c133",
+   "topic_title": "Exercises - einsum",
+   "topic_cell": "0-0-c133",
    "answer_cell": "0-0-c134"
   }
  ]

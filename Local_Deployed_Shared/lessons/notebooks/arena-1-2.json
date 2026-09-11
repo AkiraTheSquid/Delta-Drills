@@ -1806,6 +1806,9 @@
     "1-2-c014-answer"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c011",
+   "topic_title": "Loading and Running Models",
+   "topic_cell": "1-2-c011",
    "answer_cell": "1-2-c014-answer"
   },
   {
@@ -1816,6 +1819,9 @@
     "1-2-c026"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c021",
+   "topic_title": "Tokenization",
+   "topic_cell": "1-2-c021",
    "answer_cell": "1-2-c026"
   },
   {
@@ -1826,6 +1832,9 @@
     "1-2-c035"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c029",
+   "topic_title": "Caching all Activations",
+   "topic_cell": "1-2-c029",
    "answer_cell": "1-2-c035"
   },
   {
@@ -1837,6 +1846,9 @@
     "1-2-c052"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c042",
+   "topic_title": "Introducing Our Toy Attention-Only Model",
+   "topic_cell": "1-2-c042",
    "answer_cell": "1-2-c052"
   },
   {
@@ -1847,6 +1859,9 @@
     "1-2-c056"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c042",
+   "topic_title": "Introducing Our Toy Attention-Only Model",
+   "topic_cell": "1-2-c042",
    "answer_cell": "1-2-c056"
   },
   {
@@ -1857,6 +1872,9 @@
     "1-2-c062"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c060",
+   "topic_title": "Checking for the induction capability",
+   "topic_cell": "1-2-c060",
    "answer_cell": "1-2-c062"
   },
   {
@@ -1867,6 +1885,9 @@
     "1-2-c065"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c064",
+   "topic_title": "Looking for Induction Attention Patterns",
+   "topic_cell": "1-2-c064",
    "answer_cell": "1-2-c065"
   },
   {
@@ -1877,6 +1898,9 @@
     "1-2-c069"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c060",
+   "topic_title": "Checking for the induction capability",
+   "topic_cell": "1-2-c060",
    "answer_cell": "1-2-c069"
   },
   {
@@ -1887,6 +1911,9 @@
     "1-2-c081"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c079",
+   "topic_title": "Hooks: Accessing Activations",
+   "topic_cell": "1-2-c079",
    "answer_cell": "1-2-c081"
   },
   {
@@ -1897,6 +1924,9 @@
     "1-2-c086"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c079",
+   "topic_title": "Hooks: Accessing Activations",
+   "topic_cell": "1-2-c079",
    "answer_cell": "1-2-c086"
   },
   {
@@ -1908,6 +1938,9 @@
     "1-2-c093"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c088",
+   "topic_title": "Building interpretability tools",
+   "topic_cell": "1-2-c088",
    "answer_cell": "1-2-c090"
   },
   {
@@ -1918,6 +1951,9 @@
     "1-2-c096"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c088",
+   "topic_title": "Building interpretability tools",
+   "topic_cell": "1-2-c088",
    "answer_cell": "1-2-c096"
   },
   {
@@ -1929,6 +1965,9 @@
     "1-2-c104"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c099",
+   "topic_title": "Hooks: Intervening on Activations",
+   "topic_cell": "1-2-c099",
    "answer_cell": "1-2-c101"
   },
   {
@@ -1939,6 +1978,9 @@
     "1-2-c107"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c099",
+   "topic_title": "Hooks: Intervening on Activations",
+   "topic_cell": "1-2-c099",
    "answer_cell": "1-2-c107"
   },
   {
@@ -1949,6 +1991,9 @@
     "1-2-c116-answer"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c115",
+   "topic_title": "Factored Matrix class",
+   "topic_cell": "1-2-c115",
    "answer_cell": "1-2-c116-answer"
   },
   {
@@ -1960,6 +2005,9 @@
     "1-2-c132"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c126",
+   "topic_title": "[1] OV copying circuit",
+   "topic_cell": "1-2-c126",
    "answer_cell": "1-2-c129"
   },
   {
@@ -1970,6 +2018,9 @@
     "1-2-c135"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c126",
+   "topic_title": "[1] OV copying circuit",
+   "topic_cell": "1-2-c126",
    "answer_cell": "1-2-c135"
   },
   {
@@ -1980,6 +2031,9 @@
     "1-2-c141"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c126",
+   "topic_title": "[1] OV copying circuit",
+   "topic_cell": "1-2-c126",
    "answer_cell": "1-2-c141"
   },
   {
@@ -1990,6 +2044,9 @@
     "1-2-c145"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c143",
+   "topic_title": "[2] QK prev-token circuit",
+   "topic_cell": "1-2-c143",
    "answer_cell": "1-2-c145"
   },
   {
@@ -2000,6 +2057,9 @@
     "1-2-c148"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c146",
+   "topic_title": "[3] K-composition circuit",
+   "topic_cell": "1-2-c146",
    "answer_cell": "1-2-c148"
   },
   {
@@ -2012,6 +2072,9 @@
     "1-2-c157"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c146",
+   "topic_title": "[3] K-composition circuit",
+   "topic_cell": "1-2-c146",
    "answer_cell": "1-2-c152"
   },
   {
@@ -2022,6 +2085,9 @@
     "1-2-c160"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c146",
+   "topic_title": "[3] K-composition circuit",
+   "topic_cell": "1-2-c146",
    "answer_cell": "1-2-c160"
   },
   {
@@ -2033,6 +2099,9 @@
     "1-2-c167"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c162-2",
+   "topic_title": "Further Exploration of Induction Circuits",
+   "topic_cell": "1-2-c162-2",
    "answer_cell": "1-2-c164"
   },
   {
@@ -2044,6 +2113,9 @@
     "1-2-c173"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c162-2",
+   "topic_title": "Further Exploration of Induction Circuits",
+   "topic_cell": "1-2-c162-2",
    "answer_cell": "1-2-c170"
   },
   {
@@ -2054,6 +2126,9 @@
     "1-2-c179"
    ],
    "section": "1-2",
+   "topic_id": "topic:1-2-c162-2",
+   "topic_title": "Further Exploration of Induction Circuits",
+   "topic_cell": "1-2-c162-2",
    "answer_cell": "1-2-c179"
   }
  ]

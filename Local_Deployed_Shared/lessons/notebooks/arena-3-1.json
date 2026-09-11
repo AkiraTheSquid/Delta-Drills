@@ -573,6 +573,9 @@
     "3-1-c019"
    ],
    "section": "3-1",
+   "topic_id": "topic:3-1-c013",
+   "topic_title": "or...",
+   "topic_cell": "3-1-c013",
    "answer_cell": "3-1-c019"
   },
   {
@@ -583,6 +586,9 @@
     "3-1-c032"
    ],
    "section": "3-1",
+   "topic_id": "topic:3-1-c023",
+   "topic_title": "Alignment Faking in LLMs",
+   "topic_cell": "3-1-c023",
    "answer_cell": "3-1-c032"
   },
   {
@@ -593,6 +599,9 @@
     "3-1-c040-answer"
    ],
    "section": "3-1",
+   "topic_id": "topic:3-1-c039",
+   "topic_title": "Threat-Modeling",
+   "topic_cell": "3-1-c039",
    "answer_cell": "3-1-c040-answer"
   },
   {
@@ -603,6 +612,9 @@
     "3-1-c043-answer"
    ],
    "section": "3-1",
+   "topic_id": "topic:3-1-c042",
+   "topic_title": "Specification",
+   "topic_cell": "3-1-c042",
    "answer_cell": "3-1-c043-answer"
   },
   {
@@ -613,6 +625,9 @@
     "3-1-c046"
    ],
    "section": "3-1",
+   "topic_id": "topic:3-1-c044",
+   "topic_title": "Question Design",
+   "topic_cell": "3-1-c044",
    "answer_cell": "3-1-c046"
   }
  ]
