@@ -110,77 +110,48 @@ const LessonNotebookView = (() => {
 
   /* ---------- cell DOM ------------------------------------------------- */
 
-  /* Where a cell's source comes from at Run time.
+  /* The cell DOM is SHARED — practice/notebook-cells.js. This surface, the
+     lesson gate and the ARENA pages all build the same rectangle now (Seth,
+     2026-09-10: "I want them to be the same thing"), so what is left here is
+     only the part that is this notebook's own: which of the compiler's six
+     roles maps to which kind of cell.
 
-     Carried ON THE NODE, never read back out of the rendered DOM. 🔴 That is
-     not a style preference — `innerText` is defined in terms of LAYOUT, so a
-     cell inside a collapsed `<details>` (every solution, every hints block)
-     returns the empty string. Reading it there ran an empty program and
-     reported "✓ ran successfully": the learner opened a solution, pressed Run,
-     was told it worked, and `dd_check` below still said `solve` is not defined.
-     `_ddSource` is seeded at build time and updated on every edit, so it is
-     right whether the cell is on screen or not.
+     See that file for why the source is carried on the node rather than read
+     back out of the DOM — the short version is that a cell inside a collapsed
+     `<details>`, which every solution and every hints block is, reads back as
+     the empty string. */
+  const _cells = () => window.DeltaNotebookCells;
 
-     `textContent` is the fallback rather than `innerText` for the same reason —
-     it does not care whether the node is displayed. */
-  const _sourceOf = (node) => {
-    if (node._ddSource != null) return node._ddSource + (node._ddChecks || "");
-    const code = node.querySelector(".nbv-src code");
-    return ((code && (code.innerText || code.textContent)) || "").replace(/ /g, " ");
-  };
+  const _sourceOf = (node) => _cells().readSource(node);
 
-  const _codeCell = (cell, { editable = true, source = null } = {}) => {
-    const el = document.createElement("section");
-    el.className = "nbv-cell nbv-code";
-    el.dataset.role = cell.role;
-    el.id = `nbv-${cell.id}`;
-    el.dataset.cellId = cell.id;
-    if (cell.q) el.dataset.q = String(cell.q);
-    el._ddSource = source != null ? source : _stripTitle(cell.src).replace(/\s+$/, "");
-    const parts = window.LessonNotebook.splitChecks(el._ddSource);
-    el._ddSource = parts.code;
-    el._ddChecks = parts.checks;
-    el.innerHTML =
-      '<div class="nbv-gutter">' +
-      '<button type="button" class="nbv-run" title="Run this cell">▶</button>' +
-      '<span class="nbv-count" aria-hidden="true"></span>' +
-      "</div>" +
-      '<div class="nbv-body">' +
-      (editable
-        ? '<pre class="nbv-src"><code contenteditable="plaintext-only" spellcheck="false">' +
-          esc(el._ddSource) +
-          "</code></pre>"
-        : "") +
-      '<pre class="nbv-out hidden"></pre>' +
-      "</div>";
-    return el;
-  };
+  const _codeCell = (cell, { editable = true, source = null } = {}) =>
+    _cells().codeCell({
+      source: source != null ? source : _stripTitle(cell.src).replace(/\s+$/, ""),
+      id: cell.id,
+      role: cell.role,
+      q: cell.q || null,
+      editable,
+    });
 
-  const _mdCell = (cell) => {
-    const el = document.createElement("section");
-    el.className = "nbv-cell nbv-md";
-    el.dataset.role = cell.role;
-    el.id = `nbv-${cell.id}`;
-    if (cell.q) el.dataset.q = String(cell.q);
-    el.innerHTML = md(_stripMarkers(cell.src));
-    return el;
-  };
+  const _mdCell = (cell) =>
+    _cells().mdCell(md(_stripMarkers(cell.src)), {
+      id: cell.id,
+      role: cell.role,
+      q: cell.q || null,
+    });
 
   /* A `<details>` the compiler authored as literal HTML. Unwrapped rather than
      passed through: the shared renderer escapes HTML, so the tags would print. */
-  const _detailsCell = (cell, summary, body, extraClass, open = false) => {
-    const el = document.createElement("details");
-    el.className = `nbv-cell ${extraClass}`;
-    el.dataset.role = cell.role;
-    el.id = `nbv-${cell.id}`;
-    if (cell.q) el.dataset.q = String(cell.q);
-    if (open) el.open = true;
-    const head = document.createElement("summary");
-    head.textContent = summary;
-    el.appendChild(head);
-    el.appendChild(body);
-    return el;
-  };
+  const _detailsCell = (cell, summary, body, extraClass, open = false) =>
+    _cells().detailsCell({
+      summary,
+      body,
+      extraClass,
+      id: cell.id,
+      role: cell.role,
+      q: cell.q || null,
+      open,
+    });
 
   const _hintsCell = (cell) => {
     const inner = String(cell.src || "")
@@ -341,10 +312,8 @@ const LessonNotebookView = (() => {
   };
 
   const _runCell = async (node) => {
-    const button = node.querySelector(".nbv-run");
-    const out = node.querySelector(".nbv-out");
-    const count = node.querySelector(".nbv-count");
-    if (!button || !out) return;
+    const view = _cells();
+    if (!node.querySelector(".nbv-run") || !node.querySelector(".nbv-out")) return;
     /* The notebook this run belongs to, captured BEFORE the first await. Read
        `current` after one and a slow cell finishing just as the learner opens
        another lesson would mark THAT lesson's checker as loaded, and a later
@@ -352,25 +321,21 @@ const LessonNotebookView = (() => {
     const state = current;
     if (!state) return;
     if (!window.DeltaKernel || !window.DeltaKernel.available()) {
-      out.classList.remove("hidden");
-      out.classList.add("is-error");
-      out.textContent =
+      view.refuse(
+        node,
         "Running cells needs an account — the notebook keeps a Python session " +
-        "on the server, and a session needs someone to belong to.";
+          "on the server, and a session needs someone to belong to.",
+      );
       return;
     }
 
-    button.disabled = true;
-    node.classList.add("is-running");
-    node.classList.remove("is-stale");
-    if (count) count.textContent = "[*]";
-    out.classList.remove("hidden", "is-error");
-    out.textContent = "";
-
+    const { out } = view.begin(node);
     const source = _sourceOf(node);
+    let result = null;
     let failed = false;
+    let text = "";
     try {
-      let result = await window.LessonNotebook.runSource(source, {
+      result = await window.LessonNotebook.runSource(source, {
         context: CONTEXT(state.id),
         name: `<${node.dataset.cellId || node.id.replace(/^nbv-/, "")}>`,
       });
@@ -383,11 +348,28 @@ const LessonNotebookView = (() => {
       }
       failed = !!result.failed;
       const checks = window.LessonNotebook.checkCount(source);
-      out.textContent =
+      text =
         !failed && checks && !/\S/.test(result.text.replace(/^✓.*$/gm, ""))
           ? `✓ ${checks} check${checks === 1 ? "" : "s"} passed`
           : result.text;
-      out.classList.toggle("is-error", failed);
+    } catch (err) {
+      result = null;
+      failed = true;
+      text = `Error: ${err.message}`;
+    }
+
+    state.runSeq += 1;
+    view.finish(node, { text, failed, seq: state.runSeq });
+
+    /* 🔴 EVERYTHING BELOW HAPPENS AFTER `finish`, AND THE ORDER IS
+       LOAD-BEARING. `finish` writes the output element's text, and
+       DeltaCellOutputs APPENDS figures and tables to that same element — so a
+       render before it would be erased by it. The counter is bumped once,
+       above, on both paths: it used to be incremented after the try/catch, and
+       hoisting the beacon out of the try (where a throw would have painted a
+       recorded attempt as a failed cell) made it possible to do it twice. */
+    if (!result) return;
+    try {
       window.DeltaCellOutputs?.render(out, result.outputs);
       if (node.dataset.role === "check" && !failed) await _beacon(state, node, result.text);
       if (node.dataset.role === "checker" && !failed) {
@@ -395,17 +377,17 @@ const LessonNotebookView = (() => {
         _banner("", "info", state);
       }
     } catch (err) {
-      failed = true;
-      out.textContent = `Error: ${err.message}`;
-      out.classList.add("is-error");
+      /* These three used to sit INSIDE the try above, so a renderer or beacon
+         that threw painted the cell as failed. Moved out for the erase-order
+         reason just given, they would otherwise throw into nobody — the cell
+         already says it ran, and the learner is told nothing. Codex caught
+         that (2026-09-10). Same sequence number: nothing ran twice. */
+      view.finish(node, {
+        text: `${text}\nError: ${err.message}`.trim(),
+        failed: true,
+        seq: state.runSeq,
+      });
     }
-
-    state.runSeq += 1;
-    node.classList.remove("is-running");
-    node.classList.add("has-run");
-    node.classList.toggle("has-failed", failed);
-    if (count) count.textContent = `[${state.runSeq}]`;
-    button.disabled = false;
   };
 
   /* ---------- the notebook screen -------------------------------------- */

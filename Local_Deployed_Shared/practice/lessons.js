@@ -474,21 +474,35 @@ const LessonGate = (() => {
     // spans the page and survives this innerHTML being replaced — see
     // practice/concept-topbar.js and `_showTopbar` below.
     let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
-    // `nb-scope` marks the regions whose ```python fences are programs rather
-    // than illustrations — the same two sections validate_lessons.py executes
-    // against one shared namespace. LessonNotebook turns those into cells; a
-    // fence in "Watch out" is outside the scope and stays static, because CI
-    // never runs it and a Run button on unrun code is a trap.
-    html += '<div class="lesson-body nb-scope">' + md(seg.concept_markdown) + "</div>";
+    /* `nb-scope` marks the regions whose ```python fences are programs rather
+       than illustrations — the same two sections validate_lessons.py executes
+       against one shared namespace. LessonNotebook turns those into cells; a
+       fence in "Watch out" is outside the scope and stays static, because CI
+       never runs it and a Run button on unrun code is a trap.
+
+       🔴 `nbv-md` IS THE READING SURFACE, and it is the whole of why a lesson
+       now looks like a notebook. It is the same class a markdown cell in the
+       Notebooks tab and on an ARENA page carries, so these three divs take the
+       one type scale in styles/practice/notebook-view.css — LessWrong's
+       measurements, at the zoom styles/practice/notebook.css sets for this
+       page. Seth, 2026-09-10: "I want the lessons in notebook style format
+       rather than what they currently are." Before this they were 15px system
+       sans with their own headings, their own code chip and their own
+       blockquote: a fourth reading surface in an app that already had three.
+
+       It goes on "Watch out" as well. That band keeps its warning rule down
+       the left (styles/practice/lessons.css) — what it stops having is its own
+       paragraph size. */
+    html += '<div class="lesson-body nb-scope nbv-md">' + md(seg.concept_markdown) + "</div>";
     if (watchOut) {
-      html += '<div class="lesson-watch-out"><h3>Watch out</h3>' + md(watchOut) + "</div>";
+      html += '<div class="lesson-watch-out nbv-md"><h3>Watch out</h3>' + md(watchOut) + "</div>";
     }
     // The worked example's code is rendered INLINE now, where the prose that
     // explains it is, rather than being shipped off to the editor in the other
     // panel. `renderCode: false` used to strip it precisely because it lived
     // over there; keeping the two in one column is the whole point of the
     // notebook layout, so the fences stay and LessonNotebook makes them run.
-    html += '<div class="lesson-worked nb-scope"><h3>Worked example</h3>' +
+    html += '<div class="lesson-worked nb-scope nbv-md"><h3>Worked example</h3>' +
       md(seg.worked_example_markdown) +
       '<p class="lesson-example-note">Run any block to see it execute. A block runs ' +
       "everything above it too, so the variables it needs already exist.</p></div>";
