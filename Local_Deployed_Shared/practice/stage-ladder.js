@@ -238,6 +238,7 @@ const StageLadder = (() => {
     const n = estimate && estimate.streak;
     const need = estimate && estimate.streak_needed;
     return {
+      soloProgress: estimate && estimate.solo_progress,
       streak: Number.isFinite(n) ? n : null,
       streakNeeded: Number.isFinite(need) && need > 0 ? need : null,
       /* WHICH rung this run was counted against (`kc_estimate` sends its own
@@ -300,6 +301,9 @@ const StageLadder = (() => {
     // back to the window average would run the bar BACKWARDS on a correct
     // answer — the one thing a progress bar may never do.
     if (at > shown) return 1;
+    if (STAGES[shown].id === "partial" && current.soloProgress && !current.soloProgress.ready) {
+      return current.soloProgress.fraction;
+    }
     const parts = [];
     if (Number.isFinite(current.bound)) parts.push(current.bound / threshold);
     // The run promotes out of the rung it was counted against, so it is this

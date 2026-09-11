@@ -266,6 +266,126 @@
    "kc": "einops.einsum"
   },
   {
+   "id": "kc:tensor.row-normalization",
+   "kind": "kc",
+   "title": "Row lengths and unit directions",
+   "kc": "tensor.row-normalization"
+  },
+  {
+   "id": "kc:tensor.cosine-similarity",
+   "kind": "kc",
+   "title": "Compare directions across two collections",
+   "kc": "tensor.cosine-similarity"
+  },
+  {
+   "id": "kc:tensor.indexed-selection",
+   "kind": "kc",
+   "title": "Select values with tensor indices",
+   "kc": "tensor.indexed-selection"
+  },
+  {
+   "id": "kc:tensor.stable-probabilities",
+   "kind": "kc",
+   "title": "Stable probabilities from logits",
+   "kc": "tensor.stable-probabilities"
+  },
+  {
+   "id": "kc:tensor.classifier-evaluation",
+   "kind": "kc",
+   "title": "Evaluate predictions and classification loss",
+   "kc": "tensor.classifier-evaluation"
+  },
+  {
+   "id": "kc:tensor.inverse-cdf",
+   "kind": "kc",
+   "title": "Turn random draws into categorical samples",
+   "kc": "tensor.inverse-cdf"
+  },
+  {
+   "id": "kc:raytracing.segment-intersection",
+   "kind": "kc",
+   "title": "Solve a ray–segment intersection",
+   "kc": "raytracing.segment-intersection"
+  },
+  {
+   "id": "kc:raytracing.batched-segments",
+   "kind": "kc",
+   "title": "Every ray against every segment",
+   "kc": "raytracing.batched-segments"
+  },
+  {
+   "id": "kc:raytracing.make-rays-2d",
+   "kind": "kc",
+   "title": "A two-dimensional camera as a batch of rays",
+   "kc": "raytracing.make-rays-2d"
+  },
+  {
+   "id": "kc:raytracing.triangle-intersection",
+   "kind": "kc",
+   "title": "Barycentric coordinates and triangle hits",
+   "kc": "raytracing.triangle-intersection"
+  },
+  {
+   "id": "kc:raytracing.mesh-visibility",
+   "kind": "kc",
+   "title": "Render the nearest visible mesh surface",
+   "kc": "raytracing.mesh-visibility"
+  },
+  {
+   "id": "kc:cnn.stride-views",
+   "kind": "kc",
+   "title": "Tensor strides describe addresses, not shapes",
+   "kc": "cnn.stride-views"
+  },
+  {
+   "id": "kc:python.control-flow",
+   "kind": "kc",
+   "title": "Decisions and repeated work",
+   "kc": "python.control-flow"
+  },
+  {
+   "id": "kc:cnn.module-state",
+   "kind": "kc",
+   "title": "Modules own computation and trainable state",
+   "kc": "cnn.module-state"
+  },
+  {
+   "id": "kc:cnn.linear-layer",
+   "kind": "kc",
+   "title": "A learned affine map on the last axis",
+   "kc": "cnn.linear-layer"
+  },
+  {
+   "id": "kc:cnn.mlp",
+   "kind": "kc",
+   "title": "Compose a multilayer image classifier",
+   "kc": "cnn.mlp"
+  },
+  {
+   "id": "kc:cnn.convolution-1d",
+   "kind": "kc",
+   "title": "Convolution shares one filter across positions",
+   "kc": "cnn.convolution-1d"
+  },
+  {
+   "id": "kc:cnn.convolution-2d",
+   "kind": "kc",
+   "title": "Image filters combine channels and local geometry",
+   "kc": "cnn.convolution-2d"
+  },
+  {
+   "id": "kc:cnn.pooling",
+   "kind": "kc",
+   "title": "Pool spatial evidence while preserving channels",
+   "kc": "cnn.pooling"
+  },
+  {
+   "id": "kc:cnn.batch-normalization",
+   "kind": "kc",
+   "title": "BatchNorm separates current data from running state",
+   "kc": "cnn.batch-normalization"
+  },
+  {
    "id": "section:0-0",
    "kind": "section",
    "section": "0-0",
@@ -524,7 +644,9 @@
    "answer_cell": "0-0-c091",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.row-normalization"
+   ],
    "concepts": []
   },
   {
@@ -549,7 +671,9 @@
    "answer_cell": "0-0-c094",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.cosine-similarity"
+   ],
    "concepts": []
   },
   {
@@ -574,7 +698,9 @@
    "answer_cell": "0-0-c097",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.inverse-cdf"
+   ],
    "concepts": []
   },
   {
@@ -599,7 +725,9 @@
    "answer_cell": "0-0-c100",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.classifier-evaluation"
+   ],
    "concepts": []
   },
   {
@@ -624,7 +752,9 @@
    "answer_cell": "0-0-c103",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -649,7 +779,9 @@
    "answer_cell": "0-0-c106",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -674,7 +806,9 @@
    "answer_cell": "0-0-c109",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -699,7 +833,9 @@
    "answer_cell": "0-0-c112",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -724,7 +860,9 @@
    "answer_cell": "0-0-c115",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.stable-probabilities"
+   ],
    "concepts": []
   },
   {
@@ -749,7 +887,9 @@
    "answer_cell": "0-0-c118",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.stable-probabilities"
+   ],
    "concepts": []
   },
   {
@@ -774,7 +914,9 @@
    "answer_cell": "0-0-c121",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.stable-probabilities"
+   ],
    "concepts": []
   },
   {
@@ -799,7 +941,9 @@
    "answer_cell": "0-0-c124",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.classifier-evaluation"
+   ],
    "concepts": []
   },
   {
@@ -824,7 +968,9 @@
    "answer_cell": "0-0-c127",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -849,7 +995,9 @@
    "answer_cell": "0-0-c130",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "tensor.indexed-selection"
+   ],
    "concepts": []
   },
   {
@@ -1607,7 +1755,9 @@
    "answer_cell": "0-1-c124",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.segment-intersection"
+   ],
    "concepts": [
     {
      "id": "ray-parametric-form",
@@ -1661,7 +1811,9 @@
    "answer_cell": "0-1-c138",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.batched-segments"
+   ],
    "concepts": [
     {
      "id": "ray-parametric-form",
@@ -1727,7 +1879,9 @@
    "answer_cell": "0-1-c143",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.make-rays-2d"
+   ],
    "concepts": [
     {
      "id": "tensor-zeros-init",
@@ -1773,7 +1927,9 @@
    "answer_cell": "0-1-c150",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.triangle-intersection"
+   ],
    "concepts": [
     {
      "id": "ray-parametric-form",
@@ -1823,7 +1979,9 @@
    "answer_cell": "0-1-c157",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.triangle-intersection"
+   ],
    "concepts": [
     {
      "id": "ray-parametric-form",
@@ -1881,7 +2039,9 @@
    "answer_cell": "0-1-c169",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "raytracing.mesh-visibility"
+   ],
    "concepts": [
     {
      "id": "ray-parametric-form",
@@ -2079,7 +2239,9 @@
    "answer_cell": "0-2-c018",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.module-state"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2113,7 +2275,9 @@
    "answer_cell": "0-2-c022",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.linear-layer"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2240,7 +2404,9 @@
    "answer_cell": "0-2-c060",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.convolution-2d"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2290,7 +2456,9 @@
    "answer_cell": "0-2-c072",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.batch-normalization"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2352,7 +2520,9 @@
    "answer_cell": "0-2-c076",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.pooling"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -16419,6 +16589,526 @@
    "relation": "prerequisite"
   },
   {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:tensor.row-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:tensor.row-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.boolean-masking",
+   "target": "kc:tensor.row-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:tensor.row-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.constructors",
+   "target": "kc:tensor.row-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:tensor.cosine-similarity",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dot-matmul-patterns",
+   "target": "kc:tensor.cosine-similarity",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.transpose-axes",
+   "target": "kc:tensor.cosine-similarity",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:tensor.cosine-similarity",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.slicing-views",
+   "target": "kc:tensor.indexed-selection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.ranges",
+   "target": "kc:tensor.indexed-selection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:tensor.indexed-selection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:tensor.indexed-selection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:tensor.stable-probabilities",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.elementwise-ufuncs",
+   "target": "kc:tensor.stable-probabilities",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:tensor.stable-probabilities",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.ranges",
+   "target": "kc:tensor.stable-probabilities",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.stable-probabilities",
+   "target": "kc:tensor.classifier-evaluation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "kc:tensor.classifier-evaluation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:tensor.classifier-evaluation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.boolean-masking",
+   "target": "kc:tensor.classifier-evaluation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dtype-astype",
+   "target": "kc:tensor.classifier-evaluation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.random-threading",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dtype-astype",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.stable-probabilities",
+   "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.ray-parametrisation",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.linalg-basics",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.stack-concat-interleave",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.constructors",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.boolean-masking",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "kc:raytracing.segment-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.segment-intersection",
+   "target": "kc:raytracing.batched-segments",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:raytracing.batched-segments",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:raytracing.batched-segments",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.make-rays-1d",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.reshape-flatten",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.slice-assignment",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.stack-concat-interleave",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:raytracing.make-rays-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.segment-intersection",
+   "target": "kc:raytracing.triangle-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.linalg-basics",
+   "target": "kc:raytracing.triangle-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:raytracing.triangle-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.triangle-intersection",
+   "target": "kc:raytracing.mesh-visibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.batched-segments",
+   "target": "kc:raytracing.mesh-visibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:raytracing.make-rays-2d",
+   "target": "kc:raytracing.mesh-visibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "kc:raytracing.mesh-visibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dtype-astype",
+   "target": "kc:raytracing.mesh-visibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.views-and-copies",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.slicing-views",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dot-matmul-patterns",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.defining-functions",
+   "target": "kc:cnn.stride-views",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.defining-functions",
+   "target": "kc:python.control-flow",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.lists-and-tuples",
+   "target": "kc:python.control-flow",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.indexing",
+   "target": "kc:python.control-flow",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.boolean-masking",
+   "target": "kc:python.control-flow",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.defining-functions",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.dots-and-imports",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.elementwise-ufuncs",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.ndarray-model",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.slice-assignment",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dtype-astype",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.module-state",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.dot-matmul-patterns",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.transpose-axes",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.broadcasting-rules",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.reshape-flatten",
+   "target": "kc:cnn.linear-layer",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.linear-layer",
+   "target": "kc:cnn.mlp",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.reshape-flatten",
+   "target": "kc:cnn.mlp",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.classifier-evaluation",
+   "target": "kc:cnn.mlp",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.stride-views",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:einops.einsum",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.slice-assignment",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.constructors",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.sorting",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.transpose-axes",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.stack-concat-interleave",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.convolution-1d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.convolution-1d",
+   "target": "kc:cnn.convolution-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.convolution-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.stack-concat-interleave",
+   "target": "kc:cnn.convolution-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.sorting",
+   "target": "kc:cnn.convolution-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:cnn.convolution-2d",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.convolution-2d",
+   "target": "kc:cnn.pooling",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:cnn.pooling",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.argmin-argmax",
+   "target": "kc:cnn.pooling",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.row-normalization",
+   "target": "kc:cnn.pooling",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.batch-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.axis-reductions",
+   "target": "kc:cnn.batch-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.elementwise-ufuncs",
+   "target": "kc:cnn.batch-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.batch-normalization",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:numpy.stack-concat-interleave",
+   "target": "kc:cnn.batch-normalization",
+   "relation": "prerequisite"
+  },
+  {
    "source": "section:0-0",
    "target": "topic:0-0-c036",
    "relation": "lesson_topic"
@@ -16569,6 +17259,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.row-normalization",
+   "target": "exercise:0-0-c091",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c073",
    "target": "exercise:0-0-c091",
    "relation": "exercise_order"
@@ -16582,6 +17277,11 @@
    "source": "topic:0-0-c093",
    "target": "exercise:0-0-c094",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.cosine-similarity",
+   "target": "exercise:0-0-c094",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c091",
@@ -16599,6 +17299,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.inverse-cdf",
+   "target": "exercise:0-0-c097",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c094",
    "target": "exercise:0-0-c097",
    "relation": "exercise_order"
@@ -16612,6 +17317,11 @@
    "source": "topic:0-0-c099",
    "target": "exercise:0-0-c100",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.classifier-evaluation",
+   "target": "exercise:0-0-c100",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c097",
@@ -16629,6 +17339,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c103",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c100",
    "target": "exercise:0-0-c103",
    "relation": "exercise_order"
@@ -16642,6 +17357,11 @@
    "source": "topic:0-0-c105",
    "target": "exercise:0-0-c106",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c106",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c103",
@@ -16659,6 +17379,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c109",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c106",
    "target": "exercise:0-0-c109",
    "relation": "exercise_order"
@@ -16672,6 +17397,11 @@
    "source": "topic:0-0-c111",
    "target": "exercise:0-0-c112",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c112",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c109",
@@ -16689,6 +17419,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.stable-probabilities",
+   "target": "exercise:0-0-c115",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c112",
    "target": "exercise:0-0-c115",
    "relation": "exercise_order"
@@ -16702,6 +17437,11 @@
    "source": "topic:0-0-c117",
    "target": "exercise:0-0-c118",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.stable-probabilities",
+   "target": "exercise:0-0-c118",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c115",
@@ -16719,6 +17459,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.stable-probabilities",
+   "target": "exercise:0-0-c121",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c118",
    "target": "exercise:0-0-c121",
    "relation": "exercise_order"
@@ -16732,6 +17477,11 @@
    "source": "topic:0-0-c123",
    "target": "exercise:0-0-c124",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.classifier-evaluation",
+   "target": "exercise:0-0-c124",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c121",
@@ -16749,6 +17499,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c127",
+   "relation": "prepares"
+  },
+  {
    "source": "exercise:0-0-c124",
    "target": "exercise:0-0-c127",
    "relation": "exercise_order"
@@ -16762,6 +17517,11 @@
    "source": "topic:0-0-c129",
    "target": "exercise:0-0-c130",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:tensor.indexed-selection",
+   "target": "exercise:0-0-c130",
+   "relation": "prepares"
   },
   {
    "source": "exercise:0-0-c127",
@@ -17234,6 +17994,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:raytracing.segment-intersection",
+   "target": "exercise:0-1-c123",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:ray-parametric-form",
    "target": "exercise:0-1-c123",
    "relation": "exercises_concept"
@@ -17282,6 +18047,11 @@
    "source": "topic:0-1-c136",
    "target": "exercise:0-1-c137",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:raytracing.batched-segments",
+   "target": "exercise:0-1-c137",
+   "relation": "prepares"
   },
   {
    "source": "concept:ray-parametric-form",
@@ -17349,6 +18119,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:raytracing.make-rays-2d",
+   "target": "exercise:0-1-c142",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:tensor-zeros-init",
    "target": "exercise:0-1-c142",
    "relation": "exercises_concept"
@@ -17387,6 +18162,11 @@
    "source": "topic:0-1-c146",
    "target": "exercise:0-1-c149",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:raytracing.triangle-intersection",
+   "target": "exercise:0-1-c149",
+   "relation": "prepares"
   },
   {
    "source": "concept:ray-parametric-form",
@@ -17432,6 +18212,11 @@
    "source": "topic:0-1-c152",
    "target": "exercise:0-1-c156",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:raytracing.triangle-intersection",
+   "target": "exercise:0-1-c156",
+   "relation": "prepares"
   },
   {
    "source": "concept:ray-parametric-form",
@@ -17487,6 +18272,11 @@
    "source": "topic:0-1-c167",
    "target": "exercise:0-1-c168",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:raytracing.mesh-visibility",
+   "target": "exercise:0-1-c168",
+   "relation": "prepares"
   },
   {
    "source": "concept:ray-parametric-form",
@@ -17669,6 +18459,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:cnn.module-state",
+   "target": "exercise:0-2-c017",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:nn-module-subclass",
    "target": "exercise:0-2-c017",
    "relation": "exercises_concept"
@@ -17692,6 +18487,11 @@
    "source": "topic:0-2-c020",
    "target": "exercise:0-2-c021",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:cnn.linear-layer",
+   "target": "exercise:0-2-c021",
+   "relation": "prepares"
   },
   {
    "source": "concept:nn-module-subclass",
@@ -17799,6 +18599,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:cnn.convolution-2d",
+   "target": "exercise:0-2-c059",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:nn-module-subclass",
    "target": "exercise:0-2-c059",
    "relation": "exercises_concept"
@@ -17842,6 +18647,11 @@
    "source": "topic:0-2-c068",
    "target": "exercise:0-2-c071",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:cnn.batch-normalization",
+   "target": "exercise:0-2-c071",
+   "relation": "prepares"
   },
   {
    "source": "concept:nn-module-subclass",
@@ -17902,6 +18712,11 @@
    "source": "topic:0-2-c074",
    "target": "exercise:0-2-c075",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:cnn.pooling",
+   "target": "exercise:0-2-c075",
+   "relation": "prepares"
   },
   {
    "source": "concept:nn-module-subclass",

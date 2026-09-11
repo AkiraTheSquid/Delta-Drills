@@ -2,7 +2,7 @@
 kc: python.values-and-names
 title: Values and names — what = really does
 supporting: []
-new_syntax: [builtin.print, builtin.type, syntax.assign, syntax.tuple]
+new_syntax: [builtin.print, builtin.type, syntax.assign, syntax.tuple, syntax.arith]
 faded: [568, 569, 718, 719, 720, 721, 722, 723, 724, 725]
 guided: []
 independent: [570, 571, 708, 709, 710, 711, 726, 727, 728, 729]

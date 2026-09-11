@@ -190,7 +190,7 @@ def check_the_exercise_map_is_servable():
         with open(nb_path, encoding='utf-8') as fh:
             cells = json.load(fh)['cells']
         src = '\n'.join(c.get('src', '') for c in cells)
-        defs = set(re.findall(r'^\s*def\s+([A-Za-z_]\w*)\s*\(', src, re.M))
+        defs = set(re.findall(r'^(?:def|class)\s+([A-Za-z_]\w*)\s*[(:]', src, re.M))
         tags = set(re.findall(r'^\s*(?:#+\s*)?(\(\w{1,3}\))\s', src, re.M))
         for key, ex in table.items():
             where = f'{nb}/{key}'

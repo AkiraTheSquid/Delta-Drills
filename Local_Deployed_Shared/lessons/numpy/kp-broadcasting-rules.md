@@ -2,7 +2,7 @@
 kc: numpy.broadcasting-rules
 title: Broadcasting rules
 supporting: [numpy.elementwise-ufuncs, numpy.reshape-flatten]
-new_syntax: [none-newaxis-indexing, torch.broadcast_shapes]
+new_syntax: [none-newaxis-indexing, torch.broadcast_shapes, syntax.none]
 faded: [111, 949, 151, 948, 950, 951]
 guided: [499, 500, 952, 953]
 independent: [501, 502, 954, 955]
