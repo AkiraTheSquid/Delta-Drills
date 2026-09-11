@@ -452,12 +452,19 @@
        • `#### (1) Column-stacking` (0.0 image ops, no def) → key "(1)"
        • a CODE cell holding `def rearrange_1(` / the five `def einsum_*(`
          (0.0 sections A–I and the einsum block) → one key per def
+       • a CODE cell holding `class ReLU(nn.Module):` (0.2) → one key per class
      A markdown cell yields at most one key; a code cell may yield several
      — the 0.0 einsum exercises share ONE cell — and each gets its own block. */
   const TAG_RE = /^\((\w{1,3})\)\s/;
   /* The run button (▶) is glued to the first line of a code cell's
-     textContent, so a def may follow it instead of a newline. */
-  const DEF_RE = /(?:^|[\n▶])\s*def\s+([A-Za-z_]\w*)\s*\(/g;
+     textContent, so a def may follow it instead of a newline. `class` too
+     (Z, 2026-09-11): 0.2's exercises are `class ReLU(nn.Module)`, `class
+     Linear`, … — one key per TOP-LEVEL def or class in the cell.
+     🔴 Column 0 only after a newline: `\s*` there also matched the indented
+     `def forward(` inside every class, so one cell of four modules yielded
+     four `forward` keys (codex, 2026-09-11). Whitespace is allowed only after
+     the glued ▶. */
+  const DEF_RE = /(?:^|\n|▶\s*)(?:def|class)\s+([A-Za-z_]\w*)\s*[(:]/g;
   const _cellKeys = (cell) => {
     if (cell.classList.contains("nbv-md")) {
       const h = cell.querySelector("h1, h2, h3, h4");

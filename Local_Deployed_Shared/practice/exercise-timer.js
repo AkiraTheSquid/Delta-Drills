@@ -18,11 +18,9 @@
 
    Seth, 2026-09-11: the clock does NOT get its own chrome. It used to be a
    pill fixed to the bottom of the viewport (`.dd-nbt-bar`) — "kind of
-   idiotic" — and it does not go on the topbar notch either: that notch is the
-   Practice tab's, shown only while a problem in the question-left/code-right
-   interface is live (practice/notch-menu.js). The clock "should display the
-   timer over the original button panel that you clicked on": the exercise's
-   own block swaps its two buttons for three controls —
+   idiotic". The clock "should display the timer over the original button
+   panel that you clicked on": the exercise's own block swaps its two buttons
+   for three controls —
 
        [ Mark as "I don't know this yet" ]   [ 9:30 ]   [ Pause timer to
          (if no progress is made)                          come back later ]
@@ -30,6 +28,13 @@
    — and swaps them back when the clock stops. There is no "I'm done": running
    the exercise's tests is how a solution gets checked, and the clock is only
    the authority on running out.
+
+   AND IT IS ON THE TOPBAR NOTCH TOO — "we should remain consistent. but we can
+   do both" (Seth, later the same day). practice/notch-menu.js MIRRORS this
+   clock the way it mirrors the session's: it never counts, it copies. This
+   file announces every repaint as `dd-exercise-timer:tick` and exposes
+   `clockText()` / `isLow()` so the notch has something to copy; the notch's
+   pause square proxies a click to this block's own Pause button.
 
    SO THIS IS NOT A PRACTICE SESSION. Nothing here switches tabs, nothing here
    builds a ladder, nothing here touches `PracticeSession` — the two buttons on
@@ -227,7 +232,18 @@ const ExerciseTimer = (() => {
       if (clock.textContent !== text) clock.textContent = text;
     }
     live.block.classList.toggle("is-low", secs <= 60);
+    // What was painted, kept for the mirror — not recomputed on read, so the
+    // notch cannot land one second off across a rounding boundary.
+    live.text = _mmss(secs);
+    live.low = secs <= 60;
+    // The notch copies this repaint (practice/notch-menu.js). Fired after the
+    // block is painted so a listener reading `clockText()` sees the same text.
+    document.dispatchEvent(new CustomEvent("dd-exercise-timer:tick", { detail: { ex: live.ex, secs } }));
   };
+
+  /** What the block's clock says right now, for mirrors. "" when idle. */
+  const clockText = () => (live ? live.text || _mmss(_remaining()) : "");
+  const isLow = () => !!live && !!live.low;
 
   const _remaining = () => {
     if (!live) return 0;
@@ -341,7 +357,7 @@ const ExerciseTimer = (() => {
     const budget = Number.isFinite(secs) && secs > 0 ? secs : budgetSecs(block);
     live = {
       ex, block, page: focus.page, hidden: focus.hidden,
-      deadline: Date.now() + budget * 1000, tick: null,
+      deadline: Date.now() + budget * 1000, tick: null, text: "", low: false,
     };
     _ensureLive(block);
     block.classList.add("is-live");
@@ -534,7 +550,7 @@ const ExerciseTimer = (() => {
 
   return {
     start, stop, pause, resume, restore, isRunning, activeExercise, pausedFor,
-    recommendedSecs, budgetSecs, FALLBACK_SECS,
+    clockText, isLow, recommendedSecs, budgetSecs, FALLBACK_SECS,
   };
 })();
 
