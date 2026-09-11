@@ -71,6 +71,7 @@ from watch_lessons import (
     check_the_fifth_rung_is_shown_not_stored,
     check_the_gate_teaches_one_concept_then_drills_it,
     check_the_notebook_kernel_has_a_fallback,
+    check_no_cell_asks_for_more_time_than_the_kernel_allows,
 )
 from watch_placement import (
     check_a_taken_placement_leaves_the_learner_home,
@@ -643,6 +644,7 @@ if __name__ == '__main__':
               check_the_gate_teaches_one_concept_then_drills_it,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
+              check_no_cell_asks_for_more_time_than_the_kernel_allows,
               check_the_notebook_view_is_loaded_after_what_it_calls,
               check_the_arena_notebook_keeps_its_rail_and_its_place,
               check_the_notebook_remembers_what_you_ran_and_where_you_were,

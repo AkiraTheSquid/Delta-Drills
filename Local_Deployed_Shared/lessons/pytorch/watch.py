@@ -64,7 +64,7 @@ def check_public_api():
             assert key in fm, f'{os.path.basename(path)}: frontmatter lacks {key}'
         kc = kcs.get(fm['kc'])
         assert kc, f'{os.path.basename(path)}: kc {fm["kc"]} not in registry'
-        assert kc['lesson'] == 'tr-1', f'{fm["kc"]} is not under lesson tr-1'
+        assert kc['lesson'] in {l['id'] for l in reg['lessons']}, f'{fm["kc"]} has an unknown lesson'
 
 
 def check_invariants():
@@ -76,9 +76,13 @@ def check_invariants():
         text = open(path, encoding='utf-8').read()
         for bad in _FORBIDDEN:
             assert bad not in text, f'{name}: uses {bad!r}, which no ARENA notebook uses'
-        for fence in re.findall(r'```python starter\n(.*?)```', text, re.S):
-            assert '_____' in fence, f'{name}: a faded starter has no blank'
         fm = _frontmatter(text)
+        for fence in re.findall(r'```python starter\n(.*?)```', text, re.S):
+            from scripts.content_safety import is_stub
+            if min(_ids(fm['faded']) or [0]) >= 993:
+                assert is_stub(fence), f'{name}: new fading must use an ARENA-style whole-function stub'
+            else:
+                assert '_____' in fence or is_stub(fence), f'{name}: faded starter is a complete implementation'
         claimed = _ids(fm['faded']) + _ids(fm['independent']) + _ids(fm['integrated'])
         assert len(_ids(fm['faded'])) >= 2, f'{name}: Faded floor is 2'
         assert len(_ids(fm['independent'])) >= 6, f'{name}: Solo floor is 6'

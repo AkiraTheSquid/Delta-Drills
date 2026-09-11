@@ -20,8 +20,10 @@
        installs the numbers, then the normal `PracticeSession.start()`
      • resuming: a paused block for this notebook and exercise turns
        the button into "Resume", and pressing it is timer.js's own resume
-     • the "Related drills" list: every drill on the KC and its
-       prerequisites, grouped by concept and rung — read-only
+
+   🪦 "Related drills" — a read-only list of every drill on the KC and its
+   prerequisites, folded under each block — was REMOVED 2026-09-11. Seth: "I
+   never told the ai to add that." The block is two buttons, nothing else.
 
    WHAT IT DOES NOT OWN — and must not grow into
      Grading, mastery, the rung estimate, the clock itself. A miss inside the
@@ -450,12 +452,25 @@
        • `#### (1) Column-stacking` (0.0 image ops, no def) → key "(1)"
        • a CODE cell holding `def rearrange_1(` / the five `def einsum_*(`
          (0.0 sections A–I and the einsum block) → one key per def
+       • a CODE cell holding `class ReLU(nn.Module):` (0.2) → one key per class
      A markdown cell yields at most one key; a code cell may yield several
-     — the 0.0 einsum exercises share ONE cell — and each gets its own block. */
+     — the 0.0 einsum exercises share ONE cell — and each gets its own block.
+     🔴 A CELL ID OUTRANKS EVERY NAME (Z, 2026-09-11): 0.2 has two different
+     exercises both called `train`, and a stride-size answer cell with no def
+     at all. A map entry keyed `exercise:<cell id>` (the compiled cell's
+     `data-cell-id`, e.g. `exercise:0-2-c047`) claims that cell outright and
+     its name keys are not consulted, so one cell never grows two blocks. */
+  const CELL_KEY = (cell) => (cell.dataset.cellId ? `exercise:${cell.dataset.cellId}` : null);
   const TAG_RE = /^\((\w{1,3})\)\s/;
   /* The run button (▶) is glued to the first line of a code cell's
-     textContent, so a def may follow it instead of a newline. */
-  const DEF_RE = /(?:^|[\n▶])\s*def\s+([A-Za-z_]\w*)\s*\(/g;
+     textContent, so a def may follow it instead of a newline. `class` too
+     (Z, 2026-09-11): 0.2's exercises are `class ReLU(nn.Module)`, `class
+     Linear`, … — one key per TOP-LEVEL def or class in the cell.
+     🔴 Column 0 only after a newline: `\s*` there also matched the indented
+     `def forward(` inside every class, so one cell of four modules yielded
+     four `forward` keys (codex, 2026-09-11). Whitespace is allowed only after
+     the glued ▶. */
+  const DEF_RE = /(?:^|\n|▶\s*)(?:def|class)\s+([A-Za-z_]\w*)\s*[(:]/g;
   const _cellKeys = (cell) => {
     if (cell.classList.contains("nbv-md")) {
       const h = cell.querySelector("h1, h2, h3, h4");
@@ -475,34 +490,38 @@
   const _syncButton = (block) => {
     const btn = block.querySelector(".dd-ex-btn");
     const timerBtn = block.querySelector(".dd-ex-timer-btn");
-    const note = block.querySelector(".dd-ex-note");
     const ex = block._exercise;
     const paused = _pausedFor(ex);
-    btn.textContent = paused ? `Resume drills · ${ex.title}` : "Drill this concept";
+    /* Two buttons of EQUAL weight (Seth, 2026-09-11: "give equal importance to
+       the drill or start problem option"). Neither is `.primary`; both are the
+       same box (styles/practice/exercise-session.css). */
+    btn.textContent = paused
+      ? `Resume drills · question ${paused.served}${paused.config.quota ? ` of ${paused.config.quota}` : ""}`
+      : "Drill prerequisite concepts";
     /* The button says the budget out loud, because the budget is the notebook's
        and the learner has no other way to know what they are agreeing to.
        ExerciseTimer reads it off the exercise's own "You should spend up to …"
        line; when the notebook does not say, it says its fallback rather than
-       nothing. */
+       nothing. A clock the learner paused on this exercise is offered back
+       with what is left on it. */
     const T = window.ExerciseTimer;
     if (timerBtn) {
-      const running = !!T?.isRunning?.(ex);
-      const secs = T ? T.budgetSecs(block) : null;
-      const mins = Number.isFinite(secs) ? Math.round(secs / 60) : null;
-      timerBtn.textContent = running
-        ? "Stop the clock"
-        : `Start timer${mins ? ` · ${mins} min` : ""}`;
+      const left = T?.pausedFor?.(ex);
+      if (left) {
+        timerBtn.textContent = `Resume timer · ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")} left`;
+      } else {
+        const secs = T ? T.budgetSecs(block) : null;
+        const mins = Number.isFinite(secs) ? Math.round(secs / 60) : null;
+        timerBtn.textContent = mins ? `Start ${mins} minute question timer` : "Start question timer";
+      }
       // Another exercise is on the clock. Starting a second one would silently
       // abandon the first, so say why the button is off rather than doing it.
-      const busy = !!T?.activeExercise?.() && !running;
+      const busy = !!T?.activeExercise?.() && !T.isRunning(ex);
       timerBtn.disabled = !T || busy;
       timerBtn.title = busy
-        ? `${T.activeExercise().title || T.activeExercise().fn} is on the clock — finish or stop it first.`
+        ? `${T.activeExercise().title || T.activeExercise().fn} is on the clock — pause or finish it first.`
         : "";
     }
-    note.textContent = paused
-      ? `Drills paused at question ${paused.served}${paused.config.quota ? ` of ${paused.config.quota}` : ""}.`
-      : "Answer it here on the clock, or drill the concept behind it first.";
   };
 
   /* Every block's buttons describe one shared clock, so all of them change when
@@ -517,10 +536,13 @@
     if (!Object.keys(table).length) return;
     const seen = new Set(Array.from(host.querySelectorAll(".dd-ex-block"),
       (block) => block._exercise?.fn).filter(Boolean));
+    const titles = [];
     host.querySelectorAll(".nbv-cell.nbv-md, .nbv-cell.nbv-code").forEach((cell) => {
       if (cell.nextElementSibling?.classList?.contains("dd-ex-block")) return;
+      const byId = CELL_KEY(cell);
+      const keys = byId && table[byId]?.kc ? [byId] : _cellKeys(cell);
       // Blocks go after the cell in reverse so several defs in one cell read top-down.
-      _cellKeys(cell).filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
+      keys.filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
       seen.add(fn);
       const entry = table[fn];
       const ex = {
@@ -541,90 +563,41 @@
          Practice tab — so the only thing you could do with a notebook exercise
          was leave the notebook. The problem is on the page; the first button
          times an attempt at it where it is, and the second is the trip to the
-         drills, taken on purpose. */
+         drills, taken on purpose.
+
+         While the clock runs, practice/exercise-timer.js puts `is-live` on
+         this block and its own `.dd-ex-live` row after `.dd-ex-row`; the CSS
+         swaps the two. The verdict slot is last so it reads under either. */
       block.innerHTML =
         '<div class="dd-ex-row">' +
-        '<button type="button" class="primary dd-ex-timer-btn"></button>' +
-        '<button type="button" class="ghost dd-ex-btn"></button>' +
-        '<span class="dd-ex-note"></span></div>' +
-        '<div class="dd-ex-verdict hidden"></div>' +
-        '<details class="dd-ex-related"><summary>Related drills</summary><div class="dd-ex-related-body">Loading…</div></details>';
+        '<button type="button" class="dd-ex-timer-btn"></button>' +
+        '<button type="button" class="dd-ex-btn"></button></div>' +
+        '<div class="dd-ex-verdict hidden"></div>';
       block.querySelector(".dd-ex-btn").onclick = () => _open(ex);
       block.querySelector(".dd-ex-timer-btn").onclick = () => {
         const T = window.ExerciseTimer;
-        if (!T) return;
-        if (T.isRunning(ex)) T.stop("done");
+        if (!T || T.isRunning(ex)) return;
+        if (T.pausedFor(ex)) T.resume(ex, block);
         else T.start(ex, block);
       };
-      block.querySelector(".dd-ex-related").addEventListener("toggle", (e) => {
-        if (e.target.open && !block._relatedLoaded) {
-          block._relatedLoaded = true;
-          _renderRelated(ex, block.querySelector(".dd-ex-related-body"));
-        }
-      }, { once: false });
       cell.insertAdjacentElement("afterend", block);
       _syncButton(block);
       // A clock the learner started before a reload comes back here, because
       // this is the first moment the exercise and its block exist together.
       window.ExerciseTimer?.restore?.(ex, block);
-      window.LessonGate?.getKpEntry?.(ex.kc).then((entry) => {
+      const named = window.LessonGate?.getKpEntry?.(ex.kc).then((entry) => {
         if (entry && entry.kp && entry.kp.title) ex.kcTitle = entry.kp.title;
       }).catch(() => {});
+      titles.push(named);
       });
     });
-  };
-
-  /* ── related drills: the KC and its prerequisites, by rung ─────── */
-  const RUNGS = [
-    ["faded_items", "Faded", (it) => it && it.question_id],
-    ["guided_items", "Guided", (it) => it && it.question_id],
-    ["independent_items", "Solo", (id) => id],
-    ["integrated_items", "Integrated", (it) => it && it.question_id],
-  ];
-
-  const _firstLine = (text) => {
-    const line = String(text || "").split("\n").map((l) => l.trim()).find(Boolean) || "";
-    return line.replace(/[`*_#]/g, "").slice(0, 110);
-  };
-
-  const _renderRelated = async (ex, host) => {
-    try {
-      const gate = window.LessonGate;
-      if (!gate?.getKpEntry) throw new Error("lessons not loaded");
-      if (typeof loadQuestionsBank === "function") await loadQuestionsBank();
-      const root = await gate.getKpEntry(ex.kc);
-      if (!root || !root.kp) throw new Error("no lesson for " + ex.kc);
-      const kcs = [ex.kc, ...(root.kp.supporting_kcs || [])];
-      const sections = [];
-      let total = 0;
-      for (const kc of kcs) {
-        const entry = kc === ex.kc ? root : await gate.getKpEntry(kc);
-        if (!entry || !entry.kp) continue;
-        const rows = [];
-        for (const [field, label, pick] of RUNGS) {
-          const ids = (entry.kp[field] || []).map(pick).filter((id) => Number.isFinite(id));
-          if (!ids.length) continue;
-          const items = ids.map((id) => {
-            const q = typeof getQuestionFromBank === "function" ? getQuestionFromBank(id) : null;
-            const text = q ? _firstLine(q.question_text || q.prompt) : `question ${id}`;
-            return `<li><span class="dd-ex-qid">#${id}</span> ${_esc(text)}</li>`;
-          });
-          total += items.length;
-          rows.push(`<div class="dd-ex-rung"><span class="dd-ex-rung-label">${label} · ${items.length}</span><ul>${items.join("")}</ul></div>`);
-        }
-        if (!rows.length) continue;
-        sections.push(
-          `<section class="dd-ex-kc${kc === ex.kc ? " is-target" : ""}">` +
-          `<h4>${_esc(entry.kp.title || kc)}${kc === ex.kc ? "" : ' <span class="dd-ex-prereq">prerequisite</span>'}</h4>` +
-          rows.join("") + "</section>",
-        );
-      }
-      host.innerHTML = sections.length
-        ? `<p class="dd-ex-related-count">${total} drills across ${sections.length} concept${sections.length === 1 ? "" : "s"}. A miss on the top concept queues the prerequisite rows.</p>` + sections.join("")
-        : "<p>No drills attached yet.</p>";
-    } catch (err) {
-      host.textContent = "Could not list the drills — " + (err?.message || err);
-    }
+    /* For practice/arena-notebook-focus.js, which tints each section's heading
+       and the topbar pill with the concept's readiness and needs the concept's
+       NAME to do it — so this waits for the title lookups above rather than
+       announcing blocks whose concept is still an id. The blocks themselves are
+       usable before this fires. */
+    await Promise.all(titles);
+    document.dispatchEvent(new CustomEvent("dd-exercise-blocks:decorated", { detail: { id: nbId, host } }));
   };
 
   /* ── hooks timer.js calls ──────────────────────────────────────── */

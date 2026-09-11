@@ -515,10 +515,18 @@ const ArenaNotebookView = (() => {
       window.DeltaCellOutputs?.render(out, rich);
     } catch (err) {
       failed = true;
-      shown = `Error: ${err.message}`;
+      /* 🔴 KEEP WHAT SETUP ALREADY PAINTED HERE. The clicked cell can BE the
+         setup cell that failed: `execute` runs `ensure` first, `onSetup` writes
+         its traceback into this same `.nbv-out`, then `ensure` throws "Setup
+         stopped at <id>. See its output above" — and this line used to erase
+         that output with the sentence pointing at it. Seth's 2026-09-11 screen
+         showed two setup cells reading only "Error: Python unavailable". */
+      const prior = node._ddSetupText || "";
+      shown = prior ? `${prior}\n\nError: ${err.message}` : `Error: ${err.message}`;
       out.textContent = shown;
       out.classList.add("is-error");
     }
+    node._ddSetupText = "";
 
     state.runSeq += 1;
     node.classList.remove("is-running");
@@ -684,6 +692,8 @@ const ArenaNotebookView = (() => {
         out.classList.remove("hidden");
         out.classList.toggle("is-error", !!result.failed);
         out.textContent = result.text || "Setup ready";
+        // Read by _runCell's catch when this node is also the clicked cell.
+        node._ddSetupText = out.textContent;
         window.DeltaCellOutputs?.render(out, result.outputs || []);
         state.runSeq += 1;
         node.querySelector(".nbv-count").textContent = `[${state.runSeq}]`;
@@ -855,7 +865,7 @@ const ArenaNotebookView = (() => {
   let openRequest = 0;
   const open = async (slug, exercise = null) => {
     const host = _host();
-    if (!host || !slug) return false;
+    if (!host || !["0-0", "0-1", "0-2"].includes(slug)) return false;
     const request = ++openRequest;
 
     /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,

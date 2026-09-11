@@ -377,10 +377,26 @@ def check_concept_pill():
         )
     # The gate has to be ON the hide branch, not merely defined. A helper that
     # is written and never consulted is what this would otherwise miss.
-    assert re.search(r"!\s*title\s*\|\|\s*!\s*_onScreen\(\)", pill_code), (
-        "the chip's hide branch must test BOTH: no concept published, OR no "
-        "question on screen to have one. Either alone leaves one of the two "
+    # Since 2026-09-11 the chip has TWO screens (the practice question and
+    # the ARENA notebook's section-in-view), so the gate is `_screen()`: it
+    # answers "practice" through `_onScreen()`, "notebook" through
+    # #page-arena-notebook, or null. The hide branch tests the screen and the
+    # title it picked for that screen.
+    screen_fn = re.search(r"const _screen = \(\) => \{(.*?)\n  \};", pill_code, re.S)
+    assert screen_fn, "concept-pill.js has lost `_screen`, the chip's which-page gate"
+    assert "_onScreen()" in screen_fn.group(1) and "page-arena-notebook" in screen_fn.group(1), (
+        "_screen must consult _onScreen() for the practice page and "
+        "#page-arena-notebook for the notebook - a page it does not know about "
+        "is a page the chip goes stale on"
+    )
+    assert re.search(r"!\s*screen\s*\|\|\s*!\s*title", pill_code), (
+        "the chip's hide branch must test BOTH: no page on screen to describe, "
+        "OR no concept published for it. Either alone leaves one of the two "
         "ways it goes stale"
+    )
+    assert "dd-notebook-concept" in pill_js, (
+        "concept-pill.js has no dd-notebook-concept listener - the notebook's "
+        "section readiness (practice/arena-notebook-focus.js) has nowhere to go"
     )
     # And the other half: a tab switch and a pause change nothing about the
     # READING, so the ladder never fires for either. Without an observer the

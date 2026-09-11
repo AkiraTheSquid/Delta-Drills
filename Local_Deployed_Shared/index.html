@@ -89,17 +89,19 @@
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=7" />
-  <link rel="stylesheet" href="styles/arena-curriculum.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=8" />
   <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
        rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
        override, it is a fixed-position surface that happens to sit beside the
        notebook. -->
   <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=3" />
+  <!-- The section the reader is scrolled to, its heading tinted by how ready
+       they are for its concept. practice/arena-notebook-focus.js. -->
+  <link rel="stylesheet" href="styles/practice/arena-notebook-focus.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=4" />
   <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=9" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=10" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <link rel="stylesheet" href="styles/practice/diagnostic.css?v=14" />
@@ -125,8 +127,8 @@
   <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=3" />
   <!-- "Practice make_rays_1d" on an ARENA page: the setup dialog and the
        related-drills list. practice/exercise-session.js. -->
-  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/exercise-timer.css?v=1" />
+  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/exercise-timer.css?v=2" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
        AFTER styles/practice/question.css, and this is the only thing about its
@@ -135,7 +137,7 @@
        question.css declares that card with. Later sheet wins. Reversed, the
        concept is named twice — once up here and once in a 20px <h2> under it —
        and nothing throws. `watch_concept_pill.py` asserts the order. -->
-  <link rel="stylesheet" href="styles/concept-pill.css?v=2" />
+  <link rel="stylesheet" href="styles/concept-pill.css?v=3" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -2220,7 +2222,6 @@ t.manual_seed(0)
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
   <script src="concept-graph/lesson-graph.js?v=30" defer></script>
-  <script src="concept-graph/arena-curriculum.js?v=1" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2272,7 +2273,7 @@ t.manual_seed(0)
   <script src="practice/api.js?v=28"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=33"></script>
-  <script src="practice/kernel.js?v=6"></script>
+  <script src="practice/kernel.js?v=7"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
        chain it: missing, cells still print, figures are simply not drawn. -->
@@ -2311,8 +2312,8 @@ t.manual_seed(0)
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=3"></script>
-  <script src="practice/notch-menu.js?v=10"></script>
+  <script src="concept-pill.js?v=4"></script>
+  <script src="practice/notch-menu.js?v=12"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -2353,7 +2354,7 @@ t.manual_seed(0)
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
   <script src="practice/arena-notebook-resume.js?v=1"></script>
   <script src="practice/arena-notebook-session.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=8"></script>
+  <script src="practice/arena-notebook.js?v=9"></script>
   <script src="practice/ladder.js?v=13"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
@@ -2362,8 +2363,12 @@ t.manual_seed(0)
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-timer.js?v=1"></script>
-  <script src="practice/exercise-session.js?v=5"></script>
+  <script src="practice/exercise-timer.js?v=3"></script>
+  <script src="practice/exercise-session.js?v=8"></script>
+  <!-- After exercise-session.js: it reads the blocks that file puts under
+       each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
+       concept pill which section the reader is in. -->
+  <script src="practice/arena-notebook-focus.js?v=1"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

@@ -1,0 +1,56 @@
+/* ================================================================
+   ARENA-NOTEBOOK-FOCUS.CSS — the section the reader is in, tinted by
+   how ready they are for its concept.
+   ================================================================
+   Behaviour in practice/arena-notebook-focus.js. It puts `dd-ex-focus` on
+   ONE heading at a time — the exercise whose section holds the reading
+   point of the viewport — and writes `--dd-ready-color` on it: the same
+   red → blue ramp the knowledge graph colours its nodes with, grey when
+   the concept has no reading. Seth, 2026-09-11: "whenever you are close
+   enough to it ... it essentially gets highlighted for the color of skill
+   that you are, for whether it's red or blue or whatever for how ready
+   for it you are".
+
+   🔴 THE TINT IS ON THE HEADING, NOT THE CELL. A cell-wide wash would sit
+   behind prose and code and fight both the code rectangles and the
+   selection colour; the heading is the one element on the page that IS
+   the section's name, and it is centred (arena-notebook.css), so an
+   underline the width of the text reads as a label on the section rather
+   than a box around it.
+
+   The colour is a custom property so the JS writes one value and both the
+   text and the rule follow. The ramp's endpoints are the graph's — see the
+   JS for why they are restated there at all.
+   ================================================================ */
+
+#page-arena-notebook .nbv-md h1.dd-ex-focus,
+#page-arena-notebook .nbv-md h2.dd-ex-focus,
+#page-arena-notebook .nbv-md h3.dd-ex-focus,
+#page-arena-notebook .nbv-md h4.dd-ex-focus {
+  color: var(--dd-ready-color, var(--prose-head));
+  transition: color 0.35s;
+}
+
+/* The underline: a short rule under the centred text, in the same colour,
+   so the tint is visible even where the heading colour is close to the
+   page's own (a "Learning" purple on a dark theme). A fixed 56px rule with
+   auto margins, not the text's width: the headings are centred, and a rule
+   as wide as a long title would read as a border on the column. */
+#page-arena-notebook .nbv-md .dd-ex-focus::after {
+  content: "";
+  display: block;
+  margin: 6px auto 0;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--dd-ready-color, var(--border-strong));
+  opacity: 0.9;
+}
+
+/* A learner who asked for less motion still gets the colour; only the
+   fade goes. */
+@media (prefers-reduced-motion: reduce) {
+  #page-arena-notebook .nbv-md .dd-ex-focus {
+    transition: none;
+  }
+}

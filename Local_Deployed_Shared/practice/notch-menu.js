@@ -72,8 +72,24 @@
      controls. */
   function _pauseTarget() {
     if (_placementOnClock()) return _placementPauseBtn();
-    return _sessionOpen() ? _pauseBtn() : null;
+    if (_sessionOpen()) return _pauseBtn();
+    return _notebookOnClock() ? _notebookPauseBtn() : null;
   }
+
+  /* THE THIRD CLOCK: an ARENA notebook exercise on its own clock
+     (practice/exercise-timer.js). Seth, 2026-09-11: "it should display the
+     timer on the notch at the top in addition to the timer that's below" —
+     so this is a mirror of that block's clock, exactly as the session's is a
+     mirror of #session-countdown, and the square proxies to the block's own
+     "Pause timer to come back later" button — the real element with the real
+     handler, so pausing from the notch and from the block are one behaviour.
+     It ranks below a session and a placement, which cannot be live at the
+     same time as it in practice (the notebook page is not the practice page)
+     but the order is written down so nobody has to guess. */
+  function _notebookOnClock() {
+    return window.ExerciseTimer?.isRunning?.() === true;
+  }
+  const _notebookPauseBtn = () => document.querySelector(".dd-ex-block.is-live .dd-ex-live-pause");
 
   /* A session is running when timer.js has unhidden its row. That class is
      the single fact both this menu and the row itself read — see timer.js
@@ -116,6 +132,11 @@
     const open = _sessionOpen();
     const tab = document.getElementById("practice-notch-tab");
     const srPhase = document.getElementById("practice-notch-phase");
+    /* 🔴 THE NOTCH NEVER GOES AWAY (Seth, 2026-08-23, reaffirmed 2026-09-11:
+       "the notch timer shouldn't go away"). For one hour on 2026-09-11 it was
+       hidden between problems (`is-idle`); Seth reversed that the same day —
+       "we should remain consistent". What changed instead is what it says
+       when idle: see the `!open` branch. */
     if (_placementOnClock()) {
       clock.classList.add("hidden");
       /* The placement's phase is not the session's, and the session's is
@@ -136,13 +157,30 @@
       return;
     }
     clock.classList.remove("hidden");
-    clock.classList.toggle("practice-notch-clock--idle", !open);
+    const notebook = !open && _notebookOnClock();
+    clock.classList.toggle("practice-notch-clock--idle", !open && !notebook);
+    if (notebook) {
+      /* A notebook exercise's clock, copied. `clockText()` is the text the
+         block just painted; `dd-exercise-timer:tick` is what brings us here
+         once a repaint, so the two cannot disagree. Review tint never applies:
+         that clock has one phase. */
+      const T = window.ExerciseTimer;
+      const text = T.clockText();
+      if (clock.textContent !== text) clock.textContent = text;
+      clock.classList.remove("practice-notch-clock--review");
+      clock.classList.toggle("practice-notch-clock--low", T.isLow());
+      const ex = T.activeExercise?.();
+      const phaseText = `Answering ${ex?.title || ex?.fn || "a notebook exercise"} in the notebook`;
+      if (tab) tab.title = phaseText;
+      if (srPhase && srPhase.textContent !== phaseText) srPhase.textContent = phaseText;
+      return;
+    }
     if (!open) {
-      /* 🔴 The clock STAYS between sessions (Seth, 2026-08-23: "even after you
-         exit the session, the notch should still be there ... with the amount
-         of time that you would want to set"). What it shows is the allowance
-         the next question will get — read from timer.js, never computed here —
-         greyed, so it reads as the rule rather than as a running clock.
+      /* 🔴 IDLE SAYS `--:--`, NOT A NUMBER. Seth, 2026-09-11: "when there's
+         currently no timer for it, it shouldn't display 8 minutes or whatever.
+         it should just have the --:--". It used to show the next question's
+         allowance (timer.js `idleClockText()`, still exported, no longer read
+         here) — a rule dressed as a clock, and he read it as a clock.
 
          Nothing is being counted, so nothing may still SAY it is: the phase
          classes, the tooltip and the screen-reader phase all come off, because
@@ -152,9 +190,8 @@
         "practice-notch-clock--review",
         "practice-notch-clock--low",
       );
-      const idle = _session()?.idleClockText?.() || "";
-      if (clock.textContent !== idle) clock.textContent = idle;
-      if (tab) tab.title = "Each problem has its own clock, set by its concept.";
+      if (clock.textContent !== "--:--") clock.textContent = "--:--";
+      if (tab) tab.title = "No clock running. Each problem brings its own.";
       if (srPhase) srPhase.textContent = "";
       return;
     }
@@ -184,6 +221,7 @@
   function _syncItems() {
     const open = _sessionOpen();
     const placement = _placementOnClock();
+    const notebook = !open && !placement && _notebookOnClock();
     const target = _pauseTarget();
     /* Refused for one of two reasons, and they are not the same: nothing to
        pause at all, or a question that is mid-grade. timer.js owns the second
@@ -222,7 +260,9 @@
           : "Nothing to pause — load the next placement question to carry on."
         : open && target
           ? target.title || ""
-          : "No session running.";
+          : notebook
+            ? "Pause the notebook exercise's clock. Its remaining time is kept; the block offers Resume."
+            : "No session running.";
     if (pauseItem) {
       pauseItem.disabled = refused;
       pauseItem.title = why;
@@ -238,8 +278,8 @@
       stopBtn.disabled = refused;
       stopBtn.title = why;
     }
-    /* The note explains the idle clock, and a placement is not idle. */
-    if (note) note.classList.toggle("hidden", open || placement);
+    /* The note explains the idle clock; a placement or a notebook clock is not idle. */
+    if (note) note.classList.toggle("hidden", open || placement || notebook);
   }
 
   function _open() {
@@ -342,6 +382,16 @@
       subtree: true,
     });
   }
+
+  /* The notebook clock's own announcements: `:tick` once a repaint (the
+     mirror's only source of the text), `:change` at start / pause / stop (the
+     square's enabled state and tooltip). Neither touches
+     #session-status-row, so the observer above never sees them. */
+  document.addEventListener("dd-exercise-timer:tick", _syncClock);
+  document.addEventListener("dd-exercise-timer:change", () => {
+    _syncClock();
+    _syncItems();
+  });
 
   /* The row can already be open when this runs — a resumed session unhides it
      from timer.js's own init, and load order between the two is not a thing
