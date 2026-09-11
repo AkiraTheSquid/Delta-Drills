@@ -521,6 +521,29 @@ INDEX_PARTS = (
 )
 
 
+def packed_map(part: dict, width: int = 96) -> str:
+    """`{"questions": {...}}` with several `"id": "nb"` pairs per line.
+
+    The flat question→notebook map is one entry per authored problem, and one
+    entry per line put the file past Modulario's 700-line ceiling at ~780
+    questions. Same object, same key order — only the whitespace differs.
+    """
+    (name, mapping), = part.items()
+    lines: list[str] = []
+    row = ""
+    for k, v in mapping.items():
+        item = f"{json.dumps(k)}: {json.dumps(v, ensure_ascii=False)}"
+        if row and len(row) + 2 + len(item) > width:
+            lines.append(row + ",")
+            row = item
+        else:
+            row = f"{row}, {item}" if row else item
+    if row:
+        lines.append(row)
+    inner = "\n".join("    " + line for line in lines)
+    return f'{{\n  {json.dumps(name)}: {{\n{inner}\n  }}\n}}'
+
+
 def index_scripts(index: dict, path: Path) -> list[tuple[Path, str]]:
     """The extension's copy — classic scripts that build up one global.
 
@@ -531,7 +554,7 @@ def index_scripts(index: dict, path: Path) -> list[tuple[Path, str]]:
     out: list[tuple[Path, str]] = []
     for i, (suffix, keys) in enumerate(INDEX_PARTS):
         part = {k: index[k] for k in keys}
-        body = json.dumps(part, indent=2, ensure_ascii=False)
+        body = packed_map(part) if keys == ("questions",) else json.dumps(part, indent=2, ensure_ascii=False)
         out.append(
             (
                 path.with_name(f"{path.stem}{suffix}{path.suffix}"),
