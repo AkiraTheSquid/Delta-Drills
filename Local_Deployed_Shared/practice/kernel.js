@@ -27,6 +27,12 @@ const DeltaKernel = (() => {
   const EXEC_PATH = "/api/practice/kernel/exec";
   const RESET_PATH = "/api/practice/kernel/reset";
   const STATUS_PATH = "/api/practice/kernel/status";
+  /* 🔴 Mirrors `MAX_TIMEOUT_SECONDS` in backend/app/practice/kernel_router.py.
+     The server 422s a larger value, and a 422 used to come back as
+     `unavailable` — so an ARENA setup cell asking for 300 s against a 60 s cap
+     opened every notebook with "Python unavailable" (2026-09-11). Clamp here
+     so no caller can trip that, and keep the two numbers equal. */
+  const MAX_TIMEOUT = 300;
 
   /* Set only when the backend has told us it has no kernel endpoints. A
      network blip must NOT set this — see the header. */
@@ -50,13 +56,14 @@ const DeltaKernel = (() => {
      inside the prefix, which is wrong for anything that is not idempotent. */
   const runCell = async ({ code, bootstrap = "", filename = "<cell>", context = "", timeout = 30, skipOnFresh = false } = {}) => {
     if (!available()) return { unavailable: true };
+    const seconds = Math.min(MAX_TIMEOUT, Math.max(1, Math.round(Number(timeout) || 0)));
     let res;
     try {
       res = await apiFetch(EXEC_PATH, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code, bootstrap, filename, context, timeout,
+          code, bootstrap, filename, context, timeout: seconds,
           skip_on_fresh: !!skipOnFresh,
         }),
       });
@@ -71,7 +78,18 @@ const DeltaKernel = (() => {
     // 409 is the kernel saying it is mid-cell, or the box saying it is full.
     // Both are "in a moment", not a failure of this code.
     if (res.status === 409) return { busy: true };
-    if (res.status === 401 || !res.ok) return { unavailable: true };
+    // Signed out, or a token the server no longer honours: no kernel to be
+    // had, and the stateless path is the right answer.
+    if (res.status === 401 || res.status === 403) return { unavailable: true };
+    // A 4xx the server sent about THIS request (422 above all: a body the
+    // contract did not allow) is a real answer about this cell, not "no
+    // Python" — saying so sent the learner to "retry when connected" for a bug
+    // no reconnect could fix. A 5xx, a 429 or a proxy failure is the outage
+    // the header describes, and keeps the stateless fallback (codex, 2026-09-11).
+    if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+      return { ok: false, stdout: "", stderr: await _refusal(res), outputs: [], fresh: false, execCount: 0 };
+    }
+    if (!res.ok) return { unavailable: true };
     let data;
     try {
       data = await res.json();
@@ -88,6 +106,19 @@ const DeltaKernel = (() => {
       fresh: !!data.fresh,
       execCount: data.exec_count || 0,
     };
+  };
+
+  /* One line the learner can read AND report: the status, and the server's
+     own `detail` when it sent one (FastAPI's validation errors do). */
+  const _refusal = async (res) => {
+    let detail = "";
+    try {
+      const data = await res.json();
+      detail = typeof data?.detail === "string" ? data.detail : JSON.stringify(data?.detail ?? data);
+    } catch (_err) {
+      detail = "";
+    }
+    return `The kernel server refused this cell (HTTP ${res.status})${detail ? `: ${detail}` : "."}\n`;
   };
 
   /* Throw the session away — the notebook's "Restart runtime". The next cell
@@ -133,7 +164,7 @@ const DeltaKernel = (() => {
     return info.sessions.some((s) => s && s.alive && s.context === String(context || ""));
   };
 
-  return { available, runCell, reset, status, contextAlive };
+  return { available, runCell, reset, status, contextAlive, MAX_TIMEOUT };
 })();
 
 window.DeltaKernel = DeltaKernel;

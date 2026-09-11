@@ -378,6 +378,7 @@ def check_the_notebook_kernel_has_a_fallback():
     # to a dead Run button. Losing either half breaks a whole class of learner:
     # the first breaks guests, the second breaks everyone else's state.
     assert "_runOnKernel" in notebook, "notebook.js lost its kernel path"
+
     assert "DeltaRunner.runSnippet" in notebook, (
         "notebook.js lost the stateless fallback — guests and an unreachable "
         "backend would have no way to run a cell"
@@ -412,6 +413,35 @@ def check_the_notebook_kernel_has_a_fallback():
         "notebook.js is inferring failure from stderr again — a warning would "
         "paint a passing cell red, and a silent exit would read as success"
     )
+
+
+# The server 422s a `timeout` above its cap, and until 2026-09-11 the client
+# read that 422 as "no kernel": the ARENA setup cells asked for 300 s against a
+# 60 s cap, so every ARENA notebook opened with "Python unavailable. Retry
+# setup when connected." Three things keep that from coming back: the client
+# clamps to its own MAX_TIMEOUT, no caller asks for more than that, and a
+# refused request is reported as a refusal rather than as an outage.
+def check_no_cell_asks_for_more_time_than_the_kernel_allows():
+    kernel = read(os.path.join(HERE, "kernel.js"))
+    m = re.search(r"const MAX_TIMEOUT = (\d+);", kernel)
+    assert m, "kernel.js lost its MAX_TIMEOUT constant"
+    cap = int(m.group(1))
+    assert "Math.min(MAX_TIMEOUT" in kernel, "kernel.js no longer clamps `timeout` to MAX_TIMEOUT"
+    assert "res.status === 403" in kernel and "_refusal(res)" in kernel, (
+        "kernel.js must keep 401/403 as `unavailable` and report a refused 4xx "
+        "as a failed cell with the server's detail")
+    assert "res.status < 500 && res.status !== 429" in kernel, (
+        "kernel.js must keep 5xx/429 as `unavailable` — an outage has to reach "
+        "the stateless fallback, only a refused request is a failed cell")
+    for name in sorted(os.listdir(HERE)):
+        if not name.endswith(".js"):
+            continue
+        src = read(os.path.join(HERE, name))
+        for lit in re.findall(r"\btimeout:\s*(\d+)", src):
+            assert int(lit) <= cap, (
+                f"{name} asks the kernel for timeout {lit} s, above kernel.js MAX_TIMEOUT "
+                f"{cap} — raise MAX_TIMEOUT and the server's MAX_TIMEOUT_SECONDS together")
+
 
 
 # ── Run all checks ────────────────────────────

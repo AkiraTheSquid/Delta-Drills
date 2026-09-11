@@ -33,7 +33,12 @@ from app.models import User
 
 router = APIRouter()
 
-MAX_TIMEOUT_SECONDS = 60
+# 🔴 Must be >= the longest `timeout` any client sends. The ARENA notebook's
+# setup cells (`%pip install`, the exercises `wget`) ask for 300 s
+# (`practice/arena-notebook-session.js`); a request above this cap is a 422,
+# and the client reads a 422 as "no kernel" — every ARENA notebook then opens
+# with "Python unavailable. Retry setup when connected." (2026-09-11).
+MAX_TIMEOUT_SECONDS = 300
 MAX_CONTEXT_CHARS = 200
 
 

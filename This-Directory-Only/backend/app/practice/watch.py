@@ -700,6 +700,32 @@ def check_placement_cannot_classify_without_a_direct_probe():
     assert pm.HOP_ATTENUATION_DOWN < pm.HOP_ATTENUATION_UP <= 1.0
 
 
+# ── The kernel's timeout cap is one number on two sides ──
+# `KernelExecRequest.timeout` 422s above MAX_TIMEOUT_SECONDS. The client used
+# to read a 422 as "no kernel", and its ARENA setup cells asked for 300 s
+# against a 60 s cap — so every ARENA notebook opened with "Python
+# unavailable. Retry setup when connected." (2026-09-11). The client now clamps
+# to its own MAX_TIMEOUT; this pins the two numbers to each other.
+def check_the_kernel_timeout_cap_matches_the_client():
+    with open(os.path.join(THIS, 'kernel_router.py')) as f:
+        router = f.read()
+    m = re.search(r'^MAX_TIMEOUT_SECONDS = (\d+)$', router, re.MULTILINE)
+    assert m, "kernel_router.py lost MAX_TIMEOUT_SECONDS"
+    server_cap = int(m.group(1))
+    assert re.search(r'le=MAX_TIMEOUT_SECONDS', router), \
+        "KernelExecRequest.timeout is no longer bounded by MAX_TIMEOUT_SECONDS"
+    client = os.path.join(THIS, '..', '..', '..', '..', 'Local_Deployed_Shared', 'practice', 'kernel.js')
+    assert os.path.exists(client), f"cannot find the kernel client at {client}"
+    with open(client) as f:
+        src = f.read()
+    m = re.search(r'const MAX_TIMEOUT = (\d+);', src)
+    assert m, "practice/kernel.js lost its MAX_TIMEOUT constant"
+    assert int(m.group(1)) == server_cap, (
+        f"practice/kernel.js MAX_TIMEOUT={m.group(1)} but kernel_router.py "
+        f"MAX_TIMEOUT_SECONDS={server_cap} — a cell asking for the client's "
+        "maximum is a 422")
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -709,7 +735,8 @@ if __name__ == '__main__':
               check_repair_runs_off_the_local_cli,
               check_repair_queue_never_loses_an_open_job,
               check_the_two_nudge_tables_agree,
-              check_placement_cannot_classify_without_a_direct_probe]
+              check_placement_cannot_classify_without_a_direct_probe,
+              check_the_kernel_timeout_cap_matches_the_client]
     for fn in checks:
         try:
             fn()
