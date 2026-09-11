@@ -1280,5 +1280,453 @@
    "src": "Another way you can clean this code up is to use **named tuples**. These are an especially nice and Pythonic structure which maintains the features of a tuple, but also allows you to define instances & access elements by name. For instance, instead of:\n\n```python\nray_segment_batch = (\n    solutions.rays1d,\n    solutions.segments\n)\n```\n\nyou could have:\n\n```python\nfrom collections import namedtuple\nTestCase = namedtuple(\"TestCase\", \"rays segments\")\n\nray_segment_batch = TestCase(\n    rays = solutions.rays1d,\n    segments = solutions.segments\n)\n```\n\nand this `ray_segment_batch` object would still be treated like a tensor when it's used in a parameterized test.",
    "summary": "Aside - named tuples"
   }
+ ],
+ "setup_cells": [
+  "0-1-c007",
+  "0-1-c008",
+  "0-1-c020"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-1-c014",
+   "title": "Exercise - implement `make_rays_1d`",
+   "prompt_cell": "0-1-c014",
+   "answer_cells": [
+    "0-1-c016"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c016"
+  },
+  {
+   "id": "exercise:0-1-c027",
+   "title": "Faded 1.1 — a (5, 2, 3) block of zeros, float32",
+   "prompt_cell": "0-1-c027",
+   "answer_cells": [
+    "0-1-c027"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c027"
+  },
+  {
+   "id": "exercise:0-1-c029",
+   "title": "Faded 1.2 — a length-4 integer tensor of all 1s, and a length-4 float tensor of all -2.5",
+   "prompt_cell": "0-1-c029",
+   "answer_cells": [
+    "0-1-c029"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c029"
+  },
+  {
+   "id": "exercise:0-1-c031",
+   "title": "Faded 1.3 — build this exact tensor from a Python list literal:",
+   "prompt_cell": "0-1-c031",
+   "answer_cells": [
+    "0-1-c031"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c031"
+  },
+  {
+   "id": "exercise:0-1-c033",
+   "title": "Faded 1.4 — same shape and dtype as `template`, but filled with 9s. Use a *_like function.",
+   "prompt_cell": "0-1-c033",
+   "answer_cells": [
+    "0-1-c033"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c033"
+  },
+  {
+   "id": "exercise:0-1-c036",
+   "title": "blank_rays",
+   "prompt_cell": "0-1-c036",
+   "answer_cells": [
+    "0-1-c036"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c036"
+  },
+  {
+   "id": "exercise:0-1-c038",
+   "title": "Challenge 1.2 — predict, then verify. Fill each `expected_*` with the literal you predict.",
+   "prompt_cell": "0-1-c038",
+   "answer_cells": [
+    "0-1-c038"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c038"
+  },
+  {
+   "id": "exercise:0-1-c040",
+   "title": "stack_pairs",
+   "prompt_cell": "0-1-c040",
+   "answer_cells": [
+    "0-1-c040"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c040"
+  },
+  {
+   "id": "exercise:0-1-c048",
+   "title": "Faded 2.1 — 7 values from -3 to 3 inclusive",
+   "prompt_cell": "0-1-c048",
+   "answer_cells": [
+    "0-1-c048"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c048"
+  },
+  {
+   "id": "exercise:0-1-c050",
+   "title": "Faded 2.2 — the integers 2, 4, 6, 8 using arange",
+   "prompt_cell": "0-1-c050",
+   "answer_cells": [
+    "0-1-c050"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c050"
+  },
+  {
+   "id": "exercise:0-1-c052",
+   "title": "Faded 2.3 — 9 values from -y_limit to +y_limit, as in make_rays_1d(9, 10.0)",
+   "prompt_cell": "0-1-c052",
+   "answer_cells": [
+    "0-1-c052"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c052"
+  },
+  {
+   "id": "exercise:0-1-c054",
+   "title": "Faded 2.4 — how many elements? Fill the literal integers you predict.",
+   "prompt_cell": "0-1-c054",
+   "answer_cells": [
+    "0-1-c054"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c054"
+  },
+  {
+   "id": "exercise:0-1-c057",
+   "title": "symmetric",
+   "prompt_cell": "0-1-c057",
+   "answer_cells": [
+    "0-1-c057"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c057"
+  },
+  {
+   "id": "exercise:0-1-c059",
+   "title": "my_linspace",
+   "prompt_cell": "0-1-c059",
+   "answer_cells": [
+    "0-1-c059"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c059"
+  },
+  {
+   "id": "exercise:0-1-c061",
+   "title": "centres",
+   "prompt_cell": "0-1-c061",
+   "answer_cells": [
+    "0-1-c061"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c061"
+  },
+  {
+   "id": "exercise:0-1-c070",
+   "title": "Faded 3.1 — set the x-component of every direction to 1",
+   "prompt_cell": "0-1-c070",
+   "answer_cells": [
+    "0-1-c070"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c070"
+  },
+  {
+   "id": "exercise:0-1-c072",
+   "title": "Faded 3.2 — write linspace(-1, 1, 6) into the y-component of every direction using out=",
+   "prompt_cell": "0-1-c072",
+   "answer_cells": [
+    "0-1-c072"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c072"
+  },
+  {
+   "id": "exercise:0-1-c074",
+   "title": "Faded 3.3 — same result as 3.2, but WITHOUT out=: plain slice assignment",
+   "prompt_cell": "0-1-c074",
+   "answer_cells": [
+    "0-1-c074"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c074"
+  },
+  {
+   "id": "exercise:0-1-c076",
+   "title": "Faded 3.4 — assign a whole direction vector at once to ray number 2 (0-indexed)",
+   "prompt_cell": "0-1-c076",
+   "answer_cells": [
+    "0-1-c076"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c076"
+  },
+  {
+   "id": "exercise:0-1-c079",
+   "title": "shares",
+   "prompt_cell": "0-1-c079",
+   "answer_cells": [
+    "0-1-c079"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c079"
+  },
+  {
+   "id": "exercise:0-1-c081",
+   "title": "fill_directions",
+   "prompt_cell": "0-1-c081",
+   "answer_cells": [
+    "0-1-c081"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c081"
+  },
+  {
+   "id": "exercise:0-1-c083",
+   "title": "set_all",
+   "prompt_cell": "0-1-c083",
+   "answer_cells": [
+    "0-1-c083"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c083"
+  },
+  {
+   "id": "exercise:0-1-c091",
+   "title": "point_at",
+   "prompt_cell": "0-1-c091",
+   "answer_cells": [
+    "0-1-c091"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c091"
+  },
+  {
+   "id": "exercise:0-1-c093",
+   "title": "ray_through",
+   "prompt_cell": "0-1-c093",
+   "answer_cells": [
+    "0-1-c093"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c093"
+  },
+  {
+   "id": "exercise:0-1-c095",
+   "title": "Faded 4.3 — extract the direction-y of every ray in a batch, and the origin of every ray",
+   "prompt_cell": "0-1-c095",
+   "answer_cells": [
+    "0-1-c095"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c095"
+  },
+  {
+   "id": "exercise:0-1-c097",
+   "title": "screen_hits",
+   "prompt_cell": "0-1-c097",
+   "answer_cells": [
+    "0-1-c097"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c097"
+  },
+  {
+   "id": "exercise:0-1-c100",
+   "title": "screen_hits_general",
+   "prompt_cell": "0-1-c100",
+   "answer_cells": [
+    "0-1-c100"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c100"
+  },
+  {
+   "id": "exercise:0-1-c102",
+   "title": "same_ray",
+   "prompt_cell": "0-1-c102",
+   "answer_cells": [
+    "0-1-c102"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c102"
+  },
+  {
+   "id": "exercise:0-1-c104",
+   "title": "y_at_4",
+   "prompt_cell": "0-1-c104",
+   "answer_cells": [
+    "0-1-c104"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c104"
+  },
+  {
+   "id": "exercise:0-1-c107",
+   "title": "make_rays_1d_z",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c107"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c107"
+  },
+  {
+   "id": "exercise:0-1-c109",
+   "title": "make_rays_1d_from",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c109"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c109"
+  },
+  {
+   "id": "exercise:0-1-c111",
+   "title": "make_rays_1d_screen",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c111"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c111"
+  },
+  {
+   "id": "exercise:0-1-c113",
+   "title": "make_rays_1d_unit",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c113"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c113"
+  },
+  {
+   "id": "exercise:0-1-c115",
+   "title": "make_rays_1d_centres",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c115"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c115"
+  },
+  {
+   "id": "exercise:0-1-c117",
+   "title": "make_rays_1d_range",
+   "prompt_cell": "0-1-c106",
+   "answer_cells": [
+    "0-1-c117"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c117"
+  },
+  {
+   "id": "exercise:0-1-c123",
+   "title": "Exercise - implement `intersect_ray_1d`",
+   "prompt_cell": "0-1-c123",
+   "answer_cells": [
+    "0-1-c124"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c124"
+  },
+  {
+   "id": "exercise:0-1-c137",
+   "title": "Exercise - implement `intersect_rays_1d`",
+   "prompt_cell": "0-1-c137",
+   "answer_cells": [
+    "0-1-c138"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c138"
+  },
+  {
+   "id": "exercise:0-1-c142",
+   "title": "Exercise - implement `make_rays_2d`",
+   "prompt_cell": "0-1-c142",
+   "answer_cells": [
+    "0-1-c143"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c143"
+  },
+  {
+   "id": "exercise:0-1-c149",
+   "title": "Exercise - implement `triangle_ray_intersects`",
+   "prompt_cell": "0-1-c149",
+   "answer_cells": [
+    "0-1-c150"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c150"
+  },
+  {
+   "id": "exercise:0-1-c156",
+   "title": "Exercise - implement `raytrace_triangle`",
+   "prompt_cell": "0-1-c156",
+   "answer_cells": [
+    "0-1-c157"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c157"
+  },
+  {
+   "id": "exercise:0-1-c168",
+   "title": "Exercise - implement `raytrace_mesh`",
+   "prompt_cell": "0-1-c168",
+   "answer_cells": [
+    "0-1-c169"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c169"
+  },
+  {
+   "id": "exercise:0-1-c174",
+   "title": "Exercise - rotation matrix",
+   "prompt_cell": "0-1-c174",
+   "answer_cells": [
+    "0-1-c175",
+    "0-1-c178"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c175"
+  },
+  {
+   "id": "exercise:0-1-c179",
+   "title": "Exercise - use GPUs",
+   "prompt_cell": "0-1-c179",
+   "answer_cells": [
+    "0-1-c180"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c180"
+  },
+  {
+   "id": "exercise:0-1-c182",
+   "title": "Exercise (bonus) - add lighting",
+   "prompt_cell": "0-1-c182",
+   "answer_cells": [
+    "0-1-c183"
+   ],
+   "section": "0-1",
+   "answer_cell": "0-1-c183"
+  }
  ]
 }

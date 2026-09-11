@@ -1247,5 +1247,244 @@
    "role": "prose",
    "src": "### `torch.stack`\n\nSo far we've registered a separate backwards for each input argument that could be a Tensor. This is problematic if the function can take any number of tensors like `torch.stack` or `numpy.stack`. Think of and implement the backward function for stack. It may require modification to your other code."
   }
+ ],
+ "setup_cells": [
+  "0-4-c006",
+  "0-4-c007"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-4-c025",
+   "title": "Exercise - implement `log_back`",
+   "prompt_cell": "0-4-c025",
+   "answer_cells": [
+    "0-4-c027"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c027"
+  },
+  {
+   "id": "exercise:0-4-c035",
+   "title": "Exercise - implement `unbroadcast`",
+   "prompt_cell": "0-4-c035",
+   "answer_cells": [
+    "0-4-c037"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c037"
+  },
+  {
+   "id": "exercise:0-4-c040",
+   "title": "Exercise - implement both `multiply_back` functions",
+   "prompt_cell": "0-4-c040",
+   "answer_cells": [
+    "0-4-c041"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c041"
+  },
+  {
+   "id": "exercise:0-4-c044",
+   "title": "Exercise - implement `forward_and_back`",
+   "prompt_cell": "0-4-c044",
+   "answer_cells": [
+    "0-4-c045"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c045"
+  },
+  {
+   "id": "exercise:0-4-c055",
+   "title": "Exercise - implement `BackwardFuncLookup`",
+   "prompt_cell": "0-4-c055",
+   "answer_cells": [
+    "0-4-c056"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c056"
+  },
+  {
+   "id": "exercise:0-4-c063",
+   "title": "Exercise - implement `log_forward`",
+   "prompt_cell": "0-4-c063",
+   "answer_cells": [
+    "0-4-c064"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c064"
+  },
+  {
+   "id": "exercise:0-4-c067",
+   "title": "Exercise - implement `multiply_forward`",
+   "prompt_cell": "0-4-c067",
+   "answer_cells": [
+    "0-4-c068"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c068"
+  },
+  {
+   "id": "exercise:0-4-c071",
+   "title": "Exercise - implement `wrap_forward_fn`",
+   "prompt_cell": "0-4-c071",
+   "answer_cells": [
+    "0-4-c072"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c072"
+  },
+  {
+   "id": "exercise:0-4-c077",
+   "title": "Exercise - implement `topological_sort`",
+   "prompt_cell": "0-4-c077",
+   "answer_cells": [
+    "0-4-c078",
+    "0-4-c082"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c078"
+  },
+  {
+   "id": "exercise:0-4-c085",
+   "title": "Exercise - implement `backprop`",
+   "prompt_cell": "0-4-c085",
+   "answer_cells": [
+    "0-4-c086"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c086"
+  },
+  {
+   "id": "exercise:0-4-c091",
+   "title": "Exercise - `negative`",
+   "prompt_cell": "0-4-c091",
+   "answer_cells": [
+    "0-4-c092"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c092"
+  },
+  {
+   "id": "exercise:0-4-c094",
+   "title": "Exercise - `exp`",
+   "prompt_cell": "0-4-c094",
+   "answer_cells": [
+    "0-4-c095"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c095"
+  },
+  {
+   "id": "exercise:0-4-c097",
+   "title": "Exercise - `reshape`",
+   "prompt_cell": "0-4-c097",
+   "answer_cells": [
+    "0-4-c098"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c098"
+  },
+  {
+   "id": "exercise:0-4-c100",
+   "title": "Exercise - `permute`",
+   "prompt_cell": "0-4-c100",
+   "answer_cells": [
+    "0-4-c101"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c101"
+  },
+  {
+   "id": "exercise:0-4-c103",
+   "title": "Exercise - `sum`",
+   "prompt_cell": "0-4-c103",
+   "answer_cells": [
+    "0-4-c104"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c104"
+  },
+  {
+   "id": "exercise:0-4-c107",
+   "title": "YOUR CODE HERE - continue adding to BACK_FUNCS, for each of the 3 functions & both arg orders",
+   "prompt_cell": "0-4-c106",
+   "answer_cells": [
+    "0-4-c107"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c107"
+  },
+  {
+   "id": "exercise:0-4-c117",
+   "title": "Exercise - `max`",
+   "prompt_cell": "0-4-c117",
+   "answer_cells": [
+    "0-4-c119"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c119"
+  },
+  {
+   "id": "exercise:0-4-c121",
+   "title": "Exercise - functional `ReLU`",
+   "prompt_cell": "0-4-c121",
+   "answer_cells": [
+    "0-4-c122"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c122"
+  },
+  {
+   "id": "exercise:0-4-c124",
+   "title": "Exercise - 2D `matmul`",
+   "prompt_cell": "0-4-c124",
+   "answer_cells": [
+    "0-4-c125"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c125"
+  },
+  {
+   "id": "exercise:0-4-c130",
+   "title": "Module",
+   "prompt_cell": "0-4-c129",
+   "answer_cells": [
+    "0-4-c130"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c130"
+  },
+  {
+   "id": "exercise:0-4-c131",
+   "title": "Exercise - implement `Linear`",
+   "prompt_cell": "0-4-c131",
+   "answer_cells": [
+    "0-4-c132",
+    "0-4-c135",
+    "0-4-c137"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c132"
+  },
+  {
+   "id": "exercise:0-4-c138",
+   "title": "Exercise - implement `cross_entropy`",
+   "prompt_cell": "0-4-c138",
+   "answer_cells": [
+    "0-4-c139"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c139"
+  },
+  {
+   "id": "exercise:0-4-c143",
+   "title": "Exercise - implement `SGD`",
+   "prompt_cell": "0-4-c143",
+   "answer_cells": [
+    "0-4-c144"
+   ],
+   "section": "0-4",
+   "answer_cell": "0-4-c144"
+  }
  ]
 }

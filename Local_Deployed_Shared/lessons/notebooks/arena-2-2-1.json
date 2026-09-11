@@ -263,6 +263,13 @@
    "src": "### Exercise - read & understand other probe environments\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 10-20 minutes here.\n> ```\n\nFor each of the probes in `gpu_probe.py`, read their implementation code, and understand how they correspond to their docstrings (and to the [descriptions](https://andyljones.com/posts/rl-debugging.html#:~:text=Use%20probe%20environments) given in Andy Jones' post).\n\nIt's very important to understand how these probes work, and why they're useful tools for debugging. When you're working on your own RL projects, you might have to write your own probes to suit your particular use cases."
   },
   {
+   "id": "2-2-1-c035-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "2-2-1-c036",
    "role": "prose",
@@ -417,6 +424,74 @@
    "id": "2-2-1-c056",
    "role": "prose",
    "src": "## Bonus\n\n### Target Network\n\nWhy have the target network? Modify the DQN code above, but this time use the same network for both the target and the Q-value network, rather than updating the target every so often.\n\nCompare the performance of this against using the target network.\n\n### Shrink the Brain\n\nCan DQN still learn to solve CartPole with a Q-network with fewer parameters? Could we get away with three-quarters or even half as many parameters? Try comparing the resulting training curves with a shrunken version of the Q-network. What about the same number of parameters, but with more/less layers, and less/more parameters per layer?\n\n### Dueling DQN\n\nImplement dueling DQN according to [the paper](https://arxiv.org/pdf/1511.06581.pdf) and compare its performance."
+  }
+ ],
+ "setup_cells": [
+  "2-2-1-c006",
+  "2-2-1-c007"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:2-2-1-c017",
+   "title": "Exercise - implement `QNetwork`",
+   "prompt_cell": "2-2-1-c017",
+   "answer_cells": [
+    "2-2-1-c018"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c018"
+  },
+  {
+   "id": "exercise:2-2-1-c026",
+   "title": "Exercise - implement linear scheduler",
+   "prompt_cell": "2-2-1-c026",
+   "answer_cells": [
+    "2-2-1-c027"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c027"
+  },
+  {
+   "id": "exercise:2-2-1-c030",
+   "title": "Exercise - implement the epsilon greedy policy",
+   "prompt_cell": "2-2-1-c030",
+   "answer_cells": [
+    "2-2-1-c031"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c031"
+  },
+  {
+   "id": "exercise:2-2-1-c035",
+   "title": "Exercise - read & understand other probe environments",
+   "prompt_cell": "2-2-1-c035",
+   "answer_cells": [
+    "2-2-1-c035-answer"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c035-answer"
+  },
+  {
+   "id": "exercise:2-2-1-c041",
+   "title": "Exercise - fill in the agent class",
+   "prompt_cell": "2-2-1-c041",
+   "answer_cells": [
+    "2-2-1-c042"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c042"
+  },
+  {
+   "id": "exercise:2-2-1-c046",
+   "title": "Exercise - write DQN training loop",
+   "prompt_cell": "2-2-1-c046",
+   "answer_cells": [
+    "2-2-1-c047",
+    "2-2-1-c050",
+    "2-2-1-c052"
+   ],
+   "section": "2-2-1",
+   "answer_cell": "2-2-1-c047"
   }
  ]
 }

@@ -258,6 +258,13 @@
    "src": "### Exercise - brainstorm your reward function\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend ~5 minutes on this exercise.\n> ```\n\nTake 5 minutes (on your own or with a partner) to brainstorm how the model might be able to maximize the output of periods in ways which don't produce incoherent output (e.g. collapsing into only outputting periods). Remember we have a KL penalty with the reference model, meaning the model is penalized for producing outputs which would be very unlikely under the original model. What ideas can you come up with? When you train your model and observe the output, you should come back here and see how many of the period-maximizing behaviours you predicted actually occur.\n\nThis exercise is a great way to start thinking about the effects of different reward functions - although it's only a toy example, it still illustrates the important alignment concept that the behaviour induced by certain reward functions might not always be what you expect!"
   },
   {
+   "id": "2-4-c032-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "2-4-c032-1",
    "role": "details",
@@ -857,6 +864,168 @@
    "role": "details",
    "src": "```python\nclass LoraHooksMixedPrecision(LoraHooks):\n    \"\"\"\n    Defines the LoRA hooks needed for the Attention layer of the transformer, but allow for mixed precision.\n    \"\"\"\n    \n    def lora_hook_qkv(\n        self, \n        resid_pre_normed: Float[Tensor, \"batch pos d_model\"], \n        hook: HookPoint\n    ) -> Float[Tensor, \"batch pos n_heads d_head\"]:\n        \n        # EXERCISE\n        # raise NotImplementedError()\n        # END EXERCISE\n        # SOLUTION\n        hook_location = hook.name.split(\".\")[-1]\n        \n        orig_dtype = resid_pre_normed.dtype\n        resid_pre_normed = resid_pre_normed.to(self.dtype)\n      \n        super().lora_hook_qkv(resid_pre_normed, hook)\n        \n        lora_qkv_out = lora_qkv_out.to(orig_dtype)\n        return lora_qkv_out\n        # END SOLUTION\n\n    def lora_hook_out(\n        self, attn_out: Float[Tensor, \"batch pos n_heads d_head\"], hook: HookPoint\n    ) -> Float[Tensor, \"batch pos n_heads d_head\"]:\n        \n        # EXERCISE\n        # raise NotImplementedError()\n        # END EXERCISE\n        # SOLUTION\n        orig_dtype = attn_out.dtype\n        attn_out = attn_out.to(self.dtype)\n        \n        super().lora_hook_out(attn_out, hook)\n        \n        lora_attn_out = lora_attn_out.to(orig_dtype)\n        return lora_attn_out\n        # END SOLUTION\n```",
    "summary": "Solution"
+  }
+ ],
+ "setup_cells": [
+  "2-4-c007",
+  "2-4-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:2-4-c021",
+   "title": "Exercise - implement `HookedTransformerWithValueHead`",
+   "prompt_cell": "2-4-c021",
+   "answer_cells": [
+    "2-4-c022"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c022"
+  },
+  {
+   "id": "exercise:2-4-c029",
+   "title": "Exercise - implement `reward_fn_char_count`",
+   "prompt_cell": "2-4-c029",
+   "answer_cells": [
+    "2-4-c030"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c030"
+  },
+  {
+   "id": "exercise:2-4-c032",
+   "title": "Exercise - brainstorm your reward function",
+   "prompt_cell": "2-4-c032",
+   "answer_cells": [
+    "2-4-c032-answer"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c032-answer"
+  },
+  {
+   "id": "exercise:2-4-c033",
+   "title": "Exercise - implement `normalize_reward`",
+   "prompt_cell": "2-4-c033",
+   "answer_cells": [
+    "2-4-c034"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c034"
+  },
+  {
+   "id": "exercise:2-4-c036",
+   "title": "Exercise - implement `get_advantages`",
+   "prompt_cell": "2-4-c036",
+   "answer_cells": [
+    "2-4-c037"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c037"
+  },
+  {
+   "id": "exercise:2-4-c044",
+   "title": "Exercise - implement `calc_kl_penalty`",
+   "prompt_cell": "2-4-c044",
+   "answer_cells": [
+    "2-4-c045"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c045"
+  },
+  {
+   "id": "exercise:2-4-c047",
+   "title": "Exercise - (re)implement `compute_entropy_bonus`",
+   "prompt_cell": "2-4-c047",
+   "answer_cells": [
+    "2-4-c048"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c048"
+  },
+  {
+   "id": "exercise:2-4-c052",
+   "title": "Exercise - implement `get_logprobs`",
+   "prompt_cell": "2-4-c052",
+   "answer_cells": [
+    "2-4-c053"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c053"
+  },
+  {
+   "id": "exercise:2-4-c056",
+   "title": "Exercise - implement `get_optimizer`",
+   "prompt_cell": "2-4-c056",
+   "answer_cells": [
+    "2-4-c057"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c057"
+  },
+  {
+   "id": "exercise:2-4-c063",
+   "title": "Exercise - complete `RLHFTrainer`",
+   "prompt_cell": "2-4-c063",
+   "answer_cells": [
+    "2-4-c064",
+    "2-4-c067",
+    "2-4-c069"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c064"
+  },
+  {
+   "id": "exercise:2-4-c072",
+   "title": "Exercise - use a more complex reward function",
+   "prompt_cell": "2-4-c072",
+   "answer_cells": [
+    "2-4-c073"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c073"
+  },
+  {
+   "id": "exercise:2-4-c079",
+   "title": "Exercise - complete `Lora`",
+   "prompt_cell": "2-4-c079",
+   "answer_cells": [
+    "2-4-c080"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c080"
+  },
+  {
+   "id": "exercise:2-4-c085",
+   "title": "Exercise - complete `LoraHooks`",
+   "prompt_cell": "2-4-c085",
+   "answer_cells": [
+    "2-4-c087",
+    "2-4-c088"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c087"
+  },
+  {
+   "id": "exercise:2-4-c092",
+   "title": "Exercise - complete `TransformerWithValueHeadLora`",
+   "prompt_cell": "2-4-c092",
+   "answer_cells": [
+    "2-4-c093",
+    "2-4-c096",
+    "2-4-c097"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c093"
+  },
+  {
+   "id": "exercise:2-4-c106",
+   "title": "Exercise: Construct GRPO trainer",
+   "prompt_cell": "2-4-c106",
+   "answer_cells": [
+    "2-4-c107",
+    "2-4-c108"
+   ],
+   "section": "2-4",
+   "answer_cell": "2-4-c107"
   }
  ]
 }

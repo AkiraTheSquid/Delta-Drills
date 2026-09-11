@@ -183,6 +183,13 @@
    "src": "### Exercise - Write few-shot prompts for generation\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-20 minutes on this exercise.\n> ```\n\nWe'll now generate a larger set of questions from our set above, using few-shot prompting. This involves adding some examples to our generation prompt, to help guide subsequent completions. In practice, you can do this either by having the examples requested directly in the user prompt (first example below), or you can include the examples as part of the dialogue between the user and the assistant (second example below). Note that you don't have to run this code, it's just a demo.\n\n```python\n# Example 1: instructions in the user prompt\nmessages=[\n    {\"role\": \"user\", \"content\": \"[Request 1] Here are some examples: [Examples]\"},\n]\n\n# Example 2: instructions in the previous dialogue\nmessages=[\n    {\"role\": \"user\", \"content\": \"[Request 1]\"},\n    {\"role\": \"assistant\", \"content\": \"[Examples]\"},\n    {\"role\": \"user\", \"content\": \"[Request 2]\"},\n    {\"role\": \"assistant\", \"content\": \"[Examples]\"},\n    {\"role\": \"user\", \"content\": \"[Request 3]\"},\n]\n```\n\nThe second example is often helpful so that the examples & requests can convey more detailed information (e.g. an example can \"make a mistake\" and then the request can point out that mistake, or the request can score / give feedback on each example - both of these techniques help guide the model towards better examples, and we'll explore some of them later in today's exercises). However since we aren't doing anything like this and we only have one way of phrasing our request, we'll just use the first approach.\n\nYou should fill in the `add_few_shot_examples` function below, which appends our few-shot examples to the user prompt. You should then run the code below which will generate a larger set of questions (15 by default) and save them to a `.json` file. You should make sure to inspect these questions and verify that they're high-quality.\n\nSome notes / tips:\n- You can use `json.dumps(example)` to convert a dictionary to a string that can be appended to the user prompt. It's usually a good idea in cases like these to separate the examples with line breaks.\n- We've given you a rewritten `GenPrompts` class below, which will extend the user prompt by sampling from a supplied list of few-shot examples.\n- Again, the idea isn't to produce the best possible questions - we'll work on filtering our questions down to a better set in the next section."
   },
   {
+   "id": "3-2-c023-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "code",
    "id": "3-2-c024",
    "role": "code",
@@ -418,6 +425,117 @@
    "id": "3-2-c056",
    "role": "code",
    "src": "dataset = []\nnum_qs_total = 300\n\nwhile len(dataset) < num_qs_total:\n    num_qs_to_generate = num_qs_total - len(dataset)\n    new_dataset = filter_dataset(generate_and_score_questions(num_qs=num_qs_to_generate), min_score=9)\n    dataset.extend(new_dataset)\n    print(f\"Generated {len(new_dataset)} new qs, have {len(dataset)}/{num_qs_total} total qs\")\n\n# Save the dataset to a JSON file\nwith open(section_dir / f\"{evaluation_target}_{num_qs_total}_qs.json\", \"w\") as f:\n    json.dump([d.question.model_dump() for d in dataset], f)"
+  }
+ ],
+ "setup_cells": [
+  "3-2-c006",
+  "3-2-c007",
+  "3-2-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:3-2-c015",
+   "title": "Exercise - Generate structured MCQ outputs",
+   "prompt_cell": "3-2-c015",
+   "answer_cells": [
+    "3-2-c016"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c016"
+  },
+  {
+   "id": "exercise:3-2-c020",
+   "title": "Exercise - Write prompts for question generation",
+   "prompt_cell": "3-2-c020",
+   "answer_cells": [
+    "3-2-c021"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c021"
+  },
+  {
+   "id": "exercise:3-2-c023",
+   "title": "Exercise - Write few-shot prompts for generation",
+   "prompt_cell": "3-2-c023",
+   "answer_cells": [
+    "3-2-c023-answer"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c023-answer"
+  },
+  {
+   "id": "exercise:3-2-c024",
+   "title": "add_few_shot_examples",
+   "prompt_cell": "3-2-c023",
+   "answer_cells": [
+    "3-2-c024"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c024"
+  },
+  {
+   "id": "exercise:3-2-c026",
+   "title": "Exercise - Add variance prompts",
+   "prompt_cell": "3-2-c026",
+   "answer_cells": [
+    "3-2-c027"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c027"
+  },
+  {
+   "id": "exercise:3-2-c031",
+   "title": "Exercise - Write prompt-generation function with concurrency",
+   "prompt_cell": "3-2-c031",
+   "answer_cells": [
+    "3-2-c032",
+    "3-2-c035"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c032"
+  },
+  {
+   "id": "exercise:3-2-c039",
+   "title": "Exercise - Write a scoring function",
+   "prompt_cell": "3-2-c039",
+   "answer_cells": [
+    "3-2-c040",
+    "3-2-c043",
+    "3-2-c045"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c040"
+  },
+  {
+   "id": "exercise:3-2-c047",
+   "title": "Exercise - Checks and summary statistics",
+   "prompt_cell": "3-2-c047",
+   "answer_cells": [
+    "3-2-c048"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c048"
+  },
+  {
+   "id": "exercise:3-2-c050",
+   "title": "Exercise - Filter dataset",
+   "prompt_cell": "3-2-c050",
+   "answer_cells": [
+    "3-2-c051"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c051"
+  },
+  {
+   "id": "exercise:3-2-c053",
+   "title": "Exercise - Generate a final question set",
+   "prompt_cell": "3-2-c053",
+   "answer_cells": [
+    "3-2-c054",
+    "3-2-c056"
+   ],
+   "section": "3-2",
+   "answer_cell": "3-2-c054"
   }
  ]
 }

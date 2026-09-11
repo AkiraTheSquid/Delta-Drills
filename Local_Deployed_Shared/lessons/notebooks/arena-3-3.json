@@ -614,5 +614,164 @@
    "role": "code",
    "src": "# YOUR CODE HERE - plot some interesting graphs"
   }
+ ],
+ "setup_cells": [
+  "3-3-c006",
+  "3-3-c007",
+  "3-3-c009"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:3-3-c017",
+   "title": "Exercise - write `record_to_sample` for your dataset",
+   "prompt_cell": "3-3-c017",
+   "answer_cells": [
+    "3-3-c018"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c018"
+  },
+  {
+   "id": "exercise:3-3-c031",
+   "title": "Exercise - implement `prompt_template` solver",
+   "prompt_cell": "3-3-c031",
+   "answer_cells": [
+    "3-3-c032"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c032"
+  },
+  {
+   "id": "exercise:3-3-c034",
+   "title": "Exercise - implement `multiple_choice_format` solver",
+   "prompt_cell": "3-3-c034",
+   "answer_cells": [
+    "3-3-c035",
+    "3-3-c037"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c037"
+  },
+  {
+   "id": "exercise:3-3-c039",
+   "title": "Exercise - implement `make_choice` solver",
+   "prompt_cell": "3-3-c039",
+   "answer_cells": [
+    "3-3-c040"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c040"
+  },
+  {
+   "id": "exercise:3-3-c042",
+   "title": "Exercise - implement `self_critique_format` solver",
+   "prompt_cell": "3-3-c042",
+   "answer_cells": [
+    "3-3-c043",
+    "3-3-c045"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c045"
+  },
+  {
+   "id": "exercise:3-3-c047",
+   "title": "Exercise (optional) - Write your own solvers",
+   "prompt_cell": "3-3-c047",
+   "answer_cells": [
+    "3-3-c048"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c048"
+  },
+  {
+   "id": "exercise:3-3-c051",
+   "title": "Exercise - Write a simple scorer",
+   "prompt_cell": "3-3-c051",
+   "answer_cells": [
+    "3-3-c052"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c052"
+  },
+  {
+   "id": "exercise:3-3-c054",
+   "title": "Exercise (optional) - Write your own scorer(s)",
+   "prompt_cell": "3-3-c054",
+   "answer_cells": [
+    "3-3-c055"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c055"
+  },
+  {
+   "id": "exercise:3-3-c058",
+   "title": "Exercise - implement `record_to_sample_shuffle`",
+   "prompt_cell": "3-3-c058",
+   "answer_cells": [
+    "3-3-c059"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c059"
+  },
+  {
+   "id": "exercise:3-3-c061",
+   "title": "Exercise - implement `record_to_sample_full`",
+   "prompt_cell": "3-3-c061",
+   "answer_cells": [
+    "3-3-c062"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c062"
+  },
+  {
+   "id": "exercise:3-3-c064",
+   "title": "Exercise - implement the `benchmark_eval` task",
+   "prompt_cell": "3-3-c064",
+   "answer_cells": [
+    "3-3-c065"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c065"
+  },
+  {
+   "id": "exercise:3-3-c067",
+   "title": "Exercise - finalize & run your eval",
+   "prompt_cell": "3-3-c067",
+   "answer_cells": [
+    "3-3-c068"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c068"
+  },
+  {
+   "id": "exercise:3-3-c070",
+   "title": "Exercise - run full eval sweeps",
+   "prompt_cell": "3-3-c070",
+   "answer_cells": [
+    "3-3-c071"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c071"
+  },
+  {
+   "id": "exercise:3-3-c074",
+   "title": "Exercise (optional) - Extract data from log files",
+   "prompt_cell": "3-3-c074",
+   "answer_cells": [
+    "3-3-c075"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c075"
+  },
+  {
+   "id": "exercise:3-3-c076",
+   "title": "Exercise (optional) - Use plotly (and Claude) to plot the results of your evaluation",
+   "prompt_cell": "3-3-c076",
+   "answer_cells": [
+    "3-3-c077"
+   ],
+   "section": "3-3",
+   "answer_cell": "3-3-c077"
+  }
  ]
 }

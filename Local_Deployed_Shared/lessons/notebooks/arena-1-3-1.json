@@ -794,5 +794,161 @@
    "role": "prose",
    "src": "## Bonus: out-of-distribution generalisation\n\nThe training data is LLM-generated synthetic pairs. The paper evaluates whether probes trained on this data generalise to real-world datasets: Anthropic HH-RLHF conversations, medical transcriptions, mental health dialogues, and Aya red-teaming prompts. These are substantially different from the training distribution in style and domain.\n\nTo test this yourself, download the evaluation datasets:\n\n```bash\ncd /path/to/models-under-pressure\nuv run mup datasets download\n```\n\nEvaluation datasets land in `data/evals/dev/` as JSONL files. Load them with `datasets.load_dataset(\"json\", data_files=...)`, extract activations using `extract_full_sequence_activations` with the same layer and model, then score with the trained `attn_probe` directly. No retraining required.\n\nThe paper finds that the attention probe generalises better than last-token baselines across all evaluation datasets. Cross-dataset generalisation is also studied via a generalisation heatmap (train on dataset A, evaluate on B), which the repo reproduces with `uv run mup exp +experiment=generalisation_heatmap`."
   }
+ ],
+ "setup_cells": [
+  "1-3-1-c007",
+  "1-3-1-c008",
+  "1-3-1-c009",
+  "1-3-1-c011",
+  "1-3-1-c012",
+  "1-3-1-c014"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-3-1-c017",
+   "title": "Exercise - implement `extract_activations`",
+   "prompt_cell": "1-3-1-c017",
+   "answer_cells": [
+    "1-3-1-c018",
+    "1-3-1-c021"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c018"
+  },
+  {
+   "id": "exercise:1-3-1-c023",
+   "title": "Exercise - implement `get_pca_components`",
+   "prompt_cell": "1-3-1-c023",
+   "answer_cells": [
+    "1-3-1-c024",
+    "1-3-1-c027"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c024"
+  },
+  {
+   "id": "exercise:1-3-1-c030",
+   "title": "Exercise - implement layer sweep",
+   "prompt_cell": "1-3-1-c030",
+   "answer_cells": [
+    "1-3-1-c031"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c031"
+  },
+  {
+   "id": "exercise:1-3-1-c037",
+   "title": "Exercise - implement `MMProbe`",
+   "prompt_cell": "1-3-1-c037",
+   "answer_cells": [
+    "1-3-1-c038"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c038"
+  },
+  {
+   "id": "exercise:1-3-1-c040",
+   "title": "Exercise - implement `LRProbe`",
+   "prompt_cell": "1-3-1-c040",
+   "answer_cells": [
+    "1-3-1-c041"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c041"
+  },
+  {
+   "id": "exercise:1-3-1-c043",
+   "title": "Exercise - cross-dataset generalization matrix",
+   "prompt_cell": "1-3-1-c043",
+   "answer_cells": [
+    "1-3-1-c044"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c044"
+  },
+  {
+   "id": "exercise:1-3-1-c050",
+   "title": "Exercise - implement few-shot evaluation",
+   "prompt_cell": "1-3-1-c050",
+   "answer_cells": [
+    "1-3-1-c051",
+    "1-3-1-c052",
+    "1-3-1-c055"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c052"
+  },
+  {
+   "id": "exercise:1-3-1-c056",
+   "title": "Exercise - implement the batch-aware intervention hook",
+   "prompt_cell": "1-3-1-c056",
+   "answer_cells": [
+    "1-3-1-c057"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c057"
+  },
+  {
+   "id": "exercise:1-3-1-c073",
+   "title": "Exercise - construct instructed-pairs dataset",
+   "prompt_cell": "1-3-1-c073",
+   "answer_cells": [
+    "1-3-1-c074"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c074"
+  },
+  {
+   "id": "exercise:1-3-1-c077",
+   "title": "Bonus exercise - multi-layer aggregation",
+   "prompt_cell": "1-3-1-c077",
+   "answer_cells": [
+    "1-3-1-c079"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c079"
+  },
+  {
+   "id": "exercise:1-3-1-c081",
+   "title": "Exercise - implement `DeceptionSteeringHook`",
+   "prompt_cell": "1-3-1-c081",
+   "answer_cells": [
+    "1-3-1-c082"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c082"
+  },
+  {
+   "id": "exercise:1-3-1-c085",
+   "title": "Exercise - implement `score_dialogue`",
+   "prompt_cell": "1-3-1-c085",
+   "answer_cells": [
+    "1-3-1-c086",
+    "1-3-1-c087"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c086"
+  },
+  {
+   "id": "exercise:1-3-1-c100",
+   "title": "Exercise - implement `extract_full_sequence_activations`",
+   "prompt_cell": "1-3-1-c100",
+   "answer_cells": [
+    "1-3-1-c101",
+    "1-3-1-c102"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c101"
+  },
+  {
+   "id": "exercise:1-3-1-c104",
+   "title": "Exercise - implement `attention_probe_forward`",
+   "prompt_cell": "1-3-1-c104",
+   "answer_cells": [
+    "1-3-1-c105"
+   ],
+   "section": "1-3-1",
+   "answer_cell": "1-3-1-c105"
+  }
  ]
 }

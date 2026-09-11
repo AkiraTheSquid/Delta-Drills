@@ -1407,5 +1407,256 @@
    "role": "prose",
    "src": "Now, you're finished! You can go back to the ResNets exercises, and build your ResNet ***entirely using your own stride-based functions***."
   }
+ ],
+ "setup_cells": [
+  "0-2-c007",
+  "0-2-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-2-c017",
+   "title": "Exercise - implement `ReLU`",
+   "prompt_cell": "0-2-c017",
+   "answer_cells": [
+    "0-2-c018"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c018"
+  },
+  {
+   "id": "exercise:0-2-c021",
+   "title": "Exercise - implement `Linear`",
+   "prompt_cell": "0-2-c021",
+   "answer_cells": [
+    "0-2-c022"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c022"
+  },
+  {
+   "id": "exercise:0-2-c027",
+   "title": "Exercise - implement the simple MLP",
+   "prompt_cell": "0-2-c027",
+   "answer_cells": [
+    "0-2-c028"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c028"
+  },
+  {
+   "id": "exercise:0-2-c047",
+   "title": "Exercise - add a validation loop",
+   "prompt_cell": "0-2-c047",
+   "answer_cells": [
+    "0-2-c048",
+    "0-2-c049"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c048"
+  },
+  {
+   "id": "exercise:0-2-c059",
+   "title": "Exercise - implement `Conv2d`",
+   "prompt_cell": "0-2-c059",
+   "answer_cells": [
+    "0-2-c060"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c060"
+  },
+  {
+   "id": "exercise:0-2-c071",
+   "title": "Exercise - implement `BatchNorm2d`",
+   "prompt_cell": "0-2-c071",
+   "answer_cells": [
+    "0-2-c072"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c072"
+  },
+  {
+   "id": "exercise:0-2-c075",
+   "title": "Exercise - implement `AveragePool`",
+   "prompt_cell": "0-2-c075",
+   "answer_cells": [
+    "0-2-c076"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c076"
+  },
+  {
+   "id": "exercise:0-2-c079",
+   "title": "Exercise - implement `ResidualBlock`",
+   "prompt_cell": "0-2-c079",
+   "answer_cells": [
+    "0-2-c080"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c080"
+  },
+  {
+   "id": "exercise:0-2-c082",
+   "title": "Exercise - implement `BlockGroup`",
+   "prompt_cell": "0-2-c082",
+   "answer_cells": [
+    "0-2-c083"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c083"
+  },
+  {
+   "id": "exercise:0-2-c085",
+   "title": "Exercise - implement `ResNet34`",
+   "prompt_cell": "0-2-c085",
+   "answer_cells": [
+    "0-2-c086"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c086"
+  },
+  {
+   "id": "exercise:0-2-c097",
+   "title": "Exercise - verify your model's predictions",
+   "prompt_cell": "0-2-c097",
+   "answer_cells": [
+    "0-2-c098"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c098"
+  },
+  {
+   "id": "exercise:0-2-c107",
+   "title": "Exercise - prepare ResNet for feature extraction",
+   "prompt_cell": "0-2-c107",
+   "answer_cells": [
+    "0-2-c108",
+    "0-2-c111"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c108"
+  },
+  {
+   "id": "exercise:0-2-c113",
+   "title": "Exercise - write training loop for feature extraction",
+   "prompt_cell": "0-2-c113",
+   "answer_cells": [
+    "0-2-c114",
+    "0-2-c115"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c114"
+  },
+  {
+   "id": "exercise:0-2-c123",
+   "title": "Exercise - fill in the correct size and stride",
+   "prompt_cell": "0-2-c123",
+   "answer_cells": [
+    "0-2-c124"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c124"
+  },
+  {
+   "id": "exercise:0-2-c127",
+   "title": "Exercise - trace",
+   "prompt_cell": "0-2-c127",
+   "answer_cells": [
+    "0-2-c128"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c128"
+  },
+  {
+   "id": "exercise:0-2-c130",
+   "title": "Exercise - matrix-vector multiplication",
+   "prompt_cell": "0-2-c130",
+   "answer_cells": [
+    "0-2-c131"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c131"
+  },
+  {
+   "id": "exercise:0-2-c133",
+   "title": "Exercise - matrix-matrix multiplication",
+   "prompt_cell": "0-2-c133",
+   "answer_cells": [
+    "0-2-c134"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c134"
+  },
+  {
+   "id": "exercise:0-2-c138",
+   "title": "Exercise - implement minimal 1D conv (part 1)",
+   "prompt_cell": "0-2-c138",
+   "answer_cells": [
+    "0-2-c139"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c139"
+  },
+  {
+   "id": "exercise:0-2-c141",
+   "title": "Exercise - implement minimal 1D conv (part 2)",
+   "prompt_cell": "0-2-c141",
+   "answer_cells": [
+    "0-2-c142"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c142"
+  },
+  {
+   "id": "exercise:0-2-c145",
+   "title": "Exercise - implement 2D minimal convolutions",
+   "prompt_cell": "0-2-c145",
+   "answer_cells": [
+    "0-2-c146"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c146"
+  },
+  {
+   "id": "exercise:0-2-c150",
+   "title": "Exercise - implement padding",
+   "prompt_cell": "0-2-c150",
+   "answer_cells": [
+    "0-2-c151",
+    "0-2-c154"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c151"
+  },
+  {
+   "id": "exercise:0-2-c157",
+   "title": "Exercise - implement 1D convolutions",
+   "prompt_cell": "0-2-c157",
+   "answer_cells": [
+    "0-2-c158"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c158"
+  },
+  {
+   "id": "exercise:0-2-c160",
+   "title": "Exercise - implement 2D convolutions",
+   "prompt_cell": "0-2-c160",
+   "answer_cells": [
+    "0-2-c161",
+    "0-2-c163"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c163"
+  },
+  {
+   "id": "exercise:0-2-c166",
+   "title": "Exercise - implement 2D max pooling",
+   "prompt_cell": "0-2-c166",
+   "answer_cells": [
+    "0-2-c167"
+   ],
+   "section": "0-2",
+   "answer_cell": "0-2-c167"
+  }
  ]
 }

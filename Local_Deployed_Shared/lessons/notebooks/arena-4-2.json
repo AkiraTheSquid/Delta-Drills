@@ -764,5 +764,117 @@
    "role": "prose",
    "src": "### Paper replication: \"Why Do Some Language Models Fake Alignment?\"\n\nThe paper [\"Why Do Some Language Models Fake Alignment While Others Don't?\"](https://arxiv.org/abs/2501.18951) studies alignment faking behavior in models like Llama 3 405B and Gemini 2.0 Flash, proposing different hypotheses for why it occurs. Some questions to explore:\n\n1. Does our analysis match up with theirs? Run experiments comparing the models we studied (Claude Opus, Gemini Flash, Llama 405B) with the paper's methodology.\n2. The paper found that some models fake alignment more when the scope of future harm is higher. Can you replicate this by varying the severity of harmful requests?\n3. The paper proposes four hypotheses for alignment faking: rater sycophancy (model tries to please the rater without understanding consequences), instrumental goal guarding (model reasons strategically to preserve its goals), terminal goal guarding (model has explicit preferences about its own values), and low coherence alignment faking (confused or inconsistent strategic behavior). Can you design experiments to distinguish between these? Look at scratchpad reasoning and categorize which hypothesis best explains each model's behavior.\n4. The paper found that different models exhibit different patterns (e.g., Llama 3 shows more terminal goal guarding, while Gemini shows more rater sycophancy). Can you replicate and explain these differences?\n5. Try running experiments from the paper that we didn't include here, e.g. varying the explicitness of training consequences, testing whether models respond differently when training is \"optional\" vs \"mandatory\", or examining whether alignment faking persists when models are told their reasoning is monitored.\n\nTips: start by reading the paper carefully and identifying which experiments are most feasible to replicate. Use the infrastructure we've built (scratchpad reasoning, judges, compliance gap measurement). Focus on qualitative analysis of reasoning patterns, not just quantitative compliance rates."
   }
+ ],
+ "setup_cells": [
+  "4-2-c010",
+  "4-2-c011",
+  "4-2-c013"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:4-2-c025",
+   "title": "Exercise - Implement bypass detection",
+   "prompt_cell": "4-2-c025",
+   "answer_cells": [
+    "4-2-c026",
+    "4-2-c027",
+    "4-2-c028"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c028"
+  },
+  {
+   "id": "exercise:4-2-c034",
+   "title": "Exercise - Integration: Complete Bash Simulator",
+   "prompt_cell": "4-2-c034",
+   "answer_cells": [
+    "4-2-c035"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c035"
+  },
+  {
+   "id": "exercise:4-2-c040",
+   "title": "Exercise - main experiment loop",
+   "prompt_cell": "4-2-c040",
+   "answer_cells": [
+    "4-2-c041"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c041"
+  },
+  {
+   "id": "exercise:4-2-c046",
+   "title": "Exercise - Write system prompt variants",
+   "prompt_cell": "4-2-c046",
+   "answer_cells": [
+    "4-2-c047"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c047"
+  },
+  {
+   "id": "exercise:4-2-c056",
+   "title": "Exercise - Post-task shutdown control",
+   "prompt_cell": "4-2-c056",
+   "answer_cells": [
+    "4-2-c057"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c057"
+  },
+  {
+   "id": "exercise:4-2-c083",
+   "title": "Exercise - Replicate Scratchpad Alignment Faking",
+   "prompt_cell": "4-2-c083",
+   "answer_cells": [
+    "4-2-c084"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c084"
+  },
+  {
+   "id": "exercise:4-2-c088",
+   "title": "Exercise - Build Regex Classifier",
+   "prompt_cell": "4-2-c088",
+   "answer_cells": [
+    "4-2-c089",
+    "4-2-c090"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c089"
+  },
+  {
+   "id": "exercise:4-2-c092",
+   "title": "Exercise - Build LLM Autorater",
+   "prompt_cell": "4-2-c092",
+   "answer_cells": [
+    "4-2-c093",
+    "4-2-c094"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c093"
+  },
+  {
+   "id": "exercise:4-2-c098",
+   "title": "Exercise - Build Response Judge (optional)",
+   "prompt_cell": "4-2-c098",
+   "answer_cells": [
+    "4-2-c099",
+    "4-2-c100"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c099"
+  },
+  {
+   "id": "exercise:4-2-c107",
+   "title": "Exercise - Red-Team Your Results",
+   "prompt_cell": "4-2-c107",
+   "answer_cells": [
+    "4-2-c108"
+   ],
+   "section": "4-2",
+   "answer_cell": "4-2-c108"
+  }
  ]
 }

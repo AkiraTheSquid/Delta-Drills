@@ -197,6 +197,13 @@
    "src": "### Exercise - answer some initial questions\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 20-30 minutes on these exercises.\n> Thinking about the functional form of your model before you start analysing a toy problem is an important skill.\n> ```\n\nHere are a few questions, designed to get you thinking about the problem and how it relates to the model's internals. You can find answers to all of them (as well as more thorough discussion of other points) in the dropdown below.\n\n* Of the six distinct pieces of information fed into the model (three token embeddings and three positional embeddings), which ones are relevant for solving the modular addition task?\n* What does this imply about the role of position embeddings?\n* What should the attention pattern look like? Which parts of the attention pattern will even matter?\n* What will the role of the direct path (i.e. embeddings -> unembeddings, without any MLP or attention) be? How about the path that goes through the MLP layer but not the attention layer?\n* What kinds of symmetries to you expect to see in the model?"
   },
   {
+   "id": "1-5-2-c030-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-5-2-c030-1",
    "role": "details",
@@ -208,6 +215,13 @@
    "id": "1-5-2-c031",
    "role": "prose",
    "src": "### Exercise - derive the functional form\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴⚪\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 20-30 minutes on these exercises.\n> This exercise is challenging, and involves only maths and no coding. You should look at parts of the solution if you get stuck, because there are several steps involved. Even if you can't get all the steps, any progress is good!\n> ```\n\nThere exists a [comprehensive mathematical framework for understanding transformer circuits](https://transformer-circuits.pub/2021/framework/index.html), as you may have encountered in previous exercises. However, we will not need the full power of that framework today to understand the circuit responsible for modular additon, both because our model only has a single layer and because our task has some special structure that we can exploit.\n\nConsider the following simplifying assumptions about our model:\n\n* The position embeddings are irrelevant and can be zero-ablated without loss of performance;\n* The residual stream is irrelevant and can be mean-ablated without loss of performance;\n* For every head, position `2` only pays attention to positions `0` and `1`.\n\nWrite down the function $\\ell = f(t)$ computed by the model, where $\\ell \\in \\mathbb{R}^p$ is a vector of logits for each token and $t \\in \\mathbb{R}^{2 \\times p}$ is a one-hot vector representing the input integers $m$ and $n$. Simplify the expression obtaind as far as possible. What can be said about it?"
+  },
+  {
+   "id": "1-5-2-c031-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
   },
   {
    "t": "md",
@@ -529,6 +543,13 @@
    "id": "1-5-2-c079",
    "role": "prose",
    "src": "### Exercise - spot patterns in the activations\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nIncrease `top_k` from 3 to a larger number, and look at different neurons. What do you notice about the patterns in the activations?"
+  },
+  {
+   "id": "1-5-2-c079-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
   },
   {
    "t": "md",
@@ -1282,6 +1303,197 @@
    "id": "1-5-2-c188",
    "role": "prose",
    "src": "### [A Toy Model of Universality: Reverse Engineering How Networks Learn Group Operations](https://arxiv.org/abs/2302.03025)\n\nThis paper extends the analysis of this particular task & model, by looking at a general group operation of which modular addition is a special case.\n\nThis might be a good replication for you if:\n\n* You enjoyed all subsections in this exercise set, and would like to perform similar analysis on more complex algorithms\n* You're interested in studying grokking and training dynamics\n* You have a background in mathematics, and in particular have some familiarity with group theory (and ideally some representation theory)"
+  }
+ ],
+ "setup_cells": [
+  "1-5-2-c010",
+  "1-5-2-c011"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-5-2-c026",
+   "title": "Exercise - extract key activations",
+   "prompt_cell": "1-5-2-c026",
+   "answer_cells": [
+    "1-5-2-c027"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c027"
+  },
+  {
+   "id": "exercise:1-5-2-c030",
+   "title": "Exercise - answer some initial questions",
+   "prompt_cell": "1-5-2-c030",
+   "answer_cells": [
+    "1-5-2-c030-answer"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c030-answer"
+  },
+  {
+   "id": "exercise:1-5-2-c031",
+   "title": "Exercise - derive the functional form",
+   "prompt_cell": "1-5-2-c031",
+   "answer_cells": [
+    "1-5-2-c031-answer"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c031-answer"
+  },
+  {
+   "id": "exercise:1-5-2-c032",
+   "title": "Exercise - define the effective weight matrices",
+   "prompt_cell": "1-5-2-c032",
+   "answer_cells": [
+    "1-5-2-c033"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c033"
+  },
+  {
+   "id": "exercise:1-5-2-c045",
+   "title": "Exercise - create the 1D Fourier basis",
+   "prompt_cell": "1-5-2-c045",
+   "answer_cells": [
+    "1-5-2-c046",
+    "1-5-2-c049",
+    "1-5-2-c052"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c046"
+  },
+  {
+   "id": "exercise:1-5-2-c054",
+   "title": "Exercise - 1D Fourier transform",
+   "prompt_cell": "1-5-2-c054",
+   "answer_cells": [
+    "1-5-2-c055",
+    "1-5-2-c058"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c055"
+  },
+  {
+   "id": "exercise:1-5-2-c061",
+   "title": "Exercise - create the 2D Fourier basis",
+   "prompt_cell": "1-5-2-c061",
+   "answer_cells": [
+    "1-5-2-c062",
+    "1-5-2-c065"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c062"
+  },
+  {
+   "id": "exercise:1-5-2-c067",
+   "title": "Exercise - Implementing the 2D Fourier Transform",
+   "prompt_cell": "1-5-2-c067",
+   "answer_cells": [
+    "1-5-2-c068",
+    "1-5-2-c071",
+    "1-5-2-c073"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c068"
+  },
+  {
+   "id": "exercise:1-5-2-c079",
+   "title": "Exercise - spot patterns in the activations",
+   "prompt_cell": "1-5-2-c079",
+   "answer_cells": [
+    "1-5-2-c079-answer"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c079-answer"
+  },
+  {
+   "id": "exercise:1-5-2-c093",
+   "title": "Exercise - calculate the mean squared coefficient",
+   "prompt_cell": "1-5-2-c093",
+   "answer_cells": [
+    "1-5-2-c095"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c095"
+  },
+  {
+   "id": "exercise:1-5-2-c098",
+   "title": "Exercise - verify the quadratic term matters, and that $\\gamma > 0$",
+   "prompt_cell": "1-5-2-c098",
+   "answer_cells": [
+    "1-5-2-c099"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c099"
+  },
+  {
+   "id": "exercise:1-5-2-c102",
+   "title": "Exercise - find neuron clusters",
+   "prompt_cell": "1-5-2-c102",
+   "answer_cells": [
+    "1-5-2-c103",
+    "1-5-2-c106",
+    "1-5-2-c108"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c103"
+  },
+  {
+   "id": "exercise:1-5-2-c112",
+   "title": "Exercise - validate neuron clusters",
+   "prompt_cell": "1-5-2-c112",
+   "answer_cells": [
+    "1-5-2-c113",
+    "1-5-2-c116",
+    "1-5-2-c119",
+    "1-5-2-c122"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c113"
+  },
+  {
+   "id": "exercise:1-5-2-c129",
+   "title": "Exercise - validate by only taking quadratic terms",
+   "prompt_cell": "1-5-2-c129",
+   "answer_cells": [
+    "1-5-2-c130",
+    "1-5-2-c133"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c130"
+  },
+  {
+   "id": "exercise:1-5-2-c150",
+   "title": "Exercise - implement excluded loss",
+   "prompt_cell": "1-5-2-c150",
+   "answer_cells": [
+    "1-5-2-c151",
+    "1-5-2-c154"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c151"
+  },
+  {
+   "id": "exercise:1-5-2-c156",
+   "title": "Exercise - define `fourier_embed`",
+   "prompt_cell": "1-5-2-c156",
+   "answer_cells": [
+    "1-5-2-c157",
+    "1-5-2-c160"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c157"
+  },
+  {
+   "id": "exercise:1-5-2-c161",
+   "title": "Exercise - Examine the SVD of $W_E$",
+   "prompt_cell": "1-5-2-c161",
+   "answer_cells": [
+    "1-5-2-c162",
+    "1-5-2-c163"
+   ],
+   "section": "1-5-2",
+   "answer_cell": "1-5-2-c162"
   }
  ]
 }

@@ -285,6 +285,13 @@
    "src": "### Exercise - find interesting latents\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 5-15 minutes on this exercise.\n> ```\n\nSpend some time browsing through the SAE dashboard (i.e. running the code with different random indices). What interesting latents can you find? Try and find the following types of latents:\n\n- Latents for **token-level features**, which seem to only fire on a particular token and basically no others. Do the top logits make sense, when viewed as bigram frequencies?\n- Latents for **concept-level features**, which fire not on single tokens but across multiple tokens, provided that a particular concept is present in the text (e.g. `latent_idx=4527` is an example of this). What is the concept that this latent represents? Can you see how the positive logits for this token make sense?\n- **Highly sparse latents**, with activation density less than 0.05%. Does it seem more interpretable than the average latent?"
   },
   {
+   "id": "1-3-3-c032-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-3-3-c032-1",
    "role": "details",
@@ -1148,6 +1155,13 @@
    "src": "### Exercise - study these SAEs\n\n> ```yaml\n> Difficulty: 🔴🔴⚪⚪⚪\n> Importance: 🔵🔵🔵⚪⚪\n> \n> You should spend up to 10-15 minutes on this exercise.\n> ```\n\nUse the neuronpedia page (or displaying inline latent dashboards using `display_dashboard`) to study the latents in these SAEs. Try to find examples of latent splitting between some pair of SAEs in this set. Do they seem similar to the examples of latent splitting from Anthropic's \"Towards Monosemanticity\" post?"
   },
   {
+   "id": "1-3-3-c146-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-3-3-c146-1",
    "role": "details",
@@ -1601,6 +1615,13 @@
    "src": "### Exercise - identify good and bad training curves\n\n> ```yaml\n> Difficulty: 🔴🔴🔴⚪⚪\n> Importance: 🔵🔵🔵🔵🔵\n> \n> You should spend up to 25-40 minutes on this exercise.\n> ```\n\n[Here](https://wandb.ai/callum-mcdougall/arena-demos-tinystories-v3/workspace?nw=nwusercallummcdougall) is a link to a WandB project page with seven training runs. The first one (Run #0) is a \"good\" training run (at least compared to the others), and can be thought of as a baseline. Each of the other 6 runs (labelled Run #1 - Run #6) has some particular issue with it. Your task will be to identify the issue (i.e. from one or more of the metrics plots), and find the root cause of the issue from looking at the configs (you can compare the configs to each other in the \"runs\" tab). Note that we recommend trying to identify the issue from the plots first, rather than immediately jumping to the config and looking for a diff between it and the good run. You'll get most value out of the exercises by using the following pattern when assessing each run:\n\n1. Looking at the metrics, and finding some which seem like indications of poor SAE quality\n2. Based on these metrics, try and guess what might be going wrong in the config\n3. Look at the config, and test whether your guess was correct.\n\nAlso, a reminder - you can look at a run's density histogram plot, although you can only see this when you're looking at the page for a single run (as opposed to the project page).\n\nUse the dropdowns below to see the answer for each of the runs. Note, the first few are more important to get right, as the last few are more difficult and don't always have obvious root causes."
   },
   {
+   "id": "1-3-3-c214-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-3-3-c214-1",
    "role": "details",
@@ -1727,6 +1748,267 @@
    "id": "1-3-3-c225",
    "role": "prose",
    "src": "## Evaluating SAEs\n\n> Note - this section is not complete (the precise form of the exercises hasn't taken shape yet). My intention is to work through the results of some key papers on evals, in particular [Scaling and evaluating SAEs](https://cdn.openai.com/papers/sparse-autoencoders.pdf) which discusses 4 ways of evaluating SAEs (downstream loss, probe loss, interpretability, ablation sparsity) and [Towards Principled Evaluations of SAEs](https://arxiv.org/abs/2405.08366) which performs a suite of evals related to the indirect object identification circuit, with the evals focused on the questions of **sparse control** (whether you can change the output in predictable ways by changing a sparse set of input latents) and **interpretability** (whether you can use SAE latents as probes to find expected latents).\n>\n> There's also a new SAELens tutorial [here](https://github.com/jbloomAus/SAELens/blob/improving-evals/tutorials/evaluating_saes_with_sae_lens_evals.ipynb), which looks at several different metrics we covered while talking about training, but takes some deeper dives (e.g. looking at distributions of log latent density, and the **consistent activation heuristic**). We recommend anyone interested in evals have a look through this notebook.\n>\n> However, there may end up being a lot of overlap with content elsewhere (e.g. latent-to-latent gradients in exercise set 1.4.2, and autointerp in section 2️⃣ of this exercise set), in which case this section may end up being paired down to just focus on training, and evals exercises will be moved elsewhere where appropriate."
+  }
+ ],
+ "setup_cells": [
+  "1-3-3-c010",
+  "1-3-3-c011",
+  "1-3-3-c012"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-3-3-c032",
+   "title": "Exercise - find interesting latents",
+   "prompt_cell": "1-3-3-c032",
+   "answer_cells": [
+    "1-3-3-c032-answer"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c032-answer"
+  },
+  {
+   "id": "exercise:1-3-3-c049",
+   "title": "Exercise - get the activation distribution",
+   "prompt_cell": "1-3-3-c049",
+   "answer_cells": [
+    "1-3-3-c050"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c050"
+  },
+  {
+   "id": "exercise:1-3-3-c052",
+   "title": "Exercise - find max activating examples",
+   "prompt_cell": "1-3-3-c052",
+   "answer_cells": [
+    "1-3-3-c053",
+    "1-3-3-c055",
+    "1-3-3-c058",
+    "1-3-3-c060"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c055"
+  },
+  {
+   "id": "exercise:1-3-3-c061",
+   "title": "Exercise - get top / bottom logits",
+   "prompt_cell": "1-3-3-c061",
+   "answer_cells": [
+    "1-3-3-c062"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c062"
+  },
+  {
+   "id": "exercise:1-3-3-c064",
+   "title": "Exercise - autointerp",
+   "prompt_cell": "1-3-3-c064",
+   "answer_cells": [
+    "1-3-3-c065",
+    "1-3-3-c067",
+    "1-3-3-c070"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c067"
+  },
+  {
+   "id": "exercise:1-3-3-c074",
+   "title": "Exercise - explore attention SAE dashboards",
+   "prompt_cell": "1-3-3-c074",
+   "answer_cells": [
+    "1-3-3-c075"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c075"
+  },
+  {
+   "id": "exercise:1-3-3-c076",
+   "title": "Exercise - derive attention DFA",
+   "prompt_cell": "1-3-3-c076",
+   "answer_cells": [
+    "1-3-3-c077",
+    "1-3-3-c079"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c079"
+  },
+  {
+   "id": "exercise:1-3-3-c084",
+   "title": "Exercise - verify model + SAEs can still solve this",
+   "prompt_cell": "1-3-3-c084",
+   "answer_cells": [
+    "1-3-3-c085"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c085"
+  },
+  {
+   "id": "exercise:1-3-3-c088",
+   "title": "Exercise - find name mover features with max activations",
+   "prompt_cell": "1-3-3-c088",
+   "answer_cells": [
+    "1-3-3-c089"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c089"
+  },
+  {
+   "id": "exercise:1-3-3-c091",
+   "title": "Exercise - identify name mover heads",
+   "prompt_cell": "1-3-3-c091",
+   "answer_cells": [
+    "1-3-3-c092"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c092"
+  },
+  {
+   "id": "exercise:1-3-3-c095",
+   "title": "Exercise - find name mover features with DLA",
+   "prompt_cell": "1-3-3-c095",
+   "answer_cells": [
+    "1-3-3-c096"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c096"
+  },
+  {
+   "id": "exercise:1-3-3-c098",
+   "title": "Exercise (optional) - replicate these results, with sentiment",
+   "prompt_cell": "1-3-3-c098",
+   "answer_cells": [
+    "1-3-3-c099",
+    "1-3-3-c101"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c101"
+  },
+  {
+   "id": "exercise:1-3-3-c104",
+   "title": "Exercise - find duplicate token features with ablation",
+   "prompt_cell": "1-3-3-c104",
+   "answer_cells": [
+    "1-3-3-c105"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c105"
+  },
+  {
+   "id": "exercise:1-3-3-c109",
+   "title": "Exercise - compare ablation to attribution patching",
+   "prompt_cell": "1-3-3-c109",
+   "answer_cells": [
+    "1-3-3-c110"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c110"
+  },
+  {
+   "id": "exercise:1-3-3-c120",
+   "title": "Exercise - implement `generate_with_steering`",
+   "prompt_cell": "1-3-3-c120",
+   "answer_cells": [
+    "1-3-3-c121",
+    "1-3-3-c123"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c123"
+  },
+  {
+   "id": "exercise:1-3-3-c134",
+   "title": "months_of_the_year = [3977, 4140, 5993, 7299, 9104, 9401, 10449, 11196, 12661, 14715, 17068, 17528, 19589, 21033, 22043, 23304]",
+   "prompt_cell": "1-3-3-c133",
+   "answer_cells": [
+    "1-3-3-c134"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c134"
+  },
+  {
+   "id": "exercise:1-3-3-c137",
+   "title": "YOUR CODE HERE - replicate long and short-prefix induction results",
+   "prompt_cell": "1-3-3-c136",
+   "answer_cells": [
+    "1-3-3-c137"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c137"
+  },
+  {
+   "id": "exercise:1-3-3-c146",
+   "title": "Exercise - study these SAEs",
+   "prompt_cell": "1-3-3-c146",
+   "answer_cells": [
+    "1-3-3-c146-answer"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c146-answer"
+  },
+  {
+   "id": "exercise:1-3-3-c147",
+   "title": "Exercise - create UMAP",
+   "prompt_cell": "1-3-3-c147",
+   "answer_cells": [
+    "1-3-3-c148",
+    "1-3-3-c150"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c148"
+  },
+  {
+   "id": "exercise:1-3-3-c151",
+   "title": "Exercise - add clustering",
+   "prompt_cell": "1-3-3-c151",
+   "answer_cells": [
+    "1-3-3-c152"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c152"
+  },
+  {
+   "id": "exercise:1-3-3-c160",
+   "title": "Exercise - implement autointerp scoring",
+   "prompt_cell": "1-3-3-c160",
+   "answer_cells": [
+    "1-3-3-c161",
+    "1-3-3-c163",
+    "1-3-3-c165",
+    "1-3-3-c168",
+    "1-3-3-c170"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c165"
+  },
+  {
+   "id": "exercise:1-3-3-c179",
+   "title": "Exercise - implement patch scoping",
+   "prompt_cell": "1-3-3-c179",
+   "answer_cells": [
+    "1-3-3-c180",
+    "1-3-3-c182"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c182"
+  },
+  {
+   "id": "exercise:1-3-3-c184",
+   "title": "Exercise - replicate patch scoping scale tuning results",
+   "prompt_cell": "1-3-3-c184",
+   "answer_cells": [
+    "1-3-3-c185"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c185"
+  },
+  {
+   "id": "exercise:1-3-3-c214",
+   "title": "Exercise - identify good and bad training curves",
+   "prompt_cell": "1-3-3-c214",
+   "answer_cells": [
+    "1-3-3-c214-answer"
+   ],
+   "section": "1-3-3",
+   "answer_cell": "1-3-3-c214-answer"
   }
  ]
 }

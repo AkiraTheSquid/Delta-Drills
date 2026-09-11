@@ -36,6 +36,7 @@ import json
 import os
 import re
 import sys
+import subprocess
 import urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -168,6 +169,7 @@ def check_the_arena_curriculum_is_openable():
         for p in glob.glob(os.path.join(HERE, f"{ARENA_PREFIX}*.json"))
     }
     on_disk.discard(ARENA_INDEX)
+    on_disk.discard("arena-curriculum.json")
     assert listed == on_disk, (
         "arena-index.json and the folder disagree about which ARENA notebooks "
         f"exist: listed-not-present={sorted(listed - on_disk)}, "
@@ -288,6 +290,15 @@ def check_invariants():
             )
 
 
+def check_curriculum_exercise_navigation():
+    """Every source exercise has a writable answer and valid graph anchors."""
+    result = subprocess.run(
+        [sys.executable, os.path.join(REPO, "scripts", "test_arena_curriculum.py")],
+        capture_output=True, text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 if __name__ == '__main__':
     checks = [
         check_imports,
@@ -295,6 +306,7 @@ if __name__ == '__main__':
         check_the_arena_curriculum_is_openable,
         check_the_arena_notebooks_are_not_swept_away_by_the_lesson_compiler,
         check_invariants,
+        check_curriculum_exercise_navigation,
     ]
     for fn in checks:
         try:

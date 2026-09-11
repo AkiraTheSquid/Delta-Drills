@@ -783,6 +783,13 @@
    "src": "### Exercise - replicate the steering vector results\n\n> ```yaml\n> Difficulty: 🔴🔴🔴🔴🔴\n> Importance: 🔵🔵🔵🔵⚪\n> \n> You should spend up to 30-50 minutes on this exercise.\n> ```\n\nReplicate the results in the LessWrong post [Steering GPT-2-XL by adding an activation vector](https://www.lesswrong.com/posts/5spBue2z2tw4JuDCx/steering-gpt-2-xl-by-adding-an-activation-vector#fnrefcvnfx3e6sfu); specifically the \"demonstrations of additions that work well\" section.\n\nRead the \"How activation additions work\" section of [Steering GPT-2-XL by adding an activation vector](https://www.lesswrong.com/posts/5spBue2z2tw4JuDCx/steering-gpt-2-xl-by-adding-an-activation-vector#How_activation_additions_work) to understand how vectors are extracted and added. We've provided a function template as well as some example code to run; your main job will be to fill in the function. This will be like a hybrid of several previous exercises (with most similarity to the function `calculate_and_intervene_with_h`), although there will be a few methodological differences.\n\nThis is the last exercise in this set, and hopefully it'll provide an opportunity to draw together all the threads of what you've learned so far!\n\n### Caching\n\nThis is a different kind of causal intervention than we performed in previous sections. Rather than adding a single vector to the final sequence position at each token generation, we're adding a slice of vectors to the first sequence positions of the original prompt (see tables like in [this section](https://www.lesswrong.com/posts/5spBue2z2tw4JuDCx/steering-gpt-2-xl-by-adding-an-activation-vector#1__Love___Hate) for an illustration). How do you think this will affect our function? Should we still cache? Should we be using `.generate()` or `.trace()`? If using `.generate()`, do we need to call `model.next()` ?"
   },
   {
+   "id": "1-3-2-c089-answer",
+   "t": "code",
+   "role": "code",
+   "src": "# Write your reasoning here.",
+   "generated_answer": true
+  },
+  {
    "t": "md",
    "id": "1-3-2-c089-1",
    "role": "details",
@@ -887,6 +894,149 @@
    "id": "1-3-2-c103",
    "role": "prose",
    "src": "## Suggested paper replications\n\n### [Inference-Time Intervention: Eliciting Truthful Answers from a Language Model](https://arxiv.org/abs/2306.03341)\n\nIn this paper, the authors focus on inducing the behavioural change of \"making the model tell the truth\". They also look at other non-forward-pass-based techniques for finding an intervention vector, e.g. CCS and linear probing, although it concludes that forward-pass-based methods similar to the ones we've been using so far work the best.\n\nThis might be a good replication for you if:\n\n* You enjoyed the exercises in this section, but are also interested in experimenting with techniques which weren't covered in this section (e.g. linear probing),\n* You're comfortable working with very large models, possibly via the `nnsight` library,\n* You're interested in studying [model truthfulness](https://arxiv.org/abs/2109.07958).\n\n### [Steering Llama 2 via Contrastive Activation Addition](https://arxiv.org/abs/2312.06681)\n\nThis paper can be thought of as an extension of the GPT2-XL steering vector work to larger models, specifically Llama 2 13B. It also takes more of a high-level evals framework; measuring the model's change in attributes such as sycophancy, myopia, and power-seeking (finding that these attributes can be increased or decreased by adding the appropriate vectors).\n\nThis might be a good replication for you if:\n\n* You enjoyed the exercises in this section, but want to apply these ideas in more of a behavioural context than a task-based context\n* You're comfortable working with very large models, possibly via the `nnsight` library,\n* You're interested in [evaluating models](https://www.alignmentforum.org/posts/yRAo2KEGWenKYZG9K/discovering-language-model-behaviors-with-model-written) on traits like myopia, power seeking, etc,\n* You're comfortable doing prompt-engineering, and working with large datasets (like the ones linked above).\n\n*Update* - there is now a [LessWrong post](https://www.lesswrong.com/posts/v7f8ayBxLhmMFRzpa/steering-llama-2-with-contrastive-activation-additions) associated with this paper, which also briefly discusses related areas. We strongly recommend reading this post if you're interested in this replication, or any of the other suggested replications in this section.\n\n### [Red-teaming language models via activation engineering](https://www.alignmentforum.org/posts/iHmsJdxgMEWmAfNne/red-teaming-language-models-via-activation-engineering)\n\nThis work, done by Nina Rimsky, extends the results from much of the work we've seen previously, but applied to the domain of **refusal** - what determines whether the LLM will refuse to answer your request, and how can you affect this behaviour? From her post:\n\n> *Validating if finetuning and RLHF have robustly achieved the intended outcome is challenging ... We can try to trigger unwanted behaviors in models more efficiently by manipulating their internal states during inference rather than searching through many inputs. The idea is that if a behavior can be easily triggered through techniques such as activation engineering, it may also occur in deployment. The inability to elicit behaviors via small internal perturbations could serve as a stronger guarantee of safety.*\n\nThis might be a good replication for you if:\n\n* You enjoyed the exercises in this section, but want to apply these ideas in more of a behavioural context than a task-based context,\n* You're comfortable working with very large models, possibly via the `nnsight` library,\n* You're interested in RLHF, adversarial attacks and jailbreaking,\n* You're comfortable doing prompt-engineering (although some of the data you'd need for this replication is available on Nina's [GitHub repo](https://github.com/nrimsky/LM-exp/tree/main)).\n\n\n\n\n\n---\n\n\n\n\nNote - for a week of work, we weakly suggest participants don't try one of these paper replications, because they're quite compute-heavy (even considering the fact that participants have the `nnsight` library at their disposal). There are many possible replications and extensions that can be done from the function vectors or GPT2-XL work, and this might be a better option for you if you enjoyed the exercises in this section and want to do more things like them.\n\nHowever, if you do feel comfortable working with large models (e.g. you have some past experience of this) and you're interested in this work, then you're certainly welcome to try one of these replications!"
+  }
+ ],
+ "setup_cells": [
+  "1-3-2-c007",
+  "1-3-2-c008"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-3-2-c019",
+   "title": "Exercise - visualize attention heads",
+   "prompt_cell": "1-3-2-c019",
+   "answer_cells": [
+    "1-3-2-c020"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c020"
+  },
+  {
+   "id": "exercise:1-3-2-c026",
+   "title": "Exercise (optional) - generate your own antonym pairs",
+   "prompt_cell": "1-3-2-c026",
+   "answer_cells": [
+    "1-3-2-c028"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c028"
+  },
+  {
+   "id": "exercise:1-3-2-c040",
+   "title": "Exercise - forward pass on antonym dataset",
+   "prompt_cell": "1-3-2-c040",
+   "answer_cells": [
+    "1-3-2-c041",
+    "1-3-2-c044"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c041"
+  },
+  {
+   "id": "exercise:1-3-2-c046",
+   "title": "Exercise - intervene with $h$",
+   "prompt_cell": "1-3-2-c046",
+   "answer_cells": [
+    "1-3-2-c047",
+    "1-3-2-c050",
+    "1-3-2-c052"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c047"
+  },
+  {
+   "id": "exercise:1-3-2-c053",
+   "title": "Exercise - combine the last two functions",
+   "prompt_cell": "1-3-2-c053",
+   "answer_cells": [
+    "1-3-2-c054"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c054"
+  },
+  {
+   "id": "exercise:1-3-2-c056",
+   "title": "Exercise - compute change in accuracy",
+   "prompt_cell": "1-3-2-c056",
+   "answer_cells": [
+    "1-3-2-c057",
+    "1-3-2-c060"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c057"
+  },
+  {
+   "id": "exercise:1-3-2-c066",
+   "title": "Exercise - implement `calculate_fn_vectors_and_intervene`",
+   "prompt_cell": "1-3-2-c066",
+   "answer_cells": [
+    "1-3-2-c067",
+    "1-3-2-c070",
+    "1-3-2-c071"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c067"
+  },
+  {
+   "id": "exercise:1-3-2-c072",
+   "title": "Exercise - calculate the function vector",
+   "prompt_cell": "1-3-2-c072",
+   "answer_cells": [
+    "1-3-2-c073"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c073"
+  },
+  {
+   "id": "exercise:1-3-2-c076",
+   "title": "Exercise - intervene with function vector, in multi-token generation",
+   "prompt_cell": "1-3-2-c076",
+   "answer_cells": [
+    "1-3-2-c077",
+    "1-3-2-c080"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c077"
+  },
+  {
+   "id": "exercise:1-3-2-c081",
+   "title": "Exercise - generalize results to another task (optional)",
+   "prompt_cell": "1-3-2-c081",
+   "answer_cells": [
+    "1-3-2-c082"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c082"
+  },
+  {
+   "id": "exercise:1-3-2-c089",
+   "title": "Exercise - replicate the steering vector results",
+   "prompt_cell": "1-3-2-c089",
+   "answer_cells": [
+    "1-3-2-c089-answer"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c089-answer"
+  },
+  {
+   "id": "exercise:1-3-2-c090",
+   "title": "calculate_and_apply_steering_vector",
+   "prompt_cell": "1-3-2-c089-2",
+   "answer_cells": [
+    "1-3-2-c090"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c090"
+  },
+  {
+   "id": "exercise:1-3-2-c099",
+   "title": "YOUR CODE HERE - find the decoded vocabulary",
+   "prompt_cell": "1-3-2-c098",
+   "answer_cells": [
+    "1-3-2-c099"
+   ],
+   "section": "1-3-2",
+   "answer_cell": "1-3-2-c099"
   }
  ]
 }

@@ -9,6 +9,7 @@ so when it is measured wrong nothing LOOKS wrong.
 
 import os
 import re
+import subprocess
 
 from watch_common import HERE, SHARED, read
 
@@ -379,3 +380,10 @@ def check_code_on_the_arena_page_is_set_at_the_prose_size():
     assert ".nbv-md pre {" in css and "background" not in (
         css.split("\n.nbv-md pre {")[1].split("}")[0]
     ), "a fenced code block is filled again rather than being a plain rectangle"
+
+
+def check_arena_setup_recovers_without_replaying_answers():
+    """The setup queue must survive restart, failure and notebook navigation."""
+    test = os.path.join(SHARED, "..", "This-Directory-Only", "scripts", "test_arena_setup.mjs")
+    result = subprocess.run(["node", test], capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr

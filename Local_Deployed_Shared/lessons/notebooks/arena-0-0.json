@@ -1026,5 +1026,252 @@
    "role": "code",
    "src": "def einsum_trace(mat: np.ndarray):\n    \"\"\"\n    Returns the same as `np.trace`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mv(mat: np.ndarray, vec: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat` is a 2D array and `vec` is 1D.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_mm(mat1: np.ndarray, mat2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.matmul`, when `mat1` and `mat2` are both 2D arrays.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_inner(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.inner`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ndef einsum_outer(vec1: np.ndarray, vec2: np.ndarray):\n    \"\"\"\n    Returns the same as `np.outer`.\n    \"\"\"\n    raise NotImplementedError()\n\n\ntests.test_einsum_trace(einsum_trace)\ntests.test_einsum_mv(einsum_mv)\ntests.test_einsum_mm(einsum_mm)\ntests.test_einsum_inner(einsum_inner)\ntests.test_einsum_outer(einsum_outer)"
   }
+ ],
+ "setup_cells": [
+  "0-0-c026",
+  "0-0-c027",
+  "0-0-c029"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:0-0-c038",
+   "title": "Your code here - define arr1",
+   "prompt_cell": "0-0-c036",
+   "answer_cells": [
+    "0-0-c038"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c038"
+  },
+  {
+   "id": "exercise:0-0-c042",
+   "title": "Your code here - define arr2",
+   "prompt_cell": "0-0-c040",
+   "answer_cells": [
+    "0-0-c042"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c042"
+  },
+  {
+   "id": "exercise:0-0-c046",
+   "title": "Your code here - define arr3",
+   "prompt_cell": "0-0-c044",
+   "answer_cells": [
+    "0-0-c046"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c046"
+  },
+  {
+   "id": "exercise:0-0-c050",
+   "title": "Your code here - define arr4",
+   "prompt_cell": "0-0-c048",
+   "answer_cells": [
+    "0-0-c050"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c050"
+  },
+  {
+   "id": "exercise:0-0-c054",
+   "title": "Your code here - define arr5",
+   "prompt_cell": "0-0-c052",
+   "answer_cells": [
+    "0-0-c054"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c054"
+  },
+  {
+   "id": "exercise:0-0-c058",
+   "title": "Your code here - define arr6",
+   "prompt_cell": "0-0-c056",
+   "answer_cells": [
+    "0-0-c058"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c058"
+  },
+  {
+   "id": "exercise:0-0-c062",
+   "title": "Your code here - define arr7",
+   "prompt_cell": "0-0-c060",
+   "answer_cells": [
+    "0-0-c062"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c062"
+  },
+  {
+   "id": "exercise:0-0-c066",
+   "title": "Your code here - define arr8",
+   "prompt_cell": "0-0-c064",
+   "answer_cells": [
+    "0-0-c066"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c066"
+  },
+  {
+   "id": "exercise:0-0-c073",
+   "title": "rearrange_1",
+   "prompt_cell": "0-0-c072",
+   "answer_cells": [
+    "0-0-c073"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c073"
+  },
+  {
+   "id": "exercise:0-0-c091",
+   "title": "normalize_rows",
+   "prompt_cell": "0-0-c090",
+   "answer_cells": [
+    "0-0-c091"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c091"
+  },
+  {
+   "id": "exercise:0-0-c094",
+   "title": "cos_sim_matrix",
+   "prompt_cell": "0-0-c093",
+   "answer_cells": [
+    "0-0-c094"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c094"
+  },
+  {
+   "id": "exercise:0-0-c097",
+   "title": "sample_distribution",
+   "prompt_cell": "0-0-c096",
+   "answer_cells": [
+    "0-0-c097"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c097"
+  },
+  {
+   "id": "exercise:0-0-c100",
+   "title": "classifier_accuracy",
+   "prompt_cell": "0-0-c099",
+   "answer_cells": [
+    "0-0-c100"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c100"
+  },
+  {
+   "id": "exercise:0-0-c103",
+   "title": "total_price_indexing",
+   "prompt_cell": "0-0-c102",
+   "answer_cells": [
+    "0-0-c103"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c103"
+  },
+  {
+   "id": "exercise:0-0-c106",
+   "title": "gather_2d",
+   "prompt_cell": "0-0-c105",
+   "answer_cells": [
+    "0-0-c106"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c106"
+  },
+  {
+   "id": "exercise:0-0-c109",
+   "title": "total_price_gather",
+   "prompt_cell": "0-0-c108",
+   "answer_cells": [
+    "0-0-c109"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c109"
+  },
+  {
+   "id": "exercise:0-0-c112",
+   "title": "integer_array_indexing",
+   "prompt_cell": "0-0-c111",
+   "answer_cells": [
+    "0-0-c112"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c112"
+  },
+  {
+   "id": "exercise:0-0-c115",
+   "title": "batched_logsumexp",
+   "prompt_cell": "0-0-c114",
+   "answer_cells": [
+    "0-0-c115"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c115"
+  },
+  {
+   "id": "exercise:0-0-c118",
+   "title": "batched_softmax",
+   "prompt_cell": "0-0-c117",
+   "answer_cells": [
+    "0-0-c118"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c118"
+  },
+  {
+   "id": "exercise:0-0-c121",
+   "title": "batched_logsoftmax",
+   "prompt_cell": "0-0-c120",
+   "answer_cells": [
+    "0-0-c121"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c121"
+  },
+  {
+   "id": "exercise:0-0-c124",
+   "title": "batched_cross_entropy_loss",
+   "prompt_cell": "0-0-c123",
+   "answer_cells": [
+    "0-0-c124"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c124"
+  },
+  {
+   "id": "exercise:0-0-c127",
+   "title": "collect_rows",
+   "prompt_cell": "0-0-c126",
+   "answer_cells": [
+    "0-0-c127"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c127"
+  },
+  {
+   "id": "exercise:0-0-c130",
+   "title": "collect_columns",
+   "prompt_cell": "0-0-c129",
+   "answer_cells": [
+    "0-0-c130"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c130"
+  },
+  {
+   "id": "exercise:0-0-c134",
+   "title": "einsum_trace",
+   "prompt_cell": "0-0-c133",
+   "answer_cells": [
+    "0-0-c134"
+   ],
+   "section": "0-0",
+   "answer_cell": "0-0-c134"
+  }
  ]
 }

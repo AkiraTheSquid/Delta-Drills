@@ -1887,5 +1887,189 @@
    "role": "prose",
    "src": "## Suggested paper replications\n\n\n\n\n### [A circuit for Python docstrings in a 4-layer attention-only transformer](https://www.lesswrong.com/posts/u6KXXmKFbXfWzoAXn/a-circuit-for-python-docstrings-in-a-4-layer-attention-only)\n\nThis work was produced as part of the SERI ML Alignment Theory Scholars Program (Winter 2022) under the supervision of Neel Nanda. Similar to how the IOI paper searched for in some sense the simplest kind of circuit which required 3 layers, this work was looking for the simplest kind of circuit which required 4 layers. The task they investigated was the **docstring task** - can you predict parameters in the right order, in situations like this:\n\n```python\ndef port(self, load, size, files, last):\n    '''oil column piece\n\n    :param load: crime population\n    :param size: unit dark\n    :param\n```\n\nThe token that follows should be ` files`, and just like in the case of IOI we can deeply analyze how the transformer solves this task. Unlike IOI, we're looking at a 4-layer transformer which was trained on code (not GPT2-Small), which makes a lot of the analysis cleaner (even though the circuit has more levels of composition than IOI does).\n\nFor an extra challenge, rather than replicating the authors' results, you can try and perform this investigation yourself, without seeing what tools the authors of the paper used! Most will be similar to the ones you've used in the exercises so far.\n\nThis might be a good replication for you if:\n\n* You enjoyed most/all sections of these exercises, and want to practice using the tools you learned in a different context\n* You don't want to try anything *too* far left field from the content of these exercises (this post also comes with a Colab notebook which can be referred to if you're stuck)\n\n\n\n\n### [Mechanistically interpreting time in GPT-2 small](https://www.lesswrong.com/posts/6tHNM2s6SWzFHv3Wo/mechanistically-interpreting-time-in-gpt-2-small)\n\nThis work was done by a group of independent researchers, supervised by Arthur Conmy. The task was to interpret how GPT2-Small can solve the task of next day prediction, i.e. predicting the next token in sentences like *If today is Monday, tomorrow is*. This replication is easier than the previous one, since the core circuit only contains one attention head rather than a composition of several. For this reason, we'd more strongly encourage trying to do this replication without guidance, i.e. have a crack at it before reading the full post.\n\n\n\n\n### [How does GPT-2 compute greater-than? Interpreting mathematical abilities in a pre-trained language model](https://openreview.net/pdf?id=p4PckNQR8k)\n\nThis paper came out of the REMIX program run by Redwood Research. It analyses a circuit in GPT2-Small, much like this one. Here, the circuit is for computing greater-than; in other words detecting that sentences like *The war lasted from the year 1732 to the year 17...* will be completed by valid two-digit end years (years > 32). The paper identifies a circuit, explains the role of each circuit component, and also finds related tasks that activate the circuit.\n\nFor an extra challenge, rather than replicating this paper, you can try and perform this investigation yourself, without seeing what tools the authors of the paper used! Many will be similar to the ones you've used in the exercises so far; some will be different. In particular, there will be some analysis of individual neurons in this replication, unlike in this IOI notebook.\n\nThis might be a good replication for you if:\n\n* You enjoyed most/all sections of these exercises, and want to practice using the tools you learned in a different context\n* You don't want to try anything *too* far left field from the content of these exercises (although this is probably more challenging than the docstring circuit, mainly due to the presence of MLPs)\n\n\n\n\n### [Towards Automated Circuit Discovery for Mechanistic Interpretability](https://arxiv.org/abs/2304.14997) / [Attribution Patching Outperforms Automated Circuit Discovery](https://arxiv.org/abs/2310.10348)\n\nThese two are grouped together, because they both study the possibility of scaling circuit discovery tools using automation. **Automated Circuit Discovery** (ACDC) was a tool discovered by Arthur Conmy & collaborators partially done at Redwood Research. They automate several of the techniques we've used in these exercises (in particular activation & patch patching), iteratively severing connections between components until we're left with a minimal circuit which can still effectively solve the task. **Attribution patching** is slightly different; it approximates the effect of each component on the model's output (and by extension its importance in a particular task) by a simple and computationally cheap first-order approximation.\n\nEither of these techniques would serve as suitable replication challenges over the course of a week. There's also a lot of work that can still be done in improving or refining these techniques.\n\nThis might be a good replication for you if:\n\n* You enjoyed the exercises in this section, in particular those on activation and path patching\n* You're looking for a project which is more focused on coding and implementation than on theory\n* You're excited about exploring ways to scale / automate circuit discovery efficiently"
   }
+ ],
+ "setup_cells": [
+  "1-4-1-c009",
+  "1-4-1-c010"
+ ],
+ "exercises": [
+  {
+   "id": "exercise:1-4-1-c024",
+   "title": "Exercise - implement the performance evaluation function",
+   "prompt_cell": "1-4-1-c024",
+   "answer_cells": [
+    "1-4-1-c025"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c025"
+  },
+  {
+   "id": "exercise:1-4-1-c042",
+   "title": "Exercise - implement `residual_stack_to_logit_diff`",
+   "prompt_cell": "1-4-1-c042",
+   "answer_cells": [
+    "1-4-1-c043",
+    "1-4-1-c046"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c043"
+  },
+  {
+   "id": "exercise:1-4-1-c074",
+   "title": "Exercise - create a metric",
+   "prompt_cell": "1-4-1-c074",
+   "answer_cells": [
+    "1-4-1-c075"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c075"
+  },
+  {
+   "id": "exercise:1-4-1-c082",
+   "title": "Exercise - implement head-to-residual patching",
+   "prompt_cell": "1-4-1-c082",
+   "answer_cells": [
+    "1-4-1-c083",
+    "1-4-1-c086"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c083"
+  },
+  {
+   "id": "exercise:1-4-1-c093",
+   "title": "Exercise (optional) - implement head-to-block patching",
+   "prompt_cell": "1-4-1-c093",
+   "answer_cells": [
+    "1-4-1-c094",
+    "1-4-1-c095"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c094"
+  },
+  {
+   "id": "exercise:1-4-1-c102",
+   "title": "Exercise - implement head-to-head patching",
+   "prompt_cell": "1-4-1-c102",
+   "answer_cells": [
+    "1-4-1-c103",
+    "1-4-1-c104",
+    "1-4-1-c105"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c103"
+  },
+  {
+   "id": "exercise:1-4-1-c112",
+   "title": "Exercise (optional) - implement head-to-head-input patching",
+   "prompt_cell": "1-4-1-c112",
+   "answer_cells": [
+    "1-4-1-c113",
+    "1-4-1-c114"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c113"
+  },
+  {
+   "id": "exercise:1-4-1-c154",
+   "title": "Exercise - implement path patching to the final residual stream value",
+   "prompt_cell": "1-4-1-c154",
+   "answer_cells": [
+    "1-4-1-c156",
+    "1-4-1-c157"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c156"
+  },
+  {
+   "id": "exercise:1-4-1-c162",
+   "title": "Exercise - implement path patching from head to head",
+   "prompt_cell": "1-4-1-c162",
+   "answer_cells": [
+    "1-4-1-c163",
+    "1-4-1-c164"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c163"
+  },
+  {
+   "id": "exercise:1-4-1-c170",
+   "title": "Exercise - replicate writing direction results",
+   "prompt_cell": "1-4-1-c170",
+   "answer_cells": [
+    "1-4-1-c172",
+    "1-4-1-c173"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c172"
+  },
+  {
+   "id": "exercise:1-4-1-c175",
+   "title": "Exercise - replicate copying score results",
+   "prompt_cell": "1-4-1-c175",
+   "answer_cells": [
+    "1-4-1-c177",
+    "1-4-1-c178",
+    "1-4-1-c179"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c177"
+  },
+  {
+   "id": "exercise:1-4-1-c183",
+   "title": "Exercise - perform head validation",
+   "prompt_cell": "1-4-1-c183",
+   "answer_cells": [
+    "1-4-1-c184",
+    "1-4-1-c185"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c184"
+  },
+  {
+   "id": "exercise:1-4-1-c193",
+   "title": "Exercise - constructing the minimal circuit",
+   "prompt_cell": "1-4-1-c193",
+   "answer_cells": [
+    "1-4-1-c195",
+    "1-4-1-c198",
+    "1-4-1-c201",
+    "1-4-1-c202"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c198"
+  },
+  {
+   "id": "exercise:1-4-1-c204",
+   "title": "Exercise - calculate minimality scores",
+   "prompt_cell": "1-4-1-c204",
+   "answer_cells": [
+    "1-4-1-c206",
+    "1-4-1-c208",
+    "1-4-1-c210"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c210"
+  },
+  {
+   "id": "exercise:1-4-1-c222",
+   "title": "Exercise - validate prev token heads via patching",
+   "prompt_cell": "1-4-1-c222",
+   "answer_cells": [
+    "1-4-1-c223",
+    "1-4-1-c224"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c223"
+  },
+  {
+   "id": "exercise:1-4-1-c247",
+   "title": "Exercise - decompose S-Inhibition heads",
+   "prompt_cell": "1-4-1-c247",
+   "answer_cells": [
+    "1-4-1-c248"
+   ],
+   "section": "1-4-1",
+   "answer_cell": "1-4-1-c248"
+  }
  ]
 }
