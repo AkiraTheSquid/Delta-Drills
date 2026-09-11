@@ -68,6 +68,7 @@
   // day it appears rather than silently demoting them to prep.
   const ARENA_SECTIONS = {
     "0-0": { id: "s00", label: "Section 0.0 — ARENA's own problems", color: "#4f9fe0" },
+    "0-2": { id: "s02", label: "Section 0.2 — CNNs & ResNets", color: "#e8a765" },
     "0-1": { id: "s01", label: "Section 0.1 — ARENA's ray tracing", color: "#bb7de8" },
   };
   const ARENA_LATER = { id: "sNN", label: "Later ARENA sections", color: "#e0709a" };
@@ -110,6 +111,8 @@
   };
 
   const FAMILIES = [
+    { id: "tensor.reasoning", group: "Tensor reasoning", label: "ARENA tensor reasoning", color: "#84c8ed", test: id => id.startsWith("tensor.") },
+    { id: "cnn.modules", group: "Neural networks", label: "CNNs & ResNets", color: "#e8a765", test: id => id.startsWith("cnn.") },
     /* --- Python: warm ambers ------------------------------------------ */
     { id: "py.data", group: "Python", label: "Values, types & sequences", color: "#f8dda6",
       test: (id) => /^python\.(values-and-names|types-and-conversion|lists-and-tuples|indexing)$/.test(id) },
@@ -2036,6 +2039,8 @@
      function touches graph state, and both answer before build() has run
      (`lattice` is simply null, which is the offline path anyway). */
   window.deltaKcReadinessInfo = (kc) => kcReadinessInfo(kc);
+  window.deltaKcMasteryColor = masteryColor;
+  window.deltaKcMasteryBand = masteryBand;
   window.deltaKcIsMeasured = (kc) => _isMeasured(kc);
   window.deltaKcHasAnyMeasurement = () => hasAnyMeasurement();
   window.deltaKcNoDataText = () => noDataText();

@@ -352,7 +352,8 @@ def main() -> int:
         print(f"  ⚠ no fork checkout at {fork} — run scripts/sync_arena_fork.sh; "
               f"compiling from {ARENA_EDITION} only")
 
-    sections = _sections(COURSES_JS.read_text(encoding="utf-8"))
+    sections = [s for s in _sections(COURSES_JS.read_text(encoding="utf-8"))
+                if s["number"] in {"0.0", "0.1", "0.2"}]
     # --dry-run writes nothing, and that includes not creating the folder it
     # would have written into.
     if not args.dry_run:

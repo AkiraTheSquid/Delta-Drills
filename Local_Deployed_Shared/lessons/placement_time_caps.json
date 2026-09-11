@@ -1,5 +1,5 @@
 {
-  "_comment": "The answer clock, in seconds, per concept — for the placement diagnostic AND, since 2026-09-09, for ordinary practice (Seth: a problem is timed by what it needs, not by a choice made before the block). Read by backend/app/diagnostic.py (kc_cap_secs); the placement enforces it server-side, practice sends it on the question (NextQuestionResponse.secs_allowed; probes carry diagnostic_secs_allowed). The client displays that number when it is there and otherwise reads THIS FILE itself (practice/session-clock.js), because a question built out of the static bank \u2014 KcPractice, the Pyodide engine, a guest with no backend \u2014 never passes through the server queue; it runs the same rule (ladder concept, else the q-matrix's target_kcs, longest cap wins, 1200 ceiling). One rule for every learner, fixed per concept, never per question or per learner, so probes on the same concept stay comparable. Numbers: Seth 2026-09-07 \u2014 the einops rearrange/reduce/repeat concepts and broadcasting rules 10 min as ARENA recommends; einops.einsum 8 min (ARENA gives the five einsums 15-20 min together) (0.0: ~45 min for the 8 image exercises, ~45 min for the broadcasting set, 15-20 min for the five einsums; 0.1: make_rays_1d 10-15 min). Everything under that is judged from the drills' shape: py-0 and np-1 answers are 7-11 lines of one call each. A concept missing here gets default_secs.",
+  "_comment": "The answer clock, in seconds, per concept \u2014 for the placement diagnostic AND, since 2026-09-09, for ordinary practice (Seth: a problem is timed by what it needs, not by a choice made before the block). Read by backend/app/diagnostic.py (kc_cap_secs); the placement enforces it server-side, practice sends it on the question (NextQuestionResponse.secs_allowed; probes carry diagnostic_secs_allowed). The client displays that number when it is there and otherwise reads THIS FILE itself (practice/session-clock.js), because a question built out of the static bank \u2014 KcPractice, the Pyodide engine, a guest with no backend \u2014 never passes through the server queue; it runs the same rule (ladder concept, else the q-matrix's target_kcs, longest cap wins, 1200 ceiling). One rule for every learner, fixed per concept, never per question or per learner, so probes on the same concept stay comparable. Numbers: Seth 2026-09-07 \u2014 the einops rearrange/reduce/repeat concepts and broadcasting rules 10 min as ARENA recommends; einops.einsum 8 min (ARENA gives the five einsums 15-20 min together) (0.0: ~45 min for the 8 image exercises, ~45 min for the broadcasting set, 15-20 min for the five einsums; 0.1: make_rays_1d 10-15 min). Everything under that is judged from the drills' shape: py-0 and np-1 answers are 7-11 lines of one call each. A concept missing here gets default_secs.",
   "default_secs": 1200,
   "kcs": {
     "python.values-and-names": 300,
@@ -45,6 +45,26 @@
     "torch.out-argument": 600,
     "torch.slice-assignment": 600,
     "raytracing.ray-parametrisation": 600,
-    "raytracing.make-rays-1d": 900
+    "raytracing.make-rays-1d": 900,
+    "tensor.row-normalization": 900,
+    "tensor.cosine-similarity": 900,
+    "tensor.indexed-selection": 900,
+    "tensor.stable-probabilities": 900,
+    "tensor.classifier-evaluation": 900,
+    "tensor.inverse-cdf": 900,
+    "raytracing.segment-intersection": 900,
+    "raytracing.batched-segments": 900,
+    "raytracing.make-rays-2d": 900,
+    "raytracing.triangle-intersection": 900,
+    "raytracing.mesh-visibility": 900,
+    "cnn.module-state": 900,
+    "cnn.linear-layer": 900,
+    "cnn.mlp": 900,
+    "cnn.stride-views": 900,
+    "cnn.convolution-1d": 900,
+    "cnn.convolution-2d": 900,
+    "cnn.pooling": 900,
+    "python.control-flow": 900,
+    "cnn.batch-normalization": 900
   }
 }

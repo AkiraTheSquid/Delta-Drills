@@ -387,6 +387,74 @@ def strict_for(kp: dict) -> bool:
 
     Opting in by having written `## Applied practice` — the section that only
     exists on pages taken through this pass — is what lets the rules be strict
-    without failing every legacy page on the day they land.
+    without failing every legacy page on the day they land. Pages authored
+    under the ARENA-style rule (every faded id >= NEW_PAGE_FLOOR) are strict
+    by construction.
     """
+    from content_safety import NEW_PAGE_FLOOR
+
+    faded = kp.get("faded") or []
+    if faded and min(faded) >= NEW_PAGE_FLOOR:
+        return True
     return bool((kp.get("sections") or {}).get("Applied practice", "").strip())
+
+
+MAX_NEW_FAMILIES_PER_SEGMENT = 2
+
+
+def _family(symbol: str) -> str:
+    """`Tensor.norm#keepdim` is a parameter of `Tensor.norm`, not a new thing."""
+    return symbol.split("#", 1)[0]
+
+
+def check_syntax_load(kp: dict, label: str) -> list[str]:
+    """SYNTAX_LOAD and SYNTAX_UNSHOWN — one new syntax per concept.
+
+    A segment is one concept, one worked example, then practice; the syntax
+    it introduces is what the learner has to absorb alongside the idea. Two
+    new call families in one segment is the ceiling (a call and the construct
+    it sits in — `for` and `+=` — is the common honest pair). Every family the
+    page declares in `new_syntax:` must be SHOWN in some segment's fences:
+    a declaration with no demonstration is a claim nobody stood behind.
+    """
+    import ast
+    from audit_lesson_syntax import ASSUMED, Collector
+    from lesson_lib import code_fences
+
+    declared = {_family(s) for s in (kp.get("new_syntax") or [])}
+    # `for` and comprehensions are in the course's ASSUMED floor: a page may
+    # still declare them (the prereq ratchet keys on declarations), but they
+    # are not new load for a learner who already writes plain Python.
+    load = declared - ASSUMED
+    if not declared:
+        return []
+    problems = []
+    seen: set[str] = set()
+    for si, seg in enumerate(kp["segments"]):
+        shown: set[str] = set()
+        for text in (seg["concept"], seg["worked"]):
+            for code in code_fences(text, "python"):
+                try:
+                    tree = ast.parse(code)
+                except SyntaxError:
+                    continue
+                c = Collector()
+                c.visit(tree)
+                shown |= {_family(s) for s in c.symbols}
+        introduced = sorted((shown & declared) - seen)
+        seen |= set(introduced)
+        new_load = sorted(set(introduced) & load)
+        if len(new_load) > MAX_NEW_FAMILIES_PER_SEGMENT:
+            problems.append(
+                f"{label}: segment {si + 1}: SYNTAX_LOAD — introduces "
+                f"{len(new_load)} new syntax families {new_load} (max "
+                f"{MAX_NEW_FAMILIES_PER_SEGMENT}). Split the segment, or move a "
+                f"variation to a later lesson."
+            )
+    unshown = sorted(declared - seen)
+    if unshown:
+        problems.append(
+            f"{label}: SYNTAX_UNSHOWN — new_syntax declares {unshown} but no "
+            f"concept or worked-example fence shows them."
+        )
+    return problems

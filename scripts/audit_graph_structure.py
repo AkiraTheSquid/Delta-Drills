@@ -63,7 +63,7 @@ ATOM_GRAPH = (ROOT / "This-Directory-Only" / "backend" / "app" / "data"
               / "concept_graphs" / "arena_drillable_v1.json")
 BASELINE = Path(__file__).resolve().parent / "graph_structure_baseline.json"
 
-RUNGS = ("faded", "guided", "applied", "solo", "integrated", "independent")
+RUNGS = ("faded", "guided", "applied", "solo", "independent", "integrated")
 TOLERANCE = 5.0  # difficulty_score points a later rung may sit BELOW an earlier one
 
 

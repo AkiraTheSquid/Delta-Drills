@@ -63,7 +63,7 @@ from app import lessons
 from app import example_schedule
 
 from app import bkt_mastery
-from app import kc_prefs
+from app import kc_prefs, solo_progress
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -578,6 +578,11 @@ def kc_estimate(user_state, kc: str) -> dict:
     # Scoped to the rung the learner is standing on, which is computed from
     # everything above it. `_stage_from` does not read `streak`, so this is a
     # display correction and not a second promotion rule.
+    from app.questions import get_question_by_id
+    solo_ids = questions_at_stage(questions_for_kc(kc), "partial")
+    difficulties = {qid: q.difficulty_score for qid in solo_ids
+                    if (q := get_question_by_id(qid)) is not None}
+    est["solo_progress"] = solo_progress.progress(attempts, difficulties)
     stage = _stage_from(est, row)
     # The rung this estimate DESCRIBES, sent with it. A client can hold an
     # estimate that is newer than the rung on its screen — the practice strip
@@ -653,6 +658,10 @@ def _stage_from(est: dict, row: dict) -> str:
     # taking the lower would let a poisoned window cancel a run it cannot see.
     if streak and LADDER_STAGES.index(streak) > LADDER_STAGES.index(earned):
         earned = streak
+    solo = est.get("solo_progress")
+    previously_integrated = any(a.get("stage") == "solo" for a in attempts)
+    if earned == "solo" and solo and not solo["ready"] and not previously_integrated:
+        earned = "partial"
     return earned
 
 

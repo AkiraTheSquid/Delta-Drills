@@ -2,7 +2,7 @@
 kc: numpy.axis-reductions
 title: Reductions along an axis — and keepdims
 supporting: [numpy.aggregations, numpy.broadcasting-rules]
-new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim]
+new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-literal]
 faded: [220, 135]
 guided: [503, 504]
 independent: [108, 505, 174]

@@ -5796,3 +5796,3443 @@ def solve(z):
 
 print(solve(t.tensor([1.0, 5.0])))
 ",70,"(4.0, 3.0, False)"
+PyTorch,ar-00,"Return row lengths, shape (m,). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x.norm(dim=1)
+",25,
+PyTorch,ar-00,"Return squared row lengths, shape (m, 1). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return (x*x).sum(dim=1,keepdim=True)
+",30,
+PyTorch,ar-00,"Return unit rows, shape (m, n). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x/x.norm(dim=1,keepdim=True)
+",35,
+PyTorch,ar-00,"Return each row rescaled to length three, shape (m, n). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return 3*x/x.norm(dim=1,keepdim=True)
+",40,
+PyTorch,ar-00,"Return the distance of each row from the origin, shape (m,). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return (x*x).sum(dim=-1).sqrt()
+",45,
+PyTorch,ar-00,"Return one unit direction per row, shape (m, n). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x / x.norm(dim=1,keepdim=True)
+",45,
+PyTorch,ar-00,"Return how much each row must be multiplied by to become unit length, shape (m,). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return 1/x.norm(dim=1)
+",55,
+PyTorch,ar-00,"Return the unit direction of the sum of all rows, shape (n,); the sum is nonzero. Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    v=x.sum(dim=0)
+    return v/v.norm()
+",55,
+PyTorch,ar-00,"Return each row with its first coordinate removed, then normalized, shape (m,n-1). Omitted-coordinate rows are nonzero. Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    v=x[:,1:]
+    return v/v.norm(dim=1,keepdim=True)
+",65,
+PyTorch,ar-00,"Return the row index with greatest distance from the origin, as a scalar tensor; ties choose first. Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x.norm(dim=1).argmax()
+",65,
+PyTorch,ar-00,"Return distances between every pair of rows, shape (m,m). Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    d=x[:,None,:]-x[None,:,:]
+    return d.norm(dim=-1)
+",75,
+PyTorch,ar-00,"Return the unit direction from the first row to every other row, shape (m-1,n); duplicate rows stay zero. Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    v=x[1:]-x[0]
+    n=v.norm(dim=1,keepdim=True)
+    return v/t.where(n==0,t.ones_like(n),n)
+",80,
+PyTorch,ar-00,"Return the length of the average of unit row directions, as a scalar tensor. Input x: nonzero rows of a float tensor (m, n); return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    u=x/x.norm(dim=1,keepdim=True)
+    return u.mean(dim=0).norm()
+",85,
+PyTorch,ar-00,"Return all row dot products, shape (m,n). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return x@y.T
+",25,
+PyTorch,ar-00,"Return lengths of every candidate row, shape (n,1). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return y.norm(dim=1,keepdim=True)
+",30,
+PyTorch,ar-00,"Return cosine similarities, shape (m,n). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s
+",35,
+PyTorch,ar-00,"Return the largest cosine similarity per query, shape (m,). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s.max(dim=1).values
+",40,
+PyTorch,ar-00,"Return cosine similarity of each query to the first candidate, shape (m,). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y[0]/y[0].norm()
+    return a@b
+",45,
+PyTorch,ar-00,"Return similarities for every candidate against every query, shape (n,m). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s.T
+",45,
+PyTorch,ar-00,"Return nearest candidate indices by cosine similarity, shape (m,); ties choose first. Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s.argmax(dim=1)
+",55,
+PyTorch,ar-00,"Return each query’s mean similarity to the candidates, shape (m,). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s.mean(dim=1)
+",55,
+PyTorch,ar-00,"Return a Boolean matrix showing strictly opposing directions, shape (m,n). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s<0
+",65,
+PyTorch,ar-00,"Return one minus cosine similarity for each pair, shape (m,n). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return 1-s
+",65,
+PyTorch,ar-00,"Return the original candidate vector closest in direction to each query, shape (m,d). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return y[s.argmax(dim=1)]
+",75,
+PyTorch,ar-00,"Return Euclidean distances between normalized query and candidate directions, shape (m,n). Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    return (a[:,None,:]-b[None,:,:]).norm(dim=-1)
+",80,
+PyTorch,ar-00,"Return each query’s similarity to the unit direction of the candidate centroid, shape (m,). Candidate mean is nonzero. Inputs x (m,d), y (n,d): float tensors with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    c=y.mean(dim=0)
+    return a@(c/c.norm())
+",85,
+PyTorch,ar-00,"Return requested value per row, shape (b,1). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x.gather(1,ids[:,None])
+",25,
+PyTorch,ar-00,"Return requested values as a vector, shape (b,). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x[t.arange(x.shape[0]),ids]
+",30,
+PyTorch,ar-00,"Return the sum of requested values, as a scalar tensor. Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x.gather(1,ids[:,None]).sum()
+",35,
+PyTorch,ar-00,"Return requested values minus each row’s mean, shape (b,). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x[t.arange(len(ids)),ids]-x.mean(dim=1)
+",40,
+PyTorch,ar-00,"Return requested value per row, shape (b,). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x.gather(1,ids[:,None])[:,0]
+",45,
+PyTorch,ar-00,"Return the gap from each requested value to its row’s maximum, shape (b,). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x.max(dim=1).values-x[t.arange(len(ids)),ids]
+",45,
+PyTorch,ar-00,"Return whether the requested value is a row maximum, shape (b,); ties count as maxima. Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x[t.arange(len(ids)),ids]==x.max(dim=1).values
+",55,
+PyTorch,ar-00,"Return requested entries with their row order reversed, shape (b,). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    v=x[t.arange(len(ids)),ids]
+    return v[t.arange(len(ids)-1,-1,-1)]
+",55,
+PyTorch,ar-00,"Return each row after subtracting its requested value, shape (b,c). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x-x.gather(1,ids[:,None])
+",65,
+PyTorch,ar-00,"Return each requested column across all rows, preserving request order, shape (b,b). Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x[:,ids]
+",65,
+PyTorch,ar-00,"Return the sum of positive requested values, as a scalar tensor. Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    v=x[t.arange(len(ids)),ids]
+    return v[v>0].sum()
+",75,
+PyTorch,ar-00,"Return the requested value divided by the sum of absolute values in its row, shape (b,). Rows have positive absolute sum. Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    v=x.gather(1,ids[:,None])[:,0]
+    return v/x.abs().sum(dim=1)
+",80,
+PyTorch,ar-00,"Return each row’s zero-based rank of its requested value: count entries strictly greater, shape (b,). Ties share a rank. Inputs x: float tensor (b,c); ids: valid integer class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    v=x.gather(1,ids[:,None])
+    return (x>v).sum(dim=1)
+",85,
+PyTorch,ar-00,"Return row scores relative to each row’s maximum, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x-x.max(dim=1,keepdim=True).values
+",25,
+PyTorch,ar-00,"Return positive unnormalized weights after removing the largest row score, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    return z.exp()
+",30,
+PyTorch,ar-00,"Return normalized class probabilities, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p
+",35,
+PyTorch,ar-00,"Return row log-normalizers, shape (b,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    m=x.max(dim=1).values
+    return m+(x-m[:,None]).exp().sum(dim=1).log()
+",40,
+PyTorch,ar-00,"Return normalized probabilities without built-in probability-normalization functions, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p
+",45,
+PyTorch,ar-00,"Return log probabilities without built-in log-normalization functions, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    return z-z.exp().sum(dim=1,keepdim=True).log()
+",45,
+PyTorch,ar-00,"Return each row’s largest class probability, shape (b,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p.max(dim=1).values
+",55,
+PyTorch,ar-00,"Return the probability assigned to the first class, shape (b,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p[:,0]
+",55,
+PyTorch,ar-00,"Return the entropy of each row’s distribution, shape (b,); entropy is minus the sum of probability times log probability. Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    return -(l.exp()*l).sum(dim=1)
+",65,
+PyTorch,ar-00,"Return the log of the mean exponential score per row, shape (b,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    m=x.max(dim=1).values
+    return m+(x-m[:,None]).exp().mean(dim=1).log()
+",65,
+PyTorch,ar-00,"Return the class probabilities after halving score differences, shape (b,c). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x/2
+    z=z-z.max(dim=1,keepdim=True).values
+    e=z.exp()
+    return e/e.sum(dim=1,keepdim=True)
+",75,
+PyTorch,ar-00,"Return the mean class distribution across the batch, shape (c,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p.mean(dim=0)
+",80,
+PyTorch,ar-00,"Return how much probability each row assigns to scores strictly below that row’s average, shape (b,). Input x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True).values
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return (p*(x<x.mean(dim=1,keepdim=True))).sum(dim=1)
+",85,
+PyTorch,ar-00,"Return predicted class indices, shape (b,); ties choose first. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return x.argmax(dim=1)
+",25,
+PyTorch,ar-00,"Return which examples were classified correctly, shape (b,). Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return x.argmax(dim=1)==y
+",30,
+PyTorch,ar-00,"Return accuracy as a scalar tensor. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return (x.argmax(dim=1)==y).float().mean()
+",35,
+PyTorch,ar-00,"Return per-example cross entropy, shape (b,), without a built-in loss function. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss
+",40,
+PyTorch,ar-00,"Return the number of correct predictions, as a scalar tensor. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return (x.argmax(dim=1)==y).sum()
+",45,
+PyTorch,ar-00,"Return the mean negative log probability of the true class, as a scalar tensor, without a built-in loss function. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss.mean()
+",45,
+PyTorch,ar-00,"Return log probability of the true class for each example, shape (b,). Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return -loss
+",55,
+PyTorch,ar-00,"Return how far each true-class score falls below its row maximum, shape (b,). Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return x.max(dim=1).values-x[t.arange(len(y)),y]
+",55,
+PyTorch,ar-00,"Return the batch indices of all misclassified examples, as a 1-D integer tensor. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    wrong=x.argmax(dim=1)!=y
+    return t.arange(len(y))[wrong]
+",65,
+PyTorch,ar-00,"Return probabilities assigned to the true classes, shape (b,). Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return (-loss).exp()
+",65,
+PyTorch,ar-00,"Return the summed loss on misclassified examples, as a scalar tensor; return zero when none were missed. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss[x.argmax(dim=1)!=y].sum()
+",75,
+PyTorch,ar-00,"Return accuracy weighted by prediction confidence: sum maximum class probabilities on correct predictions divided by their sum on all examples. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    p=z.exp()/z.exp().sum(dim=1,keepdim=True)
+    w=p.max(dim=1).values
+    return (w*(x.argmax(dim=1)==y)).sum()/w.sum()
+",80,
+PyTorch,ar-00,"Return the index of the example with largest cross entropy, as a scalar integer tensor; ties choose first. Inputs x: finite float logits (b,c), y: integer true classes (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True).values
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss.argmax()
+",85,
+PyTorch,ar-00,"Return cumulative interval right endpoints, shape (k,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    return p.cumsum(dim=0)
+",25,
+PyTorch,ar-00,"Return each draw’s crossed-boundary table, shape (n,k). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    return u[:,None]>=p.cumsum(dim=0)
+",30,
+PyTorch,ar-00,"Return sampled class indices, shape (n,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    return (u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+",35,
+PyTorch,ar-00,"Return the probability of the class selected by each draw, shape (n,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    return p[idx]
+",40,
+PyTorch,ar-00,"Return the class index for each draw, shape (n,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    return (u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+",45,
+PyTorch,ar-00,"Return interval left endpoints, shape (k,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    return p.cumsum(dim=0)-p
+",45,
+PyTorch,ar-00,"Return whether each draw selects the most probable class, shape (n,); ties choose first. Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    return idx==p.argmax()
+",55,
+PyTorch,ar-00,"Return counts of sampled classes, shape (k,), including classes never sampled. Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    return (idx[:,None]==t.arange(len(p))).sum(dim=0)
+",55,
+PyTorch,ar-00,"Return each draw’s position within its selected interval, expressed as a fraction from zero to one, shape (n,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    ends=p.cumsum(dim=0)
+    idx=(u[:,None]>=ends).sum(dim=1)
+    return (u-(ends-p)[idx])/p[idx]
+",65,
+PyTorch,ar-00,"Return the sampled frequencies minus the requested probabilities, shape (k,). Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    freq=(idx[:,None]==t.arange(len(p))).float().mean(dim=0)
+    return freq-p
+",65,
+PyTorch,ar-00,"Return counts of consecutive sampled-class transitions, shape (k,k); row is previous class, column is next. Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    a=idx[:-1,None,None]==t.arange(len(p))[None,:,None]
+    b=idx[1:,None,None]==t.arange(len(p))[None,None,:]
+    return (a&b).sum(dim=0)
+",75,
+PyTorch,ar-00,"Return total probability mass of classes sampled at least once, as a scalar tensor. Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    seen=(idx[:,None]==t.arange(len(p))).any(dim=0)
+    return p[seen].sum()
+",80,
+PyTorch,ar-00,"Return expected class index under the empirical sample distribution minus its expectation under p, as a scalar tensor. Inputs p: nonnegative class probabilities (k,) summing to one; u: uniform draws (n,) in [0,1). Intervals include their left endpoint, exclude their right. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    return idx.float().mean()-(t.arange(len(p))*p).sum()
+",85,
+PyTorch,ar-00,"Shorten rows longer than one to unit length; preserve shorter rows, shape (m,n). x: float tensor (m,n) with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    n=x.norm(dim=1,keepdim=True)
+    return x/n.clamp(min=1)
+",65,
+PyTorch,ar-00,"Return a matrix of row-length ratios: entry i,j is length of row i divided by length of row j, shape (m,m). x: float tensor (m,n) with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    n=x.norm(dim=1)
+    return n[:,None]/n[None,:]
+",65,
+PyTorch,ar-00,"Return the component of each unit row direction on the first coordinate axis, shape (m,). x: float tensor (m,n) with nonzero rows. Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    return x[:,0]/x.norm(dim=1)
+",65,
+PyTorch,ar-00,"Return each query’s best candidate similarity minus its mean candidate similarity, shape (m,). x: float (m,d), y: float (n,d), all rows nonzero. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return s.max(dim=1)[0]-s.mean(dim=1)
+",65,
+PyTorch,ar-00,"Return how many candidates point in a strictly positive direction relative to each query, shape (m,). x: float (m,d), y: float (n,d), all rows nonzero. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    return (s>0).sum(dim=1)
+",65,
+PyTorch,ar-00,"Return similarities between every query and the unit direction of the sum of normalized candidate directions, shape (m,). Return zeros if candidate directions cancel. x: float (m,d), y: float (n,d), all rows nonzero. Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    v=b.sum(dim=0)
+    return a@(v/v.norm().clamp(min=1e-30))
+",65,
+PyTorch,ar-00,"Return the largest requested value across examples, as a scalar tensor. x: float (b,c), ids: valid class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return x[t.arange(len(ids)),ids].max()
+",65,
+PyTorch,ar-00,"Return how often each column index was requested, shape (c,). x: float (b,c), ids: valid class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    return (ids[:,None]==t.arange(x.shape[1])).sum(dim=0)
+",65,
+PyTorch,ar-00,"Return the absolute difference between each requested value and the requested value of the first row, shape (b,). x: float (b,c), ids: valid class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,ids):
+    v=x.gather(1,ids[:,None])[:,0]
+    return (v-v[0]).abs()
+",65,
+PyTorch,ar-00,"Return the expected zero-based class index for each distribution, shape (b,). x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return (p*t.arange(x.shape[1])).sum(dim=1)
+",65,
+PyTorch,ar-00,"Return squared distance of each class distribution from uniform, shape (b,). x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return ((p-1/x.shape[1])**2).sum(dim=1)
+",65,
+PyTorch,ar-00,"Return effective number of equally likely classes, defined as the exponential of entropy, shape (b,). x: finite float logits (b,c). Return a tensor.","import torch as t
+import einops
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    return (-(l.exp()*l).sum(dim=1)).exp()
+",65,
+PyTorch,ar-00,"Return numbers of examples belonging to each true class, shape (c,). x: finite float logits (b,c), y: true class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    return (y[:,None]==t.arange(x.shape[1])).sum(dim=0)
+",65,
+PyTorch,ar-00,"Return summed cross entropy on correctly classified examples, as a scalar tensor; zero if none. x: finite float logits (b,c), y: true class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss[x.argmax(dim=1)==y].sum()
+",65,
+PyTorch,ar-00,"Return the cross entropy above the uniform-prediction loss, one value per example, shape (b,). x: finite float logits (b,c), y: true class indices (b,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    return loss-t.tensor(x.shape[1],dtype=x.dtype).log()
+",65,
+PyTorch,ar-00,"Return midpoint of the interval containing each draw, shape (n,). p: probabilities (k,) summing to one, u: draws (n,) in [0,1). Left endpoints included. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    end=p.cumsum(dim=0)
+    idx=(u[:,None]>=end).sum(dim=1)
+    return (end-p/2)[idx]
+",65,
+PyTorch,ar-00,"Return negative log probability of each sampled class, shape (n,). p: probabilities (k,) summing to one, u: draws (n,) in [0,1). Left endpoints included. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    return -p[idx].log()
+",65,
+PyTorch,ar-00,"Return empirical frequency of sampling a class strictly above the distribution’s expected class index, as a scalar tensor. p: probabilities (k,) summing to one, u: draws (n,) in [0,1). Left endpoints included. Return a tensor.","import torch as t
+import einops
+
+def solve(p,u):
+    idx=(u[:,None]>=p.cumsum(dim=0)).sum(dim=1)
+    mean=(p*t.arange(len(p))).sum()
+    return (idx>mean).to(t.float32).mean()
+",65,
+PyTorch,ar-01,"Return the two-column coefficient matrix, shape (2,2). r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    return m
+",25,
+PyTorch,ar-01,"Return the displacement from ray origin to first segment endpoint, shape (2,). r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    return v
+",30,
+PyTorch,ar-01,"Return whether the two supporting lines have a unique intersection, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    return t.linalg.det(m).abs()>=1e-8
+",35,
+PyTorch,ar-01,"Return whether ray and segment intersect, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return valid & (u>=0) & (w>=0) & (w<=1)
+",40,
+PyTorch,ar-01,"Return the signed determinant of the intersection system, as a scalar tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    return t.linalg.det(m)
+",45,
+PyTorch,ar-01,"Return [ray parameter, segment parameter] for unique line intersections; otherwise [0,0], shape (2,). r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid,uv,t.zeros(2))
+",45,
+PyTorch,ar-01,"Return whether the supporting lines intersect strictly behind the ray origin, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return valid & (u<0)
+",55,
+PyTorch,ar-01,"Return whether the line intersection lies within the segment, ignoring ray direction, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return valid & (w>=0)&(w<=1)
+",55,
+PyTorch,ar-01,"Return the actual ray–segment hit verdict, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return valid & (u>=0) & (w>=0) & (w<=1)
+",65,
+PyTorch,ar-01,"Return the xy hit point, or [0,0] on a miss, shape (2,). r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid & (u>=0) & (w>=0) & (w<=1),o+u*d,t.zeros(2))
+",65,
+PyTorch,ar-01,"Return ray parameter to the supporting-line intersection only when it lies behind the origin; return zero otherwise, as a scalar tensor. r: ray (2,3), s: segment (2,3), float xy-plane tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid&(u<0),u,0.)
+",65,
+PyTorch,ar-01,"Return distance from the first segment endpoint to the hit point, else -1, as a scalar tensor. r: ray (2,3), s: segment (2,3), float xy-plane tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid & (u>=0) & (w>=0) & (w<=1),w*(b-a).norm(),t.tensor(-1.))
+",65,
+PyTorch,ar-01,"Return the segment midpoint relative to the ray origin, shape (2,). r: ray (2,3), s: segment (2,3), float xy-plane tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    return s[:,:2].mean(dim=0)-r[0,:2]
+",65,
+PyTorch,ar-01,"Return Euclidean travel distance to a hit, or -1 on a miss, as a scalar float tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid & (u>=0) & (w>=0) & (w<=1),u*d.norm(),t.tensor(-1.))
+",75,
+PyTorch,ar-01,"Return the two endpoint interpolation weights at a hit, [1-v,v], or [0,0] on a miss, shape (2,). r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return t.where(valid & (u>=0) & (w>=0) & (w<=1),t.stack((1-w,w)),t.zeros(2))
+",80,
+PyTorch,ar-01,"Return whether the ray meets the segment strictly between its endpoints; exclude endpoint hits, as a scalar Boolean tensor. r stores origin/direction (2,3), s stores segment endpoints (2,3); float tensors in the xy plane. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,v)
+    u,w=uv[0],uv[1]
+    return valid & (u>=0)&(w>0)&(w<1)
+",85,
+PyTorch,ar-01,"Return displacement from every ray origin to every segment start, shape (nr,ns,2). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    return v
+",25,
+PyTorch,ar-01,"Return determinants for every pair, shape (nr,ns). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    return t.linalg.det(m)
+",30,
+PyTorch,ar-01,"Return hit verdicts for every pair, shape (nr,ns). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit
+",35,
+PyTorch,ar-01,"Return whether each ray hits anything, shape (nr,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.any(dim=1)
+",40,
+PyTorch,ar-01,"Return one verdict for every ray–segment pair, shape (nr,ns). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit
+",45,
+PyTorch,ar-01,"Return how many segments each ray hits, shape (nr,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.sum(dim=1)
+",45,
+PyTorch,ar-01,"Return whether each segment is hit by any ray, shape (ns,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.any(dim=0)
+",55,
+PyTorch,ar-01,"Return whether each ray hits every segment, shape (nr,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.all(dim=1)
+",55,
+PyTorch,ar-01,"Return indices of rays that miss every segment, as a 1-D integer tensor. r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return t.arange(len(r))[~hit.any(dim=1)]
+",65,
+PyTorch,ar-01,"Return total number of valid ray–segment intersections, as a scalar integer tensor. r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.sum()
+",65,
+PyTorch,ar-01,"Return number of rays hitting at least one segment, as a scalar integer tensor. r: rays (nr,2,3), s: segments (ns,2,3), nonempty float xy tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.any(dim=1).sum()
+",65,
+PyTorch,ar-01,"Return whether each ray hits exactly one segment, shape (nr,). r: rays (nr,2,3), s: segments (ns,2,3), nonempty float xy tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return hit.sum(dim=1)==1
+",65,
+PyTorch,ar-01,"Return number of segment pairs whose line intersection is behind the ray origin, per ray, shape (nr,). r: rays (nr,2,3), s: segments (ns,2,3), nonempty float xy tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return (valid&(u<0)).sum(dim=1)
+",65,
+PyTorch,ar-01,"Return the smallest forward ray parameter among hit segments, or infinity on a miss, shape (nr,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    dist=t.where(hit,u,t.tensor(float(""inf"")))
+    return dist.min(dim=1)[0]
+",75,
+PyTorch,ar-01,"Return counts of rays hitting each segment strictly inside its endpoints, shape (ns,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return (hit&(w>0)&(w<1)).sum(dim=0)
+",80,
+PyTorch,ar-01,"Return nearest-hit Euclidean travel distances, or infinity for misses, shape (nr,). r: float rays (nr,2,3), s: float segments (ns,2,3), both nonempty in the xy plane. Singular pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    travel=u*r[:,1,:2].norm(dim=1)[:,None]
+    return t.where(hit,travel,t.tensor(float(""inf""))).min(dim=1)[0]
+",85,
+PyTorch,ar-01,"Return y pixel coordinates as a vector, shape (ny,). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    return t.linspace(-yl,yl,ny)
+",25,
+PyTorch,ar-01,"Return all pixel yz coordinates, shape (ny*nz,2). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    return t.stack((yy,zz),dim=-1).reshape(-1,2)
+",30,
+PyTorch,ar-01,"Return camera rays from the origin through plane x=1, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r
+",35,
+PyTorch,ar-01,"Return each camera ray’s direction, shape (ny*nz,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r[:,1]
+",40,
+PyTorch,ar-01,"Return the yz coordinates as an image grid, shape (ny,nz,2). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    return t.stack((yy,zz),dim=-1)
+",45,
+PyTorch,ar-01,"Return rays from the origin through plane x=1, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r
+",45,
+PyTorch,ar-01,"Return points reached by these rays at parameter u=2, shape (ny*nz,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r[:,0]+2*r[:,1]
+",55,
+PyTorch,ar-01,"Return only rays through the first z-column of the image, shape (ny,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r.reshape(ny,nz,2,3)[:,0]
+",55,
+PyTorch,ar-01,"Return rays from camera (0,1,0) through the fixed plane x=1, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    r[:,0,1]=1
+    r[:,1,1]-=1
+    return r
+",65,
+PyTorch,ar-01,"Return directions through plane x=2 using the same yz pixel coordinates, shape (ny*nz,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    r[:,1,0]=2
+    return r[:,1]
+",65,
+PyTorch,ar-01,"Return each pixel’s squared distance from the centre of plane x=1, as a flattened vector (ny*nz,). ny,nz: positive counts; yl,zl: nonnegative half-widths. Sample inclusively from -limit to +limit; singleton uses -limit. z changes fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    return (yy*yy+zz*zz).reshape(-1)
+",65,
+PyTorch,ar-01,"Return the yz coordinates of the final pixel in each y-row, shape (ny,2). ny,nz: positive counts; yl,zl: nonnegative half-widths. Sample inclusively from -limit to +limit; singleton uses -limit. z changes fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    return t.stack((yy[:,-1],zz[:,-1]),dim=1)
+",65,
+PyTorch,ar-01,"Return directions from camera (0,0,1) to pixels on fixed plane x=1, shape (ny*nz,3). ny,nz: positive counts; yl,zl: nonnegative half-widths. Sample inclusively from -limit to +limit; singleton uses -limit. z changes fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    return r[:,1]-t.tensor([0.,0.,1.])
+",65,
+PyTorch,ar-01,"Return rays from the origin with unit-length directions through plane x=1, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    r[:,1]=r[:,1]/r[:,1].norm(dim=1,keepdim=True)
+    return r
+",75,
+PyTorch,ar-01,"Return rays through plane x=1 with the image reversed along z within each y row, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    image=r.reshape(ny,nz,2,3)
+    return image[:,t.arange(nz-1,-1,-1)].reshape(-1,2,3)
+",80,
+PyTorch,ar-01,"Return rays from camera (-1,1,0) through fixed plane x=1 with unit-length directions, shape (ny*nz,2,3). ny,nz: positive pixel counts; yl,zl: nonnegative plane half-widths. Sample each axis inclusively from -limit to +limit (one sample uses -limit). Flatten with z changing fastest. Return a float tensor.","import torch as t
+import einops
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=1
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    o=t.tensor([-1.,1.,0.])
+    r[:,0]=o
+    d=r[:,1]-o
+    r[:,1]=d/d.norm(dim=1,keepdim=True)
+    return r
+",85,
+PyTorch,ar-01,"Return edge vectors B−A and C−A as columns, shape (3,2). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    return t.stack((tr[1]-tr[0],tr[2]-tr[0]),dim=1)
+",25,
+PyTorch,ar-01,"Return the ray/triangle coefficient matrix, shape (3,3). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return m
+",30,
+PyTorch,ar-01,"Return whether the ray intersects the triangle, as a scalar Boolean tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return hit
+",35,
+PyTorch,ar-01,"Return [s,u,v] for nonsingular plane intersections, else [0,0,0], shape (3,). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(valid,suv,t.zeros(3))
+",40,
+PyTorch,ar-01,"Return whether the ray meets the triangle including its boundary, as a scalar Boolean tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return hit
+",45,
+PyTorch,ar-01,"Return whether the supporting line meets the triangle, ignoring the forward-ray condition, as a scalar Boolean tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return valid&(u>=0)&(v>=0)&(u+v<=1)
+",45,
+PyTorch,ar-01,"Return hit position in world coordinates, or zero vector on a miss, shape (3,). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,o+s*d,t.zeros(3))
+",55,
+PyTorch,ar-01,"Return vertex weights [A,B,C] for a hit, or zero vector on a miss, shape (3,). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,t.stack((1-u-v,u,v)),t.zeros(3))
+",55,
+PyTorch,ar-01,"Return forward travel parameter to a hit, else -1, as a scalar tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,s,t.tensor(-1.))
+",65,
+PyTorch,ar-01,"Return whether the ray hits strictly inside the triangle, excluding edges, as a scalar Boolean tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return valid&(s>=0)&(u>0)&(v>0)&(u+v<1)
+",65,
+PyTorch,ar-01,"Return the distance between the hit point and first vertex, or -1 on a miss, as a scalar tensor. r: ray (2,3), tr: triangle (3,3), float tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,(o+s*d-a).norm(),t.tensor(-1.))
+",65,
+PyTorch,ar-01,"Return whether the ray hits the edge opposite A, including its endpoints, as a scalar Boolean tensor; use absolute tolerance 1e-6 for the edge. r: ray (2,3), tr: triangle (3,3), float tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return hit&((u+v-1).abs()<1e-6)
+",65,
+PyTorch,ar-01,"Return the centroid of the triangle relative to the ray origin, shape (3,). r: ray (2,3), tr: triangle (3,3), float tensors. Singular pairs count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    return tr.mean(dim=0)-r[0]
+",65,
+PyTorch,ar-01,"Return Euclidean travel distance to a hit, else -1, as a scalar tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,s*d.norm(),t.tensor(-1.))
+",75,
+PyTorch,ar-01,"Return interpolated vertex value at a hit when A,B,C carry values 2,5,11; return -1 on a miss, as a scalar tensor. r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,2*(1-u-v)+5*u+11*v,t.tensor(-1.))
+",80,
+PyTorch,ar-01,"Return the displacement from the triangle centroid to a hit, else zero, shape (3,). r: origin/direction float tensor (2,3); tr: triangle vertices A,B,C, float tensor (3,3). Parallel/degenerate pairs are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(hit,o+s*d-tr.mean(dim=0),t.zeros(3))
+",85,
+PyTorch,ar-01,"Return hit verdicts for all pairs, shape (nr,nt). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit
+",25,
+PyTorch,ar-01,"Return travel parameters for valid hits and infinity for misses, shape (nr,nt). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return depth
+",30,
+PyTorch,ar-01,"Return nearest valid travel parameter per ray, or infinity, shape (nr,). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return depth.min(dim=1)[0]
+",35,
+PyTorch,ar-01,"Return whether each ray has any visible surface, shape (nr,). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit.any(dim=1)
+",40,
+PyTorch,ar-01,"Return number of triangles hit by each ray, shape (nr,). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit.sum(dim=1)
+",45,
+PyTorch,ar-01,"Return the nearest valid ray parameter per ray, shape (nr,), using infinity for background. r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return depth.min(dim=1)[0]
+",45,
+PyTorch,ar-01,"Return index of nearest triangle, or -1 on background, shape (nr,); ties choose first. r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    value,index=depth.min(dim=1)
+    return t.where(value<float(""inf""),index,-1)
+",55,
+PyTorch,ar-01,"Return whether each triangle is hit by any ray, shape (nt,). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit.any(dim=0)
+",55,
+PyTorch,ar-01,"Return indices of background rays, as a 1-D integer tensor. r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return t.arange(len(r))[~hit.any(dim=1)]
+",65,
+PyTorch,ar-01,"Return number of valid pair intersections strictly inside triangle edges, as a scalar integer tensor. r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return (hit&(u>0)&(v>0)&(u+v<1)).sum()
+",65,
+PyTorch,ar-01,"Return fraction of rays seeing at least one triangle, as a scalar float tensor. r: rays (nr,2,3), tr: mesh (nt,3,3), nonempty float tensors. Singular pairs and backward intersections count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit.any(dim=1).to(t.float32).mean()
+",65,
+PyTorch,ar-01,"Return whether each ray crosses more than one triangle, shape (nr,). r: rays (nr,2,3), tr: mesh (nt,3,3), nonempty float tensors. Singular pairs and backward intersections count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return hit.sum(dim=1)>1
+",65,
+PyTorch,ar-01,"Return the farthest valid travel parameter per ray, or -1 on a miss, shape (nr,). r: rays (nr,2,3), tr: mesh (nt,3,3), nonempty float tensors. Singular pairs and backward intersections count as misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return t.where(hit,s,t.tensor(-1.)).max(dim=1)[0]
+",65,
+PyTorch,ar-01,"Return nearest hit positions in world coordinates, or zero vectors for background, shape (nr,3). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    nearest=depth.min(dim=1)[0]
+    seen=nearest<float(""inf"")
+    safe_s=t.where(seen,nearest,0.)
+    points=r[:,0]+safe_s[:,None]*r[:,1]
+    return t.where(seen[:,None],points,t.zeros_like(points))
+",75,
+PyTorch,ar-01,"Return nearest-hit Euclidean distance for each ray, or infinity for background, shape (nr,). r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    return depth.min(dim=1)[0]*r[:,1].norm(dim=1)
+",80,
+PyTorch,ar-01,"Return how many pixels show each triangle as the nearest surface, shape (nt,), excluding background; ties choose first. r: nonempty float rays (nr,2,3); tr: nonempty float mesh triangles (nt,3,3). Singular pairs and backward hits are misses. Return a tensor.","import torch as t
+import einops
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    value,index=depth.min(dim=1)
+    seen=value<float(""inf"")
+    return ((index[:,None]==t.arange(len(tr)))&seen[:,None]).sum(dim=0)
+",85,
+PyTorch,ar-02,"Return a parameter-free ReLU module. For any float tensor x, preserve positive entries and replace negative entries with zero.","import torch as t
+import einops
+
+def solve():
+    class ReLU(t.nn.Module):
+        def forward(self,x):
+            return x.clamp(min=0)
+    return ReLU()
+",25,
+PyTorch,ar-02,Implement learned scaling: output x multiplied by weight. w: scalar float tensor. Return a new module; register its learnable scalar as weight. Its forward accepts float tensors x of arbitrary shape.,"import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    return Scale()
+",30,
+PyTorch,ar-02,"Return a calibrated module: subtract fixed scalar b, then multiply by learned scalar w. Store weight as a Parameter and offset as a buffer; both inputs are scalar float tensors.","import torch as t
+import einops
+
+def solve(w,b):
+    class Calibrated(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.register_buffer(""offset"",b.clone())
+        def forward(self,x):
+            return (x-self.offset)*self.weight
+    return Calibrated()
+",35,
+PyTorch,ar-02,Return an affine scalar module with optional bias. w is a scalar float tensor; b is a scalar float tensor or None. Register weight; register bias only when supplied.,"import torch as t
+import einops
+
+def solve(w,b):
+    class Affine(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone()) if b is not None else None
+        def forward(self,x):
+            y=x*self.weight
+            return y if self.bias is None else y+self.bias
+    return Affine()
+",40,
+PyTorch,ar-02,"Implement a parameter-free ReLU as a module. Its forward preserves the shape of any float tensor x, keeping positive entries and replacing negative entries with zero. Return a new instance.","import torch as t
+import einops
+
+def solve():
+    class ReLU(t.nn.Module):
+        def forward(self,x):
+            return x.clamp(min=0)
+    return ReLU()
+",45,
+PyTorch,ar-02,Return a module computing x multiplied by its trainable weight. w: scalar float tensor. Return a new module; register its learnable scalar as weight. Its forward accepts float tensors x of arbitrary shape.,"import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    return Scale()
+",45,
+PyTorch,ar-02,Build a learned scalar affine module from w and optional b. Its output is x times weight plus bias when present. A disabled bias must add no parameter. Return a new module with attributes weight and bias.,"import torch as t
+import einops
+
+def solve(w,b):
+    class Affine(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone()) if b is not None else None
+        def forward(self,x):
+            y=x*self.weight
+            return y if self.bias is None else y+self.bias
+    return Affine()
+",55,
+PyTorch,ar-02,"Build a calibrated scalar module with trainable weight initialized from w and fixed offset initialized from b. Forward returns (x minus offset) times weight. offset must follow module device/dtype moves and serialization, while remaining absent from its parameters. Return a new module.","import torch as t
+import einops
+
+def solve(w,b):
+    class Calibrated(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.register_buffer(""offset"",b.clone())
+        def forward(self,x):
+            return (x-self.offset)*self.weight
+    return Calibrated()
+",55,
+PyTorch,ar-02,"Return a model containing one child module named scale, whose sole parameter weight starts at scalar tensor w. Output is the positive part of x times that weight. Parent parameter discovery must find scale.weight.","import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    class Model(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.scale=Scale()
+        def forward(self,x):
+            return self.scale(x).clamp(min=0)
+    return Model()
+",65,
+PyTorch,ar-02,Return learned scaling with independent parameter storage; editing input w later must not change the module. w: scalar float tensor. Return a new module; register its learnable scalar as weight. Its forward accepts float tensors x of arbitrary shape.,"import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    return Scale()
+",65,
+PyTorch,ar-02,Return learned scaling with gradients reaching both parameter and input. w: scalar float tensor. Return a new module; register its learnable scalar as weight. Its forward accepts float tensors x of arbitrary shape.,"import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    return Scale()
+",65,
+PyTorch,ar-02,"Return a module using the same trainable scalar on both sides of a ReLU: positive part of x times weight, then multiplied by weight again. Register weight only once. w: scalar float tensor. Return a new module; register its learnable scalar as weight. Its forward accepts float tensors x of arbitrary shape.","import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return (x*self.weight).clamp(min=0)*self.weight
+    return Scale()
+",65,
+PyTorch,ar-02,"Return a calibrated module with trainable weight and fixed offset, independently initialized from scalar float tensors w,b. Forward returns (x minus offset) times weight. Converting the module to float64 must convert both stored values; changes to input tensors must not change either stored value.","import torch as t
+import einops
+
+def solve(w,b):
+    class Calibrated(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.register_buffer(""offset"",b.clone())
+        def forward(self,x):
+            return (x-self.offset)*self.weight
+    return Calibrated()
+",65,
+PyTorch,ar-02,"Build a parent with child scale owning one scalar parameter weight initialized from w. Forward applies the child, ReLU, then that same child again. Gradients from both uses must accumulate on scale.weight, with no second parameter. Return the parent.","import torch as t
+import einops
+
+def solve(w):
+    class Scale(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+        def forward(self,x):
+            return x*self.weight
+    class Model(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.scale=Scale()
+        def forward(self,x):
+            return self.scale(self.scale(x).clamp(min=0))
+    return Model()
+",75,
+PyTorch,ar-02,"Return a learned scalar affine module from w and optional b, with independent storage. Forward accepts any-shaped x and returns x times weight plus bias when enabled. For enabled bias, gradients must reach weight, bias and input.","import torch as t
+import einops
+
+def solve(w,b):
+    class Affine(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone()) if b is not None else None
+        def forward(self,x):
+            y=x*self.weight
+            return y if self.bias is None else y+self.bias
+    return Affine()
+",80,
+PyTorch,ar-02,"Return calibrated scaling with trainable weight and fixed offset initialized independently from w,b. Output is (x minus offset) times weight. Its state dictionary must restore both quantities into another instance, including after dtype conversion.","import torch as t
+import einops
+
+def solve(w,b):
+    class Calibrated(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.register_buffer(""offset"",b.clone())
+        def forward(self,x):
+            return (x-self.offset)*self.weight
+    return Calibrated()
+",85,
+PyTorch,ar-02,"Return the affine output, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y
+",25,
+PyTorch,ar-02,"Return the affine output with zero bias, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    return x@w.T
+",30,
+PyTorch,ar-02,"Return positive parts of affine outputs, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.clamp(min=0)
+",35,
+PyTorch,ar-02,"Return the affine output averaged across output features, shape (...). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.mean(dim=-1)
+",40,
+PyTorch,ar-02,"Apply the affine map independently at every input position, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y
+",45,
+PyTorch,ar-02,"Return the affine outputs centred to zero mean within each example, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y-y.mean(dim=-1,keepdim=True)
+",45,
+PyTorch,ar-02,"Return index of the largest affine output for every example, shape (...); ties choose first. Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.argmax(dim=-1)
+",55,
+PyTorch,ar-02,"Return the affine output with all leading example axes combined, shape (number_of_examples,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.reshape(-1,w.shape[0])
+",55,
+PyTorch,ar-02,"Return the mean affine output across all examples and positions, shape (out_features,). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.reshape(-1,w.shape[0]).mean(dim=0)
+",65,
+PyTorch,ar-02,"Encode through the affine map and a positive-part activation, then decode with the same weights and no decoder bias, shape (...,in_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y.clamp(min=0)@w
+",65,
+PyTorch,ar-02,"Return total squared affine activation per example, shape (...). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return (y*y).sum(dim=-1)
+",65,
+PyTorch,ar-02,"Return the original input plus its tied-weight encoded-and-decoded update, shape (...,in_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return x+y.clamp(min=0)@w
+",65,
+PyTorch,ar-02,"Return the difference between affine outputs on x and on zero input, shape (...,out_features). Inputs x: float (...,in_features), w: float (out_features,in_features), b: float (out_features,). Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,b):
+    y=x@w.T+b
+    return y-b
+",65,
+PyTorch,ar-02,"Return a new learned affine module initialized from float weight w (out,in) and bias b (out,). Its forward accepts (...,in) and returns (...,out); register parameters as weight and bias.","import torch as t
+import einops
+
+def solve(w,b):
+    class Linear(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone())
+        def forward(self,x):
+            return x@self.weight.T+self.bias
+    return Linear()
+",75,
+PyTorch,ar-02,"Return an affine-then-ReLU module using supplied float weight w (out,in), bias b (out,). Register weight and bias; preserve every leading input axis.","import torch as t
+import einops
+
+def solve(w,b):
+    class Linear(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone())
+        def forward(self,x):
+            return (x@self.weight.T+self.bias).clamp(min=0)
+    return Linear()
+",80,
+PyTorch,ar-02,"Return an affine module initialized from supplied w (out,in), b (out,), with independent parameter storage and gradients to both parameters. Forward maps (...,in) to (...,out).","import torch as t
+import einops
+
+def solve(w,b):
+    class Linear(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(w.clone())
+            self.bias=t.nn.Parameter(b.clone())
+        def forward(self,x):
+            return x@self.weight.T+self.bias
+    return Linear()
+",85,
+PyTorch,ar-02,"Return image features, shape (b,pixels). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    return x.reshape(x.shape[0],-1)
+",25,
+PyTorch,ar-02,"Return hidden pre-activation values, shape (b,hidden). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    return x.reshape(x.shape[0],-1)@w1.T+b1
+",30,
+PyTorch,ar-02,"Return hidden activations after the positive-part nonlinearity, shape (b,hidden). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return h
+",35,
+PyTorch,ar-02,"Return classifier logits, shape (b,classes). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return y
+",40,
+PyTorch,ar-02,"Return logits from the two-layer image classifier, shape (b,classes). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return y
+",45,
+PyTorch,ar-02,"Return predicted class indices, shape (b,); ties choose first. x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return y.argmax(dim=1)
+",45,
+PyTorch,ar-02,"Return mean hidden activation over the batch, shape (hidden,). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return h.mean(dim=0)
+",55,
+PyTorch,ar-02,"Return number of active hidden features per example, shape (b,); positive values are active. x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return (h>0).sum(dim=1)
+",55,
+PyTorch,ar-02,"Return logits with the first hidden feature silenced, shape (b,classes). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    h[:,0]=0
+    return h@w2.T+b2
+",65,
+PyTorch,ar-02,"Return class probabilities, shape (b,classes). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    z=y-y.max(dim=1,keepdim=True)[0]
+    e=z.exp()
+    return e/e.sum(dim=1,keepdim=True)
+",65,
+PyTorch,ar-02,"Return the change in logits caused by removing the hidden nonlinearity, shape (b,classes): linear-only minus normal model. x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    plain=(flat@w1.T+b1)@w2.T+b2
+    return plain-y
+",65,
+PyTorch,ar-02,"Return the first hidden feature’s contribution to every logit, shape (b,classes), excluding output bias. x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return h[:,0,None]*w2[None,:,0]
+",65,
+PyTorch,ar-02,"Return logits relative to each example’s first class score, shape (b,classes). x: float batch of images (b,...); w1: (hidden,pixels), b1: (hidden,), w2: (classes,hidden), b2: (classes,), all float tensors. pixels equals image size. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w1,b1,w2,b2):
+    flat=x.reshape(x.shape[0],-1)
+    h=(flat@w1.T+b1).clamp(min=0)
+    y=h@w2.T+b2
+    return y-y[:,0,None]
+",65,
+PyTorch,ar-02,"Build a learned two-layer image classifier from w1 (hidden,pixels), b1 (hidden,), w2 (classes,hidden), b2 (classes,). Return a module mapping images (b,...) to logits (b,classes), with ReLU only between layers. Register parameters as w1,b1,w2,b2.","import torch as t
+import einops
+
+def solve(w1,b1,w2,b2):
+    class MLP(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.w1=t.nn.Parameter(w1.clone())
+            self.b1=t.nn.Parameter(b1.clone())
+            self.w2=t.nn.Parameter(w2.clone())
+            self.b2=t.nn.Parameter(b2.clone())
+        def forward(self,x):
+            flat=x.reshape(x.shape[0],-1)
+            h=(flat@self.w1.T+self.b1).clamp(min=0)
+            return h@self.w2.T+self.b2
+    return MLP()
+",75,
+PyTorch,ar-02,"Build the same learned image classifier but include an input-to-logit skip when pixels equals classes. Other shapes use the normal two-layer path. Register w1,b1,w2,b2; return a module.","import torch as t
+import einops
+
+def solve(w1,b1,w2,b2):
+    class MLP(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.w1=t.nn.Parameter(w1.clone())
+            self.b1=t.nn.Parameter(b1.clone())
+            self.w2=t.nn.Parameter(w2.clone())
+            self.b2=t.nn.Parameter(b2.clone())
+        def forward(self,x):
+            flat=x.reshape(x.shape[0],-1)
+            h=(flat@self.w1.T+self.b1).clamp(min=0)
+            y=h@self.w2.T+self.b2
+            return y+flat if flat.shape[1]==y.shape[1] else y
+    return MLP()
+",80,
+PyTorch,ar-02,"Build the learned two-layer image classifier with ReLU hidden features and independent parameter storage. Register w1,b1,w2,b2; gradients must reach every parameter. Return a module mapping (b,...) to logits.","import torch as t
+import einops
+
+def solve(w1,b1,w2,b2):
+    class MLP(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.w1=t.nn.Parameter(w1.clone())
+            self.b1=t.nn.Parameter(b1.clone())
+            self.w2=t.nn.Parameter(w2.clone())
+            self.b2=t.nn.Parameter(b2.clone())
+        def forward(self,x):
+            flat=x.reshape(x.shape[0],-1)
+            h=(flat@self.w1.T+self.b1).clamp(min=0)
+            return h@self.w2.T+self.b2
+    return MLP()
+",85,
+PyTorch,ar-02,"Return a transpose view using as_strided, shape (n,m). x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((x.shape[1],x.shape[0]),(x.stride(1),x.stride(0)))
+",25,
+PyTorch,ar-02,"Return the main diagonal as a view of length min(m,n), using as_strided. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((min(x.shape),),(x.stride(0)+x.stride(1),))
+",30,
+PyTorch,ar-02,"Return m copies of v as a view, shape (m,n), using as_strided. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return v.as_strided(x.shape,(0,v.stride(0)))
+",35,
+PyTorch,ar-02,"Return x multiplied by v, shape (m,), using as_strided for repetition. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    vv=v.as_strided(x.shape,(0,v.stride(0)))
+    return (x*vv).sum(dim=1)
+",40,
+PyTorch,ar-02,"Return the main diagonal as a view, length min(m,n); use as_strided. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((min(x.shape),),(x.stride(0)+x.stride(1),))
+",45,
+PyTorch,ar-02,"Return x multiplied by v, shape (m,), using only as_strided, elementwise arithmetic and sum for tensor computation. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    vv=v.as_strided(x.shape,(0,v.stride(0)))
+    return (x*vv).sum(dim=1)
+",45,
+PyTorch,ar-02,"Return every other column of x as a view, starting at column zero; use as_strided. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((x.shape[0],(x.shape[1]+1)//2),(x.stride(0),2*x.stride(1)))
+",55,
+PyTorch,ar-02,"Return a view of shape (m,n,2) whose last axis repeats each source value twice; use as_strided. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((*x.shape,2),(*x.stride(),0))
+",55,
+PyTorch,ar-02,"Return the sum of the main diagonal as a scalar tensor, using as_strided and sum. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    return x.as_strided((min(x.shape),),(x.stride(0)+x.stride(1),)).sum()
+",65,
+PyTorch,ar-02,"Return the row Gram matrix, shape (m,m), using as_strided to align operands and sum for reduction; do not use matmul or einsum. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    m,n=x.shape
+    a=x.as_strided((m,m,n),(x.stride(0),0,x.stride(1)))
+    b=x.as_strided((m,m,n),(0,x.stride(0),x.stride(1)))
+    return (a*b).sum(dim=2)
+",65,
+PyTorch,ar-02,"Return sums of consecutive width-two windows from each row, shape (m,n-1). n is at least two. Use as_strided for the windows. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    m,n=x.shape
+    w=x.as_strided((m,n-1,2),(x.stride(0),x.stride(1),x.stride(1)))
+    return w.sum(dim=-1)
+",65,
+PyTorch,ar-02,"Return the feature Gram matrix, shape (n,n), using as_strided to align operands and sum for reduction; do not use matmul or einsum. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    m,n=x.shape
+    a=x.as_strided((m,n,n),(x.stride(0),x.stride(1),0))
+    b=x.as_strided((m,n,n),(x.stride(0),0,x.stride(1)))
+    return (a*b).sum(dim=0)
+",65,
+PyTorch,ar-02,"Return scalar squared length of x multiplied by v, using as_strided for repetition and sum for reductions; do not use matmul or einsum. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    vv=v.as_strided(x.shape,(0,v.stride(0)))
+    y=(x*vv).sum(dim=1)
+    return (y*y).sum()
+",65,
+PyTorch,ar-02,"Return x times its transpose times x, shape (m,n). Use as_strided to align tensor operands and sum for reductions; do not use matmul or einsum. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    m,n=x.shape
+    a=x.as_strided((m,m,n),(x.stride(0),0,x.stride(1)))
+    b=x.as_strided((m,m,n),(0,x.stride(0),x.stride(1)))
+    g=(a*b).sum(dim=2)
+    ga=g.as_strided((m,m,n),(g.stride(0),g.stride(1),0))
+    xb=x.as_strided((m,m,n),(0,x.stride(0),x.stride(1)))
+    return (ga*xb).sum(dim=1)
+",75,
+PyTorch,ar-02,"Return matrix product a (m,k) times b (k,n), shape (m,n). Inputs are float matrices, possibly noncontiguous with nonzero storage offsets. Use as_strided, elementwise arithmetic and sum; no matmul or einsum.","import torch as t
+import einops
+
+def solve(a,b):
+    m,k=a.shape
+    n=b.shape[1]
+    aa=a.as_strided((m,k,n),(a.stride(0),a.stride(1),0))
+    bb=b.as_strided((m,k,n),(0,b.stride(0),b.stride(1)))
+    return (aa*bb).sum(dim=1)
+",80,
+PyTorch,ar-02,"Return a pairwise squared-distance table between rows of x, shape (m,m). Use as_strided to align rows; do not use matmul, einsum or a prebuilt distance function. x: float matrix (m,n), v: float vector (n,); m,n are positive. Views may be noncontiguous or start inside larger storage. Return a tensor.","import torch as t
+import einops
+
+def solve(x,v):
+    m,n=x.shape
+    a=x.as_strided((m,m,n),(x.stride(0),0,x.stride(1)))
+    b=x.as_strided((m,m,n),(0,x.stride(0),x.stride(1)))
+    return ((a-b)**2).sum(dim=2)
+",85,
+PyTorch,ar-02,"Return valid convolution with stride one and no padding; ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",25,
+PyTorch,ar-02,"Return each filter’s valid output averaged over positions; ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y.mean(dim=2)
+",30,
+PyTorch,ar-02,"Return x with p zeros on both ends, preserving batch and channels; ignore w,s. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    y=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    y[:,:,p:p+width]=x
+    return y
+",35,
+PyTorch,ar-02,"Return convolution with stride s and symmetric zero padding p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",40,
+PyTorch,ar-02,"Return valid convolution with stride one and no padding; ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",45,
+PyTorch,ar-02,"Return valid convolution followed by positive-part activation; ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y.clamp(min=0)
+",45,
+PyTorch,ar-02,"Return each filter’s maximum valid activation over positions; ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y.max(dim=2)[0]
+",55,
+PyTorch,ar-02,"Return valid convolution with stride s and no padding; ignore p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y[:,:,::s]
+",55,
+PyTorch,ar-02,"Return convolution with stride s and symmetric zero padding p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",65,
+PyTorch,ar-02,"Return the response to channel-centred filters: subtract each filter tap’s mean across input channels before convolution. Use stride s and padding p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    w=w-w.mean(dim=1,keepdim=True)
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",65,
+PyTorch,ar-02,"Return each filter’s activation averaged across both batch and positions, using stride s and padding p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y.mean(dim=(0,2))
+",65,
+PyTorch,ar-02,"Return activation change when the input is reversed along width: reversed-input result minus normal result. Use stride s and padding p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    normal=None
+    outputs=[]
+    for signal in (x.flip((2,)),x):
+        b,c,width=signal.shape
+        k=w.shape[2]
+        xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+        xx[:,:,p:p+width]=signal
+        st=xx.stride()
+        win=xx.as_strided((b,c,1+(width+2*p-k)//s,k),(st[0],st[1],s*st[2],st[2]))
+        outputs.append(einops.einsum(win,w,""b c p k, o c k -> b o p""))
+    return outputs[0]-outputs[1]
+",65,
+PyTorch,ar-02,"Return filters ranked by descending mean squared activation over batch and positions. Use stride s and padding p; ties need not be handled because test scores are distinct. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return (y*y).mean(dim=(0,2)).argsort(descending=True)
+",65,
+PyTorch,ar-02,"Return concatenated valid convolution responses at stride one and stride two, with no padding: first all stride-one positions, then stride-two positions. Ignore s,p. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    win=x.as_strided((b,c,width-k+1,k),(*x.stride(),x.stride(2)))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return t.cat((y,y[:,:,::2]),dim=2)
+",75,
+PyTorch,ar-02,"Return per-example normalized convolution features: positive parts of responses with stride s and padding p, divided by their total over filters and positions. An all-zero response stays all zero. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    y=y.clamp(min=0)
+    total=y.sum(dim=(1,2),keepdim=True)
+    return y/t.where(total>0,total,t.ones_like(total))
+",80,
+PyTorch,ar-02,"Return responses with local input means removed before scoring each filter window. Use stride s and zero padding p; mean includes padding and averages channels and kernel positions. x: float (batch,in_channels,width); w: float (out_channels,in_channels,kernel); s: positive stride; p: nonnegative padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,width=x.shape
+    o,_,k=w.shape
+    xx=t.zeros((b,c,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+width]=x
+    step=xx.stride()
+    n=1+(xx.shape[2]-k)//s
+    win=xx.as_strided((b,c,n,k),(step[0],step[1],s*step[2],step[2]))
+    win=win-win.mean(dim=(1,3),keepdim=True)
+    y=einops.einsum(win,w,""b c p k, o c k -> b o p"")
+    return y
+",85,
+PyTorch,ar-02,"Return the image convolution with stride s and padding p, using windows and einsum. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y
+",25,
+PyTorch,ar-02,"Return the image convolution followed by ReLU, using windows and einsum. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y.clamp(min=0)
+",30,
+PyTorch,ar-02,"Return symmetric zero-padded x, ignoring w,s. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    y=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    y[:,:,p:p+h,p:p+width]=x
+    return y
+",35,
+PyTorch,ar-02,"Return the image convolution through the functional library API. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    import torch.nn.functional as F
+    return F.conv2d(x,w,stride=s,padding=p)
+",40,
+PyTorch,ar-02,"Return convolution with stride s and padding p using windows and einsum; do not call a convolution API. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y
+",45,
+PyTorch,ar-02,"Return average convolution activation per example and output channel, shape (batch,out_channels). x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y.mean(dim=(2,3))
+",45,
+PyTorch,ar-02,"Return image convolution with each filter adjusted to have zero total coefficient. Use stride s and padding p. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    w=w-w.mean(dim=(1,2,3),keepdim=True)
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y
+",55,
+PyTorch,ar-02,"Return each output channel’s maximum response over all examples and positions, shape (out_channels,). x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y.max(dim=3)[0].max(dim=2)[0].max(dim=0)[0]
+",55,
+PyTorch,ar-02,"Return convolution activation at the upper-left output position, shape (batch,out_channels). Include padding exactly as in the full operation. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y[:,:,0,0]
+",65,
+PyTorch,ar-02,"Return channelwise centred feature maps: subtract each example/channel’s spatial mean from every convolution response. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y-y.mean(dim=(2,3),keepdim=True)
+",65,
+PyTorch,ar-02,"Return shape (batch,out_channels,2), containing each response map’s spatial minimum followed by its maximum. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    low=y.min(dim=3)[0].min(dim=2)[0]
+    high=y.max(dim=3)[0].max(dim=2)[0]
+    return t.stack((low,high),dim=-1)
+",65,
+PyTorch,ar-02,"Return per-example total energy in each output channel, divided by total energy over all channels. Zero-energy examples return zeros. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    energy=(y*y).sum(dim=(2,3))
+    total=energy.sum(dim=1,keepdim=True)
+    return energy/t.where(total>0,total,t.ones_like(total))
+",65,
+PyTorch,ar-02,"Return the response of locally mean-centred image patches to the filters. Patch means include padding and all input channels. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    win=win-win.mean(dim=(1,4,5),keepdim=True)
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    return y
+",65,
+PyTorch,ar-02,"Return a feature descriptor combining each channel’s mean positive activation and maximum positive activation, shape (batch,2*out_channels), means first. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    b,c,h,width=x.shape
+    o,_,kh,kw=w.shape
+    xx=t.zeros((b,c,h+2*p,width+2*p),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+width]=x
+    bs,cs,hs,ws=xx.stride()
+    oh=1+(h+2*p-kh)//s
+    ow=1+(width+2*p-kw)//s
+    win=xx.as_strided((b,c,oh,ow,kh,kw),(bs,cs,s*hs,s*ws,hs,ws))
+    y=einops.einsum(win,w,""b c h w i j, o c i j -> b o h w"")
+    y=y.clamp(min=0)
+    return t.cat((y.mean(dim=(2,3)),y.max(dim=3)[0].max(dim=2)[0]),dim=1)
+",75,
+PyTorch,ar-02,"Return the difference between normal convolution and convolution with spatially reversed kernels. Preserve channel order, stride s and padding p. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    import torch.nn.functional as F
+    return F.conv2d(x,w,stride=s,padding=p)-F.conv2d(x,w.flip((2,3)),stride=s,padding=p)
+",80,
+PyTorch,ar-02,"Return the concatenation along output channels of responses to w and to each filter rotated 180 degrees. Use stride s, padding p; do not modify x or w. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: positive integer stride; p: nonnegative symmetric zero padding. Kernel fits padded input. Return a tensor.","import torch as t
+import einops
+
+def solve(x,w,s,p):
+    import torch.nn.functional as F
+    filters=t.cat((w,w.flip((2,3))),dim=0)
+    return F.conv2d(x,filters,stride=s,padding=p)
+",85,
+PyTorch,ar-02,"Return global spatial average, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.mean(dim=(2,3))
+",25,
+PyTorch,ar-02,"Return local max pooling with stride s and padding p; use windows and reductions. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return y
+",30,
+PyTorch,ar-02,"Return positive parts of locally pooled values. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return y.clamp(min=0)
+",35,
+PyTorch,ar-02,"Return each channel’s spatial maximum, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.max(dim=3)[0].max(dim=2)[0]
+",40,
+PyTorch,ar-02,"Return global average features, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.mean(dim=(2,3))
+",45,
+PyTorch,ar-02,"Return max-pooled feature maps with kernel k, stride s and padding p, without a pooling API. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return y
+",45,
+PyTorch,ar-02,"Return the spatial range of each channel, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.max(dim=3)[0].max(dim=2)[0]-x.min(dim=3)[0].min(dim=2)[0]
+",55,
+PyTorch,ar-02,"Return the difference between global max and global mean of each channel; ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.max(dim=3)[0].max(dim=2)[0]-x.mean(dim=(2,3))
+",55,
+PyTorch,ar-02,"Return the fraction of positive pixels in each example/channel, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return (x>0).to(x.dtype).mean(dim=(2,3))
+",65,
+PyTorch,ar-02,"Return global averages of locally max-pooled maps, shape (batch,channels). x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return y.mean(dim=(2,3))
+",65,
+PyTorch,ar-02,"Return each channel’s spatial maximum location as a flattened row-major index, shape (batch,channels). Ties choose first; ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return x.reshape(*x.shape[:2],-1).argmax(dim=2)
+",65,
+PyTorch,ar-02,"Return unit-length global-average feature vectors, shape (batch,channels). A zero vector stays zero; ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    y=x.mean(dim=(2,3))
+    n=y.norm(dim=1,keepdim=True)
+    return y/t.where(n>0,n,t.ones_like(n))
+",65,
+PyTorch,ar-02,"Return root-mean-square activation per example/channel, shape (batch,channels); ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    return ((x*x).mean(dim=(2,3))).sqrt()
+",65,
+PyTorch,ar-02,"Return concatenated global means and global maxima of locally max-pooled maps, shape (batch,2*channels), means first. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return t.cat((y.mean(dim=(2,3)),y.max(dim=3)[0].max(dim=2)[0]),dim=1)
+",75,
+PyTorch,ar-02,"Return the change in channelwise spatial means caused by local max pooling, shape (batch,channels): pooled mean minus original mean. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    b,c,h,w=x.shape
+    xx=t.full((b,c,h+2*p,w+2*p),float(""-inf""),dtype=x.dtype,device=x.device)
+    xx[:,:,p:p+h,p:p+w]=x
+    bs,cs,hs,ws=xx.stride()
+    win=xx.as_strided((b,c,1+(h+2*p-k)//s,1+(w+2*p-k)//s,k,k),(bs,cs,s*hs,s*ws,hs,ws))
+    y=win.max(dim=5)[0].max(dim=4)[0]
+    return y.mean(dim=(2,3))-x.mean(dim=(2,3))
+",80,
+PyTorch,ar-02,"Return a binary mask of original image positions equal to their channel’s maximum, preserving x shape and float dtype. Keep all ties; ignore k,s,p. x: float (batch,channels,height,width); k: positive square kernel size; s: positive stride; p: symmetric padding with 0<=p<=k//2. Kernel fits padded image. Return a tensor.","import torch as t
+import einops
+
+def solve(x,k,s,p):
+    peak=x.max(dim=3,keepdim=True)[0].max(dim=2,keepdim=True)[0]
+    return (x==peak).to(x.dtype)
+",85,
+PyTorch,ar-00,"Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    if len(xs)==0:
+        return fallback
+    return xs[0]
+",25,
+PyTorch,ar-00,"Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    return xs if fallback==0 else [fallback]
+",30,
+PyTorch,ar-00,"Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    total=0
+    for value in xs:
+        total += value
+    return total
+",35,
+PyTorch,ar-00,"Return squares of positive values in xs, in original order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    return [value*value for value in xs if value>0]
+",40,
+PyTorch,ar-00,"Return the last item when xs is nonempty, otherwise fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    return xs[-1] if len(xs)>0 else fallback
+",45,
+PyTorch,ar-00,"Return the sum of all positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    total=0
+    for value in xs:
+        if value>0:
+            total += value
+    return total
+",45,
+PyTorch,ar-00,"Return a list replacing negative items with fallback, preserving other items and order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    return [fallback if value<0 else value for value in xs]
+",55,
+PyTorch,ar-00,"Return the product of all items. The empty product is one; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    product=1
+    for value in xs:
+        product *= value
+    return product
+",55,
+PyTorch,ar-00,"Return the first positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    answer=None
+    for value in xs:
+        if answer is None and value>0:
+            answer=value
+    return fallback if answer is None else answer
+",65,
+PyTorch,ar-00,"Return the last positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    answer=None
+    for value in xs:
+        if value>0:
+            answer=value
+    return fallback if answer is None else answer
+",65,
+PyTorch,ar-00,"Return items strictly greater than the average of xs, in original order. Empty input returns an empty list; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    if len(xs)==0:
+        return []
+    total=0
+    for value in xs:
+        total += value
+    mean=total/len(xs)
+    return [value for value in xs if value>mean]
+",65,
+PyTorch,ar-00,"Return the largest item, or fallback for an empty list. Do not assume items are positive. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    answer=None
+    for value in xs:
+        if answer is None or value>answer:
+            answer=value
+    return fallback if answer is None else answer
+",65,
+PyTorch,ar-00,"Return the length of the longest uninterrupted run of positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    best=0
+    current=0
+    for value in xs:
+        current=current+1 if value>0 else 0
+        if current>best:
+            best=current
+    return best
+",65,
+PyTorch,ar-00,"Return the value nearest to fallback; ties choose the earliest item. Empty input returns fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    best=None
+    for value in xs:
+        if best is None or (value-fallback)**2<(best-fallback)**2:
+            best=value
+    return fallback if best is None else best
+",75,
+PyTorch,ar-00,"Return how many times xs changes sign between consecutive nonzero values. Zeros are ignored, not separators; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    previous=None
+    changes=0
+    for value in xs:
+        if value!=0:
+            if previous is not None and (value>0)!=(previous>0):
+                changes += 1
+            previous=value
+    return changes
+",80,
+PyTorch,ar-00,"Return the maximum prefix sum, including the empty prefix with sum zero. Ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+import einops
+
+def solve(xs,fallback):
+    total=0
+    best=0
+    for value in xs:
+        total += value
+        if total>best:
+            best=total
+    return best
+",85,
+PyTorch,ar-02,"Return per-channel batch means, shape (channels,). x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    return mean
+",25,
+PyTorch,ar-02,"Return training-mode normalized and affine-transformed x. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    return y
+",30,
+PyTorch,ar-02,"Return the updated running mean after this batch. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    return (1-momentum)*rm+momentum*x.mean(dim=(0,2,3))
+",35,
+PyTorch,ar-02,"Return evaluation-mode normalized and affine-transformed x. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=rm
+    var=rv
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    return y
+",40,
+PyTorch,ar-02,"Return training-mode output, preserving x shape. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    return y
+",45,
+PyTorch,ar-02,"Return evaluation-mode output, preserving x shape. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=rm
+    var=rv
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    return y
+",45,
+PyTorch,ar-02,"Return population variance of each input channel, shape (channels,). x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    return var
+",55,
+PyTorch,ar-02,"Return the updated running variance after this batch. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    return (1-momentum)*rv+momentum*var
+",55,
+PyTorch,ar-02,"Return training output minus evaluation output for the same input. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    training=y
+    mean=rm
+    var=rv
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    return training-y
+",65,
+PyTorch,ar-02,"Return the running mean after observing this same batch twice. Each update uses the result of the previous update. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    first=(1-momentum)*rm+momentum*mean
+    return (1-momentum)*first+momentum*mean
+",65,
+PyTorch,ar-02,"Return the effective scale per channel for evaluation: the multiplier that converts each input value into output before adding a constant offset. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    return g/t.sqrt(rv+eps)
+",65,
+PyTorch,ar-02,"Return the effective offset per channel for evaluation, so output equals input times effective scale plus this offset. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    return b-rm*g/t.sqrt(rv+eps)
+",65,
+PyTorch,ar-02,"Return training-mode channel means and population variances after the affine transform, shape (2,channels), means first. x: float (batch,channels,height,width); g,b: channel affine vectors; rm,rv: running mean/variance vectors; eps>0; momentum in (0,1]. Variance here is the population variance, including running updates. Return a tensor; preserve inputs.","import torch as t
+import einops
+
+def solve(x,g,b,rm,rv,eps,momentum):
+    mean=x.mean(dim=(0,2,3))
+    var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+    z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+    y=z*g[None,:,None,None]+b[None,:,None,None]
+    ym=y.mean(dim=(0,2,3))
+    yv=((y-ym[None,:,None,None])**2).mean(dim=(0,2,3))
+    return t.stack((ym,yv))
+",65,
+PyTorch,ar-02,"Implement a stateful BatchNorm module. Its training forward must update statistics once per call; evaluation must leave all buffers unchanged. g,b,rm,rv: float channel vectors; eps>0; momentum in (0,1]. Return a new training-mode BatchNorm module with weight,bias parameters and running_mean,running_var,num_batches_tracked buffers. Normalize population variance and also use it for running updates, matching this ARENA page.","import torch as t
+import einops
+
+def solve(g,b,rm,rv,eps,momentum):
+    class BatchNorm(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(g.clone())
+            self.bias=t.nn.Parameter(b.clone())
+            self.register_buffer(""running_mean"",rm.clone())
+            self.register_buffer(""running_var"",rv.clone())
+            self.register_buffer(""num_batches_tracked"",t.tensor(0))
+        def forward(self,x):
+            if self.training:
+                mean=x.mean(dim=(0,2,3))
+                var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+                with t.no_grad():
+                    self.running_mean.copy_((1-momentum)*self.running_mean+momentum*mean)
+                    self.running_var.copy_((1-momentum)*self.running_var+momentum*var)
+                    self.num_batches_tracked += 1
+            else:
+                mean=self.running_mean
+                var=self.running_var
+            z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+            return z*self.weight[None,:,None,None]+self.bias[None,:,None,None]
+    return BatchNorm()
+",75,
+PyTorch,ar-02,"Implement BatchNorm whose evaluation result uses accumulated running statistics. The supplied initial statistics are independent storage. g,b,rm,rv: float channel vectors; eps>0; momentum in (0,1]. Return a new training-mode BatchNorm module with weight,bias parameters and running_mean,running_var,num_batches_tracked buffers. Normalize population variance and also use it for running updates, matching this ARENA page.","import torch as t
+import einops
+
+def solve(g,b,rm,rv,eps,momentum):
+    class BatchNorm(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(g.clone())
+            self.bias=t.nn.Parameter(b.clone())
+            self.register_buffer(""running_mean"",rm.clone())
+            self.register_buffer(""running_var"",rv.clone())
+            self.register_buffer(""num_batches_tracked"",t.tensor(0))
+        def forward(self,x):
+            if self.training:
+                mean=x.mean(dim=(0,2,3))
+                var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+                with t.no_grad():
+                    self.running_mean.copy_((1-momentum)*self.running_mean+momentum*mean)
+                    self.running_var.copy_((1-momentum)*self.running_var+momentum*var)
+                    self.num_batches_tracked += 1
+            else:
+                mean=self.running_mean
+                var=self.running_var
+            z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+            return z*self.weight[None,:,None,None]+self.bias[None,:,None,None]
+    return BatchNorm()
+",80,
+PyTorch,ar-02,"Implement BatchNorm with differentiable outputs and nondifferentiable running state. Repeated training calls must update both buffers in sequence and count every batch. g,b,rm,rv: float channel vectors; eps>0; momentum in (0,1]. Return a new training-mode BatchNorm module with weight,bias parameters and running_mean,running_var,num_batches_tracked buffers. Normalize population variance and also use it for running updates, matching this ARENA page.","import torch as t
+import einops
+
+def solve(g,b,rm,rv,eps,momentum):
+    class BatchNorm(t.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight=t.nn.Parameter(g.clone())
+            self.bias=t.nn.Parameter(b.clone())
+            self.register_buffer(""running_mean"",rm.clone())
+            self.register_buffer(""running_var"",rv.clone())
+            self.register_buffer(""num_batches_tracked"",t.tensor(0))
+        def forward(self,x):
+            if self.training:
+                mean=x.mean(dim=(0,2,3))
+                var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
+                with t.no_grad():
+                    self.running_mean.copy_((1-momentum)*self.running_mean+momentum*mean)
+                    self.running_var.copy_((1-momentum)*self.running_var+momentum*var)
+                    self.num_batches_tracked += 1
+            else:
+                mean=self.running_mean
+                var=self.running_var
+            z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+            return z*self.weight[None,:,None,None]+self.bias[None,:,None,None]
+    return BatchNorm()
+",85,

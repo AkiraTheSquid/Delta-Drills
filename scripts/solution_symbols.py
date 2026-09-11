@@ -68,10 +68,14 @@ class StrictCollector(Collector):
         self.from_imports: dict[str, str] = {}
         # every name this chunk binds: params, assignments, defs, loop vars.
         self.bound: set[str] = set(known_names or ())
+        self.class_members: list[set[tuple[str, str]]] = []
 
     # -- callee resolution -----------------------------------------------
     def _callee(self, node: ast.AST) -> str | None:
         if isinstance(node, ast.Attribute):
+            if (isinstance(node.value, ast.Name) and self.class_members
+                    and (node.value.id, node.attr) in self.class_members[-1]):
+                return None  # Authored state/method, like an authored local name.
             if node.attr.startswith("__"):
                 return None
             parts = [node.attr]
@@ -163,7 +167,29 @@ class StrictCollector(Collector):
         self.symbols.add("syntax.class")
         self.local_defs.add(node.name)
         self.bound.add(node.name)
+        members = set()
+        for method in node.body:
+            if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            args = [*method.args.posonlyargs, *method.args.args]
+            if not args:
+                continue
+            receiver = args[0].arg
+            members.add((receiver, method.name))
+            for part in ast.walk(method):
+                if (isinstance(part, ast.Attribute) and isinstance(part.ctx, ast.Store)
+                        and isinstance(part.value, ast.Name) and part.value.id == receiver):
+                    members.add((receiver, part.attr))
+                if (isinstance(part, ast.Call) and isinstance(part.func, ast.Attribute)
+                        and isinstance(part.func.value, ast.Name)
+                        and part.func.value.id == receiver
+                        and part.func.attr in {"register_buffer", "register_parameter", "add_module"}
+                        and part.args and isinstance(part.args[0], ast.Constant)
+                        and isinstance(part.args[0].value, str)):
+                    members.add((receiver, part.args[0].value))
+        self.class_members.append(members)
         self.generic_visit(node)
+        self.class_members.pop()
 
     def visit_Return(self, node: ast.Return) -> None:  # noqa: N802
         self.symbols.add("syntax.return")
@@ -381,6 +407,16 @@ class StrictCollector(Collector):
         super().visit_Call(node)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:  # noqa: N802
+        # In torch.nn.Parameter, nn is a namespace component, not another API.
+        # Retain the full qualified API and attributes of actual object values.
+        parent = getattr(node, "_parent", None)
+        if isinstance(parent, ast.Attribute) and parent.value is node:
+            root = node
+            while isinstance(root, ast.Attribute):
+                root = root.value
+            if isinstance(root, ast.Name) and root.id in self.modules:
+                self.generic_visit(node)
+                return
         self.symbols.add("syntax.attribute")
         # `type(x).__name__` is the readable word for a type, and
         # `python.types-and-conversion` declares it as `python.type-name`. The
@@ -471,6 +507,9 @@ def collect(source: str, known_names: set[str] | None = None) -> set[str]:
     except SyntaxError:
         return set()
     c = StrictCollector(known_names)
+    for parent in ast.walk(tree):
+        for child in ast.iter_child_nodes(parent):
+            child._parent = parent
     prebind(tree, c.bound)
     c.visit(tree)
     bound = c.bound | c.local_defs

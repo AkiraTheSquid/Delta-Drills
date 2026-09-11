@@ -237,7 +237,7 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
 
     const chaptersWrap = document.createElement("section");
     chaptersWrap.className = "course-chapters";
-    detail.chapters.forEach((ch, i) => chaptersWrap.appendChild(buildChapter(ch, i)));
+    detail.chapters.slice(0, 1).forEach((ch, i) => chaptersWrap.appendChild(buildChapter({ ...ch, sections: ch.sections.filter(s => ["0.0", "0.1", "0.2"].includes(s.number)) }, i)));
     article.appendChild(chaptersWrap);
 
     return article;

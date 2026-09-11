@@ -2,7 +2,7 @@
 kc: raytracing.ray-parametrisation
 title: A ray is an origin and a direction
 supporting: [numpy.constructors, numpy.broadcasting-rules, numpy.slicing-views, numpy.ranges]
-new_syntax: []
+new_syntax: [syntax.unpack]
 previews: []
 faded: [820, 821]
 guided: []
@@ -35,6 +35,9 @@ print(origin + u * direction)       # the point at u = 2
 # Hidden checks
 assert _delta_output == 'tensor([2., 1., 0.])\n'
 ```
+
+`origin, direction = ray[0], ray[1]` unpacks a pair into two names.
+The left and right sides have the same number of items, in the same order.
 
 Because the whole thing is arithmetic, **many `u` at once** is one broadcast:
 a column of `u` values times the direction row gives one point per row.

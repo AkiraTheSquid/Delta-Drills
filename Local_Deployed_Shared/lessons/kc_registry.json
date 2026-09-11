@@ -55,6 +55,24 @@
    "topic": "Einops",
    "title": "Einsum",
    "subtopic_key": "Einops: Einsum"
+  },
+  {
+   "id": "ar-00",
+   "topic": "PyTorch",
+   "title": "ARENA 0.0 \u2014 Tensor reasoning",
+   "subtopic_key": "PyTorch: ar-00"
+  },
+  {
+   "id": "ar-01",
+   "topic": "PyTorch",
+   "title": "ARENA 0.1 \u2014 Geometry and rendering",
+   "subtopic_key": "PyTorch: ar-01"
+  },
+  {
+   "id": "ar-02",
+   "topic": "PyTorch",
+   "title": "ARENA 0.2 \u2014 Neural networks and ResNets",
+   "subtopic_key": "PyTorch: ar-02"
   }
  ],
  "kcs": [
@@ -470,6 +488,310 @@
    "prereqs": [
     "einops.pattern-language"
    ]
+  },
+  {
+   "id": "tensor.row-normalization",
+   "lesson": "ar-00",
+   "title": "Row lengths and unit directions",
+   "syntax": true,
+   "prereqs": [
+    "numpy.axis-reductions",
+    "numpy.broadcasting-rules",
+    "numpy.boolean-masking",
+    "numpy.argmin-argmax",
+    "numpy.constructors"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "tensor.cosine-similarity",
+   "lesson": "ar-00",
+   "title": "Compare directions across two collections",
+   "syntax": false,
+   "prereqs": [
+    "tensor.row-normalization",
+    "numpy.dot-matmul-patterns",
+    "numpy.transpose-axes",
+    "numpy.argmin-argmax"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "tensor.indexed-selection",
+   "lesson": "ar-00",
+   "title": "Select values with tensor indices",
+   "syntax": true,
+   "prereqs": [
+    "numpy.slicing-views",
+    "numpy.ranges",
+    "numpy.axis-reductions",
+    "numpy.broadcasting-rules"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "tensor.stable-probabilities",
+   "lesson": "ar-00",
+   "title": "Stable probabilities from logits",
+   "syntax": false,
+   "prereqs": [
+    "numpy.axis-reductions",
+    "numpy.elementwise-ufuncs",
+    "numpy.broadcasting-rules",
+    "numpy.ranges"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "tensor.classifier-evaluation",
+   "lesson": "ar-00",
+   "title": "Evaluate predictions and classification loss",
+   "syntax": false,
+   "prereqs": [
+    "tensor.stable-probabilities",
+    "tensor.indexed-selection",
+    "numpy.argmin-argmax",
+    "numpy.boolean-masking",
+    "numpy.dtype-astype"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "tensor.inverse-cdf",
+   "lesson": "ar-00",
+   "title": "Turn random draws into categorical samples",
+   "syntax": true,
+   "prereqs": [
+    "numpy.axis-reductions",
+    "numpy.broadcasting-rules",
+    "numpy.random-threading",
+    "tensor.indexed-selection",
+    "numpy.argmin-argmax",
+    "numpy.dtype-astype",
+    "tensor.stable-probabilities"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "raytracing.segment-intersection",
+   "lesson": "ar-01",
+   "title": "Solve a ray\u2013segment intersection",
+   "syntax": true,
+   "prereqs": [
+    "raytracing.ray-parametrisation",
+    "numpy.linalg-basics",
+    "numpy.stack-concat-interleave",
+    "numpy.constructors",
+    "numpy.boolean-masking",
+    "tensor.row-normalization",
+    "tensor.indexed-selection"
+   ],
+   "arena_section": "0.1",
+   "assessment": "composite"
+  },
+  {
+   "id": "raytracing.batched-segments",
+   "lesson": "ar-01",
+   "title": "Every ray against every segment",
+   "syntax": false,
+   "prereqs": [
+    "raytracing.segment-intersection",
+    "numpy.broadcasting-rules",
+    "numpy.axis-reductions"
+   ],
+   "arena_section": "0.1",
+   "assessment": "composite"
+  },
+  {
+   "id": "raytracing.make-rays-2d",
+   "lesson": "ar-01",
+   "title": "A two-dimensional camera as a batch of rays",
+   "syntax": false,
+   "prereqs": [
+    "raytracing.make-rays-1d",
+    "numpy.broadcasting-rules",
+    "numpy.reshape-flatten",
+    "torch.slice-assignment",
+    "numpy.stack-concat-interleave",
+    "tensor.row-normalization"
+   ],
+   "arena_section": "0.1",
+   "assessment": "composite"
+  },
+  {
+   "id": "raytracing.triangle-intersection",
+   "lesson": "ar-01",
+   "title": "Barycentric coordinates and triangle hits",
+   "syntax": false,
+   "prereqs": [
+    "raytracing.segment-intersection",
+    "numpy.linalg-basics",
+    "numpy.broadcasting-rules"
+   ],
+   "arena_section": "0.1",
+   "assessment": "composite"
+  },
+  {
+   "id": "raytracing.mesh-visibility",
+   "lesson": "ar-01",
+   "title": "Render the nearest visible mesh surface",
+   "syntax": false,
+   "prereqs": [
+    "raytracing.triangle-intersection",
+    "raytracing.batched-segments",
+    "raytracing.make-rays-2d",
+    "tensor.indexed-selection",
+    "numpy.dtype-astype"
+   ],
+   "arena_section": "0.1",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.stride-views",
+   "lesson": "ar-02",
+   "title": "Tensor strides describe addresses, not shapes",
+   "syntax": true,
+   "prereqs": [
+    "numpy.views-and-copies",
+    "numpy.slicing-views",
+    "numpy.broadcasting-rules",
+    "numpy.axis-reductions",
+    "numpy.dot-matmul-patterns",
+    "python.defining-functions"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "python.control-flow",
+   "lesson": "ar-00",
+   "title": "Decisions and repeated work",
+   "syntax": true,
+   "prereqs": [
+    "python.defining-functions",
+    "python.lists-and-tuples",
+    "python.indexing",
+    "numpy.boolean-masking"
+   ],
+   "arena_section": "0.0",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.module-state",
+   "lesson": "ar-02",
+   "title": "Modules own computation and trainable state",
+   "syntax": true,
+   "prereqs": [
+    "python.defining-functions",
+    "python.dots-and-imports",
+    "numpy.elementwise-ufuncs",
+    "numpy.ndarray-model",
+    "tensor.row-normalization",
+    "torch.slice-assignment",
+    "numpy.dtype-astype",
+    "python.control-flow"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.linear-layer",
+   "lesson": "ar-02",
+   "title": "A learned affine map on the last axis",
+   "syntax": false,
+   "prereqs": [
+    "cnn.module-state",
+    "numpy.dot-matmul-patterns",
+    "numpy.transpose-axes",
+    "numpy.broadcasting-rules",
+    "numpy.axis-reductions",
+    "numpy.argmin-argmax",
+    "numpy.reshape-flatten"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.mlp",
+   "lesson": "ar-02",
+   "title": "Compose a multilayer image classifier",
+   "syntax": false,
+   "prereqs": [
+    "cnn.linear-layer",
+    "numpy.reshape-flatten",
+    "tensor.classifier-evaluation"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.convolution-1d",
+   "lesson": "ar-02",
+   "title": "Convolution shares one filter across positions",
+   "syntax": false,
+   "prereqs": [
+    "cnn.stride-views",
+    "einops.einsum",
+    "torch.slice-assignment",
+    "numpy.constructors",
+    "numpy.sorting",
+    "numpy.transpose-axes",
+    "tensor.row-normalization",
+    "numpy.stack-concat-interleave",
+    "python.control-flow"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.convolution-2d",
+   "lesson": "ar-02",
+   "title": "Image filters combine channels and local geometry",
+   "syntax": true,
+   "prereqs": [
+    "cnn.convolution-1d",
+    "cnn.module-state",
+    "numpy.stack-concat-interleave",
+    "numpy.sorting",
+    "tensor.row-normalization"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.pooling",
+   "lesson": "ar-02",
+   "title": "Pool spatial evidence while preserving channels",
+   "syntax": false,
+   "prereqs": [
+    "cnn.convolution-2d",
+    "numpy.axis-reductions",
+    "numpy.argmin-argmax",
+    "tensor.row-normalization"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.batch-normalization",
+   "lesson": "ar-02",
+   "title": "BatchNorm separates current data from running state",
+   "syntax": true,
+   "prereqs": [
+    "cnn.module-state",
+    "numpy.axis-reductions",
+    "numpy.elementwise-ufuncs",
+    "python.control-flow",
+    "numpy.stack-concat-interleave"
+   ],
+   "arena_section": "0.2",
+   "assessment": "composite"
   }
  ]
 }

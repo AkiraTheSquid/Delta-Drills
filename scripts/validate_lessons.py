@@ -30,7 +30,8 @@ import sys
 import traceback
 from pathlib import Path
 
-from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, load_bank,
+import content_safety
+from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_question, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
 sys.path.insert(0, str(LESSONS_DIR))
@@ -66,10 +67,14 @@ def values_equal(got, expected):
 
 
 NUMBERS_NPY = str(REPO / "Local_Deployed_Shared" / "delta_numbers.npy")
+# Leak findings on pages that are not strict yet — printed, never fatal.
+LEAK_WARNINGS = []
 
 
 def grade_against_bank(solution_code, question):
     """Run solution against the bank question's test_cases. Returns list of failures."""
+    if not question.get("exercise", {}).get("test_cases"):
+        return ["no test cases — an untested solution cannot pass validation"]
     failures = []
     for i, tc in enumerate(question["exercise"]["test_cases"]):
         # The runtime grader always injects numpy (code_runner.CODE_PREAMBLE),
@@ -210,19 +215,45 @@ def check_kp(path, registry, bank, errors):
     # have been through the pass — see `strict_for`. `audit_ladder_pairing.py`
     # reports them for every page, so the legacy backlog stays visible instead
     # of being silently exempt.
-    if quality.strict_for(kp):
+    # The rules read the flat bank shape (`question_text`, `answer_code`,
+    # `test_cases` at the top level); `bank` is the structured export. Every
+    # rule below was handed a raw row for months and saw only empty strings.
+    strict = quality.strict_for(kp)
+    if strict:
+        errors.extend(quality.check_syntax_load(kp, name))
         for si, seg in enumerate(kp["segments"]):
             label = f"{name}: segment {si + 1}"
             errors.extend(quality.check_example_shape(seg["worked"], label))
             for qid, content in split_items(seg["faded"]).items():
                 if qid in bank:
-                    errors.extend(quality.check_pairing(seg["worked"], bank[qid], f"{name}: q{qid}"))
+                    errors.extend(quality.check_pairing(seg["worked"], flat_question(bank[qid]), f"{name}: q{qid}"))
                     errors.extend(quality.fade_findings(kp, qid, content, bank, f"{name}: q{qid}"))
         for item_qid in kp["independent"]:
             if item_qid in bank:
                 errors.extend(
-                    quality.check_prompt_leak(bank[item_qid], "solo", f"{name}: q{item_qid}")
+                    quality.check_prompt_leak(flat_question(bank[item_qid]), "solo", f"{name}: q{item_qid}")
                 )
+
+    # 4b'. Answer leaks on the unaided rungs (scripts/content_safety.py). Both
+    # surfaces the learner sees — the prompt on the left and the starter on the
+    # right, comments and docstrings included — are held against the reference
+    # solution, and the starter must be a bare stub. The integrated rung is also
+    # held against the lesson's own fences (lesson_giveaway). Errors on pages
+    # that are strict, warnings elsewhere so the legacy backlog stays visible.
+    lesson_code = "\n".join(
+        code for seg in kp["segments"]
+        for text in (seg["concept"], seg["worked"])
+        for code in code_fences(text, "python")
+    )
+    leak_sink = errors if strict else LEAK_WARNINGS
+    for rung, ids in (("solo", kp["independent"]), ("integrated", kp.get("integrated") or [])):
+        for qid in ids:
+            if qid not in bank:
+                continue
+            q = flat_question(bank[qid])
+            leak_sink.extend(content_safety.leak_findings(q, rung, f"{name}: q{qid}"))
+            if rung == "integrated":
+                leak_sink.extend(content_safety.lesson_giveaway(q, lesson_code, f"{name}: q{qid}"))
 
     # 4c. Applied practice is the ladder's third rung. Its ids must be drills the
     # backend already treats as independent, or the rung the learner is served
@@ -410,6 +441,21 @@ def main(argv):
         check_previews(paths, errors)
     if coverage:
         check_coverage(registry, bank, kps, errors)
+    if LEAK_WARNINGS:
+        # One line per legacy page: the backlog stays visible without burying
+        # the errors under it. `--leaks` prints every finding.
+        by_page = {}
+        for w in LEAK_WARNINGS:
+            page, _, rest = w.partition(": ")
+            code = rest.split(" — ")[0].split(": ")[-1].split(" (")[0]
+            by_page.setdefault(page, {}).setdefault(code, 0)
+            by_page[page][code] += 1
+        print(f"WARN — {len(LEAK_WARNINGS)} leak finding(s) on {len(by_page)} non-strict page(s):")
+        for page, codes in sorted(by_page.items()):
+            print(f"  - {page}: " + ", ".join(f"{c}×{n}" for c, n in sorted(codes.items())))
+        if "--leaks" in sys.argv:
+            for w in LEAK_WARNINGS:
+                print(f"    {w}")
     if errors:
         print(f"FAIL — {len(errors)} error(s):")
         for e in errors:

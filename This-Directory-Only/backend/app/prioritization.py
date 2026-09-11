@@ -411,6 +411,11 @@ def narrow_to_next_kc(
         if unshown:
             return [min(unshown, key=lambda q: (q.difficulty_score, q.id))], next_kc, None
         return sorted(fresh, key=lambda q: (q.difficulty_score, q.id)), next_kc, None
+    if stage == "partial":
+        from app.solo_progress import next_band
+        all_solo = set(kc_graph.questions_at_stage([q.id for q in narrowed], "partial"))
+        difficulties = {q.id: q.difficulty_score for q in narrowed if q.id in all_solo}
+        return next_band(fresh, kc_graph.ladder_view(user_state, next_kc).get("attempts", []), difficulties), next_kc, None
     return fresh, next_kc, None
 
 

@@ -51,6 +51,21 @@ def load_bank():
     return {q["id"]: q for q in bank}
 
 
+def flat_question(question):
+    """The structured bank row as the flat shape the quality rules read.
+
+    `lesson_quality` and `content_safety` look for `question_text`,
+    `answer_code`, `starter_code` and `test_cases` at the top level — the
+    flat `questions.json` shape. The validator loads `questions_structured.json`,
+    which nests all of that under `exercise` and calls the answer
+    `canonical_solution`, so every rule handed a raw row read empty strings
+    and passed. Flatten once, here, so a rule sees what it was written for.
+    """
+    ex = dict(question.get("exercise") or {})
+    ex.setdefault("answer_code", ex.get("canonical_solution") or "")
+    return {**{k: v for k, v in question.items() if k != "exercise"}, **ex}
+
+
 def _parse_value(raw):
     raw = raw.strip()
     if raw.startswith("[") and raw.endswith("]"):

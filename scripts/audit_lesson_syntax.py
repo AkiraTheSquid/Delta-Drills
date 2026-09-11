@@ -81,7 +81,9 @@ TORCH_ALIASES = {"t", "torch"}
 # every pattern call in the einops chapters under `Tensor.rearrange`, a method
 # that does not exist, and the einops KP that DOES teach it cannot declare it
 # under a name matching what the audit reports.
-LIBRARY_ALIASES = {"einops": "einops"}
+# `import torch.nn.functional as F` is the ARENA spelling; without the alias
+# `F.conv2d` files as a tensor method named conv2d.
+LIBRARY_ALIASES = {"einops": "einops", "F": "torch.nn.functional"}
 
 
 class Collector(ast.NodeVisitor):
@@ -167,6 +169,44 @@ class Collector(ast.NodeVisitor):
 
     def visit_ListComp(self, node: ast.ListComp) -> None:
         self.symbols.add("syntax.comprehension")
+        if any(gen.ifs for gen in node.generators):
+            self.symbols.add("syntax.comprehension-filter")
+        self.generic_visit(node)
+
+    # Control flow and class syntax are curriculum too: the 0.2 pages declare
+    # `syntax.if`, `syntax.with`, `syntax.class`… and the per-segment load
+    # guard (lesson_quality.check_syntax_load) needs to see where each one is
+    # first shown.
+    def visit_If(self, node: ast.If) -> None:
+        self.symbols.add("syntax.if")
+        if node.orelse:
+            self.symbols.add("syntax.else")
+        self.generic_visit(node)
+
+    def visit_IfExp(self, node: ast.IfExp) -> None:
+        self.symbols.add("syntax.ternary")
+        self.generic_visit(node)
+
+    def visit_With(self, node: ast.With) -> None:
+        self.symbols.add("syntax.with")
+        self.generic_visit(node)
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self.symbols.add("syntax.class")
+        self.local_defs.add(node.name)
+        self.generic_visit(node)
+
+    def visit_AugAssign(self, node: ast.AugAssign) -> None:
+        self.symbols.add("syntax.aug-assign")
+        self.generic_visit(node)
+
+    def visit_BoolOp(self, node: ast.BoolOp) -> None:
+        self.symbols.add("syntax.and" if isinstance(node.op, ast.And) else "syntax.or")
+        self.generic_visit(node)
+
+    def visit_Compare(self, node: ast.Compare) -> None:
+        if any(isinstance(op, (ast.Is, ast.IsNot)) for op in node.ops):
+            self.symbols.add("syntax.is")
         self.generic_visit(node)
 
     def visit_JoinedStr(self, node: ast.JoinedStr) -> None:

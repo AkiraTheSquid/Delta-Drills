@@ -865,7 +865,7 @@ const ArenaNotebookView = (() => {
   let openRequest = 0;
   const open = async (slug, exercise = null) => {
     const host = _host();
-    if (!host || !slug) return false;
+    if (!host || !["0-0", "0-1", "0-2"].includes(slug)) return false;
     const request = ++openRequest;
 
     /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,
