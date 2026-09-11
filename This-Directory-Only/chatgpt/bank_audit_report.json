@@ -1,5 +1,5 @@
 {
- "total": 743,
+ "total": 1063,
  "questions": {
   "64": [
    {
@@ -599,11 +599,86 @@
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
    }
+  ],
+  "1176": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1181": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['item']"
+   }
+  ],
+  "1183": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['first', 'second']"
+   }
+  ],
+  "1235": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1251": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1299": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1302": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1305": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1306": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1310": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1311": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1312": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 93,
-  "precompute_leak": 5,
+  "answer_symbol_in_prompt": 102,
+  "precompute_leak": 8,
   "starter_passes_some_cases": 1
  }
 }

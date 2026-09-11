@@ -1144,7 +1144,7 @@
 {"question_id": 1168, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 1.0}, {"atom_id": "linalg-solve-batched", "confidence": 1.0}]}
 {"question_id": 1169, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
 {"question_id": 1170, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
-{"question_id": 1171, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
+{"question_id": 1171, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}, {"atom_id": "register-buffer", "confidence": 1.0}]}
 {"question_id": 1172, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
 {"question_id": 1173, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
 {"question_id": 1174, "atoms": [{"atom_id": "nn-module-subclass", "confidence": 1.0}, {"atom_id": "nn-parameter-wrap", "confidence": 1.0}]}
@@ -1270,19 +1270,19 @@
 {"question_id": 1294, "atoms": [{"atom_id": "python-defining-functions", "confidence": 1.0}]}
 {"question_id": 1295, "atoms": [{"atom_id": "python-defining-functions", "confidence": 1.0}]}
 {"question_id": 1296, "atoms": [{"atom_id": "python-defining-functions", "confidence": 1.0}]}
-{"question_id": 1297, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1298, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1299, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1300, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1301, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1302, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1303, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1304, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
+{"question_id": 1297, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}]}
+{"question_id": 1298, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}]}
+{"question_id": 1299, "atoms": [{"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1300, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1301, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}]}
+{"question_id": 1302, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1303, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}]}
+{"question_id": 1304, "atoms": [{"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
 {"question_id": 1305, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1306, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1307, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1308, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1309, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1310, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1311, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
-{"question_id": 1312, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}]}
+{"question_id": 1306, "atoms": [{"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1307, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1308, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}]}
+{"question_id": 1309, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}]}
+{"question_id": 1310, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}
+{"question_id": 1311, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}
+{"question_id": 1312, "atoms": [{"atom_id": "batchnorm-affine-params", "confidence": 1.0}, {"atom_id": "batchnorm-running-stats", "confidence": 1.0}, {"atom_id": "train-eval-mode-branch", "confidence": 1.0}, {"atom_id": "buffer-copy_-inplace", "confidence": 1.0}]}

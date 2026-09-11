@@ -7621,6 +7621,26 @@
    "is_encompassing": false,
    "propagation_weight": 0.0,
    "rationale": "The batched sampler compares every draw against every cumulative endpoint."
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "train-eval-mode-branch",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": false,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[uses] the self.training branch lives in a Module's forward"
+  },
+  {
+   "prerequisite_id": "register-buffer",
+   "dependent_id": "buffer-copy_-inplace",
+   "weight": 1.0,
+   "confidence": 0.7,
+   "is_hard_gate": false,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[uses] copy_ writes into a buffer that register_buffer created"
   }
  ],
  "lessons": [],
