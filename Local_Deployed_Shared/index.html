@@ -89,13 +89,16 @@
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=7" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=8" />
   <link rel="stylesheet" href="styles/arena-curriculum.css?v=1" />
   <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
        rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
        override, it is a fixed-position surface that happens to sit beside the
        notebook. -->
   <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=3" />
+  <!-- The section the reader is scrolled to, its heading tinted by how ready
+       they are for its concept. practice/arena-notebook-focus.js. -->
+  <link rel="stylesheet" href="styles/practice/arena-notebook-focus.css?v=1" />
   <link rel="stylesheet" href="styles/practice/ladder.css?v=4" />
   <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
@@ -135,7 +138,7 @@
        question.css declares that card with. Later sheet wins. Reversed, the
        concept is named twice — once up here and once in a 20px <h2> under it —
        and nothing throws. `watch_concept_pill.py` asserts the order. -->
-  <link rel="stylesheet" href="styles/concept-pill.css?v=2" />
+  <link rel="stylesheet" href="styles/concept-pill.css?v=3" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -2311,7 +2314,7 @@ t.manual_seed(0)
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=3"></script>
+  <script src="concept-pill.js?v=4"></script>
   <script src="practice/notch-menu.js?v=12"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
@@ -2363,7 +2366,11 @@ t.manual_seed(0)
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
   <script src="practice/exercise-timer.js?v=3"></script>
-  <script src="practice/exercise-session.js?v=7"></script>
+  <script src="practice/exercise-session.js?v=8"></script>
+  <!-- After exercise-session.js: it reads the blocks that file puts under
+       each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
+       concept pill which section the reader is in. -->
+  <script src="practice/arena-notebook-focus.js?v=1"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

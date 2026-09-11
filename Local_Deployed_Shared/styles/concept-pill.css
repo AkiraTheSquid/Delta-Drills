@@ -103,6 +103,20 @@
   transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ON AN ARENA NOTEBOOK the chip is a different meter (see concept-pill.js,
+   "the notebook's reading"): how ready the learner is for the concept of the
+   section they are scrolled to, filled in the colour the knowledge graph
+   paints that concept — red far from ready, blue ready — because the section
+   heading below it is tinted the same (styles/practice/arena-notebook-focus.css)
+   and the two must be one colour. `--dd-concept-color` is written by the JS
+   per announcement; the gradient above stays the practice question's. The
+   colour transitions so a scroll from a red section to a blue one reads as
+   the meter changing, not as a new meter. */
+.dd-concept.dd-concept--ready .dd-concept-fill {
+  background: var(--dd-concept-color, var(--accent-2));
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.35s;
+}
+
 /* No reading for this concept yet — an unknown rung, a KC-less item. The track
    is EMPTY, not zero-filled: see concept-pill.js on why those are different
    claims. The dashed border is the visible half of saying so; the tooltip is

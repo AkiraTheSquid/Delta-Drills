@@ -476,6 +476,28 @@
   line-height: calc(26px * var(--anb-zoom, 1));
 }
 
+/* 🔴 EVERY HEADING ON THIS PAGE IS CENTRED — the section's own title block
+   and every `.nbv-md` heading down the notebook. Seth, 2026-09-11: "for the
+   different headers within the notebook, instead of being left aligned, they
+   should be center aligned, such that they align with the top bar". The tab
+   strip in the topbar is centred in the window; a left-aligned heading under
+   it reads as a column that starts somewhere else. Body prose stays
+   left-aligned — a centred paragraph is a poster.
+
+   Scoped to this page: notebook-view.css's scale is shared with the lesson
+   notebooks, and this is the ARENA page's alignment, not theirs. At 1500px
+   and up the reading column itself sits `--anb-nudge` right of centre (see
+   the top of this sheet), so a centred heading is centred in the COLUMN, a
+   hundred pixels right of the tab strip — the nudge was Seth's call too, and
+   moving the headings off the column they head would be the worse trade. */
+#page-arena-notebook .arena-nb-head,
+#page-arena-notebook .nbv-md h1,
+#page-arena-notebook .nbv-md h2,
+#page-arena-notebook .nbv-md h3,
+#page-arena-notebook .nbv-md h4 {
+  text-align: center;
+}
+
 /* ---- the editor layer (practice/notebook-code-edit.js) ------------------- */
 
 /* 🔴 BOTH OF THESE ARE GENERATED CONTENT, AND THAT IS THE POINT. The cell's

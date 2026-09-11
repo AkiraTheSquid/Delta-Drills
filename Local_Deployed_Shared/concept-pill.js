@@ -120,11 +120,45 @@
     );
   };
 
+  /* ── THE NOTEBOOK'S READING ──────────────────────────────────────
+     Seth, 2026-09-11: on an ARENA notebook, "the top bar ... the text for it
+     gets replaced and then it ... displays how ready you are for the specific
+     concept related to that problem". practice/arena-notebook-focus.js works
+     out which exercise the reader is in and fires `dd-notebook-concept` with
+     that exercise's concept, the tutor's readiness for it, and the colour the
+     knowledge graph would paint it. This chip draws it while that page is up.
+
+     🔴 IT IS A DIFFERENT NUMBER FROM THE PRACTICE READING, and the tooltip
+     says which is which. The practice fill is "how far through the rungs of
+     this concept", ceiling 75. The notebook fill is P(known) — the same
+     estimate the graph's bubbles are coloured by — on a 0–100 scale, with
+     no ceiling, and it carries a SOURCE: the learner's own answers, or a
+     number borrowed from the lesson or extrapolated from their level. A
+     borrowed reading is drawn, because it is what the tutor believes, but it
+     is never presented as measured. The same rule as everywhere else in the
+     app: no reading is `null`, drawn empty and dashed, never 0. */
+  const SOURCE_TEXT = {
+    atom: "from your own answers on this concept",
+    subtopic: "borrowed from the lesson's average — this concept itself is not measured yet",
+    topic: "borrowed from the topic — this concept itself is not measured yet",
+    extrapolated: "an extrapolation from your overall level, not a measurement",
+  };
+  const _readyTooltip = (title, pct, source) => {
+    if (pct === null) return `${title} — not yet estimated. Drills on this concept give the tutor a reading.`;
+    const how = SOURCE_TEXT[source] || "the tutor's current estimate";
+    return `${title} — ${Math.round(pct)}% ready, ${how}. Red is far from ready, blue is ready; the same colours as the knowledge graph.`;
+  };
+
   /* The last reading the ladder published, held so the chip can be redrawn
      when the SCREEN changes underneath it without the ladder having rendered.
      See `_onScreen` — the chip has two reasons to be up, and only one of them
      arrives as an event. */
   let last = null;
+  // The notebook's last announcement, same reason (see `_screen`).
+  let nbLast = null;
+  // Which page the chip was last drawn for; a change snaps the fill, since the
+  // two readings are different numbers about different things.
+  let shownScreen = null;
 
   /* 🔴 IS THE QUESTION THIS CHIP NAMES ACTUALLY ON THE SCREEN?
 
@@ -160,6 +194,17 @@
     );
   };
 
+  /* Which reading the chip is for right now: the practice question's, the
+     notebook's, or nobody's. The practice page wins when it is up; the
+     notebook page is `#page-arena-notebook`, hidden by the same `.hidden`
+     class app.js's switchTab puts on every other page. */
+  const _screen = () => {
+    if (_onScreen()) return "practice";
+    const nb = _el("page-arena-notebook");
+    if (nb && !nb.classList.contains("hidden")) return "notebook";
+    return null;
+  };
+
   const _render = (detail) => {
     last = detail || null;
     _paint();
@@ -169,7 +214,8 @@
     const host = _el("dd-concept");
     if (!host) return;
 
-    const detail = last;
+    const screen = _screen();
+    const detail = screen === "practice" ? last : screen === "notebook" ? nbLast : null;
     const title = (detail && (detail.title || detail.kc)) || null;
     /* No concept, or no question on screen to have one: the readout goes, it
        does not go blank. An empty chip in the topbar is a control the learner
@@ -180,15 +226,17 @@
        clearing it would make every tab switch rewrite two nodes for no change.
        A title that changed while the chip was down still differs from it and
        still writes. */
-    if (!title || !_onScreen()) {
+    if (!screen || !title) {
       host.classList.add("hidden");
       return;
     }
+    const notebook = screen === "notebook";
 
     const raw = detail ? detail.pct : null;
     const pct = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : null;
 
-    const conceptChanged = title !== shownTitle;
+    const conceptChanged = title !== shownTitle || screen !== shownScreen;
+    shownScreen = screen;
     if (conceptChanged) {
       /* BOTH layers, same string, same call — see the header. */
       const base = _el("dd-concept-label");
@@ -224,6 +272,16 @@
       host.classList.remove("dd-concept--snap");
     }
     host.classList.toggle("is-unmeasured", pct === null);
+    /* The notebook's fill is the readiness colour, not the concept gradient
+       — the heading it is about is tinted the same (arena-notebook-focus.css)
+       and the two must agree. styles/concept-pill.css reads the property. */
+    host.classList.toggle("dd-concept--ready", notebook);
+    if (notebook && detail.color) host.style.setProperty("--dd-concept-color", detail.color);
+    else host.style.removeProperty("--dd-concept-color");
+    host.setAttribute(
+      "aria-label",
+      notebook ? "How ready you are for this section's concept" : "Progress through the current concept",
+    );
     /* `aria-valuenow` on a `progressbar` with no value is what `aria-valuetext`
        is for; a missing reading is stated, not implied by a zero. */
     if (pct === null) {
@@ -231,14 +289,21 @@
       host.setAttribute("aria-valuetext", "No reading yet");
     } else {
       host.setAttribute("aria-valuenow", String(Math.round(pct)));
-      host.setAttribute("aria-valuetext", `${Math.round(pct)}% of this concept`);
+      host.setAttribute(
+        "aria-valuetext",
+        notebook ? `${Math.round(pct)}% ready for this concept` : `${Math.round(pct)}% of this concept`,
+      );
     }
 
-    host.title = _tooltip(title, pct);
+    host.title = notebook ? _readyTooltip(title, pct, detail.source) : _tooltip(title, pct);
     host.classList.remove("hidden");
   }
 
   window.addEventListener("dd-concept-progress", (e) => _render(e.detail));
+  window.addEventListener("dd-notebook-concept", (e) => {
+    nbLast = (e.detail && (e.detail.title || e.detail.kc)) ? e.detail : null;
+    _paint();
+  });
 
   /* The other half of `_onScreen`: a tab switch and a pause change nothing
      about the reading, so the ladder never fires for either, and without this
@@ -246,13 +311,14 @@
      Cheap enough to be unconditional — one attribute filter on one element,
      and `_paint` writes only what changed. */
   if (typeof MutationObserver === "function") {
-    const page = _el("page-practice");
-    if (page) {
+    ["page-practice", "page-arena-notebook"].forEach((id) => {
+      const page = _el(id);
+      if (!page) return;
       new MutationObserver(_paint).observe(page, {
         attributes: true,
         attributeFilter: ["class"],
       });
-    }
+    });
   }
 
   /* 🔴 NO BOOT RENDER, and nothing read off the DOM at load. The ladder fires

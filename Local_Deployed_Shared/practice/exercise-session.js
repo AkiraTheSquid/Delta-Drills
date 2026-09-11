@@ -454,7 +454,13 @@
          (0.0 sections A–I and the einsum block) → one key per def
        • a CODE cell holding `class ReLU(nn.Module):` (0.2) → one key per class
      A markdown cell yields at most one key; a code cell may yield several
-     — the 0.0 einsum exercises share ONE cell — and each gets its own block. */
+     — the 0.0 einsum exercises share ONE cell — and each gets its own block.
+     🔴 A CELL ID OUTRANKS EVERY NAME (Z, 2026-09-11): 0.2 has two different
+     exercises both called `train`, and a stride-size answer cell with no def
+     at all. A map entry keyed `exercise:<cell id>` (the compiled cell's
+     `data-cell-id`, e.g. `exercise:0-2-c047`) claims that cell outright and
+     its name keys are not consulted, so one cell never grows two blocks. */
+  const CELL_KEY = (cell) => (cell.dataset.cellId ? `exercise:${cell.dataset.cellId}` : null);
   const TAG_RE = /^\((\w{1,3})\)\s/;
   /* The run button (▶) is glued to the first line of a code cell's
      textContent, so a def may follow it instead of a newline. `class` too
@@ -530,10 +536,13 @@
     if (!Object.keys(table).length) return;
     const seen = new Set(Array.from(host.querySelectorAll(".dd-ex-block"),
       (block) => block._exercise?.fn).filter(Boolean));
+    const titles = [];
     host.querySelectorAll(".nbv-cell.nbv-md, .nbv-cell.nbv-code").forEach((cell) => {
       if (cell.nextElementSibling?.classList?.contains("dd-ex-block")) return;
+      const byId = CELL_KEY(cell);
+      const keys = byId && table[byId]?.kc ? [byId] : _cellKeys(cell);
       // Blocks go after the cell in reverse so several defs in one cell read top-down.
-      _cellKeys(cell).filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
+      keys.filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
       seen.add(fn);
       const entry = table[fn];
       const ex = {
@@ -576,11 +585,19 @@
       // A clock the learner started before a reload comes back here, because
       // this is the first moment the exercise and its block exist together.
       window.ExerciseTimer?.restore?.(ex, block);
-      window.LessonGate?.getKpEntry?.(ex.kc).then((entry) => {
+      const named = window.LessonGate?.getKpEntry?.(ex.kc).then((entry) => {
         if (entry && entry.kp && entry.kp.title) ex.kcTitle = entry.kp.title;
       }).catch(() => {});
+      titles.push(named);
       });
     });
+    /* For practice/arena-notebook-focus.js, which tints each section's heading
+       and the topbar pill with the concept's readiness and needs the concept's
+       NAME to do it — so this waits for the title lookups above rather than
+       announcing blocks whose concept is still an id. The blocks themselves are
+       usable before this fires. */
+    await Promise.all(titles);
+    document.dispatchEvent(new CustomEvent("dd-exercise-blocks:decorated", { detail: { id: nbId, host } }));
   };
 
   /* ── hooks timer.js calls ──────────────────────────────────────── */
