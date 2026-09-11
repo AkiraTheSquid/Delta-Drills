@@ -52911,5 +52911,1085 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 1313,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return the total of its squared entries as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-3., 4.])",
+          "call": "solve(x)",
+          "expected_expr": "25.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1., -2.], [0., 3.]])",
+          "call": "solve(x)",
+          "expected_expr": "14.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0.])",
+          "call": "solve(x)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[0.5, -0.5]]])",
+          "call": "solve(x)",
+          "expected_expr": "0.5",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return (x * x).sum().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1314,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty integer tensor x of any shape, return the number of entries equal to zero as a Python int.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0, 2, 0], [3, 0, 4]])",
+          "call": "solve(x)",
+          "expected_expr": "3",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1, -1])",
+          "call": "solve(x)",
+          "expected_expr": "0",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0])",
+          "call": "solve(x)",
+          "expected_expr": "1",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[0, 0], [0, 0]]])",
+          "call": "solve(x)",
+          "expected_expr": "4",
+          "assert_code": "assert type(result) is int"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return (x == 0).sum().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1315,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 44,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape and a Python float threshold, return the fraction of entries strictly above threshold as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x, threshold):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1., 3.], [3., 5.]])\nthreshold = 3.0",
+          "call": "solve(x, threshold)",
+          "expected_expr": "0.25",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-2., -1., 0.])\nthreshold = -3.0",
+          "call": "solve(x, threshold)",
+          "expected_expr": "1.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2.])\nthreshold = 2.0",
+          "call": "solve(x, threshold)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0., 1., 2.])\nthreshold = 0.0",
+          "call": "solve(x, threshold)",
+          "expected_expr": "2 / 3",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x, threshold):\n    return ((x > threshold).sum() / x.numel()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1316,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 44,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return the number halfway between its smallest and largest entries as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0., 0., 10.])",
+          "call": "solve(x)",
+          "expected_expr": "5.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[-8., -2.], [-3., -4.]])",
+          "call": "solve(x)",
+          "expected_expr": "-5.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([7.5])",
+          "call": "solve(x)",
+          "expected_expr": "7.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1., 9., 2.]]])",
+          "call": "solve(x)",
+          "expected_expr": "5.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return ((x.min() + x.max()) / 2).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1317,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return its population variance as a Python float: the average squared distance from the global mean.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 3.])",
+          "call": "solve(x)",
+          "expected_expr": "1.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0., 2.], [4., 6.]])",
+          "call": "solve(x)",
+          "expected_expr": "5.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([9.])",
+          "call": "solve(x)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-2., -2., 4.])",
+          "call": "solve(x)",
+          "expected_expr": "8.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return ((x - x.mean()) ** 2).mean().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1318,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors predicted and actual with identical shapes, return their mean squared error as a Python float. Each error is the difference between corresponding entries.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(predicted, actual):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([1., 4.])\nactual = t.tensor([2., 2.])",
+          "call": "solve(predicted, actual)",
+          "expected_expr": "2.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([[1., -1.], [0., 2.]])\nactual = t.tensor([[0., 0.], [0., 0.]])",
+          "call": "solve(predicted, actual)",
+          "expected_expr": "1.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([3.])\nactual = t.tensor([3.])",
+          "call": "solve(predicted, actual)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([2., 0.])\nactual = t.tensor([0., 2.])",
+          "call": "solve(predicted, actual)",
+          "expected_expr": "4.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(predicted, actual):\n    return ((predicted - actual) ** 2).mean().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1319,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors a and b with identical shapes, return a Python bool indicating whether any corresponding pair has opposite signs. A pair containing zero does not count.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, b):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([2., -3.])\nb = t.tensor([-1., -2.])",
+          "call": "solve(a, b)",
+          "expected_expr": "True",
+          "assert_code": "assert type(result) is bool"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[0., -2.], [3., 0.]])\nb = t.tensor([[-5., -1.], [1., 8.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "False",
+          "assert_code": "assert type(result) is bool"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([0.])\nb = t.tensor([-2.])",
+          "call": "solve(a, b)",
+          "expected_expr": "False",
+          "assert_code": "assert type(result) is bool"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1., 2.], [3., -4.]])\nb = t.tensor([[1., 2.], [3., 4.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "True",
+          "assert_code": "assert type(result) is bool"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    return ((a * b) < 0).any().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1320,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 46,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors a and b, which may have different shapes, return how much the total of a exceeds the total of b as a Python float. A negative result means b has the larger total.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, b):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([1., 2., 3.])\nb = t.tensor([[2., 2.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "2.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([1.])\nb = t.tensor([[2., 3.], [4., 5.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "-13.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([-3., 3.])\nb = t.tensor([0.])",
+          "call": "solve(a, b)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[[2., 2.], [2., 2.]]])\nb = t.tensor([2., 2.])",
+          "call": "solve(a, b)",
+          "expected_expr": "4.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    return (a.sum() - b.sum()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1321,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return the number of entries strictly above its global average as a Python int.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0., 1., 2., 9.])",
+          "call": "solve(x)",
+          "expected_expr": "1",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0., 4., 4.], [4., 4., 8.]])",
+          "call": "solve(x)",
+          "expected_expr": "1",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([7.])",
+          "call": "solve(x)",
+          "expected_expr": "0",
+          "assert_code": "assert type(result) is int"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-9., 1., 1., 1.])",
+          "call": "solve(x)",
+          "expected_expr": "3",
+          "assert_code": "assert type(result) is int"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return (x > x.mean()).sum().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1322,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 56,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return the fraction of entries equal to its largest value as a Python float. Include all ties.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[3., 1.], [3., 0.]])",
+          "call": "solve(x)",
+          "expected_expr": "0.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-2., -2., -5.])",
+          "call": "solve(x)",
+          "expected_expr": "2 / 3",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([4.])",
+          "call": "solve(x)",
+          "expected_expr": "1.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 2., 3., 4.])",
+          "call": "solve(x)",
+          "expected_expr": "0.25",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return ((x == x.max()).sum() / x.numel()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1323,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 56,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return the total contributed by strictly positive entries as a Python float. Negative entries and zeros contribute nothing.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-5., 2., 3.])",
+          "call": "solve(x)",
+          "expected_expr": "5.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[-1., 0.], [-4., -2.]])",
+          "call": "solve(x)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([7.5])",
+          "call": "solve(x)",
+          "expected_expr": "7.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1., -1.], [2., 4.]]])",
+          "call": "solve(x)",
+          "expected_expr": "7.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.clamp(min=0).sum().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1324,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty float tensor x of any shape, return its root mean square as a Python float: the nonnegative value whose square equals the average squared entry.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-3., 3.])",
+          "call": "solve(x)",
+          "expected_expr": "3.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0., 0.], [0., 4.]])",
+          "call": "solve(x)",
+          "expected_expr": "2.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0.])",
+          "call": "solve(x)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 7.])",
+          "call": "solve(x)",
+          "expected_expr": "5.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return t.sqrt((x * x).mean()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1325,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 65,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors x and weights with identical shapes, return the weighted average of all entries of x as a Python float. Weights are nonnegative with positive total; multiplying every weight by the same positive number must leave the answer unchanged.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x, weights):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 5.])\nweights = t.tensor([3., 1.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "2.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[2., 8.], [20., -4.]])\nweights = t.tensor([[1., 3.], [0., 0.]])",
+          "call": "solve(x, weights)",
+          "expected_expr": "6.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-7.])\nweights = t.tensor([5.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "-7.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 5.])\nweights = t.tensor([30., 10.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "2.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x, weights):\n    return ((x * weights).sum() / weights.sum()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1326,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 66,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors a and b, which may have different shapes and sizes, return the average of all their entries together as a Python float. Every entry has equal weight.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, b):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([0.])\nb = t.tensor([4., 4., 4.])",
+          "call": "solve(a, b)",
+          "expected_expr": "3.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1., 2.], [3., 4.]])\nb = t.tensor([10.])",
+          "call": "solve(a, b)",
+          "expected_expr": "4.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([-2.])\nb = t.tensor([2.])",
+          "call": "solve(a, b)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[[8., 8., 8.]]])\nb = t.tensor([0.])",
+          "call": "solve(a, b)",
+          "expected_expr": "6.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    return ((a.sum() + b.sum()) / (a.numel() + b.numel())).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1327,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 68,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given a nonempty nonnegative float tensor x with positive total, return (shares, total). Shares must have the same shape, preserve the ratios between entries, and total 1; total is the original total as a Python float. Leave x unchanged.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2., 6.])\n_before = x.clone()",
+          "call": "solve(x)",
+          "expected_expr": "(t.tensor([0.25, 0.75]), 8.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0., 3.], [1., 0.]])\n_before = x.clone()",
+          "call": "solve(x)",
+          "expected_expr": "(t.tensor([[0., 0.75], [0.25, 0.]]), 4.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([5.])\n_before = x.clone()",
+          "call": "solve(x)",
+          "expected_expr": "(t.tensor([1.]), 5.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2., 2., 2., 2.])\n_before = x.clone()",
+          "call": "solve(x)",
+          "expected_expr": "(t.tensor([0.25, 0.25, 0.25, 0.25]), 8.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    total = x.sum()\n    return x / total, total.item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1328,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 72,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given a nonconstant float tensor x of any shape and Python floats low < high, return (calibrated, original_span). Apply one order-preserving affine transformation to every entry so the smallest becomes low and the largest becomes high; preserve shape and leave x unchanged. Return original_span as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x, low, high):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2., 4., 6.])\nlow = -1.0\nhigh = 1.0\n_before = x.clone()",
+          "call": "solve(x, low, high)",
+          "expected_expr": "(t.tensor([-1., 0., 1.]), 4.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[3., -1.], [1., 0.]])\nlow = 10.0\nhigh = 18.0\n_before = x.clone()",
+          "call": "solve(x, low, high)",
+          "expected_expr": "(t.tensor([[18., 10.], [14., 12.]]), 4.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-4., -2.])\nlow = 0.0\nhigh = 1.0\n_before = x.clone()",
+          "call": "solve(x, low, high)",
+          "expected_expr": "(t.tensor([0., 1.]), 2.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[0., 3., 1.]]])\nlow = -6.0\nhigh = 0.0\n_before = x.clone()",
+          "call": "solve(x, low, high)",
+          "expected_expr": "(t.tensor([[[-6., 0., -4.]]]), 3.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert isinstance(result[0], t.Tensor) and result[0].shape == x.shape\nassert type(result[1]) is float\nassert t.equal(x, _before)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x, low, high):\n    lo = x.min()\n    span = x.max() - lo\n    return low + (x - lo) * ((high - low) / span), span.item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1329,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 80,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors x and target with identical shapes, return the Python float scale that minimizes the total squared error between scale * x and target. At least one entry of x is nonzero; negative scales are allowed.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x, target):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 2.])\ntarget = t.tensor([2., 5.])",
+          "call": "solve(x, target)",
+          "expected_expr": "2.4",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1., -1.], [0., 2.]])\ntarget = t.tensor([[-2., 2.], [9., -4.]])",
+          "call": "solve(x, target)",
+          "expected_expr": "-2.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([4.])\ntarget = t.tensor([2.])",
+          "call": "solve(x, target)",
+          "expected_expr": "0.5",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1., 1.])\ntarget = t.tensor([1., -1.])",
+          "call": "solve(x, target)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x, target):\n    return ((x * target).sum() / (x * x).sum()).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1330,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 76,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors measured and target with identical shapes, return (offset, error) as Python floats. Choose one offset added to every measured entry to minimize mean squared error against target; error is that minimum mean squared error.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(measured, target):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nmeasured = t.tensor([1., 2.])\ntarget = t.tensor([3., 6.])",
+          "call": "solve(measured, target)",
+          "expected_expr": "(3.0, 1.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\nmeasured = t.tensor([[1., 2.], [3., 4.]])\ntarget = t.tensor([[0., 1.], [2., 3.]])",
+          "call": "solve(measured, target)",
+          "expected_expr": "(-1.0, 0.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\nmeasured = t.tensor([5.])\ntarget = t.tensor([8.])",
+          "call": "solve(measured, target)",
+          "expected_expr": "(3.0, 0.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\nmeasured = t.tensor([0., 0., 0.])\ntarget = t.tensor([-2., 0., 2.])",
+          "call": "solve(measured, target)",
+          "expected_expr": "(0.0, 8 / 3)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(measured, target):\n    offset = (target - measured).mean()\n    error = ((measured + offset - target) ** 2).mean()\n    return offset.item(), error.item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1331,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 78,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors x and weights with identical shapes, return their weighted population variance as a Python float: the weighted average squared distance from the weighted mean. Weights are nonnegative with positive total and need not total 1.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x, weights):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0., 4.])\nweights = t.tensor([3., 1.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "3.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1., 5.], [99., 3.]])\nweights = t.tensor([[1., 1.], [0., 2.]])",
+          "call": "solve(x, weights)",
+          "expected_expr": "2.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-7.])\nweights = t.tensor([4.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "0.0",
+          "assert_code": "assert type(result) is float"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0., 4.])\nweights = t.tensor([30., 10.])",
+          "call": "solve(x, weights)",
+          "expected_expr": "3.0",
+          "assert_code": "assert type(result) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(x, weights):\n    total = weights.sum()\n    mean = (x * weights).sum() / total\n    return ((weights * (x - mean) ** 2).sum() / total).item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1332,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 74,
+      "difficulty_label": "hard"
+    },
+    "exercise": {
+      "question_text": "Given nonempty float tensors predicted and actual with identical shapes and a nonnegative Python float tolerance, return (fraction_within, mean_squared_error) as Python floats. An entry is within tolerance when its distance from the corresponding actual value is at most tolerance.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(predicted, actual, tolerance):\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([0., 1., 3.])\nactual = t.tensor([0., 0., 0.])\ntolerance = 1.0",
+          "call": "solve(predicted, actual, tolerance)",
+          "expected_expr": "(2 / 3, 10 / 3)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([[1., -1.], [2., -2.]])\nactual = t.tensor([[0., 0.], [0., 0.]])\ntolerance = 0.5",
+          "call": "solve(predicted, actual, tolerance)",
+          "expected_expr": "(0.0, 2.5)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([3.])\nactual = t.tensor([3.])\ntolerance = 0.0",
+          "call": "solve(predicted, actual, tolerance)",
+          "expected_expr": "(1.0, 0.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        },
+        {
+          "setup_code": "import torch as t\npredicted = t.tensor([-2., 2.])\nactual = t.tensor([0., 0.])\ntolerance = 2.0",
+          "call": "solve(predicted, actual, tolerance)",
+          "expected_expr": "(1.0, 4.0)",
+          "assert_code": "assert type(result) is tuple and len(result) == 2\nassert type(result[0]) is float and type(result[1]) is float"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [],
+      "canonical_solution": "import torch as t\n\ndef solve(predicted, actual, tolerance):\n    squared = (predicted - actual) ** 2\n    fraction = (squared <= tolerance ** 2).sum() / squared.numel()\n    return fraction.item(), squared.mean().item()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

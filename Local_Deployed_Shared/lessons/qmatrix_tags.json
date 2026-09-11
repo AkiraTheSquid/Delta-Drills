@@ -38,7 +38,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-faded"
@@ -104,7 +103,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -122,7 +122,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -339,7 +340,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-faded"
@@ -409,7 +409,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -448,7 +449,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -557,7 +559,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-guided"
@@ -769,7 +770,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-independent"
@@ -914,7 +914,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-independent"
@@ -1176,7 +1175,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-independent"
@@ -1209,7 +1207,6 @@
   ],
   "new_syntax": [
    "torch.count_nonzero",
-   "syntax.compare",
    "syntax.bitwise"
   ],
   "source": "kp-faded"
@@ -2575,7 +2572,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-guided"
  },
@@ -2593,7 +2591,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-guided"
  },
@@ -2611,7 +2610,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -2629,7 +2629,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -10132,7 +10133,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -10150,7 +10152,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -10168,7 +10171,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-faded"
  },
@@ -10186,7 +10190,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -10204,7 +10209,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -10222,7 +10228,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-independent"
  },
@@ -10240,7 +10247,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-integrated"
  },
@@ -10258,7 +10266,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-integrated"
  },
@@ -10276,7 +10285,8 @@
    "Tensor.min",
    "Tensor.sum",
    "torch.Tensor",
-   "torch.allclose"
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-integrated"
  },
@@ -15445,6 +15455,386 @@
    "syntax.with",
    "torch.no_grad",
    "Tensor.training"
+  ],
+  "source": "kp-integrated"
+ },
+ "1313": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1314": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1315": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1316": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1317": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1318": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1319": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1320": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1321": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1322": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1323": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1324": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-independent"
+ },
+ "1325": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1326": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1327": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1328": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1329": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1330": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1331": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
+  ],
+  "source": "kp-integrated"
+ },
+ "1332": {
+  "target_kcs": [
+   "numpy.aggregations"
+  ],
+  "supporting_kcs": [
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "Tensor.any",
+   "Tensor.max",
+   "Tensor.mean",
+   "Tensor.min",
+   "Tensor.sum",
+   "torch.Tensor",
+   "torch.allclose",
+   "syntax.compare"
   ],
   "source": "kp-integrated"
  }

@@ -2,11 +2,11 @@
 kc: numpy.aggregations
 title: Whole-tensor aggregations and Python scalars
 supporting: [numpy.elementwise-ufuncs]
-new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.Tensor, torch.allclose]
+new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.Tensor, torch.allclose, syntax.compare]
 faded: [26, 28, 64, 984, 985, 986]
 guided: [495, 496]
-independent: [62, 497, 498, 987, 988, 989]
-integrated: [990, 991, 992]
+independent: [62, 497, 498, 987, 988, 989, 1313, 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323, 1324]
+integrated: [990, 991, 992, 1325, 1326, 1327, 1328, 1329, 1330, 1331, 1332]
 ---
 
 ## Concept: reductions — collapsing a tensor to one number
@@ -221,8 +221,10 @@ def solve(x):
 
 Yes/no questions about tensors have two standard shapes:
 
-- **Comparison, then reduce.** A comparison builds a boolean tensor (previous
-  KP); `x.any()` (is at least one entry True?) or `x.all()` (are they all
+- **Comparison, then reduce.** A comparison builds a boolean tensor of the
+  same shape: `x > 0` marks positive entries with `True`. The operators `<`
+  and `>` exclude the boundary; `<=` and `>=` include it.
+  `x.any()` (is at least one entry True?) or `x.all()` (are they all
   True?) collapses it to one answer. `(x > 0).all()` asks "is everything
   positive?".
 - **Whole-tensor equality.** `t.equal(a, b)` is an exact match of shape
@@ -349,6 +351,42 @@ From the drill bank: q987 (centre and scale a tensor using whole-tensor statisti
 From the drill bank: q988 (whether two tensors hold equal totals within tolerance).
 From the drill bank: q989 (the average and whether the tensor is constant).
 
+### q1313
+Total squared magnitude.
+
+### q1314
+Count zero entries.
+
+### q1315
+Fraction above a threshold.
+
+### q1316
+Midpoint of the observed range.
+
+### q1317
+Population variance.
+
+### q1318
+Prediction error.
+
+### q1319
+Opposite-sign pairs.
+
+### q1320
+Difference between batch totals.
+
+### q1321
+Count above the global average.
+
+### q1322
+Share of entries at the maximum.
+
+### q1323
+Total positive contribution.
+
+### q1324
+Root mean square.
+
 ## Guided practice
 
 ### q495
@@ -374,6 +412,30 @@ Return a centred tensor, its removed average, and a centring verdict.
 
 ### q992
 Return span, average, and whether the tensor is constant.
+
+### q1325
+Weighted average.
+
+### q1326
+Average across unequal batches.
+
+### q1327
+Normalized mass with original total.
+
+### q1328
+Calibrate an observed range.
+
+### q1329
+Best single scale factor.
+
+### q1330
+Correct a constant sensor offset.
+
+### q1331
+Weighted spread.
+
+### q1332
+Accuracy within a tolerance.
 
 ## Misconceptions
 
