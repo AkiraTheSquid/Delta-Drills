@@ -122,6 +122,26 @@
   --xp-to: #22d3ee;
   --xp-glow-rgb: 34 211 238;
 
+  /* ── THE READING SURFACE ────────────────────────────────────────────────
+     The four colours a page of PROSE needs beyond --text/--muted, shared by
+     every surface that renders a lesson: the ARENA notebook, the Notebooks
+     tab, a lesson page and the problem statement in the practice split.
+
+     They started as literals inside styles/practice/arena-notebook.css, where
+     they were LessWrong's own greys and were safe to hardcode because that
+     page was pinned to the light palette in every theme. It is not any more
+     (see the LIGHT block below), so a literal there is now the
+     white-text-on-white bug with the colours reversed — #424242 headings on a
+     #202124 page. Hence: tokens, three times, like everything else here.
+
+     The LIGHT values are LessWrong's, unchanged and still measured off their
+     render. The dark ones follow the theme rather than inventing a second
+     palette. */
+  --prose-head: var(--white);
+  --prose-subhead: var(--muted);
+  --prose-link: var(--ok);
+  --prose-chip: rgb(var(--well-rgb) / calc(0.55 * var(--well-k)));
+
   --code-key: #7dd3fc;
   --code-str: #a5f3a6;
   --code-err: #fca5a5;
@@ -209,6 +229,26 @@
   --xp-to: #78d9ec;
   --xp-glow-rgb: 120 217 236;
 
+  /* ── THE READING SURFACE ────────────────────────────────────────────────
+     The four colours a page of PROSE needs beyond --text/--muted, shared by
+     every surface that renders a lesson: the ARENA notebook, the Notebooks
+     tab, a lesson page and the problem statement in the practice split.
+
+     They started as literals inside styles/practice/arena-notebook.css, where
+     they were LessWrong's own greys and were safe to hardcode because that
+     page was pinned to the light palette in every theme. It is not any more
+     (see the LIGHT block below), so a literal there is now the
+     white-text-on-white bug with the colours reversed — #424242 headings on a
+     #202124 page. Hence: tokens, three times, like everything else here.
+
+     The LIGHT values are LessWrong's, unchanged and still measured off their
+     render. The dark ones follow the theme rather than inventing a second
+     palette. */
+  --prose-head: var(--white);
+  --prose-subhead: var(--muted);
+  --prose-link: var(--ok);
+  --prose-chip: rgb(var(--well-rgb) / calc(0.55 * var(--well-k)));
+
   --code-key: #78d9ec;
   --code-str: #a5d6a7;
   --code-err: #f28b82;
@@ -233,25 +273,34 @@
 }
 
 /* ── LIGHT ──────────────────────────────────────────────────────────────── */
-/* 🔴 THE ARENA NOTEBOOK PAGE IS ALWAYS LIGHT, IN EVERY THEME. It is
-   LessWrong's reading surface (styles/practice/arena-notebook.css), and Seth
-   asked for their look copied exactly — which is a light page. It takes the
-   whole tested light palette from HERE rather than declaring a second one, so
-   a change to these values still reaches it and the two cannot drift apart.
+/* 🪦 THE ARENA NOTEBOOK USED TO BE PINNED TO THIS PALETTE IN EVERY THEME —
+   `:root[data-arena-notebook]` was a second selector on this block, so opening
+   a notebook turned the whole app white even for a learner who had chosen the
+   dark theme. Seth, 2026-09-10: "if it's in dark mode, both the notebook and
+   the coding interface or whatever should be in dark mode. And then if it's in
+   light mode, it should just have what it currently has."
 
-   🔴 THE SCOPE IS :root, NOT #page-arena-notebook, AND THAT IS NOT A STYLE
-   PREFERENCE — it is the difference between working and half-working. Custom
-   properties inherit DOWNWARDS only. The element that paints the page is
-   `body` (styles/base.css: `background: var(--bg)`), which is an ANCESTOR of
-   the page div, so tokens declared on the page could never reach it. Shipped
-   that way on 2026-09-02 and the result was a half-lit screen: the reading
-   column went white while the body stayed black, and the contents rail —
-   `position: fixed`, so out of the page's painted box entirely — hung on the
-   black. Anything portalled to body (modals, the topbar) has the same problem.
-   app.js's switchTab sets the attribute; Local_Deployed_Shared/watch.py pins
-   that wiring so it cannot be deleted silently. */
-:root[data-theme="light"],
-:root[data-arena-notebook] {
+   So the notebook now follows `data-theme` like every other page, and light
+   mode is where it still gets exactly the surface it always had. What
+   `data-arena-notebook` still carries is the part that was never about colour:
+   the reading MEASURE and LessWrong's type scale, which are theme-independent
+   and live in styles/practice/arena-notebook.css. That sheet layers a light or
+   a dark set of LessWrong's greys on top of these tokens depending on the
+   theme.
+
+   🔴 THE SCOPE OF THAT ATTRIBUTE IS STILL :root, NOT #page-arena-notebook, AND
+   THAT IS NOT A STYLE PREFERENCE — it is the difference between working and
+   half-working. Custom properties inherit DOWNWARDS only. The element that
+   paints the page is `body` (styles/base.css: `background: var(--bg)`), which
+   is an ANCESTOR of the page div, so tokens declared on the page could never
+   reach it. Shipped that way on 2026-09-02 and the result was a half-lit
+   screen: the reading column went white while the body stayed black, and the
+   contents rail — `position: fixed`, so out of the page's painted box entirely
+   — hung on the black. Anything portalled to body (modals, the topbar) has the
+   same problem. app.js's switchTab sets the attribute;
+   Local_Deployed_Shared/watch.py pins that wiring so it cannot be deleted
+   silently. */
+:root[data-theme="light"] {
   /* --bg is the PAGE and also every recessed field (.text-input, .result-item
      and friends all say `background: var(--bg)`), so it is the off-white and
      --surface is the pure white the cards sit on. Inverting those two makes
@@ -318,6 +367,26 @@
   --xp-to: #0891b2;
   --xp-glow-rgb: 8 145 178;
 
+  /* ── THE READING SURFACE ────────────────────────────────────────────────
+     The four colours a page of PROSE needs beyond --text/--muted, shared by
+     every surface that renders a lesson: the ARENA notebook, the Notebooks
+     tab, a lesson page and the problem statement in the practice split.
+
+     They started as literals inside styles/practice/arena-notebook.css, where
+     they were LessWrong's own greys and were safe to hardcode because that
+     page was pinned to the light palette in every theme. It is not any more
+     (see the LIGHT block below), so a literal there is now the
+     white-text-on-white bug with the colours reversed — #424242 headings on a
+     #202124 page. Hence: tokens, three times, like everything else here.
+
+     The LIGHT values are LessWrong's, unchanged and still measured off their
+     render. The dark ones follow the theme rather than inventing a second
+     palette. */
+  --prose-head: #424242;
+  --prose-subhead: #616161;
+  --prose-link: #327e09;
+  --prose-chip: #f5f5f5;
+
   --code-key: #0b6f8a;
   --code-str: #12703a;
   --code-err: #b3261e;
@@ -356,4 +425,46 @@
      this list quietly breaks. It carries no colour, so it belongs here rather
      than in the three theme blocks. */
   --code-font: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+
+  /* THE READING FACE — the one every piece of PROSE in the app is set in: the
+     ARENA notebook, the Notebooks tab, a lesson page, and the problem
+     statement in the left half of the practice split. Same reasoning as
+     --code-font directly above: "the reading surfaces look the same
+     everywhere" is a promise that a second copy of this list quietly breaks.
+
+     🔴 IT IS A SERIF, AND THAT IS DELIBERATE. It came in as LessWrong's body
+     stack (`--lw-serif`, styles/practice/arena-notebook.css) when Seth asked
+     for their reading surface copied exactly, and it only lived on that one
+     page. Seth, 2026-09-10, on the practice split: "the left side needs to
+     have the same font as the notebook for the text and then of course the
+     code will have its own separate font". So it is promoted here and the
+     notebook sheet reads it from here — one face, four surfaces.
+
+     Why this particular list: LessWrong's own prose face is `warnock-pro`, a
+     commercial Adobe face served from THEIR Typekit kit, which we cannot ship
+     (see the long note in arena-notebook.css). This is the chain that sits
+     behind it in their `serifStackBody`, plus URW Palladio (P052) — the
+     metric-compatible Palatino clone Linux actually has, and Palatino is the
+     first thing they fall back to.
+
+     --prose-heading is ET Book, which IS their heading face and IS
+     MIT-licensed, so it is vendored. Its @font-face lives in
+     arena-notebook.css, which index.html links unconditionally, so the face is
+     registered document-wide and every surface here can ask for it. */
+  --prose-font: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
+    P052, "URW Palladio L", Georgia, serif;
+  --prose-heading: "ETBookRoman", var(--prose-font);
+
+  /* THE UI FACE — chrome. Buttons, tabs, labels, banners, the topbar: every
+     piece of text that is part of the INTERFACE rather than part of what the
+     learner is reading. It is `body`'s font-family in styles/base.css and it
+     was the app's only face until 2026-09-10.
+
+     It has to be nameable now that it is not. With prose set in a serif, a
+     control that sits INSIDE a piece of prose — the note under a worked
+     example, a rich-output table under a cell — inherits the serif and starts
+     reading as part of the lesson. `font-family: inherit` used to mean "the UI
+     face" everywhere in this app and quietly stopped meaning it; this is what
+     those places say instead. */
+  --ui-font: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
 }

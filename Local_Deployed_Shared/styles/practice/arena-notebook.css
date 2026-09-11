@@ -57,7 +57,7 @@
 
 .arena-notebooks-container {
   margin: 0 auto;
-  max-width: calc(var(--anb-measure, 682px) + 32px);
+  max-width: calc(682px * var(--anb-zoom, 1) + 32px);
   padding: 0 16px;
 }
 
@@ -117,7 +117,7 @@
 .arena-nb-head {
   border-bottom: 1px solid var(--border);
   margin: 0 auto 18px;
-  max-width: var(--anb-measure, 682px);
+  max-width: calc(682px * var(--anb-zoom, 1));
   padding-bottom: 16px;
 }
 
@@ -210,10 +210,10 @@
 
 #page-arena-notebook .arena-nb-md-editor {
   background: var(--surface);
-  border: 1px solid #8ab4f8;
+  border: 1px solid var(--info);
   border-radius: 4px;
   box-sizing: border-box;
-  color: #202124;
+  color: var(--white);
   /* 🔴 THE RAW SOURCE SCALES WITH WHAT IT RENDERS INTO. Left at a flat 14px
      this editor opened as a speck under 25px prose — you would be reading the
      Markdown for a heading at half the size of the heading. Same token as the
@@ -227,7 +227,7 @@
 }
 
 #page-arena-notebook .arena-nb-md-editor:focus {
-  box-shadow: 0 0 0 2px rgb(66 133 244 / 0.18);
+  box-shadow: 0 0 0 2px rgb(var(--info-rgb) / 0.18);
   outline: none;
 }
 
@@ -264,7 +264,7 @@
   background: transparent;
   border: 0;
   border-radius: 3px;
-  color: #5f6368;
+  color: var(--muted);
   cursor: pointer;
   font: 500 calc(11px * var(--anb-zoom, 1)) / 1.2 Inter, ui-sans-serif,
     system-ui, sans-serif;
@@ -272,8 +272,8 @@
 }
 
 .arena-nb-cell-tools button:hover {
-  background: #e8f0fe;
-  color: #174ea6;
+  background: rgb(var(--info-rgb) / 0.14);
+  color: var(--info);
 }
 
 /* 🔴 A TOUCH SCREEN IS NOT A NARROW SCREEN. These controls were revealed by
@@ -311,20 +311,22 @@
 
 #page-arena-notebook .nbv-cells,
 #page-arena-notebook .arena-nb-head {
-  max-width: var(--anb-measure);
+  max-width: calc(682px * var(--anb-zoom, 1));
 }
 
-/* 🔴 CODE IS IN THE COLUMN NOW, NOT BESIDE IT. It used to break out by 99px
-   each side to 880px, and that is what put the runnable cells further left
-   than the prose above them — under the contents tree, and visibly unaligned.
-   Seth, 2026-09-03: "make it such that the body text is aligned with the code
-   blocks ... aligned on both the left and the right". At 1.4x the column is
-   ~955px, which is wider than the 880px the breakout was buying anyway.
+/* 🔴 CODE IS IN THE COLUMN, NOT BESIDE IT. It used to break out by 99px each
+   side to 880px, and that is what put the runnable cells further left than the
+   prose above them — under the contents tree, and visibly unaligned. Seth,
+   2026-09-03: "make it such that the body text is aligned with the code blocks
+   ... aligned on both the left and the right". At 1.4x the column is ~955px,
+   which is wider than the 880px the breakout was buying anyway. That is now
+   just `.nbv-cells { max-width: calc(682px * var(--anb-zoom, 1)) }` above.
 
-   The grey fill goes with it: on a white page a tinted block reads as an
-   inert quote, and their pages have no such panel. The border still says
-   where the cell starts and ends. */
-#page-arena-notebook .nbv-cell.nbv-code,
+   🪦 The grey fill was dropped here at the same time, as a page override of a
+   filled rule in notebook-view.css — which left the same element tinted on two
+   surfaces and hairlined on this one. The rectangle is the shared rule now;
+   only the hints disclosure still needs saying, because it is not `.nbv-code`
+   and so is not covered by it. */
 #page-arena-notebook .nbv-cell.nbv-hints {
   background: transparent;
 }
@@ -374,24 +376,13 @@
      measure. */
   --anb-zoom: 1.4;
 
-  /* One column for the whole document: prose and code share both edges. */
-  --anb-measure: calc(682px * var(--anb-zoom, 1));
-
-  /* 🔴 CODE IS SET AT THE PARAGRAPH SIZE. Seth, 2026-09-06: "the text for the
-     code or whatever should be the same size as the text for the regular
-     paragraphs." So this is the SAME expression as `.nbv-md`'s font-size and
-     line-height, written once and shared by all three kinds of code on the
-     page — the runnable cells, the fenced blocks in prose, and the output
-     under a cell — so they cannot drift apart from the prose or from each
-     other. Change the number here, nowhere else.
-
-     What it costs, so the trade is visible: 25.5px monospace fits about 57
-     columns in this column, and upstream's lines run to ~88, so a long line
-     scrolls sideways inside its own cell rather than wrapping. That is the
-     price of matching the prose exactly; dropping this to ~0.8× the prose
-     size buys the whole line back. */
-  --anb-code-size: calc(18.2px * var(--anb-zoom, 1));
-  --anb-code-lh: calc(26px * var(--anb-zoom, 1));
+  /* 🪦 --anb-measure, --anb-code-size and --anb-code-lh WERE DECLARED HERE,
+     and then briefly at :root in styles/practice/notebook-view.css, and now
+     nowhere: a custom property is substituted where it is DECLARED, so a token
+     derived from --anb-zoom freezes at whichever zoom its own block had and
+     the surfaces that set a different one silently keep the root's number. The
+     measurements are written out at each point of use instead. See the note at
+     the top of that file. This page still sets the zoom and nothing else. */
 
   /* 🔴 THE TREE'S CEILING, NOT ITS WIDTH. The width it actually takes is the
      margin the centred column leaves — `clamp(320px, 100%, var(--anb-toc-w))`
@@ -409,17 +400,31 @@
      panel a third of itself. */
   --anb-toc-w: min(440px, 32vw);
 
-  --lw-serif: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
-    P052, "URW Palladio L", Georgia, serif;
-  --lw-header: "ETBookRoman", var(--lw-serif);
+  /* 🪦 --lw-serif / --lw-header WERE DECLARED HERE. They are
+     --prose-font / --prose-heading in styles/variables.css now, because this
+     stopped being the only page set in them: Seth, 2026-09-10, asked the
+     practice split's problem panel and the lesson pages for "the same font as
+     the notebook", so the face had to outlive this attribute. Same list, same
+     provenance — see the note in variables.css. */
+}
 
-  /* Their surface, over the light palette variables.css already handed this
-     page: a pure white page rather than our off-white --bg, their three greys,
-     and their hairline. --accent-text is the label hover in the rail, which
-     they take to full-strength text rather than to a brand colour.
+/* ── LessWrong's palette — THE LIGHT THEME ONLY ────────────────────────────
+   🪦 THIS PAGE USED TO BE LIGHT IN EVERY THEME. variables.css handed
+   `:root[data-arena-notebook]` the whole light palette, so a learner on the
+   dark theme who opened a notebook got a white screen. Seth, 2026-09-10: "if
+   it's in dark mode, both the notebook and the coding interface or whatever
+   should be in dark mode. And then if it's in light mode, it should just have
+   what it currently has."
 
-     --bg becomes --surface, so the page and the topbar are the same white and
-     the bar reads as LessWrong's does: a hairline rule rather than a panel. */
+   "What it currently has" is this block, and it is unchanged — their three
+   greys and their hairline, over the light palette. It just has to ASK for the
+   light theme now instead of forcing it.
+
+   --bg becomes --surface, so the page and the topbar are the same white and
+   the bar reads as LessWrong's does: a hairline rule rather than a panel.
+   --accent-text is the label hover in the rail, which they take to
+   full-strength text rather than to a brand colour. */
+:root[data-theme="light"][data-arena-notebook] {
   --bg: var(--surface);
   --text: rgba(0, 0, 0, 0.87);
   --muted: #616161;
@@ -429,159 +434,46 @@
   --accent-text: rgba(0, 0, 0, 0.87);
 }
 
+/* ── The same page, on a dark theme ────────────────────────────────────────
+   Deliberately short. The dark and blue palettes are already a reading
+   surface — that is what the Colab greys were built for — so this does NOT
+   restate them, it only repeats the ONE structural move the light block makes
+   that the theme does not: the rail's hover goes to full-strength text rather
+   than to the brand red, so a contents tree does not read as a list of links
+   to click.
+
+   Everything else that differed between the two surfaces is a --prose-* token
+   in variables.css, declared once per theme like every other colour.
+
+   🔴 `:not([data-theme="light"])` rather than listing dark and blue. A fourth
+   theme is "a block in variables.css, an entry in THEMES, and nothing else"
+   (theme.js), and naming the themes here would quietly break that promise —
+   the new theme would get the light block's greys on a dark page. */
+:root:not([data-theme="light"])[data-arena-notebook] {
+  --accent-text: var(--white);
+}
+
 #page-arena-notebook {
   background: var(--bg);
   color: var(--text);
 }
 
-#page-arena-notebook .nbv-md {
-  color: var(--text);
-  font-family: var(--lw-serif);
-  font-size: calc(18.2px * var(--anb-zoom, 1));
-  line-height: calc(26px * var(--anb-zoom, 1));
-}
-
-#page-arena-notebook .nbv-md p {
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-}
-
-/* Their list items are tighter than their paragraphs — 6.5px between rows
-   against 18.2px between paragraphs — which is most of why a bulleted section
-   of theirs reads as one block and ours read as a stack. */
-#page-arena-notebook .nbv-md li {
-  margin-bottom: calc(6.5px * var(--anb-zoom, 1));
-}
-
-#page-arena-notebook .nbv-md h1,
-#page-arena-notebook .nbv-md h2,
-#page-arena-notebook .nbv-md h3,
-#page-arena-notebook .arena-nb-title {
-  font-family: var(--lw-header);
-  font-weight: 400;
-}
-
-#page-arena-notebook .nbv-md h1 {
-  color: #424242;
-  font-size: calc(36.4px * var(--anb-zoom, 1));
-  line-height: calc(41.25px * var(--anb-zoom, 1));
-  margin: calc(-3px * var(--anb-zoom, 1)) 0 calc(24.4px * var(--anb-zoom, 1));
-}
-
-#page-arena-notebook .nbv-md h2 {
-  color: #424242;
-  font-size: calc(26px * var(--anb-zoom, 1));
-  line-height: calc(31.35px * var(--anb-zoom, 1));
-  margin: calc(26px * var(--anb-zoom, 1)) 0 calc(21.6px * var(--anb-zoom, 1));
-}
-
-#page-arena-notebook .nbv-md h3 {
-  color: #616161;
-  font-size: calc(20.8px * var(--anb-zoom, 1));
-  line-height: calc(25.1px * var(--anb-zoom, 1));
-  margin: calc(20.8px * var(--anb-zoom, 1)) 0;
-}
-
-/* h4 is the one heading they do NOT set in the display face: it drops to the
-   body serif and carries its weight instead, which is what keeps a fourth
-   level from reading as another h3. */
-#page-arena-notebook .nbv-md h4 {
-  color: #616161;
-  font-family: var(--lw-serif);
-  font-size: calc(18.2px * var(--anb-zoom, 1));
-  font-weight: 600;
-  line-height: calc(23px * var(--anb-zoom, 1));
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0 calc(12px * var(--anb-zoom, 1));
-}
-
-#page-arena-notebook .nbv-md a {
-  color: #327e09;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-#page-arena-notebook .nbv-md blockquote {
-  border-left: 3px solid var(--border);
-  color: var(--text);
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-  padding-left: calc(18px * var(--anb-zoom, 1));
-}
-
-/* 🔴 INLINE PROSE CODE ONLY — a `code` span sitting INSIDE a sentence. A
-   fenced block is also `.nbv-md code`, and it is not this: see the code-cell
-   section at the end of this sheet, which claims `pre > code` back off this
-   rule. The runnable cell's source is `.nbv-src code`, a third element again.
-
-   Their inline code is much smaller than their body text — 12.74px against
-   18.2px — which only looks right because it is set on a grey chip, so the
-   chip and the size travel together and neither survives on its own. */
-#page-arena-notebook .nbv-md :not(pre) > code {
-  background: #f5f5f5;
-  font-size: calc(12.74px * var(--anb-zoom, 1));
-  line-height: calc(18.1px * var(--anb-zoom, 1));
-  padding: 1px 3px;
-}
-
 /* The section header is this page's title block, so it follows the headings
-   rather than the app's sans chrome. */
+   rather than the app's sans chrome — but it is the one heading here that is
+   NOT inside a `.nbv-md` cell, so the shared scale in
+   styles/practice/notebook-view.css does not reach it and it restates the
+   face. Same h2 numbers as that sheet's `.nbv-md h2`. */
 #page-arena-notebook .arena-nb-title {
+  font-family: var(--prose-heading);
+  font-weight: 400;
   font-size: calc(26px * var(--anb-zoom, 1));
   line-height: calc(31.35px * var(--anb-zoom, 1));
 }
 
 #page-arena-notebook .arena-nb-desc {
-  font-family: var(--lw-serif);
+  font-family: var(--prose-font);
   font-size: calc(18.2px * var(--anb-zoom, 1));
   line-height: calc(26px * var(--anb-zoom, 1));
-}
-
-/* ---- code cells ---------------------------------------------------------- */
-
-/* 🔴 A CODE BLOCK IS A RECTANGLE, NOT A PANEL. Seth, 2026-09-06: "make it such
-   that the code cells don't have the gray background or whatever, but are just
-   the regular rectangles, kind of like Colab does."
-
-   The runnable cells were already unfilled (`background: transparent` further
-   up this sheet, 2026-09-03). What was still grey was everything markdown
-   renders: `.nbv-md code` chips a fenced ```python block the same way it chips
-   an inline `len(x)`, and an ARENA section is mostly fenced blocks — 406 of
-   them on 0.1 alone. So the chip rule is inline-only now and a fence gets the
-   same hairline rectangle a runnable cell has. Same border, same radius: the
-   two kinds of block differ by whether there is a Run button, and nothing
-   else. */
-#page-arena-notebook .nbv-md pre {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin: calc(18.2px * var(--anb-zoom, 1)) 0;
-  overflow-x: auto;
-  padding: 10px 14px;
-}
-
-#page-arena-notebook .nbv-md pre > code {
-  background: none;
-  display: block;
-  padding: 0;
-  white-space: pre;
-}
-
-/* The one size rule for every kind of code on the page — see --anb-code-size.
-   `.nbv-out` is in it because output set at half the size of the code that
-   printed it reads as a footnote to the cell rather than as its answer. */
-#page-arena-notebook .nbv-src code,
-#page-arena-notebook .nbv-md pre > code,
-#page-arena-notebook .nbv-out,
-#page-arena-notebook .nbv-checker-note {
-  font-size: var(--anb-code-size);
-  line-height: var(--anb-code-lh);
-}
-
-/* The Run gutter is sized off the cell it sits beside, so it grows with the
-   code rather than floating at the top of a much taller box. */
-#page-arena-notebook .nbv-run {
-  font-size: calc(var(--anb-code-size) * 0.8);
-}
-
-#page-arena-notebook .nbv-count {
-  font-size: calc(var(--anb-code-size) * 0.62);
 }
 
 /* ---- the editor layer (practice/notebook-code-edit.js) ------------------- */
@@ -610,13 +502,3 @@
   content: "\200B";
 }
 
-/* A cell being edited is the thing on screen. The colour comes from
-   styles/practice/code-highlight.css, which the notebook shares with the
-   practice editor — the `cm-*` classes are painted by the same tokeniser. */
-#page-arena-notebook .nbv-src code:focus {
-  outline: none;
-}
-
-#page-arena-notebook .nbv-cell.nbv-code:focus-within {
-  border-color: var(--border-strong);
-}
