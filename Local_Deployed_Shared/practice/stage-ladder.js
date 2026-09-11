@@ -104,10 +104,16 @@ const StageLadder = (() => {
      see"; its `partial` rung serves a drill with a solved example above it and
      was displayed as "Faded — most of the solution is written". Each named the
      other one's rung, so the screen promised support that was not on the page.
-     The order below is the one the course actually teaches. */
+     The order below is the one the course actually teaches.
+
+     🔴 THREE SECTIONS SINCE 2026-09-11. The `faded` rung (fill-in-the-blank)
+     is retired on the backend (`kc_ladder_math.DRILL_FLOOR = "partial"`): a
+     concept goes lesson -> Solo -> Integrated, and the support that used to be
+     the blanks is the example schedule on Solo. `STAGE_ALIASES` still accepts
+     the word `faded` for the rows filed there before the retirement, and maps
+     it onto Solo, which is where the backend now puts that learner. */
   const STAGES = [
     { id: "lesson", label: "Lesson", blurb: "Read the explanation and run the examples." },
-    { id: "faded", label: "Faded", blurb: "Most of the solution is written — supply the rest." },
     { id: "example", label: "Solo", blurb: "Write the whole thing yourself. An example pops up now and then, less and less." },
     { id: "solo", label: "Integrated", blurb: "Every idea in this concept at once, with nothing to read first." },
   ];
@@ -127,7 +133,6 @@ const StageLadder = (() => {
      empty panel in front of a learner. */
   const INFO_KEY = {
     lesson: "ladder.lesson",
-    faded: "ladder.faded",
     example: "ladder.example",
     solo: "ladder.solo",
   };
@@ -151,7 +156,9 @@ const StageLadder = (() => {
   */
   const STAGE_ALIASES = {
     worked: "lesson",
-    faded: "faded",
+    // Retired rung (2026-09-11). Rows filed there read as Solo, which is the
+    // floor the backend lifts them onto (`kc_ladder_math._floored`).
+    faded: "example",
     partial: "example",
     solo: "solo",
     independent: "solo",
@@ -176,7 +183,6 @@ const StageLadder = (() => {
      threshold is worse than one drawn empty: the learner fills it and nothing
      happens. */
   const PROMOTE_AT = {
-    faded: 0.34,   // → worked example  (backend PROMOTE_LO.faded)
     example: 0.51, // → solo            (backend PROMOTE_LO.partial)
   };
 
@@ -301,7 +307,7 @@ const StageLadder = (() => {
     // back to the window average would run the bar BACKWARDS on a correct
     // answer — the one thing a progress bar may never do.
     if (at > shown) return 1;
-    if (STAGES[shown].id === "partial" && current.soloProgress && !current.soloProgress.ready) {
+    if (STAGES[shown].id === "example" && current.soloProgress && !current.soloProgress.ready) {
       return current.soloProgress.fraction;
     }
     const parts = [];

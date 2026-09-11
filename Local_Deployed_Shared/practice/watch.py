@@ -400,7 +400,10 @@ def check_promotion_threshold_matches_the_backend():
             r"PROMOTE_AT\s*=\s*\{(.*?)\}", ladder_js, re.S).group(1))}
 
     # backend rung -> the rung the display calls it
-    for backend_stage, displayed in (("faded", "faded"), ("partial", "example")):
+    # `faded` left both tables when the rung was retired (2026-09-11).
+    assert "faded" not in promote_lo and "faded" not in promote_at, \
+        "the retired faded rung is back on a promotion table"
+    for backend_stage, displayed in (("partial", "example"),):
         assert backend_stage in promote_lo, f"backend lost PROMOTE_LO[{backend_stage}]"
         assert displayed in promote_at, (
             f"stage-ladder.js lost the {displayed!r} threshold — that section "
@@ -454,17 +457,17 @@ def check_promotion_threshold_matches_the_backend():
         "the bar would ignore the route the learner is actually on"
     )
 
-    for backend_stage, displayed in (("faded", "faded"), ("partial", "example")):
+    for backend_stage, displayed in (("partial", "example"),):
         assert abs(promote_at[displayed] - promote_lo[backend_stage]) < 1e-9, (
             f"the {displayed!r} rung draws its promotion mark at "
             f"{promote_at[displayed]} but kc_graph promotes at "
             f"{promote_lo[backend_stage]} — the app is showing a rule it does "
             f"not follow"
         )
-    assert len(promote_at) == 2, (
+    assert len(promote_at) == 1, (
         "PROMOTE_AT gained a rung. `lesson` is left by reading and `solo` is the "
         "top of the per-concept ladder — there is no threshold above either, so "
-        "a third entry means the display believes in a promotion the backend "
+        "a second entry means the display believes in a promotion the backend "
         "does not make"
     )
 

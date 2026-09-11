@@ -605,8 +605,8 @@ def check_infotips():
         "somewhere this check cannot see"
     )
     rung_keys = set(_re.findall(r':\s*"([^"]+)"', info_key.group(1)))
-    assert len(rung_keys) == 4, (
-        f"INFO_KEY names {len(rung_keys)} rungs, expected 4 — a rung with no "
+    assert len(rung_keys) == 3, (
+        f"INFO_KEY names {len(rung_keys)} rungs, expected 3 — a rung with no "
         f"ⓘ is a rung the learner cannot ask about"
     )
     anchors.update(rung_keys)
