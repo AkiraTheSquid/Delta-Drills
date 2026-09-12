@@ -161,6 +161,7 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+- 2026-09-12: `index.html` links `styles/graph-views.css?v=1` and `concept-graph/graph-views.js?v=1` — the Knowledge Graph's Adaptive / Condensed / Complete view card (`concept-graph/README.md` 2026-09-12) had been committed with nothing loading it. `lesson-graph.js?v=31` adds one export, `window.deltaKcSection`.
 - 2026-09-11: `concept-pill.js` (`?v=4`) / `styles/concept-pill.css` (`?v=3`) / `watch_concept_pill.py` — the pill has a SECOND screen. On `#page-arena-notebook` it shows the concept of the section the reader is scrolled to and how ready they are for it (`dd-notebook-concept` from `practice/arena-notebook-focus.js`), filled in the knowledge graph's readiness colour; the practice page still wins when it has a question. Different number, said so in the tooltip; `null` still draws empty. Details: `practice/README.md` 2026-09-11.
 - 2026-08-30: The jargon glossary lost 37 of its 76 entries in the ARENA content cut — each defined a term for a concept that no longer exists, and `deltaFocusConceptGraphKc` returns quietly on an unknown id, so "Take me to the lesson" would have opened the graph and focused nothing. `watch_jargon.py`'s parser-blindness floor moved 60 → 37 with it; it tracks the real count on purpose, since its only job is to catch the PARSER going blind.
 

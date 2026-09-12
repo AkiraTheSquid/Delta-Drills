@@ -38,6 +38,10 @@
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
   <link rel="stylesheet" href="styles/how-it-works.css?v=34" />
+  <!-- The Knowledge Graph's view modes (adaptive / condensed / complete) and
+       its bottom-left settings card. AFTER how-it-works.css, which owns the
+       .kg2-* rules it overrides on source order. -->
+  <link rel="stylesheet" href="styles/graph-views.css?v=1" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -2231,7 +2235,11 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=1" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=2" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=30" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=31" defer></script>
+  <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
+       borrows its Cytoscape instance (deltaConceptGraphCy) and its section
+       rule (deltaKcSection); `defer` keeps document order. -->
+  <script src="concept-graph/graph-views.js?v=1" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows

@@ -2068,6 +2068,9 @@
      file's alone. Null until build() has run, which is the same "not yet"
      every other export here answers. */
   window.deltaConceptGraphCy = () => cy;
+  // Which ARENA section a concept belongs to ({id, label, color}); read by
+  // graph-views.js so its condensed view groups by the same rule drawn here.
+  window.deltaKcSection = (kc) => _sectionOf(kc);
 
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }
