@@ -1952,6 +1952,7 @@
 
     /* ---- colour-mode toggle (Mastery ↔ Lessons) ---- */
     const controls = document.querySelector(".kg2-controls");
+    window.dispatchEvent(new CustomEvent("delta:practice-target-graph-ready"));
     if (controls && !$("kg-colormode")) {
       const seg = document.createElement("div");
       // Styled by ID. It carried `.kg2-seg` and that is the lesson-segment
