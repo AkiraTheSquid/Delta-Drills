@@ -46,7 +46,7 @@ const DeltaKernel = (() => {
 
   /* Run one cell in the learner's session.
 
-     Returns { ok, stdout, stderr, fresh, busy, unavailable }. `unavailable`
+     Returns { ok, stdout, stderr, fresh, busy, detail, unavailable }. `unavailable`
      is the caller's signal to fall back to the stateless runner — it never
      carries output, and it is never an error the learner should read.
 
@@ -75,9 +75,13 @@ const DeltaKernel = (() => {
       unsupported = true;
       return { unavailable: true };
     }
-    // 409 is the kernel saying it is mid-cell, or the box saying it is full.
-    // Both are "in a moment", not a failure of this code.
-    if (res.status === 409) return { busy: true };
+    // 409 is the kernel saying it is mid-cell, the box saying it is full, or
+    // (2026-09-12) a spawn that is still in flight or gave up. All are "in a
+    // moment", not a failure of this code — but they are DIFFERENT moments,
+    // and the server's `detail` says which. Carry it: collapsing every 409
+    // into "still running a cell" told the learner a runaway cell was the
+    // problem on a day when nothing was running at all.
+    if (res.status === 409) return { busy: true, detail: await _detail(res) };
     // Signed out, or a token the server no longer honours: no kernel to be
     // had, and the stateless path is the right answer.
     if (res.status === 401 || res.status === 403) return { unavailable: true };
@@ -110,14 +114,18 @@ const DeltaKernel = (() => {
 
   /* One line the learner can read AND report: the status, and the server's
      own `detail` when it sent one (FastAPI's validation errors do). */
-  const _refusal = async (res) => {
-    let detail = "";
+  // The server's `detail` string, or "" when the body carried none.
+  const _detail = async (res) => {
     try {
       const data = await res.json();
-      detail = typeof data?.detail === "string" ? data.detail : JSON.stringify(data?.detail ?? data);
+      return typeof data?.detail === "string" ? data.detail : JSON.stringify(data?.detail ?? data);
     } catch (_err) {
-      detail = "";
+      return "";
     }
+  };
+
+  const _refusal = async (res) => {
+    const detail = await _detail(res);
     return `The kernel server refused this cell (HTTP ${res.status})${detail ? `: ${detail}` : "."}\n`;
   };
 

@@ -326,6 +326,14 @@ const LessonNotebook = (() => {
      stderr and succeeded, and a cell that calls `sys.exit(1)` writes nothing
      and did not. Reading stderr alone paints the first one red and hands the
      second one "✓ Ran successfully (no printed output)". */
+  /* What a 409 reads as. The server says WHICH "come back in a moment" this
+     is — a cell mid-run, a session still starting, a spawn that gave up, a
+     full box — and that sentence is the message. The old fixed line is only
+     the fallback for a body with no detail. */
+  const _busyText = (reply) =>
+    (reply && typeof reply.detail === "string" && reply.detail.trim()) ||
+    "The kernel is still running a cell — wait for it to finish.";
+
   const _kernelText = (reply) => {
     const stdout = (reply.stdout || "").replace(/\r\n/g, "\n").trim();
     const stderr = (reply.stderr || "").replace(/\r\n/g, "\n").trim();
@@ -360,7 +368,7 @@ const LessonNotebook = (() => {
     });
     if (!reply || reply.unavailable) return null;
     if (reply.busy) {
-      return { text: "The kernel is still running a cell — wait for it to finish.", failed: true };
+      return { text: _busyText(reply), failed: true };
     }
     // A kernel that did not exist a moment ago has never seen the cells above
     // this one. Replay them in one call and use THAT result, so the learner
@@ -370,7 +378,7 @@ const LessonNotebook = (() => {
       const rebuilt = await kernel.runCell({ ...request, code: _programUpTo(cells, index) });
       if (!rebuilt || rebuilt.unavailable) return null;
       if (rebuilt.busy) {
-        return { text: "The kernel is still running a cell — wait for it to finish.", failed: true };
+        return { text: _busyText(rebuilt), failed: true };
       }
       reply = rebuilt;
     }
@@ -530,7 +538,7 @@ const LessonNotebook = (() => {
     if (!reply || reply.unavailable) return null;
     if (reply.busy) {
       return {
-        text: "The kernel is still running a cell — wait for it to finish.",
+        text: _busyText(reply),
         failed: true,
         busy: true,
         fresh: false,

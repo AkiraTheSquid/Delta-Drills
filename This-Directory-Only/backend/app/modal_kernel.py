@@ -80,6 +80,13 @@ SANDBOX_MEMORY_MB = _env_int("DD_KERNEL_MEMORY_MB", 4096)
 # Seconds to wait for the shim's `{"ready": true}` — image build on a cold
 # cache included, which is why it is generous.
 BOOT_SECONDS = _env_int("DD_KERNEL_BOOT_SECONDS", 600)
+# Seconds a spawn may take END TO END before the request gives up on it.
+# `modal.Sandbox.create` has no timeout of its own: on 2026-09-12 the prod
+# process's spawn threads never returned (the box was starved; ssh hung too),
+# and because the placeholder held the session lock the whole time, every
+# later click was answered "already running a cell" until the machine was
+# restarted. Above BOOT_SECONDS is meaningless — the shim wait is inside it.
+SPAWN_SECONDS = _env_int("DD_KERNEL_SPAWN_SECONDS", 120)
 _BUSY_WAIT_SECONDS = 1.0
 
 _SHIM_PATH = Path(__file__).with_name("modal_kernel_shim.py")
@@ -303,6 +310,46 @@ def _spawn(session_id: str, context: str = "") -> ModalSession:
     return session
 
 
+def _spawn_with_deadline(session_id: str, context: str, deadline: float) -> ModalSession:
+    """`_spawn`, but the caller stops waiting after `deadline` seconds.
+
+    The spawn itself keeps running on its own thread — there is no way to
+    cancel a `Sandbox.create` mid-flight — so a sandbox that arrives AFTER the
+    caller gave up is terminated on the spot: nobody holds it, and it bills.
+    The gate makes "did the caller give up" and "did the spawn land" one
+    decision, so a late arrival can neither leak nor be handed to no one."""
+    gate = threading.Lock()
+    outcome: dict = {}
+    finished = threading.Event()
+
+    def _work():
+        try:
+            session = _spawn(session_id, context=context)
+        except BaseException as exc:  # surfaced to the caller below
+            outcome["error"] = exc
+            finished.set()
+            return
+        with gate:
+            if outcome.get("abandoned"):
+                logger.warning("modal kernel: %s spawned after the %ss deadline; terminating",
+                               session_id, deadline)
+                session.shutdown()
+            else:
+                outcome["session"] = session
+        finished.set()
+
+    threading.Thread(target=_work, daemon=True, name=f"modal-spawn-{session_id}").start()
+    finished.wait(deadline)
+    with gate:
+        if "session" in outcome:
+            return outcome["session"]
+        if "error" in outcome:
+            raise outcome["error"]
+        outcome["abandoned"] = True
+    raise RuntimeError(f"The Python session did not start within {int(deadline)} seconds "
+                       "— try again in a moment.")
+
+
 # --- the registry -------------------------------------------------------------
 
 _kernels: dict[str, ModalSession] = {}
@@ -368,7 +415,7 @@ def _reserve_and_run(session_id, code, bootstrap, filename, context, timeout,
             fresh = True
     if fresh:
         try:
-            session = _spawn(session_id, context=context)
+            session = _spawn_with_deadline(session_id, context, SPAWN_SECONDS)
         except Exception as exc:
             with _registry_lock:
                 _kernels.pop(session_id, None)
@@ -384,6 +431,11 @@ def _reserve_and_run(session_id, code, bootstrap, filename, context, timeout,
         placeholder.lock.release()
 
     if not session.lock.acquire(timeout=_BUSY_WAIT_SECONDS):
+        # A placeholder (no sandbox yet) is a spawn in flight, not a cell.
+        # Saying "running a cell" here is what made a hung spawn read as a
+        # runaway cell — nothing was running.
+        if session.sandbox is None:
+            raise RuntimeError("Your Python session is still starting — give it a moment.")
         raise RuntimeError("This kernel is already running a cell.")
     try:
         with _registry_lock:

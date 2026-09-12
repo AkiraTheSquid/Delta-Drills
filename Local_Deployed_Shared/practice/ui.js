@@ -267,6 +267,23 @@ function renderQuestion(q, count) {
     return;
   }
   practiceQuestionCount = count;
+  /* 🔴 A FAILED-TESTS BLOCK OUTLIVES THE QUESTION IT GRADED. It is a singleton
+     hidden only by Submit and Next (events.js), so a question that arrives by
+     any other door — a preferences refresh, a boot fetch landing after a
+     restored review, a ladder swap — renders under the previous question's
+     failures. Seen 2026-09-12: q233's timed-out review ("Failed 5 of 5 ·
+     ID 233", every case `NoneType.tolist`) sat under q67's fresh starter and
+     read as q67's grade. Hide it when the question CHANGES; a re-render of
+     the same question keeps its own block, which is what a tab switch after
+     a rated miss relies on. */
+  const staleFailures = document.getElementById("failed-tests-block");
+  if (
+    staleFailures &&
+    !staleFailures.classList.contains("hidden") &&
+    staleFailures.dataset.questionId !== stableQuestionId(q)
+  ) {
+    hideFailedTests();
+  }
   /* The heading names the CONCEPT under test, not the running question count
      (Seth, 2026-08-23). "Question 21" is a number that only goes up; "Reshape,
      ravel, and element order" is what the next ten minutes are about.
@@ -812,6 +829,9 @@ function renderFailedTests(result, question) {
   block.innerHTML =
     `<div class="failed-tests-title">Failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}${id ? ` · ID ${_escapeHtml(id)}` : ""}</div>` +
     `<pre class="failed-tests-body">${rows.join("\n")}</pre>`;
+  // Whose failures these are, so a later render of a DIFFERENT question can
+  // tell a stale block from its own (see renderQuestion).
+  block.dataset.questionId = id;
   block.classList.remove("hidden");
 }
 
