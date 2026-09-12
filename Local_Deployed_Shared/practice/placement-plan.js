@@ -41,6 +41,8 @@ const PlacementPlan = (() => {
   let selected = null;
   let options = null;      // from /diagnostic/plan, once
   let loading = null;
+  let scope = "all";
+  const selectedScope = () => scope;
 
   const _api = () => (typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI);
 
@@ -104,6 +106,22 @@ const PlacementPlan = (() => {
     host.classList.toggle("hidden", !show);
     if (!show) return;
     host.textContent = "";
+    const scopeLabel = el("label", "placement-plan-title", "Placement focus ");
+    const scopePicker = el("select", "placement-scope");
+    scopePicker.id = "placement-scope";
+    for (const [value, label] of [["all", "Whole curriculum"], ["raytracing-0.1", "Ray Tracing 0.1 · rapid"]]) {
+      const option = el("option", "", label);
+      option.value = value;
+      scopePicker.appendChild(option);
+    }
+    scopePicker.value = scope;
+    scopePicker.addEventListener("change", () => { scope = scopePicker.value; _paintPicker(status); });
+    scopeLabel.appendChild(scopePicker);
+    host.appendChild(scopeLabel);
+    if (scope === "raytracing-0.1") {
+      host.appendChild(el("p", "placement-plan-note", "Up to 8 unscaffolded problems · 25-minute cap. Starts with ray–segment intersections, jumps ahead after passes, checks prerequisites after misses. Finishing targets your practice toward 0.1; untested concepts remain uncertain."));
+      return;
+    }
     const head = el("div", "placement-plan-head");
     head.appendChild(el("span", "placement-plan-title", "How long do you have?"));
     const n = Number(options?.assessed_kcs);
@@ -195,7 +213,7 @@ const PlacementPlan = (() => {
     if (status.active) {
       chip(`${hm(plan.remaining_secs)} of ${hm(plan.budget_secs)} left`);
     } else if (status.completed_at) {
-      chip(`took ${hm(plan.spent_secs)} of ${hours(Number(plan.hours))}`);
+      chip(`took ${hm(plan.spent_secs)} of ${hm(plan.budget_secs)}`);
     } else {
       chip("stops early when settled");
     }
@@ -222,8 +240,9 @@ const PlacementPlan = (() => {
     const plan = status?.plan;
     if (!plan) return null;
     const done = Number(status.probes_done) || 0;
-    if (status.active) return `In progress · ${done} answered · ${hm(plan.remaining_secs)} left`;
-    if (status.completed_at) return `Complete · ${done} problems in ${hm(plan.spent_secs)}`;
+    const prefix = status.scope === "raytracing-0.1" ? "Ray Tracing 0.1 · " : "";
+    if (status.active) return `${prefix}In progress · ${done} answered · ${hm(plan.remaining_secs)} left`;
+    if (status.completed_at) return `${prefix}Complete · ${done} problems in ${hm(plan.spent_secs)}`;
     return "Not started";
   };
 
@@ -251,6 +270,8 @@ const PlacementPlan = (() => {
   return {
     render,
     selectedHours,
+    selectedScope,
+    setScope: (value) => { scope = value === "raytracing-0.1" ? value : "all"; _paintPicker(lastStatus); },
     statusLine,
     progressLabel: () => progressLabel(lastStatus),
     PLAN_HOURS: PLAN_HOURS.slice(),

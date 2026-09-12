@@ -134,7 +134,8 @@ const PlacementResults = (() => {
       chip(`${probedCount}/${areas.length} areas probed`);
     }
     const seeded = Number(status.atoms_seeded);
-    if (Number.isFinite(seeded)) chip(`${seeded} concepts seeded`);
+    if (status.scope === "raytracing-0.1") chip("Ray Tracing 0.1 practice selected");
+    else if (Number.isFinite(seeded)) chip(`${seeded} concepts seeded`);
   };
 
   /* The headline. Same dial, same number and same caption as the Practice
@@ -147,6 +148,16 @@ const PlacementResults = (() => {
     const host = byId("placement-readiness");
     if (!host) return;
     host.textContent = "";
+    if (status.scope === "raytracing-0.1") {
+      const tested = (status.kcs || []).filter((k) => k.probes > 0);
+      host.appendChild(el("p", "placement-overall-caption", "Your starting point for Ray Tracing 0.1"));
+      host.appendChild(el("p", "placement-overall-detail",
+        `${tested.filter((k) => k.state === "known").length} concepts passed · ${tested.filter((k) => k.state !== "known").length} to check or practise. Passed composites provide inferred prerequisite readiness for 14 days; later practice misses revoke it. Untested concepts remain uncertain.`));
+      const link = el("a", "placement-chip", "Open your focused practice graph →");
+      link.href = "/knowledge-graph";
+      host.appendChild(link);
+      return;
+    }
 
     const figure = el("div", "placement-overall");
     const dial = el("div", "readiness-dial readiness-dial--sm readiness-dial--unknown");
@@ -336,7 +347,7 @@ const PlacementResults = (() => {
        practice. They are the "Uncertain" rows above, so one line with the
        count — not 41 names again. */
     const fast = Array.isArray(status.fast_track) ? status.fast_track : [];
-    if (fast.length) {
+    if (fast.length && status.scope !== "raytracing-0.1") {
       host.appendChild(el("p", "placement-kc-note",
         `${fast.length} uncertain concept${fast.length === 1 ? "" : "s"} go first in practice.`));
     }

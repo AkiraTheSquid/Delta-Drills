@@ -63,7 +63,7 @@ from app import lessons
 from app import example_schedule
 
 from app import bkt_mastery
-from app import kc_prefs, solo_progress
+from app import kc_prefs, solo_progress, practice_targets
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -357,6 +357,7 @@ def kc_is_unlocked(user_state, kc: str) -> bool:
     # off" must not lock everything downstream out of reach.
     return all(
         kc_prefs.is_disabled(user_state, p) or kc_is_learned(user_state, p)
+        or p in practice_targets.readiness(user_state)
         for p in node["prereqs"]
     )
 
@@ -372,6 +373,8 @@ def question_kc_gate(user_state, qid: int) -> bool:
     questions carry no q-matrix row, and locking them out entirely would remove
     content rather than order it, which ch. 32 is explicit about not doing."""
     kcs = question_kcs(qid)
+    if not practice_targets.allows_question(user_state, qid):
+        return False
     if not kcs:
         return True
     # A drill on a concept the learner switched off is not servable at all —
@@ -404,7 +407,10 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
     by_kc = _questions_by_kc()
 
     out: List[str] = []
+    placed = practice_targets.readiness(user_state)
     for kc in reg:
+        if not practice_targets.includes(user_state, kc) or kc in placed:
+            continue
         # The learner switched this concept off (graph Settings tab). It is
         # not learned and not locked — it is simply not served.
         if kc_prefs.is_disabled(user_state, kc):
@@ -704,7 +710,10 @@ def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
 
 def kc_stage(user_state, kc: str) -> str:
     """Which rung to serve for this concept right now."""
-    return _stage_from(kc_estimate(user_state, kc), ladder_view(user_state, kc))
+    stage = _stage_from(kc_estimate(user_state, kc), ladder_view(user_state, kc))
+    if practice_targets.solo_entry(user_state, kc) and LADDER_STAGES.index(stage) < LADDER_STAGES.index("partial"):
+        return "partial"
+    return stage
 
 
 def note_worked_seen(user_state, kc: str) -> None:
@@ -956,7 +965,7 @@ def kc_report(user_state, eligible=None) -> dict:
             "depth": depth.get(kc, 0),
             "n_questions": len(by_kc.get(kc, ())),
             "frontier_rank": order.get(kc),
-            "ladder_stage": _stage_from(ladder_est, ladder_view(user_state, kc)),
+            "ladder_stage": kc_stage(user_state, kc),
             "ladder_estimate": ladder_est,
         }
 

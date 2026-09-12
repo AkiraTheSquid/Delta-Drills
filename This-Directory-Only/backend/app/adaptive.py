@@ -202,6 +202,8 @@ class UserPracticeState:
     # interpreted by diagnostic.py; kept as a plain JSON-able dict so the
     # posterior is always recomputed from the probe log, never persisted.
     diagnostic: Dict = field(default_factory=dict)
+    practice_target: str = "all"
+    practice_placements: Dict = field(default_factory=dict)
     # First-encounter exposure: kc_id -> ISO-8601 UTC of when the learner
     # completed the introducing KP. Drives the lesson gate (lessons.py) —
     # a question whose target KC is absent here triggers lesson-first.
@@ -268,6 +270,8 @@ def _save_user_state(state: UserPracticeState) -> None:
         "atom_last_ts": state.atom_last_ts,
         "self_reported_level": state.self_reported_level,
         "diagnostic": state.diagnostic,
+        "practice_target": state.practice_target,
+        "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
         "kc_ladder": state.kc_ladder,
         "kc_posteriors": state.kc_posteriors,
@@ -306,6 +310,8 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.atom_last_ts = data.get("atom_last_ts") or {}
         state.self_reported_level = data.get("self_reported_level")
         state.diagnostic = data.get("diagnostic") or {}
+        state.practice_target = data.get("practice_target") or "all"
+        state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}
         # Additive, back-compat: saves predating the ladder simply start it
         # empty, which reads as "no worked example seen" — the correct cold

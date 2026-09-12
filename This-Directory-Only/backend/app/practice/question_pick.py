@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, diagnostic, kc_graph, lessons
+from app import content_gaps, diagnostic, kc_graph, lessons, practice_targets
 from app.practice.grading import select_question_for_difficulty
 from app.prioritization import (
     answered_question_ids,
@@ -109,7 +109,7 @@ def pick_for_subtopic(
         raise SubtopicDry(gap)
 
     # Teach one concept, then drill THAT concept — see lessons.segment_drill.
-    question = lessons.segment_drill(question, user_state.kc_exposure, served) or question
+    question = lessons.segment_drill(question, practice_targets.effective_exposure(user_state), served) or question
 
     # 🔴 "NEXT" MAY NOT HAND BACK THE PROBLEM THE LEARNER IS LOOKING AT.
     #
@@ -146,4 +146,3 @@ def pick_for_subtopic(
         content_gaps.record(user_id, stuck)
         raise SubtopicDry(stuck)
     return sub_state, question, next_kc, gap
-

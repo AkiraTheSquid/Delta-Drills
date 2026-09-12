@@ -22,6 +22,7 @@ from app import bkt_mastery
 from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
+from app import practice_targets
 # Re-exported: every caller reads these off this module (question_pick, the
 # test scripts), and the history readers moved out only for size.
 from app.attempt_history import answered_question_ids, missed_question_ids  # noqa: F401
@@ -77,6 +78,8 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     Way ch. 32 is explicit about not doing ("no topics are skipped").
     """
     qid = getattr(question, "id", None)
+    if not practice_targets.allows_question(user_state, qid):
+        return False
     if kc_graph.question_kcs(qid):
         return kc_graph.question_kc_gate(user_state, qid)
     tags = getattr(question, "atom_tags", None) or []

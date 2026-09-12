@@ -356,7 +356,7 @@ const PracticeAPI = {
      read from it when the caller does not say, so the start button in
      advance-events.js needs no knowledge of the picker. The server falls back
      to its default plan for anything it does not recognise. */
-  async diagnosticStart(hours) {
+  async diagnosticStart(hours, scope) {
     if (practiceMode !== "backend") return null;
     const h = Number.isFinite(Number(hours)) && Number(hours) > 0
       ? Number(hours)
@@ -364,7 +364,8 @@ const PracticeAPI = {
     const res = await apiFetch("/api/practice/diagnostic/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hours: Number.isFinite(Number(h)) && Number(h) > 0 ? Number(h) : null }),
+      body: JSON.stringify({ hours: Number.isFinite(Number(h)) && Number(h) > 0 ? Number(h) : null,
+        scope: scope || window.PlacementPlan?.selectedScope?.() || "all" }),
     });
     if (res.status === 401) {
       handleExpiredToken();

@@ -1086,6 +1086,16 @@
 
   <main class="page hidden" id="page-knowledge-graph">
     <div class="container kg-container kg2">
+      <div class="practice-focus" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 0">
+        <label>Practice focus
+          <select id="practice-target" disabled>
+            <option value="all">Whole curriculum</option>
+            <option value="raytracing-0.1">Ray Tracing 0.1</option>
+          </select>
+        </label>
+        <button type="button" id="ray-placement-btn">Place me for Ray Tracing 0.1</button>
+        <span id="practice-target-note" role="status" style="font-size:12px">Loading practice focus…</span>
+      </div>
       <!-- Graph first, lesson second — in the DOM, not just in the layout, so
            tab order and the narrow-screen stack both read the way the page
            does: pick a concept on the map, then read what it teaches. -->
@@ -2270,7 +2280,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=28"></script>
+  <script src="practice/api.js?v=29"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=33"></script>
   <script src="practice/kernel.js?v=7"></script>
@@ -2386,8 +2396,9 @@ t.manual_seed(0)
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-plan.js?v=2"></script>
-  <script src="practice/placement-results.js?v=4"></script>
+  <script src="practice/placement-plan.js?v=3"></script>
+  <script src="practice/placement-results.js?v=5"></script>
+  <script src="practice/practice-target.js?v=1"></script>
   <script src="practice/diagnostic-page.js?v=25"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call

@@ -327,6 +327,8 @@ class DiagnosticEdgeViolation(BaseModel):
 
 class DiagnosticStatusResponse(BaseModel):
     active: bool
+    scope: Literal["all", "raytracing-0.1"] = "all"
+    practice_target: Literal["all", "raytracing-0.1"] = "all"
     completed_at: str | None = None
     # Shortest / longest concept clock this learner is assessed on — at the
     # top level, not only inside `plan`, so the picker can quote it BEFORE a
@@ -351,6 +353,11 @@ class DiagnosticStatusResponse(BaseModel):
 class DiagnosticStartRequest(BaseModel):
     # One of diagnostic.PLAN_HOURS; anything else falls back to the default.
     hours: int | None = None
+    scope: Literal["all", "raytracing-0.1"] = "all"
+
+
+class PracticeTargetRequest(BaseModel):
+    target: Literal["all", "raytracing-0.1"]
 
 
 class DiagnosticPlanResponse(BaseModel):

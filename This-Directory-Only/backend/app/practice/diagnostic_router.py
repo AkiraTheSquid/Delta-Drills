@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import diagnostic
+from app import diagnostic, practice_targets
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -26,6 +26,7 @@ from app.practice_schemas import (
     DiagnosticPlanResponse,
     DiagnosticStartRequest,
     DiagnosticStatusResponse,
+    PracticeTargetRequest,
 )
 from app.questions import get_question_by_id
 
@@ -38,6 +39,8 @@ def _status(user_state) -> DiagnosticStatusResponse:
     lo, hi = diagnostic.cap_range(user_state)
     return DiagnosticStatusResponse(
         active=d["active"],
+        scope=d.get("scope", "all"),
+        practice_target=user_state.practice_target,
         completed_at=d["completed_at"],
         per_problem_min_secs=lo,
         per_problem_max_secs=hi,
@@ -92,9 +95,27 @@ def diagnostic_start(
     user: User = Depends(get_current_user),
 ) -> DiagnosticStatusResponse:
     user_state = get_user_state(str(user.id))
-    diagnostic.start(user_state, hours=payload.hours if payload else None)
+    if diagnostic.should_run(user_state) and diagnostic.get_diag(user_state).get("scope", "all") != (payload.scope if payload else "all"):
+        raise HTTPException(status_code=409, detail="Finish the current placement before starting a different one.")
+    diagnostic.start(user_state, hours=payload.hours if payload else None, scope=payload.scope if payload else "all")
     save_user_state(str(user.id))
     return _status(user_state)
+
+
+@router.get("/practice-target")
+def practice_target(user: User = Depends(get_current_user)):
+    state = get_user_state(str(user.id))
+    return {"target": state.practice_target,
+            "kcs": sorted(practice_targets.scope_kcs(state.practice_target) or []),
+            "placement_ready": sorted(practice_targets.readiness(state))}
+
+
+@router.post("/practice-target")
+def set_practice_target(payload: PracticeTargetRequest, user: User = Depends(get_current_user)):
+    state = get_user_state(str(user.id))
+    state.practice_target = payload.target
+    save_user_state(str(user.id))
+    return practice_target(user)
 
 
 @router.post("/diagnostic/answer", response_model=DiagnosticStatusResponse)

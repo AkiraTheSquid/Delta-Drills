@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
-from app import bkt_mastery, kc_graph, kc_prefs, placement_model
+from app import bkt_mastery, kc_graph, kc_prefs, placement_model, practice_targets
 from app.adaptive import UserPracticeState
 from app.questions import get_question_by_id, get_subtopics, get_topic_for_subtopic
 
@@ -201,11 +201,18 @@ def normalize_hours(hours) -> int:
     return h if h in PLAN_HOURS else DEFAULT_PLAN_HOURS
 
 
-def start(user_state: UserPracticeState, hours=None) -> dict:
+def start(user_state: UserPracticeState, hours=None, scope="all") -> dict:
     """Explicitly (re)start: clears the probe log and the clock, keeps BKT.
     The previous run's frozen estimates are dropped with it — a retake is a
     new measurement, not an amendment."""
     d = get_diag(user_state)
+    if d["active"]:
+        return d
+    if d.get("completed_at"):
+        user_state.practice_placements[d.get("scope", "all")] = json.loads(json.dumps(d))
+    d["scope"] = scope
+    if scope == practice_targets.RAY:
+        user_state.practice_target = scope
     h = normalize_hours(hours)
     d["active"] = True
     d["declined"] = False
@@ -213,7 +220,7 @@ def start(user_state: UserPracticeState, hours=None) -> dict:
     d["probes"] = []
     d["plan"] = {
         "hours": h,
-        "budget_secs": h * 3600,
+        "budget_secs": practice_targets.BUDGET_SECS if scope == practice_targets.RAY else h * 3600,
         "per_problem_secs": PER_PROBLEM_SECS,
         "started_at": _now().isoformat(),
     }
@@ -277,7 +284,9 @@ def reload_caches() -> None:
 
 def assessed_kcs(user_state: UserPracticeState) -> List[str]:
     """Every registry concept the learner has not switched off."""
-    return [k for k in kc_graph._registry() if not kc_prefs.is_disabled(user_state, k)]
+    scope = practice_targets.scope_kcs(get_diag(user_state).get("scope", "all"))
+    return [k for k in kc_graph._registry() if not kc_prefs.is_disabled(user_state, k)
+            and (scope is None or k in scope)]
 
 
 def _graph(user_state: UserPracticeState) -> placement_model.Graph:
@@ -398,6 +407,8 @@ def effective_budget(user_state: UserPracticeState) -> int:
     """Estimated total problems this run will hold (done + what the remaining
     time is likely to fit). A ceiling for the progress bar, not a promise."""
     d = get_diag(user_state)
+    if d.get("scope") == practice_targets.RAY:
+        return len(d["probes"]) if d["completed_at"] else practice_targets.MAX_PROBES
     done = len(d["probes"])
     if d["completed_at"]:
         return max(1, done)
@@ -409,6 +420,8 @@ def effective_budget(user_state: UserPracticeState) -> int:
 def effective_min_probes(user_state: UserPracticeState) -> int:
     """Earliest a run can finish on evidence: one problem per still-uncertain
     concept, floored at 1."""
+    if get_diag(user_state).get("scope") == practice_targets.RAY:
+        return 1
     P = beliefs(user_state)
     open_kcs = sum(1 for p in P.values() if placement_model.classify(p) == "uncertain")
     return max(1, len(get_diag(user_state)["probes"]) + open_kcs)
@@ -522,6 +535,12 @@ def select_probe(user_state: UserPracticeState):
             record_probe(user_state, resumed, "incorrect", timed_out=True)
             if d["completed_at"]:
                 return None
+    if d.get("scope") == practice_targets.RAY:
+        kc, q = practice_targets.pick_probe(user_state, _candidates(user_state, assessed_kcs(user_state)))
+        if q is not None:
+            d["pending"] = {"question_id": q.id, "kc": kc, "served_at": _now().isoformat(),
+                            "cap_secs": kc_cap_secs(kc)}
+        return q
     ranked, cands, _graph_, _B = _ranked(user_state)
     for _score, kc in ranked:
         arena, generic = cands[kc]
@@ -724,6 +743,10 @@ def should_finish(user_state: UserPracticeState) -> bool:
 def _should_stop(user_state: UserPracticeState) -> bool:
     if remaining_secs(user_state) < MIN_REMAINING_SECS:
         return True
+    d = get_diag(user_state)
+    if d.get("scope") == practice_targets.RAY:
+        return len(d["probes"]) >= practice_targets.MAX_PROBES or practice_targets.pick_probe(
+            user_state, _candidates(user_state, assessed_kcs(user_state)))[1] is None
     ranked, cands, graph, B = _ranked(user_state)
     if not ranked:
         return True
@@ -758,6 +781,10 @@ def _kc_rows(user_state: UserPracticeState) -> List[dict]:
                 arena_counts[p["kc"]] = arena_counts.get(p["kc"], 0) + 1
     rows = []
     for kc, p in P.items():
+        # Fast section placement reports uncertainty for untested concepts.
+        # Never seed them (or shared atoms) from sparse indirect evidence.
+        if diag.get("scope") == practice_targets.RAY:
+            continue
         node = reg.get(kc) or {}
         rows.append({
             "kc": kc,
@@ -844,6 +871,7 @@ def finish(user_state: UserPracticeState, refinish: bool = False) -> dict:
     diag["atoms_written"] = sorted(seeded)
     diag["fast_track"] = [r["kc"] for r in rows if r["state"] == "uncertain"]
     diag["edge_violations"] = placement_model.edge_violations(P, graph)
+    user_state.practice_placements[diag.get("scope", "all")] = json.loads(json.dumps(diag))
     return diag
 
 
