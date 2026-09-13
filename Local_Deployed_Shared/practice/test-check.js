@@ -81,6 +81,39 @@ def _delta_to_jsonable(value):
         return {k: _delta_to_jsonable(v) for k, v in value.items()}
     return value
 
+_DELTA_PRIMITIVE = (str, bytes, bool, int, float, complex, list, tuple, dict, set, frozenset, type(None), np.generic, np.ndarray)
+
+def _delta_name_match(a, b):
+    # Mirrors code_runner._delta_name_match: a non-primitive object whose
+    # str() IS the expected string (a dtype where its name was asked for) is
+    # the right answer in the wrong wrapper — accept it and say so.
+    if isinstance(a, str) == isinstance(b, str):
+        return False
+    name, obj = (a, b) if isinstance(a, str) else (b, a)
+    if isinstance(obj, _DELTA_PRIMITIVE):
+        return False
+    try:
+        if str(obj) != name:
+            return False
+    except Exception:
+        return False
+    _delta_case_notes.append(("name" if isinstance(a, str) else "obj", type(obj).__name__, name))
+    return True
+
+def _delta_note_text():
+    out = []
+    for direction in ("obj", "name"):
+        hits = [(k, n) for d, k, n in _delta_case_notes if d == direction]
+        if not hits:
+            continue
+        kinds = ", ".join(dict.fromkeys(k for k, _ in hits))
+        names = ", ".join(dict.fromkeys(n for _, n in hits))
+        if direction == "obj":
+            out.append(f"accepted: you returned the {kinds} object {names} where its name (a string) was expected — wrap it in str(...)")
+        else:
+            out.append(f"accepted: you returned the name {names!r} where the {kinds} object itself was expected")
+    return "; ".join(out)
+
 def _delta_equal(a, b):
     if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
         return bool(np.array_equal(np.asarray(a), np.asarray(b)))
@@ -88,10 +121,14 @@ def _delta_equal(a, b):
         if len(a) != len(b):
             return False
         return all(_delta_equal(x, y) for x, y in zip(a, b))
-    return bool(a == b)
+    if bool(a == b):
+        return True
+    return _delta_name_match(a, b)
 
 _delta_results = []
+_delta_case_notes = []
 for _delta_case in json.loads(${testsJsonLiteral}):
+    _delta_case_notes = []
     try:
         if _delta_case.get("setup_code"):
             np.random.seed(0)
@@ -109,6 +146,7 @@ for _delta_case in json.loads(${testsJsonLiteral}):
             "actual": repr(_delta_to_jsonable(_delta_actual)),
             "expected": repr(_delta_to_jsonable(_delta_expected)),
             "error": "",
+            "note": _delta_note_text(),
         })
     except Exception as _delta_exc:
         _delta_results.append({
@@ -258,7 +296,8 @@ json.dumps(_delta_results)
       } else if (t.error) {
         rows.push(`<span class="run-test--fail">✗</span> ${call}\n    error: ${esc(clip(lastLine(t.error)))}`);
       } else if (t.passed) {
-        rows.push(`<span class="run-test--pass">✓</span> ${call}\n    got:      ${esc(clip(t.actual))}`);
+        rows.push(`<span class="run-test--pass">✓</span> ${call}\n    got:      ${esc(clip(t.actual))}`
+          + (t.note ? `\n    <span class="run-test--note">${esc(clip(t.note))}</span>` : ""));
       } else {
         rows.push(`<span class="run-test--fail">✗</span> ${call}\n    expected: ${esc(clip(t.expected))}\n    got:      ${esc(clip(t.actual))}`);
       }

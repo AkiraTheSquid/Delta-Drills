@@ -110,5 +110,29 @@ check("_values_equal: identical tensors equal",
 check("_values_equal: different tensors differ",
       not mech._values_equal(torch.tensor([1.0, 2.0]), torch.tensor([1.0, 3.0])))
 
+# 9. str-name near miss (Seth, q555, 2026-09-13): a dtype OBJECT where the
+#    dtype NAME was asked for passes with a note; primitives never qualify.
+r, _ = run("import torch\ndef solve(v):\n    a = torch.tensor(v)\n    return (a.dtype, torch.tensor(v, dtype=torch.float32).dtype, a.dtype == torch.float32)\n",
+           [{"call": "solve([1, 2, 3])", "expected_expr": "('torch.int64', 'torch.float32', False)"}])
+check("near miss: dtype object for dtype name passes", r and r[0].passed, getattr(r[0], "error", ""))
+check("near miss: passing row carries a note", r and "str(...)" in r[0].note and "torch.int64, torch.float32" in r[0].note, r[0].note)
+
+r, _ = run("import torch\ndef solve(v):\n    return str(torch.tensor(v).dtype)\n",
+           [{"call": "solve([1])", "expected_expr": "'torch.int64'"}])
+check("near miss: exact string answer has no note", r and r[0].passed and r[0].note == "", r[0].note)
+
+r, _ = run("import torch\ndef solve(v):\n    return torch.tensor(v).dtype\n",
+           [{"call": "solve([1])", "expected_expr": "'int64'"}])
+check("near miss: torch dtype vs bare 'int64' still fails", r and not r[0].passed)
+
+r, _ = run("def solve(v):\n    return (5, True, None)\n",
+           [{"call": "solve(0)", "expected_expr": "('5', 'True', 'None')"}])
+check("near miss: primitives 5/True/None never match their str", r and not r[0].passed)
+
+r, _ = run("def solve(v):\n    return 'torch.int64'\n",
+           [{"call": "solve(0)", "expected_expr": "__import__('torch').int64"}])
+check("near miss: name where object expected passes with the reverse note",
+      r and r[0].passed and "object itself was expected" in r[0].note, getattr(r[0], "error", "") or r[0].note)
+
 print()
 sys.exit(1 if FAILED else 0)
