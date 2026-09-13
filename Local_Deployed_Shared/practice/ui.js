@@ -284,6 +284,8 @@ function renderQuestion(q, count) {
   ) {
     hideFailedTests();
   }
+  // Same rule for the Run button's test-case check (practice/test-check.js).
+  window.DeltaTestCheck?.hideUnless?.(q);
   /* The heading names the CONCEPT under test, not the running question count
      (Seth, 2026-08-23). "Question 21" is a number that only goes up; "Reshape,
      ravel, and element order" is what the next ten minutes are about.
