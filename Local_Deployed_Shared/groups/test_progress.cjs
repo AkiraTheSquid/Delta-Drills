@@ -69,6 +69,9 @@ const harness = `<!doctype html><html><head><meta charset="utf-8"><meta name="vi
       await route.fulfill({ json: payload || {} });
     });
     await page.goto(`http://127.0.0.1:${server.address().port}`);
+    await page.locator(".dd-competency-chart").first().waitFor();
+    assert.equal(await page.getByLabel("View", { exact: true }).inputValue(), "graph", "the board opens on the competency graph");
+    await page.getByLabel("View", { exact: true }).selectOption("goals");
     await page.locator(".dd-checklist--mine .ProseMirror").waitFor();
     assert.equal(await page.locator('[contenteditable="true"]').count(), 1);
     const originalDay = await page.locator(".dd-day-input").inputValue();
