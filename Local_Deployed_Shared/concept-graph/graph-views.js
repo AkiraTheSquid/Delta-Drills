@@ -5,15 +5,17 @@
  * layers THREE views over that one graph and a settings card in the
  * bottom-left corner of the canvas to switch between them:
  *
- *   adaptive  — start zoomed in on the learner's LEARNING HORIZON: the
- *               concepts the tutor can serve now (unlocked, not yet learned)
- *               plus everything they build on. The rest of the map is laid
- *               out but INVISIBLE — every bubble keeps its slot, so the
- *               horizon sits exactly where it sits in the complete view and
- *               nothing shuffles as it grows. Tapping a bubble reveals its
- *               direct prerequisites BELOW it (fan-in, blue) and the concepts
- *               it unlocks ABOVE it (fan-out, orange) — the next things to
- *               study; tapping a revealed node reveals its neighbours in turn.
+ *   adaptive  — the learner's LEARNING HORIZON: the concepts the tutor can
+ *               serve now (unlocked, not yet learned) plus everything they
+ *               build on. The rest of the map is laid out but INVISIBLE —
+ *               every bubble keeps its slot, so the horizon sits exactly
+ *               where it sits in the complete view and nothing shuffles as
+ *               it grows. Tapping a bubble reveals its direct prerequisites
+ *               BELOW it (fan-in, blue) and the concepts it unlocks ABOVE it
+ *               (fan-out, orange) — the next things to study; tapping a
+ *               revealed node reveals its neighbours in turn, and tapping the
+ *               background folds them all away. The camera never moves on a
+ *               tap: the view fits the horizon once, when it is entered.
  *   condensed — one bubble per ARENA section (−1.0 Python, −1.1 arrays,
  *               0.0, 0.1, …) with the number of prerequisite links between
  *               sections on the edges. Tapping a section opens it into its
@@ -263,6 +265,7 @@
   const chapterHidden = (kc) => chaptersOff.has(sectionOf(kc).id);
 
   let mainLay = null;            // the running main layout, stopped before the next
+  let mainLaidOut = false;       // the main canvas has been laid out by this file
   const layoutMain = (fitEles, opts) => {
     const o = opts || {};
     // A view switch inside the previous layout's 320 ms would otherwise leave
@@ -277,6 +280,7 @@
     });
     lay.one("layoutstop", () => { if (mainLay === lay) fitTo(fitEles, o.pad); });
     mainLay = lay;
+    mainLaidOut = true;
     lay.run();
   };
   // Fit, but never so close that three bubbles fill the screen.
@@ -336,21 +340,21 @@
     fanStyled.removeClass("faded");
   };
 
-  const applyAdaptive = (focusKc) => {
+  const applyAdaptive = (o) => {
     shown = adaptiveVisible();
     // Beyond the horizon: still on the canvas, still laid out, not drawn.
     // An edge shows only when both of its ends do.
     ghost(cy.nodes().filter((n) => !shown.has(n.id())));
     ghost(cy.edges().filter((e) => !shown.has(e.source().id()) || !shown.has(e.target().id())));
     const onCanvas = cy.nodes().filter((n) => shown.has(n.id()));
-    const fitEles = focusKc && shown.has(focusKc)
-      ? cy.getElementById(focusKc).closedNeighborhood().filter((e) => e.isNode() ? shown.has(e.id()) : shown.has(e.source().id()) && shown.has(e.target().id()))
-      : onCanvas;
     // Same layout as the complete view, on the WHOLE graph: the horizon's
     // bubbles land where they land there, and switching views moves nothing.
-    layoutMain(fitEles.length ? fitEles : cy.nodes(), { rankSep: 150, pad: focusKc ? 80 : 60 });
+    // A tap (`still`) only changes what is drawn, never where: every slot is
+    // already laid out, so neither the layout nor the camera runs again —
+    // zooming in on each tap was tried and pulled (Seth, 2026-09-13).
+    if (!(o.still && mainLaidOut)) layoutMain(onCanvas.length ? onCanvas : cy.nodes(), { rankSep: 150, pad: 60 });
     const n = [...frontierSet()].filter((kc) => !chapterHidden(kc)).length;
-    const tapHint = `Tap one to reveal what it <span class="kgv-in">needs</span> (below) and what comes <span class="kgv-out">next</span> (above).`;
+    const tapHint = `Tap one to reveal what it <span class="kgv-in">needs</span> (below) and what comes <span class="kgv-out">next</span> (above); tap the background to fold them away.`;
     setHint(frontierDone
       ? `Nothing left on your horizon — everything unlocked is learned. Showing the summit. ${tapHint}`
       : n
@@ -561,7 +565,7 @@
         buildCondensed();
       } else {
         showCondensed(false);
-        if (mode === "adaptive") applyAdaptive(o.focus);
+        if (mode === "adaptive") applyAdaptive(o);
         else {
           layoutMain(cy.nodes(), { rankSep: 150, pad: 36 });
           setHint("Everything. Tap a concept for its prerequisite chain.");
@@ -662,7 +666,14 @@
       return;
     }
     expanded.add(kc);
-    applyView({ focus: kc });
+    applyView({ still: true });
+  };
+  // Tap off: back to the horizon. lesson-graph.js's own background handler
+  // has already cleared the selection chain by the time this runs.
+  const onBackgroundTap = (evt) => {
+    if (evt.target !== cy || mode !== "adaptive" || !expanded.size) return;
+    expanded.clear();
+    applyView({ still: true });
   };
 
   const init = () => {
@@ -672,6 +683,7 @@
     snapshotGraph();
     buildPanel();
     cy.on("tap", "node", onMainTap);
+    cy.on("tap", onBackgroundTap);
     // A graded attempt can move the frontier; recolor() is when the numbers
     // settle. Re-apply only if the visible set actually changed — a layout on
     // every repaint would make the map jump under the learner.
@@ -693,9 +705,9 @@
           if (mode === "condensed") {
             // An outside jump (Practice's "See in knowledge graph") lands on
             // the real map, opened around that concept.
-            mode = "adaptive"; expanded.add(kc); applyView({ focus: kc });
+            mode = "adaptive"; expanded.add(kc); applyView();
           } else if (mode === "adaptive" && !shown.has(kc)) {
-            expanded.add(kc); applyView({ focus: kc });
+            expanded.add(kc); applyView({ still: true });
           }
         }
         const r = orig(kc);

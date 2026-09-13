@@ -25,6 +25,7 @@ from app import auth, content_gaps, diagnostic, kc_graph  # noqa: E402
 from app.adaptive import get_user_state  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
+from app.practice import question_pick as qp  # noqa: E402
 from app.practice.question_pick import SubtopicDry  # noqa: E402
 from app.questions import get_question_by_id  # noqa: E402
 
@@ -52,7 +53,9 @@ check("fixture drill found", _q is not None, f"{_kc} -> q{getattr(_q, 'id', None
 GAP_A = {"kc": "kc.a", "kc_title": "Concept A", "stage": "worked", "seen": 0, "answered": 0, "total": 3}
 GAP_B = {"kc": "kc.b", "kc_title": "Concept B", "stage": "faded", "seen": 2, "answered": 2, "total": 2}
 
-_orig = (qr.select_next_subtopic, qr.pick_for_subtopic, diagnostic.should_run, content_gaps.record)
+# The loop moved from the router into question_pick.run_queue (2026-09-13) so
+# the lattice can run it dry; the stubs go where the loop now looks them up.
+_orig = (qp.select_next_subtopic, qp.pick_for_subtopic, diagnostic.should_run, content_gaps.record)
 diagnostic.should_run = lambda st: False
 recorded = []
 content_gaps.record = lambda uid, gap: recorded.append(gap)
@@ -71,16 +74,19 @@ def run(select_script, pick_script, focus=None):
         calls["select"].append((set(exclude or ()), set(exclude_kcs or ())))
         return next(sel, None)
 
-    def fake_pick(uid, st, subtopic, focus_subtopic, exclude_kcs=None):
+    def fake_pick(uid, st, subtopic, focus_subtopic, exclude_kcs=None, record=True):
         calls["pick"].append((subtopic, set(exclude_kcs or ())))
+        calls.setdefault("record", []).append(record)
         step = next(pk)
         if isinstance(step, Exception):
             raise step
         return st.get_subtopic_state(_q.subtopic), _q, _kc, step
 
-    qr.select_next_subtopic = fake_select
-    qr.pick_for_subtopic = fake_pick
+    qp.select_next_subtopic = fake_select
+    qp.pick_for_subtopic = fake_pick
     recorded.clear()
+    if focus == "arm-only":
+        return None, calls
     url = "/api/practice/next-question" + (f"?focus_subtopic={focus}" if focus else "")
     resp = client.get(url)
     return resp, calls
@@ -121,6 +127,19 @@ try:
     resp, calls = run(["S1", None], [SubtopicDry(None)])
     check("E: nothing servable and no gap -> 404", resp.status_code == 404, str(resp.json())[:120])
 
+    # G: the lattice's ring asks the SAME loop, without serving. A dry head
+    # concept is stepped past here exactly as the router steps past it, so the
+    # graph rings the concept practice will hand over, not the frontier head.
+    before = len(state.get_subtopic_state(_q.subtopic).served_question_ids)
+    _none, calls = run(["S1", "S2"], [SubtopicDry(GAP_A), None], focus="arm-only")
+    ring = qp.queue_next_kc(state)
+    check("G: queue_next_kc steps past the dry head to the served concept", ring == _kc, str(ring))
+    check("G: both picks ran dry — nothing recorded", calls["record"] == [False, False], str(calls["record"]))
+    check("G: the dry run serves nothing",
+          len(state.get_subtopic_state(_q.subtopic).served_question_ids) == before, "served list unchanged")
+    _none, calls = run(["S1", "S1", None], [SubtopicDry(GAP_A), SubtopicDry(GAP_A)], focus="arm-only")
+    check("G: a course out of material rings nothing", qp.queue_next_kc(state) is None, str(calls["select"]))
+
     # F. A focused request is not retried elsewhere.
     _orig_by_sub = qr.get_questions_by_subtopic
     qr.get_questions_by_subtopic = lambda name: [_q] if name == "S1" else _orig_by_sub(name)
@@ -134,7 +153,7 @@ try:
     check("F: focused 409 carries the learner message",
           "Concept A" in resp.json()["detail"].get("message", ""), str(resp.json())[:160])
 finally:
-    qr.select_next_subtopic, qr.pick_for_subtopic, diagnostic.should_run, content_gaps.record = _orig
+    qp.select_next_subtopic, qp.pick_for_subtopic, diagnostic.should_run, content_gaps.record = _orig
     app.dependency_overrides.clear()
 
 print()

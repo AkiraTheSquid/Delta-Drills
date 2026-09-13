@@ -127,8 +127,65 @@
    * once per body however the body arrived. */
   function setKcLattice(data) {
     _lattice = kcLatticeNote(data);
+    if (_lattice) { _liveNextKc(_lattice); _ringKc = _lattice.next_kc; }
     return _lattice;
   }
+
+  /* The concept the graph rings as "next up" is the one being TESTED.
+   *
+   * The server's `next_kc` is the queue's own next pick (question_pick.
+   * queue_next_kc), and between fetches it goes stale: a drill served from a
+   * focused session, or the pick made after the fetch, is the concept on the
+   * practice screen, and the ring kept pointing at a lower concept the learner
+   * was not on (Seth, 2026-09-13). So the field is read LIVE: the on-screen
+   * drill's own concept while there is one, the server's pick otherwise. The
+   * server's answer stays under `queue_next_kc`.
+   *
+   * `PracticeAPI` is a script-global const, not `window.PracticeAPI` — the
+   * typeof guard is the only safe read (session-clock.js has the account). */
+  function _onScreenKc() {
+    var api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    var q = api && api.currentQuestion;
+    var kc = q && q.ladder_kc;
+    return kc && _lattice && _lattice.kcs && _lattice.kcs[kc] ? kc : null;
+  }
+  function _liveNextKc(lattice) {
+    var d = Object.getOwnPropertyDescriptor(lattice, "next_kc");
+    if (d && d.get) return;   // same body adopted twice: already live
+    var served = lattice.next_kc || null;
+    Object.defineProperty(lattice, "queue_next_kc", { value: served, enumerable: true });
+    Object.defineProperty(lattice, "next_kc", {
+      enumerable: true,
+      get: function () { return _onScreenKc() || served; },
+    });
+  }
+
+  /* A new drill on the practice screen moves the ring without any grading, so
+   * the graph has to repaint when the on-screen concept changes. Every graph
+   * surface already repaints on `delta:adaptive-state-changed`; raise it only
+   * when the ring would actually move, so a submit does not repaint twice. */
+  var _ringKc = null;   // the concept the graph last painted the ring on
+  function ringCheck() {
+    if (!_lattice) return false;
+    var now = _lattice.next_kc;
+    if (now === _ringKc) return false;
+    _ringKc = now;
+    window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed", { detail: { hasState: true, ring: now } }));
+    return true;
+  }
+  window.addEventListener("delta:practice-state-changed", ringCheck);
+  // Serving a drill announces nothing (api.js emits on submit/feedback only),
+  // and the graph is on another tab while practice runs anyway — so the check
+  // also runs the moment the graph's canvas comes into view.
+  function _watchGraphTab() {
+    var host = document.getElementById("kg-cy");
+    if (!host || typeof IntersectionObserver !== "function") return;
+    new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) ringCheck();
+    }).observe(host);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", _watchGraphTab);
+  else _watchGraphTab();
 
   function getKcLattice() { return _lattice; }
 
@@ -277,6 +334,7 @@
   window.loadKcLattice = loadKcLattice;
   window.setKcLattice = setKcLattice;
   window.getKcLattice = getKcLattice;
+  window.kcLatticeRingCheck = ringCheck;
   window.loadPlacementStatus = loadPlacementStatus;
   window.kcPlacementStatus = placementStatus;
 })();

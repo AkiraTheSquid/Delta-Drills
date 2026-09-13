@@ -16,6 +16,7 @@ from app.prioritization import (
     narrow_to_next_kc,
     question_is_unlocked,
     rung_gap,
+    select_next_subtopic,
     target_difficulty,
 )
 from app.questions import get_questions_by_subtopic
@@ -49,6 +50,7 @@ def pick_for_subtopic(
     subtopic: str,
     focus_subtopic: str | None,
     exclude_kcs: set | None = None,
+    record: bool = True,
 ):
     """Choose the question to serve from ONE subtopic.
 
@@ -60,6 +62,9 @@ def pick_for_subtopic(
     on both paths: the rung really did run dry, whatever gets served instead.
     `exclude_kcs` are the concepts already found dry on this request; the
     narrowing skips them so a sibling concept in this subtopic gets its turn.
+    `record=False` is the lattice asking what WOULD be served: the pick is
+    made in full, but nothing is written down — the gap is recorded when the
+    learner actually reaches it.
     """
     sub_state = user_state.get_subtopic_state(subtopic)
     candidates = [
@@ -97,7 +102,8 @@ def pick_for_subtopic(
         # answered. Serving a repeat is what this replaces — see
         # prioritization.narrow_to_next_kc — so the gap is written down where
         # the /drill-gaps skill will find it, every time it is hit.
-        content_gaps.record(user_id, gap)
+        if record:
+            content_gaps.record(user_id, gap)
         if not [q for q in candidates if q.id not in answered]:
             # Nothing unseen anywhere on the concept.
             raise SubtopicDry(gap)
@@ -143,6 +149,103 @@ def pick_for_subtopic(
     last_served = sub_state.served_question_ids[-1] if sub_state.served_question_ids else None
     if question.id == last_served and question.id not in answered:
         stuck = gap or rung_gap(user_state, next_kc, question)
-        content_gaps.record(user_id, stuck)
+        if record:
+            content_gaps.record(user_id, stuck)
         raise SubtopicDry(stuck)
     return sub_state, question, next_kc, gap
+
+
+def run_queue(
+    user_id: str,
+    user_state,
+    subtopic: str | None,
+    focus_subtopic: str | None,
+    record: bool = True,
+) -> tuple[tuple | None, dict | None]:
+    """The selection behind /next-question, minus the serving: which subtopic,
+    which concept, which drill — retrying past dry concepts. Returns
+    `(picked, first_gap)`; `picked` is `pick_for_subtopic`'s tuple or None when
+    the course is out of material, and `first_gap` the first exhaustion met on
+    the way (the router reports it on the drill it serves instead).
+
+    `subtopic` is a focused pool (single-KC practice from the graph) or None
+    for the queue's own choice. Nothing here writes: the caller appends the
+    served drill; with `record=False` even the content gaps stay unrecorded.
+    """
+    # ONE DRY SUBTOPIC DOES NOT END THE REQUEST. Both exhaustion checks in
+    # `pick_for_subtopic` used to raise the 409 straight out of this
+    # function, and on Seth's own account that was a permanent brick: he
+    # finished his placement on 2026-09-09, the lattice put
+    # `einops.pattern-language` at the head of his frontier, that concept
+    # owns ONE rank-0 drill and no `worked` rung, he had skipped that drill —
+    # and from then on every /next-question was a 409 (seven hits in
+    # content-gaps.json in 25 seconds, the practice page "went in for half a
+    # second and then exited"). Nothing else on the course was ever asked.
+    #
+    # So a subtopic that has nothing to serve is RECORDED as the gap it is —
+    # the /drill-gaps skill still gets its work item — and the selector is
+    # asked again with that subtopic excluded. The 409 is kept for the one
+    # case it is true in: nothing anywhere on the course can be served. The
+    # FIRST gap is the one reported then, and the one attached to a question
+    # served from elsewhere, because it names the concept the lattice actually
+    # wanted to teach — that is the drill somebody needs to write.
+    #
+    # A focused request (`?focus_subtopic=`) is the learner opening one concept
+    # on purpose, and "this concept has run out" is the honest answer there;
+    # it is not retried on a sibling. (Seth, 2026-08-28, quoted in
+    # prioritization.narrow_to_next_kc: notify, don't repeat — and a learner
+    # who did not pick the concept should not be stopped by it either.)
+    #
+    # 🔴 EXCLUDE THE CONCEPT, NOT THE SUBTOPIC. A dry pick names one concept
+    # (`gap["kc"]`), and the subtopic it sits in usually holds siblings with
+    # fresh drills — writing the whole subtopic off would hide those and, when
+    # every frontier concept lives in one subtopic, 409 with work still on the
+    # shelf (codex, 2026-09-09). So the concept is excluded and the SAME
+    # selection is asked again; the subtopic is excluded only when the pick
+    # came back dry with no concept to name, or named one already excluded
+    # (the narrowing's last resort can hand back a concept off the frontier).
+    # Every iteration adds a new concept or a new subtopic to a finite set,
+    # which is what terminates the loop.
+    tried: set = set()
+    tried_kcs: set = set()
+    first_gap: dict | None = None
+    picked = None
+    while True:
+        if subtopic is None:
+            subtopic = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs)
+        if subtopic is None:
+            break
+        try:
+            picked = pick_for_subtopic(
+                user_id, user_state, subtopic, focus_subtopic, exclude_kcs=tried_kcs, record=record
+            )
+            break
+        except SubtopicDry as dry:
+            if first_gap is None and dry.gap:
+                first_gap = dry.gap
+            if focus_subtopic is not None:
+                break
+            dry_kc = (dry.gap or {}).get("kc")
+            if dry_kc and dry_kc not in tried_kcs:
+                tried_kcs.add(dry_kc)
+            else:
+                tried.add(subtopic)
+            subtopic = None
+    return picked, first_gap
+
+
+def queue_next_kc(user_state) -> str | None:
+    """The concept /next-question would serve from RIGHT NOW — the one the
+    knowledge graph rings as "next up".
+
+    Not `kc_graph.select_next_kc`: that names the frontier head that still has
+    an unserved drill, and the queue does not always serve it. A head whose
+    current RUNG is spent is a content gap the router steps past (`tried_kcs`
+    above), so practice hands over the next concept along while the graph kept
+    ringing the head — Seth, 2026-09-13, on `numpy.ndarray-model`: "it
+    highlights the lower concept that is not currently being tested". Asking
+    the real selection, dry, is the only answer that cannot drift from it.
+    None when the queue would find nothing (a 409/404 request).
+    """
+    picked, _first_gap = run_queue("", user_state, None, None, record=False)
+    return picked[2] if picked else None

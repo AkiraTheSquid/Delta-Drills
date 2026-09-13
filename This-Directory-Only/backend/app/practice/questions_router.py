@@ -39,12 +39,11 @@ from app.practice_schemas import (
     SubmitResponse,
 )
 from app import content_gaps
-from app.practice.question_pick import SubtopicDry, pick_for_subtopic, secs_allowed_for
+from app.practice.question_pick import run_queue, secs_allowed_for
 from app.prioritization import (
     ladder_fields,
     ladder_starter,
     record_ladder_outcome,
-    select_next_subtopic,
     question_target_difficulty,
 )
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
@@ -139,65 +138,10 @@ def next_question(
         if probe is not None:
             return probe
 
-    # ONE DRY SUBTOPIC DOES NOT END THE REQUEST. Both exhaustion checks in
-    # `pick_for_subtopic` used to raise the 409 straight out of this
-    # function, and on Seth's own account that was a permanent brick: he
-    # finished his placement on 2026-09-09, the lattice put
-    # `einops.pattern-language` at the head of his frontier, that concept
-    # owns ONE rank-0 drill and no `worked` rung, he had skipped that drill —
-    # and from then on every /next-question was a 409 (seven hits in
-    # content-gaps.json in 25 seconds, the practice page "went in for half a
-    # second and then exited"). Nothing else on the course was ever asked.
-    #
-    # So a subtopic that has nothing to serve is RECORDED as the gap it is —
-    # the /drill-gaps skill still gets its work item — and the selector is
-    # asked again with that subtopic excluded. The 409 is kept for the one
-    # case it is true in: nothing anywhere on the course can be served. The
-    # FIRST gap is the one reported then, and the one attached to a question
-    # served from elsewhere, because it names the concept the lattice actually
-    # wanted to teach — that is the drill somebody needs to write.
-    #
-    # A focused request (`?focus_subtopic=`) is the learner opening one concept
-    # on purpose, and "this concept has run out" is the honest answer there;
-    # it is not retried on a sibling. (Seth, 2026-08-28, quoted in
-    # prioritization.narrow_to_next_kc: notify, don't repeat — and a learner
-    # who did not pick the concept should not be stopped by it either.)
-    #
-    # 🔴 EXCLUDE THE CONCEPT, NOT THE SUBTOPIC. A dry pick names one concept
-    # (`gap["kc"]`), and the subtopic it sits in usually holds siblings with
-    # fresh drills — writing the whole subtopic off would hide those and, when
-    # every frontier concept lives in one subtopic, 409 with work still on the
-    # shelf (codex, 2026-09-09). So the concept is excluded and the SAME
-    # selection is asked again; the subtopic is excluded only when the pick
-    # came back dry with no concept to name, or named one already excluded
-    # (the narrowing's last resort can hand back a concept off the frontier).
-    # Every iteration adds a new concept or a new subtopic to a finite set,
-    # which is what terminates the loop.
-    tried: set = set()
-    tried_kcs: set = set()
-    first_gap: dict | None = None
-    picked = None
-    while True:
-        if subtopic is None:
-            subtopic = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs)
-        if subtopic is None:
-            break
-        try:
-            picked = pick_for_subtopic(
-                user_id, user_state, subtopic, focus_subtopic, exclude_kcs=tried_kcs
-            )
-            break
-        except SubtopicDry as dry:
-            if first_gap is None and dry.gap:
-                first_gap = dry.gap
-            if focus_subtopic is not None:
-                break
-            dry_kc = (dry.gap or {}).get("kc")
-            if dry_kc and dry_kc not in tried_kcs:
-                tried_kcs.add(dry_kc)
-            else:
-                tried.add(subtopic)
-            subtopic = None
+    # The retry loop lives in question_pick.run_queue so the lattice route can
+    # run the SAME selection without serving (its next_kc is the concept this
+    # request is about to hand over, not the frontier head).
+    picked, first_gap = run_queue(user_id, user_state, subtopic, focus_subtopic)
     if picked is None:
         if first_gap:
             # 409 rather than 404: the request was fine and the queue is

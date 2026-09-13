@@ -16,6 +16,7 @@ from app import kc_graph
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
+from app.practice.question_pick import queue_next_kc
 from app.practice_schemas import (
     PracticeStateResponse,
     SelfReportRequest,
@@ -201,4 +202,12 @@ def kc_lattice(user: User = Depends(get_current_user)) -> dict:
         for st in get_subtopics()
         for qid in user_state.get_subtopic_state(st).served_question_ids
     }
-    return kc_graph.kc_report(user_state, eligible=lambda qid: qid not in served)
+    report = kc_graph.kc_report(user_state, eligible=lambda qid: qid not in served)
+    # The ring must land on the concept the queue will HAND OVER, and served-
+    # awareness alone still lies: a frontier head whose current rung is spent
+    # keeps unserved drills on higher rungs, so `eligible` keeps naming it while
+    # /next-question steps past it to the next concept (question_pick.run_queue).
+    # Ask that same selection, without serving. The eligibility answer stays as
+    # the fallback for when the queue would find nothing at all.
+    report["next_kc"] = queue_next_kc(user_state) or report["next_kc"]
+    return report
