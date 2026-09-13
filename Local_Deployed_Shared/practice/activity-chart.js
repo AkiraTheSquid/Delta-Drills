@@ -50,57 +50,7 @@
       return;
     }
 
-    // Bars scale against the week's own best day, not a fixed ceiling —
-    // the chart answers "which days did I work", so relative height is
-    // the honest scale and a 3-problem Monday still shows next to a
-    // 40-problem Tuesday. max(…, 1) keeps an all-zero week from
-    // dividing by zero.
-    const max = Math.max(1, ...days.map((d) => Number(d.count) || 0));
-
-    el.textContent = "";
-    days.forEach((day, i) => {
-      const count = Number(day.count) || 0;
-      const col = document.createElement("div");
-      col.className = "activity-day";
-      if (day.date === payload.today) col.classList.add("is-today");
-      /* A placement day reads as impossibly high next to the drills the
-         learner remembers doing — the test is 14 questions that never appear
-         in their practice history. The hover says where the number came from
-         rather than leaving them to distrust the bar. */
-      const placement = Number(day.placement) || 0;
-      col.title =
-        placement > 0
-          ? `${day.date}: ${count} answered — ${Number(day.practice) || 0} practice, ${placement} placement`
-          : `${day.date}: ${count} answered`;
-
-      const label = document.createElement("span");
-      label.className = "activity-day-count";
-      // A zero is noise repeated seven times on a quiet week; the empty
-      // label keeps the column's height so the bars still align.
-      label.textContent = count > 0 ? String(count) : "";
-
-      const track = document.createElement("div");
-      track.className = "activity-day-track";
-      const bar = document.createElement("i");
-      bar.className = "activity-day-bar";
-      bar.style.height = count > 0 ? `${Math.max(6, (count / max) * 100)}%` : "0";
-      track.appendChild(bar);
-
-      const letter = document.createElement("span");
-      letter.className = "activity-day-letter";
-      letter.textContent = DAY_LETTERS[i];
-
-      col.append(label, track, letter);
-      el.appendChild(col);
-    });
-
-    const total = Number(payload.total) || 0;
-    el.setAttribute(
-      "aria-label",
-      `Problems answered this week, Monday to Sunday: ${days
-        .map((d, i) => `${DAY_LETTERS[i]} ${Number(d.count) || 0}`)
-        .join(", ")}. Total ${total}.`
-    );
+    window.DDActivityBars.render(el, payload, DAY_LETTERS);
     section.classList.remove("is-empty");
   }
 

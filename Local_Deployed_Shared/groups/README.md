@@ -1,5 +1,44 @@
 # groups
 
+## Board views (2026-09-13)
+
+The `.dd-board-day` dropdown switches the existing right column between Goals
+(the daily checklist), Problems per day, and Competency graph. Charts offer
+Daily (one date), Weekly (Monday–Sunday), and Monthly (calendar month) horizons.
+The same `.dd-day-nav` arrows step by that horizon; the date picker anchors it.
+
+`groups_progress.js` draws each member's chart. Graph selection lives on the
+left: one section, the aggregate, or every section line. Section colors match
+the concept graph's ARENA taxonomy. Own-row single/aggregate graphs support
+hover crosshairs, click-to-select, keyboard arrows/Enter, and explicit target
+save. Other members and the all-lines comparison have no target editor.
+Targets persist per learner and area in `study_group_targets`; changing views
+flushes the existing checklist editor and never writes into a different day.
+
+The companion backend lives in `Delta-Drills-Local/This-Directory-Only/backend`.
+`app/study_group_progress.py` serves membership-scoped `GET /groups/progress`
+and own-user `PUT /groups/target` through `practice/groups_router.py`. It uses
+the exercise-to-KC mapping for section membership, the canonical
+`kc_graph.kc_mastery` scale, recorded BKT posterior updates, and timestamped
+state observations. Values before the first recorded observation or after
+today are absent. Every mapped concept stays in the denominator; unseen ones
+retain their prior. Aggregate is the mean over unique concepts, not the mean
+of section means. Coverage and proxy counts accompany the estimates. The
+dotted 80/100 line is an approximate planning reference, not an unlock rule,
+an empirical ARENA passing threshold, or a claim that problems share difficulty.
+
+Problem counts use the same `range_counts` implementation as Practice's
+`week_counts`: answered drills plus placement responses, including incorrect
+answers. `practice/activity-bars.js` renders both charts. IANA browser time
+zones keep historical days aligned across DST changes.
+
+Validation: `python3 groups/watch.py`; `node groups/test_progress.cjs` with
+Playwright on Node's module path. Backend: `.venv/bin/python
+scripts/test_group_progress.py` and `scripts/test_activity_week.py`. Browser
+fixtures use synthetic members/API responses; backend tests use isolated SQLite.
+Backend startup creates the additive target table through existing
+`Base.metadata.create_all`; `schema.sql` includes the same table for manual setup.
+
 ## Purpose
 - The Groups tab: a handful of learners practising the same curriculum, reading
   each other's readiness AND each other's day side by side. Start a group, join
@@ -22,7 +61,7 @@
   the invite link (mint, copy, rotate, read out of the address bar, clear it
   again), the public directory list, and the group bar above the roster.
 - Drawing the roster: one ROW per member, two columns — their circle, name and
-  area bars on the left, their day's checklist on the right.
+  area bars or section selection on the left, their chosen board view on the right.
 - The day: which day the page is showing, the picker that changes it, and the
   local-date arithmetic behind ‹ and ›.
 - The checklist DOCUMENT and both ways of drawing it: the live three-state
@@ -68,6 +107,8 @@
 - `groups_lane.js` (`window.DDGroupsLane`): ONE member as a full-width row —
   the mastery column, the checklist column, and the only live editor mount on
   the page. `destroyAll()` is the teardown the page calls before every repaint.
+- `groups_progress.js` (`window.DDGroupProgress`): competency SVG, area legend,
+  targets, and activity bars in the same right column.
 - `groups_day.js` (`window.DDGroupsDay`): the day picker and the local-date
   arithmetic. No dates are computed anywhere else.
 - `groups_checklist_doc.js` (`window.DDChecklistDoc`): everything about the

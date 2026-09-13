@@ -25,6 +25,7 @@ FILES = (
     "groups_checklist.js",
     "groups_day.js",
     "groups_join.js",
+    "groups_progress.js",
     "groups_lane.js",
     "groups_view.js",
 )
@@ -70,6 +71,7 @@ def check_imports():
         "groups_checklist.js": "window.DDChecklist",
         "groups_day.js": "window.DDGroupsDay",
         "groups_join.js": "window.DDGroupsJoin",
+        "groups_progress.js": "window.DDGroupProgress",
         "groups_lane.js": "window.DDGroupsLane",
         "groups_view.js": "window.DDGroups",
     }

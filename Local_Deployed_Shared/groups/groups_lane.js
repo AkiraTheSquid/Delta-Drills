@@ -110,7 +110,7 @@ const DDGroupsLane = (() => {
     return wrap;
   };
 
-  const buildProfile = (member, isYou) => {
+  const buildProfile = (member, isYou, selector) => {
     const main = el("div", "dd-member-main");
 
     const head = el("div", "dd-member-head");
@@ -137,7 +137,7 @@ const DDGroupsLane = (() => {
     );
     head.appendChild(who);
     main.appendChild(head);
-    main.appendChild(buildAreas(member.areas));
+    main.appendChild(selector || buildAreas(member.areas));
     return main;
   };
 
@@ -256,8 +256,9 @@ const DDGroupsLane = (() => {
    */
   const buildRow = (deps) => {
     const row = el("article", `dd-member${deps.isYou ? " is-you" : ""}`);
-    row.appendChild(buildProfile(deps.member, deps.isYou));
-    row.appendChild(buildDay(deps));
+    const progress = deps.view && deps.view !== "goals" ? window.DDGroupProgress.build(deps) : null;
+    row.appendChild(buildProfile(deps.member, deps.isYou, progress?.selector));
+    row.appendChild(progress?.chart || buildDay(deps));
     return row;
   };
 
