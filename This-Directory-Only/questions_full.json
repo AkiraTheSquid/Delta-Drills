@@ -47493,5 +47493,1625 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1333,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and positive integers rows and cols whose product divides its length, return a nested list with shape (rows, inferred_length, cols), preserving reading order.",
+    "answer_code": "import torch as t\n\ndef solve(x, rows, cols):\n    return x.reshape(rows, -1, cols).tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "[[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\nrows = 3\ncols = 2",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "[[[4, -1]], [[9, 2]], [[8, 6]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\nrows = 1\ncols = 1",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "[[[5]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\nrows = 1\ncols = 2",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "[[[-3, 2], [7, 1]]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3\nsolve(x, rows, cols)",
+        "output": "[[[8, -2], [5, 11], [0, 3]], [[7, 4], [9, 1], [6, 2]]]",
+        "why": "The supplied column count belongs to the last axis; the middle length is the one inferred."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1334,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return the same matrix inside one new outer axis, as a nested list of shape (1, rows, cols).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(1, x.shape[0], x.shape[1]).tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[8, -2, 5], [11, 0, 3]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[4, -1], [9, 2], [8, 6]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[5]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[-3, 2, 7, 1]]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[[[8], [-2], [5]], [[11], [0], [3]]]",
+        "why": "An outer singleton axis wraps the whole matrix; a last singleton axis wraps each number."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1335,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), return a nested list with one row per batch, containing that batch's values in reading order.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(x.shape[0], -1).tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])",
+        "call": "solve(x)",
+        "expected_expr": "[[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 2]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])",
+        "call": "solve(x)",
+        "expected_expr": "[[4, -1], [9, 2], [8, 6]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])",
+        "call": "solve(x)",
+        "expected_expr": "[[5]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])",
+        "call": "solve(x)",
+        "expected_expr": "[[-3, 2], [7, 1]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nsolve(x)",
+        "output": "[[8, -2], [5, 11], [0, 3], [7, 4], [9, 1], [6, 2]]",
+        "why": "The number of batches is the row count, not the width of each row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1336,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a flat list containing positions 0, 2, 4, and so on in row-by-row reading order.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[::2].tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[8, 5, 0]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[4, 9, 8]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[-3, 7]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[8, -2, 5]",
+        "why": "Selecting alternate rows skips whole rows; selecting alternate flat positions skips individual entries."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1337,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid nonnegative batch index k, return that batch's values as one flat list.",
+    "answer_code": "import torch as t\n\ndef solve(x, k):\n    return x[k].flatten().tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1",
+        "call": "solve(x, k)",
+        "expected_expr": "[7, 4, 9, 1, 6, 2]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0",
+        "call": "solve(x, k)",
+        "expected_expr": "[4, -1]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0",
+        "call": "solve(x, k)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1",
+        "call": "solve(x, k)",
+        "expected_expr": "[7, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nsolve(x, k)",
+        "output": "[-2]",
+        "why": "A batch index selects a whole matrix before it is flattened, not one entry in the entire run."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1338,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return its first row's final entry as a Python integer, using a one-axis representation of the matrix.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[x.shape[1] - 1].item()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "5",
+        "assert_code": "assert type(result) is int"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "-1",
+        "assert_code": "assert type(result) is int"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "5",
+        "assert_code": "assert type(result) is int"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "1",
+        "assert_code": "assert type(result) is int"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "-2",
+        "why": "The first row ends after the column count, not after the row count."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1339,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), and a valid nonnegative row index k, set every entry in row k to value through a one-axis view; return x as a nested list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    flat = x.reshape(-1)\n    width = x.shape[1]\n    flat[k * width:(k + 1) * width] = value\n    return x.tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])\nk = 1\nvalue = 42",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[8, -2, 5], [42, 42, 42]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])\nk = 0\nvalue = -7",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[-7, -7], [9, 2], [8, 6]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])\nk = 0\nvalue = 0",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[0]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])\nk = 0\nvalue = 10",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[10, 10, 10, 10]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nk = 1\nvalue = 42\nsolve(x, k, value)",
+        "output": "[[8, 42, 5], [11, 0, 3]]",
+        "why": "A row occupies a contiguous interval in the flat view; its row index is not a single flat position."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1340,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, set the last entry of the first row of its cols-column matrix view to value; return the original flat tensor as a list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols, value):\n    matrix = x.reshape(-1, cols)\n    matrix[0, -1] = value\n    return x.tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nvalue = 42",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "[8, -2, 42, 11, 0, 3, 7, 4, 9, 1, 6, 2]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2\nvalue = -7",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "[4, -7, 9, 2, 8, 6]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1\nvalue = 0",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "[0]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2\nvalue = 10",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "[-3, 10, 7, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nvalue = 42\nsolve(x, cols, value)",
+        "output": "[8, -2, 5, 11, 0, 3, 7, 4, 9, 42, 6, 2]",
+        "why": "The last column of the first row is a different position from the first column of the last row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1341,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, replace that batch's first value through a two-axis view; return x as a nested list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, 0] = value\n    return x.tolist()\n",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[8, -2, 5], [11, 0, 3]], [[42, 4, 9], [1, 6, 2]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0\nvalue = -7",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[-7, -1]], [[9, 2]], [[8, 6]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0\nvalue = 0",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[0]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1\nvalue = 10",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[-3], [2]], [[10], [1]]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42\nsolve(x, k, value)",
+        "output": "[[[8, 42, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]]",
+        "why": "The batch index belongs to the preserved first axis; exchanging the indices writes into the wrong batch."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1342,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a nonnegative position k valid within each flattened batch, return a flat list containing position k from every batch in batch order.",
+    "answer_code": "import torch as t\n\ndef solve(x, k):\n    return x.reshape(x.shape[0], -1)[:, k].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1",
+        "call": "solve(x, k)",
+        "expected_expr": "[-2, 4]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0",
+        "call": "solve(x, k)",
+        "expected_expr": "[4, 9, 8]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0",
+        "call": "solve(x, k)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1",
+        "call": "solve(x, k)",
+        "expected_expr": "[2, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nsolve(x, k)",
+        "output": "[5, 11]",
+        "why": "Grouping by batch makes batches rows; changing the row width interleaves the batch boundaries."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1343,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), return (values, shape), where values is a nested list with one row per original (batch, row) pair and cols columns; shape is its shape tuple.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    matrix = x.reshape(-1, x.shape[2])\n    return matrix.tolist(), tuple(matrix.shape)\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])",
+        "call": "solve(x)",
+        "expected_expr": "([[8, -2, 5], [11, 0, 3], [7, 4, 9], [1, 6, 2]], (4, 3))",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])",
+        "call": "solve(x)",
+        "expected_expr": "([[4, -1], [9, 2], [8, 6]], (3, 2))",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])",
+        "call": "solve(x)",
+        "expected_expr": "([[5]], (1, 1))",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])",
+        "call": "solve(x)",
+        "expected_expr": "([[-3], [2], [7], [1]], (4, 1))",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nsolve(x)",
+        "output": "([[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 2]], (2, 6))",
+        "why": "Each original row stays a row; collapsing each entire batch instead produces a different width."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1344,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a nested list with one single-entry row per input element, preserving row-by-row reading order.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(-1, 1).tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[[8], [-2], [5], [11], [0], [3]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[[4], [-1], [9], [2], [8], [6]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[[5]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[[-3], [2], [7], [1]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[[8, -2, 5, 11, 0, 3]]",
+        "why": "One column gives many single-entry rows; one row gives a single long row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1345,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a nested list with shape (rows, 1, cols), preserving the matrix values.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(x.shape[0], 1, x.shape[1]).tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[8, -2, 5]], [[11, 0, 3]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[4, -1]], [[9, 2]], [[8, 6]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[5]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[[[-3, 2, 7, 1]]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[[[8, -2, 5], [11, 0, 3]]]",
+        "why": "The new singleton axis sits inside each row, not outside the whole matrix."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1346,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), return a flat list containing the last value of each original row in batch order, then row order.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(-1, x.shape[2])[:, -1].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])",
+        "call": "solve(x)",
+        "expected_expr": "[5, 3, 9, 2]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])",
+        "call": "solve(x)",
+        "expected_expr": "[-1, 2, 6]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])",
+        "call": "solve(x)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])",
+        "call": "solve(x)",
+        "expected_expr": "[-3, 2, 7, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nsolve(x)",
+        "output": "[3, 2]",
+        "why": "There is one answer per row, not just one answer per batch."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1347,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, and a valid block index k, divide the run into consecutive blocks of cols entries and return block k as a flat list.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols, k):\n    return x.reshape(-1, cols)[k].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols, k):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nk = 1",
+        "call": "solve(x, cols, k)",
+        "expected_expr": "[11, 0, 3]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2\nk = 0",
+        "call": "solve(x, cols, k)",
+        "expected_expr": "[4, -1]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1\nk = 0",
+        "call": "solve(x, cols, k)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2\nk = 1",
+        "call": "solve(x, cols, k)",
+        "expected_expr": "[7, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nk = 1\nsolve(x, cols, k)",
+        "output": "[0, 3, 7, 4]",
+        "why": "The block length specifies columns; using it as the row count changes block boundaries."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1348,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, return a flat list of the first value in each consecutive block of cols entries.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols):\n    return x.reshape(-1, cols)[:, 0].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3",
+        "call": "solve(x, cols)",
+        "expected_expr": "[8, 11, 7, 1]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2",
+        "call": "solve(x, cols)",
+        "expected_expr": "[4, 9, 8]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1",
+        "call": "solve(x, cols)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2",
+        "call": "solve(x, cols)",
+        "expected_expr": "[-3, 7]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nsolve(x, cols)",
+        "output": "[8, -2, 5]",
+        "why": "Selecting the first column visits every block; selecting the first row returns only the first block."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1349,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a flat list of all entries except the very first in row-by-row reading order. A one-element input returns an empty list.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[1:].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[-2, 5, 11, 0, 3]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[-1, 9, 2, 8, 6]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[2, 7, 1]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[11, 0, 3]",
+        "why": "Removing the first row loses more than one entry when the matrix has multiple columns."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1350,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a flat list of the first entry in each original row, using a one-axis representation.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[::x.shape[1]].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "[8, 11]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "[4, 9, 8]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "[5]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "[-3]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "[8, 5, 0]",
+        "why": "Row starts are spaced by the number of columns, not the number of rows."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1351,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return (row_starts, row_ends) as two flat lists, in original row order, using a one-axis representation.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    flat = x.flatten()\n    width = x.shape[1]\n    return flat[::width].tolist(), flat[width - 1::width].tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])",
+        "call": "solve(x)",
+        "expected_expr": "([8, 11], [5, 3])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])",
+        "call": "solve(x)",
+        "expected_expr": "([4, 9, 8], [-1, 2, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])",
+        "call": "solve(x)",
+        "expected_expr": "([5], [5])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])",
+        "call": "solve(x)",
+        "expected_expr": "([-3], [1])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nsolve(x)",
+        "output": "([8, 11], [-2, 0])",
+        "why": "A row ends at width minus one; position one is only the end when there are exactly two columns."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1352,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), replace the first entry of each row with value through a one-axis view, returning the changed matrix as a nested list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, value):\n    flat = x.reshape(-1)\n    flat[::x.shape[1]] = value\n    return x.tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42",
+        "call": "solve(x, value)",
+        "expected_expr": "[[42, -2, 5], [42, 0, 3]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])\nvalue = -7",
+        "call": "solve(x, value)",
+        "expected_expr": "[[-7, -1], [-7, 2], [-7, 6]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])\nvalue = 0",
+        "call": "solve(x, value)",
+        "expected_expr": "[[0]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])\nvalue = 10",
+        "call": "solve(x, value)",
+        "expected_expr": "[[10, 2, 7, 1]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42\nsolve(x, value)",
+        "output": "[[42, 42, 42], [11, 0, 3]]",
+        "why": "Row starts are spaced apart; the first width entries are the entire first row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1353,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), replace the last entry of each row with value through a one-axis view, returning the changed matrix as a nested list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, value):\n    flat = x.reshape(-1)\n    width = x.shape[1]\n    flat[width - 1::width] = value\n    return x.tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42",
+        "call": "solve(x, value)",
+        "expected_expr": "[[8, -2, 42], [11, 0, 42]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])\nvalue = -7",
+        "call": "solve(x, value)",
+        "expected_expr": "[[4, -7], [9, -7], [8, -7]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])\nvalue = 0",
+        "call": "solve(x, value)",
+        "expected_expr": "[[0]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])\nvalue = 10",
+        "call": "solve(x, value)",
+        "expected_expr": "[[-3, 2, 7, 10]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42\nsolve(x, value)",
+        "output": "[[8, -2, 5], [42, 42, 42]]",
+        "why": "The end of every row is a strided selection; the final width entries are just the final row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1354,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, replace every entry in that batch with value through a two-axis view; return the original tensor as a nested list. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, :] = value\n    return x.tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[8, -2, 5], [11, 0, 3]], [[42, 42, 42], [42, 42, 42]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0\nvalue = -7",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[-7, -7]], [[9, 2]], [[8, 6]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0\nvalue = 0",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[0]]]",
+        "assert_code": "assert type(result) is list"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1\nvalue = 10",
+        "call": "solve(x, k, value)",
+        "expected_expr": "[[[-3], [2]], [[10], [10]]]",
+        "assert_code": "assert type(result) is list"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42\nsolve(x, k, value)",
+        "output": "[[[8, 42, 5], [11, 0, 3]], [[7, 42, 9], [1, 6, 2]]]",
+        "why": "One batch is one row in this view; one column would change an entry in every batch."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1355,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, return (matrix_values, recovered_values), where matrix_values has cols columns and recovered_values is a flat list obtained from that matrix.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols):\n    matrix = x.reshape(-1, cols)\n    return matrix.tolist(), matrix.flatten().tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3",
+        "call": "solve(x, cols)",
+        "expected_expr": "([[8, -2, 5], [11, 0, 3], [7, 4, 9], [1, 6, 2]], [8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2",
+        "call": "solve(x, cols)",
+        "expected_expr": "([[4, -1], [9, 2], [8, 6]], [4, -1, 9, 2, 8, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1",
+        "call": "solve(x, cols)",
+        "expected_expr": "([[5]], [5])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2",
+        "call": "solve(x, cols)",
+        "expected_expr": "([[-3, 2], [7, 1]], [-3, 2, 7, 1])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nsolve(x, cols)",
+        "output": "([[8, -2, 5, 11], [0, 3, 7, 4], [9, 1, 6, 2]], [8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])",
+        "why": "Recovering the original run does not prove the intermediate matrix had the requested column count."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1356,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and positive integers rows and cols whose product divides its length, return two nested lists: first arrange rows rows with inferred width, then arrange cols columns with inferred height. Both must preserve the entire input run.",
+    "answer_code": "import torch as t\n\ndef solve(x, rows, cols):\n    return x.reshape(rows, -1).tolist(), x.reshape(-1, cols).tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "([[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 2]], [[8, -2, 5], [11, 0, 3], [7, 4, 9], [1, 6, 2]])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\nrows = 3\ncols = 2",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "([[4, -1], [9, 2], [8, 6]], [[4, -1], [9, 2], [8, 6]])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\nrows = 1\ncols = 1",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "([[5]], [[5]])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\nrows = 1\ncols = 2",
+        "call": "solve(x, rows, cols)",
+        "expected_expr": "([[-3, 2, 7, 1]], [[-3, 2], [7, 1]])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3\nsolve(x, rows, cols)",
+        "output": "([[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 2]], [[8, -2, 5, 11], [0, 3, 7, 4], [9, 1, 6, 2]])",
+        "why": "The second constraint is a column count, whereas the first is a row count."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1357,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, and a valid block index k, set the final entry of block k to value through a matrix view; return (matrix_values, original_flat_values) as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols, k, value):\n    matrix = x.reshape(-1, cols)\n    matrix[k, -1] = value\n    return matrix.tolist(), x.tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nk = 1\nvalue = 42",
+        "call": "solve(x, cols, k, value)",
+        "expected_expr": "([[8, -2, 5], [11, 0, 42], [7, 4, 9], [1, 6, 2]], [8, -2, 5, 11, 0, 42, 7, 4, 9, 1, 6, 2])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2\nk = 0\nvalue = -7",
+        "call": "solve(x, cols, k, value)",
+        "expected_expr": "([[4, -7], [9, 2], [8, 6]], [4, -7, 9, 2, 8, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1\nk = 0\nvalue = 0",
+        "call": "solve(x, cols, k, value)",
+        "expected_expr": "([[0]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2\nk = 1\nvalue = 10",
+        "call": "solve(x, cols, k, value)",
+        "expected_expr": "([[-3, 2], [7, 10]], [-3, 2, 7, 10])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nk = 1\nvalue = 42\nsolve(x, cols, k, value)",
+        "output": "([[8, -2, 5], [11, 0, 42], [7, 4, 9], [1, 6, 2]], [8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])",
+        "why": "Changing a copied matrix does not change the original run; this task requires the write to reach both views."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1358,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, replace that batch's last entry through a two-axis view; return (matrix_values, original_values, flat_values), all as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, -1] = value\n    return matrix.tolist(), x.tolist(), x.flatten().tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 42]], [[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 42]]], [8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 42])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0\nvalue = -7",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([[4, -7], [9, 2], [8, 6]], [[[4, -7]], [[9, 2]], [[8, 6]]], [4, -7, 9, 2, 8, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0\nvalue = 0",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([[0]], [[[0]]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1\nvalue = 10",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([[-3, 2], [7, 10]], [[[-3], [2]], [[7], [10]]], [-3, 2, 7, 10])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42\nsolve(x, k, value)",
+        "output": "([[8, -2, 5, 11, 0, 3], [7, 4, 9, 1, 6, 42]], [[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]], [8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])",
+        "why": "The write must appear in the original three-axis tensor and its reading-order list, not only in a copied matrix."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1359,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), set the first cols+1 entries in reading order to value, or all entries if fewer exist, through a flat view; return (changed_matrix, changed_flat_values) as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, value):\n    flat = x.reshape(-1)\n    flat[:x.shape[1] + 1] = value\n    return x.tolist(), flat.tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42",
+        "call": "solve(x, value)",
+        "expected_expr": "([[42, 42, 42], [42, 0, 3]], [42, 42, 42, 42, 0, 3])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])\nvalue = -7",
+        "call": "solve(x, value)",
+        "expected_expr": "([[-7, -7], [-7, 2], [8, 6]], [-7, -7, -7, 2, 8, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[5]])\nvalue = 0",
+        "call": "solve(x, value)",
+        "expected_expr": "([[0]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])\nvalue = 10",
+        "call": "solve(x, value)",
+        "expected_expr": "([[10, 10, 10, 10]], [10, 10, 10, 10])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42\nsolve(x, value)",
+        "output": "([[42, 42, 42], [11, 0, 3]], [42, 42, 42, 11, 0, 3])",
+        "why": "The prefix includes the next row's first entry when present, not only the first complete row."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1360,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, save the original values as a Python list, set every final-column entry of its cols-column view to value, then return (before, changed_matrix, changed_flat_values) as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, cols, value):\n    before = x.tolist()\n    matrix = x.reshape(-1, cols)\n    matrix[:, -1] = value\n    return before, matrix.tolist(), x.tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, cols, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nvalue = 42",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2], [[8, -2, 42], [11, 0, 42], [7, 4, 42], [1, 6, 42]], [8, -2, 42, 11, 0, 42, 7, 4, 42, 1, 6, 42])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\ncols = 2\nvalue = -7",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "([4, -1, 9, 2, 8, 6], [[4, -7], [9, -7], [8, -7]], [4, -7, 9, -7, 8, -7])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\ncols = 1\nvalue = 0",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "([5], [[0]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\ncols = 2\nvalue = 10",
+        "call": "solve(x, cols, value)",
+        "expected_expr": "([-3, 2, 7, 1], [[-3, 10], [7, 10]], [-3, 10, 7, 10])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\ncols = 3\nvalue = 42\nsolve(x, cols, value)",
+        "output": "([8, -2, 42, 11, 0, 42, 7, 4, 42, 1, 6, 42], [[8, -2, 42], [11, 0, 42], [7, 4, 42], [1, 6, 42]], [8, -2, 42, 11, 0, 42, 7, 4, 42, 1, 6, 42])",
+        "why": "The before-list must be captured before the view changes shared storage."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1361,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 1-D integer tensor x and positive integers rows and cols whose product divides its length, make a rows-row view and a cols-column view of x, set the first row of the former to value, then return (rows_view, cols_view, flat_values) as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, rows, cols, value):\n    a = x.reshape(rows, -1)\n    b = x.reshape(-1, cols)\n    a[0, :] = value\n    return a.tolist(), b.tolist(), x.tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, rows, cols, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3\nvalue = 42",
+        "call": "solve(x, rows, cols, value)",
+        "expected_expr": "([[42, 42, 42, 42, 42, 42], [7, 4, 9, 1, 6, 2]], [[42, 42, 42], [42, 42, 42], [7, 4, 9], [1, 6, 2]], [42, 42, 42, 42, 42, 42, 7, 4, 9, 1, 6, 2])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([4, -1, 9, 2, 8, 6])\nrows = 3\ncols = 2\nvalue = -7",
+        "call": "solve(x, rows, cols, value)",
+        "expected_expr": "([[-7, -7], [9, 2], [8, 6]], [[-7, -7], [9, 2], [8, 6]], [-7, -7, 9, 2, 8, 6])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([5])\nrows = 1\ncols = 1\nvalue = 0",
+        "call": "solve(x, rows, cols, value)",
+        "expected_expr": "([[0]], [[0]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([-3, 2, 7, 1])\nrows = 1\ncols = 2\nvalue = 10",
+        "call": "solve(x, rows, cols, value)",
+        "expected_expr": "([[10, 10, 10, 10]], [[10, 10], [10, 10]], [10, 10, 10, 10])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([8, -2, 5, 11, 0, 3, 7, 4, 9, 1, 6, 2])\nrows = 2\ncols = 3\nvalue = 42\nsolve(x, rows, cols, value)",
+        "output": "([[42, 42, 42, 42, 42, 42], [7, 4, 9, 1, 6, 2]], [[8, -2, 5], [11, 0, 3], [7, 4, 9], [1, 6, 2]], [42, 42, 42, 42, 42, 42, 7, 4, 9, 1, 6, 2])",
+        "why": "Two views of the same contiguous run both reflect the write even when their row boundaries differ."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1362,
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
+    "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, save that batch's reading-order values as a Python list, replace its first original row through a two-axis view, then return (before_batch, changed_tensor, after_batch) as lists. The input may be modified; value is a Python integer.",
+    "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    before = x[k].flatten().tolist()\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, :x.shape[2]] = value\n    return before, x.tolist(), matrix[k].tolist()\n",
+    "difficulty_score": 58,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "code_completion",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([7, 4, 9, 1, 6, 2], [[[8, -2, 5], [11, 0, 3]], [[42, 42, 42], [1, 6, 2]]], [42, 42, 42, 1, 6, 2])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[4, -1]], [[9, 2]], [[8, 6]]])\nk = 0\nvalue = -7",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([4, -1], [[[-7, -7]], [[9, 2]], [[8, 6]]], [-7, -7])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[5]]])\nk = 0\nvalue = 0",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([5], [[[0]]], [0])",
+        "assert_code": "assert type(result) is tuple"
+      },
+      {
+        "setup_code": "import torch as t\nx = t.tensor([[[-3], [2]], [[7], [1]]])\nk = 1\nvalue = 10",
+        "call": "solve(x, k, value)",
+        "expected_expr": "([7, 1], [[[-3], [2]], [[10], [1]]], [10, 1])",
+        "assert_code": "assert type(result) is tuple"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[[8, -2, 5], [11, 0, 3]], [[7, 4, 9], [1, 6, 2]]])\nk = 1\nvalue = 42\nsolve(x, k, value)",
+        "output": "([7, 4, 9, 1, 6, 2], [[[8, -2, 5], [11, 0, 3]], [[42, 42, 42], [42, 42, 42]]], [42, 42, 42, 42, 42, 42])",
+        "why": "The first original row occupies cols entries; overwriting the whole flattened batch changes later rows too."
+      }
+    ],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]
