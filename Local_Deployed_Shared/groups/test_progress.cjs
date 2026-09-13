@@ -85,12 +85,18 @@ const harness = `<!doctype html><html><head><meta charset="utf-8"><meta name="vi
     const box = await chart.boundingBox();
     await page.mouse.move(box.x + box.width * .6, box.y + box.height * .3);
     assert.equal(await own.locator(".dd-graph-crosshair line").count(), 2);
+    assert.equal(await own.locator(".dd-graph-crosshair .dd-graph-axis-tag").count(), 2, "hover tags both axes");
+    const hoverTags = await own.locator(".dd-graph-crosshair .dd-graph-axis-tag text").allTextContents();
+    assert.match(hoverTags[0], /^[A-Z][a-z]{2} \d{1,2}$/, "x-axis tag is the hovered date");
+    assert.match(hoverTags[1], /^\d{1,3}$/, "y-axis tag is the hovered level");
+    await own.screenshot({ path: "/tmp/dd-group-progress-hover.png" });
     await page.mouse.click(box.x + box.width * .6, box.y + box.height * .3);
     await own.getByLabel("Mastery / 100", { exact: true }).fill("82");
     await own.getByRole("button", { name: "Save target" }).click();
     await own.locator(".dd-target-saved").waitFor();
     assert.equal(targets["0.1"].level, 82);
     assert.equal(await own.locator(".dd-graph-target line").count(), 2);
+    assert.deepEqual((await own.locator(".dd-graph-target .dd-graph-axis-tag text").allTextContents())[1], "82", "saved target tags its level on the y-axis");
     await own.getByRole("button", { name: /All areas.*compare/ }).click();
     assert.equal(await own.locator(".dd-target-form").count(), 0);
     assert.equal(await own.locator("svg path").count(), 2);

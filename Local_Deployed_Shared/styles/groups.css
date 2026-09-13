@@ -195,6 +195,14 @@
 .dd-graph-benchmark { stroke: var(--muted); stroke-dasharray: 3 5; stroke-width: 1.5; }
 .dd-graph-target { stroke: var(--info); fill: var(--panel); stroke-width: 1.5; stroke-dasharray: 7 4; }
 .dd-graph-crosshair { stroke: var(--text); fill: var(--panel); stroke-width: 1.5; stroke-dasharray: 3 3; }
+/* The coordinate tags a crosshair pins to its axes. `stroke: none` because the
+   parent <g> paints its lines through inherited stroke, and a stroked glyph is
+   unreadable at 12px. The saved target keeps its dashed colour; the hover
+   preview uses the text colour so the two never look like the same thing. */
+.dd-graph-axis-tag { stroke: none; }
+.dd-graph-axis-tag rect { fill: var(--text); }
+.dd-graph-axis-tag text { fill: var(--panel); font-size: 12px; font-weight: 600; }
+.dd-graph-target .dd-graph-axis-tag rect { fill: var(--info); }
 .dd-target-saved { color: var(--info); font-size: 12px; margin: 6px 0; }
 .dd-target-form { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .dd-target-form label { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
