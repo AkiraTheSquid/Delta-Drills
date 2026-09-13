@@ -10,10 +10,10 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1008,
+  "questions_joined": 1038,
   "kcs_covered": 64,
   "kcs_total": 64,
-  "kcs_measured": 49,
+  "kcs_measured": 47,
   "atoms_used": 79,
   "pairs": 132
  },
@@ -971,29 +971,29 @@
    ]
   },
   "numpy.reshape-flatten": {
-   "n": 19,
-   "reliability": 0.647,
-   "shared_with": 0.5,
+   "n": 49,
+   "reliability": 0.73,
+   "shared_with": 0.4,
    "tier": "measured",
    "atoms": [
     {
+     "a": "view-vs-reshape",
+     "w": 0.773,
+     "share": 0.809,
+     "spec": 0.698,
+     "n": 37
+    },
+    {
      "a": "reshape-backward",
-     "w": 0.873,
-     "share": 0.565,
+     "w": 0.223,
+     "share": 0.163,
      "spec": 1.0,
      "n": 12
     },
     {
-     "a": "view-vs-reshape",
-     "w": 0.112,
-     "share": 0.335,
-     "spec": 0.216,
-     "n": 7
-    },
-    {
      "a": "torch-arange",
-     "w": 0.016,
-     "share": 0.1,
+     "w": 0.004,
+     "share": 0.029,
      "spec": 0.101,
      "n": 2
     }
@@ -1067,30 +1067,30 @@
   },
   "numpy.transpose-axes": {
    "n": 15,
-   "reliability": 0.431,
-   "shared_with": 1.3,
-   "tier": "measured",
+   "reliability": 0.166,
+   "shared_with": 5.0,
+   "tier": "topic-proxy",
    "atoms": [
     {
      "a": "view-vs-reshape",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.431,
+     "spec": 0.166,
      "n": 15
     }
    ]
   },
   "numpy.views-and-copies": {
    "n": 9,
-   "reliability": 0.353,
-   "shared_with": 1.8,
-   "tier": "measured",
+   "reliability": 0.136,
+   "shared_with": 6.4,
+   "tier": "topic-proxy",
    "atoms": [
     {
      "a": "view-vs-reshape",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.353,
+     "spec": 0.136,
      "n": 9
     }
    ]

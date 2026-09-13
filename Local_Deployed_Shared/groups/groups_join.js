@@ -228,7 +228,7 @@ const DDGroupsJoin = (() => {
       </section>
       <dialog class="dd-group-consent">
         <h3>What the group will see</h3>
-        <p>Every member of this group will be able to read your readiness in each area of the curriculum, how many placement probes measured it, the name you go by here, and the daily checklist you write on this page. They cannot see your email address or your attempts.</p>
+        <p>Every member of this group will be able to read your readiness, competency history, daily answered-problem counts, progress targets, placement probe counts, display name, and daily goals. They cannot see your email address or individual attempts.</p>
         <p class="dd-group-consent-public" hidden>This group is listed, so anyone signed in can find it and join without an invite. The list shows its name, how many people are in it, and each member's initials — never names or email addresses.</p>
         <p>Anyone holding the group's invite link can join, so only share it with people you mean to share this with. Leaving the group removes you from it, and with you every readout of you the other members had.</p>
         <div class="dd-group-consent-actions">

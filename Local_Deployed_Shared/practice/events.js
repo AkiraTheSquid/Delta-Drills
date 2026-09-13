@@ -227,6 +227,38 @@ feedbackButtons.forEach((btn) => {
     try {
       response = await PracticeAPI.sendFeedback(q.question_id, feedback);
     } catch (err) {
+      /* 🔴 "NOTHING TO RATE" IS AN ANSWER, NOT A FAILURE. The backend parks
+         one attempt per learner and /feedback closes it; a second rating for
+         the same question — or a rating for a question whose attempt was
+         already closed — comes back 400 "No pending attempt to provide
+         feedback on". Re-enabling the buttons on that (the old behaviour)
+         left the learner with three buttons that each produced the same
+         sentence in the output pane and nothing else: no Next, no advance,
+         no way out. Seth, 2026-09-12, on q955 after a reload+resume put a
+         graded review back on screen for an attempt the server had already
+         finalized: "when I press the button for how much easier I want the
+         next problem, it doesn't actually go to the next problem. it's just
+         stuck there."
+
+         The attempt IS closed — the server said so — so the honest thing is
+         what a successful rating does: reveal Next and press it. No mastery
+         paint, because nothing changed on the server; the reading on the
+         topbar is already the one the earlier rating produced. Every other
+         failure (network, 5xx) still re-enables the buttons so a retry can
+         land. Matched on the server's own sentence; `sendFeedback` throws
+         the response body verbatim. */
+      if (/no pending attempt/i.test(err.message || "")) {
+        if (!practiceProgress.completedQuestionIds.includes(q.question_id)) {
+          practiceProgress.completedQuestionIds.push(q.question_id);
+        }
+        savePracticeProgress(practiceProgress);
+        showNextProblemButton("This one was already rated. Loading the next problem…");
+        setTimeout(() => {
+          if (PracticeAPI.currentQuestion !== q) return;
+          nextProblemBtn.click();
+        }, TOPBAR_SETTLE_MS);
+        return;
+      }
       outputArea.textContent = "Feedback failed: " + err.message;
       feedbackButtons.forEach((b) => (b.disabled = false));
       btn.classList.remove("feedback-btn--pressed");

@@ -114,7 +114,7 @@
        Learner Home's bars, quoted rather than copied), and the one rule in
        groups.css that overrides them — `.dd-member-areas`'s tighter top
        margin — is the same specificity, so source order is what settles it. -->
-  <link rel="stylesheet" href="styles/groups.css?v=1" />
+  <link rel="stylesheet" href="styles/groups.css?v=2" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
        win the ties. Inert until app.js `applyModeVisibility` writes that class,
@@ -1480,7 +1480,7 @@
   <main class="page hidden" id="page-groups">
     <div class="groups-page">
       <h1>Groups</h1>
-      <p class="groups-page-lede">A study group puts everyone's readiness beside your own — the same area bars your Learner Home draws, for every member. Start one, join a listed one, or paste an invite link.</p>
+      <p class="groups-page-lede">Follow everyone's goals, daily practice, and competency over time. Start a study group, join a listed one, or paste an invite link.</p>
       <div id="groups-root" aria-live="polite"></div>
     </div>
   </main>
@@ -2161,13 +2161,15 @@ t.manual_seed(0)
        400 KB Tiptap bundle these use is NOT loaded here: `groups_checklist.js`
        imports it on the first mount, so nobody who never opens this tab pays
        for it. -->
-  <script src="groups/groups_store.js?v=2"></script>
+  <script src="practice/activity-bars.js?v=1"></script>
+  <script src="groups/groups_store.js?v=3"></script>
   <script src="groups/groups_checklist_doc.js?v=1"></script>
   <script src="groups/groups_checklist.js?v=1"></script>
-  <script src="groups/groups_day.js?v=1"></script>
-  <script src="groups/groups_join.js?v=1"></script>
-  <script src="groups/groups_lane.js?v=1"></script>
-  <script src="groups/groups_view.js?v=3"></script>
+  <script src="groups/groups_day.js?v=2"></script>
+  <script src="groups/groups_join.js?v=2"></script>
+  <script src="groups/groups_progress.js?v=1"></script>
+  <script src="groups/groups_lane.js?v=2"></script>
+  <script src="groups/groups_view.js?v=4"></script>
   <script src="app.js?v=36"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
@@ -2239,7 +2241,7 @@ t.manual_seed(0)
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=1" defer></script>
+  <script src="concept-graph/graph-views.js?v=2" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2290,7 +2292,7 @@ t.manual_seed(0)
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=29"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=33"></script>
+  <script src="practice/timer.js?v=34"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2341,7 +2343,7 @@ t.manual_seed(0)
   <script src="practice/session-idle.js?v=8"></script>
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
-  <script src="practice/activity-chart.js?v=3"></script>
+  <script src="practice/activity-chart.js?v=4"></script>
   <script src="practice/lessons.js?v=37"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
@@ -2390,7 +2392,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=47"></script>
+  <script src="practice/events.js?v=48"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own

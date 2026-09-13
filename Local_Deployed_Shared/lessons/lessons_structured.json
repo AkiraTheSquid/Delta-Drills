@@ -2817,13 +2817,13 @@
       "Tensor.flatten",
       "Tensor.reshape"
      ],
-     "concept_markdown": "A tensor's data is one flat run of numbers in memory; the shape is a note\nsaying how to cut that run into rows. **Reshaping rewrites the note without\ntouching the run** \u2014 which is why it is usually free (no copy) and why the one\nhard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n# Hidden checks\nassert _delta_output == 'tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])\\ntensor([[ 0,  1,  2,  3],\\n        [ 4,  5,  6,  7],\\n        [ 8,  9, 10, 11]])\\n(2, 6)  torch.Size([2, 6])\\n(3, 4)  torch.Size([3, 4])\\n'\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"RuntimeError:\")\nassert \"12\" in _delta_output and \"5, 3\" in _delta_output\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\n# Hidden checks\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```\n\n**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\n# Hidden checks\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n# Hidden checks\nassert _delta_output == 'tensor([[[ 0,  1,  2],\\n         [ 3,  4,  5]],\\n\\n        [[ 6,  7,  8],\\n         [ 9, 10, 11]]])\\n'\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\n# Hidden checks\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nSince reshape only rewrites the note, the result usually shares the original's\nmemory \u2014 it is a **view**. Writing into the view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\n# Hidden checks\nassert base[0].item() == 9.0\n```\n\nThat sharing is the whole reason reshape is free, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\n# Hidden checks\nassert t.equal(back, z)\n```",
+     "concept_markdown": "A contiguous tensor stores its values consecutively in reading order; its\nshape describes how to group that run into axes. **Reshaping preserves the\nreading-order sequence while changing those groups.** For contiguous input,\nthis shares storage without copying values. Other layouts may require a copy.\nEither way, the one hard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n# Hidden checks\nassert _delta_output == 'tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])\\ntensor([[ 0,  1,  2,  3],\\n        [ 4,  5,  6,  7],\\n        [ 8,  9, 10, 11]])\\n(2, 6)  torch.Size([2, 6])\\n(3, 4)  torch.Size([3, 4])\\n'\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"RuntimeError:\")\nassert \"12\" in _delta_output and \"5, 3\" in _delta_output\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\n# Hidden checks\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```\n\nThe fixed dimensions describe the groups you want to keep. For a tensor with\nshape `(batch, rows, cols)`, keeping `batch` as the first length gives one long\nrow per batch; keeping `cols` as the last length gives one row per original\nrow. Both preserve the same flat sequence, but they answer different questions.\nA dimension of length one adds a grouping level, not another value. Its\nposition determines which part of the result gets wrapped in another pair of\nbrackets. For example, `(1, 2, 3)` wraps one whole matrix, while `(2, 1, 3)`\nwraps each row separately.\n\n**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\n# Hidden checks\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n# Hidden checks\nassert _delta_output == 'tensor([[[ 0,  1,  2],\\n         [ 3,  4,  5]],\\n\\n        [[ 6,  7,  8],\\n         [ 9, 10, 11]]])\\n'\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\n# Hidden checks\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nEach original row occupies one interval in the flat run. With width `w`, row\n`r` starts at position `r * w` and ends just before `(r + 1) * w`; its last\nentry is at `(r + 1) * w - 1`. This explains why row starts are `w` positions\napart. Taking a slice before flattening selects groups, whereas taking it\nafter flattening selects individual values. Decide which unit the task names\nbefore choosing where to index.\n\n```python\nletters_as_numbers = t.tensor([[14, 25, 36], [47, 58, 69]])\nprint(\"one original row:\", letters_as_numbers[1:].flatten().tolist())\nprint(\"all but one entry:\", letters_as_numbers.flatten()[1:].tolist())\n# Hidden checks\nassert letters_as_numbers[1:].flatten().tolist() == [47, 58, 69]\nassert letters_as_numbers.flatten()[1:].tolist() == [25, 36, 47, 58, 69]\n```\n\nFor contiguous input, reshape can describe the new shape using the original\nstorage \u2014 the result is a **view**. Writing into this view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\n# Hidden checks\nassert base[0].item() == 9.0\n```\n\nThat sharing is the reason this reshape avoids a copy, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\n# Hidden checks\nassert t.equal(back, z)\n```\n\nTwo different shapes can therefore describe the same changing data. A write\nthrough either view appears through both, even if their row boundaries differ.\nTo record what the values were **before** a write, call `tolist()` before the\nassignment: the resulting Python list contains copied values. Calling it\nafterward records the changed values instead. Every new mutation drill here\nspecifies contiguous input, so the required sharing is guaranteed for its\nreshapes; it does not rely on the behavior of a transposed or sliced layout.\n\n```python\noriginal = t.tensor([13, 24, 35, 46])\nbefore = original.tolist()\npaired = original.reshape(2, 2)\npaired[0, 1] = 70\nprint(\"saved list:\", before)\nprint(\"current run:\", original.tolist())\n# Hidden checks\nassert before == [13, 24, 35, 46]\nassert original.tolist() == [13, 70, 35, 46]\n```",
      "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nprint(grid)\n# Hidden checks\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then cut them.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.\n\nTask: take the counting matrix apart again, both ways.\n\n```python\nimport torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n# Hidden checks\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\n```\n\nWhy: \"flatten\" is not one operation until you say the order. The default\nmatches how the matrix prints; the column-by-column read is a transpose away.\n\nTask: prove the view shares memory, then prove the round trip is exact.\n\n```python\nimport torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n# Hidden checks\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\nassert t.equal(again, x)\n```\n\nWhy: step 1 is the difference between reshape and a copy, and it is what\nmakes a stray write into a \"temporary\" reshaped tensor show up in the original.",
      "segments": [
       {
        "concept_id": "s0-reshape-re-describes-the-same-run-of-numbers",
        "title": "reshape re-describes the same run of numbers",
-       "concept_markdown": "A tensor's data is one flat run of numbers in memory; the shape is a note\nsaying how to cut that run into rows. **Reshaping rewrites the note without\ntouching the run** \u2014 which is why it is usually free (no copy) and why the one\nhard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n# Hidden checks\nassert _delta_output == 'tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])\\ntensor([[ 0,  1,  2,  3],\\n        [ 4,  5,  6,  7],\\n        [ 8,  9, 10, 11]])\\n(2, 6)  torch.Size([2, 6])\\n(3, 4)  torch.Size([3, 4])\\n'\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"RuntimeError:\")\nassert \"12\" in _delta_output and \"5, 3\" in _delta_output\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\n# Hidden checks\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```",
+       "concept_markdown": "A contiguous tensor stores its values consecutively in reading order; its\nshape describes how to group that run into axes. **Reshaping preserves the\nreading-order sequence while changing those groups.** For contiguous input,\nthis shares storage without copying values. Other layouts may require a copy.\nEither way, the one hard rule is:\n\n> the new shape must account for exactly the same number of elements\n> (`2 \u00d7 6 = 12 = 3 \u00d7 4` \u2713, but 12 \u2192 `(5, 3)` \u2717 raises an error).\n\nThe spelling is **`x.reshape(shape)`**, and the shape can be given loose\n(`x.reshape(3, 4)`) or as a tuple (`x.reshape((3, 4))`):\n\n```python\nimport torch as t\n\nx = t.arange(12)\nprint(x)\nprint(x.reshape(3, 4))\nprint(\"(2, 6) \", x.reshape(2, 6).shape)\nprint(\"(3, 4) \", x.reshape((3, 4)).shape)\n# Hidden checks\nassert _delta_output == 'tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])\\ntensor([[ 0,  1,  2,  3],\\n        [ 4,  5,  6,  7],\\n        [ 8,  9, 10, 11]])\\n(2, 6)  torch.Size([2, 6])\\n(3, 4)  torch.Size([3, 4])\\n'\n```\n\nThe count rule is not a guideline. A mismatch raises rather than padding or\ntruncating:\n\n```python\ntry:\n    x.reshape(5, 3)                      # 15 != 12\nexcept RuntimeError as err:\n    print(\"RuntimeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"RuntimeError:\")\nassert \"12\" in _delta_output and \"5, 3\" in _delta_output\n```\n\nOne dimension may be **`-1`**, meaning \"work this one out for me\":\n`x.reshape(3, -1)` fixes three rows and lets PyTorch derive the columns. It\nonly ever *derives* a length \u2014 it cannot invent elements \u2014 and only one `-1`\nis allowed per call.\n\n```python\nprint(\"(3, -1) ->\", tuple(x.reshape(3, -1).shape))\nprint(\"(-1, 2) ->\", tuple(x.reshape(-1, 2).shape))\n# Hidden checks\nassert x.reshape(3, -1).shape == x.reshape(3, 4).shape\n```\n\nThe fixed dimensions describe the groups you want to keep. For a tensor with\nshape `(batch, rows, cols)`, keeping `batch` as the first length gives one long\nrow per batch; keeping `cols` as the last length gives one row per original\nrow. Both preserve the same flat sequence, but they answer different questions.\nA dimension of length one adds a grouping level, not another value. Its\nposition determines which part of the result gets wrapped in another pair of\nbrackets. For example, `(1, 2, 3)` wraps one whole matrix, while `(2, 1, 3)`\nwraps each row separately.",
        "watch_out_markdown": "",
        "worked_example_markdown": "Task: build the classic \"counting matrix\" \u2014 an n\u00d7n tensor containing 0..n\u00b2-1\nreading left-to-right, top-to-bottom.\n\n```python\nimport torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nprint(grid)\n# Hidden checks\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n```\n\nWhy each step:\n\n1. `arange` + `reshape` is the standard two-step for \"matrix containing the\n   numbers 0..k in reading order\" \u2014 generate the flat values, then cut them.\n2. `-1` earns its keep when one dimension is derived: you state the part you\n   know and let PyTorch check the arithmetic.",
        "worked_example_code": "import torch as t\n\nn = 3\n# Step 1: make the flat run 0..8. It's 1-D \u2014 shape (9,).\nflat = t.arange(n * n)\n\n# Step 2: reshape to (3, 3). The first three numbers become row 0, the next\n# three row 1 \u2014 exactly the \"reading order\" the task describes. No data\n# is copied; only the note about the shape changed.\ngrid = flat.reshape(n, n)\n\n# The -1 shortcut: \"3 rows, you work out the columns.\"\nprint(grid)\n# Hidden checks\nassert grid.tolist() == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]\nassert grid.tolist() == t.arange(9).reshape(3, -1).tolist()\n",
@@ -2851,13 +2851,31 @@
          "prompt": "The same run of numbers, re-described as `rows` rows of `cols`.",
          "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x._____(rows, cols).tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.arange(6), 2, 3,)\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x.reshape(rows, cols).tolist()\n"
+        },
+        {
+         "question_id": 1333,
+         "prompt": "Infer the middle axis.",
+         "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    return x._____(rows, _____, cols).tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    return x.reshape(rows, -1, cols).tolist()\n"
+        },
+        {
+         "question_id": 1334,
+         "prompt": "One outer container per batch.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____(_____, x.shape[0], x.shape[1]).tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    return x.reshape(1, x.shape[0], x.shape[1]).tolist()\n"
+        },
+        {
+         "question_id": 1335,
+         "prompt": "Keep each batch together.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____(x.shape[_____], _____).tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    return x.reshape(x.shape[0], -1).tolist()\n"
         }
        ]
       },
       {
        "concept_id": "s1-flatten-and-the-order-the-numbers-come-out-in",
        "title": "flatten, and the order the numbers come out in",
-       "concept_markdown": "**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\n# Hidden checks\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n# Hidden checks\nassert _delta_output == 'tensor([[[ 0,  1,  2],\\n         [ 3,  4,  5]],\\n\\n        [[ 6,  7,  8],\\n         [ 9, 10, 11]]])\\n'\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\n# Hidden checks\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```",
+       "concept_markdown": "**`x.flatten()`** is the other direction: any shape back to one axis. Both\noperations answer the same question \u2014 **in what order do elements fill a\nshape?** \u2014 and PyTorch's answer is **row-major** (\"C order\"): the *last* axis\nmoves fastest. Reading a 2-D tensor in row-major order means walking across\nrow 0 left to right, then row 1, and so on.\n\n```python\nimport torch as t\n\nz = t.arange(6).reshape(2, 3)\nprint(z)\nprint(\"flatten ->\", z.flatten())\n# Hidden checks\nassert z.flatten().tolist() == [0, 1, 2, 3, 4, 5]\n```\n\nThe same rule explains higher-dimensional shapes: `reshape(2, 2, 3)` fills the\nlast axis (length 3) fastest and the first axis slowest.\n\n```python\nprint(t.arange(12).reshape(2, 2, 3))\n# Hidden checks\nassert _delta_output == 'tensor([[[ 0,  1,  2],\\n         [ 3,  4,  5]],\\n\\n        [[ 6,  7,  8],\\n         [ 9, 10, 11]]])\\n'\n```\n\nRead that print bottom-up: the innermost brackets (length 3) count by one, so\nthat axis moves fastest; the outermost changes only once.\n\nColumn-major (\"Fortran\") order \u2014 first axis fastest \u2014 has **no keyword** in\nPyTorch. NumPy spells it `order='F'`; here you get it by swapping the axes\nfirst and then flattening: `z.T.flatten()` reads the matrix column by column.\n\n```python\nprint(\"row-major   \", z.flatten())\nprint(\"column-major\", z.T.flatten())\n# Hidden checks\nassert z.T.flatten().tolist() == [0, 3, 1, 4, 2, 5]\n```\n\nEach original row occupies one interval in the flat run. With width `w`, row\n`r` starts at position `r * w` and ends just before `(r + 1) * w`; its last\nentry is at `(r + 1) * w - 1`. This explains why row starts are `w` positions\napart. Taking a slice before flattening selects groups, whereas taking it\nafter flattening selects individual values. Decide which unit the task names\nbefore choosing where to index.\n\n```python\nletters_as_numbers = t.tensor([[14, 25, 36], [47, 58, 69]])\nprint(\"one original row:\", letters_as_numbers[1:].flatten().tolist())\nprint(\"all but one entry:\", letters_as_numbers.flatten()[1:].tolist())\n# Hidden checks\nassert letters_as_numbers[1:].flatten().tolist() == [47, 58, 69]\nassert letters_as_numbers.flatten()[1:].tolist() == [25, 36, 47, 58, 69]\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "Task: take the counting matrix apart again, both ways.\n\n```python\nimport torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n# Hidden checks\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\n```\n\nWhy: \"flatten\" is not one operation until you say the order. The default\nmatches how the matrix prints; the column-by-column read is a transpose away.",
        "worked_example_code": "import torch as t\n\ngrid = t.arange(9).reshape(3, 3)\n\n# Step 1: flatten undoes the reshape \u2014 the row-major walk gives 0..8 back.\n\n# Step 2: the column-major walk reads DOWN each column instead. No order=\n# keyword exists, so transpose first and let the row-major walk do the work.\nprint(grid)\nprint(\"row-major   \", grid.flatten())\nprint(\"column-major\", grid.T.flatten())\n# Hidden checks\nassert grid.flatten().tolist() == [0, 1, 2, 3, 4, 5, 6, 7, 8]\nassert grid.T.flatten().tolist() == [0, 3, 6, 1, 4, 7, 2, 5, 8]\n",
@@ -2879,13 +2897,31 @@
          "prompt": "Two reads of one grid: across the rows, then down the columns.",
          "starter_code": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n)._____(rows, -1)\n    return (g._____().tolist(), g.T._____().tolist())\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (6, 2,)\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n).reshape(rows, -1)\n    return (g.flatten().tolist(), g.T.flatten().tolist())\n"
+        },
+        {
+         "question_id": 1336,
+         "prompt": "Keep every second reading-order value.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____()[::_____].tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    return x.flatten()[::2].tolist()\n"
+        },
+        {
+         "question_id": 1337,
+         "prompt": "Flatten one batch.",
+         "starter_code": "import torch as t\n\ndef solve(x, k):\n    return x[k]._____().tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x, k):\n    return x[k].flatten().tolist()\n"
+        },
+        {
+         "question_id": 1338,
+         "prompt": "Find the end of the first row.",
+         "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____()[x.shape[_____] - 1].item()\n",
+         "solution": "import torch as t\n\ndef solve(x):\n    return x.flatten()[x.shape[1] - 1].item()\n"
         }
        ]
       },
       {
        "concept_id": "s2-reshape-is-a-view-of-the-same-memory",
        "title": "reshape is a view of the same memory",
-       "concept_markdown": "Since reshape only rewrites the note, the result usually shares the original's\nmemory \u2014 it is a **view**. Writing into the view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\n# Hidden checks\nassert base[0].item() == 9.0\n```\n\nThat sharing is the whole reason reshape is free, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\n# Hidden checks\nassert t.equal(back, z)\n```",
+       "concept_markdown": "For contiguous input, reshape can describe the new shape using the original\nstorage \u2014 the result is a **view**. Writing into this view writes the original:\n\n```python\nimport torch as t\n\nbase = t.zeros(6)\ngrid = base.reshape(2, 3)\ngrid[0, 0] = 9.0\nprint(\"grid:\", grid)\nprint(\"base:\", base)\n# Hidden checks\nassert base[0].item() == 9.0\n```\n\nThat sharing is the reason this reshape avoids a copy, and it is also the thing to\nremember when a \"copy\" turns out not to be one. When the run cannot be\nre-described in place \u2014 a transposed tensor, say, whose numbers are not in\nreading order \u2014 `reshape` quietly copies instead. You will also meet\n**`x.view(shape)`**, reshape's stricter sibling: it *only* ever re-labels the\nexisting memory and raises if that is impossible. Prefer `reshape` unless you\nspecifically want the error.\n\nA round trip changes nothing: flatten, then reshape back to the old shape, and\nyou have the same numbers in the same arrangement.\n\n```python\nz = t.arange(6).reshape(2, 3)\nback = z.flatten().reshape(z.shape)\nprint(back)\n# Hidden checks\nassert t.equal(back, z)\n```\n\nTwo different shapes can therefore describe the same changing data. A write\nthrough either view appears through both, even if their row boundaries differ.\nTo record what the values were **before** a write, call `tolist()` before the\nassignment: the resulting Python list contains copied values. Calling it\nafterward records the changed values instead. Every new mutation drill here\nspecifies contiguous input, so the required sharing is guaranteed for its\nreshapes; it does not rely on the behavior of a transposed or sliced layout.\n\n```python\noriginal = t.tensor([13, 24, 35, 46])\nbefore = original.tolist()\npaired = original.reshape(2, 2)\npaired[0, 1] = 70\nprint(\"saved list:\", before)\nprint(\"current run:\", original.tolist())\n# Hidden checks\nassert before == [13, 24, 35, 46]\nassert original.tolist() == [13, 70, 35, 46]\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "Task: prove the view shares memory, then prove the round trip is exact.\n\n```python\nimport torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n# Hidden checks\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\nassert t.equal(again, x)\n```\n\nWhy: step 1 is the difference between reshape and a copy, and it is what\nmakes a stray write into a \"temporary\" reshaped tensor show up in the original.",
        "worked_example_code": "import torch as t\n\nx = t.tensor([[1, 2], [3, 4]])\n\n# Step 1: a reshaped view of a tensor in reading order shares its memory.\nflat = x.reshape(-1)\nflat[0] = 99\n\n# Step 2: the round trip \u2014 flatten, reshape back \u2014 is the same tensor.\nagain = x.flatten().reshape(x.shape)\nprint(\"x after the write:\", x.tolist())\nprint(\"round trip equal: \", t.equal(again, x))\n# Hidden checks\nassert x.tolist() == [[99, 2], [3, 4]]      # the write landed in x\nassert t.equal(again, x)\n",
@@ -2901,6 +2937,24 @@
          "prompt": "Flatten, then reshape back \u2014 the round trip changes nothing.",
          "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x._____()._____(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]),)\nprint(solve(*example))\n",
          "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x.flatten().reshape(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n"
+        },
+        {
+         "question_id": 1339,
+         "prompt": "Change one row through a flat view.",
+         "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    flat = x._____(-1)\n    width = x.shape[1]\n    flat[_____:(k + 1) * width] = value\n    return x.tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x, k, value):\n    flat = x.reshape(-1)\n    width = x.shape[1]\n    flat[k * width:(k + 1) * width] = value\n    return x.tolist()\n"
+        },
+        {
+         "question_id": 1340,
+         "prompt": "Write through a matrix view.",
+         "starter_code": "import torch as t\n\ndef solve(x, cols, value):\n    matrix = x._____(-1, cols)\n    matrix[_____, _____] = value\n    return x.tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x, cols, value):\n    matrix = x.reshape(-1, cols)\n    matrix[0, -1] = value\n    return x.tolist()\n"
+        },
+        {
+         "question_id": 1341,
+         "prompt": "Read the changed entry through another shape.",
+         "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x._____(x.shape[0], -1)\n    matrix[_____, 0] = value\n    return x.tolist()\n",
+         "solution": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, 0] = value\n    return x.tolist()\n"
         }
        ]
       }
@@ -2931,6 +2985,24 @@
        "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    \"\"\"Return x re-described as (rows, cols), as a plain nested list.\"\"\"\n    return x.reshape(rows, cols).tolist()\n"
       },
       {
+       "question_id": 1333,
+       "prompt": "Infer the middle axis.",
+       "starter_code": "import torch as t\n\ndef solve(x, rows, cols):\n    return x._____(rows, _____, cols).tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x, rows, cols):\n    return x.reshape(rows, -1, cols).tolist()\n"
+      },
+      {
+       "question_id": 1334,
+       "prompt": "One outer container per batch.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____(_____, x.shape[0], x.shape[1]).tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    return x.reshape(1, x.shape[0], x.shape[1]).tolist()\n"
+      },
+      {
+       "question_id": 1335,
+       "prompt": "Keep each batch together.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____(x.shape[_____], _____).tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    return x.reshape(x.shape[0], -1).tolist()\n"
+      },
+      {
        "question_id": 490,
        "prompt": "Any shape in, exactly one axis out.",
        "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Return x collapsed to a single axis.\"\"\"\n    return x._____()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = t.tensor([[1, 2, 3], [4, 5, 6]])\nprint(solve(example))\n",
@@ -2949,6 +3021,24 @@
        "solution": "import torch as t\n\ndef solve(n, rows):\n    \"\"\"Return (row-major read, column-major read) of the counting matrix, as lists.\"\"\"\n    g = t.arange(n).reshape(rows, -1)\n    return (g.flatten().tolist(), g.T.flatten().tolist())\n"
       },
       {
+       "question_id": 1336,
+       "prompt": "Keep every second reading-order value.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____()[::_____].tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    return x.flatten()[::2].tolist()\n"
+      },
+      {
+       "question_id": 1337,
+       "prompt": "Flatten one batch.",
+       "starter_code": "import torch as t\n\ndef solve(x, k):\n    return x[k]._____().tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x, k):\n    return x[k].flatten().tolist()\n"
+      },
+      {
+       "question_id": 1338,
+       "prompt": "Find the end of the first row.",
+       "starter_code": "import torch as t\n\ndef solve(x):\n    return x._____()[x.shape[_____] - 1].item()\n",
+       "solution": "import torch as t\n\ndef solve(x):\n    return x.flatten()[x.shape[1] - 1].item()\n"
+      },
+      {
        "question_id": 622,
        "prompt": "Write through the reshaped view and read the original.",
        "starter_code": "import torch as t\n\ndef solve(x, v):\n    \"\"\"Reshape x to 1-D, write v into the LAST slot of the result, return x's values.\"\"\"\n    flat = x._____(-1)\n    flat[-1] = v\n    return x.tolist()\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2], [3, 4]]), 9,)\nprint(solve(*example))\n",
@@ -2959,6 +3049,24 @@
        "prompt": "Flatten, then reshape back \u2014 the round trip changes nothing.",
        "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x._____()._____(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n\n\n# Example run \u2014 the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (t.tensor([[1, 2, 3], [4, 5, 6]]),)\nprint(solve(*example))\n",
        "solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Flatten x and reshape it back; return (equal to x?, shape of the round trip).\"\"\"\n    back = x.flatten().reshape(x.shape)\n    return (t.equal(back, x), tuple(back.shape))\n"
+      },
+      {
+       "question_id": 1339,
+       "prompt": "Change one row through a flat view.",
+       "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    flat = x._____(-1)\n    width = x.shape[1]\n    flat[_____:(k + 1) * width] = value\n    return x.tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x, k, value):\n    flat = x.reshape(-1)\n    width = x.shape[1]\n    flat[k * width:(k + 1) * width] = value\n    return x.tolist()\n"
+      },
+      {
+       "question_id": 1340,
+       "prompt": "Write through a matrix view.",
+       "starter_code": "import torch as t\n\ndef solve(x, cols, value):\n    matrix = x._____(-1, cols)\n    matrix[_____, _____] = value\n    return x.tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x, cols, value):\n    matrix = x.reshape(-1, cols)\n    matrix[0, -1] = value\n    return x.tolist()\n"
+      },
+      {
+       "question_id": 1341,
+       "prompt": "Read the changed entry through another shape.",
+       "starter_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x._____(x.shape[0], -1)\n    matrix[_____, 0] = value\n    return x.tolist()\n",
+       "solution": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, 0] = value\n    return x.tolist()\n"
       }
      ],
      "guided_items": [],
@@ -2998,6 +3106,81 @@
        "question_id": 626,
        "prompt": "Three axes, two of them given \u2014 infer the last with -1.\n\n-1 works in any position and at any rank: it stands for \"the one length\nthat makes the count come out\". Here it fills a THIRD axis:",
        "worked_example_code": "import torch as t\n\nx = t.arange(12)\n\ng = x.reshape(2, 2, -1)      # 12 = 2 * 2 * ?, so the last axis is 3\nprint(g)\nprint(\"shape:\", tuple(g.shape))\n# Hidden checks\nassert tuple(g.shape) == (2, 2, 3)\n"
+      },
+      {
+       "question_id": 1342,
+       "prompt": "Gather one position from every batch.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1343,
+       "prompt": "Preserve the final feature axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1344,
+       "prompt": "Each number gets its own row.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1345,
+       "prompt": "Insert an axis between rows and columns.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1346,
+       "prompt": "Remove the batch grouping.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1347,
+       "prompt": "Read one complete block.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1348,
+       "prompt": "Inspect the first item in each block.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1349,
+       "prompt": "Skip the first reading-order value.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1350,
+       "prompt": "Read row starts in the flat run.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1351,
+       "prompt": "Separate row ends from row starts.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1352,
+       "prompt": "Write every row start through one axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1353,
+       "prompt": "Write every row end through one axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1354,
+       "prompt": "Rewrite one whole batch.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1355,
+       "prompt": "Restore a saved matrix shape.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1356,
+       "prompt": "Two valid layouts of the same run.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -3012,6 +3195,30 @@
       {
        "question_id": 629,
        "prompt": "Three axes from one run, and back again."
+      },
+      {
+       "question_id": 1357,
+       "prompt": "Edit a block and inspect both layouts."
+      },
+      {
+       "question_id": 1358,
+       "prompt": "Regroup a batch and propagate a write."
+      },
+      {
+       "question_id": 1359,
+       "prompt": "Overwrite a prefix crossing a row boundary."
+      },
+      {
+       "question_id": 1360,
+       "prompt": "Preserve a snapshot before a view write."
+      },
+      {
+       "question_id": 1361,
+       "prompt": "Compare regrouped shapes after a write."
+      },
+      {
+       "question_id": 1362,
+       "prompt": "Snapshot one batch then change its first row."
       }
      ],
      "independent_items": [
@@ -3021,7 +3228,22 @@
       494,
       624,
       625,
-      626
+      626,
+      1342,
+      1343,
+      1344,
+      1345,
+      1346,
+      1347,
+      1348,
+      1349,
+      1350,
+      1351,
+      1352,
+      1353,
+      1354,
+      1355,
+      1356
      ],
      "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read.",
      "notes_markdown": "## Findings\n- 2026-09-01: 43-attempt `faded` stall at 14% accuracy in the 08-19\u219227 logs;\n  the low-p run inside it scored 1/26 (mean predicted_p 0.237). Same root\n  cause as [[numpy.ndarray-model]] (`a.T` untaught); kept as a separate note\n  because the stall metric reports per concept and both fired independently.\n\n## Checks\n- `app/kc_stats.py` flags."

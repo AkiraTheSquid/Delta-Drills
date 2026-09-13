@@ -52,6 +52,11 @@ const DDGroups = (() => {
      cannot tell a read still in flight from a read that came back empty
      handed, and the column has to say a different sentence for each. */
   let dayState = "loading";
+  let view = "goals";
+  let horizon = "weekly";
+  let progress = null;
+  let progressState = "loading";
+  let progressSeq = 0;
   /* 🔴 THE TAB CAN BE LEFT WHILE A READ IS IN FLIGHT. `suspend()` tears
      the editor down, but the promise it was racing does not know that: it
      lands, repaints the hidden page and mounts a fresh ProseMirror nobody
@@ -117,7 +122,41 @@ const DDGroups = (() => {
     entries = null;
     dayState = "loading";
     render();          // repaint immediately: the picker must feel instant
-    void loadDay(key); // …and the columns fill in when the read lands
+    void loadVisible();
+  };
+
+  const loadProgress = async () => {
+    const seq = ++progressSeq;
+    const answer = await store().readProgress(day, horizon);
+    if (seq !== progressSeq || !active) return;
+    progress = answer;
+    progressState = answer === null ? "failed" : "ready";
+    render();
+  };
+
+  const loadVisible = () => {
+    daySeq += 1;
+    progressSeq += 1;
+    if (view === "goals") return loadDay(day);
+    progress = null;
+    progressState = "loading";
+    render();
+    return loadProgress();
+  };
+
+  const selectControl = (label, value, options, change) => {
+    const wrap = el("label", "dd-board-control", label);
+    const select = el("select", "dd-board-select");
+    select.setAttribute("aria-label", label);
+    for (const [key, text] of options) {
+      const option = el("option", "", text);
+      option.value = key;
+      select.appendChild(option);
+    }
+    select.value = value;
+    select.addEventListener("change", () => change(select.value));
+    wrap.appendChild(select);
+    return wrap;
   };
 
   /** Write your own checklist for the day it was typed on.
@@ -154,7 +193,10 @@ const DDGroups = (() => {
              the click that changed something repaints on that click rather
              than one round trip later. `null` means we just left. */
           current = next;
+          daySeq += 1;
+          progressSeq += 1;
           render();
+          if (next) void loadVisible();
         },
       })
     );
@@ -166,11 +208,26 @@ const DDGroups = (() => {
        because there is only one edge for them to line up against. */
     const board = el("div", "dd-board");
     const dayRow = el("div", "dd-board-day");
-    const bar = days().buildPicker({ value: day, onChange: setDay });
-    if (dayState === "failed") {
+    dayRow.appendChild(selectControl("View", view, [
+      ["goals", "Goals"], ["activity", "Problems per day"], ["graph", "Competency graph"],
+    ], (next) => {
+      lane()?.destroyAll();
+      view = next;
+      entries = null;
+      dayState = "loading";
+      render();
+      void loadVisible();
+    }));
+    if (view !== "goals") dayRow.appendChild(selectControl("Time horizon", horizon, [
+      ["daily", "Daily"], ["weekly", "Weekly"], ["monthly", "Monthly"],
+    ], (next) => { horizon = next; void loadVisible(); }));
+    const bar = days().buildPicker({ value: day, onChange: setDay,
+      horizon: view === "goals" ? "daily" : horizon,
+      caption: view === "goals" ? "Goals for" : "Period" });
+    if ((view === "goals" ? dayState : progressState) === "failed") {
       const retry = el("button", "dd-day-retry", "Retry");
       retry.type = "button";
-      retry.addEventListener("click", retryDay);
+      retry.addEventListener("click", view === "goals" ? retryDay : () => void loadVisible());
       bar.appendChild(retry);
     }
     dayRow.appendChild(bar);
@@ -193,6 +250,9 @@ const DDGroups = (() => {
           day: paintedDay,
           dayState,
           payload,
+          view,
+          progress,
+          progressState,
           onSave: (text) => saveDay(paintedDay, text),
         })
       );
@@ -202,7 +262,11 @@ const DDGroups = (() => {
 
     const foot = el("p", "dd-group-note dd-group-foot");
     foot.textContent =
-      "Each bar is that person's estimated readiness in one area of the curriculum, on the same scale as your own Learner Home. An area nobody probed is a starting assumption, not a measurement. The checklist beside it is what they wrote for the day above — click a box to cycle it: open, done, or won't do.";
+      view === "goals"
+        ? "Goals belong to the selected day. Click your boxes to cycle: open, done, or won't do."
+        : view === "activity"
+          ? "Same count as Practice: answered drills plus placement responses, including incorrect answers. Dates use your time zone."
+          : "Normalized concept mastery (0–100), averaged across every concept in each section. Unmeasured concepts retain the model's prior; coverage and topic proxies are labeled. The dotted 80 line is an approximate planning benchmark, not an ARENA pass guarantee. Historical estimates use recorded BKT updates and the current concept mapping.";
     root.appendChild(foot);
   };
 
@@ -240,7 +304,7 @@ const DDGroups = (() => {
     entries = null;
     dayState = "loading";
     render();
-    void loadDay(day);
+    void loadVisible();
   };
 
   /**
@@ -299,6 +363,12 @@ const DDGroups = (() => {
       current = null;
       entries = null;
       dayState = "loading";
+      progress = null;
+      progressState = "loading";
+      daySeq += 1;
+      progressSeq += 1;
+      fetchSeq += 1;
+      window.DDGroupProgress?.reset();
     },
     /* Leaving the tab is a teardown, not a pause: it flushes the save
        debounce. app.js calls this from switchTab on the way out. */
@@ -311,6 +381,8 @@ const DDGroups = (() => {
          opened again. */
       active = false;
       daySeq += 1;
+      progressSeq += 1;
+      fetchSeq += 1;
     },
   };
 })();

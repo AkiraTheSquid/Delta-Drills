@@ -5,13 +5,15 @@
  * layers THREE views over that one graph and a settings card in the
  * bottom-left corner of the canvas to switch between them:
  *
- *   adaptive  — start zoomed in on the learner's KNOWLEDGE FRONTIER: the
- *               concepts the tutor can serve now (unlocked, not yet learned).
- *               Only those bubbles are on the canvas. Tapping one reveals its
+ *   adaptive  — start zoomed in on the learner's LEARNING HORIZON: the
+ *               concepts the tutor can serve now (unlocked, not yet learned)
+ *               plus everything they build on. The rest of the map is laid
+ *               out but INVISIBLE — every bubble keeps its slot, so the
+ *               horizon sits exactly where it sits in the complete view and
+ *               nothing shuffles as it grows. Tapping a bubble reveals its
  *               direct prerequisites BELOW it (fan-in, blue) and the concepts
- *               it unlocks ABOVE it (fan-out, orange); tapping a revealed node
- *               reveals its neighbours in turn, so the map grows outward from
- *               what the learner is actually studying.
+ *               it unlocks ABOVE it (fan-out, orange) — the next things to
+ *               study; tapping a revealed node reveals its neighbours in turn.
  *   condensed — one bubble per ARENA section (−1.0 Python, −1.1 arrays,
  *               0.0, 0.1, …) with the number of prerequisite links between
  *               sections on the edges. Tapping a section opens it into its
@@ -23,13 +25,16 @@
  *
  * 🔴 The graph stays lesson-graph.js's. Adaptive and complete operate on ITS
  * Cytoscape instance (`window.deltaConceptGraphCy()`) under the same contract
- * instructor-graph-edit.js honours: every hidden element is one `cy.remove`
- * whose collection is kept, and everything is `.restore()`d before the next
- * view or a mode switch — a remove is the only way to make dagre lay out the
- * SUBSET, and a bypass style on a node's border would outrank the gate-state
- * classes (locked / frontier / next-up) that file paints. Fan colours are
- * therefore `underlay-*` on nodes (a halo, not the border) and a bypass on the
- * incident EDGES only, and both are cleared when the view resets.
+ * instructor-graph-edit.js honours. The Chapters filter is the only
+ * `cy.remove` on that instance (collection kept, `.restore()`d before the
+ * next view). Adaptive never removes: what is beyond the horizon gets a
+ * `visibility: hidden` + `events: no` BYPASS, so dagre still lays it out and
+ * the horizon keeps the complete view's geometry — a removed node gives up
+ * its slot and the map re-packs. A bypass on a node's border would outrank
+ * the gate-state classes (locked / frontier / next-up) that file paints, so
+ * fan colours are `underlay-*` on nodes (a halo, not the border) and a
+ * bypass on the incident EDGES only; every bypass is cleared by name when the
+ * view resets.
  *
  * Condensed is a SECOND, private Cytoscape instance in an overlay over the
  * same box. Section nodes have no lesson, no lattice row and no learner
@@ -128,6 +133,8 @@
   let expanded = new Set();      // adaptive: KCs whose neighbourhood is revealed
   let openSections = new Set();  // condensed: sections opened into concepts
   let removed = null;            // cy collection of everything we took off the canvas
+  let ghosted = null;            // cy collection hidden in place (adaptive: beyond the horizon)
+  let shown = new Set();         // adaptive: ids currently visible
   let fanStyled = null;          // cy collection carrying our fan bypass styles
   const parents = {}, children = {}, nodeLesson = {}, nodeLabel = {};
   let allKcs = [];
@@ -205,9 +212,22 @@
     if (fanStyled && fanStyled.length) fanStyled.forEach((e) => e.removeStyle(FAN_PROPS));
     fanStyled = null;
   };
+  // Hidden in place: the element keeps its slot in the layout, draws nothing
+  // and takes no pointer events. Named properties only, same reason as above.
+  const GHOST_PROPS = "visibility events";
+  const clearGhosts = () => {
+    if (ghosted && ghosted.length) ghosted.removeStyle(GHOST_PROPS);
+    ghosted = null;
+  };
+  const ghost = (eles) => {
+    if (!eles || !eles.length) return;
+    eles.style({ visibility: "hidden", events: "no" });
+    ghosted = (ghosted || cy.collection()).union(eles);
+  };
   const restoreAll = () => {
     if (!cy) return;
     clearFans();
+    clearGhosts();
     if (removed && removed.length) removed.restore();
     removed = cy.collection();
   };
@@ -215,14 +235,13 @@
     if (!eles || !eles.length) return;
     removed = removed.union(cy.remove(eles));
   };
-  // Bring nodes back, then every edge whose endpoints are both on the canvas.
-  const bringBack = (ids) => {
-    const want = new Set(ids);
-    const nodes = removed.filter((e) => e.isNode() && want.has(e.id()));
-    if (nodes.length) { nodes.restore(); removed = removed.difference(nodes); }
-    const edges = removed.filter((e) => e.isEdge() &&
-      cy.getElementById(e.data("source")).length && cy.getElementById(e.data("target")).length);
-    if (edges.length) { edges.restore(); removed = removed.difference(edges); }
+  // Every prerequisite, transitively, of the given ids — plus the ids.
+  const closure = (ids) => {
+    const out = new Set(ids); const stack = [...ids];
+    while (stack.length) {
+      (parents[stack.pop()] || []).forEach((p) => { if (!out.has(p)) { out.add(p); stack.push(p); } });
+    }
+    return out;
   };
   // A removed element keeps its classes and misses every selection change
   // while it is off the canvas, so after any restore the selection chain is
@@ -236,10 +255,7 @@
     cy.batch(() => {
       cy.elements().removeClass("faded hl hl-strong");
       if (!id || !cy.getElementById(id).length) return;
-      const path = new Set([id]); const stack = [id];
-      while (stack.length) {
-        (parents[stack.pop()] || []).forEach((p) => { if (!path.has(p)) { path.add(p); stack.push(p); } });
-      }
+      const path = closure([id]);
       cy.nodes().forEach((n) => n.addClass(path.has(n.id()) ? (n.id() === id ? "hl-strong" : "hl") : "faded"));
       cy.edges().forEach((e) => e.addClass(path.has(e.source().id()) && path.has(e.target().id()) ? "hl" : "faded"));
     });
@@ -278,8 +294,10 @@
   };
 
   /* ---------------- adaptive ------------------------------------------ */
+  // The horizon: the frontier and everything it builds on. Expanding a node
+  // adds its direct neighbours both ways — what it needs and what comes next.
   const adaptiveVisible = () => {
-    const vis = new Set(frontierSet());
+    const vis = closure([...frontierSet()]);
     expanded.forEach((kc) => {
       vis.add(kc);
       (parents[kc] || []).forEach((p) => vis.add(p));
@@ -319,24 +337,25 @@
   };
 
   const applyAdaptive = (focusKc) => {
-    const vis = adaptiveVisible();
-    // Frontier alone and nothing to show — fall back to the whole map rather
-    // than an empty canvas, and say so.
-    const hidden = cy.nodes().filter((n) => !vis.has(n.id()));
-    takeOff(hidden);
-    bringBack([...vis]);
-    const frontier = frontierSet();
-    const fitEles = focusKc && cy.getElementById(focusKc).length
-      ? cy.getElementById(focusKc).closedNeighborhood()
-      : cy.nodes();
-    layoutMain(fitEles, { rankSep: 110, pad: focusKc ? 80 : 60 });
-    const n = [...frontier].filter((kc) => !chapterHidden(kc)).length;
-    const tapHint = `Tap one to reveal what it <span class="kgv-in">needs</span> (below) and what it <span class="kgv-out">unlocks</span> (above).`;
+    shown = adaptiveVisible();
+    // Beyond the horizon: still on the canvas, still laid out, not drawn.
+    // An edge shows only when both of its ends do.
+    ghost(cy.nodes().filter((n) => !shown.has(n.id())));
+    ghost(cy.edges().filter((e) => !shown.has(e.source().id()) || !shown.has(e.target().id())));
+    const onCanvas = cy.nodes().filter((n) => shown.has(n.id()));
+    const fitEles = focusKc && shown.has(focusKc)
+      ? cy.getElementById(focusKc).closedNeighborhood().filter((e) => e.isNode() ? shown.has(e.id()) : shown.has(e.source().id()) && shown.has(e.target().id()))
+      : onCanvas;
+    // Same layout as the complete view, on the WHOLE graph: the horizon's
+    // bubbles land where they land there, and switching views moves nothing.
+    layoutMain(fitEles.length ? fitEles : cy.nodes(), { rankSep: 150, pad: focusKc ? 80 : 60 });
+    const n = [...frontierSet()].filter((kc) => !chapterHidden(kc)).length;
+    const tapHint = `Tap one to reveal what it <span class="kgv-in">needs</span> (below) and what comes <span class="kgv-out">next</span> (above).`;
     setHint(frontierDone
-      ? `Nothing left on your frontier — everything unlocked is learned. Showing the summit. ${tapHint}`
+      ? `Nothing left on your horizon — everything unlocked is learned. Showing the summit. ${tapHint}`
       : n
-        ? `Your frontier: <b>${n}</b> concept${n === 1 ? "" : "s"} you can practise now. ${tapHint}`
-        : "Nothing on your frontier in the chapters shown.");
+        ? `Your horizon: <b>${n}</b> concept${n === 1 ? "" : "s"} you can practise now, and what they build on. ${tapHint}`
+        : "Nothing on your horizon in the chapters shown.");
   };
 
   /* ---------------- condensed ------------------------------------------ */
@@ -675,7 +694,7 @@
             // An outside jump (Practice's "See in knowledge graph") lands on
             // the real map, opened around that concept.
             mode = "adaptive"; expanded.add(kc); applyView({ focus: kc });
-          } else if (mode === "adaptive" && !cy.getElementById(kc).length) {
+          } else if (mode === "adaptive" && !shown.has(kc)) {
             expanded.add(kc); applyView({ focus: kc });
           }
         }
@@ -708,6 +727,7 @@
     set: (m) => { if (MODES.includes(m)) { mode = m; applyView(); } },
     reset: () => { expanded.clear(); openSections.clear(); applyView(); },
     frontier: () => [...frontierSet()],
+    shown: () => [...shown],
     condensed: () => ccy,
   };
 })();
