@@ -15837,5 +15837,425 @@
    "syntax.compare"
   ],
   "source": "kp-integrated"
+ },
+ "1333": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1334": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1335": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1336": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1337": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1338": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1339": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1340": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1341": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-faded"
+ },
+ "1342": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1343": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1344": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1345": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1346": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1347": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1348": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1349": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1350": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1351": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1352": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1353": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1354": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1355": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1356": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-independent"
+ },
+ "1357": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "1358": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "1359": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "1360": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "1361": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
+ },
+ "1362": {
+  "target_kcs": [
+   "numpy.reshape-flatten"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model",
+   "numpy.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.flatten",
+   "Tensor.reshape"
+  ],
+  "source": "kp-integrated"
  }
 }
