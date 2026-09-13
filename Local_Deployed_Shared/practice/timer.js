@@ -555,9 +555,20 @@ const PracticeSession = (() => {
     } else if (typeof renderFailedTests === "function") {
       renderFailedTests(review.result || { correct: !!review.correct }, PracticeAPI.currentQuestion);
     }
+    /* `completedQuestionIds` is the third witness. events.js pushes the id
+       the moment a rating lands, and it is persisted with practiceProgress —
+       unlike `pendingFeedback`, which `_loadNextPracticeQuestion` nulls on
+       the way to the next question. A snapshot written by the review clock
+       BEFORE the rating (it persists every second) still says "Next hidden",
+       so a resume from it put the three rating buttons back for an attempt
+       the server had already closed, and every press came back 400 "no
+       pending attempt" (Seth, 2026-09-12, q955). The list says the rating
+       was given; offer Next. */
+    const _qid = PracticeAPI.currentQuestion?.question_id;
     const feedbackSaved =
       review.feedbackComplete ||
-      practiceProgress.pendingFeedback?.questionId === PracticeAPI.currentQuestion?.question_id ||
+      practiceProgress.pendingFeedback?.questionId === _qid ||
+      (_qid != null && practiceProgress.completedQuestionIds?.includes(_qid)) ||
       PracticeAPI.currentQuestion?.diagnostic_active;
     if (review.unscored) showNextProblemButton("Time ran out on this one — not counted. Press Next to carry on.");
     else if (feedbackSaved) showNextProblemButton("You already rated this one. Press Next to carry on.");
