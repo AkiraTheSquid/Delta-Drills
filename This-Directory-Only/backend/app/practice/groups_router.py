@@ -31,11 +31,11 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app import diagnostic, study_group_days, study_groups
+from app import diagnostic, study_group_days, study_groups, study_group_progress
 from app.adaptive import get_user_state
 from app.auth import get_current_user
 from app.db import get_db
@@ -308,3 +308,37 @@ def groups_day_write(
     except GroupError as exc:
         raise _fail(exc) from exc
     return {"date": day.isoformat(), "payload": stored}
+
+
+@router.get("/groups/progress")
+def groups_progress(
+    date: str, horizon: str = "weekly", tz_offset: int = Query(0, ge=-960, le=960),
+    tz_name: str | None = Query(None, max_length=80),
+    user: User = Depends(get_current_user), db: Session = Depends(get_db),
+) -> dict:
+    try:
+        return study_group_progress.read_progress(
+            db, user, study_group_days.parse_day(date), horizon, tz_offset, tz_name)
+    except GroupError as exc:
+        raise _fail(exc) from exc
+
+
+class TargetWriteRequest(BaseModel):
+    area: str = Field(max_length=80)
+    date: str = Field(max_length=32)
+    level: int = Field(ge=0, le=100, strict=True)
+
+    class Config:
+        extra = "forbid"
+
+
+@router.put("/groups/target")
+def groups_target_write(
+    body: TargetWriteRequest,
+    user: User = Depends(get_current_user), db: Session = Depends(get_db),
+) -> dict:
+    try:
+        return study_group_progress.write_target(
+            db, user, body.area, study_group_days.parse_day(body.date), body.level)
+    except GroupError as exc:
+        raise _fail(exc) from exc

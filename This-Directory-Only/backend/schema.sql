@@ -109,3 +109,14 @@ CREATE TABLE IF NOT EXISTS study_group_days (
 );
 
 CREATE INDEX IF NOT EXISTS study_group_days_user_id_idx ON study_group_days(user_id);
+
+CREATE TABLE IF NOT EXISTS study_group_targets (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id),
+  area VARCHAR(80) NOT NULL,
+  day DATE NOT NULL,
+  level INTEGER NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT study_group_targets_user_area_key UNIQUE (user_id, area)
+);
+CREATE INDEX IF NOT EXISTS study_group_targets_user_id_idx ON study_group_targets(user_id);

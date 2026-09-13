@@ -73,13 +73,33 @@ const DDGroupsDay = (() => {
    * @param {{value: string, onChange: (key: string) => void}} deps
    * @returns {HTMLElement}
    */
-  const buildPicker = ({ value, onChange }) => {
+  const rangeFor = (key, horizon = "daily") => {
+    const date = dateOf(key);
+    if (horizon === "weekly") {
+      const start = shiftKey(key, -((date.getDay() + 6) % 7));
+      return { start, end: shiftKey(start, 6) };
+    }
+    if (horizon === "monthly") return {
+      start: keyOf(new Date(date.getFullYear(), date.getMonth(), 1)),
+      end: keyOf(new Date(date.getFullYear(), date.getMonth() + 1, 0)),
+    };
+    return { start: key, end: key };
+  };
+
+  const shiftPeriod = (key, delta, horizon = "daily") => {
+    if (horizon !== "monthly") return shiftKey(key, delta * (horizon === "weekly" ? 7 : 1));
+    const date = dateOf(key);
+    // Move from the first: January 31 + one month must not skip February.
+    return keyOf(new Date(date.getFullYear(), date.getMonth() + delta, 1));
+  };
+
+  const buildPicker = ({ value, onChange, horizon = "daily", caption: captionText = "Checklists for" }) => {
     const wrap = document.createElement("div");
     wrap.className = "dd-day-bar";
 
     const caption = document.createElement("span");
     caption.className = "dd-day-caption";
-    caption.textContent = "Checklists for";
+    caption.textContent = captionText;
     wrap.appendChild(caption);
 
     const nav = document.createElement("div");
@@ -91,11 +111,12 @@ const DDGroupsDay = (() => {
       button.className = "ghost dd-day-step";
       button.textContent = glyph;
       button.setAttribute("aria-label", label);
-      button.addEventListener("click", () => onChange(shiftKey(value, delta)));
+      button.addEventListener("click", () => onChange(shiftPeriod(value, delta, horizon)));
       return button;
     };
 
-    nav.appendChild(step(-1, "‹", "Previous day"));
+    const period = { daily: "day", weekly: "week", monthly: "month" }[horizon];
+    nav.appendChild(step(-1, "‹", `Previous ${period}`));
 
     /* A real `<input type="date">`: it is the platform's own calendar, it
        is keyboard-accessible for free, and it already speaks
@@ -105,7 +126,7 @@ const DDGroupsDay = (() => {
     field.type = "date";
     field.className = "dd-day-input";
     field.value = value;
-    field.setAttribute("aria-label", "Show checklists for this day");
+    field.setAttribute("aria-label", `Show ${period} containing this date`);
     field.addEventListener("change", () => {
       /* An emptied field (the picker's own clear button) must not become
          "some other day" — put back the day that is on screen. */
@@ -115,12 +136,15 @@ const DDGroupsDay = (() => {
     });
     nav.appendChild(field);
 
-    nav.appendChild(step(1, "›", "Next day"));
+    nav.appendChild(step(1, "›", `Next ${period}`));
     wrap.appendChild(nav);
 
     const named = document.createElement("span");
     named.className = "dd-day-label";
-    named.textContent = labelFor(value);
+    const range = rangeFor(value, horizon);
+    named.textContent = horizon === "daily" ? labelFor(value) : horizon === "monthly"
+      ? dateOf(value).toLocaleDateString(undefined, { month: "long", year: "numeric" })
+      : `${dateOf(range.start).toLocaleDateString(undefined, { month: "short", day: "numeric" })} – ${dateOf(range.end).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
     wrap.appendChild(named);
 
     /* Only when it would do something. A "Today" button on today is a
@@ -137,7 +161,7 @@ const DDGroupsDay = (() => {
     return wrap;
   };
 
-  return { keyOf, todayKey, dateOf, shiftKey, labelFor, buildPicker };
+  return { keyOf, todayKey, dateOf, shiftKey, labelFor, rangeFor, shiftPeriod, buildPicker };
 })();
 
 window.DDGroupsDay = DDGroupsDay;

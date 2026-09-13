@@ -41,6 +41,7 @@ const DDGroupStore = (() => {
      and every read waits for it. `settled` is what keeps one rejection from
      poisoning the chain for the rest of the session. */
   let dayWrites = Promise.resolve();
+  let targetWrites = Promise.resolve();
   const settled = (promise) => Promise.resolve(promise).catch(() => {});
 
   const complained = new Set();
@@ -243,6 +244,37 @@ const DDGroupStore = (() => {
         }
       });
       dayWrites = run;
+      return run;
+    },
+
+    async readProgress(day, horizon) {
+      if (!hasAccount()) return null;
+      try {
+        await settled(targetWrites);
+        const params = new URLSearchParams({ date: day, horizon,
+          tz_offset: String(new Date().getTimezoneOffset()),
+          tz_name: Intl.DateTimeFormat().resolvedOptions().timeZone });
+        return await call(`/api/practice/groups/progress?${params}`);
+      } catch (error) {
+        complain("readProgress", error);
+        return null;
+      }
+    },
+
+    saveTarget(area, date, level) {
+      if (!hasAccount()) return Promise.resolve({ error: "Not signed in." });
+      const run = settled(targetWrites).then(async () => {
+        try {
+          const target = await call("/api/practice/groups/target", {
+            method: "PUT", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ area, date, level }),
+          });
+          return { target };
+        } catch (error) {
+          return { error: String(error?.message || "Target could not be saved.") };
+        }
+      });
+      targetWrites = run;
       return run;
     },
 

@@ -239,7 +239,7 @@ def reload_caches() -> None:
 # --- learner-facing state -----------------------------------------------------
 
 
-def kc_mastery(user_state, kc: str) -> Tuple[float, float, str]:
+def kc_mastery(user_state, kc: str, now: Optional[datetime] = None) -> Tuple[float, float, str]:
     """(mastery, covered_weight, tier) for one KC.
 
     Mastery is the crosswalk-weighted mean of the learner's decay-adjusted BKT
@@ -271,7 +271,7 @@ def kc_mastery(user_state, kc: str) -> Tuple[float, float, str]:
             continue
         atom_id = a.get("a")
         acc += w * bkt_mastery.current_mastery(
-            user_state.atom_mastery, user_state.atom_last_ts, atom_id, params=params
+            user_state.atom_mastery, user_state.atom_last_ts, atom_id, now=now, params=params
         )
         if atom_id in (user_state.atom_mastery or {}):
             covered += w

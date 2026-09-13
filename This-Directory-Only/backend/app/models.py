@@ -135,6 +135,19 @@ class StudyGroupMember(Base):
 # row that may have been deleted. The group only decides who may READ it: the
 # day endpoints answer the checklists of the people in the caller's own group
 # and of nobody else.
+class StudyGroupTarget(Base):
+    """One learner-owned graph target per section (or the aggregate)."""
+    __tablename__ = "study_group_targets"
+    __table_args__ = (UniqueConstraint("user_id", "area", name="study_group_targets_user_area_key"),)
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    area = Column(String(80), nullable=False)
+    day = Column(Date, nullable=False)
+    level = Column(Integer, nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
 class StudyGroupDay(Base):
     __tablename__ = "study_group_days"
     __table_args__ = (

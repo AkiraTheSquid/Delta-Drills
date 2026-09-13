@@ -42,6 +42,7 @@ import logging
 from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
 
@@ -112,7 +113,20 @@ def week_counts(
     offset = timedelta(minutes=tz_offset_minutes)
     local_today: date = (now_utc - offset).date()
     monday = local_today - timedelta(days=local_today.weekday())
-    day_keys = [(monday + timedelta(days=i)).isoformat() for i in range(7)]
+    result = range_counts(user_id, monday, monday + timedelta(days=6),
+                          tz_offset_minutes, now=now_utc, base_dir=base_dir)
+    return {**result, "week_start": monday.isoformat()}
+
+
+def range_counts(user_id: str, start: date, end: date, tz_offset_minutes: int = 0,
+                 *, now: Optional[datetime] = None, base_dir: Optional[Path] = None,
+                 tz_name: Optional[str] = None) -> dict:
+    """The same answered-problem metric for any bounded calendar range."""
+    if not 0 <= (end - start).days <= 366:
+        raise ValueError("Activity range must be between 1 and 367 days.")
+    zone = ZoneInfo(tz_name) if tz_name else timezone(timedelta(minutes=-tz_offset_minutes))
+    local_today = (now or datetime.now(timezone.utc)).astimezone(zone).date()
+    day_keys = [(start + timedelta(days=i)).isoformat() for i in range((end - start).days + 1)]
     practice = {key: 0 for key in day_keys}
     placement = {key: 0 for key in day_keys}
 
@@ -121,7 +135,7 @@ def week_counts(
         ts = attempt_log.parse_ts(raw_ts)
         if ts is None:
             return
-        key = (ts - offset).date().isoformat()
+        key = ts.astimezone(zone).date().isoformat()
         if key in into:
             into[key] += 1
 
@@ -143,7 +157,8 @@ def week_counts(
         for key in day_keys
     ]
     return {
-        "week_start": day_keys[0],
+        "start": day_keys[0],
+        "end": day_keys[-1],
         "today": local_today.isoformat(),
         "days": days,
         "total": sum(d["count"] for d in days),
