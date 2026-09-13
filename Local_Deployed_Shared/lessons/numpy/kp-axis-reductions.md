@@ -3,9 +3,10 @@ kc: numpy.axis-reductions
 title: Reductions along an axis — and keepdims
 supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-literal]
-faded: [220, 135]
+faded: [220, 1363, 1364, 135, 1365, 1366]
 guided: [503, 504]
-independent: [108, 505, 174]
+independent: [108, 505, 174, 1367, 1368, 1369, 1370]
+integrated: [1371, 1372, 1373]
 ---
 
 ## Concept: axis= — the axis you name disappears
@@ -35,25 +36,30 @@ with `.to(t.float32)` first), and `std` divides by n−1 unless you pass
 
 ## Worked example
 
+The example below takes one (2, 3) float matrix and reduces it twice: once
+across its columns to get a total per row, once down its rows to get a mean
+per column. Before each print, predict the output shape by crossing the named
+axis out of `(2, 3)`.
+
 ```python
 import torch as t
 
 x = t.tensor([[1.0, 2.0, 3.0],
               [10.0, 20.0, 30.0]])    # shape (2, 3) — float, so mean works
 
-# dim=0 -> the 2 rows collapse onto each other -> one sum PER COLUMN.
-col_sums = x.sum(dim=0)
+# dim=1 -> the 3 columns collapse -> one total PER ROW.
+row_sums = x.sum(dim=1)
 
-# dim=1 -> the 3 columns collapse -> one value PER ROW.
-row_means = x.mean(dim=1)
+# dim=0 -> the 2 rows collapse onto each other -> one mean PER COLUMN.
+col_means = x.mean(dim=0)
 print("x shape", tuple(x.shape))
-print("sum(dim=0) ", col_sums,  "shape", tuple(col_sums.shape))
-print("mean(dim=1)", row_means, "shape", tuple(row_means.shape))
+print("sum(dim=1) ", row_sums,  "shape", tuple(row_sums.shape))
+print("mean(dim=0)", col_means, "shape", tuple(col_means.shape))
 # Hidden checks
-assert tuple(col_sums.shape) == (3,)  # (2, 3) with dim 0 crossed out
-assert col_sums.tolist() == [11.0, 22.0, 33.0]
-assert tuple(row_means.shape) == (2,)
-assert row_means.tolist() == [2.0, 20.0]
+assert tuple(row_sums.shape) == (2,)  # (2, 3) with dim 1 crossed out
+assert row_sums.tolist() == [6.0, 60.0]
+assert tuple(col_means.shape) == (3,)
+assert col_means.tolist() == [5.5, 11.0, 16.5]
 ```
 
 Why: for each reduction, the assert on `.shape` comes BEFORE the values —
@@ -70,7 +76,7 @@ import torch as t
 
 def solve(x):
     """Column sums of a 2-D matrix: which axis disappears?"""
-    return x.sum(dim=_____)
+    return x.sum(_____=_____)
 ```
 
 ```python solution
@@ -79,6 +85,46 @@ import torch as t
 def solve(x):
     """Column sums of a 2-D matrix: which axis disappears?"""
     return x.sum(dim=0)
+```
+
+### q1363
+Three axes now: (n, r, c) becomes (n, r), one total per row of every
+matrix.
+
+```python starter
+import torch as t
+
+def solve(x):
+    """Row totals for every one of the n matrices."""
+    return x._____(_____=_____)
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """Row totals for every one of the n matrices."""
+    return x.sum(dim=-1)
+```
+
+### q1364
+Same tensor, opposite question: every position averaged across the n
+matrices, (n, r, c) → (r, c).
+
+```python starter
+import torch as t
+
+def solve(x):
+    """Average the n matrices down to one."""
+    return x._____(_____=_____)
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """Average the n matrices down to one."""
+    return x.mean(dim=0)
 ```
 
 ## Concept: tuples of axes, and keepdims
@@ -96,27 +142,37 @@ next KP (centering), where you'll practice it.
 
 ## Worked example
 
+The example below reduces a 4-D batch over TWO axes in one call, then shows
+what `keepdim=True` changes when a row mean is subtracted back from its
+matrix. Both halves hinge on the output shape, so predict it first.
+
 ```python
 import torch as t
 
-# Tuple of axes on a 4-D batch (a, b, c, d): collapse the last two ->
-# one total per (a, b) slice. Negative axes save counting.
+# Tuple of axes on a 4-D batch (a, b, c, d): collapse the two LEADING axes
+# in one call -> one total per (c, d) position.
 batch = t.arange(24).reshape(2, 3, 2, 2)
-totals = batch.sum(dim=(-2, -1))
-
-# keepdim preview: the reduced dim survives as 1, so the result still
-# lines up against the original for broadcasting.
-# (t.mean needs a float tensor — it will not promote ints the way numpy does.)
-x = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
-rm = x.mean(dim=1, keepdim=True)
-centered = x - rm                     # (2,3) - (2,1): broadcasts by row
-print("(2,3,2,2) summed over the last two ->", tuple(totals.shape))
+totals = batch.sum(dim=(0, 1))
+print("(2,3,2,2) summed over the first two ->", tuple(totals.shape))
 print(totals)
+# Hidden checks
+assert totals.shape == (2, 2)
+assert totals.tolist() == [[60, 66], [72, 78]]
+```
+
+Two axes named, two axes gone: `(2, 3, 2, 2)` with the first two crossed out
+is `(2, 2)`, and each entry is a total over all 6 (a, b) combinations.
+Negative axes would name the trailing pair instead — the per-image case the
+concept text described. Now the keepdim switch, on a float matrix (`mean`
+refuses ints):
+
+```python
+x = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
+rm = x.mean(dim=1, keepdim=True)      # (2, 1), not (2,)
+centered = x - rm                     # (2,3) - (2,1): broadcasts by row
 print("keepdim=True keeps the axis as 1:", tuple(rm.shape), "->", rm.tolist())
 print(centered)
 # Hidden checks
-assert totals.shape == (2, 3)
-assert totals[0, 0] == 0 + 1 + 2 + 3
 assert tuple(rm.shape) == (2, 1)
 assert centered[0].tolist() == [-1.0, 0.0, 1.0]
 ```
@@ -128,14 +184,15 @@ when r = c. keepdims makes the intended alignment explicit.
 ## Faded practice
 
 ### q135
-Per-slice totals of a 4-D batch: collapse the LAST two axes in one call.
+Per-slice totals of a 4-D batch: (a, b, c, d) → (a, b), the total of each
+(c, d) slice.
 
 ```python starter
 import torch as t
 
 def solve(x):
     """(a, b, c, d) -> (a, b): total of each c*d slice."""
-    return x.sum(dim=_____)
+    return x.sum(_____=_____)
 ```
 
 ```python solution
@@ -146,17 +203,85 @@ def solve(x):
     return x.sum(dim=(-2, -1))
 ```
 
-## Independent practice
+### q1365
+The reduction is the easy part; the SHAPE of the result is the point — column
+means as (1, c), not (c,).
 
-From the drill bank: q108 (row quantiles — `t.quantile` takes `axis=` like
-everything else; watch which axis gives per-row results), q130 (index of each
-row's first nonzero — build a boolean mask, then argmax along the right axis;
-why does argmax find the FIRST True?).
+```python starter
+import torch as t
 
-From the drill bank: q505 (make every row sum to 1 — this is what keepdim was for).
+def solve(x):
+    """Column means that still have two axes."""
+    return x._____(_____=_____, _____=_____)
+```
 
-Also from the bank: q174 (per-row median with an odd column count — a
-reduction torch spells differently from mean).
+```python solution
+import torch as t
+
+def solve(x):
+    """Column means that still have two axes."""
+    return x.mean(dim=0, keepdim=True)
+```
+
+### q1366
+One mean per (h, w) slice, and the result keeps all three axes:
+(n, h, w) → (n, 1, 1).
+
+```python starter
+import torch as t
+
+def solve(x):
+    """One mean per slice, shaped to broadcast back over it."""
+    return x._____(_____=_____, _____=_____)
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """One mean per slice, shaped to broadcast back over it."""
+    return x.mean(dim=(-2, -1), keepdim=True)
+```
+
+## Solo practice
+
+### q108
+One quantile value for each row of a matrix.
+
+### q505
+Rescale each row so its entries sum to 1.
+
+### q174
+Per-row median with an odd column count — a reduction torch spells differently
+from mean.
+
+### q1367
+A per-axis reduction beside a whole-tensor one — and a scalar broadcasts
+against anything.
+
+### q1368
+Per-image means of a (b, h, w) batch: two axes have to disappear and one has
+to survive.
+
+### q1369
+Reduce, then use the result against the original — the shape you keep decides
+which axis it lines up with.
+
+### q1370
+A reduction feeding another reduction: the first one chooses the axis, the
+second has none left to choose.
+
+## Integrated practice
+
+### q1371
+Each row becomes shares of its own total, then the average share of each
+column — returned as a (1, c) tensor.
+
+### q1372
+Every image divided by its own total, so each image's pixels sum to 1.
+
+### q1373
+The same batch reduced three ways — every axis choice on the page at once.
 
 ## Guided practice
 
