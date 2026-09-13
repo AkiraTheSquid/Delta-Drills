@@ -56139,7 +56139,7 @@
         {
           "output": "[[-1.0, -1.0], [4.0, -2.0]]",
           "why": "For x = [[1.0, 3.0], [6.0, 2.0]]: without keepdim the row means are a (r,) vector, which broadcasts against the COLUMNS. On a square matrix this runs without error and gives [[-1.0, -1.0], [4.0, -2.0]] instead of [[-1.0, 1.0], [2.0, -2.0]] — the wrong row's mean subtracted from every entry.",
-          "call": "solve(x).tolist()"
+          "call": "import torch as t\nx = t.tensor([[1.0, 3.0], [6.0, 2.0]])\nsolve(x).tolist()"
         }
       ],
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Centre each row on its own mean.\"\"\"\n    return x - x.mean(dim=1, keepdim=True)\n\n\nprint(solve(t.tensor([[2.0, 8.0, 5.0], [4.0, 1.0, 1.0]])))\n",
