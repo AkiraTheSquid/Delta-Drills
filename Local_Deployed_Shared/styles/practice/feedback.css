@@ -274,6 +274,7 @@
 }
 .run-test--pass { color: rgb(var(--ok-rgb)); font-weight: 700; }
 .run-test--fail { color: var(--accent-text); font-weight: 700; }
+.run-test--note { color: rgb(var(--ok-rgb)); opacity: 0.85; font-style: italic; }
 .run-tests-note {
   font-size: 11px;
   margin-top: 4px;

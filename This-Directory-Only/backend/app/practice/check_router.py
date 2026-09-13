@@ -77,6 +77,7 @@ def check_answer(
                 "actual": r.actual,
                 "expected": r.expected,
                 "error": r.error,
+                "note": r.note,
             }
             for i, r in enumerate(results)
         ]
