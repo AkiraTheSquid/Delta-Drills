@@ -115,13 +115,26 @@ window.DDGroupProgress = (() => {
       });
       if (!hasPoints) svg.appendChild(svgEl("text", { x: (L + R) / 2, y: y(45), "text-anchor": "middle", class: "dd-graph-label" }, "No recorded measurements in this period"));
 
+      // A crosshair also names its two coordinates ON the axes: the date
+      // sits over the x-axis tick row, the level over the y-axis labels,
+      // each on a filled tag so it reads as "this one" against the ticks.
+      const axisTag = (label, cx, cy, anchor) => {
+        const w = label.length * 7 + 12, h = 18;
+        const left = anchor === "end" ? cx - w : cx - w / 2;
+        const tag = svgEl("g", { class: "dd-graph-axis-tag" });
+        tag.append(svgEl("rect", { x: left, y: cy - 13, width: w, height: h, rx: 4 }),
+          svgEl("text", { x: left + w / 2, y: cy, "text-anchor": "middle" }, label));
+        return tag;
+      };
       const crosshair = (date, level, cls) => {
         const i = history.findIndex((day) => day.date === date);
         const g = svgEl("g", { class: cls, "pointer-events": "none" });
         if (i < 0) return g;
         g.append(svgEl("line", { x1: x(i), x2: x(i), y1: T, y2: B }),
           svgEl("line", { x1: L, x2: R, y1: y(level), y2: y(level) }),
-          svgEl("circle", { cx: x(i), cy: y(level), r: 5 }));
+          svgEl("circle", { cx: x(i), cy: y(level), r: 5 }),
+          axisTag(shortDate(date), x(i), B + 22, "middle"),
+          axisTag(String(level), L - 4, y(level) + 4, "end"));
         return g;
       };
       const target = selected === "all" ? null : data.targets?.[selected];
