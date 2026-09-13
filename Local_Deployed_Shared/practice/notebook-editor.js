@@ -31,13 +31,14 @@ const DeltaNotebook = (() => {
     Array.from(cellsHost?.querySelectorAll(".notebook-cell:not([data-solution-cell])") || []);
   const solutionCell = () => cellsHost?.querySelector("[data-solution-cell]") || null;
   /* Where the learner's own cells stop and the graded feedback begins: the
-     failed-case block (parented here by ui.js::renderFailedTests) and the
-     answer both live at the tail of this list, and anything the learner adds
+     failed-case block (parented here by ui.js::renderFailedTests), the
+     Run button's own test-case check (practice/test-check.js) and the
+     answer all live at the tail of this list, and anything the learner adds
      belongs above them. querySelector returns the FIRST match in document
      order, so this is the boundary whichever of the two came first, and null
      — i.e. "append" — before a grade. */
   const feedbackBoundary = () =>
-    cellsHost?.querySelector("#failed-tests-block, [data-solution-cell]") || null;
+    cellsHost?.querySelector("#run-tests-block, #failed-tests-block, [data-solution-cell]") || null;
   const editorOf = (cell) => cell?.querySelector(".notebook-cell-editor");
   const outputOf = (cell) => cell?.querySelector(".output-area");
   const outputShellOf = (cell) => cell?.querySelector("[data-cell-output]");
@@ -131,6 +132,15 @@ const DeltaNotebook = (() => {
         runtimeStatus.textContent = result.fresh
           ? "Persistent runtime started"
           : `Persistent runtime · ${result.execCount} cells`;
+      }
+      /* Every ▶ on a learner cell also asks which test cases pass — the
+         joined cells, exactly what Submit posts, through the grader's own
+         harness (practice/test-check.js). NOT awaited: the cell's output is
+         already on screen and the button should not wait on a second run.
+         The solution cell is excluded — running the answer key against its
+         own tests tells the learner nothing about THEIR code. */
+      if (!cell.dataset.solutionCell) {
+        window.DeltaTestCheck?.afterRun?.(question, submissionCode());
       }
       // No `result.pyodide` gate: a backend run has none, and the image
       // drills are all torch — practice/runner.js::renderBackendOutputVisual.

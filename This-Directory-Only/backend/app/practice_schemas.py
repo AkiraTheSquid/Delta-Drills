@@ -386,6 +386,22 @@ class CodeRunResponse(BaseModel):
     success: bool
 
 
+class CheckRequest(BaseModel):
+    """The Run button asking how the code would grade, without grading it."""
+    question_id: int
+    user_code: str
+
+
+class CheckResponse(BaseModel):
+    # False for a drill only the AI judge can grade: nothing to show before
+    # Submit, and the client draws nothing rather than a guess.
+    supported: bool
+    correct: bool
+    actual_output: str
+    # One row per test case in bank order: {call, passed, actual, expected, error}.
+    tests: list[dict] = Field(default_factory=list)
+
+
 class AIExplanationRequest(BaseModel):
     question_text: str
     solution_code: str

@@ -42,6 +42,7 @@ EXPECTED_PATHS = {
     '/api/practice/subtopics',
     '/api/practice/weights',
     '/api/practice/run-code',
+    '/api/practice/check',
     '/api/practice/ai-explanation',
     '/api/practice/ai-judge',
     '/api/practice/ai-tutor',
