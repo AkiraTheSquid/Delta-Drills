@@ -1336,3 +1336,14 @@
 {"question_id": 1360, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.95}]}
 {"question_id": 1361, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.95}]}
 {"question_id": 1362, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.95}]}
+{"question_id": 1363, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1364, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1365, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.6}]}
+{"question_id": 1366, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.6}, {"atom_id": "einops-reduce", "confidence": 0.4}]}
+{"question_id": 1367, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1368, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1369, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}]}
+{"question_id": 1370, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1371, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
+{"question_id": 1372, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.6}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
+{"question_id": 1373, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}

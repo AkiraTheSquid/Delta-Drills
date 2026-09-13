@@ -55791,5 +55791,576 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 1363,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `x` of shape `(n, r, c)`, return a 2-D tensor of shape `(n, r)` whose entry `[i, j]` is the total of row `j` of matrix `i` — every row of every matrix summed across its columns.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Row totals for every one of the n matrices.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]], [[1.0, 1.0, 1.0], [0.0, 0.0, 9.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]], [[1.0, 1.0, 1.0], [0.0, 0.0, 9.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[8.0, 10.0], [3.0, 9.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[4.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[-1.0, -9.0]], [[-3.0, -2.0]], [[0.0, -8.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[-10.0], [-5.0], [-8.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[2.0, 6.0, 3.0], [7.0, 0.0, 12.0]]",
+          "why": "dim=0 collapses the STACK: the n matrices are added on top of each other, giving one (r, c) matrix, not one total per row of each matrix."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Row totals for every one of the n matrices.\"\"\"\n    return x.sum(dim=-1)\n\n\nprint(solve(t.tensor([[[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]], [[1.0, 1.0, 1.0], [0.0, 0.0, 9.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1364,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `x` of shape `(n, r, c)` — n matrices, one behind the other — return a 2-D tensor of shape `(r, c)` whose entry `[i, j]` is the mean of position `[i, j]` across the n matrices.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Average the n matrices down to one.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[3.0, 6.0], [5.0, 8.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[3.0, 6.0], [5.0, 8.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[2.0, 4.0], [4.0, 6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[7.0, 1.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[7.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[0.0, 0.0]], [[3.0, 6.0]], [[6.0, 0.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[3.0, 2.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[2.0, 3.0], [4.0, 7.0]]",
+          "why": "dim=1 collapses the r rows inside each matrix, leaving one row per matrix — shape (n, c) — instead of collapsing the stack to a single (r, c) matrix."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Average the n matrices down to one.\"\"\"\n    return x.mean(dim=0)\n\n\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[3.0, 6.0], [5.0, 8.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1365,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a 2-D float tensor `x` of shape `(r, c)`, return the mean of each column as a 2-D tensor of shape `(1, c)` — not a 1-D tensor of length `c`.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Column means that still have two axes.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 3.0], [3.0, 5.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1.0, 3.0], [3.0, 5.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[2.0, 4.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[2.0, 4.0, 6.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[2.0, 4.0, 6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1.0], [2.0], [3.0], [6.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[3.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[2.0, 4.0]",
+          "why": "The reduced axis was deleted, so the result is 1-D of length c; the task asked for it kept at length 1, shape (1, c)."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Column means that still have two axes.\"\"\"\n    return x.mean(dim=0, keepdim=True)\n\n\nprint(solve(t.tensor([[1.0, 3.0], [3.0, 5.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1366,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `x` of shape `(n, h, w)`, return a tensor of shape `(n, 1, 1)` holding the mean of each `(h, w)` slice — one average per leading index, with both reduced axes kept at length 1.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"One mean per slice, shaped to broadcast back over it.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[0.0, 1.0], [0.0, 1.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[0.0, 1.0], [0.0, 1.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[[2.5]], [[0.5]]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[5.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[[5.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[[1.0, 1.0]], [[2.0, 3.0]], [[0.0, 4.0]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[[1.0]], [[2.5]], [[2.0]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[2.5, 0.5]",
+          "why": "Both axes were collapsed but not kept, so the result is (n,) — it can no longer line up against an (n, h, w) slice for broadcasting."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"One mean per slice, shaped to broadcast back over it.\"\"\"\n    return x.mean(dim=(-2, -1), keepdim=True)\n\n\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[0.0, 1.0], [0.0, 1.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1367,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Given a 2-D float tensor `x` of shape `(r, c)`, return a 1-D tensor of length `c` whose entry `j` is how far column `j`'s mean sits above or below the mean of the whole tensor (column mean minus overall mean).",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column's mean, relative to the grand mean.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 5.0], [3.0, 9.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1.0, 5.0], [3.0, 9.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[-2.5, 2.5]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[2.0, 2.0, 2.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[0.0, 0.0, 0.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[-4.0], [6.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[0.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0.0, 8.0, 4.0], [0.0, 0.0, 12.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[-4.0, 0.0, 4.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[-1.5, 1.5]",
+          "why": "dim=1 averages ACROSS each row, giving one number per row (length r); a column mean needs the rows collapsed, dim=0, length c."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Each column's mean, relative to the grand mean.\"\"\"\n    return x.mean(dim=0) - x.mean()\n\n\nprint(solve(t.tensor([[1.0, 5.0], [3.0, 9.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1368,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `imgs` of shape `(b, h, w)` — a batch of b greyscale images — return a 1-D tensor of length `b` holding the mean pixel value of each image.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(imgs):\n    \"\"\"One number per image: its average brightness.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[4.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[6.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[6.0]"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[1.0, 2.0]], [[4.0, 4.0]], [[0.0, 9.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[1.5, 4.0, 4.5]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.5, 1.5], [2.5, 7.5]]",
+          "why": "dim=0 collapses the BATCH: one mean per pixel position across all images, shape (h, w), instead of one mean per image."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(imgs):\n    \"\"\"One number per image: its average brightness.\"\"\"\n    return imgs.mean(dim=(1, 2))\n\n\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1369,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 2-D float tensor `x` of shape `(r, c)`, return a tensor of the same shape in which each row has had its own mean subtracted, so every row of the result sums to zero.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"Centre each row on its own mean.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[2.0, 8.0, 5.0], [4.0, 1.0, 1.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[2.0, 8.0, 5.0], [4.0, 1.0, 1.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[-3.0, 3.0, 0.0], [2.0, -1.0, -1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1.0, 3.0], [6.0, 2.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[-1.0, 1.0], [2.0, -2.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[4.0], [9.0]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[0.0], [0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[-1.0, -1.0], [4.0, -2.0]]",
+          "why": "For x = [[1.0, 3.0], [6.0, 2.0]]: without keepdim the row means are a (r,) vector, which broadcasts against the COLUMNS. On a square matrix this runs without error and gives [[-1.0, -1.0], [4.0, -2.0]] instead of [[-1.0, 1.0], [2.0, -2.0]] — the wrong row's mean subtracted from every entry.",
+          "call": "solve(x).tolist()"
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"Centre each row on its own mean.\"\"\"\n    return x - x.mean(dim=1, keepdim=True)\n\n\nprint(solve(t.tensor([[2.0, 8.0, 5.0], [4.0, 1.0, 1.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1370,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 2-D float tensor `x` of shape `(r, c)`, return the largest column total — the biggest value you get by summing a single column — as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"The heaviest column's total.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 9.0], [5.0, 0.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[1.0, 9.0], [5.0, 0.0]])",
+          "call": "solve(x)",
+          "expected_expr": "9.0"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[3.0, 1.0, 1.0], [3.0, 1.0, 1.0]])",
+          "call": "solve(x)",
+          "expected_expr": "6.0"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[0.0, 0.0, 7.0], [1.0, 1.0, 0.0], [2.0, 2.0, 0.0]])",
+          "call": "solve(x)",
+          "expected_expr": "7.0"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[-3.0], [-2.0]])",
+          "call": "solve(x)",
+          "expected_expr": "-5.0"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([[-4.0, -1.0, -7.0]])",
+          "call": "solve(x)",
+          "expected_expr": "-1.0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "10.0",
+          "why": "dim=1 totals the ROWS, so this is the heaviest row's total, not the heaviest column's."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    \"\"\"The heaviest column's total.\"\"\"\n    return float(x.sum(dim=0).max())\n\n\nprint(solve(t.tensor([[1.0, 9.0], [5.0, 0.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1371,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 2-D float tensor `counts` of shape `(r, c)` — r rows of non-negative counts, each row with a positive total — first convert every row to proportions (each entry divided by its own row's total), then return the mean proportion of each column as a 2-D tensor of shape `(1, c)`.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(counts):\n    \"\"\"Average share of each column, after every row is made to sum to 1.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 3.0], [6.0, 2.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\ncounts = t.tensor([[1.0, 3.0], [6.0, 2.0]])",
+          "call": "solve(counts).tolist()",
+          "expected_expr": "[[0.5, 0.5]]"
+        },
+        {
+          "setup_code": "import torch as t\ncounts = t.tensor([[2.0, 2.0, 4.0]])",
+          "call": "solve(counts).tolist()",
+          "expected_expr": "[[0.25, 0.25, 0.5]]"
+        },
+        {
+          "setup_code": "import torch as t\ncounts = t.tensor([[8.0], [3.0]])",
+          "call": "solve(counts).tolist()",
+          "expected_expr": "[[1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\ncounts = t.tensor([[1.0, 1.0, 2.0], [0.0, 2.0, 2.0]])",
+          "call": "solve(counts).tolist()",
+          "expected_expr": "[[0.125, 0.375, 0.5]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.875, 0.3125]]",
+          "why": "The row totals are a (r,) vector, so on a square matrix they broadcast across the COLUMNS and each entry is divided by the wrong row's total — no error, wrong shares."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(counts):\n    \"\"\"Average share of each column, after every row is made to sum to 1.\"\"\"\n    shares = counts / counts.sum(dim=1, keepdim=True)\n    return shares.mean(dim=0, keepdim=True)\n\n\nprint(solve(t.tensor([[1.0, 3.0], [6.0, 2.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1372,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `imgs` of shape `(b, h, w)` — a batch of b non-negative images, each with a positive total — return a tensor of the same shape in which every image has been divided by its own total, so each image's pixels sum to 1.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(imgs):\n    \"\"\"Turn each image into a distribution over its own pixels.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [4.0, 1.0]], [[0.0, 4.0], [2.0, 2.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[1.0, 2.0], [4.0, 1.0]], [[0.0, 4.0], [2.0, 2.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[[[0.125, 0.25], [0.5, 0.125]], [[0.0, 0.5], [0.25, 0.25]]]"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[3.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[[[1.0]]]"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[2.0, 6.0]], [[5.0, 5.0]]])",
+          "call": "solve(imgs).tolist()",
+          "expected_expr": "[[[0.25, 0.75]], [[0.5, 0.5]]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[[0.0625, 0.125], [0.25, 0.0625]], [[0.0, 0.25], [0.125, 0.125]]]",
+          "why": "One total for the whole batch: the batch as a whole sums to 1 and each image sums to only its share of it. Each image needs its own total, kept as (b, 1, 1) so it broadcasts back over that image alone."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(imgs):\n    \"\"\"Turn each image into a distribution over its own pixels.\"\"\"\n    return imgs / imgs.sum(dim=(1, 2), keepdim=True)\n\n\nprint(solve(t.tensor([[[1.0, 2.0], [4.0, 1.0]], [[0.0, 4.0], [2.0, 2.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1373,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 56,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Given a 3-D float tensor `imgs` of shape `(b, h, w)`, return a tuple `(per_image, per_pixel, overall)`: `per_image` is a 1-D tensor of length `b` with the sum of each image; `per_pixel` is a 2-D tensor of shape `(h, w)` with the mean at each pixel position across the batch; `overall` is the mean of every pixel in the batch, as a Python float.",
+      "task_type": "code_completion",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(imgs):\n    \"\"\"Three summaries of one batch, each over a different set of axes.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(imgs))",
+          "expected_expr": "([16.0, 8.0], [[0.5, 1.5], [2.5, 7.5]], 3.0)"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[6.0]]])",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(imgs))",
+          "expected_expr": "([6.0], [[6.0]], 6.0)"
+        },
+        {
+          "setup_code": "import torch as t\nimgs = t.tensor([[[1.0, 2.0]], [[4.0, 4.0]], [[1.0, 6.0]]])",
+          "call": "(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(imgs))",
+          "expected_expr": "([3.0, 8.0, 7.0], [[2.0, 4.0]], 3.0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[6.0, 10.0], [0.0, 8.0]], [[0.5, 1.5], [2.5, 7.5]], 3.0)",
+          "why": "dim=1 removes only the height axis, leaving one total per column of each image — shape (b, w) — instead of one total per image; both trailing axes have to go."
+        }
+      ],
+      "canonical_solution": "import torch as t\n\ndef solve(imgs):\n    \"\"\"Three summaries of one batch, each over a different set of axes.\"\"\"\n    per_image = imgs.sum(dim=(1, 2))\n    per_pixel = imgs.mean(dim=0)\n    overall = float(imgs.mean())\n    return per_image, per_pixel, overall\n\n\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[0.0, 0.0], [0.0, 8.0]]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

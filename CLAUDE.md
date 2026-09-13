@@ -228,6 +228,16 @@ skill report the same thing from the other side.
   `This-Directory-Only/backend/.venv/bin/python3` — system python has no torch and every
   fence looks broken.
 
+- **`numpy.axis-reductions` to the floors** (2026-09-13): the first gap the
+  `ops/gap-watch/` session watcher ever fired — Seth had answered q174 and the unranked
+  q103 and the Solo rung was dry. 11 new drills (ids 1363–1373): Faded 2→6 (three per
+  segment), Solo 3→7, Integrated 0→3; `## Independent practice` prose became
+  `## Solo practice` items. 🔴 `Tensor.amax`/`amin`/`argmax` are declared by NO page
+  before this one — drills use `sum`/`mean` with `dim`/`keepdim` and whole-tensor
+  `Tensor.max` only. 🔑 "stack" is a term `stack-concat-interleave` defines LATER; the
+  prose ratchet rejects it on this page. 🔑 A 3-D `(n, h, w)` input with the
+  near miss on the SQUARE case is what makes a dropped keepdim visible.
+
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.
 
