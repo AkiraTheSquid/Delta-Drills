@@ -12,7 +12,8 @@
    printed output lands under the cell exactly as before. THEN the notebook's
    joined cells — `DeltaNotebook.submissionCode()`, the same text Submit
    posts — go through the same test harness Submit grades with, and every
-   case comes back ✓/✗ with the call, what it returned and what was expected.
+   case comes back ✓/✗ with the call, the inputs it ran on (its setup_code,
+   imports stripped), what it returned and what was expected.
 
    🔴 THE VERDICT IS THE GRADER'S, NOT A COPY OF IT. Backend mode posts to
    `/api/practice/check`, which is `grade_submission` with the verdict
@@ -44,6 +45,17 @@ const DeltaTestCheck = (() => {
   /* A harness that never reached the cases answers with the whole traceback
      — a temp-file path and a line number that mean nothing to the learner.
      The last line is the error, and it is the only one worth the space. */
+  /* The inputs a case ran on. A call like `solve(x)` names its input but the
+     value lives in the case's setup_code (`x = t.tensor([-3., 4.])`), and
+     without it an edge case that fails cannot be reproduced in a cell. The
+     imports are the same on every case and say nothing; the rest is shown
+     verbatim and UNCLIPPED — a clipped tensor is not an input you can retype.
+     Seth, 2026-09-13: "it shows you the inputs for each of the test cases as
+     well. otherwise you can't troubleshoot the edge cases". */
+  const inputsOf = (tc) => String(tc?.setup_code || "")
+    .split("\n")
+    .map((l) => l.trimEnd())
+    .filter((l) => l.trim() && !/^\s*(import|from)\s/.test(l));
   const lastLine = (s) => {
     const lines = String(s == null ? "" : s).trim().split("\n").filter((l) => l.trim());
     return /Traceback/.test(lines[0] || "") ? lines[lines.length - 1] : String(s);
@@ -288,7 +300,8 @@ json.dumps(_delta_results)
     const rows = [];
     for (let i = 0; i < total; i++) {
       const t = outcome.tests[i];
-      const call = esc(clip((t && t.call) || cases[i]?.call || `case ${i + 1}`));
+      const call = esc(clip((t && t.call) || cases[i]?.call || `case ${i + 1}`))
+        + inputsOf(cases[i]).map((l, j) => `\n    ${j ? "          " : "with:     "}${esc(l)}`).join("");
       if (!t) {
         // The harness stopped before this case (the code itself failed to
         // run): the first row carries the traceback, the rest never ran.
