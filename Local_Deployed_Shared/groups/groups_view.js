@@ -52,7 +52,9 @@ const DDGroups = (() => {
      cannot tell a read still in flight from a read that came back empty
      handed, and the column has to say a different sentence for each. */
   let dayState = "loading";
-  let view = "goals";
+  /* The board opens on the competency graph (Seth, 2026-09-13): progress
+     is what a group comes to compare; the day's goals are one select away. */
+  let view = "graph";
   let horizon = "weekly";
   let progress = null;
   let progressState = "loading";
@@ -209,7 +211,7 @@ const DDGroups = (() => {
     const board = el("div", "dd-board");
     const dayRow = el("div", "dd-board-day");
     dayRow.appendChild(selectControl("View", view, [
-      ["goals", "Goals"], ["activity", "Problems per day"], ["graph", "Competency graph"],
+      ["graph", "Competency graph"], ["activity", "Problems per day"], ["goals", "Goals"],
     ], (next) => {
       lane()?.destroyAll();
       view = next;

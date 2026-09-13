@@ -2,8 +2,9 @@
 
 ## Board views (2026-09-13)
 
-The `.dd-board-day` dropdown switches the existing right column between Goals
-(the daily checklist), Problems per day, and Competency graph. Charts offer
+The `.dd-board-day` dropdown switches the existing right column between
+Competency graph (the DEFAULT — the board opens on it, Seth 2026-09-13),
+Problems per day, and Goals (the daily checklist). Charts offer
 Daily (one date), Weekly (Monday–Sunday), and Monthly (calendar month) horizons.
 The same `.dd-day-nav` arrows step by that horizon; the date picker anchors it.
 
@@ -330,6 +331,11 @@ Backend startup creates the additive target table through existing
     database.
 
 ## Recent Changes
+- 2026-09-13 (later): the board opens on the Competency graph instead of Goals
+  (`view = "graph"` in `groups_view.js`, select reordered to match). The graph's
+  crosshair now pins its date to the x-axis and its level to the y-axis as
+  filled tags (`axisTag` in `groups_progress.js`, `.dd-graph-axis-tag`); the
+  saved target carries the same tags in its own colour. Harness covers both.
 - 2026-09-02: Folder created. Groups tab built — discovery card, consent gate,
   public directory, invite links, group bar, and a roster of member cards
   carrying the Learner Home's area bars.

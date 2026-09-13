@@ -878,7 +878,7 @@
     let rows = "";
     if (kc === nextUpKc) {
       rows += `<div class="kg2-dock-row is-next-up"><span>Next up</span>` +
-              `<span>the queue's weakest unlocked concept</span></div>`;
+              `<span>what you're practising now, else the queue's next pick</span></div>`;
     }
     rows += placed && last
       ? `<div class="kg2-dock-row"><span>Placement test</span><span>${esc(last)}</span></div>`
