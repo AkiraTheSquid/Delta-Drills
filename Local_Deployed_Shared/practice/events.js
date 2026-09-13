@@ -64,6 +64,8 @@ practiceSubmitBtn.addEventListener("click", async () => {
   practiceFeedbackArea.classList.remove("hidden");
 
   applyResult(result.correct);
+  // The graded verdict supersedes the Run button's dry check of the same code.
+  window.DeltaTestCheck?.hide?.();
   if (typeof renderFailedTests === "function") renderFailedTests(result, q);
   /* The answer, under the code that missed it. Ordered AFTER renderFailedTests
      because showSolution re-appends itself last, so the read is: your cells →
@@ -477,6 +479,7 @@ const _loadNextPracticeQuestion = async () => {
   showFeedbackButtons();
   _resetProblemFeedbackRow();
   if (typeof hideFailedTests === "function") hideFailedTests();
+  window.DeltaTestCheck?.hide?.();
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor

@@ -540,76 +540,20 @@ const PracticeAPI = {
     }
 
     if (this.currentQuestion.submission_mode === "function" && this.currentQuestion.test_cases?.length) {
-      const preamble = await buildPyodidePreamble(this.currentQuestion);
-      const testsJsonLiteral = JSON.stringify(JSON.stringify(this.currentQuestion.test_cases));
-      pyodide.runPython(preamble);
-      try {
-        pyodide.runPython(userCode);
-        const resultJson = pyodide.runPython(`
-import json
-import numpy as np
-
-def _delta_to_jsonable(value):
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    if isinstance(value, np.generic):
-        return value.item()
-    if isinstance(value, tuple):
-        return [_delta_to_jsonable(v) for v in value]
-    if isinstance(value, list):
-        return [_delta_to_jsonable(v) for v in value]
-    if isinstance(value, dict):
-        return {k: _delta_to_jsonable(v) for k, v in value.items()}
-    return value
-
-def _delta_equal(a, b):
-    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
-        return bool(np.array_equal(np.asarray(a), np.asarray(b)))
-    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
-        if len(a) != len(b):
-            return False
-        return all(_delta_equal(x, y) for x, y in zip(a, b))
-    return bool(a == b)
-
-_delta_results = []
-for _delta_case in json.loads(${testsJsonLiteral}):
-    try:
-        if _delta_case.get("setup_code"):
-            np.random.seed(0)
-            exec(_delta_case["setup_code"], globals())
-        _delta_actual = eval(_delta_case["call"], globals())
-        if _delta_case.get("assert_code"):
-            exec(_delta_case["assert_code"], dict(globals(), result=_delta_actual))
-        _delta_expected_setup = _delta_case.get("expected_setup_code") or _delta_case.get("setup_code")
-        if _delta_expected_setup:
-            np.random.seed(0)
-            exec(_delta_expected_setup, globals())
-        _delta_expected = eval(_delta_case["expected_expr"], globals())
-        _delta_results.append({
-            "passed": bool(_delta_equal(_delta_actual, _delta_expected)),
-            "actual": repr(_delta_to_jsonable(_delta_actual)),
-            "expected": repr(_delta_to_jsonable(_delta_expected)),
-            "error": "",
-        })
-    except Exception as _delta_exc:
-        _delta_results.append({
-            "passed": False,
-            "actual": "",
-            "expected": "",
-            "error": f"{type(_delta_exc).__name__}: {_delta_exc}",
-        })
-json.dumps(_delta_results)
-`);
-        const parsed = JSON.parse(resultJson);
-        failed_tests.push(...parsed.filter((test) => !test.passed));
+      /* 🔴 ONE HARNESS. The Python that runs the cases lives in
+         practice/test-check.js::runPyodideTests, because the Run button now
+         checks the same cases before Submit — and two copies of a grader are
+         how Run and Submit came to disagree about torch. `results` is null
+         when the learner's code itself failed to run; `output` is then the
+         traceback, which is what used to land in actualOutput. */
+      const run = await window.DeltaTestCheck.runPyodideTests(this.currentQuestion, userCode);
+      if (run.results) {
+        failed_tests.push(...run.results.filter((test) => !test.passed));
         correct = failed_tests.length === 0;
-        actualOutput = pyodide.runPython("sys.stdout.getvalue()").trim();
-      } catch (e) {
-        actualOutput = pyodide.runPython("sys.stderr.getvalue()").trim() || e.message;
+      } else {
         correct = false;
-      } finally {
-        pyodide.runPython("sys.stdout = sys.__stdout__\nsys.stderr = sys.__stderr__");
       }
+      actualOutput = run.output;
       if (practiceMode === "backend" && requiresLocalPyodide) {
         await this.recordLocalEval(questionId, correct, { finalize: false });
       }

@@ -236,6 +236,50 @@
   word-break: break-word;
 }
 
+/* The Run button's test-case check (practice/test-check.js): every case,
+   ✓/✗, under the learner's cells, before anything is submitted. Same box as
+   the failed-tests block so the two read as one family; the tone is the
+   border — green when every case passes, accent when any fails, neutral
+   while the check is in flight. */
+.run-tests-block {
+  background: rgb(var(--info-rgb) / 0.06);
+  border: 1px solid rgb(var(--info-rgb) / 0.35);
+  border-radius: 6px;
+  margin: 10px 0;
+  padding: 8px 12px;
+}
+.run-tests-block--pass {
+  background: rgb(var(--ok-rgb) / 0.06);
+  border-color: rgb(var(--ok-rgb) / 0.45);
+}
+.run-tests-block--fail {
+  background: rgb(var(--accent-rgb) / 0.06);
+  border-color: rgb(var(--accent-rgb) / 0.35);
+}
+.run-tests-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.run-tests-block--pass .run-tests-title { color: rgb(var(--ok-rgb)); }
+.run-tests-block--fail .run-tests-title { color: var(--accent-text); }
+.run-tests-body {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.run-test--pass { color: rgb(var(--ok-rgb)); font-weight: 700; }
+.run-test--fail { color: var(--accent-text); font-weight: 700; }
+.run-tests-note {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
 /* The mode-demotion banner (.practice-mode-notice) was deleted on 2026-08-23.
    practice/mode.js carries the reason it existed and why a replacement should
    go on the session status row rather than back here. */

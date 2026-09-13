@@ -82,7 +82,7 @@
        After timer.css, which still owns the card the dial sits in. -->
   <link rel="stylesheet" href="styles/practice/readiness.css?v=4" />
   <link rel="stylesheet" href="styles/practice/question.css?v=6" />
-  <link rel="stylesheet" href="styles/practice/feedback.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=7" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
@@ -2284,13 +2284,16 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=42"></script>
+  <script src="practice/ui.js?v=43"></script>
+  <!-- The Run button's test-case check. Before api.js: submitAnswer grades
+       a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
+  <script src="practice/test-check.js?v=1"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=29"></script>
+  <script src="practice/api.js?v=30"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=34"></script>
   <script src="practice/kernel.js?v=8"></script>
@@ -2321,7 +2324,7 @@ t.manual_seed(0)
   <script src="practice/visual-fixture.js?v=1"></script>
   <script src="practice/runner.js?v=24"></script>
   <script src="practice/notebook.js?v=13"></script>
-  <script src="practice/notebook-editor.js?v=6"></script>
+  <script src="practice/notebook-editor.js?v=7"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
@@ -2392,7 +2395,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=48"></script>
+  <script src="practice/events.js?v=49"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
