@@ -398,5 +398,12 @@ window.DD_GLOSSARY.kcLesson = {
   "cnn.convolution-2d": ["ARENA 0.2 — Neural networks and ResNets", "Image filters combine channels and local geometry"],
   "cnn.pooling": ["ARENA 0.2 — Neural networks and ResNets", "Pool spatial evidence while preserving channels"],
   "python.control-flow": ["ARENA 0.0 — Tensor reasoning", "Decisions and repeated work"],
-  "cnn.batch-normalization": ["ARENA 0.2 — Neural networks and ResNets", "BatchNorm separates current data from running state"]
+  "cnn.batch-normalization": ["ARENA 0.2 — Neural networks and ResNets", "BatchNorm separates current data from running state"],
+  "cnn.sequential": ["ARENA 0.2 — Neural networks and ResNets", "Chain modules in order"],
+  "cnn.residual-block": ["ARENA 0.2 — Neural networks and ResNets", "A residual block adds its input back"],
+  "cnn.block-group": ["ARENA 0.2 — Neural networks and ResNets", "Stack residual blocks, stride only in the first"],
+  "cnn.resnet34": ["ARENA 0.2 — Neural networks and ResNets", "Assemble ResNet34 from stem, groups and head"],
+  "cnn.feature-extraction": ["ARENA 0.2 — Neural networks and ResNets", "Reuse pretrained weights: copy, freeze, replace the head"],
+  "cnn.training-loop": ["ARENA 0.2 — Neural networks and ResNets", "A training loop over batches: forward, loss, backward, step, validate"],
+  "cnn.forward-hooks": ["ARENA 0.2 — Neural networks and ResNets", "Hooks watch a module's output"]
 };

@@ -65,7 +65,14 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.convolution-1d": "ar-02",
     "cnn.convolution-2d": "ar-02",
     "cnn.pooling": "ar-02",
-    "cnn.batch-normalization": "ar-02"
+    "cnn.batch-normalization": "ar-02",
+    "cnn.sequential": "ar-02",
+    "cnn.residual-block": "ar-02",
+    "cnn.block-group": "ar-02",
+    "cnn.resnet34": "ar-02",
+    "cnn.feature-extraction": "ar-02",
+    "cnn.training-loop": "ar-02",
+    "cnn.forward-hooks": "ar-02"
   },
   "kps": {
     "python.values-and-names": "dd-kp-python-values-and-names",
@@ -131,7 +138,14 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.convolution-1d": "dd-kp-cnn-convolution-1d",
     "cnn.convolution-2d": "dd-kp-cnn-convolution-2d",
     "cnn.pooling": "dd-kp-cnn-pooling",
-    "cnn.batch-normalization": "dd-kp-cnn-batch-normalization"
+    "cnn.batch-normalization": "dd-kp-cnn-batch-normalization",
+    "cnn.sequential": "dd-kp-cnn-sequential",
+    "cnn.residual-block": "dd-kp-cnn-residual-block",
+    "cnn.block-group": "dd-kp-cnn-block-group",
+    "cnn.resnet34": "dd-kp-cnn-resnet34",
+    "cnn.feature-extraction": "dd-kp-cnn-feature-extraction",
+    "cnn.training-loop": "dd-kp-cnn-training-loop",
+    "cnn.forward-hooks": "dd-kp-cnn-forward-hooks"
   },
   "segments": {
     "numpy.ndarray-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-numpy-ndarray-model-0",
@@ -232,6 +246,22 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.pooling#local-max": "dd-seg-cnn-pooling-1",
     "cnn.batch-normalization#channel-statistics": "dd-seg-cnn-batch-normalization-0",
     "cnn.batch-normalization#running-statistics": "dd-seg-cnn-batch-normalization-1",
-    "cnn.batch-normalization#train-eval": "dd-seg-cnn-batch-normalization-2"
+    "cnn.batch-normalization#train-eval": "dd-seg-cnn-batch-normalization-2",
+    "cnn.sequential#registration-order": "dd-seg-cnn-sequential-0",
+    "cnn.sequential#library-chain": "dd-seg-cnn-sequential-1",
+    "cnn.sequential#layer-objects": "dd-seg-cnn-sequential-2",
+    "cnn.residual-block#left-branch": "dd-seg-cnn-residual-block-0",
+    "cnn.residual-block#shortcut-and-sum": "dd-seg-cnn-residual-block-1",
+    "cnn.resnet34#stem": "dd-seg-cnn-resnet34-0",
+    "cnn.resnet34#stages-and-head": "dd-seg-cnn-resnet34-1",
+    "cnn.feature-extraction#state-dict": "dd-seg-cnn-feature-extraction-0",
+    "cnn.feature-extraction#copy-by-position": "dd-seg-cnn-feature-extraction-1",
+    "cnn.feature-extraction#freeze-and-replace-head": "dd-seg-cnn-feature-extraction-2",
+    "cnn.training-loop#backward-fills-grad": "dd-seg-cnn-training-loop-0",
+    "cnn.training-loop#optimizer-step": "dd-seg-cnn-training-loop-1",
+    "cnn.training-loop#zero-grad-and-loss": "dd-seg-cnn-training-loop-2",
+    "cnn.training-loop#train-eval-modes": "dd-seg-cnn-training-loop-3",
+    "cnn.forward-hooks#hook-signature-and-handle": "dd-seg-cnn-forward-hooks-0",
+    "cnn.forward-hooks#apply-recursively": "dd-seg-cnn-forward-hooks-1"
   }
 });

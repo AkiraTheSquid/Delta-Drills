@@ -113,6 +113,24 @@ def check_registry(findings):
     if cyc:
         findings.append({"key": "registry|cycle|" + ">".join(cyc),
                          "detail": "prerequisite cycle: " + " -> ".join(cyc)})
+    # Encompassing edges are a SUBSET of the prerequisite edges (spec:
+    # This-Directory-Only/SPEC_CHAPTER0_GRAPH.md). A weight says how much of
+    # the prerequisite the dependent exercises, so it lives in (0, 1]; a
+    # weight on a non-prerequisite is a graph the renderer cannot draw.
+    for kc_row in reg["kcs"]:
+        kc = kc_row["id"]
+        enc = kc_row.get("encompassing") or {}
+        if not isinstance(enc, dict):
+            findings.append({"key": f"registry|encompassing-shape|{kc}",
+                             "detail": f"{kc}: encompassing must be an object of prereq -> weight"})
+            continue
+        for p, w in enc.items():
+            if p not in prereqs[kc]:
+                findings.append({"key": f"registry|encompassing-not-prereq|{kc}|{p}",
+                                 "detail": f"{kc} encompasses {p!r}, which is not one of its prereqs"})
+            if not isinstance(w, (int, float)) or isinstance(w, bool) or not (0 < w <= 1):
+                findings.append({"key": f"registry|encompassing-weight|{kc}|{p}",
+                                 "detail": f"{kc} -> {p}: encompassing weight {w!r} is not in (0, 1]"})
     return prereqs, rank
 
 

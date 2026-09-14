@@ -2,7 +2,7 @@
  "curriculum_id": "arena-drillable-v1",
  "title": "ARENA Chapter 0 \u2014 drillable-atom graph (v1)",
  "version": "1.1.0",
- "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.] [2026-08-30: the content cut retired every question that trained as-strided-windowing and inf-masking, so both are NON_GATING now; conv-output-shape and stride-zero-broadcast had no other prerequisite and are declared intentional roots rather than left silently ungated.]",
+ "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.] [2026-08-30: the content cut retired every question that trained as-strided-windowing and inf-masking, so both are NON_GATING now; conv-output-shape and stride-zero-broadcast had no other prerequisite and are declared intentional roots rather than left silently ungated.] [2026-09-14: +7 ARENA 0.2 atoms (sequential-chain, resnet34-assembly, copy-weights-by-position, freeze-and-replace-head, forward-hook-register, nan-hook-check, training-loop-epoch) with prereq/encompassing edges for q1374-1470.]",
  "concepts": [
   {
    "id": "1x1-conv-channel-reshape",
@@ -3588,6 +3588,104 @@
    "tags": [
     "drill-atom",
     "arena-0.0"
+   ]
+  },
+  {
+   "id": "sequential-chain",
+   "title": "Sequential: run children in registration order",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: Sequential chain",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "sequential-chain \u2014 ARENA 0.2 Sequential (2026-09-14): _modules registration, len/index/iteration, forward as a loop over children",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "resnet34-assembly",
+   "title": "ResNet34: stem + block groups + pool + head",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: ResNet34 assembly",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "resnet34-assembly \u2014 ARENA 0.2 ResNet34 (2026-09-14): in_layers, residual_layers of BlockGroups, mean-pool, linear head; parameter and shape bookkeeping",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "copy-weights-by-position",
+   "title": "Copy a state dict by position, not by name",
+   "topic": "CNNs",
+   "subtopic": "CNNs: copy_weights",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "copy-weights-by-position \u2014 ARENA 0.2 copy_weights (2026-09-14): zip two state dicts, assign by position, load_state_dict",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "freeze-and-replace-head",
+   "title": "Freeze every parameter, then replace the classifier head",
+   "topic": "CNNs",
+   "subtopic": "CNNs: feature extraction",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "freeze-and-replace-head \u2014 ARENA 0.2 get_resnet_for_feature_extraction (2026-09-14): requires_grad_(False) then a fresh Linear head that trains",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "forward-hook-register",
+   "title": "register_forward_hook and remove the handle",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: forward hooks",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "forward-hook-register \u2014 ARENA 0.2 add_hook/remove_hooks (2026-09-14): hook(module, inputs, output), handles kept and removed",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "nan-hook-check",
+   "title": "NaN detector via a hook applied to every module",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: forward hooks",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "nan-hook-check \u2014 ARENA 0.2 hook_check_for_nan_output (2026-09-14): module.apply installs the check on every child; isnan().any() flags",
+   "tags": [
+    "drill-atom",
+    "part2"
+   ]
+  },
+  {
+   "id": "training-loop-epoch",
+   "title": "One epoch: train mode, loss, backward, step, zero_grad, eval accuracy",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: training loop",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "training-loop-epoch \u2014 ARENA 0.2 train (2026-09-14): Adam over trainable params, cross_entropy, backward/step/zero_grad, eval() + argmax accuracy",
+   "tags": [
+    "drill-atom",
+    "part2"
    ]
   }
  ],
@@ -7641,6 +7739,166 @@
    "is_encompassing": false,
    "propagation_weight": 0.0,
    "rationale": "[uses] copy_ writes into a buffer that register_buffer created"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "sequential-chain",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] a Sequential is a module whose children are modules"
+  },
+  {
+   "prerequisite_id": "nn-module-subclass",
+   "dependent_id": "sequential-chain",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] Sequential is written as an nn.Module subclass"
+  },
+  {
+   "prerequisite_id": "block-group-stack",
+   "dependent_id": "resnet34-assembly",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[part-of] residual_layers is a Sequential of BlockGroups"
+  },
+  {
+   "prerequisite_id": "resnet-stem",
+   "dependent_id": "resnet34-assembly",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[part-of] in_layers is the 7x7 conv / BN / ReLU / maxpool stem"
+  },
+  {
+   "prerequisite_id": "sequential-chain",
+   "dependent_id": "resnet34-assembly",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] both stages are Sequential chains"
+  },
+  {
+   "prerequisite_id": "linear-affine-transformation",
+   "dependent_id": "resnet34-assembly",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the head is a Linear over pooled features"
+  },
+  {
+   "prerequisite_id": "state-dict-load",
+   "dependent_id": "copy-weights-by-position",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[refines] load_state_dict after rewriting the dict by position"
+  },
+  {
+   "prerequisite_id": "state-dict-load",
+   "dependent_id": "freeze-and-replace-head",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the pretrained state is loaded first"
+  },
+  {
+   "prerequisite_id": "copy-weights-by-position",
+   "dependent_id": "freeze-and-replace-head",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the copied network is the one frozen"
+  },
+  {
+   "prerequisite_id": "linear-affine-transformation",
+   "dependent_id": "freeze-and-replace-head",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the new head is a Linear"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "forward-hook-register",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] hooks attach to a child module"
+  },
+  {
+   "prerequisite_id": "forward-hook-register",
+   "dependent_id": "nan-hook-check",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[refines] the NaN check is a forward hook installed on every module"
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "training-loop-epoch",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[part-of] loss.backward() is one step of the epoch"
+  },
+  {
+   "prerequisite_id": "argmax-accuracy-eval",
+   "dependent_id": "training-loop-epoch",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "rationale": "[part-of] the eval pass is argmax accuracy"
+  },
+  {
+   "prerequisite_id": "freeze-and-replace-head",
+   "dependent_id": "training-loop-epoch",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the optimiser sees only trainable params"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "inference-mode-step",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "rationale": "[builds-on] the eval step calls a composed module's forward under inference_mode (wired 2026-09-14: atom had no prerequisite edge)"
   }
  ],
  "lessons": [],

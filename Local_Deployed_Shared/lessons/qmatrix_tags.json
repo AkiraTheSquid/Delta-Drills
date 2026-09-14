@@ -16433,5 +16433,1765 @@
    "syntax.bool-literal"
   ],
   "source": "kp-integrated"
+ },
+ "1374": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1375": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1376": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1377": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1378": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1379": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-faded"
+ },
+ "1380": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1381": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1382": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1383": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1384": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1385": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "1386": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-integrated"
+ },
+ "1387": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-integrated"
+ },
+ "1388": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-integrated"
+ },
+ "1389": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-faded"
+ },
+ "1390": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-faded"
+ },
+ "1391": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-faded"
+ },
+ "1392": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-faded"
+ },
+ "1393": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1394": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1395": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1396": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1397": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1398": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-independent"
+ },
+ "1399": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-integrated"
+ },
+ "1400": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-integrated"
+ },
+ "1401": {
+  "target_kcs": [
+   "cnn.residual-block"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.convolution-2d",
+   "cnn.batch-normalization",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "torch.nn.Conv2d",
+   "torch.nn.BatchNorm2d",
+   "torch.nn.Identity"
+  ],
+  "source": "kp-integrated"
+ },
+ "1402": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1403": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1404": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1405": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1406": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1407": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1408": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1409": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1410": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1411": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1412": {
+  "target_kcs": [
+   "cnn.block-group"
+  ],
+  "supporting_kcs": [
+   "cnn.residual-block",
+   "cnn.sequential",
+   "python.control-flow"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1413": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-faded"
+ },
+ "1414": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-faded"
+ },
+ "1415": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-faded"
+ },
+ "1416": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-faded"
+ },
+ "1417": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1418": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1419": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1420": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1421": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1422": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-independent"
+ },
+ "1423": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-integrated"
+ },
+ "1424": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-integrated"
+ },
+ "1425": {
+  "target_kcs": [
+   "cnn.resnet34"
+  ],
+  "supporting_kcs": [
+   "cnn.block-group",
+   "cnn.pooling",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "torch.nn.MaxPool2d"
+  ],
+  "source": "kp-integrated"
+ },
+ "1426": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1427": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1428": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1429": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1430": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1431": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-faded"
+ },
+ "1432": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1433": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1434": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1435": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1436": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1437": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-independent"
+ },
+ "1438": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-integrated"
+ },
+ "1439": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-integrated"
+ },
+ "1440": {
+  "target_kcs": [
+   "cnn.feature-extraction"
+  ],
+  "supporting_kcs": [
+   "cnn.resnet34",
+   "cnn.module-state",
+   "cnn.linear-layer",
+   "cnn.sequential"
+  ],
+  "new_syntax": [
+   "Tensor.state_dict",
+   "builtin.zip",
+   "Tensor.load_state_dict",
+   "Tensor.parameters",
+   "Tensor.requires_grad_",
+   "Tensor.requires_grad"
+  ],
+  "source": "kp-integrated"
+ },
+ "1441": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1442": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1443": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1444": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1445": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1446": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1447": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1448": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-faded"
+ },
+ "1449": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1450": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1451": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1452": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1453": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1454": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "1455": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-integrated"
+ },
+ "1456": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-integrated"
+ },
+ "1457": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-integrated"
+ },
+ "1458": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-faded"
+ },
+ "1459": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-faded"
+ },
+ "1460": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-faded"
+ },
+ "1461": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-faded"
+ },
+ "1462": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1463": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1464": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1465": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1466": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1467": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-independent"
+ },
+ "1468": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-integrated"
+ },
+ "1469": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-integrated"
+ },
+ "1470": {
+  "target_kcs": [
+   "cnn.forward-hooks"
+  ],
+  "supporting_kcs": [
+   "cnn.sequential",
+   "cnn.module-state",
+   "python.control-flow"
+  ],
+  "new_syntax": [
+   "Tensor.register_forward_hook",
+   "Tensor.remove",
+   "Tensor.apply",
+   "torch.isnan"
+  ],
+  "source": "kp-integrated"
  }
 }

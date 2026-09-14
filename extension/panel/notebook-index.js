@@ -97,7 +97,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-02",
       "file": "ar-02-arena-0-2---neural-networks-and-resnets.ipynb",
-      "problems": 104
+      "problems": 180
     }
   ],
   "subtopics": {

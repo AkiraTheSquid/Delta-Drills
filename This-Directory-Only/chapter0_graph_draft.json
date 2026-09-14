@@ -1,0 +1,1292 @@
+{
+  "_comment": "Chapter-0 KC graph draft. encompassing ⊆ prereqs; weight = share of a success on this KC that counts as evidence on the prereq. integration = |transitive encompassing closure|. Order = proposed registry order (linear extension). See SPEC_CHAPTER0_GRAPH.md.",
+  "lessons": [
+    {
+      "id": "ar-03",
+      "topic": "PyTorch",
+      "title": "ARENA 0.3 — Optimization",
+      "subtopic_key": "PyTorch: ar-03"
+    },
+    {
+      "id": "ar-04",
+      "topic": "PyTorch",
+      "title": "ARENA 0.4 — Backpropagation",
+      "subtopic_key": "PyTorch: ar-04"
+    },
+    {
+      "id": "ar-05",
+      "topic": "PyTorch",
+      "title": "ARENA 0.5 — VAEs and GANs",
+      "subtopic_key": "PyTorch: ar-05"
+    }
+  ],
+  "registry_order": [
+    "python.values-and-names",
+    "python.types-and-conversion",
+    "python.lists-and-tuples",
+    "python.indexing",
+    "python.calling-functions",
+    "python.defining-functions",
+    "python.dots-and-imports",
+    "numpy.ndarray-model",
+    "numpy.transpose-axes",
+    "numpy.views-and-copies",
+    "numpy.constructors",
+    "numpy.slicing-views",
+    "numpy.ranges",
+    "numpy.dtype-astype",
+    "numpy.reshape-flatten",
+    "numpy.elementwise-ufuncs",
+    "numpy.aggregations",
+    "numpy.sorting",
+    "numpy.random-samplers",
+    "numpy.random-seeding",
+    "numpy.random-threading",
+    "numpy.linalg-basics",
+    "numpy.boolean-masking",
+    "numpy.argmin-argmax",
+    "numpy.broadcasting-rules",
+    "numpy.axis-reductions",
+    "numpy.dot-matmul-patterns",
+    "numpy.stack-concat-interleave",
+    "einops.pattern-language",
+    "einops.merge-axes",
+    "einops.split-axes",
+    "einops.singleton-and-lists",
+    "einops.grids-montage",
+    "einops.patches-space-depth",
+    "einops.reduce-model",
+    "einops.pooling",
+    "einops.repeat-model",
+    "einops.dl-flatten-heads",
+    "einops.channel-groups-temporal",
+    "torch.out-argument",
+    "torch.slice-assignment",
+    "raytracing.ray-parametrisation",
+    "raytracing.make-rays-1d",
+    "einops.einsum",
+    "tensor.row-normalization",
+    "tensor.cosine-similarity",
+    "tensor.indexed-selection",
+    "tensor.stable-probabilities",
+    "tensor.classifier-evaluation",
+    "tensor.inverse-cdf",
+    "raytracing.segment-intersection",
+    "raytracing.batched-segments",
+    "raytracing.make-rays-2d",
+    "raytracing.triangle-intersection",
+    "raytracing.mesh-visibility",
+    "cnn.stride-views",
+    "python.control-flow",
+    "cnn.module-state",
+    "cnn.linear-layer",
+    "cnn.mlp",
+    "cnn.convolution-1d",
+    "cnn.convolution-2d",
+    "cnn.pooling",
+    "cnn.batch-normalization",
+    "cnn.sequential",
+    "cnn.residual-block",
+    "cnn.block-group",
+    "cnn.resnet34",
+    "cnn.feature-extraction",
+    "cnn.training-loop",
+    "cnn.forward-hooks",
+    "opt.training-step",
+    "opt.sgd-momentum",
+    "opt.rmsprop",
+    "opt.adam",
+    "opt.adamw",
+    "opt.parameter-groups",
+    "opt.finetune-loop",
+    "bp.elementwise-backward",
+    "bp.unbroadcast",
+    "bp.binary-backward",
+    "bp.manual-chain",
+    "bp.backward-registry",
+    "bp.recipe-and-tensor",
+    "bp.wrap-forward",
+    "bp.topological-sort",
+    "bp.backprop",
+    "bp.shape-backward",
+    "bp.indexing-backward",
+    "bp.matmul-backward",
+    "bp.autograd-module",
+    "bp.cross-entropy",
+    "bp.autograd-sgd",
+    "bp.train-from-scratch",
+    "gen.autoencoder",
+    "gen.reconstruction-loop",
+    "gen.vae-reparameterization",
+    "gen.elbo-loss",
+    "gen.activation-modules",
+    "gen.dcgan-generator",
+    "gen.dcgan-discriminator",
+    "gen.weight-init",
+    "gen.gan-training-step",
+    "gen.conv-transpose-1d",
+    "gen.conv-transpose-2d",
+    "gen.own-layers-generator"
+  ],
+  "kcs": [
+    {
+      "id": "cnn.sequential",
+      "lesson": "ar-02",
+      "title": "Chain modules in order",
+      "prereqs": [
+        "cnn.module-state",
+        "cnn.batch-normalization",
+        "python.control-flow",
+        "python.lists-and-tuples"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.5
+      },
+      "arena_defs": [
+        "Sequential"
+      ],
+      "new_syntax": [
+        "torch.nn.Sequential",
+        "Module.add_module",
+        "Module._modules"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "_modules registration via add_module, __getitem__, forward iterates in order; nn.Sequential as the torch twin",
+      "integration": 1
+    },
+    {
+      "id": "cnn.residual-block",
+      "lesson": "ar-02",
+      "title": "A residual block adds its input back",
+      "prereqs": [
+        "cnn.sequential",
+        "cnn.convolution-2d",
+        "cnn.batch-normalization"
+      ],
+      "encompassing": {
+        "cnn.sequential": 0.5,
+        "cnn.convolution-2d": 0.4,
+        "cnn.batch-normalization": 0.3
+      },
+      "arena_defs": [
+        "ResidualBlock"
+      ],
+      "new_syntax": [
+        "torch.nn.Conv2d",
+        "torch.nn.BatchNorm2d",
+        "torch.nn.ReLU"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "left branch conv3-bn-relu-conv3-bn; right = identity unless first_stride>1 or channels change → conv1-bn; relu(left+right). Shape rule k3 p1 stride s",
+      "integration": 4
+    },
+    {
+      "id": "cnn.block-group",
+      "lesson": "ar-02",
+      "title": "Stack residual blocks, stride only in the first",
+      "prereqs": [
+        "cnn.residual-block",
+        "python.control-flow"
+      ],
+      "encompassing": {
+        "cnn.residual-block": 0.7
+      },
+      "arena_defs": [
+        "BlockGroup"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "concept",
+      "note": "first block carries first_stride + in→out channel change, the rest are identity-shaped",
+      "integration": 5
+    },
+    {
+      "id": "cnn.resnet34",
+      "lesson": "ar-02",
+      "title": "Assemble ResNet34 from stem, groups and head",
+      "prereqs": [
+        "cnn.block-group",
+        "cnn.pooling",
+        "cnn.linear-layer",
+        "cnn.sequential"
+      ],
+      "encompassing": {
+        "cnn.block-group": 0.5,
+        "cnn.pooling": 0.3,
+        "cnn.sequential": 0.3,
+        "cnn.linear-layer": 0.2
+      },
+      "arena_defs": [
+        "ResNet34"
+      ],
+      "new_syntax": [
+        "torch.nn.AdaptiveAvgPool2d",
+        "torch.nn.Flatten",
+        "torch.nn.MaxPool2d"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "stem conv7 s2 p3 → bn → relu → maxpool3 s2 p1; four groups [3,4,6,3] with strides [1,2,2,2]; avgpool → flatten → linear. Drills: compute output shapes per stage, build a MINI variant (2 groups, few channels) and check parameter count / output shape",
+      "integration": 8
+    },
+    {
+      "id": "cnn.feature-extraction",
+      "lesson": "ar-02",
+      "title": "Reuse pretrained weights: copy, freeze, replace the head",
+      "prereqs": [
+        "cnn.resnet34",
+        "cnn.module-state",
+        "cnn.linear-layer"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.3,
+        "cnn.resnet34": 0.2
+      },
+      "arena_defs": [
+        "copy_weights",
+        "get_resnet_for_feature_extraction"
+      ],
+      "new_syntax": [
+        "Module.state_dict",
+        "Module.load_state_dict",
+        "Tensor.requires_grad_",
+        "Module.named_parameters"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 copy_weights = zip two state_dicts by position; seg2 freeze all params, swap the final linear for n_classes. Drill checks trainable-param count",
+      "integration": 9
+    },
+    {
+      "id": "cnn.training-loop",
+      "lesson": "ar-02",
+      "title": "A training loop over batches: forward, loss, backward, step, validate",
+      "prereqs": [
+        "cnn.mlp",
+        "tensor.classifier-evaluation",
+        "python.control-flow",
+        "cnn.batch-normalization",
+        "cnn.feature-extraction"
+      ],
+      "encompassing": {
+        "cnn.mlp": 0.3,
+        "tensor.classifier-evaluation": 0.3,
+        "cnn.feature-extraction": 0.3
+      },
+      "arena_defs": [
+        "SimpleMLPTrainingArgs",
+        "train"
+      ],
+      "new_syntax": [
+        "torch.utils.data.TensorDataset",
+        "torch.utils.data.DataLoader",
+        "torch.optim.Adam (black box)",
+        "Optimizer.zero_grad",
+        "Optimizer.step",
+        "Tensor.backward",
+        "Tensor.item",
+        "Module.train",
+        "Module.eval"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 one epoch: for imgs, labels in loader: logits → cross_entropy → zero_grad/backward/step, record loss.item(); seg2 validation accuracy under no_grad + model.eval(). The 0.2 `train` exercise; deployed drills use TensorDataset on synthetic tensors, CPU only",
+      "integration": 12
+    },
+    {
+      "id": "cnn.forward-hooks",
+      "lesson": "ar-02",
+      "title": "Hooks watch a module's output",
+      "prereqs": [
+        "cnn.sequential",
+        "cnn.module-state"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.3
+      },
+      "arena_defs": [
+        "hook_check_for_nan_output",
+        "add_hook",
+        "remove_hooks"
+      ],
+      "new_syntax": [
+        "Module.register_forward_hook",
+        "Module.apply",
+        "torch.isnan"
+      ],
+      "segments": 1,
+      "kind": "concept",
+      "note": "register_forward_hook on every submodule via apply; remove via the handle / _forward_hooks.clear()",
+      "integration": 1
+    },
+    {
+      "id": "opt.training-step",
+      "lesson": "ar-03",
+      "title": "One optimizer step: zero, backward, step",
+      "prereqs": [
+        "cnn.training-loop",
+        "cnn.module-state",
+        "python.control-flow",
+        "numpy.stack-concat-interleave"
+      ],
+      "encompassing": {
+        "cnn.training-loop": 0.3
+      },
+      "arena_defs": [
+        "opt_fn_with_sgd"
+      ],
+      "new_syntax": [
+        "Tensor.requires_grad",
+        "Tensor.grad",
+        "torch.optim.SGD",
+        "Tensor.detach",
+        "Tensor.unbind"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 a raw leaf tensor with requires_grad → loss.backward → .grad (no module in sight); seg2 opt_fn_with_sgd: the three-line loop with torch.optim.SGD on the point itself, stacking detached copies into the trajectory",
+      "integration": 13
+    },
+    {
+      "id": "opt.sgd-momentum",
+      "lesson": "ar-03",
+      "title": "SGD with momentum and weight decay, in place",
+      "prereqs": [
+        "opt.training-step",
+        "cnn.batch-normalization"
+      ],
+      "encompassing": {
+        "opt.training-step": 0.3,
+        "cnn.batch-normalization": 0.2
+      },
+      "arena_defs": [
+        "SGD"
+      ],
+      "new_syntax": [
+        "torch.inference_mode"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "g = grad + wd·p; b = μ·b + g; p -= lr·b, all under no_grad/inference_mode; zero_grad sets grad None. Encompasses batch-norm's EMA-buffer + no_grad habits",
+      "integration": 14
+    },
+    {
+      "id": "opt.rmsprop",
+      "lesson": "ar-03",
+      "title": "RMSprop scales each step by a running RMS of the gradient",
+      "prereqs": [
+        "opt.sgd-momentum",
+        "numpy.elementwise-ufuncs"
+      ],
+      "encompassing": {
+        "opt.sgd-momentum": 0.5
+      },
+      "arena_defs": [
+        "RMSprop"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "concept",
+      "note": "v = α·v + (1-α)·g²; optional momentum buffer on g/(√v+ε)",
+      "integration": 15
+    },
+    {
+      "id": "opt.adam",
+      "lesson": "ar-03",
+      "title": "Adam: two moments and bias correction",
+      "prereqs": [
+        "opt.rmsprop",
+        "opt.sgd-momentum"
+      ],
+      "encompassing": {
+        "opt.rmsprop": 0.5,
+        "opt.sgd-momentum": 0.3
+      },
+      "arena_defs": [
+        "Adam"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 m,v EMAs + step counter; seg2 bias correction m/(1-β1^t), v/(1-β2^t). NOTE: encompassing opt.sgd-momentum is transitive-through-rmsprop but declared directly because the first moment IS the momentum buffer",
+      "integration": 16
+    },
+    {
+      "id": "opt.adamw",
+      "lesson": "ar-03",
+      "title": "AdamW decouples weight decay from the gradient",
+      "prereqs": [
+        "opt.adam"
+      ],
+      "encompassing": {
+        "opt.adam": 0.7
+      },
+      "arena_defs": [
+        "AdamW"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "concept",
+      "note": "p -= lr·wd·p before the moment update instead of g += wd·p. One decision, but a separately-failable one",
+      "integration": 17
+    },
+    {
+      "id": "opt.parameter-groups",
+      "lesson": "ar-03",
+      "title": "Per-group hyperparameters",
+      "prereqs": [
+        "opt.sgd-momentum",
+        "python.lists-and-tuples",
+        "python.control-flow"
+      ],
+      "encompassing": {
+        "opt.sgd-momentum": 0.5
+      },
+      "arena_defs": [
+        "SGD (param groups)"
+      ],
+      "new_syntax": [
+        "dict.setdefault",
+        "builtin.isinstance"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "accept an iterable of params OR a list of dicts; fill defaults per group; raise if a param is in two groups; step loops groups",
+      "integration": 15
+    },
+    {
+      "id": "opt.finetune-loop",
+      "lesson": "ar-03",
+      "title": "A training class: step, evaluate, train",
+      "prereqs": [
+        "opt.adam",
+        "opt.training-step",
+        "cnn.training-loop",
+        "cnn.feature-extraction",
+        "tensor.classifier-evaluation",
+        "python.control-flow"
+      ],
+      "encompassing": {
+        "cnn.training-loop": 0.5,
+        "opt.training-step": 0.2,
+        "cnn.feature-extraction": 0.3,
+        "tensor.classifier-evaluation": 0.3,
+        "opt.adam": 0.2
+      },
+      "arena_defs": [
+        "ResNetFinetuner"
+      ],
+      "new_syntax": [
+        "torch.optim.Adam",
+        "torch.nn.functional.cross_entropy",
+        "Module.train",
+        "Module.eval"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "training_step(imgs, labels) → loss; evaluate() → accuracy under no_grad with model.eval(); train() loops epochs. Deployed drills use a small MLP/CNN on synthetic tensors (no CIFAR, no wandb)",
+      "integration": 17
+    },
+    {
+      "id": "bp.elementwise-backward",
+      "lesson": "ar-04",
+      "title": "A backward function turns grad_out into grad_in",
+      "prereqs": [
+        "numpy.elementwise-ufuncs",
+        "numpy.broadcasting-rules",
+        "python.defining-functions"
+      ],
+      "encompassing": {},
+      "arena_defs": [
+        "log_back",
+        "negative_back",
+        "exp_back"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "concept",
+      "note": "grad_in = grad_out · (local derivative evaluated at the input); seg1 log/negative, seg2 exp (reuse the OUTPUT), signature (grad_out, out, x)",
+      "integration": 0
+    },
+    {
+      "id": "bp.unbroadcast",
+      "lesson": "ar-04",
+      "title": "Sum a gradient back to the shape it was broadcast from",
+      "prereqs": [
+        "numpy.broadcasting-rules",
+        "numpy.axis-reductions",
+        "python.control-flow"
+      ],
+      "encompassing": {
+        "numpy.broadcasting-rules": 0.3,
+        "numpy.axis-reductions": 0.3
+      },
+      "arena_defs": [
+        "unbroadcast"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 sum away the extra leading dims; seg2 sum keepdim over dims where the original size was 1",
+      "integration": 2
+    },
+    {
+      "id": "bp.binary-backward",
+      "lesson": "ar-04",
+      "title": "Backward for two-argument ops: pick the argument, then unbroadcast",
+      "prereqs": [
+        "bp.elementwise-backward",
+        "bp.unbroadcast",
+        "numpy.boolean-masking"
+      ],
+      "encompassing": {
+        "bp.unbroadcast": 0.6,
+        "bp.elementwise-backward": 0.4
+      },
+      "arena_defs": [
+        "multiply_back0",
+        "multiply_back1",
+        "maximum_back0",
+        "maximum_back1"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 multiply_back0/1 (scalars allowed on either side); seg2 maximum_back with ties split ½ each way",
+      "integration": 4
+    },
+    {
+      "id": "bp.manual-chain",
+      "lesson": "ar-04",
+      "title": "Chain backward functions by hand",
+      "prereqs": [
+        "bp.binary-backward",
+        "bp.elementwise-backward"
+      ],
+      "encompassing": {
+        "bp.binary-backward": 0.6,
+        "bp.elementwise-backward": 0.4
+      },
+      "arena_defs": [
+        "forward_and_back"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "forward d = log(log(a)·b) etc, then walk back from ones_like(d) through log_back / multiply_back0/1, accumulating; the only 'do the whole thing by hand' node",
+      "integration": 5
+    },
+    {
+      "id": "bp.backward-registry",
+      "lesson": "ar-04",
+      "title": "A lookup from (forward fn, argnum) to its backward",
+      "prereqs": [
+        "python.lists-and-tuples",
+        "python.defining-functions",
+        "python.dots-and-imports"
+      ],
+      "encompassing": {},
+      "arena_defs": [
+        "BackwardFuncLookup"
+      ],
+      "new_syntax": [
+        "syntax.class",
+        "dict (tuple keys)"
+      ],
+      "segments": 1,
+      "kind": "concept",
+      "note": "add_back_func(fn, argnum, back_fn) / get_back_func(fn, argnum); keys are (callable, int) tuples",
+      "integration": 0
+    },
+    {
+      "id": "bp.recipe-and-tensor",
+      "lesson": "ar-04",
+      "title": "A Tensor remembers how it was made",
+      "prereqs": [
+        "cnn.module-state",
+        "python.control-flow",
+        "python.lists-and-tuples"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.2
+      },
+      "arena_defs": [
+        "Recipe",
+        "Tensor",
+        "log_forward",
+        "multiply_forward"
+      ],
+      "new_syntax": [
+        "dataclasses.dataclass",
+        "builtin.any"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 Recipe(func,args,kwargs,parents) + Tensor(array, requires_grad, grad, recipe); seg2 forward fns: compute on .array, requires_grad = tracking_on and any(parent.requires_grad), attach recipe with parents {argnum: tensor}, leaves get NO recipe",
+      "integration": 1
+    },
+    {
+      "id": "bp.wrap-forward",
+      "lesson": "ar-04",
+      "title": "Wrap any array function into a differentiable one",
+      "prereqs": [
+        "bp.recipe-and-tensor",
+        "python.defining-functions"
+      ],
+      "encompassing": {
+        "bp.recipe-and-tensor": 0.6
+      },
+      "arena_defs": [
+        "wrap_forward_fn",
+        "_sum",
+        "_argmax",
+        "add_",
+        "sub_"
+      ],
+      "new_syntax": [
+        "syntax.args-kwargs",
+        "syntax.closure"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 the wrapper: unpack Tensor args to arrays, call, build the Recipe only when is_differentiable and tracking; seg2 in-place ops (add_/sub_) and non-differentiable ones (argmax) — why in-place breaks a recorded graph",
+      "integration": 2
+    },
+    {
+      "id": "bp.topological-sort",
+      "lesson": "ar-04",
+      "title": "Order the graph so parents come first",
+      "prereqs": [
+        "bp.recipe-and-tensor",
+        "python.control-flow",
+        "python.lists-and-tuples"
+      ],
+      "encompassing": {
+        "bp.recipe-and-tensor": 0.2
+      },
+      "arena_defs": [
+        "topological_sort",
+        "get_children",
+        "sorted_computational_graph"
+      ],
+      "new_syntax": [
+        "syntax.recursion",
+        "set"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 generic DFS post-order over get_children with permanent + temporary sets (temporary hit = cycle → raise); seg2 sorted_computational_graph = reversed topo over recipe.parents values",
+      "integration": 2
+    },
+    {
+      "id": "bp.backprop",
+      "lesson": "ar-04",
+      "title": "Walk the sorted graph and push gradients back",
+      "prereqs": [
+        "bp.topological-sort",
+        "bp.backward-registry",
+        "bp.wrap-forward",
+        "bp.binary-backward",
+        "bp.recipe-and-tensor"
+      ],
+      "encompassing": {
+        "bp.topological-sort": 0.5,
+        "bp.backward-registry": 0.4,
+        "bp.binary-backward": 0.3,
+        "bp.recipe-and-tensor": 0.3
+      },
+      "arena_defs": [
+        "backprop"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "grads dict keyed by node; for each node in sorted order pop its outgrad; leaf & requires_grad → accumulate into .grad; else for every (argnum, parent) call lookup(recipe.func, argnum)(outgrad, node.array, *args, **kwargs) and add into grads[parent]",
+      "integration": 9
+    },
+    {
+      "id": "bp.shape-backward",
+      "lesson": "ar-04",
+      "title": "Backward for ops that move data: reshape, permute, expand, sum",
+      "prereqs": [
+        "bp.unbroadcast",
+        "numpy.reshape-flatten",
+        "numpy.transpose-axes",
+        "numpy.sorting"
+      ],
+      "encompassing": {
+        "bp.unbroadcast": 0.3
+      },
+      "arena_defs": [
+        "reshape_back",
+        "permute_back",
+        "expand_back",
+        "sum_back"
+      ],
+      "new_syntax": [
+        "torch.argsort (inverse permutation)",
+        "Tensor.expand"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 reshape_back (reshape to x.shape) + permute_back (inverse perm via argsort); seg2 expand_back (= unbroadcast) + sum_back (re-insert the summed dim then broadcast up)",
+      "integration": 3
+    },
+    {
+      "id": "bp.indexing-backward",
+      "lesson": "ar-04",
+      "title": "Backward through indexing scatters the gradient",
+      "prereqs": [
+        "bp.elementwise-backward",
+        "tensor.indexed-selection",
+        "numpy.constructors"
+      ],
+      "encompassing": {
+        "tensor.indexed-selection": 0.3
+      },
+      "arena_defs": [
+        "coerce_index",
+        "_getitem",
+        "getitem_back"
+      ],
+      "new_syntax": [
+        "Tensor.index_put_",
+        "torch.zeros_like"
+      ],
+      "segments": 1,
+      "kind": "concept",
+      "note": "zeros_like(x) then scatter-ADD grad_out at the index (repeated indices accumulate); coerce Tensor indices to arrays",
+      "integration": 1
+    },
+    {
+      "id": "bp.matmul-backward",
+      "lesson": "ar-04",
+      "title": "Backward for matmul: transpose the other operand",
+      "prereqs": [
+        "bp.binary-backward",
+        "numpy.dot-matmul-patterns",
+        "numpy.transpose-axes"
+      ],
+      "encompassing": {
+        "bp.binary-backward": 0.3
+      },
+      "arena_defs": [
+        "_matmul2d",
+        "matmul2d_back0",
+        "matmul2d_back1",
+        "relu"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 back0 = grad_out @ y.T, back1 = x.T @ grad_out (shape-check them); seg2 relu = maximum(x, 0) reusing maximum_back",
+      "integration": 5
+    },
+    {
+      "id": "bp.autograd-module",
+      "lesson": "ar-04",
+      "title": "Parameter and Module on your own Tensor",
+      "prereqs": [
+        "cnn.mlp",
+        "cnn.linear-layer",
+        "cnn.module-state",
+        "bp.recipe-and-tensor",
+        "bp.matmul-backward"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.4,
+        "cnn.linear-layer": 0.3,
+        "cnn.mlp": 0.2,
+        "bp.recipe-and-tensor": 0.2
+      },
+      "arena_defs": [
+        "Parameter",
+        "Module",
+        "Linear",
+        "ReLU",
+        "MLP"
+      ],
+      "new_syntax": [
+        "object.__setattr__",
+        "Module.__call__"
+      ],
+      "segments": 3,
+      "kind": "integrated",
+      "note": "seg1 Parameter subclass + Module with _modules/_parameters dicts, __setattr__ routing, parameters(recurse); seg2 Linear with uniform(±1/√in) on YOUR Tensor; seg3 MLP = flatten → linear → relu → linear. Encompasses ar-02's module-state/linear/mlp because the learner re-derives them",
+      "integration": 4
+    },
+    {
+      "id": "bp.cross-entropy",
+      "lesson": "ar-04",
+      "title": "cross_entropy from a log-softmax you can differentiate",
+      "prereqs": [
+        "tensor.stable-probabilities",
+        "tensor.classifier-evaluation",
+        "bp.indexing-backward",
+        "bp.shape-backward"
+      ],
+      "encompassing": {
+        "tensor.classifier-evaluation": 0.3,
+        "tensor.stable-probabilities": 0.3,
+        "bp.indexing-backward": 0.2
+      },
+      "arena_defs": [
+        "cross_entropy"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "-log_softmax(logits)[range(n), labels] using only the wrapped ops (exp, sum, log, getitem, subtract); mean over the batch. Cross-section: 0.0 stable-probabilities + classifier-evaluation rebuilt on your autograd",
+      "integration": 4
+    },
+    {
+      "id": "bp.autograd-sgd",
+      "lesson": "ar-04",
+      "title": "An SGD that updates your own Tensors, with tracking off",
+      "prereqs": [
+        "opt.sgd-momentum",
+        "bp.autograd-module",
+        "bp.wrap-forward"
+      ],
+      "encompassing": {
+        "opt.sgd-momentum": 0.4,
+        "bp.autograd-module": 0.2,
+        "bp.wrap-forward": 0.2
+      },
+      "arena_defs": [
+        "NoGrad",
+        "SGD"
+      ],
+      "new_syntax": [
+        "syntax.with",
+        "object.__enter__",
+        "object.__exit__",
+        "syntax.global"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 NoGrad context manager flips the module-level grad_tracking_enabled and restores it; seg2 SGD.step under NoGrad: p.add_(-lr·p.grad); zero_grad → grad None. Cross-section 0.3 + 0.4",
+      "integration": 18
+    },
+    {
+      "id": "bp.train-from-scratch",
+      "lesson": "ar-04",
+      "title": "Train an MLP with nothing but your own autograd",
+      "prereqs": [
+        "bp.backprop",
+        "bp.autograd-sgd",
+        "bp.cross-entropy",
+        "bp.autograd-module",
+        "cnn.training-loop"
+      ],
+      "encompassing": {
+        "bp.backprop": 0.4,
+        "bp.autograd-sgd": 0.3,
+        "bp.cross-entropy": 0.3,
+        "bp.autograd-module": 0.3,
+        "cnn.training-loop": 0.3
+      },
+      "arena_defs": [
+        "train",
+        "test"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "capstone: batches → MLP → cross_entropy → backward via backprop → SGD.step; test() with argmax (non-differentiable op). Deployed drill: tiny synthetic 2-D dataset, assert loss falls / accuracy > threshold in N steps",
+      "integration": 31
+    },
+    {
+      "id": "gen.autoencoder",
+      "lesson": "ar-05",
+      "title": "Encoder to a bottleneck, decoder back",
+      "prereqs": [
+        "cnn.sequential",
+        "cnn.convolution-2d",
+        "cnn.linear-layer",
+        "numpy.reshape-flatten"
+      ],
+      "encompassing": {
+        "cnn.sequential": 0.4,
+        "cnn.convolution-2d": 0.3,
+        "cnn.linear-layer": 0.2
+      },
+      "arena_defs": [
+        "Autoencoder"
+      ],
+      "new_syntax": [
+        "torch.nn.ConvTranspose2d (black box, shape rule)",
+        "einops.layers.torch.Rearrange"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 encoder conv4-s2-p1 ×2 → flatten → linear → latent; seg2 decoder mirrors it with ConvTranspose2d, output shape rule (H-1)·s - 2p + k. Drills check shapes at every stage",
+      "integration": 4
+    },
+    {
+      "id": "gen.reconstruction-loop",
+      "lesson": "ar-05",
+      "title": "Train to reconstruct: MSE between output and input",
+      "prereqs": [
+        "gen.autoencoder",
+        "opt.finetune-loop",
+        "cnn.training-loop"
+      ],
+      "encompassing": {
+        "cnn.training-loop": 0.5,
+        "opt.finetune-loop": 0.3,
+        "gen.autoencoder": 0.3
+      },
+      "arena_defs": [
+        "AutoencoderTrainer"
+      ],
+      "new_syntax": [
+        "torch.nn.functional.mse_loss"
+      ],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "training_step(img) → mse(model(img), img); Adam; evaluate = reconstruct held-out images",
+      "integration": 19
+    },
+    {
+      "id": "gen.vae-reparameterization",
+      "lesson": "ar-05",
+      "title": "Sample the latent with the reparameterisation trick",
+      "prereqs": [
+        "gen.autoencoder",
+        "tensor.stable-probabilities",
+        "numpy.random-samplers"
+      ],
+      "encompassing": {
+        "gen.autoencoder": 0.5
+      },
+      "arena_defs": [
+        "VAE"
+      ],
+      "new_syntax": [
+        "Tensor.chunk",
+        "torch.randn_like"
+      ],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 encoder emits 2·latent → chunk into mu, logsigma; z = mu + exp(logsigma)·ε; seg2 forward returns (x', mu, logsigma)",
+      "integration": 5
+    },
+    {
+      "id": "gen.elbo-loss",
+      "lesson": "ar-05",
+      "title": "Reconstruction plus a KL penalty, weighted by beta",
+      "prereqs": [
+        "gen.vae-reparameterization",
+        "gen.reconstruction-loop",
+        "numpy.axis-reductions"
+      ],
+      "encompassing": {
+        "gen.reconstruction-loop": 0.5,
+        "gen.vae-reparameterization": 0.3
+      },
+      "arena_defs": [
+        "VAETrainer"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "kl = ((σ² + μ² - 1)/2 - logσ).mean(); loss = recon + β·kl; training_step returns both parts",
+      "integration": 21
+    },
+    {
+      "id": "gen.activation-modules",
+      "lesson": "ar-05",
+      "title": "Tanh, LeakyReLU and Sigmoid as modules",
+      "prereqs": [
+        "cnn.module-state",
+        "numpy.elementwise-ufuncs",
+        "numpy.boolean-masking"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.2
+      },
+      "arena_defs": [
+        "Tanh",
+        "LeakyReLU",
+        "Sigmoid"
+      ],
+      "new_syntax": [
+        "torch.where",
+        "Module.extra_repr"
+      ],
+      "segments": 1,
+      "kind": "concept",
+      "note": "tanh from exp (overflow-safe form), leaky = where(x>0, x, slope·x) + extra_repr, sigmoid = 1/(1+e^-x)",
+      "integration": 1
+    },
+    {
+      "id": "gen.dcgan-generator",
+      "lesson": "ar-05",
+      "title": "Generator: a latent vector up to an image",
+      "prereqs": [
+        "gen.autoencoder",
+        "cnn.sequential",
+        "cnn.batch-normalization",
+        "gen.activation-modules",
+        "cnn.block-group"
+      ],
+      "encompassing": {
+        "gen.autoencoder": 0.3,
+        "cnn.sequential": 0.3,
+        "cnn.batch-normalization": 0.2,
+        "cnn.block-group": 0.2
+      },
+      "arena_defs": [
+        "Generator"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 linear → reshape to (c, s, s) → bn → relu with s = img_size/2^n_layers; seg2 n_layers blocks of ConvTranspose2d(k4,s2,p1)+bn+relu with channels halving, last block → Tanh. Same block-plumbing skill as cnn.block-group",
+      "integration": 8
+    },
+    {
+      "id": "gen.dcgan-discriminator",
+      "lesson": "ar-05",
+      "title": "Discriminator: an image down to one probability",
+      "prereqs": [
+        "gen.dcgan-generator",
+        "cnn.convolution-2d",
+        "cnn.sequential",
+        "gen.activation-modules"
+      ],
+      "encompassing": {
+        "gen.dcgan-generator": 0.3,
+        "cnn.convolution-2d": 0.2,
+        "cnn.sequential": 0.2
+      },
+      "arena_defs": [
+        "Discriminator",
+        "DCGAN"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 mirror of the generator: Conv2d(k4,s2,p1)+LeakyReLU first (no bn), then blocks with bn; seg2 flatten → linear → Sigmoid, DCGAN holds both nets",
+      "integration": 9
+    },
+    {
+      "id": "gen.weight-init",
+      "lesson": "ar-05",
+      "title": "Initialise weights the DCGAN way",
+      "prereqs": [
+        "gen.dcgan-discriminator",
+        "cnn.module-state"
+      ],
+      "encompassing": {
+        "cnn.module-state": 0.3
+      },
+      "arena_defs": [
+        "initialize_weights"
+      ],
+      "new_syntax": [
+        "Module.modules",
+        "torch.nn.init.normal_",
+        "torch.nn.init.constant_"
+      ],
+      "segments": 1,
+      "kind": "concept",
+      "note": "walk model.modules(); conv/convT/linear → N(0, 0.02); BatchNorm weight N(1, 0.02), bias 0",
+      "integration": 1
+    },
+    {
+      "id": "gen.gan-training-step",
+      "lesson": "ar-05",
+      "title": "Two optimisers, two losses, detach between them",
+      "prereqs": [
+        "gen.dcgan-discriminator",
+        "gen.dcgan-generator",
+        "gen.weight-init",
+        "opt.adam",
+        "cnn.training-loop",
+        "gen.reconstruction-loop",
+        "tensor.stable-probabilities"
+      ],
+      "encompassing": {
+        "gen.reconstruction-loop": 0.4,
+        "gen.dcgan-discriminator": 0.3,
+        "gen.dcgan-generator": 0.3,
+        "cnn.training-loop": 0.3,
+        "opt.adam": 0.2
+      },
+      "arena_defs": [
+        "DCGANTrainer"
+      ],
+      "new_syntax": [
+        "torch.nn.utils.clip_grad_norm_",
+        "Optimizer betas"
+      ],
+      "segments": 2,
+      "kind": "integrated",
+      "note": "seg1 discriminator step: D(real), D(fake.detach()), loss = -(log D(real) + log(1-D(fake))).mean(), clip, step; seg2 generator step: -log D(fake).mean() through D. Drill: run k alternating steps on a tiny pair of nets and assert which parameters changed in which step",
+      "integration": 22
+    },
+    {
+      "id": "gen.conv-transpose-1d",
+      "lesson": "ar-05",
+      "title": "Transposed convolution is convolution of a padded input with the flipped kernel",
+      "prereqs": [
+        "cnn.convolution-1d",
+        "torch.slice-assignment",
+        "numpy.constructors",
+        "numpy.transpose-axes"
+      ],
+      "encompassing": {
+        "cnn.convolution-1d": 0.6,
+        "torch.slice-assignment": 0.3
+      },
+      "arena_defs": [
+        "conv_transpose1d_minimal",
+        "fractional_stride_1d",
+        "conv_transpose1d"
+      ],
+      "new_syntax": [
+        "Tensor.flip"
+      ],
+      "segments": 3,
+      "kind": "concept",
+      "note": "seg1 minimal: pad k-1 both sides, flip the kernel and swap its in/out axes, conv1d; seg2 fractional stride = zeros with strided slice-assignment; seg3 stride+padding: fractional-stride then pad k-1-p, output length (L-1)·s - 2p + k",
+      "integration": 2
+    },
+    {
+      "id": "gen.conv-transpose-2d",
+      "lesson": "ar-05",
+      "title": "The 2-D transposed convolution and its module",
+      "prereqs": [
+        "gen.conv-transpose-1d",
+        "cnn.convolution-2d",
+        "cnn.module-state"
+      ],
+      "encompassing": {
+        "gen.conv-transpose-1d": 0.6,
+        "cnn.convolution-2d": 0.3
+      },
+      "arena_defs": [
+        "fractional_stride_2d",
+        "conv_transpose2d",
+        "ConvTranspose2d"
+      ],
+      "new_syntax": [],
+      "segments": 2,
+      "kind": "concept",
+      "note": "seg1 the 2-D functional with force_pair stride/padding; seg2 the module with uniform(±1/√(out·kh·kw)) weight",
+      "integration": 4
+    },
+    {
+      "id": "gen.own-layers-generator",
+      "lesson": "ar-05",
+      "title": "Rebuild the generator from your own ConvTranspose2d, Tanh and BatchNorm",
+      "prereqs": [
+        "gen.conv-transpose-2d",
+        "gen.dcgan-generator",
+        "gen.activation-modules",
+        "cnn.batch-normalization",
+        "cnn.feature-extraction"
+      ],
+      "encompassing": {
+        "gen.conv-transpose-2d": 0.4,
+        "gen.dcgan-generator": 0.4,
+        "gen.activation-modules": 0.3,
+        "cnn.batch-normalization": 0.2,
+        "cnn.feature-extraction": 0.2
+      },
+      "arena_defs": [
+        "Generator (own layers, section bonus)"
+      ],
+      "new_syntax": [],
+      "segments": 1,
+      "kind": "integrated",
+      "note": "capstone: swap every torch layer for the learner's own, copy weights across (copy_weights) and assert the two generators agree on the same noise",
+      "integration": 17
+    }
+  ],
+  "backfill_encompassing": {
+    "einops.grids-montage": {
+      "einops.split-axes": 0.7
+    },
+    "einops.dl-flatten-heads": {
+      "einops.split-axes": 0.7,
+      "einops.merge-axes": 0.7
+    },
+    "einops.repeat-model": {
+      "einops.split-axes": 0.7
+    },
+    "einops.pooling": {
+      "einops.split-axes": 0.7,
+      "einops.reduce-model": 0.7
+    },
+    "einops.split-axes": {
+      "einops.merge-axes": 0.7
+    },
+    "einops.reduce-model": {
+      "einops.pattern-language": 0.7
+    },
+    "einops.merge-axes": {
+      "einops.pattern-language": 0.7
+    },
+    "numpy.dot-matmul-patterns": {
+      "numpy.linalg-basics": 0.6
+    },
+    "cnn.forward-hooks": {
+      "cnn.sequential": 0.6,
+      "cnn.module-state": 0.6
+    },
+    "cnn.residual-block": {
+      "cnn.sequential": 0.6,
+      "cnn.convolution-2d": 0.4,
+      "cnn.batch-normalization": 0.4
+    },
+    "cnn.resnet34": {
+      "cnn.sequential": 0.6,
+      "cnn.block-group": 0.7
+    },
+    "cnn.feature-extraction": {
+      "cnn.module-state": 0.6,
+      "cnn.resnet34": 0.7
+    },
+    "cnn.sequential": {
+      "cnn.module-state": 0.6
+    },
+    "einops.channel-groups-temporal": {
+      "einops.dl-flatten-heads": 0.7,
+      "einops.pooling": 0.7
+    },
+    "cnn.block-group": {
+      "cnn.residual-block": 0.7
+    },
+    "cnn.module-state": {
+      "numpy.dtype-astype": 0.4,
+      "numpy.ndarray-model": 0.4
+    },
+    "numpy.axis-reductions": {
+      "numpy.aggregations": 0.4,
+      "numpy.broadcasting-rules": 0.4
+    },
+    "tensor.stable-probabilities": {
+      "numpy.broadcasting-rules": 0.4
+    },
+    "tensor.classifier-evaluation": {
+      "tensor.stable-probabilities": 0.4
+    },
+    "cnn.convolution-2d": {
+      "cnn.module-state": 0.4
+    },
+    "cnn.linear-layer": {
+      "numpy.dot-matmul-patterns": 0.4
+    },
+    "cnn.stride-views": {
+      "numpy.dot-matmul-patterns": 0.4
+    },
+    "torch.out-argument": {
+      "numpy.ranges": 0.4
+    }
+  }
+}

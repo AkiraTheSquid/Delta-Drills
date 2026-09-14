@@ -1347,3 +1347,100 @@
 {"question_id": 1371, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
 {"question_id": 1372, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.6}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
 {"question_id": 1373, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1374, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.8}]}
+{"question_id": 1375, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1376, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "relu-elementwise-max", "confidence": 0.6}]}
+{"question_id": 1377, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1378, "atoms": [{"atom_id": "linear-affine-transformation", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.5}]}
+{"question_id": 1379, "atoms": [{"atom_id": "linear-affine-transformation", "confidence": 0.8}, {"atom_id": "sequential-chain", "confidence": 0.8}, {"atom_id": "relu-elementwise-max", "confidence": 0.5}]}
+{"question_id": 1380, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1381, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1382, "atoms": [{"atom_id": "sequential-chain", "confidence": 0.8}, {"atom_id": "relu-elementwise-max", "confidence": 0.5}]}
+{"question_id": 1383, "atoms": [{"atom_id": "sequential-chain", "confidence": 0.7}, {"atom_id": "linear-affine-transformation", "confidence": 0.6}]}
+{"question_id": 1384, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1385, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
+{"question_id": 1386, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 1.0}, {"atom_id": "nn-module-subclass", "confidence": 0.7}]}
+{"question_id": 1387, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "linear-affine-transformation", "confidence": 0.8}, {"atom_id": "relu-elementwise-max", "confidence": 0.6}]}
+{"question_id": 1388, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "register-buffer", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1389, "atoms": [{"atom_id": "conv2d-module", "confidence": 0.8}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.5}]}
+{"question_id": 1390, "atoms": [{"atom_id": "conv2d-module", "confidence": 1.0}, {"atom_id": "conv-stride-downsample", "confidence": 0.6}]}
+{"question_id": 1391, "atoms": [{"atom_id": "residual-skip-add", "confidence": 0.8}, {"atom_id": "1x1-conv-channel-reshape", "confidence": 1.0}, {"atom_id": "conv-stride-downsample", "confidence": 0.6}]}
+{"question_id": 1392, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.6}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1393, "atoms": [{"atom_id": "conv-stride-downsample", "confidence": 1.0}, {"atom_id": "conv-output-shape", "confidence": 0.6}]}
+{"question_id": 1394, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}]}
+{"question_id": 1395, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1396, "atoms": [{"atom_id": "1x1-conv-channel-reshape", "confidence": 1.0}, {"atom_id": "conv-stride-downsample", "confidence": 0.8}]}
+{"question_id": 1397, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "1x1-conv-channel-reshape", "confidence": 0.7}]}
+{"question_id": 1398, "atoms": [{"atom_id": "residual-skip-add", "confidence": 0.9}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.7}]}
+{"question_id": 1399, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.8}, {"atom_id": "conv-stride-downsample", "confidence": 0.6}]}
+{"question_id": 1400, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.7}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1401, "atoms": [{"atom_id": "residual-skip-add", "confidence": 1.0}, {"atom_id": "1x1-conv-channel-reshape", "confidence": 0.8}, {"atom_id": "torch-no-bias-conv-batchnorm-pair", "confidence": 0.6}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1402, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.6}]}
+{"question_id": 1403, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}]}
+{"question_id": 1404, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}]}
+{"question_id": 1405, "atoms": [{"atom_id": "block-group-stack", "confidence": 0.9}, {"atom_id": "conv-stride-downsample", "confidence": 0.6}]}
+{"question_id": 1406, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}]}
+{"question_id": 1407, "atoms": [{"atom_id": "block-group-stack", "confidence": 0.8}, {"atom_id": "sequential-chain", "confidence": 0.7}]}
+{"question_id": 1408, "atoms": [{"atom_id": "block-group-stack", "confidence": 0.8}, {"atom_id": "residual-skip-add", "confidence": 0.6}]}
+{"question_id": 1409, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}, {"atom_id": "1x1-conv-channel-reshape", "confidence": 0.5}]}
+{"question_id": 1410, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.7}, {"atom_id": "sequential-chain", "confidence": 0.5}]}
+{"question_id": 1411, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.7}]}
+{"question_id": 1412, "atoms": [{"atom_id": "block-group-stack", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.8}]}
+{"question_id": 1413, "atoms": [{"atom_id": "resnet-stem", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.5}]}
+{"question_id": 1414, "atoms": [{"atom_id": "resnet-stem", "confidence": 0.9}, {"atom_id": "conv-output-shape", "confidence": 0.6}]}
+{"question_id": 1415, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 1.0}, {"atom_id": "block-group-stack", "confidence": 0.6}, {"atom_id": "resnet-stem", "confidence": 0.5}]}
+{"question_id": 1416, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 0.7}, {"atom_id": "linear-affine-transformation", "confidence": 0.5}]}
+{"question_id": 1417, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 0.8}, {"atom_id": "conv-output-shape", "confidence": 0.6}]}
+{"question_id": 1418, "atoms": [{"atom_id": "resnet-stem", "confidence": 1.0}]}
+{"question_id": 1419, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 1.0}, {"atom_id": "block-group-stack", "confidence": 0.5}]}
+{"question_id": 1420, "atoms": [{"atom_id": "resnet-stem", "confidence": 0.7}, {"atom_id": "linear-affine-transformation", "confidence": 0.5}]}
+{"question_id": 1421, "atoms": [{"atom_id": "argmax-accuracy-eval", "confidence": 0.8}, {"atom_id": "resnet34-assembly", "confidence": 0.3}]}
+{"question_id": 1422, "atoms": [{"atom_id": "resnet-stem", "confidence": 1.0}, {"atom_id": "conv2d-module", "confidence": 0.4}]}
+{"question_id": 1423, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.7}, {"atom_id": "resnet-stem", "confidence": 0.4}]}
+{"question_id": 1424, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 0.9}, {"atom_id": "block-group-stack", "confidence": 0.7}, {"atom_id": "residual-skip-add", "confidence": 0.4}]}
+{"question_id": 1425, "atoms": [{"atom_id": "resnet34-assembly", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.6}, {"atom_id": "conv-output-shape", "confidence": 0.4}]}
+{"question_id": 1426, "atoms": [{"atom_id": "state-dict-load", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.4}]}
+{"question_id": 1427, "atoms": [{"atom_id": "state-dict-load", "confidence": 0.8}]}
+{"question_id": 1428, "atoms": [{"atom_id": "copy-weights-by-position", "confidence": 1.0}, {"atom_id": "state-dict-load", "confidence": 0.7}]}
+{"question_id": 1429, "atoms": [{"atom_id": "state-dict-load", "confidence": 0.6}, {"atom_id": "module-composition", "confidence": 0.4}]}
+{"question_id": 1430, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 1.0}, {"atom_id": "resnet34-assembly", "confidence": 0.5}, {"atom_id": "nn-module-subclass", "confidence": 0.4}]}
+{"question_id": 1431, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 0.7}]}
+{"question_id": 1432, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 0.9}, {"atom_id": "sequential-chain", "confidence": 0.4}]}
+{"question_id": 1433, "atoms": [{"atom_id": "copy-weights-by-position", "confidence": 1.0}]}
+{"question_id": 1434, "atoms": [{"atom_id": "copy-weights-by-position", "confidence": 0.7}, {"atom_id": "state-dict-load", "confidence": 0.8}]}
+{"question_id": 1435, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.4}]}
+{"question_id": 1436, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 0.6}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1437, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 0.9}, {"atom_id": "block-group-stack", "confidence": 0.4}]}
+{"question_id": 1438, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 1.0}, {"atom_id": "copy-weights-by-position", "confidence": 0.9}, {"atom_id": "resnet34-assembly", "confidence": 0.5}]}
+{"question_id": 1439, "atoms": [{"atom_id": "copy-weights-by-position", "confidence": 1.0}, {"atom_id": "state-dict-load", "confidence": 0.6}, {"atom_id": "resnet34-assembly", "confidence": 0.3}]}
+{"question_id": 1440, "atoms": [{"atom_id": "freeze-and-replace-head", "confidence": 1.0}, {"atom_id": "state-dict-load", "confidence": 0.5}, {"atom_id": "resnet34-assembly", "confidence": 0.4}]}
+{"question_id": 1441, "atoms": [{"atom_id": "backward-on-scalar-loss", "confidence": 1.0}, {"atom_id": "training-loop-epoch", "confidence": 0.4}]}
+{"question_id": 1442, "atoms": [{"atom_id": "backward-on-scalar-loss", "confidence": 1.0}]}
+{"question_id": 1443, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 0.8}, {"atom_id": "backward-on-scalar-loss", "confidence": 0.5}]}
+{"question_id": 1444, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 0.8}]}
+{"question_id": 1445, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}, {"atom_id": "logsumexp-cross-entropy", "confidence": 0.4}]}
+{"question_id": 1446, "atoms": [{"atom_id": "backward-on-scalar-loss", "confidence": 0.8}, {"atom_id": "training-loop-epoch", "confidence": 0.5}]}
+{"question_id": 1447, "atoms": [{"atom_id": "argmax-accuracy-eval", "confidence": 1.0}, {"atom_id": "inference-mode-step", "confidence": 0.5}]}
+{"question_id": 1448, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}, {"atom_id": "argmax-accuracy-eval", "confidence": 0.6}]}
+{"question_id": 1449, "atoms": [{"atom_id": "backward-on-scalar-loss", "confidence": 0.9}, {"atom_id": "training-loop-epoch", "confidence": 0.6}]}
+{"question_id": 1450, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}]}
+{"question_id": 1451, "atoms": [{"atom_id": "backward-on-scalar-loss", "confidence": 0.9}, {"atom_id": "logsumexp-cross-entropy", "confidence": 0.3}]}
+{"question_id": 1452, "atoms": [{"atom_id": "argmax-accuracy-eval", "confidence": 1.0}]}
+{"question_id": 1453, "atoms": [{"atom_id": "inference-mode-step", "confidence": 0.6}, {"atom_id": "training-loop-epoch", "confidence": 0.5}]}
+{"question_id": 1454, "atoms": [{"atom_id": "logsumexp-cross-entropy", "confidence": 0.7}, {"atom_id": "inference-mode-step", "confidence": 0.5}]}
+{"question_id": 1455, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}, {"atom_id": "freeze-and-replace-head", "confidence": 0.7}, {"atom_id": "argmax-accuracy-eval", "confidence": 0.5}]}
+{"question_id": 1456, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}, {"atom_id": "backward-on-scalar-loss", "confidence": 0.7}, {"atom_id": "argmax-accuracy-eval", "confidence": 0.5}]}
+{"question_id": 1457, "atoms": [{"atom_id": "training-loop-epoch", "confidence": 1.0}, {"atom_id": "argmax-accuracy-eval", "confidence": 0.7}]}
+{"question_id": 1458, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.4}]}
+{"question_id": 1459, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}]}
+{"question_id": 1460, "atoms": [{"atom_id": "module-composition", "confidence": 0.7}, {"atom_id": "forward-hook-register", "confidence": 0.3}]}
+{"question_id": 1461, "atoms": [{"atom_id": "nan-hook-check", "confidence": 1.0}, {"atom_id": "forward-hook-register", "confidence": 0.6}]}
+{"question_id": 1462, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}]}
+{"question_id": 1463, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}]}
+{"question_id": 1464, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.3}]}
+{"question_id": 1465, "atoms": [{"atom_id": "forward-hook-register", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1466, "atoms": [{"atom_id": "nan-hook-check", "confidence": 1.0}]}
+{"question_id": 1467, "atoms": [{"atom_id": "module-composition", "confidence": 0.7}]}
+{"question_id": 1468, "atoms": [{"atom_id": "nan-hook-check", "confidence": 1.0}, {"atom_id": "forward-hook-register", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.5}]}
+{"question_id": 1469, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.6}]}
+{"question_id": 1470, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.7}]}

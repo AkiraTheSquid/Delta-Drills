@@ -238,6 +238,28 @@ skill report the same thing from the other side.
   prose ratchet rejects it on this page. 🔑 A 3-D `(n, h, w)` input with the
   near miss on the SQUARE case is what makes a dropped keepdim visible.
 
+- **ARENA 0.2 gap CLOSED — the ResNet half of `ar-02`** (2026-09-14): seven KCs
+  `cnn.sequential` → `cnn.residual-block` → `cnn.block-group` → `cnn.resnet34` →
+  `cnn.feature-extraction` → `cnn.training-loop` → `cnn.forward-hooks` under
+  `lessons/pytorch/`, 97 drills (ids 1374–1470), every rung at the floors, three of them
+  `integrated` nodes. Spec: `This-Directory-Only/SPEC_CHAPTER0_GRAPH.md` (+
+  `chapter0_graph_draft.json`, built by `scripts/build_ch0_graph.py`, which now checks a
+  LANDED node's registry row against the draft). The registry gained an
+  `"encompassing": {prereq: weight}` field (every encompassing edge is also a prereq;
+  `audit_graph_structure.py` enforces it) — backfilled over the existing `ar-*` KCs from
+  the atom graph. Seven atoms + edges added to `arena_drillable_v1.json`
+  (`inference-mode-step` had NO prereq edge; wired to `module-composition`).
+  `arena_exercise_kcs.json` "0-2" maps Sequential/ResidualBlock/BlockGroup/ResNet34/
+  copy_weights/get_resnet_for_feature_extraction/train/add_hook/remove_hooks/
+  hook_check_for_nan_output. 🔴 `torch.nn.BatchNorm2d`/`MaxPool2d` are df=0 in the
+  grounding ratchet because ARENA calls its OWN same-named classes — baseline re-recorded,
+  accepted debt. 🔑 Prereq-ratchet UNOWNED traps met here: `syntax.not`, dict literals,
+  `raise`/`try`, `Tensor.detach`, `torch.optim.SGD` (use Adam, 86 ARENA uses),
+  `logsumexp`, `torch.equal`, and custom attributes of a passed-in module
+  (`m.out_layers` → `m._modules["out_layers"]`). 🔑 A case-0 setup that calls `solve(...)`
+  trips `setup_exec_error` (starter returns None) — put the call in the `call` expression.
+  Next: `ar-03` (optimisers, 7 KCs), then `ar-04` (16), `ar-05` (12) per the spec.
+
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.
 

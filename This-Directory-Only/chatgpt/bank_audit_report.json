@@ -1,5 +1,5 @@
 {
- "total": 1124,
+ "total": 1221,
  "questions": {
   "64": [
    {
@@ -674,10 +674,178 @@
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
    }
+  ],
+  "1392": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1394": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1397": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1398": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1399": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1400": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1401": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1402": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1406": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1407": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1409": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1410": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1411": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1412": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1415": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers', 'residual_layers']"
+   }
+  ],
+  "1416": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['lin']"
+   }
+  ],
+  "1419": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'residual_layers']"
+   }
+  ],
+  "1421": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['net']"
+   }
+  ],
+  "1423": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'head', 'in_layers', 'residual_layers']"
+   }
+  ],
+  "1425": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers']"
+   }
+  ],
+  "1431": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['parameters']"
+   }
+  ],
+  "1438": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResNet']"
+   }
+  ],
+  "1460": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1461": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1465": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1467": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1468": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1469": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 102,
+  "answer_symbol_in_prompt": 130,
   "precompute_leak": 8,
   "starter_passes_some_cases": 1
  }

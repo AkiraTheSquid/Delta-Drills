@@ -359,8 +359,16 @@ def new_syntax_patterns(symbol):
         return []
     if owner == "Tensor":
         return [(re.compile(rf"(?<=\.){re.escape(name)}\b"), BLANK)]
-    # torch.* — keep the module, blank the call.
-    return [(re.compile(rf"(?<=\b)(t|torch)\.{re.escape(name)}\b"), rf"\1.{BLANK}")]
+    if owner == "builtin":
+        # A builtin call: blank the NAME where it is called (`zip(a, b)` →
+        # `_____(a, b)`), never a same-named attribute or keyword.
+        return [(re.compile(rf"(?<![\w.]){re.escape(name)}(?=\s*\()"), BLANK)]
+    # torch.* — keep the module PATH, blank the call. `torch.nn.MaxPool2d` is
+    # written `t.nn.MaxPool2d(…)` in code, so the path between the alias and
+    # the name (`.nn`, `.nn.functional`, `.optim`) must be matched, not just
+    # `t.`; before 2026-09-14 every `torch.nn.*` symbol silently blanked nothing.
+    sub = owner[len("torch"):] if owner.startswith("torch") else ""
+    return [(re.compile(rf"(?<=\b)(t|torch){re.escape(sub)}\.{re.escape(name)}\b"), rf"\1{sub}.{BLANK}")]
 
 
 def blank_new_syntax(starter, new_syntax, fn_name="solve"):
