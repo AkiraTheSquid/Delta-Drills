@@ -1,5 +1,5 @@
 {
- "_comment": "ARENA exercise \u2192 knowledge component. Keyed by notebook slug, then by the function the exercise heading names (### Exercise - implement `make_rays_1d`). practice/exercise-session.js reads it; a heading with no entry gets no button. Add the next 0.1 exercises here as their lessons land (CLAUDE.md, frontier list).",
+ "_comment": "ARENA exercise → knowledge component. Keyed by notebook slug, then by the function the exercise heading names (### Exercise - implement `make_rays_1d`). practice/exercise-session.js reads it; a heading with no entry gets no button. Add the next 0.1 exercises here as their lessons land (CLAUDE.md, frontier list).",
  "0-1": {
   "make_rays_1d": {
    "kc": "raytracing.make-rays-1d",
@@ -15,7 +15,7 @@
   },
   "intersect_ray_1d": {
    "kc": "raytracing.segment-intersection",
-   "title": "Solve a ray\u2013segment intersection",
+   "title": "Solve a ray–segment intersection",
    "variants": [
     1093,
     1094,
@@ -296,7 +296,7 @@
   },
   "temperatures_average": {
    "kc": "einops.pooling",
-   "title": "(B1) temperature average \u2014 window reductions",
+   "title": "(B1) temperature average — window reductions",
    "variants": [
     929,
     930,
@@ -914,6 +914,166 @@
     1310,
     1311,
     1312
+   ],
+   "original": null
+  },
+  "Sequential": {
+   "kc": "cnn.sequential",
+   "title": "Chaining modules in order",
+   "variants": [
+    1380,
+    1381,
+    1382,
+    1383,
+    1384,
+    1385,
+    1386,
+    1387,
+    1388
+   ],
+   "original": null
+  },
+  "ResidualBlock": {
+   "kc": "cnn.residual-block",
+   "title": "The residual block",
+   "variants": [
+    1393,
+    1394,
+    1395,
+    1396,
+    1397,
+    1398,
+    1399,
+    1400,
+    1401
+   ],
+   "original": null
+  },
+  "BlockGroup": {
+   "kc": "cnn.block-group",
+   "title": "A group of residual blocks",
+   "variants": [
+    1404,
+    1405,
+    1406,
+    1407,
+    1408,
+    1409,
+    1410,
+    1411,
+    1412
+   ],
+   "original": null
+  },
+  "ResNet34": {
+   "kc": "cnn.resnet34",
+   "title": "Assembling ResNet34",
+   "variants": [
+    1417,
+    1418,
+    1419,
+    1420,
+    1421,
+    1422,
+    1423,
+    1424,
+    1425
+   ],
+   "original": null
+  },
+  "copy_weights": {
+   "kc": "cnn.feature-extraction",
+   "title": "Pretrained weights and feature extraction",
+   "variants": [
+    1432,
+    1433,
+    1434,
+    1435,
+    1436,
+    1437,
+    1438,
+    1439,
+    1440
+   ],
+   "original": null
+  },
+  "get_resnet_for_feature_extraction": {
+   "kc": "cnn.feature-extraction",
+   "title": "Pretrained weights and feature extraction",
+   "variants": [
+    1432,
+    1433,
+    1434,
+    1435,
+    1436,
+    1437,
+    1438,
+    1439,
+    1440
+   ],
+   "original": null
+  },
+  "train": {
+   "kc": "cnn.training-loop",
+   "title": "The training loop",
+   "variants": [
+    1449,
+    1450,
+    1451,
+    1452,
+    1453,
+    1454,
+    1455,
+    1456,
+    1457
+   ],
+   "original": null
+  },
+  "hook_check_for_nan_output": {
+   "kc": "cnn.forward-hooks",
+   "title": "Forward hooks",
+   "variants": [
+    1462,
+    1463,
+    1464,
+    1465,
+    1466,
+    1467,
+    1468,
+    1469,
+    1470
+   ],
+   "original": null
+  },
+  "add_hook": {
+   "kc": "cnn.forward-hooks",
+   "title": "Forward hooks",
+   "variants": [
+    1462,
+    1463,
+    1464,
+    1465,
+    1466,
+    1467,
+    1468,
+    1469,
+    1470
+   ],
+   "original": null
+  },
+  "remove_hooks": {
+   "kc": "cnn.forward-hooks",
+   "title": "Forward hooks",
+   "variants": [
+    1462,
+    1463,
+    1464,
+    1465,
+    1466,
+    1467,
+    1468,
+    1469,
+    1470
    ],
    "original": null
   }

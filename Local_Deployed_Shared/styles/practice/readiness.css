@@ -145,3 +145,49 @@
   line-height: 1.5;
   text-align: center;
 }
+
+/* THE MULTIPLIER — 2026-09-14. One number under the clock line: a factor on
+   every problem's own clock (practice/session-clock-scale.js paints and
+   commits it; the markup holds no default). 0.5 = half the time each problem
+   usually gets. Only on the idle screen, so it never moves a running clock. */
+.session-clock-scale {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 10px;
+  margin: 12px 0 0;
+  max-width: 420px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  cursor: text;
+}
+
+.session-clock-scale-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.session-clock-scale-input {
+  width: 64px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.session-clock-scale-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.session-clock-scale-hint {
+  flex-basis: 100%;
+  text-align: center;
+}

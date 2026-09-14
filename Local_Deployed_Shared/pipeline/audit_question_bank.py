@@ -504,9 +504,17 @@ def check_wrong_examples(question: dict, code_runner=None) -> list[dict]:
                 continue
         ns = base_namespace()
         lines = [line for line in call.splitlines() if line.strip()]
+        # A call that is one of the question's own graded cases (the
+        # generated-drill convention: the near miss is anchored to the case
+        # where it diverges) runs on that case's fixture; anything else is
+        # self-contained (q484's pattern) and runs on the bare namespace.
+        anchored = next((tc for tc in question.get("test_cases") or []
+                         if str(tc.get("call") or "").strip() == call), None)
         try:
             with contextlib.redirect_stdout(io.StringIO()):
                 exec(answer, ns)
+                if anchored and (anchored.get("setup_code") or "").strip():
+                    exec_seeded(anchored["setup_code"], ns)
                 if lines[:-1]:
                     exec_seeded("\n".join(lines[:-1]), ns)
                 value = eval(lines[-1], ns)

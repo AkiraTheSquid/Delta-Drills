@@ -30,6 +30,16 @@
    Both steps get the same number — answering and reviewing alike, per
    question — exactly as the picker's one number did.
 
+   🔴 SCALED, NOT CHOSEN (2026-09-14). The learner sets a MULTIPLIER on the
+   idle screen (practice/session-clock-scale.js; 0.5 = half the time every
+   problem usually gets) and `secsFor` applies it to the problem's own
+   number. The table still decides what each problem is worth relative to
+   every other; the factor tightens all of them alike and is ≤ 1, so no
+   practice clock ever exceeds what the placement charges for the same
+   concept. Nothing is stored HERE — the factor lives in its own file and
+   is read through `window.SessionClockScale`, defaulting to 1 when that
+   file is absent (the watch probes run this file alone).
+
    🔴 THE PLACEMENT IS NOT ON THIS PATH. A probe carries
    `diagnostic_secs_allowed` and practice/placement-timer.js displays it;
    timer.js's `_answerSecsFor` asks PlacementTimer first. Same table, two
@@ -144,7 +154,18 @@
   /* The clock a question record carries, or null when nothing can name one.
      A string, 0, a negative or a boolean is a record nobody stamped, and the
      table (then the ceiling) is the honest fallback. */
-  const secsFor = (question) => {
+  /* 🔴 SCALE AFTER THE CEILING. `_clean` clamps the raw stamp to the
+     server's 20:00 first; the factor then multiplies the clamped number, so
+     a 0.5 account sees 10:00 on the ceiling and 2:30 on a 5:00 drill —
+     whole seconds, never below 1 (session-clock-scale.js `apply`). The pause
+     snapshot copies the SCALED number as `secsAllowed`, so a resume is timed
+     the way the question was served even if the factor moved in between. */
+  const _scale = (secs) => {
+    const scale = window.SessionClockScale;
+    return scale && typeof scale.apply === "function" ? scale.apply(secs) : secs;
+  };
+
+  const rawSecsFor = (question) => {
     const own = _clean(question?.secs_allowed);
     if (own !== null) return own;
     const ladder = _capFor(question?.ladder_kc);
@@ -152,14 +173,28 @@
     return _qmatrixCap(Number(question?.question_id));
   };
 
+  const secsFor = (question) => {
+    const raw = rawSecsFor(question);
+    return raw === null ? null : _scale(raw);
+  };
+
   /* Whether the question on screen carries its own number. The idle notch
      asks this: between blocks nothing is on screen, so there is no "next
      question's allowance" to show — it is set by the concept the queue
      picks, and that is not known until it is served. */
   const hasOwn = () => secsFor(_question()) !== null;
-  const answerSecs = () => secsFor(_question()) ?? CEILING_SECS;
+  const answerSecs = () => secsFor(_question()) ?? _scale(CEILING_SECS);
   const reviewSecs = () => answerSecs();
   const isUnlimited = () => false;
 
-  window.SessionClock = { CEILING_SECS, ready, secsFor, hasOwn, answerSecs, reviewSecs, isUnlimited };
+  window.SessionClock = {
+    CEILING_SECS,
+    ready,
+    secsFor,
+    rawSecsFor,
+    hasOwn,
+    answerSecs,
+    reviewSecs,
+    isUnlimited,
+  };
 })();
