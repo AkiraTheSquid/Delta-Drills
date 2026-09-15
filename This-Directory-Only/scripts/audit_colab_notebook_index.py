@@ -39,15 +39,37 @@ INDEX_PATH = REPO_DIR / "Local_Deployed_Shared" / "lessons" / "colab_notebooks.j
 OWNER = "AkiraTheSquid"
 
 
-def raw_url(repo: str, prefix: str, filename: str) -> str:
+def raw_url(repo: str, prefix: str, filename: str, ref: str) -> str:
     path = "/".join(p for p in (prefix, filename) if p)
-    return f"https://raw.githubusercontent.com/{OWNER}/{repo}/main/{path}"
+    return f"https://raw.githubusercontent.com/{OWNER}/{repo}/{ref}/{path}"
+
+
+def published_ref(repo: str) -> str:
+    """Resolve main once, then inspect that immutable published commit.
+
+    GitHub's ``raw/.../main`` CDN can serve the previous notebook immediately
+    after a successful publish. That made this gate reject the exact commit it
+    was meant to validate. The commits API is authoritative, while a SHA URL
+    cannot be stale.
+    """
+    url = f"https://api.github.com/repos/{OWNER}/{repo}/commits/main"
+    request = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json"})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        sha = json.load(response).get("sha")
+    if not isinstance(sha, str) or not sha:
+        raise ValueError(f"No main SHA returned for {OWNER}/{repo}")
+    return sha
 
 
 def main() -> int:
     index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     directory = index.get("dir", "")
     repo, _, prefix = directory.partition("/")
+    try:
+        ref = published_ref(repo)
+    except (urllib.error.URLError, json.JSONDecodeError, ValueError) as err:
+        print(f"FAIL — cannot resolve published {OWNER}/{repo} main: {err}", file=sys.stderr)
+        return 1
     lessons = {lesson["id"]: lesson for lesson in index.get("lessons", [])}
 
     by_lesson: dict[str, list[str]] = collections.defaultdict(list)
@@ -75,7 +97,7 @@ def main() -> int:
         if not lesson:
             problems.append(f"{lesson_id}: mapped by {len(question_ids)} questions but has no lesson entry")
             continue
-        url = raw_url(repo, prefix, lesson["file"])
+        url = raw_url(repo, prefix, lesson["file"], ref)
         try:
             with urllib.request.urlopen(url, timeout=30) as response:
                 notebook = json.load(response)
