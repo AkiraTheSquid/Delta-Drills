@@ -1,0 +1,1353 @@
+{
+  "metadata": {
+    "generator": "Antigravity (Google DeepMind)",
+    "description": "Alternative einops solutions authored and verified by Antigravity",
+    "total_solutions": 168
+  },
+  "solutions": {
+    "23": {
+      "qid": 23,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "37": {
+      "qid": 37,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "46": {
+      "qid": 46,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "62": {
+      "qid": 62,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "84": {
+      "qid": 84,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "89": {
+      "qid": 89,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "95": {
+      "qid": 95,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "121": {
+      "qid": 121,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "135": {
+      "qid": 135,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "141": {
+      "qid": 141,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "144": {
+      "qid": 144,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "151": {
+      "qid": 151,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "220": {
+      "qid": 220,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/Export of numpy problems with outputs.csv"
+    },
+    "415": {
+      "qid": 415,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNN",
+      "subtopic": "Conv2d module mechanics",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "418": {
+      "qid": 418,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "419": {
+      "qid": 419,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNN",
+      "subtopic": "Pooling, Flatten, BatchNorm",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "451": {
+      "qid": 451,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Autograd",
+      "subtopic": "Matrix multiplication backward (dL/dX = dL/dM @ Y^T, dL/dY = X^T @ dL/dM)",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "454": {
+      "qid": 454,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch Fundamentals",
+      "subtopic": "BatchNorm variance: biased vs unbiased",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "459": {
+      "qid": 459,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNNs",
+      "subtopic": "BatchNorm per-channel broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "460": {
+      "qid": 460,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNNs",
+      "subtopic": "BatchNorm per-channel broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "461": {
+      "qid": 461,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "CNNs",
+      "subtopic": "BatchNorm per-channel broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/cnn_problems.csv"
+    },
+    "490": {
+      "qid": 490,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "491": {
+      "qid": 491,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "492": {
+      "qid": 492,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "495": {
+      "qid": 495,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "496": {
+      "qid": 496,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "501": {
+      "qid": 501,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "502": {
+      "qid": 502,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "503": {
+      "qid": 503,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "504": {
+      "qid": 504,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "505": {
+      "qid": 505,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "509": {
+      "qid": 509,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "510": {
+      "qid": 510,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "511": {
+      "qid": 511,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "513": {
+      "qid": 513,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "514": {
+      "qid": 514,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "515": {
+      "qid": 515,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "558": {
+      "qid": 558,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "610": {
+      "qid": 610,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "611": {
+      "qid": 611,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "612": {
+      "qid": 612,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "613": {
+      "qid": 613,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "614": {
+      "qid": 614,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "821": {
+      "qid": 821,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "826": {
+      "qid": 826,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "827": {
+      "qid": 827,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "828": {
+      "qid": 828,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "829": {
+      "qid": 829,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "839": {
+      "qid": 839,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "948": {
+      "qid": 948,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "950": {
+      "qid": 950,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "951": {
+      "qid": 951,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "952": {
+      "qid": 952,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "953": {
+      "qid": 953,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "954": {
+      "qid": 954,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "955": {
+      "qid": 955,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "956": {
+      "qid": 956,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "958": {
+      "qid": 958,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "974": {
+      "qid": 974,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "975": {
+      "qid": 975,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "976": {
+      "qid": 976,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "978": {
+      "qid": 978,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "979": {
+      "qid": 979,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "981": {
+      "qid": 981,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "983": {
+      "qid": 983,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "993": {
+      "qid": 993,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "994": {
+      "qid": 994,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "995": {
+      "qid": 995,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "996": {
+      "qid": 996,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "997": {
+      "qid": 997,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "998": {
+      "qid": 998,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1000": {
+      "qid": 1000,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1001": {
+      "qid": 1001,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1003": {
+      "qid": 1003,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1005": {
+      "qid": 1005,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1006": {
+      "qid": 1006,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1007": {
+      "qid": 1007,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1008": {
+      "qid": 1008,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1009": {
+      "qid": 1009,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1010": {
+      "qid": 1010,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1011": {
+      "qid": 1011,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1012": {
+      "qid": 1012,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1013": {
+      "qid": 1013,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1014": {
+      "qid": 1014,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1015": {
+      "qid": 1015,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1016": {
+      "qid": 1016,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1017": {
+      "qid": 1017,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1018": {
+      "qid": 1018,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1032": {
+      "qid": 1032,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1033": {
+      "qid": 1033,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1034": {
+      "qid": 1034,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1035": {
+      "qid": 1035,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1036": {
+      "qid": 1036,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1037": {
+      "qid": 1037,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1038": {
+      "qid": 1038,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1039": {
+      "qid": 1039,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1040": {
+      "qid": 1040,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1041": {
+      "qid": 1041,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1042": {
+      "qid": 1042,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1043": {
+      "qid": 1043,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1044": {
+      "qid": 1044,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1049": {
+      "qid": 1049,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1050": {
+      "qid": 1050,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1101": {
+      "qid": 1101,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1122": {
+      "qid": 1122,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1123": {
+      "qid": 1123,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1124": {
+      "qid": 1124,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1127": {
+      "qid": 1127,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1128": {
+      "qid": 1128,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1129": {
+      "qid": 1129,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1130": {
+      "qid": 1130,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1133": {
+      "qid": 1133,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1134": {
+      "qid": 1134,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1135": {
+      "qid": 1135,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1136": {
+      "qid": 1136,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1137": {
+      "qid": 1137,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1138": {
+      "qid": 1138,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1149": {
+      "qid": 1149,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1153": {
+      "qid": 1153,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1154": {
+      "qid": 1154,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1155": {
+      "qid": 1155,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1156": {
+      "qid": 1156,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1157": {
+      "qid": 1157,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1158": {
+      "qid": 1158,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1159": {
+      "qid": 1159,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1160": {
+      "qid": 1160,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1164": {
+      "qid": 1164,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1192": {
+      "qid": 1192,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1193": {
+      "qid": 1193,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1201": {
+      "qid": 1201,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1202": {
+      "qid": 1202,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1203": {
+      "qid": 1203,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1204": {
+      "qid": 1204,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1205": {
+      "qid": 1205,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1206": {
+      "qid": 1206,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1207": {
+      "qid": 1207,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1208": {
+      "qid": 1208,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1210": {
+      "qid": 1210,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1212": {
+      "qid": 1212,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1219": {
+      "qid": 1219,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1222": {
+      "qid": 1222,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1224": {
+      "qid": 1224,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1303": {
+      "qid": 1303,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1304": {
+      "qid": 1304,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1309": {
+      "qid": 1309,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1312": {
+      "qid": 1312,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1315": {
+      "qid": 1315,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1325": {
+      "qid": 1325,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1329": {
+      "qid": 1329,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1331": {
+      "qid": 1331,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1363": {
+      "qid": 1363,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1364": {
+      "qid": 1364,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1365": {
+      "qid": 1365,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1366": {
+      "qid": 1366,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1367": {
+      "qid": 1367,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1368": {
+      "qid": 1368,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1369": {
+      "qid": 1369,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1370": {
+      "qid": 1370,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1371": {
+      "qid": 1371,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1372": {
+      "qid": 1372,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1373": {
+      "qid": 1373,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1416": {
+      "qid": 1416,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "PyTorch",
+      "subtopic": "ar-02",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1471": {
+      "qid": 1471,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1473": {
+      "qid": 1473,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1476": {
+      "qid": 1476,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1477": {
+      "qid": 1477,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1481": {
+      "qid": 1481,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "1482": {
+      "qid": 1482,
+      "created_by": "Antigravity",
+      "model": "Antigravity (Google DeepMind)",
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "original_answer_source": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    }
+  }
+}

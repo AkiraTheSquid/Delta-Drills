@@ -353,7 +353,7 @@ const DeltaNotebook = (() => {
       </div>
       <div class="notebook-cell-main">
         <div class="notebook-cell-actions notebook-cell-actions--solution notebook-cell-actions--solution-einops">
-          <span>💡 Alternative solution (einops)</span>
+          <span>💡 Alternative solution (einops) • Created by Antigravity</span>
         </div>
         <textarea class="code-editor notebook-cell-editor" spellcheck="false"
                   aria-label="Alternative einops solution"></textarea>

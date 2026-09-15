@@ -1,5 +1,18 @@
 __pycache__/
 .vercel/
+# Deployment-only source material. The browser never fetches these paths:
+# live ARENA data remains under content/ARENA_{3,4,5}.0-main and arena-book/.
+archive/
+content/ARENA_3.0-fork/
+content/books/
+content/Master the Boards USMLE Step 3 (Master the Boards) (Conrad Fischer) (Z-Library)_chapters/
+# Nested upstream checkouts and Python environments are development metadata,
+# never browser assets. Keep their application files; omit only these folders.
+**/.git/
+**/.github/
+**/.devcontainer/
+**/.streamlit/
+**/.venv/
 books/
 ARENA_3.0-main/
 Master the Boards USMLE Step 3 (Master the Boards) (Conrad Fischer) (Z-Library)_chapters/

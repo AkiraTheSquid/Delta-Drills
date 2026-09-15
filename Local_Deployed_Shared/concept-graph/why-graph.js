@@ -465,10 +465,19 @@
   // too and is placed after them, so document order has already run them by
   // the time this executes. `load` is the belt-and-braces path for a cached
   // reorder.
+  const boot = () => {
+    // The editable About copy may replace the graph shell from the saved
+    // server version. Mount only after that fetch settles, otherwise Cytoscape
+    // binds to a node the content loader immediately replaces.
+    const ready = global.DDAboutContentReady;
+    if (ready && typeof ready.finally === "function") ready.finally(init);
+    else init();
+  };
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
   } else {
-    init();
+    boot();
   }
 
   global.deltaInitWhyGraph = init;

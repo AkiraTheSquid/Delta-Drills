@@ -244,6 +244,35 @@ body.dd-welcome .guest-banner { display: none; }
 }
 .lab-disclosure-title { flex: 1 1 auto; }
 
+/* Owner-only controls. The script keeps this entire row hidden for every
+   other account; the API independently verifies the same email on save. */
+.dd-about-editor-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.dd-about-editor-controls[hidden] { display: none; }
+.dd-about-editor-controls button {
+  background: var(--panel, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 7px 11px;
+}
+.dd-about-editor-controls button:hover:not(:disabled),
+.dd-about-editor-controls button:focus-visible {
+  border-color: var(--accent, currentColor);
+}
+#about-editor-status { color: var(--text-dim, inherit); font-size: 0.9rem; }
+#about-page-content.dd-about-editing {
+  outline: 2px dashed var(--accent, currentColor);
+  outline-offset: 8px;
+}
+
 /* The chevron is drawn, not typed: a rotated border corner keeps its
    weight in step with the border of the box it sits in, which a glyph
    from the body font does not. */
