@@ -1,2196 +1,457 @@
 {
  "total": 1233,
  "questions": {
-  "1": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "8": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "12": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "19": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "23": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "24": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "26": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "28": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "36": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "37": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "38": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "41": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "42": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "43": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "46": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "48": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "49": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "50": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "51": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "52": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "53": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "58": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "61": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "62": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "63": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
   "64": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['equal']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "67": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "74": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "75": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "76": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "84": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "85": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "87": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "89": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "95": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "98": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "103": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['exp']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "104": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "107": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "108": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "111": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "121": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "135": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "141": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "144": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "145": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "146": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "151": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "159": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "168": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "174": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "189": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "192": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "202": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "212": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "213": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "214": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "215": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "219": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "220": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "224": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "225": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "227": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "228": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "229": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "230": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "231": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "232": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "233": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "236": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "238": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "239": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "242": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "313": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "314": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "315": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "316": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "317": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['repeat']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "318": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "319": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "320": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "321": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "322": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "323": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "324": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "325": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "326": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "327": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "328": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "329": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "330": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "331": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "332": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "333": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "334": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "335": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "336": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "337": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "338": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "339": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "340": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "341": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "342": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "343": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "344": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "345": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "346": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "347": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "348": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['repeat']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "349": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "350": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "351": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['repeat']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "352": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "353": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "354": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "355": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['repeat']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "356": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "357": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "358": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "359": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "360": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "361": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "362": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "363": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "364": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "365": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "367": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "368": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "369": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "370": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "371": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "372": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "373": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "374": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "375": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "376": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "377": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "378": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "379": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "380": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "381": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "382": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "383": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "384": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "385": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['repeat']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "388": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "389": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "390": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "391": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['rearrange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "392": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "394": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "395": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "396": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "397": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "398": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "399": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reduce']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "400": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "401": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "402": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "403": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "404": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "405": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "406": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "407": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "408": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "409": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "410": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['new_full']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "411": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "412": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "413": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel', 'parameters']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "414": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['conv2d']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "415": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "416": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "417": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "418": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "419": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['Flatten']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "420": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BatchNorm2d', 'numel']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "421": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "422": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['train']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "423": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['Linear']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "424": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['randn']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "425": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "426": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['inference_mode']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "427": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['parameters', 'requires_grad_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "428": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "429": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['amax']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "430": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['amax']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "431": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['amax', 'unfold']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "432": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "433": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['normal_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "434": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['empty', 'manual_seed', 'mean', 'normal_', 'std', 'tolist']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "435": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['backward']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "436": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['exp']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "437": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['outer']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "438": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "439": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['cross_entropy', 'log_softmax']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "440": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "441": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "442": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['detach', 'no_grad', 'tensor']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "443": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "444": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['make_params', 'numel']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "445": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['parameters']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "446": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['item', 'tensor']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "447": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "448": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "449": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "hw",
+    "detail": "post-setup var 'hw' already equals the expected value"
    }
   ],
   "450": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['backward']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "451": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "452": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "453": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['var']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "454": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean', 'var']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "455": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BatchNorm2d', 'allclose', 'sqrt']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "456": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "457": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ones', 'zeros']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "458": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "459": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['sqrt']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "460": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "461": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['reshape']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "462": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['pad', 'unfold']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "463": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['MaxPool1d']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "464": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "465": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "466": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "467": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "468": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['Linear']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "469": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['Scale']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "470": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['Linear', 'MyBlock']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "471": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['is_grad_enabled', 'set_grad_enabled']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "472": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['is_grad_enabled']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "473": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['no_grad']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "474": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['backward']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "475": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "476": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean', 'no_grad']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "477": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel', 'parameters', 'requires_grad_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "478": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['model', 'requires_grad_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "479": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "480": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['tensor']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "481": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "482": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "483": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "484": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "485": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "486": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "487": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "488": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "489": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "490": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "491": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "492": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "493": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "494": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "495": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['item']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "496": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "497": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "498": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "499": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "500": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "501": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "502": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "503": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "504": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "505": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "506": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "507": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "508": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "509": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "510": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "511": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "512": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "513": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "514": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "515": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "516": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "517": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "518": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "519": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "520": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "521": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "522": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "523": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['contiguous', 'data_ptr']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "524": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "531": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "532": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "533": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "534": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "535": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "536": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "537": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "538": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "539": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "540": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "541": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "542": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "543": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
    }
   ],
   "544": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "545": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "546": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "547": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "548": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "549": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
    }
   ],
   "550": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "551": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "552": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "553": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "554": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "555": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "556": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "557": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "558": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "559": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "560": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "561": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "562": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "563": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "564": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "565": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "566": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "567": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/4 graded cases"
    }
   ],
   "581": [
@@ -2225,4908 +486,367 @@
     "detail": "prompt names solution call(s) in code form: ['append']"
    }
   ],
-  "610": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "611": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "612": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "613": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "614": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "615": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "616": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "617": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "618": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "619": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "620": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "621": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "622": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "623": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "624": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "625": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "626": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "627": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "628": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "629": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "630": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "631": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "632": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "633": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "634": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "635": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "636": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "637": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "638": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "639": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "640": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "641": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "642": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "643": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "644": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "645": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "646": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "647": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "648": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "649": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "650": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "651": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "652": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "653": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "654": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "655": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "656": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "657": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "658": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "659": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "660": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "661": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "662": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "663": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "664": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "665": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "666": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "667": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "668": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "669": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "670": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "671": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "672": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "673": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "674": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "675": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "676": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "677": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "678": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "679": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "680": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "681": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "682": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "683": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "684": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "685": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "686": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "687": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "688": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "689": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "690": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "691": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "692": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "693": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "694": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "695": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "696": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "697": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "698": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "699": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "700": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "701": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "702": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "703": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "704": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "705": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "706": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "707": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "798": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
   "799": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "800": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "801": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "802": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "803": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "804": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange', 'zeros']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "805": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "806": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "807": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "808": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace', 'ones']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "809": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "810": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['copy_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "811": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['zeros']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "812": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "813": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['tolist']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "814": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "815": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange', 'copy_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "816": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['zeros']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "817": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "818": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "819": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['copy_']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "820": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "821": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "822": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "823": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "824": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "825": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "826": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['arange']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "827": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "828": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "829": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "830": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "831": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "832": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "833": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "834": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "835": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "836": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "837": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "838": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "839": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "840": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "841": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "842": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "843": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "844": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "845": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "846": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "847": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "848": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "849": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "850": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "851": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "852": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "853": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "854": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "855": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "856": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "857": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "858": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "859": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "860": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "861": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "862": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "863": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "864": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "865": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "866": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "867": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "868": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "869": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "870": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "871": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "872": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "873": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "874": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "875": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "876": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "877": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "878": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "879": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "880": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "881": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "882": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "883": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "884": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "885": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "886": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "887": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "888": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "889": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "890": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "891": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "892": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "893": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "894": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "895": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "896": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "897": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "898": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "899": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "900": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "901": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "902": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "903": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "904": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "905": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "906": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "907": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "908": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "909": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "910": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "911": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "912": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "913": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "914": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "915": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "916": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "917": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "918": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "919": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "920": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "921": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "922": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "923": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "924": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "925": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "926": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "927": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "928": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "929": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "930": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "931": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "932": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "933": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "934": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "935": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "936": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "937": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "938": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "939": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "940": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "941": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "942": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "943": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "944": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "945": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "946": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "947": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "948": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "949": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "950": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "951": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "952": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "953": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "954": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "955": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "956": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "957": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "958": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "959": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "960": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "961": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "962": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "963": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "964": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "965": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "966": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "967": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "968": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "969": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "970": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "971": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "972": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "973": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "974": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "975": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "976": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "977": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "978": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "979": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "980": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "981": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "982": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "983": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "984": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "985": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "986": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "987": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "988": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "989": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "990": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "991": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "992": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "993": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "994": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "995": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "996": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "997": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "998": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "999": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1000": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1001": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1002": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1003": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1004": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1005": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1006": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1007": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1008": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1009": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1010": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1011": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1012": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1013": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1014": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1015": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1016": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1017": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1018": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1019": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1020": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1021": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1022": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1023": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1024": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1025": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1026": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1027": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1028": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1029": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1030": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1031": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1032": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1033": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1034": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1035": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1036": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1037": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1038": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1039": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1040": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1041": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1042": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1043": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1044": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1045": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1046": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1047": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1048": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1049": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1050": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1051": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1052": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1053": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1054": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1055": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1056": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1057": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1058": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1059": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1060": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1061": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1062": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1063": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1064": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1065": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1066": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1067": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1068": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1069": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1070": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1071": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1072": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1073": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1074": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1075": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1076": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1077": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1078": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1079": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1080": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1081": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1082": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1083": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1084": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1085": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1086": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1087": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1088": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1089": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1090": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1091": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1092": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1093": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1094": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1095": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1096": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1097": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1098": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1099": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1100": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1101": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1102": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1103": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1104": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1105": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1106": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1107": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1108": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1109": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1110": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1111": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1112": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1113": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1114": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1115": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1116": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1117": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1118": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1119": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1120": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1121": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1122": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1123": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1124": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1125": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1126": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1127": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1128": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1129": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1130": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1131": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1132": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1133": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1134": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1135": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1136": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1137": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1138": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1139": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1140": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1141": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1142": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1143": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1144": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1145": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1146": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1147": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1148": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1149": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1150": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1151": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1152": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1153": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1154": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1155": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1156": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1157": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1158": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1159": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1160": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1161": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1162": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1163": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1164": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1165": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1166": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1167": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1168": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1169": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1170": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1171": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1172": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1173": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1174": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1175": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1176": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1177": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1178": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1179": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1180": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
    }
   ],
   "1181": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['item']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1182": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1183": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['first', 'second']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1184": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1185": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1186": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1187": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1188": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1189": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1190": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1191": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1192": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1193": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1194": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1195": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1196": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1197": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1198": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1199": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1200": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1201": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1202": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1203": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1204": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1205": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1206": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1207": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1208": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1209": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1210": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1211": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1212": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1213": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1214": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1215": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1216": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1217": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1218": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1219": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1220": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1221": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1222": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1223": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1224": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1225": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1226": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1227": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1228": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1229": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1230": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1231": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1232": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1233": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1234": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1235": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1236": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1237": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1238": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1239": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1240": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1241": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1242": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1243": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1244": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1245": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1246": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1247": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1248": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1249": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1250": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
    }
   ],
   "1251": [
    {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1252": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1253": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1254": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1255": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1256": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1257": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1258": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1259": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1260": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1261": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1262": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1263": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1264": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1265": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1266": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1267": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1268": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1269": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1270": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1271": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1272": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1273": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1274": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1275": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1276": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1277": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1278": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1279": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1280": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1281": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1282": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1283": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1284": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1285": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1286": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1287": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1288": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1289": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1290": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1291": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1292": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1293": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1294": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1295": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1296": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1297": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1298": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
    }
   ],
   "1299": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1300": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1301": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1302": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1303": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1304": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1305": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1306": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1307": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1308": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1309": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1310": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1311": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1312": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['mean']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1313": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1314": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1315": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1316": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1317": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1318": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1319": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1320": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1321": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1322": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1323": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1324": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1325": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1326": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1327": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1328": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1329": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1330": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1331": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1332": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1333": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1334": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1335": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1336": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1337": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1338": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1339": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1340": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1341": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1342": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1343": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1344": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1345": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1346": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1347": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1348": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1349": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1350": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1351": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1352": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1353": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1354": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1355": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1356": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1357": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1358": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1359": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1360": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1361": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1362": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1363": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1364": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1365": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1366": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1367": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1368": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1369": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1370": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1371": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1372": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1373": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1374": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1375": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1376": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1377": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1378": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1379": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1380": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1381": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1382": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1383": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1384": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1385": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1386": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1387": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1388": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1389": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1390": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1391": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1392": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1393": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1394": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1395": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1396": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1397": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1398": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1399": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1400": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1401": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1402": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1403": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1404": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1405": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1406": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1407": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1408": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1409": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1410": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1411": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1412": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1413": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1414": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1415": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers', 'residual_layers']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1416": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['lin']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1417": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1418": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1419": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'residual_layers']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1420": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1421": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['net']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1422": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1423": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'head', 'in_layers', 'residual_layers']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1424": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1425": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1426": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1427": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1428": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1429": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1430": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1431": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['parameters']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1432": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1433": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1434": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1435": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1436": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1437": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1438": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['ResNet']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1439": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1440": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1441": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1442": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1443": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1444": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1445": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1446": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1447": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1448": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1449": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1450": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1451": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1452": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1453": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1454": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1455": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1456": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1457": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1458": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1459": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1460": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1461": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1462": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1463": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1464": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1465": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1466": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1467": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1468": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ],
   "1469": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
-   },
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1470": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1471": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1473": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1475": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1476": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1477": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1478": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1481": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
-   }
-  ],
-  "1482": [
-   {
-    "check": "torch_unavailable",
-    "detail": "torch not importable here \u2014 question unscanned"
    }
   ]
  },
  "counts": {
-  "torch_unavailable": 1097,
   "answer_symbol_in_prompt": 130,
-  "precompute_leak": 2
+  "precompute_leak": 8,
+  "starter_passes_some_cases": 1
  }
 }
