@@ -15,7 +15,6 @@
 const LessonGate = (() => {
   let lessonsData = null;
   let qmatrix = null;
-  let kcAtomCrosswalk = null;
   let loadFailed = false;
   let activeQuestion = null; // Truthy during lesson → Run uses local Pyodide.
   // config.js owns the text; see DEFAULT_EDITOR_CODE there for why it is torch.
@@ -83,34 +82,6 @@ const LessonGate = (() => {
       console.warn("[lessons] qmatrix unavailable — local lesson gate disabled:", err);
       loadFailed = true;
     }
-  };
-
-  /* A learner may bypass first-exposure teaching only with real, atom-level
-     evidence. A broad subtopic score or a self-report is not evidence that
-     they know the API this question requires. The crosswalk gives each KC the
-     atoms that actually contain its lesson code; one such atom strictly above
-     85% is the explicit expertise-reversal exception. */
-  const _ensureKcAtomCrosswalk = async () => {
-    if (kcAtomCrosswalk || loadFailed) return;
-    try {
-      const data = await _fetchJson("concept-graph/kc_atom_crosswalk.json");
-      kcAtomCrosswalk = data?.kcs && typeof data.kcs === "object" ? data.kcs : {};
-    } catch (err) {
-      // Safe default: no crosswalk means no mastery bypass, so teach first.
-      console.warn("[lessons] KC/atom crosswalk unavailable — teaching before drill:", err);
-      kcAtomCrosswalk = {};
-    }
-  };
-
-  const _hasMasteredLessonAtom = async (kc) => {
-    await _ensureKcAtomCrosswalk();
-    const atoms = kcAtomCrosswalk?.[kc]?.atoms;
-    if (!Array.isArray(atoms) || typeof computeAtomReadiness !== "function") return false;
-    return atoms.some((row) => {
-      const atom = row?.a;
-      const mastery = atom ? computeAtomReadiness(atom, 0) : 0;
-      return Number.isFinite(mastery) && mastery > 0.85;
-    });
   };
 
   const _findKp = (kc) => {
@@ -191,25 +162,18 @@ const LessonGate = (() => {
          dropped cannot take a later, unread entry for the same KC with it. */
       const exposed = _localExposure();
       const seen = new Set();
-      const entries = (question?.lesson_gate || [])
+      return (question?.lesson_gate || [])
         .filter((entry) => entry?.kc && !exposed[entry.exposure_key || entry.kc])
-        .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc));
-      const pending = [];
-      for (const entry of entries) {
-        if (!(await _hasMasteredLessonAtom(entry.kc))) pending.push(_stepFromGate(entry));
-      }
-      return pending;
+        .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc))
+        .map(_stepFromGate);
     }
     await _ensureQmatrix();
     if (!qmatrix) return [];
     const tags = qmatrix[String(question?.question_id)];
     if (!tags?.target_kcs?.length) return [];
     const exposed = _localExposure();
-    const pending = [];
-    for (const kc of [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))]) {
-      if (!(await _hasMasteredLessonAtom(kc))) pending.push(_stepFor(kc, exposed));
-    }
-    return pending;
+    return [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))]
+      .map((kc) => _stepFor(kc, exposed));
   };
 
   /* ---------- Markdown subset (mirrors lessons/viewer.html) ------------ */
@@ -740,7 +704,7 @@ const LessonGate = (() => {
           });
         }
         questionText.scrollTop = 0;
-        window.scrollTo({ top: 0 });
+        if (typeof window.scrollTo === "function") window.scrollTo({ top: 0 });
         const lessonCode = colabHref
           ? DEFAULT_EDITOR
           : (page.seg.worked_example_code ||

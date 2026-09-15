@@ -32,7 +32,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 48
+      "problems": 60
     },
     {
       "id": "eo-1",
@@ -500,6 +500,18 @@
     "1368": "np-3",
     "1369": "np-3",
     "1370": "np-3",
+    "1471": "np-3",
+    "1472": "np-3",
+    "1473": "np-3",
+    "1474": "np-3",
+    "1475": "np-3",
+    "1476": "np-3",
+    "1477": "np-3",
+    "1478": "np-3",
+    "1479": "np-3",
+    "1480": "np-3",
+    "1481": "np-3",
+    "1482": "np-3",
     "313": "eo-1",
     "314": "eo-1",
     "315": "eo-1",

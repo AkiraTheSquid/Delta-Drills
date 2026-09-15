@@ -314,7 +314,7 @@ assignment; derive the canvas length first).
 
 
 From the drill bank: q978 (elementwise maximum across a list of tensors).
-From the drill bank: q979 (three vectors interleaved in order).
+From the drill bank: q979 (three vectors alternated in order).
 From the drill bank: q980 (one constant column added on each side of a matrix).
 
 

@@ -1610,7 +1610,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return a and b interleaved: a[0], b[0], a[1], b[1], ...\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several pairs.\nprint(solve(t.tensor([1, 3, 5]), t.tensor([2, 4, 6])))\n",
+    "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Return a and b alternating: a[0], b[0], a[1], b[1], ...\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several pairs.\nprint(solve(t.tensor([1, 3, 5]), t.tensor([2, 4, 6])))\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\na = t.tensor([1, 3, 5])\nb = t.tensor([2, 4, 6])",
@@ -2202,7 +2202,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(a, b, c):\n    \"\"\"Return a, b, c interleaved elementwise into one length-3n array.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several triples.\nprint(solve(t.tensor([1, 2]), t.tensor([10, 20]), t.tensor([100, 200])))\n",
+    "starter_code": "import torch as t\n\ndef solve(a, b, c):\n    \"\"\"Return a, b, c alternating elementwise into one length-3n array.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several triples.\nprint(solve(t.tensor([1, 2]), t.tensor([10, 20]), t.tensor([100, 200])))\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\na = t.tensor([1, 2])\nb = t.tensor([10, 20])\nc = t.tensor([100, 200])",
@@ -32774,7 +32774,7 @@
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
     "question_text": "Three 1-D integer tensors of the same length n are given. Return the 1-D tensor of length three times n that takes one entry from each in turn: a's first, b's first, c's first, then a's second, and so on. No loop.",
-    "answer_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors interleaved, a then b then c at each position.\"\"\"\n    return t.column_stack((a, b, c)).ravel()\n\n\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
+    "answer_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors alternated, a then b then c at each position.\"\"\"\n    return t.column_stack((a, b, c)).ravel()\n\n\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
     "expected_output": "tensor([1, 2, 3, 4, 5, 6])",
@@ -32782,7 +32782,7 @@
     "primary_library": "torch",
     "task_type": "function_impl",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors interleaved, a then b then c at each position.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
+    "starter_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors alternated, a then b then c at each position.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\na = t.tensor([1, 4])\nb = t.tensor([2, 5])\nc = t.tensor([3, 6])",
