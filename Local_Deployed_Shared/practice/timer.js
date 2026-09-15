@@ -530,6 +530,13 @@ const PracticeSession = (() => {
     if (!review) return;
     _restoreDraft(state.draft || review.userCode);
     solutionCode.textContent = review.solutionCode || PracticeAPI.currentQuestion?.solution_code || "";
+    const restoredEinops = PracticeAPI.currentQuestion?.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(PracticeAPI.currentQuestion?.question_id || PracticeAPI.currentQuestion?.id) : "") || "";
+    if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
+      solutionCodeEinops.textContent = restoredEinops;
+    }
+    if (typeof solutionSectionEinops !== "undefined" && solutionSectionEinops) {
+      solutionSectionEinops.classList.toggle("hidden", !restoredEinops);
+    }
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(!!review.correct);

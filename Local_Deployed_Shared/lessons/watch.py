@@ -292,6 +292,18 @@ _spec.loader.exec_module(_guard)
 
 _CONTENT_GUARDS = _guard.run(None)
 
+
+def check_every_problem_api_is_taught_before_serving():
+    """Question API metadata must resolve to an introducing lesson at or
+    before its target KC. Runtime LessonGate uses the same target-KC contract
+    to keep the drill behind that lesson until exposure or >85% atom mastery.
+    """
+    path = os.path.join(_DIR, 'watch_problem_prerequisites.py')
+    spec = _ilu.spec_from_file_location('watch_problem_prerequisites', path)
+    module = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.main()
+
 def check_the_placement_clock_covers_every_concept():
     """placement_time_caps.json: one answer clock per registry KC, none for a
     retired one, every value inside (0, 1200]. A concept missing here would
@@ -314,6 +326,7 @@ if __name__ == '__main__':
               check_the_glossary_points_at_live_kcs,
               check_every_lesson_has_a_notebook,
               check_every_kc_is_teachable,
+              check_every_problem_api_is_taught_before_serving,
               check_the_placement_clock_covers_every_concept] + _CONTENT_GUARDS
     for fn in checks:
         try:

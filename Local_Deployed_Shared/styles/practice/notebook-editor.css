@@ -128,6 +128,17 @@
   border-left-color: color-mix(in srgb, var(--accent-text) 45%, transparent);
 }
 
+.notebook-cell--solution-einops .notebook-cell-actions--solution-einops {
+  color: #38bdf8;
+}
+.notebook-cell--solution-einops .code-editor,
+.notebook-cell--solution-einops .code-highlight {
+  border-left-color: #38bdf8;
+}
+.notebook-cell--solution-einops .notebook-cell-output {
+  border-left-color: color-mix(in srgb, #38bdf8 45%, transparent);
+}
+
 /* 🪦 WORKED-EXAMPLE CELLS — `.notebook-cell--example`, deleted 2026-09-10.
    notebook-editor.js::showExamples used to lay the rail example's code fences
    in as runnable cells at the TOP of the notebook, info-blue against the

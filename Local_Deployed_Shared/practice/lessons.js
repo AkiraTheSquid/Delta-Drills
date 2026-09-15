@@ -15,6 +15,7 @@
 const LessonGate = (() => {
   let lessonsData = null;
   let qmatrix = null;
+  let kcAtomCrosswalk = null;
   let loadFailed = false;
   let activeQuestion = null; // Truthy during lesson → Run uses local Pyodide.
   // config.js owns the text; see DEFAULT_EDITOR_CODE there for why it is torch.
@@ -84,6 +85,34 @@ const LessonGate = (() => {
     }
   };
 
+  /* A learner may bypass first-exposure teaching only with real, atom-level
+     evidence. A broad subtopic score or a self-report is not evidence that
+     they know the API this question requires. The crosswalk gives each KC the
+     atoms that actually contain its lesson code; one such atom strictly above
+     85% is the explicit expertise-reversal exception. */
+  const _ensureKcAtomCrosswalk = async () => {
+    if (kcAtomCrosswalk || loadFailed) return;
+    try {
+      const data = await _fetchJson("concept-graph/kc_atom_crosswalk.json");
+      kcAtomCrosswalk = data?.kcs && typeof data.kcs === "object" ? data.kcs : {};
+    } catch (err) {
+      // Safe default: no crosswalk means no mastery bypass, so teach first.
+      console.warn("[lessons] KC/atom crosswalk unavailable — teaching before drill:", err);
+      kcAtomCrosswalk = {};
+    }
+  };
+
+  const _hasMasteredLessonAtom = async (kc) => {
+    await _ensureKcAtomCrosswalk();
+    const atoms = kcAtomCrosswalk?.[kc]?.atoms;
+    if (!Array.isArray(atoms) || typeof computeAtomReadiness !== "function") return false;
+    return atoms.some((row) => {
+      const atom = row?.a;
+      const mastery = atom ? computeAtomReadiness(atom, 0) : 0;
+      return Number.isFinite(mastery) && mastery > 0.85;
+    });
+  };
+
   const _findKp = (kc) => {
     if (!lessonsData) return null;
     for (const lesson of lessonsData.lessons) {
@@ -132,7 +161,11 @@ const LessonGate = (() => {
   });
 
   const _pendingSteps = async (question) => {
-    if (question?.diagnostic_active || question?.attempt_first) return [];
+    // `attempt_first` used to skip this guard. That let an intermediate-level
+    // learner receive an API before its lesson, exactly when they most need
+    // first-exposure teaching. A placement diagnostic remains an assessment
+    // of prior knowledge, not ordinary practice, so it alone stays exempt.
+    if (question?.diagnostic_active) return [];
     if (practiceMode === "backend") {
       /* 🔴 …MINUS ANYTHING THIS BROWSER HAS ALREADY SHOWN.
 
@@ -158,18 +191,25 @@ const LessonGate = (() => {
          dropped cannot take a later, unread entry for the same KC with it. */
       const exposed = _localExposure();
       const seen = new Set();
-      return (question?.lesson_gate || [])
+      const entries = (question?.lesson_gate || [])
         .filter((entry) => entry?.kc && !exposed[entry.exposure_key || entry.kc])
-        .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc))
-        .map(_stepFromGate);
+        .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc));
+      const pending = [];
+      for (const entry of entries) {
+        if (!(await _hasMasteredLessonAtom(entry.kc))) pending.push(_stepFromGate(entry));
+      }
+      return pending;
     }
     await _ensureQmatrix();
     if (!qmatrix) return [];
     const tags = qmatrix[String(question?.question_id)];
     if (!tags?.target_kcs?.length) return [];
     const exposed = _localExposure();
-    return [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))]
-      .map((kc) => _stepFor(kc, exposed));
+    const pending = [];
+    for (const kc of [...new Set(tags.target_kcs.filter((kc) => !exposed[kc]))]) {
+      if (!(await _hasMasteredLessonAtom(kc))) pending.push(_stepFor(kc, exposed));
+    }
+    return pending;
   };
 
   /* ---------- Markdown subset (mirrors lessons/viewer.html) ------------ */
@@ -565,7 +605,6 @@ const LessonGate = (() => {
 
   const maybeShow = async (question, onDone, forceKcs = null) => {
     try {
-      if (question?.attempt_first) return false;
       // Content first: a local-mode step is read out of the KP's own segment
       // list, so `_pendingSteps` cannot answer before the lessons have loaded.
       await _ensureLessons();

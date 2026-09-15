@@ -62,6 +62,8 @@ const nextProblemBtn = document.getElementById("next-problem-btn");
 // Top progress lives in StageLadder. Legacy ewma-accuracy DOM below review now
 // carries scoped KC understanding with tier + coverage, never broad EWMA.
 const solutionCode = document.getElementById("solution-code");
+const solutionSectionEinops = document.getElementById("solution-section-einops");
+const solutionCodeEinops = document.getElementById("solution-code-einops");
 const aiExplanationSection = document.getElementById("ai-explanation-section");
 const aiExplanationText = document.getElementById("ai-explanation-text");
 const tutorSection = document.getElementById("tutor-section");

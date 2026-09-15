@@ -29,7 +29,8 @@ const DeltaNotebook = (() => {
      all of that. */
   const cells = () =>
     Array.from(cellsHost?.querySelectorAll(".notebook-cell:not([data-solution-cell])") || []);
-  const solutionCell = () => cellsHost?.querySelector("[data-solution-cell]") || null;
+  const solutionCell = () => cellsHost?.querySelector("[data-solution-cell]:not([data-solution-einops-cell])") || null;
+  const solutionEinopsCell = () => cellsHost?.querySelector("[data-solution-einops-cell]") || null;
   /* Where the learner's own cells stop and the graded feedback begins: the
      failed-case block (parented here by ui.js::renderFailedTests), the
      Run button's own test-case check (practice/test-check.js) and the
@@ -263,7 +264,7 @@ const DeltaNotebook = (() => {
      Editable on purpose, exactly like Colab's: poking at the reference answer
      to see what breaks is the point. Nothing here is graded — the marker
      attribute keeps it out of submissionCode() — so an edit costs nothing. */
-  const showSolution = (code) => {
+  const showSolution = (code, einopsCode = "") => {
     if (!cellsHost || !code) return null;
     /* 🔴 EXISTS IS NOT VISIBLE. #notebook-cells stays in the DOM on surfaces
        that hide the whole right pane — a torch drill routed out to Colab, the
@@ -315,6 +316,12 @@ const DeltaNotebook = (() => {
       cellsHost.appendChild(cell);
       bindCell(cell);
     }
+    const labelSpan = cell.querySelector(".notebook-cell-actions--solution span");
+    if (labelSpan) {
+      labelSpan.textContent = einopsCode
+        ? "💡 Solution (PyTorch) — the answer this was graded against"
+        : "💡 Solution — the answer this was graded against";
+    }
     const editor = editorOf(cell);
     editor.value = code;
     /* The source just changed underneath any run the learner did on the
@@ -330,6 +337,47 @@ const DeltaNotebook = (() => {
     // if something else touched the list between grades.
     cellsHost.appendChild(cell);
     resize(editor);
+
+    if (einopsCode) {
+      let eCell = solutionEinopsCell();
+      if (!eCell) {
+        eCell = document.createElement("section");
+        eCell.className = "notebook-cell notebook-cell--solution notebook-cell--solution-einops";
+        eCell.dataset.solutionCell = "1";
+        eCell.dataset.solutionEinopsCell = "1";
+        eCell.dataset.cellId = "solution-einops";
+        eCell.innerHTML = `
+      <div class="notebook-cell-gutter">
+        <button class="notebook-cell-run" type="button" aria-label="Run the alternative einops solution">▶</button>
+        <span class="notebook-cell-exec" aria-label="Not run">[ ]</span>
+      </div>
+      <div class="notebook-cell-main">
+        <div class="notebook-cell-actions notebook-cell-actions--solution notebook-cell-actions--solution-einops">
+          <span>💡 Alternative solution (einops)</span>
+        </div>
+        <textarea class="code-editor notebook-cell-editor" spellcheck="false"
+                  aria-label="Alternative einops solution"></textarea>
+        <div class="notebook-cell-output hidden" data-cell-output>
+          <div class="output-header">Output</div>
+          <pre class="output-area"></pre>
+        </div>
+      </div>`;
+        cellsHost.appendChild(eCell);
+        bindCell(eCell);
+      }
+      const eEditor = editorOf(eCell);
+      eEditor.value = einopsCode;
+      outputOf(eCell).textContent = "";
+      outputShellOf(eCell)?.classList.add("hidden");
+      execOf(eCell).textContent = "[ ]";
+      eCell.dataset.executed = "";
+      eCell.classList.remove("notebook-cell--stale");
+      cellsHost.appendChild(eCell);
+      resize(eEditor);
+    } else {
+      solutionEinopsCell()?.remove();
+    }
+
     /* Tells basic-mode.css that the answer is already on screen, so the left
        rail's copy of it can stay hidden. 🔴 The rail copy is NOT dead code —
        it is the fallback for every question that has no notebook to append to
@@ -341,6 +389,7 @@ const DeltaNotebook = (() => {
 
   const clearSolution = () => {
     solutionCell()?.remove();
+    solutionEinopsCell()?.remove();
     document.body.classList.remove("dd-solution-in-notebook");
   };
 

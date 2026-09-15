@@ -154,6 +154,7 @@ html:not(.dd-colab-edition) body.dd-basic-mode #ewma-accuracy {
 /* The reference solution, the generated explanation, and the tutor
    thread. The heaviest block on the screen by a wide margin. */
 html:not(.dd-colab-edition) body.dd-basic-mode .solution-section,
+html:not(.dd-colab-edition) body.dd-basic-mode .solution-section-einops,
 html:not(.dd-colab-edition) body.dd-basic-mode #ai-explanation-section,
 html:not(.dd-colab-edition) body.dd-basic-mode #tutor-section {
   display: none;
@@ -185,6 +186,9 @@ html:not(.dd-colab-edition) body.dd-basic-mode #tutor-section {
 html:not(.dd-colab-edition) body.dd-basic-mode #practice-feedback-area.result-incorrect .solution-section {
   display: block;
 }
+html:not(.dd-colab-edition) body.dd-basic-mode #practice-feedback-area.result-incorrect .solution-section-einops {
+  display: block;
+}
 
 /* 🔴 UNLESS THE NOTEBOOK ALREADY HAS IT. The rule above was the whole fix on
    2026-08-24 and it was not enough: the rail puts the solution below the
@@ -199,6 +203,12 @@ html:not(.dd-colab-edition) body.dd-basic-mode #practice-feedback-area.result-in
    matters: a question with no notebook to append to (torch routed to Colab
    hides the right panel entirely) has nowhere else to put the answer. */
 html:not(.dd-colab-edition) body.dd-basic-mode.dd-solution-in-notebook
-  #practice-feedback-area.result-incorrect .solution-section {
+  #practice-feedback-area.result-incorrect .solution-section,
+html:not(.dd-colab-edition) body.dd-basic-mode.dd-solution-in-notebook
+  #practice-feedback-area.result-incorrect .solution-section-einops {
+  display: none;
+}
+
+.solution-section-einops.hidden {
   display: none;
 }

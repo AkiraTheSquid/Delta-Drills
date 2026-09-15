@@ -355,7 +355,17 @@ function renderQuestion(q, count) {
     tier: q.kc_tier,
     title: q.ladder_kc_title,
   });
+  if (q && !q.einops_solution && typeof getEinopsSolution === "function") {
+    const einopsSol = getEinopsSolution(q.question_id || q.id);
+    if (einopsSol) q.einops_solution = einopsSol;
+  }
   solutionCode.textContent = q.solution_code;
+  if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
+    solutionCodeEinops.textContent = q.einops_solution || "";
+  }
+  if (typeof solutionSectionEinops !== "undefined" && solutionSectionEinops) {
+    solutionSectionEinops.classList.toggle("hidden", !q.einops_solution);
+  }
   setupQuestionAids(q);
   overrideRow.classList.add("hidden");
 
@@ -906,9 +916,10 @@ function restoreGradedFeedbackInNotebook({ correct, failedTests, solutionCode: s
     { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
     q,
   );
+  const einopsSol = q?.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(q?.question_id || q?.id) : "") || "";
   // A saved state from before this field existed has no code of its own; the
   // question payload carries the same answer, so the restore is not lossy.
-  if (!window.DeltaNotebook?.showSolution?.(solCode || q?.solution_code || "")) return;
+  if (!window.DeltaNotebook?.showSolution?.(solCode || q?.solution_code || "", einopsSol)) return;
   /* 🔴 A RESTORE HAS THE SAME FOLD AS A SUBMIT. The draft that comes back is
      the learner's own long attempt, so the answer lands under it, off-screen,
      and a resume would hand back a review whose second half is invisible —
