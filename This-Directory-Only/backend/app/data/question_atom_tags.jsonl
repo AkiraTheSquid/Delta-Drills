@@ -1347,6 +1347,18 @@
 {"question_id": 1371, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
 {"question_id": 1372, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.6}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.5}]}
 {"question_id": 1373, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1471, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1472, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1473, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1474, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1475, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1476, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1477, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}]}
+{"question_id": 1478, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}]}
+{"question_id": 1479, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1480, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}]}
+{"question_id": 1481, "atoms": [{"atom_id": "einops-reduce", "confidence": 0.6}]}
+{"question_id": 1482, "atoms": [{"atom_id": "sum-back-expand-broadcast", "confidence": 0.7}]}
 {"question_id": 1374, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.8}]}
 {"question_id": 1375, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}]}
 {"question_id": 1376, "atoms": [{"atom_id": "sequential-chain", "confidence": 1.0}, {"atom_id": "relu-elementwise-max", "confidence": 0.6}]}

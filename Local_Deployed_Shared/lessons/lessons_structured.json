@@ -4839,6 +4839,66 @@
        "question_id": 1370,
        "prompt": "A reduction feeding another reduction: the first one chooses the axis, the\nsecond has none left to choose.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1471,
+       "prompt": "Per-row totals from a matrix.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1472,
+       "prompt": "Per-column totals from a matrix.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1473,
+       "prompt": "Per-row means from a matrix.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1474,
+       "prompt": "A batch-axis mean, leaving height and width.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1475,
+       "prompt": "Per-image sums over both spatial axes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1476,
+       "prompt": "Per-image means using negative trailing axes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1477,
+       "prompt": "Row sums retaining length-one axis for broadcasting.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1478,
+       "prompt": "Per-image means retaining both spatial axes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1479,
+       "prompt": "A tuple reduction over the first two axes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1480,
+       "prompt": "Column means retaining the reduced axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1481,
+       "prompt": "Whole-tensor mean returned as a Python float.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1482,
+       "prompt": "Per-image sums retaining every reduced axis.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -4862,7 +4922,19 @@
       1367,
       1368,
       1369,
-      1370
+      1370,
+      1471,
+      1472,
+      1473,
+      1474,
+      1475,
+      1476,
+      1477,
+      1478,
+      1479,
+      1480,
+      1481,
+      1482
      ],
      "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely.",
      "notes_markdown": ""

@@ -13,6 +13,9 @@ from pydantic import BaseModel, Field
 # Responses
 # ---------------------------------------------------------------------------
 
+class ClaimQuestionRequest(BaseModel):
+    question_id: int
+
 class NextQuestionResponse(BaseModel):
     question_id: int
     question_text: str

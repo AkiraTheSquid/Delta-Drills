@@ -9394,3 +9394,51 @@ PyTorch,ar-02,"Given a module `m`, return the number of modules strictly BELOW i
 PyTorch,ar-02,"Build a removable NaN detector. Given a module `m` and an input `x`: use `apply` to attach to every module in the tree a forward hook that records the module when any entry of its output is not-a-number, keeping every handle in a list; run the model on `x`; detach every hook through its handle; run the model on `x` again; return a tuple `(count, first_is_source)`: the number of records as a Python int, and a Python boolean saying whether the first recorded module is the source (its output has NaN while its input does not). With no record at all return `(0, False)`.","import torch as t\n\ndef solve(m,x):\n    flagged=[]\n    handles=[]\n    def check(module,inputs,output):\n        if t.isnan(output).any():\n            flagged.append((module,t.isnan(inputs[0]).any().item()))\n    def add_hook(module):\n        handles.append(module.register_forward_hook(check))\n    m.apply(add_hook)\n    m(x)\n    for h in handles:\n        h.remove()\n    m(x)\n    first=False\n    for module,had_nan_in in flagged[:1]:\n        first=had_nan_in==False\n    return (len(flagged),first)\n",65,
 PyTorch,ar-02,"Given a module `m` and an input `x`, use `apply` to attach to every module in the tree a forward hook that records the mean of the module's output as a Python float, keeping the handles; run the model on `x`; detach every hook; return the list of means in firing order (nested modules before their parents, the root last).","import torch as t\n\ndef solve(m,x):\n    means=[]\n    handles=[]\n    def record(module,inputs,output):\n        means.append(output.mean().item())\n    def add_hook(module):\n        handles.append(module.register_forward_hook(record))\n    m.apply(add_hook)\n    m(x)\n    for h in handles:\n        h.remove()\n    return means\n",65,
 PyTorch,ar-02,"Given a module `m`, an input `x`, the registered `name` of one of its direct children and a scalar `c`: look the child up by name through the children mapping, attach a forward hook that replaces that child's output with the output multiplied by `c`, run the model on `x`, detach the hook, run the model again, and return a tuple of two tensors — the output with the hook attached and the output after it was removed.","import torch as t\n\ndef solve(m,x,name,c):\n    def scale(module,inputs,output):\n        return output*c\n    h=m._modules[name].register_forward_hook(scale)\n    during=m(x)\n    h.remove()\n    after=m(x)\n    return (during,after)\n",70,
+Numpy,Vectorization and broadcasting,"For a 2-D float tensor x, return one sum per row as shape (r,).","import torch as t
+
+def solve(x):
+    return x.sum(dim=1)",24,
+Numpy,Vectorization and broadcasting,"For a 2-D integer tensor x, return one sum per column as shape (c,).","import torch as t
+
+def solve(x):
+    return x.sum(dim=0)",22,
+Numpy,Vectorization and broadcasting,"For a 2-D float tensor x, return one mean per row as shape (r,).","import torch as t
+
+def solve(x):
+    return x.mean(dim=1)",26,
+Numpy,Vectorization and broadcasting,"For x shaped (b,h,w), average across batch axis only; return shape (h,w).","import torch as t
+
+def solve(x):
+    return x.mean(dim=0)",28,
+Numpy,Vectorization and broadcasting,"For x shaped (b,h,w), return one sum per image by reducing both spatial axes.","import torch as t
+
+def solve(x):
+    return x.sum(dim=(1,2))",30,
+Numpy,Vectorization and broadcasting,"For x shaped (b,h,w), return one mean per image by reducing both spatial axes.","import torch as t
+
+def solve(x):
+    return x.mean(dim=(-2,-1))",30,
+Numpy,Vectorization and broadcasting,"For x shaped (r,c), return row sums with shape (r,1), keeping reduced axis.","import torch as t
+
+def solve(x):
+    return x.sum(dim=1, keepdim=True)",32,
+Numpy,Vectorization and broadcasting,"For x shaped (b,h,w), return means shaped (b,1,1), ready to broadcast over each image.","import torch as t
+
+def solve(x):
+    return x.mean(dim=(1,2), keepdim=True)",36,
+Numpy,Vectorization and broadcasting,"For x shaped (a,b,c), sum axes 0 and 1 together; return shape (c,).","import torch as t
+
+def solve(x):
+    return x.sum(dim=(0,1))",30,
+Numpy,Vectorization and broadcasting,"For x shaped (r,c), return column means with shape (1,c).","import torch as t
+
+def solve(x):
+    return x.mean(dim=0, keepdim=True)",32,
+Numpy,Vectorization and broadcasting,"For any float tensor x, return its overall mean as a Python float.","import torch as t
+
+def solve(x):
+    return float(x.mean())",24,
+Numpy,Vectorization and broadcasting,"For x shaped (b,c,h,w), return one sum per image while retaining shape (b,1,1,1).","import torch as t
+
+def solve(x):
+    return x.sum(dim=(1,2,3), keepdim=True)",40,

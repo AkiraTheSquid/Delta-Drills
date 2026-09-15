@@ -30,6 +30,7 @@ from app.practice.grading import (
     run_and_get_expected_output,
 )
 from app.practice_schemas import (
+    ClaimQuestionRequest,
     LocalEvalResponse,
     LocalEvalSubmitRequest,
     NextQuestionResponse,
@@ -49,6 +50,29 @@ from app.prioritization import (
 from app.questions import compose_full_solution, get_question_by_id, get_questions_by_subtopic
 
 router = APIRouter()
+
+
+@router.post("/claim-question")
+def claim_question(
+    payload: ClaimQuestionRequest,
+    user: User = Depends(get_current_user),
+) -> dict:
+    """Atomically reserve a browser-built ladder drill before rendering it.
+
+    The KC ladder hydrates bank records in the browser, bypassing
+    ``next_question``. Without this claim, its served state and the adaptive
+    queue's served state diverge, so either track can hand the same drill back.
+    """
+    question = get_question_by_id(payload.question_id)
+    if question is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown question")
+    user_id = str(user.id)
+    sub_state = get_user_state(user_id).get_subtopic_state(question.subtopic)
+    already_served = question.id in sub_state.served_question_ids
+    if not already_served:
+        sub_state.served_question_ids.append(question.id)
+        save_user_state(user_id)
+    return {"already_served": already_served}
 
 
 def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | None:

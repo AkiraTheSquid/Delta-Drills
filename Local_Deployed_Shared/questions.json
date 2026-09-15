@@ -54458,5 +54458,369 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1471,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For a 2-D float tensor x, return one sum per row as shape (r,).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=1)",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[2.,4.,6.],[1.,3.,5.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[12.0,9.0]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[7.],[-2.],[9.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[7.0,-2.0,9.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1472,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For a 2-D integer tensor x, return one sum per column as shape (c,).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(0,))",
+    "difficulty_score": 22,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": null,
+    "test_cases": [],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1473,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For a 2-D float tensor x, return one mean per row as shape (r,).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=1)",
+    "difficulty_score": 26,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1.,2.,3.],[10.,20.,30.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[2.0,20.0]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[-4.,4.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[0.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1474,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (b,h,w), average across batch axis only; return shape (h,w).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=0, keepdim=False)",
+    "difficulty_score": 28,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": null,
+    "test_cases": [],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1475,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (b,h,w), return one sum per image by reducing both spatial axes.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(1,2))",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[1.,2.],[3.,4.]],[[5.,6.],[7.,8.]]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[10.0,26.0]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[9.]],[-1.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[9.0,-1.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1476,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (b,h,w), return one mean per image by reducing both spatial axes.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(-2,-1))",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[2.,4.],[6.,8.]],[[1.,3.],[5.,7.]]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[5.0,4.0]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[-3.]]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[-3.0]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1477,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (r,c), return row sums with shape (r,1), keeping reduced axis.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=1, keepdim=True)",
+    "difficulty_score": 32,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1.,2.,3.],[4.,5.,6.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[6.0],[15.0]]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[9.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[9.0]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1478,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (b,h,w), return means shaped (b,1,1), ready to broadcast over each image.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(1,2), keepdim=True)",
+    "difficulty_score": 36,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[1.,3.],[5.,7.]],[[2.,4.],[6.,8.]]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[[4.0]],[[5.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[[10.]],[-2.]])",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[[10.0]],[[-2.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1479,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (a,b,c), sum axes 0 and 1 together; return shape (c,).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=0).sum(dim=0)",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": null,
+    "test_cases": [],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1480,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (r,c), return column means with shape (1,c).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(0,), keepdim=True)",
+    "difficulty_score": 32,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": null,
+    "test_cases": [],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1481,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For any float tensor x, return its overall mean as a Python float.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return float(x.mean())",
+    "difficulty_score": 24,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1.,3.],[5.,7.]])",
+        "call": "solve(x)",
+        "expected_expr": "4.0"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[-2.]])",
+        "call": "solve(x)",
+        "expected_expr": "-2.0"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1482,
+    "topic": "Numpy",
+    "subtopic": "Vectorization and broadcasting",
+    "subtopic_key": "Numpy: Vectorization and broadcasting",
+    "question_text": "For x shaped (b,c,h,w), return one sum per image while retaining shape (b,1,1,1).",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(1,2,3), keepdim=True)",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.arange(16,dtype=t.float32).reshape(1,2,2,4)",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[[[120.0]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.ones(2,1,1,1)",
+        "call": "solve(x).tolist()",
+        "expected_expr": "[[[[1.0]]],[[[1.0]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [],
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]

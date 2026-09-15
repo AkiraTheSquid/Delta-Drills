@@ -5,7 +5,7 @@ supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-literal]
 faded: [220, 1363, 1364, 135, 1365, 1366]
 guided: [503, 504]
-independent: [108, 505, 174, 1367, 1368, 1369, 1370]
+independent: [108, 505, 174, 1367, 1368, 1369, 1370, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1480, 1481, 1482]
 integrated: [1371, 1372, 1373]
 ---
 
@@ -270,6 +270,42 @@ which axis it lines up with.
 ### q1370
 A reduction feeding another reduction: the first one chooses the axis, the
 second has none left to choose.
+
+### q1471
+Per-row totals from a matrix.
+
+### q1472
+Per-column totals from a matrix.
+
+### q1473
+Per-row means from a matrix.
+
+### q1474
+A batch-axis mean, leaving height and width.
+
+### q1475
+Per-image sums over both spatial axes.
+
+### q1476
+Per-image means using negative trailing axes.
+
+### q1477
+Row sums retaining length-one axis for broadcasting.
+
+### q1478
+Per-image means retaining both spatial axes.
+
+### q1479
+A tuple reduction over the first two axes.
+
+### q1480
+Column means retaining the reduced axis.
+
+### q1481
+Whole-tensor mean returned as a Python float.
+
+### q1482
+Per-image sums retaining every reduced axis.
 
 ## Integrated practice
 

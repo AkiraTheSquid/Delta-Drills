@@ -78,12 +78,9 @@ def pick_for_subtopic(
     # aim has to be measured on a concept on both paths, or focused practice
     # keeps the subtopic-wide average this change exists to remove.
     served = set(sub_state.served_question_ids)
-    # Two different questions, and collapsing them is what bricked Seth's
-    # account on 2026-08-31: `served` is "don't hand back the drill they just
-    # skipped" and only the difficulty picker should read it; `answered` is
-    # "this learner has given evidence on this drill" and it is the only thing
-    # allowed to decide that the course has run out. See
-    # prioritization.answered_question_ids.
+    # Served means shown, not answered. A learner must see every compatible
+    # drill before any repeat; skipping is still an encounter, not permission
+    # to silently recycle it.
     answered = answered_question_ids(user_state)
     narrowed, next_kc, gap = narrow_to_next_kc(
         user_state, candidates, served, answered, exclude_kcs=exclude_kcs,
@@ -108,9 +105,13 @@ def pick_for_subtopic(
             # Nothing unseen anywhere on the concept.
             raise SubtopicDry(gap)
     target_diff = target_difficulty(user_state, subtopic, kc=next_kc)
-    question = select_question_for_difficulty(
-        candidates, target_diff, served, sub_state.served_question_ids
-    )
+    unshown = [q for q in candidates if q.id not in served]
+    if not unshown:
+        stuck = gap or rung_gap(user_state, next_kc, candidates[0] if candidates else None)
+        if record:
+            content_gaps.record(user_id, stuck)
+        raise SubtopicDry(stuck)
+    question = select_question_for_difficulty(unshown, target_diff, served, sub_state.served_question_ids)
     if question is None:
         raise SubtopicDry(gap)
 
