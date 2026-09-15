@@ -467,7 +467,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "file": "np-3.json",
-   "cells": 283,
+   "cells": 327,
    "questions": [
     37,
     84,
@@ -516,7 +516,19 @@
     1367,
     1368,
     1369,
-    1370
+    1370,
+    1471,
+    1472,
+    1473,
+    1474,
+    1475,
+    1476,
+    1477,
+    1478,
+    1479,
+    1480,
+    1481,
+    1482
    ],
    "kcs": [
     "numpy.broadcasting-rules",

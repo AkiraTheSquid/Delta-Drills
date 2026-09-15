@@ -18193,5 +18193,197 @@
    "torch.isnan"
   ],
   "source": "kp-integrated"
+ },
+ "1471": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1472": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1473": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1474": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1475": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1476": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1477": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1478": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1479": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1480": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1481": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
+ },
+ "1482": {
+  "target_kcs": [
+   "numpy.axis-reductions"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.mean#dim",
+   "Tensor.mean#keepdim",
+   "Tensor.sum#dim",
+   "syntax.bool-literal"
+  ],
+  "source": "kp-independent"
  }
 }
