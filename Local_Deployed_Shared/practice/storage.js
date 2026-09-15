@@ -41,6 +41,12 @@ const practiceProgress = {
   completedQuestionIds: Array.isArray(savedProgress?.completedQuestionIds)
     ? savedProgress.completedQuestionIds
     : [],
+  // Every drill rendered, including skips. This is distinct from completion:
+  // a skipped drill was still shown and must not leak from the KC ladder back
+  // into a later queue slot.
+  shownQuestionIds: Array.isArray(savedProgress?.shownQuestionIds)
+    ? savedProgress.shownQuestionIds.filter(Number.isFinite)
+    : [],
   pendingFeedback: savedProgress?.pendingFeedback || null,
   currentTargetDifficulty: Number.isFinite(savedProgress?.currentTargetDifficulty)
     ? savedProgress.currentTargetDifficulty

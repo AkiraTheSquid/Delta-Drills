@@ -60,6 +60,13 @@ practiceSubmitBtn.addEventListener("click", async () => {
   const expectedOutput = result.expected_output || q.expected_output || "";
 
   solutionCode.textContent = solCode;
+  const einopsSol = q.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(q.question_id || q.id) : "") || "";
+  if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
+    solutionCodeEinops.textContent = einopsSol;
+  }
+  if (typeof solutionSectionEinops !== "undefined" && solutionSectionEinops) {
+    solutionSectionEinops.classList.toggle("hidden", !einopsSol);
+  }
   practiceSubmitArea.classList.add("hidden");
   practiceFeedbackArea.classList.remove("hidden");
 
@@ -75,7 +82,7 @@ practiceSubmitBtn.addEventListener("click", async () => {
      solved sits under your working code until the next question loads. */
   if (result.correct) {
     window.DeltaNotebook?.clearSolution?.();
-  } else if (window.DeltaNotebook?.showSolution?.(solCode)) {
+  } else if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
     /* Appended is not seen: the answer lands under cells as tall as whatever
        the learner just wrote, i.e. below the fold of the notebook pane. Scroll
        it into view in the next frame — the cell was appended and auto-sized in

@@ -9,6 +9,7 @@ let questionsBankJson = null; // JSON string for passing to Pyodide engine
 let kcTaggedIds = null;
 let questionsSourceIndex = null; // Map from question id -> ARENA prereq source record
 let questionsSourceJson = null; // JSON string for passing to Pyodide engine when needed
+let einopsSolutionsIndex = null; // Map from question id -> einops alternative solution
 const PRACTICE_ARENA_CONTENT_BASE =
   "/content/ARENA_5.0-main/chapter0_fundamentals/exercises/part0_prereqs/";
 const PRACTICE_PREREQ_NOTEBOOK_URL =
@@ -26,31 +27,55 @@ const PRACTICE_PREREQ_NOTEBOOK_IPYNB_FALLBACKS = [
 let practiceNotebookPromise = null;
 let practiceNotebookData = null;
 
+async function loadEinopsSolutionsIndex() {
+  if (einopsSolutionsIndex) return einopsSolutionsIndex;
+  try {
+    const res = await fetch(`practice/einops_solutions.json?v=20260914-1`, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const index = new Map();
+    for (const [qid, sol] of Object.entries(data)) {
+      index.set(Number(qid), sol);
+    }
+    einopsSolutionsIndex = index;
+    console.log(`[practice] loaded ${index.size} einops alternative solutions`);
+  } catch (e) {
+    console.warn("[practice] failed to load practice/einops_solutions.json:", e.message);
+    einopsSolutionsIndex = new Map();
+  }
+  return einopsSolutionsIndex;
+}
+
+function getEinopsSolution(questionId) {
+  if (!einopsSolutionsIndex) return null;
+  return einopsSolutionsIndex.get(Number(questionId)) || null;
+}
+
 async function loadQuestionsBank() {
   if (questionsBank) return questionsBank;
   try {
-    await loadQuestionsSourceIndex();
+    await Promise.all([loadQuestionsSourceIndex(), loadEinopsSolutionsIndex()]);
     const res = await fetch(`questions.json?v=20260428-rewrite`, { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     questionsBank = await res.json();
     questionsBank = questionsBank.filter((q) => !curatedExcludedIds.has(q.id));
-    if (questionsSourceIndex) {
-      questionsBank = questionsBank.map((q) => {
-        const source = questionsSourceIndex.get(Number(q.id));
-        if (!source) return q;
-        return {
-          ...q,
-          arena_source_path: source?.source?.path || null,
-          arena_source_cell_index: Number.isFinite(source?.source?.cell_index) ? source.source.cell_index : null,
-          arena_source_type: source?.source?.type || null,
-          arena_notebook_url: buildArenaNotebookUrl(source?.source?.path),
-          arena_function_names: Array.isArray(source?.exercise?.function_names)
-            ? source.exercise.function_names.filter(Boolean)
-            : [],
-          arena_curriculum: source?.curriculum || null,
-        };
-      });
-    }
+    questionsBank = questionsBank.map((q) => {
+      const source = questionsSourceIndex ? questionsSourceIndex.get(Number(q.id)) : null;
+      const einopsSol = getEinopsSolution(q.id);
+      const withEinops = einopsSol ? { ...q, einops_solution: einopsSol } : q;
+      if (!source) return withEinops;
+      return {
+        ...withEinops,
+        arena_source_path: source?.source?.path || null,
+        arena_source_cell_index: Number.isFinite(source?.source?.cell_index) ? source.source.cell_index : null,
+        arena_source_type: source?.source?.type || null,
+        arena_notebook_url: buildArenaNotebookUrl(source?.source?.path),
+        arena_function_names: Array.isArray(source?.exercise?.function_names)
+          ? source.exercise.function_names.filter(Boolean)
+          : [],
+        arena_curriculum: source?.curriculum || null,
+      };
+    });
     await loadKcTaggedIds();
     questionsBankJson = JSON.stringify(servableQuestions() || questionsBank);
     const parked = kcTaggedIds ? questionsBank.length - (servableQuestions() || []).length : 0;
@@ -329,6 +354,7 @@ function isPracticeQuestionAllowed(question) {
 // `overrides` lets the faded tier swap in its blanked starter_code.
 function buildPracticeQuestionFromBank(q, overrides = {}) {
   if (!q) return null;
+  const einopsSol = getEinopsSolution(q.id) || q.einops_solution || null;
   return {
     question_id: q.id,
     question_text: q.question_text,
@@ -337,6 +363,7 @@ function buildPracticeQuestionFromBank(q, overrides = {}) {
     difficulty: q.difficulty_score,
     expected_output: q.expected_output,
     solution_code: q.answer_code,
+    einops_solution: einopsSol,
     primary_library: q.primary_library || null,
     task_type: q.task_type || null,
     expected_artifact_type: q.expected_artifact_type || "stdout",
@@ -365,7 +392,8 @@ function getQuestionFromBank(questionId) {
 function hydrateSavedPracticeQuestionFromBank(savedQuestion) {
   if (!savedQuestion) return null;
   const bankQ = getQuestionFromBank(savedQuestion.question_id || savedQuestion.id);
-  if (!bankQ) return savedQuestion;
+  const einopsSol = getEinopsSolution(savedQuestion.question_id || savedQuestion.id) || savedQuestion.einops_solution || null;
+  if (!bankQ) return { ...savedQuestion, einops_solution: einopsSol };
 
   const artifactChanged =
     (savedQuestion.question_text || "") !== (bankQ.question_text || "") ||
@@ -383,6 +411,7 @@ function hydrateSavedPracticeQuestionFromBank(savedQuestion) {
     difficulty: bankQ.difficulty_score,
     expected_output: bankQ.expected_output,
     solution_code: bankQ.answer_code,
+    einops_solution: einopsSol,
     primary_library: bankQ.primary_library || null,
     task_type: bankQ.task_type || null,
     expected_artifact_type: bankQ.expected_artifact_type || "stdout",

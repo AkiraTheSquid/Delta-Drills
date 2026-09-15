@@ -25,6 +25,38 @@ function _exampleShown(questionId) {
 const PracticeAPI = {
   currentQuestion: practiceQuestionPool[0],
 
+  noteQuestionShown(questionId) {
+    if (!Number.isFinite(questionId)) return;
+    if (!Array.isArray(practiceProgress.shownQuestionIds)) practiceProgress.shownQuestionIds = [];
+    if (!practiceProgress.shownQuestionIds.includes(questionId)) {
+      practiceProgress.shownQuestionIds.push(questionId);
+      savePracticeProgress(practiceProgress);
+    }
+  },
+
+  async claimLadderQuestion(questionId) {
+    if (!Number.isFinite(questionId)) return true;
+    if (practiceMode === "backend") {
+      const res = await apiFetch("/api/practice/claim-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question_id: questionId }),
+      });
+      if (res.status === 401) {
+        handleExpiredToken();
+        return true;
+      }
+      if (!res.ok) throw new Error("Could not reserve this practice problem.");
+      const data = await res.json();
+      this.noteQuestionShown(questionId);
+      return !data.already_served;
+    }
+    const shown = new Set(practiceProgress.shownQuestionIds || []);
+    if (shown.has(questionId)) return false;
+    this.noteQuestionShown(questionId);
+    return true;
+  },
+
   outputsMatch(actualOutput, expectedOutput) {
     return (actualOutput || "").trim() === (expectedOutput || "").trim();
   },
@@ -166,6 +198,7 @@ const PracticeAPI = {
     if (window.KcPractice && window.KcPractice.isActive()) {
       const ladderQ = await window.KcPractice.nextQuestion();
       if (ladderQ) {
+        this.noteQuestionShown(ladderQ.question_id);
         this.currentQuestion = ladderQ;
         practiceProgress.currentQuestionId = ladderQ.question_id;
         practiceProgress.currentQuestion = ladderQ;
@@ -214,12 +247,15 @@ const PracticeAPI = {
         throw new Error(detail || "Failed to load next question.");
       } else {
         const data = await res.json();
+        const einopsSol = (typeof getEinopsSolution === "function" ? getEinopsSolution(data.question_id) : null) || data.einops_solution || null;
         this.currentQuestion = {
           ...data,
+          einops_solution: einopsSol,
           target_difficulty: Number.isFinite(data.target_difficulty)
             ? data.target_difficulty
             : data.difficulty,
         };
+        this.noteQuestionShown(data.question_id);
         practiceProgress.currentQuestion = this.currentQuestion;
         practiceProgress.currentQuestionId = data.question_id;
         savePracticeProgress(practiceProgress);
@@ -244,6 +280,7 @@ const PracticeAPI = {
 
       if (result.question) {
         this.currentQuestion = buildPracticeQuestionFromBank(result.question);
+        this.noteQuestionShown(this.currentQuestion.question_id);
       }
     } else {
       // Fallback to hardcoded pool — a static round-robin with NO adaptivity.
@@ -268,6 +305,11 @@ const PracticeAPI = {
       } while (completed.has(practiceQuestionPool[nextIndex].question_id));
       practiceQuestionIndex = nextIndex;
       this.currentQuestion = practiceQuestionPool[practiceQuestionIndex];
+      const poolEinopsSol = (typeof getEinopsSolution === "function" ? getEinopsSolution(this.currentQuestion.question_id) : null) || this.currentQuestion.einops_solution || null;
+      if (poolEinopsSol && !this.currentQuestion.einops_solution) {
+        this.currentQuestion = { ...this.currentQuestion, einops_solution: poolEinopsSol };
+      }
+      this.noteQuestionShown(this.currentQuestion.question_id);
     }
 
     practiceProgress.currentQuestionId = this.currentQuestion.question_id;
