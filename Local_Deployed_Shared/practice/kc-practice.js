@@ -30,6 +30,13 @@ const KcPractice = (() => {
   let queue = [];
   let served = 0;
 
+  const _claim = async (q) => {
+    if (!q) return false;
+    const api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
+    if (!api?.claimLadderQuestion) return true;
+    return api.claimLadderQuestion(q.question_id);
+  };
+
   /* EXERCISE-SCOPED PRACTICE (2026-09-06). An ARENA exercise on the notebook
      page ("Practice make_rays_1d") starts this ladder on ONE KC and, on a
      miss, pulls that KC's PREREQUISITES in front of the remaining queue —
@@ -290,6 +297,10 @@ const KcPractice = (() => {
         if (!d) { active = false; return null; }
         const q = _hydrate(d.item);
         if (q) {
+          if (!(await _claim(q))) {
+            planner.drop(d);
+            continue;
+          }
           /* THE NOTEBOOK'S "Try the problem first", carried onto the question.
              `attemptFirst && used === 0` is the planner's own definition of the
              cold attempt (exercise-planner.js::peek), and it has to be read
@@ -330,6 +341,7 @@ const KcPractice = (() => {
       const item = queue[served++];
       const q = _hydrate(item);
       if (q) {
+        if (!(await _claim(q))) continue;
         q.ladder_kind = item.kind;
         _stamp(q, item);
         if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);

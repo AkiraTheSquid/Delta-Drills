@@ -311,7 +311,11 @@
    "prereqs": [
     "numpy.aggregations",
     "numpy.broadcasting-rules"
-   ]
+   ],
+   "encompassing": {
+    "numpy.aggregations": 0.4,
+    "numpy.broadcasting-rules": 0.4
+   }
   },
   {
    "id": "numpy.dot-matmul-patterns",
@@ -321,7 +325,10 @@
    "prereqs": [
     "numpy.linalg-basics",
     "numpy.axis-reductions"
-   ]
+   ],
+   "encompassing": {
+    "numpy.linalg-basics": 0.6
+   }
   },
   {
    "id": "numpy.stack-concat-interleave",
@@ -348,7 +355,10 @@
    "syntax": false,
    "prereqs": [
     "einops.pattern-language"
-   ]
+   ],
+   "encompassing": {
+    "einops.pattern-language": 0.7
+   }
   },
   {
    "id": "einops.split-axes",
@@ -357,7 +367,10 @@
    "syntax": false,
    "prereqs": [
     "einops.merge-axes"
-   ]
+   ],
+   "encompassing": {
+    "einops.merge-axes": 0.7
+   }
   },
   {
    "id": "einops.singleton-and-lists",
@@ -375,7 +388,10 @@
    "syntax": false,
    "prereqs": [
     "einops.split-axes"
-   ]
+   ],
+   "encompassing": {
+    "einops.split-axes": 0.7
+   }
   },
   {
    "id": "einops.patches-space-depth",
@@ -394,7 +410,10 @@
    "prereqs": [
     "einops.pattern-language",
     "numpy.axis-reductions"
-   ]
+   ],
+   "encompassing": {
+    "einops.pattern-language": 0.7
+   }
   },
   {
    "id": "einops.pooling",
@@ -404,7 +423,11 @@
    "prereqs": [
     "einops.reduce-model",
     "einops.split-axes"
-   ]
+   ],
+   "encompassing": {
+    "einops.split-axes": 0.7,
+    "einops.reduce-model": 0.7
+   }
   },
   {
    "id": "einops.repeat-model",
@@ -413,7 +436,10 @@
    "syntax": false,
    "prereqs": [
     "einops.split-axes"
-   ]
+   ],
+   "encompassing": {
+    "einops.split-axes": 0.7
+   }
   },
   {
    "id": "einops.dl-flatten-heads",
@@ -423,7 +449,11 @@
    "prereqs": [
     "einops.merge-axes",
     "einops.split-axes"
-   ]
+   ],
+   "encompassing": {
+    "einops.merge-axes": 0.7,
+    "einops.split-axes": 0.7
+   }
   },
   {
    "id": "einops.channel-groups-temporal",
@@ -433,7 +463,11 @@
    "prereqs": [
     "einops.dl-flatten-heads",
     "einops.pooling"
-   ]
+   ],
+   "encompassing": {
+    "einops.dl-flatten-heads": 0.7,
+    "einops.pooling": 0.7
+   }
   },
   {
    "id": "torch.out-argument",
@@ -443,7 +477,10 @@
    "prereqs": [
     "numpy.ranges",
     "numpy.slicing-views"
-   ]
+   ],
+   "encompassing": {
+    "numpy.ranges": 0.4
+   }
   },
   {
    "id": "torch.slice-assignment",
@@ -543,6 +580,9 @@
     "numpy.broadcasting-rules",
     "numpy.ranges"
    ],
+   "encompassing": {
+    "numpy.broadcasting-rules": 0.4
+   },
    "arena_section": "0.0",
    "assessment": "composite"
   },
@@ -558,6 +598,9 @@
     "numpy.boolean-masking",
     "numpy.dtype-astype"
    ],
+   "encompassing": {
+    "tensor.stable-probabilities": 0.4
+   },
    "arena_section": "0.0",
    "assessment": "composite"
   },
@@ -665,6 +708,9 @@
     "numpy.dot-matmul-patterns",
     "python.defining-functions"
    ],
+   "encompassing": {
+    "numpy.dot-matmul-patterns": 0.4
+   },
    "arena_section": "0.2",
    "assessment": "composite"
   },
@@ -697,6 +743,10 @@
     "numpy.dtype-astype",
     "python.control-flow"
    ],
+   "encompassing": {
+    "numpy.dtype-astype": 0.4,
+    "numpy.ndarray-model": 0.4
+   },
    "arena_section": "0.2",
    "assessment": "composite"
   },
@@ -714,6 +764,9 @@
     "numpy.argmin-argmax",
     "numpy.reshape-flatten"
    ],
+   "encompassing": {
+    "numpy.dot-matmul-patterns": 0.4
+   },
    "arena_section": "0.2",
    "assessment": "composite"
   },
@@ -761,6 +814,9 @@
     "numpy.sorting",
     "tensor.row-normalization"
    ],
+   "encompassing": {
+    "cnn.module-state": 0.4
+   },
    "arena_section": "0.2",
    "assessment": "composite"
   },
@@ -790,6 +846,128 @@
     "python.control-flow",
     "numpy.stack-concat-interleave"
    ],
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.sequential",
+   "lesson": "ar-02",
+   "title": "Chain modules in order",
+   "syntax": true,
+   "prereqs": [
+    "cnn.module-state",
+    "cnn.batch-normalization",
+    "python.control-flow",
+    "python.lists-and-tuples"
+   ],
+   "encompassing": {
+    "cnn.module-state": 0.5
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.residual-block",
+   "lesson": "ar-02",
+   "title": "A residual block adds its input back",
+   "syntax": true,
+   "prereqs": [
+    "cnn.sequential",
+    "cnn.convolution-2d",
+    "cnn.batch-normalization"
+   ],
+   "encompassing": {
+    "cnn.sequential": 0.5,
+    "cnn.convolution-2d": 0.4,
+    "cnn.batch-normalization": 0.3
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.block-group",
+   "lesson": "ar-02",
+   "title": "Stack residual blocks, stride only in the first",
+   "syntax": false,
+   "prereqs": [
+    "cnn.residual-block",
+    "python.control-flow"
+   ],
+   "encompassing": {
+    "cnn.residual-block": 0.7
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.resnet34",
+   "lesson": "ar-02",
+   "title": "Assemble ResNet34 from stem, groups and head",
+   "syntax": true,
+   "prereqs": [
+    "cnn.block-group",
+    "cnn.pooling",
+    "cnn.linear-layer",
+    "cnn.sequential"
+   ],
+   "encompassing": {
+    "cnn.block-group": 0.5,
+    "cnn.pooling": 0.3,
+    "cnn.sequential": 0.3,
+    "cnn.linear-layer": 0.2
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.feature-extraction",
+   "lesson": "ar-02",
+   "title": "Reuse pretrained weights: copy, freeze, replace the head",
+   "syntax": true,
+   "prereqs": [
+    "cnn.resnet34",
+    "cnn.module-state",
+    "cnn.linear-layer"
+   ],
+   "encompassing": {
+    "cnn.module-state": 0.3,
+    "cnn.resnet34": 0.2
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.training-loop",
+   "lesson": "ar-02",
+   "title": "A training loop over batches: forward, loss, backward, step, validate",
+   "syntax": true,
+   "prereqs": [
+    "cnn.mlp",
+    "tensor.classifier-evaluation",
+    "python.control-flow",
+    "cnn.batch-normalization",
+    "cnn.feature-extraction"
+   ],
+   "encompassing": {
+    "cnn.mlp": 0.3,
+    "tensor.classifier-evaluation": 0.3,
+    "cnn.feature-extraction": 0.3
+   },
+   "arena_section": "0.2",
+   "assessment": "composite"
+  },
+  {
+   "id": "cnn.forward-hooks",
+   "lesson": "ar-02",
+   "title": "Hooks watch a module's output",
+   "syntax": true,
+   "prereqs": [
+    "cnn.sequential",
+    "cnn.module-state"
+   ],
+   "encompassing": {
+    "cnn.module-state": 0.3
+   },
    "arena_section": "0.2",
    "assessment": "composite"
   }

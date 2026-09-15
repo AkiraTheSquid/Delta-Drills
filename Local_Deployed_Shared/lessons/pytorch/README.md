@@ -70,4 +70,5 @@
   - Status: `ACTIVE`
 
 ## Recent Changes
+- 2026-09-14: ar-02 gap filled — 7 KPs (`kp-sequential`, `kp-residual-block`, `kp-block-group`, `kp-resnet34`, `kp-feature-extraction`, `kp-training-loop`, `kp-forward-hooks`), 97 drills (q1374–q1470), registry `encompassing` edges, 7 atoms in `arena_drillable_v1.json`, `arena_exercise_kcs.json` "0-2" +10 ARENA defs. BatchNorm2d/MaxPool2d grounding debt accepted (ARENA calls its own same-named classes).
 - 2026-09-06: Lesson created — 4 KPs, 44 drills (q798–q841), atoms and glossary wired.

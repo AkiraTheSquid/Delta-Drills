@@ -10,7 +10,8 @@ q798–q841. The cheap structural checks worth running on every edit:
     `repeat_interleave` were removed on 2026-09-06 because the grounding
     ratchet rejects them, and a copy-paste from a numpy page could bring
     them back;
-  * every faded fence has at least one blank, and every drill id the page
+  * every faded fence is a whole-function stub or a `_____` scaffold that
+    hides every `new_syntax` symbol, and every drill id the page
     claims exists in the bank.
 
 Files are parsed, never executed — scripts/validate_lessons.py runs the
@@ -79,10 +80,17 @@ def check_invariants():
         fm = _frontmatter(text)
         for fence in re.findall(r'```python starter\n(.*?)```', text, re.S):
             from scripts.content_safety import is_stub
-            if min(_ids(fm['faded']) or [0]) >= 993:
-                assert is_stub(fence), f'{name}: new fading must use an ARENA-style whole-function stub'
-            else:
-                assert '_____' in fence or is_stub(fence), f'{name}: faded starter is a complete implementation'
+            from scripts.lesson_lib import blank_new_syntax
+            assert '_____' in fence or is_stub(fence), f'{name}: faded starter is a complete implementation'
+            if min(_ids(fm['faded']) or [0]) >= 993 and not is_stub(fence):
+                # 2026-09-14: the 09-11 rule was "stub only" for new pages. That
+                # contradicted AUTHORING ("every new_syntax symbol must be
+                # blanked, everything else may stay") and Astra flagged the
+                # pass-only stubs as GIVE_RUNG. A scaffold is allowed when it
+                # leaks no new_syntax symbol — blank_new_syntax is a no-op on it.
+                syms = re.findall(r"""['"]([^'"]+)['"]""", fm.get('new_syntax', ''))
+                assert blank_new_syntax(fence, syms) == fence, \
+                    f'{name}: faded scaffold leaves a new_syntax symbol visible'
         claimed = _ids(fm['faded']) + _ids(fm['independent']) + _ids(fm['integrated'])
         assert len(_ids(fm['faded'])) >= 2, f'{name}: Faded floor is 2'
         assert len(_ids(fm['independent'])) >= 6, f'{name}: Solo floor is 6'

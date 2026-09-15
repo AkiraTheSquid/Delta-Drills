@@ -38,6 +38,14 @@ def check_the_clock_is_the_problems_own():
          the resume reads it first: a resume rebuilt from the static bank
          (no stamp) is timed the way the question was served.
       5. The picker is gone from the idle screen and from index.html.
+      6. (2026-09-14) The learner may SCALE the problem's clock, never replace
+         it: practice/session-clock-scale.js holds one factor in (0.1 … 1],
+         default 1, and session-clock.js multiplies the problem's own number
+         by it AFTER the ceiling clamp, whole seconds, ≥ 1. Absent the scale
+         file the clock is exactly the table. Seth: "a multiplier for less
+         time. so you would give .5 for half as much time as you would
+         usually get." A factor > 1 is refused — the table is the most a
+         practice question gets, since the placement charges the same cap.
     """
     timer = read(os.path.join(HERE, "timer.js"))
     for name in ("ANSWER_SECS", "REVIEW_SECS"):
@@ -103,10 +111,20 @@ def check_the_clock_is_the_problems_own():
             f"session-clock.js has `{banned}` again — a stored choice is a "
             f"clock that is not the problem's"
         )
+    scale = read(os.path.join(HERE, "session-clock-scale.js"))
+    assert "window.SessionClockScale" in clock, (
+        "session-clock.js no longer applies the learner's multiplier"
+    )
     index = read(os.path.join(SHARED, "index.html"))
     assert 'id="question-clock-picker"' not in index, (
         "the idle screen has the per-question picker back — the choice Seth "
         "removed on 2026-09-09 has a place to be made again"
+    )
+    assert 'id="session-clock-scale"' in index, (
+        "the idle screen lost the time multiplier input"
+    )
+    assert index.index("practice/session-clock-scale.js") < index.index("practice/session-clock.js?"), (
+        "session-clock-scale.js must load BEFORE session-clock.js, which reads it"
     )
     assert index.index("practice/session-clock.js") < index.index("practice/timer.js?"), (
         "session-clock.js must load BEFORE timer.js, which reads it"
@@ -151,6 +169,70 @@ for (const bad of [null, undefined, 0, -5, "300", true, NaN]) {
   eq(C.answerSecs(), 1200, `unstamped (${String(bad)}) = the ceiling, never no-limit`);
   eq(C.isUnlimited(), false, `unstamped (${String(bad)}) is not unlimited`);
 }
+"""
+    proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
+    assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()
+
+    # The multiplier, run with both files and a refusing localStorage: it
+    # scales the problem's number after the ceiling, defaults to 1, refuses
+    # anything outside (0.1 … 1], survives a storage that keeps nothing, and
+    # never scales a clock below one second.
+    probe = """
+const window = {};
+let PracticeAPI = { currentQuestion: null };
+const store = new Map();
+let refuse = false;
+const localStorage = {
+  getItem: (k) => (store.has(k) ? store.get(k) : null),
+  setItem: (k, v) => { if (refuse) throw new Error("refused"); store.set(k, String(v)); },
+};
+let account = "test";
+const getPracticeStorageKey = () => `practice_progress_${account}`;
+""" + scale + clock + """
+const eq = (got, want, why) => {
+  if (got !== want) {
+    console.error(`FAIL ${why}: got ${JSON.stringify(got)} want ${JSON.stringify(want)}`);
+    process.exit(1);
+  }
+};
+const S = window.SessionClockScale;
+const C = window.SessionClock;
+eq(S.MAX, 1, "a factor may not exceed 1 — the table is the most a practice question gets");
+eq(S.factor(), 1, "default factor is 1");
+PracticeAPI.currentQuestion = { secs_allowed: 300 };
+eq(C.answerSecs(), 300, "at 1 the clock is the table");
+eq(S.set(0.5), 0.5, "0.5 is accepted");
+eq(C.answerSecs(), 150, "0.5 halves the problem's own clock");
+eq(C.reviewSecs(), 150, "review is scaled alike");
+eq(C.secsFor({ secs_allowed: 300 }), 150, "secsFor (the snapshot's copy) is the scaled number");
+eq(C.rawSecsFor({ secs_allowed: 300 }), 300, "rawSecsFor is the table");
+PracticeAPI.currentQuestion = { secs_allowed: 99999 };
+eq(C.answerSecs(), 600, "scaled AFTER the ceiling clamp");
+PracticeAPI.currentQuestion = null;
+eq(C.answerSecs(), 600, "the ceiling fallback is scaled too");
+for (const bad of [0, -1, 1.5, 2, "abc", "", null, undefined, Infinity, NaN, true, 0.09]) {
+  eq(S.set(bad), 0.5, `refused (${String(bad)}) leaves the factor in force`);
+}
+eq(S.set(" .25 "), 0.25, "a padded decimal string cleans to a number");
+eq(S.set(1), 1, "1 is accepted (the table as written)");
+eq(S.set(0.1), 0.1, "the floor is accepted");
+eq(S.apply(1), 1, "never below one second");
+eq(S.apply(null), null, "no limit passes through untouched");
+refuse = true;
+eq(S.set(0.75), 0.75, "a choice storage refused is still the choice");
+eq(S.factor(), 0.75, "…and it is in force for this page load");
+account = "other";
+eq(S.factor(), 1, "a refused choice does not follow the page onto another account");
+account = "test";
+eq(S.factor(), 0.75, "…and is still in force back on its own");
+refuse = false;
+eq(S.set(0.75), 0.75, "committing the same value again retries the write");
+eq(store.get("practice_progress_test_clock_scale"), "0.75", "…and a recovered store now holds it");
+refuse = true;
+eq(S.set(0.6), 0.6, "refused again");
+refuse = false;
+store.set("practice_progress_test_clock_scale", "0.3");
+eq(S.factor(), 0.3, "a later real write wins over the volatile choice");
 """
     proc = subprocess.run(["node", "-e", probe], capture_output=True, text=True)
     assert proc.returncode == 0, (proc.stderr or proc.stdout).strip()

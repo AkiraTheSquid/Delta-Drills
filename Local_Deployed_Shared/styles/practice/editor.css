@@ -5,6 +5,12 @@
   padding-top: 18px;
 }
 
+.solution-section-einops {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-top: 18px;
+}
+
 .solution-label {
   font-size: 12px;
   font-weight: 600;

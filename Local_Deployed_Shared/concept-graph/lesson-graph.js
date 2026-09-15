@@ -375,6 +375,23 @@
   let childrenOf = {};    // id -> [dependent ids]
   let selectedKc = null;
 
+  /* How integrated a concept is = how many concepts its ENCOMPASSING edges
+     reach transitively (a flashcard node reaches none; ResNet34 reaches the
+     whole 0.2 stack). Only encompassing edges are followed — a plain
+     prerequisite gates but is not exercised, so it does not count. */
+  const integrationIndex = (id) => {
+    const seen = new Set();
+    const stack = [id];
+    while (stack.length) {
+      const cur = stack.pop();
+      const enc = (kcById[cur] || {}).encompassing || {};
+      Object.keys(enc).forEach((p) => {
+        if (!seen.has(p) && kcById[p]) { seen.add(p); stack.push(p); }
+      });
+    }
+    return seen.size;
+  };
+
   /* ---------------- tiny markdown renderer ----------------------------- */
   const esc = (v) =>
     String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -1130,6 +1147,9 @@
     html += cell("Lesson", `${esc(lm.title || kc.lesson || "—")} <span class="kg2-md-dim">(${esc(kc.lesson || "—")})</span>`);
     html += cell("Topic", esc(_kcTopic(id) || "—"));
     html += cell("Prerequisites", (parentsOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
+    const enc = kc.encompassing || {};
+    html += cell("Encompasses", Object.keys(enc).map((p) => `<code>${esc(p)}</code> <span class="kg2-md-dim">×${esc(String(enc[p]))}</span>`).join(" ") || "none");
+    html += cell("Integration index", `${integrationIndex(id)} <span class="kg2-md-dim">concepts reached by encompassing edges</span>`);
     html += cell("Unlocks", (childrenOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
     if (kp.segments && kp.segments.length) html += cell("Segments", String(kp.segments.length));
     if (row) {
@@ -1551,9 +1571,13 @@
   // Whether the Category legend's family list is unfolded. Module-level
   // because buildLegend() rewrites the element it lives on.
   let legendFoldOpen = true;
-  const _disabledLegend = () => dimDisabled
+  const _disabledLegend = () => (dimDisabled
     ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>'
-    : "";
+    : "") + _edgeLegend();
+  // Edge kinds are the same in every colour mode, so every legend carries them.
+  const _edgeLegend = () =>
+    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-enc"></span>Encompasses — practising it also practises the parent (thicker = more)</span>' +
+    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-pre"></span>Prerequisite only — must be known first</span>';
   const buildLegend = () => {
     const el = $("kg-legend");
     if (!el) return;
@@ -1877,10 +1901,20 @@
     Object.values(kcById).forEach((k) => {
       elements.push({ data: { id: k.id, label: k.title, lesson: k.lesson } });
     });
+    // Two kinds of edge share one arrow head. A prerequisite edge is the
+    // gate: the parent must be known first. An ENCOMPASSING edge is a
+    // prerequisite edge with a weight in (0,1]: working the child also works
+    // that much of the parent (SPEC_CHAPTER0_GRAPH.md). Encompassing edges are
+    // always a subset of the prereqs — the registry audit enforces it — so a
+    // node's integration index is just the size of its transitive
+    // encompassing closure, computed here rather than stored.
     let ei = 0;
     Object.values(kcById).forEach((k) => {
+      const enc = k.encompassing || {};
       (k.prereqs || []).forEach((p) => {
-        if (kcById[p]) elements.push({ data: { id: "e" + (ei++), source: p, target: k.id } });
+        if (!kcById[p]) return;
+        const w = typeof enc[p] === "number" ? enc[p] : 0;
+        elements.push({ data: { id: "e" + (ei++), source: p, target: k.id, w, kind: w > 0 ? "encompassing" : "prereq" } });
       });
     });
 
@@ -1905,6 +1939,10 @@
             "curve-style": "bezier", "width": 1.8, "line-color": "#e3212c",
             "target-arrow-shape": "triangle", "target-arrow-color": "#e3212c", "arrow-scale": 0.8, "opacity": 0.9,
         }},
+        // A plain prerequisite only gates; it is drawn thin and dashed so the
+        // solid, weighted encompassing edges read as the load-bearing ones.
+        { selector: "edge[kind = 'prereq']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.2, "opacity": 0.55 } },
+        { selector: "edge[kind = 'encompassing']", style: { "line-style": "solid", "width": (e) => 1.5 + 3 * (e.data("w") || 0), "opacity": 0.95 } },
         { selector: ".faded", style: { "opacity": 0.1 } },
         { selector: "node.hl", style: { "opacity": 1, "border-width": 3, "border-color": ACCENT, "z-index": 50 } },
         { selector: "node.hl-strong", style: { "opacity": 1, "border-width": 5, "border-color": ACCENT, "font-size": 12, "z-index": 99 } },

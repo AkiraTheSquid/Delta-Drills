@@ -386,6 +386,48 @@
    "kc": "cnn.batch-normalization"
   },
   {
+   "id": "kc:cnn.sequential",
+   "kind": "kc",
+   "title": "Chain modules in order",
+   "kc": "cnn.sequential"
+  },
+  {
+   "id": "kc:cnn.residual-block",
+   "kind": "kc",
+   "title": "A residual block adds its input back",
+   "kc": "cnn.residual-block"
+  },
+  {
+   "id": "kc:cnn.block-group",
+   "kind": "kc",
+   "title": "Stack residual blocks, stride only in the first",
+   "kc": "cnn.block-group"
+  },
+  {
+   "id": "kc:cnn.resnet34",
+   "kind": "kc",
+   "title": "Assemble ResNet34 from stem, groups and head",
+   "kc": "cnn.resnet34"
+  },
+  {
+   "id": "kc:cnn.feature-extraction",
+   "kind": "kc",
+   "title": "Reuse pretrained weights: copy, freeze, replace the head",
+   "kc": "cnn.feature-extraction"
+  },
+  {
+   "id": "kc:cnn.training-loop",
+   "kind": "kc",
+   "title": "A training loop over batches: forward, loss, backward, step, validate",
+   "kc": "cnn.training-loop"
+  },
+  {
+   "id": "kc:cnn.forward-hooks",
+   "kind": "kc",
+   "title": "Hooks watch a module's output",
+   "kc": "cnn.forward-hooks"
+  },
+  {
    "id": "section:0-0",
    "kind": "section",
    "section": "0-0",
@@ -2556,7 +2598,9 @@
    "answer_cell": "0-2-c080",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.residual-block"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2598,7 +2642,9 @@
    "answer_cell": "0-2-c083",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.block-group"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -2628,7 +2674,9 @@
    "answer_cell": "0-2-c086",
    "kind": "exercise",
    "chapter": "Chapter 0 — Fundamentals",
-   "prep_kcs": [],
+   "prep_kcs": [
+    "cnn.resnet34"
+   ],
    "concepts": [
     {
      "id": "nn-module-subclass",
@@ -17109,6 +17157,121 @@
    "relation": "prerequisite"
   },
   {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.sequential",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.batch-normalization",
+   "target": "kc:cnn.sequential",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.sequential",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.lists-and-tuples",
+   "target": "kc:cnn.sequential",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.sequential",
+   "target": "kc:cnn.residual-block",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.convolution-2d",
+   "target": "kc:cnn.residual-block",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.batch-normalization",
+   "target": "kc:cnn.residual-block",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.residual-block",
+   "target": "kc:cnn.block-group",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.block-group",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.block-group",
+   "target": "kc:cnn.resnet34",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.pooling",
+   "target": "kc:cnn.resnet34",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.linear-layer",
+   "target": "kc:cnn.resnet34",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.sequential",
+   "target": "kc:cnn.resnet34",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.resnet34",
+   "target": "kc:cnn.feature-extraction",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.feature-extraction",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.linear-layer",
+   "target": "kc:cnn.feature-extraction",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.mlp",
+   "target": "kc:cnn.training-loop",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:tensor.classifier-evaluation",
+   "target": "kc:cnn.training-loop",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:python.control-flow",
+   "target": "kc:cnn.training-loop",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.batch-normalization",
+   "target": "kc:cnn.training-loop",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.feature-extraction",
+   "target": "kc:cnn.training-loop",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.sequential",
+   "target": "kc:cnn.forward-hooks",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:cnn.module-state",
+   "target": "kc:cnn.forward-hooks",
+   "relation": "prerequisite"
+  },
+  {
    "source": "section:0-0",
    "target": "topic:0-0-c036",
    "relation": "lesson_topic"
@@ -18744,6 +18907,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:cnn.residual-block",
+   "target": "exercise:0-2-c079",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:nn-module-subclass",
    "target": "exercise:0-2-c079",
    "relation": "exercises_concept"
@@ -18784,6 +18952,11 @@
    "relation": "topic_exercise"
   },
   {
+   "source": "kc:cnn.block-group",
+   "target": "exercise:0-2-c082",
+   "relation": "prepares"
+  },
+  {
    "source": "concept:nn-module-subclass",
    "target": "exercise:0-2-c082",
    "relation": "exercises_concept"
@@ -18807,6 +18980,11 @@
    "source": "topic:0-2-c078",
    "target": "exercise:0-2-c085",
    "relation": "topic_exercise"
+  },
+  {
+   "source": "kc:cnn.resnet34",
+   "target": "exercise:0-2-c085",
+   "relation": "prepares"
   },
   {
    "source": "concept:nn-module-subclass",
