@@ -81,7 +81,11 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     if not practice_targets.allows_question(user_state, qid):
         return False
     if kc_graph.question_kcs(qid):
-        return kc_graph.question_kc_gate(user_state, qid)
+        if not kc_graph.question_kc_gate(user_state, qid):
+            return False
+        return lessons.question_is_segment_unlocked(
+            qid, practice_targets.effective_exposure(user_state)
+        )
     tags = getattr(question, "atom_tags", None) or []
     if not tags:
         return True

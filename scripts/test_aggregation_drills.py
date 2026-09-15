@@ -83,8 +83,13 @@ class AggregationDrillsTests(unittest.TestCase):
         # assertion distinguishes the correct Python return type here.
         cases = [{'setup_code': 'x = 3', 'call': 'solve(x)', 'expected_expr': '3.0',
                   'assert_code': 'assert type(result) is float'}]
-        source = (ROOT / 'Local_Deployed_Shared/practice/api.js').read_text()
-        harness = source.split('const resultJson = pyodide.runPython(`', 1)[1].split('`);', 1)[0]
+        # Submit's Pyodide harness moved to test-check.js so Run and Submit
+        # share one implementation. Extract its template literal for this
+        # cross-grader parity check; keep the test independent of browser libs.
+        source = (ROOT / 'Local_Deployed_Shared/practice/test-check.js').read_text()
+        start = source.index('const harness = (testCases) => {')
+        end = source.index('  /* Run the question\'s function tests', start)
+        harness = source[start:end].split('return `', 1)[1].rsplit('`;', 1)[0]
         harness = harness.replace('${testsJsonLiteral}', json.dumps(json.dumps(cases)))
         for body, wanted in [('return float(x)', True), ('return x', False)]:
             solution = 'def solve(x):\n    ' + body

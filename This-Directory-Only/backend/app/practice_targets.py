@@ -85,8 +85,15 @@ def solo_entry(user_state, kc):
 
 def effective_exposure(user_state):
     """Skip introductory gates justified by placement without writing lesson completion."""
-    return {**{k: placement(user_state)["completed_at"] for k in readiness(user_state)},
-            **user_state.kc_exposure}
+    from app import lessons
+    lessons._load()
+    placed_at = placement(user_state).get("completed_at", "")
+    placed_map = {}
+    for k in readiness(user_state):
+        placed_map[k] = placed_at
+        for seg in lessons._kc_segments.get(k, []):
+            placed_map[f"{k}#{seg['concept_id']}"] = placed_at
+    return {**placed_map, **user_state.kc_exposure}
 
 
 def pick_probe(user_state, candidates):

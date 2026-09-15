@@ -27,7 +27,7 @@ from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
 from app.adaptive import get_user_state  # noqa: E402
 from app.prioritization import question_is_unlocked  # noqa: E402
-from app.questions import get_all_questions  # noqa: E402
+from app.questions import get_all_questions, get_every_question  # noqa: E402
 
 fails = []
 
@@ -42,23 +42,13 @@ def check(name, cond, detail=""):
 lessons._load()
 # 🔴 DERIVED, never a frozen count. Both of these used to be magic numbers
 # (416 tagged questions, 63 KCs) and both had been failing for weeks: every
-# drill Seth authors moves the first and every retirement moves the second, so
-# the numbers rotted on their own and the failure said nothing about the gate.
-# The SIZE floors are owned by Local_Deployed_Shared/lessons/watch.py
-# (_MIN_KCS, _MIN_TAGGED_QUESTIONS) — one place, and it is the one the deploy
-# gate reads. What is left here is the pair of invariants this suite is
-# actually about, each stated against another file so it cannot go stale:
-#   - every KC the registry declares has an introducing KP, or a learner can
-#     reach a concept the gate has no lesson to send them to;
-#   - every tagged question id is a real question, or a retirement left tags
-#     pointing at drills that no longer exist.
 _registry = lessons._read_json("kc_registry.json") or {}
 _registry_kcs = {kc["id"] for kc in _registry.get("kcs", [])}
 _missing_kp = sorted(_registry_kcs - set(lessons._kc_gate_info))
 check("every registered KC has an introducing KP", not _missing_kp,
       f"{len(_missing_kp)} without one: {_missing_kp[:5]}")
 
-_bank_ids = {q.id for q in get_all_questions()}
+_bank_ids = {q.id for q in get_every_question()}
 _orphan_tags = sorted(set(lessons._question_target_kcs) - _bank_ids)
 check("no qmatrix tag points at a retired question", not _orphan_tags,
       f"{len(_orphan_tags)} orphaned: {_orphan_tags[:5]}")
@@ -69,8 +59,12 @@ gate = lessons.unexposed_target_kcs(1, {})
 check("unexposed target KC gates", bool(gate) and gate[0]["kc"] == "numpy.argmin-argmax")
 check("gate entry carries lesson pointers",
       bool(gate) and all(k in gate[0] for k in ("kc_title", "kp_title", "lesson_id", "lesson_title", "topic")))
+_exposed_argmin = {
+    "numpy.argmin-argmax": "ts",
+    **{f"numpy.argmin-argmax#{seg['concept_id']}": "ts" for seg in lessons._kc_segments.get("numpy.argmin-argmax", [])},
+}
 check("exposed KC does not gate",
-      lessons.unexposed_target_kcs(1, {"numpy.argmin-argmax": "ts"}) == [])
+      lessons.unexposed_target_kcs(1, _exposed_argmin) == [])
 check("untagged question does not gate", lessons.unexposed_target_kcs(999999, {}) == [])
 
 _duplicate_qid = -1
@@ -119,7 +113,8 @@ check("exposure survives state reload", "numpy.argmin-argmax" in resp["exposed"]
 # a fresh user has nothing unlocked there: /next-question 404d, the response
 # had no `lesson_gate` key at all and the suite died on a KeyError two checks
 # from the end. Ask the lattice which subtopic is open instead.
-qr = sys.modules["app.practice.questions_router"]
+from app.practice import question_pick  # noqa: E402
+from app import prioritization  # noqa: E402
 _probe_state = get_user_state(str(user.id))
 _open = [
     q for q in get_all_questions()
@@ -129,9 +124,10 @@ check("a fresh learner has an unlocked, gated question to be served", bool(_open
       f"{len(_open)} unlocked and gated"
       if _open else "nothing unlocked carries a lesson gate — no first drill")
 _gate_subtopic = _open[0].subtopic if _open else ""
-_orig_select = qr.select_next_subtopic
+_orig_select = question_pick.select_next_subtopic
 _orig_should_run = diagnostic.should_run
-qr.select_next_subtopic = lambda st, **kw: _gate_subtopic
+question_pick.select_next_subtopic = lambda st, **kw: _gate_subtopic
+prioritization.select_next_subtopic = lambda st, **kw: _gate_subtopic
 diagnostic.should_run = lambda st: False
 try:
     data = client.get("/api/practice/next-question").json()
@@ -145,7 +141,8 @@ try:
     check("gate clears after exposure", not any(kc in again for kc in gate_kcs),
           f"qid {data2['question_id']} -> {again}")
 finally:
-    qr.select_next_subtopic = _orig_select
+    question_pick.select_next_subtopic = _orig_select
+    prioritization.select_next_subtopic = _orig_select
     diagnostic.should_run = _orig_should_run
 app.dependency_overrides.clear()
 

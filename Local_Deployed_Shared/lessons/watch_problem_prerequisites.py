@@ -2,9 +2,9 @@
 """Fail when a served question's declared API has no teachable KC first.
 
 `qmatrix_tags.json:new_syntax` is the per-question API contract. Runtime
-`LessonGate` blocks the question until every target KC is exposed, unless a
-mapped atom is above 85% mastery. This watch checks the static half: each API
-must have an owning lesson KC at or before every KC the question targets.
+`LessonGate` blocks the question until every target KC is exposed. This watch
+checks the static half: each API must have an owning lesson KC at or before
+every KC the question targets.
 
 Run: python3 Local_Deployed_Shared/lessons/watch_problem_prerequisites.py
 """

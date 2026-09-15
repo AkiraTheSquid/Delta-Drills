@@ -836,6 +836,13 @@
        map in styles/why-map.css, the disclosures in styles/learn-about.css. -->
   <main class="page hidden" id="page-learn-about-app">
     <div class="container">
+      <div class="dd-about-editor-controls" id="about-editor-controls" hidden>
+        <span id="about-editor-status" role="status"></span>
+        <button type="button" id="about-editor-start">Edit this page</button>
+        <button type="button" id="about-editor-save" hidden>Save changes</button>
+        <button type="button" id="about-editor-discard" hidden>Discard changes</button>
+      </div>
+      <div id="about-page-content">
 
       <section class="hiw-hero">
         <h1>Why this app exists</h1>
@@ -1084,6 +1091,7 @@
         </button>
       </p>
 
+      </div>
     </div>
   </main>
 
@@ -2191,6 +2199,7 @@ t.manual_seed(0)
   <script src="groups/groups_lane.js?v=2"></script>
   <script src="groups/groups_view.js?v=5"></script>
   <script src="app.js?v=36"></script>
+  <script src="about-page-editor.js?v=1"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail

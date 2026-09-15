@@ -117,17 +117,19 @@ function makeHarness({ mode = "local", qmatrix = {}, lessons = [], fetchFailure 
     return { ok: true, status: 200, async json() { return data; } };
   };
   const context = {
-    window: {}, document, localStorage, fetch,
+    window: { dispatchEvent: () => {} }, document, localStorage, fetch,
     /* lessons.js ends with a second IIFE that reads `?lesson=<kc>` at load.
        Without these the whole file throws before a single assertion runs —
        the suite had been dead on arrival rather than failing loudly. Empty
        search = the ordinary practice flow, which is what these tests cover. */
     location: { search: "" },
     URLSearchParams,
+    CustomEvent: function CustomEvent(type, init) { this.type = type; this.detail = init?.detail; },
     practiceMode: mode,
     getPracticeStorageKey: () => "test_user",
     apiFetch: async (...args) => { apiCalls.push(args); return { status: 500, ok: false }; },
     handleExpiredToken: () => {},
+    scrollTo: () => {},
     setTimeout: (fn) => { timers.push(fn); return timers.length; },
     console: { warn: () => {} },
   };
@@ -137,7 +139,7 @@ function makeHarness({ mode = "local", qmatrix = {}, lessons = [], fetchFailure 
   return {
     gate: context.window.LessonGate,
     document,
-    overlay: () => document.body.children[0],
+    lesson: () => document.getElementById("question-text"),
     storage,
     apiCalls,
     timers,
@@ -162,39 +164,28 @@ async function run() {
   });
   let done = 0;
   assert.equal(await h.gate.maybeShow({ question_id: 7 }, () => { done++; }), true);
-  const overlay = h.overlay();
-  const button = overlay.querySelector("#lesson-gate-continue");
-  assert.equal(overlay.getAttribute("role"), "dialog");
-  assert.equal(overlay.getAttribute("aria-modal"), "true");
-  assert.equal(overlay.getAttribute("aria-hidden"), "false");
-  assert.equal(h.document.activeElement.id, "lesson-gate-title");
-  assert.equal(h.document.body.classList.contains("lesson-gate-open"), true);
-  let prevented = false;
-  overlay.listeners.keydown({
-    key: "Tab", shiftKey: true,
-    preventDefault() { prevented = true; },
-  });
-  assert.equal(prevented, true);
-  assert.equal(h.document.activeElement.id, "lesson-gate-continue");
-
+  const lesson = h.lesson();
+  let button = h.document.getElementById("lesson-continue-btn");
+  assert.match(lesson.innerHTML, /KC One/);
+  assert.match(lesson.innerHTML, /Concept/);
+  assert.doesNotMatch(lesson.innerHTML, /lesson-solution/);
+  assert.equal(h.document.body.classList.contains("lesson-mode"), true);
   button.onclick();
-  button.onclick();
+  await Promise.resolve();
   assert.equal(done, 0, "double click must not skip second concept");
   let exposed = JSON.parse(h.storage.get("test_user_kc_exposure"));
   assert.deepEqual(Object.keys(exposed), ["kc.one"]);
-  h.timers.shift()();
   button.onclick();
-  button.onclick();
+  await Promise.resolve();
   assert.equal(done, 1, "completion callback must run once");
   exposed = JSON.parse(h.storage.get("test_user_kc_exposure"));
   assert.deepEqual(Object.keys(exposed), ["kc.one", "kc.two"]);
-  assert.equal(overlay.classList.contains("hidden"), true);
-  assert.equal(overlay.getAttribute("aria-hidden"), "true");
-  assert.equal(h.document.body.classList.contains("lesson-gate-open"), false);
+  assert.equal(h.document.body.classList.contains("lesson-mode"), false);
 
   h = makeHarness({ lessons: [lessonFixture] });
   assert.equal(await h.gate.maybeShow({ diagnostic_active: true }, () => {}), false);
-  assert.equal(h.overlay(), undefined, "diagnostic must not build overlay");
+  assert.equal(h.document.body.classList.contains("lesson-mode"), false,
+    "diagnostic must not build lesson screen");
 
   h = makeHarness({ mode: "backend", lessons: [lessonFixture] });
   done = 0;
@@ -202,7 +193,7 @@ async function run() {
     question_id: 8,
     lesson_gate: [{ kc: "kc.one" }, { kc: "kc.one" }],
   }, () => { done++; }), true);
-  h.overlay().querySelector("#lesson-gate-continue").onclick();
+  h.document.getElementById("lesson-continue-btn").onclick();
   await Promise.resolve();
   assert.equal(done, 1);
   assert.equal(h.apiCalls.length, 1, "backend exposure must post once per unique KC");

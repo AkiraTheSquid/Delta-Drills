@@ -206,13 +206,16 @@ def atom_is_ready(
     now: Optional[datetime] = None,
     threshold: float = UNLOCK_THRESHOLD,
     params: BKTParams = DEFAULT_PARAMS,
+    apply_decay: bool = False,
 ) -> bool:
     """READY-TO-LEARN gate for a teaching item targeting `atom_id`: every gating
     prerequisite of the atom is mastered to >= threshold. Root atoms (no gating
     prereqs) are always ready — they are the entry points. This is the unified
-    per-atom prerequisite gate; the atom ITSELF is not required (non-circular)."""
+    per-atom prerequisite gate; the atom ITSELF is not required (non-circular).
+    Prerequisites represent curriculum milestones learned from evidence, so
+    decay does not re-lock cleared prerequisites."""
     return all(
-        current_mastery(mastery, last_ts, p, now, params) >= threshold
+        current_mastery(mastery, last_ts, p, now, params, apply_decay=apply_decay) >= threshold
         for p in prerequisites(atom_id)
     )
 
@@ -399,11 +402,15 @@ def current_mastery(
     atom_id: str,
     now: Optional[datetime] = None,
     params: BKTParams = DEFAULT_PARAMS,
+    apply_decay: bool = True,
 ) -> float:
     """Decay-adjusted P(known) for an atom right now (read without mutating).
 
     Atoms never practiced (and never FIRe-credited) sit at p_init.
+    When apply_decay=False, returns the un-decayed posterior from evidence.
     """
+    if not apply_decay:
+        return (mastery or {}).get(atom_id, params.p_init)
     return decay(mastery.get(atom_id, params.p_init), last_ts.get(atom_id), now, params)
 
 

@@ -5,7 +5,7 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 39.8,
+ "mean": 39.7,
  "kcs": {
   "cnn.batch-normalization": {
    "d": 55.9,
@@ -52,8 +52,8 @@
    "n": 13
   },
   "cnn.resnet34": {
-   "d": 47.3,
-   "n": 13
+   "d": 48.1,
+   "n": 15
   },
   "cnn.sequential": {
    "d": 46.7,
@@ -64,12 +64,12 @@
    "n": 16
   },
   "cnn.training-loop": {
-   "d": 45.3,
-   "n": 17
+   "d": 46.8,
+   "n": 20
   },
   "einops.channel-groups-temporal": {
-   "d": 45.9,
-   "n": 8
+   "d": 45.4,
+   "n": 11
   },
   "einops.dl-flatten-heads": {
    "d": 36.8,
@@ -80,24 +80,24 @@
    "n": 42
   },
   "einops.grids-montage": {
-   "d": 55.3,
-   "n": 13
+   "d": 50.7,
+   "n": 16
   },
   "einops.merge-axes": {
    "d": 38.1,
    "n": 19
   },
   "einops.patches-space-depth": {
-   "d": 59.5,
-   "n": 10
+   "d": 53.2,
+   "n": 13
   },
   "einops.pattern-language": {
-   "d": 28.8,
-   "n": 19
+   "d": 29.6,
+   "n": 20
   },
   "einops.pooling": {
-   "d": 48.0,
-   "n": 13
+   "d": 44.5,
+   "n": 16
   },
   "einops.reduce-model": {
    "d": 33.5,
@@ -124,28 +124,28 @@
    "n": 7
   },
   "numpy.axis-reductions": {
-   "d": 33.8,
-   "n": 19
+   "d": 32.2,
+   "n": 31
   },
   "numpy.boolean-masking": {
    "d": 29.9,
    "n": 7
   },
   "numpy.broadcasting-rules": {
-   "d": 41.2,
-   "n": 17
+   "d": 41.5,
+   "n": 19
   },
   "numpy.constructors": {
-   "d": 13.6,
-   "n": 18
+   "d": 17.5,
+   "n": 21
   },
   "numpy.dot-matmul-patterns": {
    "d": 31.7,
    "n": 7
   },
   "numpy.dtype-astype": {
-   "d": 17.0,
-   "n": 16
+   "d": 19.9,
+   "n": 18
   },
   "numpy.elementwise-ufuncs": {
    "d": 18.7,
@@ -160,8 +160,8 @@
    "n": 37
   },
   "numpy.random-samplers": {
-   "d": 17.7,
-   "n": 12
+   "d": 20.9,
+   "n": 14
   },
   "numpy.random-seeding": {
    "d": 23.5,
@@ -176,8 +176,8 @@
    "n": 20
   },
   "numpy.reshape-flatten": {
-   "d": 31.3,
-   "n": 49
+   "d": 31.6,
+   "n": 53
   },
   "numpy.slicing-views": {
    "d": 21.2,
@@ -196,8 +196,8 @@
    "n": 15
   },
   "numpy.views-and-copies": {
-   "d": 26.4,
-   "n": 9
+   "d": 27.2,
+   "n": 10
   },
   "python.calling-functions": {
    "d": 20.4,

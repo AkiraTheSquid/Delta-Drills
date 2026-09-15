@@ -239,14 +239,19 @@ def reload_caches() -> None:
 # --- learner-facing state -----------------------------------------------------
 
 
-def kc_mastery(user_state, kc: str, now: Optional[datetime] = None) -> Tuple[float, float, str]:
+def kc_mastery(
+    user_state, kc: str, now: Optional[datetime] = None, decay: bool = True
+) -> Tuple[float, float, str]:
     """(mastery, covered_weight, tier) for one KC.
 
-    Mastery is the crosswalk-weighted mean of the learner's decay-adjusted BKT
-    posteriors over the atoms the KC's questions exercise. Atoms with no
-    attempts sit at the learner's prior, so a fresh account lands near the BKT
-    prior everywhere — which is the honest answer and the one that makes the
-    whole lattice lock except at its roots.
+    Mastery is the crosswalk-weighted mean of the learner's BKT posteriors
+    over the atoms the KC's questions exercise. When `decay=True` (default),
+    applies time decay via `bkt_mastery.current_mastery` for display and spaced
+    review scheduling. When `decay=False`, reads un-decayed posteriors from
+    evidence, so that time elapsed does not revoke curriculum milestones.
+    Atoms with no attempts sit at the learner's prior, so a fresh account lands
+    near the BKT prior everywhere — which is the honest answer and the one that
+    makes the whole lattice lock except at its roots.
 
     `covered_weight` is the share of the KC's crosswalk weight that rests on
     atoms the learner has actually attempted; `tier` is the crosswalk's own
@@ -271,7 +276,7 @@ def kc_mastery(user_state, kc: str, now: Optional[datetime] = None) -> Tuple[flo
             continue
         atom_id = a.get("a")
         acc += w * bkt_mastery.current_mastery(
-            user_state.atom_mastery, user_state.atom_last_ts, atom_id, now=now, params=params
+            user_state.atom_mastery, user_state.atom_last_ts, atom_id, now=now, params=params, apply_decay=decay
         )
         if atom_id in (user_state.atom_mastery or {}):
             covered += w
@@ -339,7 +344,7 @@ def _served_question_ids(user_state) -> set:
 
 
 def kc_is_learned(user_state, kc: str) -> bool:
-    if kc_mastery(user_state, kc)[0] >= LEARNED_THRESHOLD:
+    if kc_mastery(user_state, kc, decay=False)[0] >= LEARNED_THRESHOLD:
         return True
     return kc_evidence_exhausted(user_state, kc)
 

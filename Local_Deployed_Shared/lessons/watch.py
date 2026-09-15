@@ -296,7 +296,7 @@ _CONTENT_GUARDS = _guard.run(None)
 def check_every_problem_api_is_taught_before_serving():
     """Question API metadata must resolve to an introducing lesson at or
     before its target KC. Runtime LessonGate uses the same target-KC contract
-    to keep the drill behind that lesson until exposure or >85% atom mastery.
+    to keep the drill behind that lesson until exposure.
     """
     path = os.path.join(_DIR, 'watch_problem_prerequisites.py')
     spec = _ilu.spec_from_file_location('watch_problem_prerequisites', path)

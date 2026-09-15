@@ -22,7 +22,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +55,8 @@ _applied_with_example: set[int] = set()
 # one, and it is why the third concept never sticks. Teaching one and drilling
 # THAT one before the next is the whole point of segmenting the markdown.
 _kc_segments: Dict[str, List[dict]] = {}
+# question_id -> (kc, segment_index) for drills assigned to a specific concept segment.
+_question_segment: Dict[int, Tuple[str, int]] = {}
 
 
 def _read_json(name: str) -> Optional[dict]:
@@ -126,6 +128,9 @@ def _load() -> None:
                 })
             if len(segments) > 1:
                 _kc_segments[kc] = segments
+                for seg_idx, seg_dict in enumerate(segments):
+                    for drill_id in seg_dict.get("drills", []):
+                        _question_segment[drill_id] = (kc, seg_idx)
 
             # Segment-level lists shadow the KP-level one (same items, grouped),
             # so read both and let the later write win — they agree by
@@ -268,8 +273,50 @@ def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
         segments = _kc_segments.get(kc) or []
         if len(segments) < 2:
             return False
-        return all(f"{kc}#{seg['concept_id']}" in kc_exposure for seg in segments)
+        return _kc_is_fully_exposed(kc, kc_exposure)
     return False
+
+
+def _kc_is_fully_exposed(kc: str, kc_exposure: Dict[str, str]) -> bool:
+    """True if this KC is exposed as a whole (single-concept KP) or if all of its segments are exposed."""
+    _load()
+    segments = _kc_segments.get(kc)
+    if segments and len(segments) > 1:
+        return all(f"{kc}#{seg['concept_id']}" in kc_exposure for seg in segments)
+    return kc in kc_exposure
+
+
+def question_is_segment_unlocked(question_id: int, kc_exposure: Dict[str, str]) -> bool:
+    """Is this question unlocked with respect to concept segments?
+
+    For a segmented KC:
+    - If the question belongs to a specific segment i, all prior segments 0..i-1
+      must be exposed in kc_exposure (or the KC itself exposed).
+    - If the question does NOT belong to a specific segment of the KC (e.g. a
+      whole-KP integrated/independent drill), ALL segments must be exposed.
+    """
+    _load()
+    qid = int(question_id)
+    kcs = _question_target_kcs.get(qid, [])
+    for kc in kcs:
+        if _kc_is_fully_exposed(kc, kc_exposure):
+            continue
+        segments = _kc_segments.get(kc)
+        if not segments or len(segments) < 2:
+            continue
+        seg_info = _question_segment.get(qid)
+        if seg_info is not None and seg_info[0] == kc:
+            seg_idx = seg_info[1]
+            for prev_idx in range(seg_idx):
+                key = f"{kc}#{segments[prev_idx]['concept_id']}"
+                if key not in kc_exposure:
+                    return False
+        else:
+            for seg in segments:
+                key = f"{kc}#{seg['concept_id']}"
+                if key not in kc_exposure:
+                    return False
+    return True
 
 
 def _segment_step(kc: str, kc_exposure: Dict[str, str]) -> dict:
@@ -345,7 +392,7 @@ def segment_drill(question, kc_exposure: Dict[str, str], served_ids) -> Optional
     from app.questions import get_question_by_id  # app.questions imports us
 
     for kc in _question_target_kcs.get(int(question.id), []):
-        if kc in kc_exposure or kc not in _kc_gate_info:
+        if _kc_is_fully_exposed(kc, kc_exposure) or kc not in _kc_gate_info:
             continue
         # Only the FIRST unexposed concept matters — it is the one being taught.
         # A concept may declare two faded drills (a fading series: the second
@@ -370,13 +417,34 @@ def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[
     _load()
     gates = []
     seen = set()
-    for kc in _question_target_kcs.get(question_id, []):
-        if kc in seen or kc in kc_exposure:
+    qid = int(question_id)
+    for kc in _question_target_kcs.get(qid, []):
+        if kc in seen or _kc_is_fully_exposed(kc, kc_exposure):
             continue
         seen.add(kc)
         info = _kc_gate_info.get(kc)
-        if info:  # a KC with no introducing KP can't be taught — never gate on it
-            gates.append({**info, **_segment_step(kc, kc_exposure)})
+        if not info:  # a KC with no introducing KP can't be taught — never gate on it
+            continue
+        segments = _kc_segments.get(kc) or []
+        seg_info = _question_segment.get(qid)
+        if seg_info is not None and seg_info[0] == kc and segments:
+            seg_idx = seg_info[1]
+            seg = segments[seg_idx]
+            exposure_key = f"{kc}#{seg['concept_id']}"
+            if exposure_key not in kc_exposure:
+                gates.append({
+                    **info,
+                    "concept_id": seg["concept_id"],
+                    "segment_title": seg["title"],
+                    "segment_index": seg_idx,
+                    "segment_total": len(segments),
+                    "exposure_key": exposure_key,
+                    "drills": list(seg["drills"]),
+                })
+        else:
+            step = _segment_step(kc, kc_exposure)
+            if step["exposure_key"] not in kc_exposure:
+                gates.append({**info, **step})
     return gates
 
 
