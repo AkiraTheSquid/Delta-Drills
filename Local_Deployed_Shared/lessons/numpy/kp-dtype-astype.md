@@ -5,8 +5,8 @@ supporting: [numpy.ndarray-model]
 new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype, torch.float64, torch.int16]
 faded: [230, 215, 51, 649, 650, 651]
 guided: [87]
-independent: [19, 652, 653, 654, 655, 656]
-integrated: [657, 658, 659]
+independent: [19, 652, 653, 654, 655, 656, 1483, 1484, 1485, 1486, 1487, 1488, 1489, 1490, 1491, 1492, 1493, 1494]
+integrated: [657, 658, 659, 1495, 1496, 1497, 1498, 1499, 1500]
 ---
 
 ## Concept: .to() — converting an existing tensor
@@ -343,6 +343,30 @@ Through an integer type and back out — what survives?
 ### q656
 Convert to a dtype you only know by name.
 
+### q1487
+Check that conversion returns a new tensor when the dtype changes.
+
+### q1488
+Preserve shape while converting a multidimensional tensor.
+
+### q1489
+Convert to bool and report the resulting values and dtype.
+
+### q1490
+Convert through int16 and measure the resulting buffer.
+
+### q1491
+Build a tensor in a named dtype and report its memory cost.
+
+### q1492
+Convert negative and positive fractions with truncation toward zero.
+
+### q1493
+Compare two dtype conversions made from the same source.
+
+### q1494
+Use a runtime dtype name to convert and describe a tensor.
+
 The two halves of this page meet here: `.to()` wants a dtype object, and
 `getattr` turns a name into one:
 
@@ -367,6 +391,24 @@ A run of integers in a named dtype, fully described.
 
 ### q659
 Two conversions from one tensor, and the original untouched.
+
+### q1495
+Combine runtime dtype lookup with conversion and memory accounting.
+
+### q1496
+Describe a converted tensor's values, shape, dtype, and byte count.
+
+### q1497
+Convert two tensors to a requested dtype and compare their memory costs.
+
+### q1498
+Use truncation and dtype lookup together on a batch of values.
+
+### q1499
+Return a complete report for a named dtype created with `arange`.
+
+### q1500
+Convert a tensor and verify both the converted copy and untouched source.
 
 ## Misconceptions
 

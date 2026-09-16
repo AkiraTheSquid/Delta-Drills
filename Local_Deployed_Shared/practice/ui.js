@@ -326,6 +326,13 @@ function renderQuestion(q, count) {
     q.topic && !subtopic.startsWith(`${q.topic}:`) ? `${q.topic}: ${subtopic}` : subtopic,
   );
   difficultyLabel.textContent = "Difficulty: " + q.difficulty + " / 100";
+  const provenance = q.provenance;
+  if (questionProvenance) {
+    const model = provenance && provenance.model;
+    const strength = provenance && provenance.strength;
+    questionProvenance.textContent = model && strength ? `Source: ${model} (${strength})` : "";
+    questionProvenance.classList.toggle("hidden", !(model && strength));
+  }
   renderQuestionIdChip(q);
   if (typeof updateGraphJump === "function") updateGraphJump(q);
   questionMetaTop.classList.add("hidden");

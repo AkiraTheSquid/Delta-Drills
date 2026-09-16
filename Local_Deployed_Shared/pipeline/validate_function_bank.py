@@ -47,6 +47,9 @@ def load_code_runner():
     spec.loader.exec_module(module)
     if BACKEND_PYTHON.exists():
         module.sys.executable = str(BACKEND_PYTHON)
+    # The validator runs outside the API startup path, so explicitly preload
+    # the local CPU torch before the code runner handles torch questions.
+    module.preload_torch()
     return module
 
 
@@ -127,7 +130,7 @@ def _extract_referenced_names(expr: str) -> set[str]:
     return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
 
 
-def _validate_test_case(code_runner, starter_code: str, case: dict) -> tuple[list[str], list[dict]]:
+def _validate_test_case(code_runner, answer_code: str, case: dict) -> tuple[list[str], list[dict]]:
     reasons: list[str] = []
     details: list[dict] = []
 
@@ -155,12 +158,27 @@ def _validate_test_case(code_runner, starter_code: str, case: dict) -> tuple[lis
 
     available_names = (
         ALLOWED_GLOBAL_NAMES
-        | _extract_defined_names(starter_code)
+        | _extract_defined_names(answer_code)
         | _extract_defined_names(setup_code)
         | _extract_defined_names(expected_setup_code)
     )
     referenced_names = _extract_referenced_names(expected_expr)
     undefined = sorted(name for name in referenced_names if name not in available_names)
+    # Names introduced as lambda parameters or comprehensions are local to the
+    # expression and must not be treated as missing fixture names.
+    try:
+        expression_tree = ast.parse(expected_expr, mode="eval")
+        local_names = {
+            node.arg
+            for node in ast.walk(expression_tree)
+            if isinstance(node, ast.arg)
+        }
+        for node in ast.walk(expression_tree):
+            if isinstance(node, ast.comprehension):
+                local_names.update(_extract_target_names(node.target))
+        undefined = [name for name in undefined if name not in local_names]
+    except SyntaxError:
+        pass
     if undefined:
         reasons.append("expected_expr_undefined_names")
         details.append(
@@ -174,11 +192,15 @@ def _validate_test_case(code_runner, starter_code: str, case: dict) -> tuple[lis
         return reasons, details
 
     harness = (
-        f"{starter_code}\n"
+        f"{answer_code}\n"
         f"{setup_code}\n"
         f"{expected_setup_code}\n"
         "_delta_expected_value = None\n"
         f"_delta_expected_value = eval({expected_expr!r}, globals())\n"
+        "if hasattr(_delta_expected_value, 'shape'):\n"
+        "    _delta_expected_value = _delta_expected_value.tolist()\n"
+        "elif isinstance(_delta_expected_value, tuple):\n"
+        "    _delta_expected_value = list(_delta_expected_value)\n"
         "print('__DELTA_EXPECTED_OK__')\n"
     )
     execution = code_runner.run_code(harness)
@@ -206,18 +228,19 @@ def main() -> None:
     for question in questions:
         if question.get("submission_mode") != "function":
             continue
-        starter_code = question.get("starter_code") or ""
+        if not question.get("test_cases"):
+            continue
         test_cases = question.get("test_cases") or []
+        starter_code = question.get("starter_code") or ""
         answer_code = question.get("answer_code") or ""
-
         failure_reasons = []
-        if "def solve" not in starter_code:
-            failure_reasons.append("starter_code_missing_solve")
+        if "def solve" not in answer_code:
+            failure_reasons.append("answer_code_missing_solve")
         if not test_cases:
             failure_reasons.append("missing_test_cases")
 
         for case in test_cases:
-            case_reasons, case_details = _validate_test_case(code_runner, starter_code, case)
+            case_reasons, case_details = _validate_test_case(code_runner, answer_code, case)
             failure_reasons.extend(case_reasons)
             if case_details:
                 failures.append(
@@ -252,7 +275,9 @@ def main() -> None:
             )
             continue
 
-        solution_code = synthesize_solution_code(starter_code, test_cases)
+        # Validate the authored canonical answer, not the learner starter. The
+        # starter intentionally returns None until the learner fills it in.
+        solution_code = answer_code
         results, execution = code_runner.run_function_tests(solution_code, test_cases)
         bad = [r for r in results if not r.passed]
         if bad:
