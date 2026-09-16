@@ -1,5 +1,5 @@
 {
- "total": 1233,
+ "total": 1251,
  "questions": {
   "64": [
    {
@@ -842,11 +842,18 @@
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['apply']"
    }
+  ],
+  "1483": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
   ]
  },
  "counts": {
   "answer_symbol_in_prompt": 130,
-  "precompute_leak": 8,
+  "precompute_leak": 9,
   "starter_passes_some_cases": 1
  }
 }

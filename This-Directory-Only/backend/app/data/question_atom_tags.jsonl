@@ -1456,3 +1456,21 @@
 {"question_id": 1468, "atoms": [{"atom_id": "nan-hook-check", "confidence": 1.0}, {"atom_id": "forward-hook-register", "confidence": 0.8}, {"atom_id": "module-composition", "confidence": 0.5}]}
 {"question_id": 1469, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "module-composition", "confidence": 0.6}]}
 {"question_id": 1470, "atoms": [{"atom_id": "forward-hook-register", "confidence": 1.0}, {"atom_id": "sequential-chain", "confidence": 0.7}]}
+{"question_id": 1483, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1484, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1485, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1486, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1487, "atoms": [{"atom_id": "torch-arange", "confidence": 0.9}]}
+{"question_id": 1488, "atoms": [{"atom_id": "torch-arange", "confidence": 0.9}]}
+{"question_id": 1489, "atoms": [{"atom_id": "torch-arange", "confidence": 0.9}]}
+{"question_id": 1490, "atoms": [{"atom_id": "torch-arange", "confidence": 0.9}]}
+{"question_id": 1491, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1492, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1493, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1494, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1495, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1496, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1497, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1498, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1499, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1500, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}

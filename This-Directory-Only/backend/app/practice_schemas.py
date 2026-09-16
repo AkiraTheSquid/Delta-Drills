@@ -46,6 +46,7 @@ class NextQuestionResponse(BaseModel):
     # Authored near-miss outputs shown under the prompt, as
     # [{"call": ..., "output": ..., "why": ...}]. Empty for most questions.
     wrong_examples: list[dict] = Field(default_factory=list)
+    provenance: dict | None = None
     hint: str | None = None  # short nudge, revealed by the Show Hint button
     # repo-relative path to the per-question solution Colab (arena-procedural-drills/…);
     # the frontend routes it to GitHub via colabUpstreamHref for the Show Answer button.

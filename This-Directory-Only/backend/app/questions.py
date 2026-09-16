@@ -331,6 +331,7 @@ class Question:
     # [{"call": ..., "output": ..., "why": ...}]. Override-only and usually
     # empty — see the note beside the override read below.
     wrong_examples: List[dict] = field(default_factory=list)
+    provenance: dict | None = None
     # Concept-graph atoms this question's solution exercises, each with a
     # confidence ∈ [0,1] (see data/question_atom_tags.jsonl). Drives the
     # per-atom BKT mastery update on submit. Empty until tags are loaded.
@@ -650,6 +651,7 @@ def _load_csv_into(
                     test_cases=test_cases,
                     submission_mode=submission_mode,
                     wrong_examples=wrong_examples,
+                    provenance=override.get("provenance") if override else None,
                 )
             )
             idx += 1

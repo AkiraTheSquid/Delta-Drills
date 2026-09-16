@@ -9442,3 +9442,87 @@ Numpy,Vectorization and broadcasting,"For x shaped (b,c,h,w), return one sum per
 
 def solve(x):
     return x.sum(dim=(1,2,3), keepdim=True)",40,
+Numpy,"Dtypes, .to(), and memory size",Convert x to float32 and return its values.,"import torch as t
+
+def solve(x):
+    return x.to(t.float32).tolist()",20
+Numpy,"Dtypes, .to(), and memory size",Convert floating values to int64; conversion truncates toward zero.,"import torch as t
+
+def solve(x):
+    return x.to(t.int64).tolist()",24
+Numpy,"Dtypes, .to(), and memory size",Return the dtype name after converting x to float64.,"import torch as t
+
+def solve(x):
+    return str(x.to(t.float64).dtype)",22
+Numpy,"Dtypes, .to(), and memory size",Return whether converting x to its existing dtype gives the same object.,"import torch as t
+
+def solve(x):
+    return x.to(x.dtype) is x",26
+Numpy,"Dtypes, .to(), and memory size",Build 0 through n-1 in the dtype named by name and return its values and dtype string.,"import torch as t
+
+def solve(n, name):
+    z=t.arange(n, dtype=getattr(t, name))
+    return (z.tolist(), str(z.dtype))",30
+Numpy,"Dtypes, .to(), and memory size",Create n ones using a dtype name and return bytes per element.,"import torch as t
+
+def solve(n, name):
+    return t.ones(n, dtype=getattr(t, name)).element_size()",28
+Numpy,"Dtypes, .to(), and memory size",Return total bytes occupied by x.,"import torch as t
+
+def solve(x):
+    return x.numel() * x.element_size()",24
+Numpy,"Dtypes, .to(), and memory size","Return x converted to int16 as a plain list, leaving x itself unchanged.","import torch as t
+
+def solve(x):
+    y=x.to(t.int16)
+    return (y.tolist(), str(x.dtype))",30
+Numpy,"Dtypes, .to(), and memory size","Return values, dtype string, and bytes per element for an arange with named dtype.","import torch as t
+
+def solve(n, name):
+    z=t.arange(n, dtype=getattr(t,name))
+    return (z.tolist(), str(z.dtype), z.element_size())",34
+Numpy,"Dtypes, .to(), and memory size",Convert x to bool and return the values and original dtype.,"import torch as t
+
+def solve(x):
+    y=x.to(t.bool)
+    return (y.tolist(), str(x.dtype))",30
+Numpy,"Dtypes, .to(), and memory size",Return float32 and float64 bytes for the same number of elements as x.,"import torch as t
+
+def solve(x):
+    return (x.numel()*t.tensor([],dtype=t.float32).element_size(), x.numel()*t.tensor([],dtype=t.float64).element_size())",36
+Numpy,"Dtypes, .to(), and memory size",Convert x using a dtype name and return converted values plus whether the original dtype stayed float32.,"import torch as t
+
+def solve(x, name):
+    y=x.to(getattr(t,name))
+    return (y.tolist(), x.dtype == t.float32)",34
+Numpy,"Dtypes, .to(), and memory size",Return the truncating int64 conversion and the original values in one tuple.,"import torch as t
+
+def solve(x):
+    y=x.to(t.int64)
+    return (y.tolist(), x.tolist())",32
+Numpy,"Dtypes, .to(), and memory size","For x, return dtype name, element size, and total bytes without changing x.","import torch as t
+
+def solve(x):
+    return (str(x.dtype), x.element_size(), x.numel()*x.element_size())",38
+Numpy,"Dtypes, .to(), and memory size",Convert x to the named dtype and report whether the conversion changed object identity.,"import torch as t
+
+def solve(x, name):
+    y=x.to(getattr(t,name))
+    return (y.tolist(), y is x)",40
+Numpy,"Dtypes, .to(), and memory size","Create a float64 arange, convert it to int16, and return both value lists and both byte sizes.","import torch as t
+
+def solve(n):
+    a=t.arange(n,dtype=t.float64)
+    b=a.to(t.int16)
+    return (a.tolist(), b.tolist(), a.element_size(), b.element_size())",44
+Numpy,"Dtypes, .to(), and memory size","Given x and a dtype name, return converted values, original dtype, and total bytes of the converted tensor.","import torch as t
+
+def solve(x, name):
+    y=x.to(getattr(t,name))
+    return (y.tolist(), str(x.dtype), y.numel()*y.element_size())",44
+Numpy,"Dtypes, .to(), and memory size","For x, make float32 and int16 versions and return each dtype name, values, and total bytes.","import torch as t
+
+def solve(x):
+    a=x.to(t.float32)
+    b=x.to(t.int16)
+    return ((a.tolist(),str(a.dtype),a.numel()*a.element_size()), (b.tolist(),str(b.dtype),b.numel()*b.element_size()))",48
