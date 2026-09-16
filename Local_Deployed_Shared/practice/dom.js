@@ -37,6 +37,7 @@ const questionVisualNote = document.getElementById("question-visual-note");
 const questionVisualCanvas = document.getElementById("question-visual-canvas");
 const subtopicLabel = document.getElementById("subtopic-label");
 const difficultyLabel = document.getElementById("difficulty-label");
+const questionProvenance = document.getElementById("question-provenance");
 const questionIdChip = document.getElementById("question-id-chip");
 const practiceSubmitArea = document.getElementById("practice-submit-area");
 const practiceSubmitBtn = document.getElementById("practice-submit-btn");
