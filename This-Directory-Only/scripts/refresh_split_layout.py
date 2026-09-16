@@ -69,7 +69,7 @@ ALLOWED_ROOT_NAMES = {
                              # able to import it, and ops/watch.py asserts that.
                              # Added 2026-08-18.
 }
-ALLOWED_ROOT_GLOBS = ("HANDOFF-*.md",)
+ALLOWED_ROOT_GLOBS = ("*.md",)
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
 
 # The Vercel CLI writes `.env.local` beside the `.vercel/` directory already
