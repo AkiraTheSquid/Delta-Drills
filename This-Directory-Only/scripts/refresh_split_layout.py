@@ -61,6 +61,7 @@ ALLOWED_ROOT_NAMES = {
                              # 2026-09-02, after it aborted a deploy: this guard
                              # walks the working tree, so .gitignore does not
                              # hide a path from it.
+    ".openclaude",           # OpenClaude agent session state / worktrees
     "ops",                   # operator tooling run from THIS machine, never by
                              # the app: the question-repair runner that drives
                              # the local `claude` CLI. Deliberately outside
@@ -68,7 +69,9 @@ ALLOWED_ROOT_NAMES = {
                              # able to import it, and ops/watch.py asserts that.
                              # Added 2026-08-18.
 }
+ALLOWED_ROOT_GLOBS = ("HANDOFF-*.md",)
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
+
 # The Vercel CLI writes `.env.local` beside the `.vercel/` directory already
 # allowed above — same tool, same directory, and `Local_Deployed_Shared/
 # .gitignore` line 2 (`.env*.local`) already excludes the whole family, so it
@@ -112,10 +115,13 @@ def main() -> None:
     for child in root.iterdir():
         if child.name in ALLOWED_ROOT_NAMES:
             continue
+        if any(fnmatch(child.name, pat) for pat in ALLOWED_ROOT_GLOBS):
+            continue
         if child.is_symlink():
             child.unlink()
             continue
         raise RuntimeError(f"Unexpected root-level path outside split layout: {child}")
+
 
 
 if __name__ == "__main__":
