@@ -567,6 +567,48 @@ def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
     return sum(vals) / len(vals) if vals else params.p_init
 
 
+def demonstrated_learner_baseline(user_state: UserPracticeState) -> Optional[float]:
+    """Calculate an empirical baseline mastery for a learner who has demonstrated
+    competence across other concepts.
+
+    If a learner has completed multiple graded drills with solid accuracy (or has
+    demonstrated mastery across practiced KCs), they are not a complete novice (p_init=0.02).
+    Seeding an unpracticed concept with their demonstrated baseline ensures they are not
+    reset to difficulty 10/100 (e.g. primitive 'return x[:k]' syntax drills).
+    """
+    total = 0
+    correct = 0
+    ladder = getattr(user_state, "kc_ladder", {}) or {}
+    for row in ladder.values():
+        for a in row.get("attempts", []):
+            if isinstance(a.get("correct"), bool):
+                total += 1
+                if a["correct"]:
+                    correct += 1
+
+    if total < 8:
+        sub_states = getattr(user_state, "subtopic_states", {}) or {}
+        st_total = 0
+        st_correct = 0
+        for st in sub_states.values():
+            n = getattr(st, "n", 0)
+            p = getattr(st, "p", 0.0)
+            if n > 0:
+                st_total += n
+                st_correct += n * p
+        if st_total > total:
+            total = int(st_total)
+            correct = int(st_correct)
+
+    if total >= 8:
+        acc = correct / total
+        if acc >= 0.70:
+            # Baseline in [0.35, 0.50] corresponding to target difficulty ~48-60.
+            # A 70% learner gets 0.35; an 85%+ learner gets ~0.46-0.50.
+            return min(0.50, max(0.35, 0.35 + (acc - 0.70) * 0.75))
+    return None
+
+
 def _aim_mastery(
     user_state: UserPracticeState, subtopic: str, kc: Optional[str]
 ) -> float:
@@ -613,10 +655,18 @@ def _aim_mastery(
         est = kc_graph.kc_estimate(user_state, kc)
         if est["n"]:
             return float(est["ci"][0])
-        mastery, _covered, tier = kc_graph.kc_mastery(user_state, kc)
-        if tier == "measured":
-            return float(mastery)
-    return subtopic_mastery(user_state, subtopic)
+        mastery, covered, tier = kc_graph.kc_mastery(user_state, kc)
+        if tier == "measured" and covered > 0:
+            val = float(mastery)
+            baseline = demonstrated_learner_baseline(user_state)
+            return max(val, baseline) if baseline is not None else val
+    fallback = subtopic_mastery(user_state, subtopic)
+    baseline = demonstrated_learner_baseline(user_state)
+    if baseline is not None:
+        return max(fallback, baseline)
+    return fallback
+
+
 
 
 def target_difficulty(

@@ -54,6 +54,14 @@ def select_question_for_difficulty(
     if not pool:
         return None
 
+    # For learners whose target difficulty is elevated (>= 35.0), bypass primitive
+    # language drills (difficulty <= 15, e.g. single-slice x[:k]) if richer
+    # drills exist in the pool.
+    if target_difficulty >= 35.0:
+        non_primitive = [q for q in pool if q.difficulty_score > 15]
+        if non_primitive:
+            pool = non_primitive
+
     if unseen:
         ranked = sorted(pool, key=lambda q: abs(q.difficulty_score - target_difficulty))
         # Explore only within a band of the target. The old flat top-3 was uniform
@@ -62,6 +70,7 @@ def select_question_for_difficulty(
         band = [q for q in ranked if abs(q.difficulty_score - target_difficulty) <= REACH]
         top_n = (band or ranked[:1])[:3]
         return random.choice(top_n)
+
 
     # Recycling. Rank by how stale the repeat is first and difficulty second:
     # seen-once beats seen-twice, and among equals the longest-ago wins. This is
