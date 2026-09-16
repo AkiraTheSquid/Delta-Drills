@@ -15,10 +15,12 @@ is checked rather than remembered.
 Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import contextlib
+import multiprocessing
 import io
 import re
 import sys
 import os
+from concurrent.futures import ProcessPoolExecutor
 
 _DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_DIR, '..'))
@@ -401,9 +403,36 @@ if __name__ == '__main__':
               check_arena_grounding_ratchet, check_declared_symbols_are_drilled,
               check_arena_index_is_current, check_graph_structure_ratchet,
               check_prose_prereq_ratchet]
-    for fn in checks:
+    # The ratchets independently read the same large content corpus. Running
+    # them one after another makes this lightweight watcher exceed Modulario's
+    # ten-second scoped-watch budget, even though each check passes. Keep the
+    # import/API/invariant checks first, then run the corpus scans in forked
+    # workers so their read-only work overlaps.
+    for fn in checks[:4]:
         try:
             fn()
         except Exception as e:
             print(f"FAIL {fn.__name__}: {e}", file=sys.stderr)
             sys.exit(1)
+
+    remaining = checks[4:]
+    try:
+        context = multiprocessing.get_context('fork')
+        with ProcessPoolExecutor(
+            max_workers=len(remaining), mp_context=context
+        ) as pool:
+            futures = [(fn, pool.submit(fn)) for fn in remaining]
+            for fn, future in futures:
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"FAIL {fn.__name__}: {e}", file=sys.stderr)
+                    sys.exit(1)
+    except (AttributeError, ValueError, RuntimeError):
+        # Keep watcher usable on platforms without fork support.
+        for fn in remaining:
+            try:
+                fn()
+            except Exception as e:
+                print(f"FAIL {fn.__name__}: {e}", file=sys.stderr)
+                sys.exit(1)
