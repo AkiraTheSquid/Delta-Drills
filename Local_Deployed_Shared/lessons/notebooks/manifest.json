@@ -134,7 +134,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Core array literacy",
    "file": "np-1.json",
-   "cells": 1581,
+   "cells": 1579,
    "questions": [
     8,
     19,
@@ -362,7 +362,6 @@
     1350,
     1351,
     1352,
-    1353,
     1354,
     1355,
     1356,
@@ -479,7 +478,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "file": "np-3.json",
-   "cells": 329,
+   "cells": 319,
    "questions": [
     37,
     84,
@@ -519,7 +518,6 @@
     976,
     977,
     978,
-    979,
     980,
     1363,
     1364,
@@ -532,14 +530,10 @@
     1471,
     1472,
     1473,
-    1474,
     1475,
-    1476,
     1477,
-    1478,
     1479,
     1480,
-    1481,
     1482
    ],
    "kcs": [
