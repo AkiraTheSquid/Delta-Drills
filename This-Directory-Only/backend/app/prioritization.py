@@ -23,6 +23,7 @@ from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
 from app import practice_targets
+from app import symbol_gate
 # Re-exported: every caller reads these off this module (question_pick, the
 # test scripts), and the history readers moved out only for size.
 from app.attempt_history import answered_question_ids, missed_question_ids  # noqa: F401
@@ -82,6 +83,10 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
         return False
     if kc_graph.question_kcs(qid):
         if not kc_graph.question_kc_gate(user_state, qid):
+            return False
+        # Every symbol the drill uses must be taught by a concept the learner
+        # has learned or read — not only its own chain. See symbol_gate.
+        if not symbol_gate.question_passes(user_state, qid):
             return False
         return lessons.question_is_segment_unlocked(
             qid, practice_targets.effective_exposure(user_state)

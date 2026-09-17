@@ -5,7 +5,7 @@ supporting: [numpy.aggregations, numpy.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-literal]
 faded: [220, 1363, 1364, 135, 1365, 1366]
 guided: [503, 504]
-independent: [108, 505, 174, 1367, 1368, 1369, 1370, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1480, 1481, 1482]
+independent: [108, 505, 174, 1367, 1368, 1369, 1370, 1471, 1472, 1473, 1475, 1477, 1479, 1480, 1482]
 integrated: [1371, 1372, 1373]
 ---
 

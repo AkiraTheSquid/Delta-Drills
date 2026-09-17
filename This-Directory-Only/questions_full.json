@@ -32082,7 +32082,7 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Two shapes are given as plain tuples of ints, `s1` and `s2`. Return the shape that broadcasting them together produces, as a plain tuple of ints. Answer the shape question WITHOUT building a tensor of either shape.",
+    "question_text": "Two shapes are given as plain tuples of ints, `s1` and `s2`. Return the shape that broadcasting them together produces, as a plain tuple of ints. PyTorch can answer this from the shapes alone, without allocating a tensor of either shape.",
     "answer_code": "import torch as t\n\n\ndef solve(s1, s2):\n    \"\"\"The shape broadcasting s1 and s2 together produces.\"\"\"\n    return tuple(t.broadcast_shapes(s1, s2))\n\n\nprint(solve((3, 1), (1, 4)))\n",
     "difficulty_score": 26,
     "difficulty_label": "easy",
@@ -32360,7 +32360,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.ones(2, 3)\nrow_scale = t.tensor([1.0, 10.0])\ncol_bias = t.tensor([0.0, 1.0, 2.0])\nsolve(x, row_scale, col_bias).tolist()",
+        "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+        "why": "Both vectors were lined up on the wrong axis: row_scale must gain a trailing axis to run down the rows, and col_bias already lines up with the columns as it is."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32405,7 +32411,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([10.0, 20.0, 30.0])\nc = t.tensor([100.0])\nsolve(a, b, c).tolist()",
+        "output": "[[1000.0, 2000.0, 3000.0], [2000.0, 4000.0, 6000.0]]",
+        "why": "Only two of the three were given their own axis; c was left flat, so it lands on the LAST axis together with b instead of on its own third axis."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32450,7 +32462,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "imgs = t.ones(2, 1, 2, 3)\nmean = t.tensor([0.0, 1.0, 2.0])\ngain = t.tensor([1.0, 10.0])\nsolve(imgs, mean, gain).tolist()",
+        "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 3'",
+        "why": "gain has one entry per IMAGE, so it must be reshaped to (b, 1, 1, 1) to broadcast against the batch axis; left flat it lines up with the channel axis and fails or scales the wrong thing."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32462,7 +32480,7 @@
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Two PyTorch tensors `a` and `b` are given. Return a tuple `(shape, table)`: `shape` is the shape broadcasting them together produces, as a plain tuple of ints, decided from the two shapes alone without building anything; `table` is their elementwise sum as a nested list. The shape must be worked out BEFORE the sum, not read off the result.",
+    "question_text": "Two PyTorch tensors `a` and `b` are given. Return a tuple `(shape, table)`: `shape` is the shape broadcasting them together produces, as a plain tuple of ints, and `table` is their elementwise sum as a nested list. The shape is decided by the broadcasting rules from the two input shapes alone.",
     "answer_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The broadcast shape, decided first, and the sum it produces.\"\"\"\n    shape = tuple(t.broadcast_shapes(a.shape, b.shape))\n    return shape, (a + b).tolist()\n\n\nprint(solve(t.arange(3.0)[:, None], t.arange(4.0)[None, :]))\n",
     "difficulty_score": 68,
     "difficulty_label": "hard",
@@ -32762,7 +32780,7 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "A signal is sampled n times at a rate of hz samples per second, with the first sample taken at time zero. Return the 1-D float tensor of the n sample times in seconds. Floating-point rounding must not accumulate from one sample to the next.",
+    "question_text": "A signal is sampled n times at a rate of hz samples per second, with the first sample taken at time zero. Return the 1-D float tensor of the n sample times in seconds. Build it from an integer count scaled once, so no rounding error accumulates from one sample to the next.",
     "answer_code": "import torch as t\n\n\ndef solve(n, hz):\n    \"\"\"The n sample times of a signal sampled at hz samples per second.\"\"\"\n    return t.arange(n) * (1.0 / hz)\n\n\nprint(solve(5, 4.0))\n",
     "difficulty_score": 30,
     "difficulty_label": "easy",
@@ -32845,7 +32863,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(1.0, 0.0, 5).tolist()",
+        "output": "[0.0, 0.25, 0.5, 0.75, 1.0]",
+        "why": "Runs upward from low to high. The prompt wants it running DOWN: high first, low last — swap the two endpoints."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32890,7 +32914,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(0, 10, 3)",
+        "output": "12",
+        "why": "Added one more step past the last value produced. arange stops BEFORE stop, and its final element is what was asked for."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32935,7 +32965,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(0.0, 1.0, 4).tolist()",
+        "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+        "why": "n points give n-1 bins. Cutting into n bins needs n+1 edges."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32980,7 +33016,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(5).tolist()",
+        "output": "[5, 4, 3, 2]",
+        "why": "The stop is exclusive, so stopping at 1 leaves 1 out. Stop at 0 to include 1."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -32992,7 +33034,7 @@
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Return the 1-D float tensor holding lo, then lo plus one step, and so on up to and INCLUDING hi. The distance from lo to hi is an exact whole number of steps. Floating-point rounding must not accumulate from one value to the next.",
+    "question_text": "Return the 1-D float tensor holding lo, then lo plus one step, and so on up to and INCLUDING hi. The distance from lo to hi is an exact whole number of steps. Work out how many values that is, then build them from an integer count scaled once, so no rounding error accumulates.",
     "answer_code": "import torch as t\n\n\ndef solve(lo, hi, step):\n    \"\"\"lo, lo+step, ... up to and including hi.\"\"\"\n    n = int(round((hi - lo) / step)) + 1\n    return lo + t.arange(n) * step\n\n\nprint(solve(0.0, 2.0, 0.5))\n",
     "difficulty_score": 52,
     "difficulty_label": "medium",
@@ -33025,7 +33067,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(0.0, 2.0, 0.5).tolist()",
+        "output": "[0.0, 0.5, 1.0, 1.5]",
+        "why": "arange stops BEFORE hi, so the final value is missing. Compute the count and build with an integer arange so rounding cannot drift either."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33070,7 +33118,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "solve(1.0, 4).tolist()",
+        "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+        "why": "With n points the last one lands ON stop. Ask for n+1 and drop the last, or use arange(n) * (stop / n)."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33115,52 +33169,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
-    "id": 971,
-    "topic": "Numpy",
-    "subtopic": "Core array literacy",
-    "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Return a tuple holding two things: the 1-D float tensor running from lo up to and including hi in steps of step, and the number of values in it as a Python int. The distance from lo to hi is an exact whole number of steps, and the count must be worked out BEFORE the tensor is built, not measured off it.",
-    "answer_code": "import torch as t\n\n\ndef solve(lo, hi, step):\n    \"\"\"The inclusive stepped range and how many values it holds.\"\"\"\n    n = int(round((hi - lo) / step)) + 1\n    return lo + t.arange(n) * step, n\n\n\nprint(solve(0.0, 2.0, 0.5))\n",
-    "difficulty_score": 62,
-    "difficulty_label": "medium",
-    "expected_output": "(tensor([0.0000, 0.5000, 1.0000, 1.5000, 2.0000]), 5)",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(lo, hi, step):\n    \"\"\"The inclusive stepped range and how many values it holds.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0.0, 2.0, 0.5))\n",
-    "test_cases": [
+    "wrong_examples": [
       {
-        "setup_code": "import torch as t\n",
-        "call": "(lambda r: (r[0].tolist(), r[1]))(solve(0.0, 2.0, 0.5))",
-        "expected_expr": "([0.0, 0.5, 1.0, 1.5, 2.0], 5)"
-      },
-      {
-        "setup_code": "import torch as t\n",
-        "call": "(lambda r: (r[0].tolist(), r[1]))(solve(1.0, 3.0, 1.0))",
-        "expected_expr": "([1.0, 2.0, 3.0], 3)"
-      },
-      {
-        "setup_code": "import torch as t\n",
-        "call": "(lambda r: (r[0].tolist(), r[1]))(solve(0.0, 0.0, 0.5))",
-        "expected_expr": "([0.0], 1)"
-      },
-      {
-        "setup_code": "import torch as t\n",
-        "call": "(lambda r: (r[0].tolist(), r[1]))(solve(-1.0, 0.0, 0.25))",
-        "expected_expr": "([-1.0, -0.75, -0.5, -0.25, 0.0], 5)"
+        "call": "solve(4).tolist()",
+        "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+        "why": "The last position is one whole turn, the same place as zero. n positions around a circle stop one step short of a full turn: an integer count divided by n."
       }
     ],
-    "submission_mode": "function",
-    "wrong_examples": [],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33205,7 +33220,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 4))",
+        "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [0.0, 0.3333333432674408, 0.6666666269302368, 1.0])",
+        "why": "The centres are not n evenly spaced points from lo to hi; they sit halfway between consecutive edges."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33250,7 +33271,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 5))",
+        "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [-0.25, -0.25, -0.25, -0.25])",
+        "why": "The gaps are negated: later minus earlier is grid[1:] - grid[:-1]. (And build the grid once, not three times.)"
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33490,52 +33517,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
-    "id": 979,
-    "topic": "Numpy",
-    "subtopic": "Vectorization and broadcasting",
-    "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "Three 1-D integer tensors of the same length n are given. Return the 1-D tensor of length three times n that takes one entry from each in turn: a's first, b's first, c's first, then a's second, and so on. No loop.",
-    "answer_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors alternated, a then b then c at each position.\"\"\"\n    return t.column_stack((a, b, c)).ravel()\n\n\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
-    "difficulty_score": 52,
-    "difficulty_label": "medium",
-    "expected_output": "tensor([1, 2, 3, 4, 5, 6])",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(a, b, c):\n    \"\"\"Three vectors alternated, a then b then c at each position.\"\"\"\n    return  # your answer here\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 4]), t.tensor([2, 5]), t.tensor([3, 6])))\n",
-    "test_cases": [
+    "wrong_examples": [
       {
-        "setup_code": "import torch as t\na = t.tensor([1, 4])\nb = t.tensor([2, 5])\nc = t.tensor([3, 6])",
-        "call": "solve(a, b, c).tolist()",
-        "expected_expr": "[1, 2, 3, 4, 5, 6]"
-      },
-      {
-        "setup_code": "import torch as t\na = t.tensor([0])\nb = t.tensor([1])\nc = t.tensor([2])",
-        "call": "solve(a, b, c).tolist()",
-        "expected_expr": "[0, 1, 2]"
-      },
-      {
-        "setup_code": "import torch as t\na = t.arange(3)\nb = t.arange(10, 13)\nc = t.arange(20, 23)",
-        "call": "solve(a, b, c).tolist()",
-        "expected_expr": "[0, 10, 20, 1, 11, 21, 2, 12, 22]"
-      },
-      {
-        "setup_code": "import torch as t\na = t.tensor([-1, -2])\nb = t.tensor([0, 0])\nc = t.tensor([1, 2])",
-        "call": "solve(a, b, c).tolist()",
-        "expected_expr": "[-1, 0, 1, -2, 0, 2]"
+        "call": "mats = [t.tensor([1, 5]), t.tensor([4, 2])]\nsolve(mats).tolist()",
+        "output": "5",
+        "why": "cat glues the tensors end to end and the max collapses everything to one number. stack adds a NEW axis so the max can run across the list, position by position."
       }
     ],
-    "submission_mode": "function",
-    "wrong_examples": [],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33580,7 +33568,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([[1, 2], [3, 4]])\npad = 0\nsolve(z, pad).tolist()",
+        "output": "[[0, 0], [1, 2], [3, 4], [0, 0]]",
+        "why": "Padding went on the top and bottom (dim=0), adding rows. A column runs down the rows, so the pad has shape (rows, 1) and joins along dim=1."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33625,7 +33619,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([[1, 2]])\nb = t.tensor([[3, 4]])\nsolve(a, b)",
+        "output": "(([[1, 2, 3, 4]], (1, 4)), ([[1, 2], [3, 4]], (2, 2)))",
+        "why": "The two joins are swapped: the vertical join (rows underneath) must come first."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33638,7 +33638,7 @@
     "subtopic": "Vectorization and broadcasting",
     "subtopic_key": "Numpy: Vectorization and broadcasting",
     "question_text": "A 1-D integer tensor and a count are given. Return the 1-D tensor holding the original entries in order with exactly that many zeros between each consecutive pair. There are no extra zeros before the first entry or after the last. No loop.",
-    "answer_code": "import torch as t\n\n\ndef solve(z, nz):\n    \"\"\"The vector with nz zeros inserted between consecutive entries.\"\"\"\n    n = z.shape[0]\n    out = t.zeros((n - 1) * (nz + 1) + 1, dtype=z.dtype)\n    out[::nz + 1] = z\n    return out\n\n\nprint(solve(t.tensor([1, 2, 3]), 2))\n",
+    "answer_code": "import torch as t\n\n\ndef solve(z, nz):\n    \"\"\"z's entries in order with nz zeros between each consecutive pair.\"\"\"\n    n = z.shape[0]\n    piled = t.stack([z] + [z * 0] * nz, dim=1)\n    return piled.flatten()[: n * (nz + 1) - nz]\n\n\nprint(solve(t.tensor([1, 2, 3]), 2))\n",
     "difficulty_score": 66,
     "difficulty_label": "hard",
     "expected_output": "tensor([1, 0, 0, 2, 0, 0, 3])",
@@ -33670,7 +33670,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([1, 2, 3])\nnz = 2\nsolve(z, nz).tolist()",
+        "output": "[1, 0, 0, 2, 0, 0, 3, 0, 0]",
+        "why": "Every entry got nz zeros after it, including the LAST one. The trailing run of zeros has to be cut off: there are no zeros after the final entry."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33715,7 +33721,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "mats = [t.tensor([1.0, 3.0]), t.tensor([3.0, 5.0])]\n(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(mats))",
+        "output": "([1.0, 3.0, 3.0, 5.0], 3.0, 2)",
+        "why": "cat runs the tensors end to end instead of piling them on a new axis, so the mean is one number instead of an elementwise mean across the pile."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33910,7 +33922,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([1.0, 2.0, 3.0])\nsolve(z).tolist()",
+        "output": "[-0.3333333432674408, 0.0, 0.3333333432674408]",
+        "why": "Divided by the largest entry instead of by the span (max minus min). The result is only right when the smallest entry is zero."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -33955,7 +33973,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([[3.0]])\nsolve(a, b)",
+        "output": "False",
+        "why": "allclose on the two tensors themselves needs matching shapes and asks a different question. Compare the two TOTALS within tolerance."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -34000,7 +34024,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([2.0, 2.0, 2.0])\nsolve(z)",
+        "output": "(tensor(2.), True)",
+        "why": "The first item is a 0-d tensor, not a plain Python float. Wrap it in float(...)."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -34045,7 +34075,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([1.0, 2.0, 3.0, 4.0])\nsolve(z)",
+        "output": "(tensor(10.), tensor(2.5000), tensor(1.), tensor(4.))",
+        "why": "Four 0-d tensors, not four plain Python floats. Each needs float(...) or .item()."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -34090,7 +34126,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([1.0, 2.0, 3.0])\n(lambda r: (r[0].tolist(), r[1], r[2]))(solve(z))",
+        "output": "([-1.0, 0.0, 1.0], tensor(2.), True)",
+        "why": "The second item is a 0-d tensor, not a Python float, and the verdict was never computed — assert nothing, measure it with allclose against zero."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -34135,7 +34177,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "z = t.tensor([1.0, 5.0])\nsolve(z)",
+        "output": "(5.0, 3.0, False)",
+        "why": "The first item is the largest entry, not the span. Span is max minus min."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47639,7 +47687,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([-3., 4.])\nsolve(x)",
+        "output": "tensor(25.)",
+        "why": "A 0-d tensor came back, not a Python float. Convert it to a plain number."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47688,7 +47742,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[0, 2, 0], [3, 0, 4]])\nsolve(x)",
+        "output": "tensor(3)",
+        "why": "The count is still a tensor; the prompt asks for a Python int."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47737,7 +47797,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[1., 3.], [3., 5.]])\nthreshold = 3.0\nsolve(x, threshold)",
+        "output": "0.75",
+        "why": "Used >= instead of >. Entries exactly equal to the threshold are NOT strictly above it."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47786,7 +47852,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([0., 0., 10.])\nsolve(x)",
+        "output": "3.3333332538604736",
+        "why": "The mean is not the midpoint of the range. Halfway between the smallest and largest entries is (min + max) / 2."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47835,7 +47907,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([1., 3.])\nsolve(x)",
+        "output": "2.0",
+        "why": "Summed the squared distances instead of averaging them. Variance is the MEAN squared distance from the mean."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47884,7 +47962,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "predicted = t.tensor([1., 4.])\nactual = t.tensor([2., 2.])\nsolve(predicted, actual)",
+        "output": "0.25",
+        "why": "Squared the mean error instead of averaging the squared errors. Positive and negative errors cancel before the square."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47933,7 +48017,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([[0., -2.], [3., 0.]])\nb = t.tensor([[-5., -1.], [1., 8.]])\nsolve(a, b)",
+        "output": "True",
+        "why": "Treats zero as positive, so a pair like (0, -1) counts as opposite signs. The prompt says a pair containing zero does not count."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -47982,7 +48072,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([1., 2., 3.])\nb = t.tensor([[2., 2.]])\nsolve(a, b)",
+        "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+        "why": "Subtracting the tensors elementwise assumes they have the same shape. The prompt says they may not; subtract the two totals instead."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48031,7 +48127,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[0., 4., 4.], [4., 4., 8.]])\nsolve(x)",
+        "output": "5",
+        "why": "Used >= so entries EQUAL to the mean are counted. The prompt asks for strictly above."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48080,7 +48182,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([[3., 1.], [3., 0.]])\nsolve(x)",
+        "output": "2",
+        "why": "That is the count of ties, not the fraction. Divide by the number of entries."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48129,7 +48237,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([-5., 2., 3.])\nsolve(x)",
+        "output": "tensor(5.)",
+        "why": "Boolean indexing works, but the answer is still a tensor, not a Python float."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48178,7 +48292,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([-3., 3.])\nsolve(x)",
+        "output": "tensor(3.)",
+        "why": "Right value, wrong type: a 0-d tensor instead of a Python float."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48227,7 +48347,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([1., 5.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+        "output": "4.0",
+        "why": "Averaging the products ignores the weight total. A weighted average divides by the sum of the weights, not by the count."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48276,7 +48402,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "a = t.tensor([0.])\nb = t.tensor([4., 4., 4.])\nsolve(a, b)",
+        "output": "2.0",
+        "why": "Averaging the two means gives every TENSOR equal weight, not every entry. Pool the totals and divide by the combined count."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48325,7 +48457,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([2., 6.])\n_before = x.clone()\nsolve(x)",
+        "output": "(tensor([0.2500, 0.7500]), tensor(8.))",
+        "why": "The second item is a 0-d tensor; the prompt wants the total as a Python float."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48374,7 +48512,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([2., 4., 6.])\nlow = -1.0\nhigh = 1.0\n_before = x.clone()\nsolve(x, low, high)",
+        "output": "(tensor([0.0000, 0.5000, 1.0000]), 4.0)",
+        "why": "Only rescaled to [0, 1]; the prompt asks for [low, high]. Multiply by (high - low) and add low."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48423,7 +48567,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([1., 2.])\ntarget = t.tensor([2., 5.])\nsolve(x, target)",
+        "output": "2.3333332538604736",
+        "why": "Ratio of totals is not the least-squares scale. The scale minimising the squared error is sum(x*target) / sum(x*x)."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48472,7 +48622,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "measured = t.tensor([1., 2.])\ntarget = t.tensor([3., 6.])\nsolve(measured, target)",
+        "output": "(3.0, 10.0)",
+        "why": "The error must be measured AFTER the offset is applied, not on the raw measured tensor."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48521,7 +48677,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "x = t.tensor([0., 4.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+        "output": "4.0",
+        "why": "Distances were taken from the plain mean. A weighted variance measures distance from the WEIGHTED mean."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -48570,7 +48732,13 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "call": "predicted = t.tensor([0., 1., 3.])\nactual = t.tensor([0., 0., 0.])\ntolerance = 1.0\nsolve(predicted, actual, tolerance)",
+        "output": "(0.3333333333333333, 3.3333332538604736)",
+        "why": "Strict < instead of at-most: an entry exactly tolerance away IS within tolerance."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -49079,7 +49247,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a nonnegative position k valid within each flattened batch, return a flat list containing position k from every batch in batch order.",
     "answer_code": "import torch as t\n\ndef solve(x, k):\n    return x.reshape(x.shape[0], -1)[:, k].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 44,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49134,7 +49302,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), return (values, shape), where values is a nested list with one row per original (batch, row) pair and cols columns; shape is its shape tuple.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    matrix = x.reshape(-1, x.shape[2])\n    return matrix.tolist(), tuple(matrix.shape)\n",
-    "difficulty_score": 40,
+    "difficulty_score": 46,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49189,8 +49357,8 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a nested list with one single-entry row per input element, preserving row-by-row reading order.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(-1, 1).tolist()\n",
-    "difficulty_score": 40,
-    "difficulty_label": "medium",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
     "expected_output": "",
     "language": "python",
     "primary_library": "torch",
@@ -49244,7 +49412,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a nested list with shape (rows, 1, cols), preserving the matrix values.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(x.shape[0], 1, x.shape[1]).tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 36,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49299,7 +49467,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), return a flat list containing the last value of each original row in batch order, then row order.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    return x.reshape(-1, x.shape[2])[:, -1].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 46,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49354,7 +49522,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, and a valid block index k, divide the run into consecutive blocks of cols entries and return block k as a flat list.",
     "answer_code": "import torch as t\n\ndef solve(x, cols, k):\n    return x.reshape(-1, cols)[k].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 38,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49464,7 +49632,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a flat list of all entries except the very first in row-by-row reading order. A one-element input returns an empty list.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[1:].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 36,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49519,7 +49687,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return a flat list of the first entry in each original row, using a one-axis representation.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    return x.flatten()[::x.shape[1]].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 42,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49574,7 +49742,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), return (row_starts, row_ends) as two flat lists, in original row order, using a one-axis representation.",
     "answer_code": "import torch as t\n\ndef solve(x):\n    flat = x.flatten()\n    width = x.shape[1]\n    return flat[::width].tolist(), flat[width - 1::width].tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 48,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49629,7 +49797,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), replace the first entry of each row with value through a one-axis view, returning the changed matrix as a nested list. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, value):\n    flat = x.reshape(-1)\n    flat[::x.shape[1]] = value\n    return x.tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 44,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49678,68 +49846,13 @@
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
   {
-    "id": 1353,
-    "topic": "Numpy",
-    "subtopic": "Core array literacy",
-    "subtopic_key": "Numpy: Core array literacy",
-    "question_text": "Given a nonempty contiguous 2-D integer tensor x with shape (rows, cols), replace the last entry of each row with value through a one-axis view, returning the changed matrix as a nested list. The input may be modified; value is a Python integer.",
-    "answer_code": "import torch as t\n\ndef solve(x, value):\n    flat = x.reshape(-1)\n    width = x.shape[1]\n    flat[width - 1::width] = value\n    return x.tolist()\n",
-    "difficulty_score": 40,
-    "difficulty_label": "medium",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "code_completion",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(x, value):\n    pass\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42",
-        "call": "solve(x, value)",
-        "expected_expr": "[[8, -2, 42], [11, 0, 42]]",
-        "assert_code": "assert type(result) is list"
-      },
-      {
-        "setup_code": "import torch as t\nx = t.tensor([[4, -1], [9, 2], [8, 6]])\nvalue = -7",
-        "call": "solve(x, value)",
-        "expected_expr": "[[4, -7], [9, -7], [8, -7]]",
-        "assert_code": "assert type(result) is list"
-      },
-      {
-        "setup_code": "import torch as t\nx = t.tensor([[5]])\nvalue = 0",
-        "call": "solve(x, value)",
-        "expected_expr": "[[0]]",
-        "assert_code": "assert type(result) is list"
-      },
-      {
-        "setup_code": "import torch as t\nx = t.tensor([[-3, 2, 7, 1]])\nvalue = 10",
-        "call": "solve(x, value)",
-        "expected_expr": "[[-3, 2, 7, 10]]",
-        "assert_code": "assert type(result) is list"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "call": "x = t.tensor([[8, -2, 5], [11, 0, 3]])\nvalue = 42\nsolve(x, value)",
-        "output": "[[8, -2, 5], [42, 42, 42]]",
-        "why": "The end of every row is a strided selection; the final width entries are just the final row."
-      }
-    ],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
     "id": 1354,
     "topic": "Numpy",
     "subtopic": "Core array literacy",
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, replace every entry in that batch with value through a two-axis view; return the original tensor as a nested list. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, :] = value\n    return x.tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 46,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49849,7 +49962,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 1-D integer tensor x and positive integers rows and cols whose product divides its length, return two nested lists: first arrange rows rows with inferred width, then arrange cols columns with inferred height. Both must preserve the entire input run.",
     "answer_code": "import torch as t\n\ndef solve(x, rows, cols):\n    return x.reshape(rows, -1).tolist(), x.reshape(-1, cols).tolist()\n",
-    "difficulty_score": 40,
+    "difficulty_score": 42,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49904,7 +50017,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, and a valid block index k, set the final entry of block k to value through a matrix view; return (matrix_values, original_flat_values) as lists. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, cols, k, value):\n    matrix = x.reshape(-1, cols)\n    matrix[k, -1] = value\n    return matrix.tolist(), x.tolist()\n",
-    "difficulty_score": 58,
+    "difficulty_score": 56,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -49959,7 +50072,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, replace that batch's last entry through a two-axis view; return (matrix_values, original_values, flat_values), all as lists. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, -1] = value\n    return matrix.tolist(), x.tolist(), x.flatten().tolist()\n",
-    "difficulty_score": 58,
+    "difficulty_score": 62,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -50069,7 +50182,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 1-D integer tensor x and a positive integer cols dividing its length, save the original values as a Python list, set every final-column entry of its cols-column view to value, then return (before, changed_matrix, changed_flat_values) as lists. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, cols, value):\n    before = x.tolist()\n    matrix = x.reshape(-1, cols)\n    matrix[:, -1] = value\n    return before, matrix.tolist(), x.tolist()\n",
-    "difficulty_score": 58,
+    "difficulty_score": 60,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -50124,7 +50237,7 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 1-D integer tensor x and positive integers rows and cols whose product divides its length, make a rows-row view and a cols-column view of x, set the first row of the former to value, then return (rows_view, cols_view, flat_values) as lists. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, rows, cols, value):\n    a = x.reshape(rows, -1)\n    b = x.reshape(-1, cols)\n    a[0, :] = value\n    return a.tolist(), b.tolist(), x.tolist()\n",
-    "difficulty_score": 58,
+    "difficulty_score": 64,
     "difficulty_label": "medium",
     "expected_output": "",
     "language": "python",
@@ -50179,8 +50292,8 @@
     "subtopic_key": "Numpy: Core array literacy",
     "question_text": "Given a nonempty contiguous 3-D integer tensor x with shape (batch, rows, cols), and a valid batch index k, save that batch's reading-order values as a Python list, replace its first original row through a two-axis view, then return (before_batch, changed_tensor, after_batch) as lists. The input may be modified; value is a Python integer.",
     "answer_code": "import torch as t\n\ndef solve(x, k, value):\n    before = x[k].flatten().tolist()\n    matrix = x.reshape(x.shape[0], -1)\n    matrix[k, :x.shape[2]] = value\n    return before, x.tolist(), matrix[k].tolist()\n",
-    "difficulty_score": 58,
-    "difficulty_label": "medium",
+    "difficulty_score": 66,
+    "difficulty_label": "hard",
     "expected_output": "",
     "language": "python",
     "primary_library": "torch",
@@ -55801,46 +55914,6 @@
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
   {
-    "id": 1474,
-    "topic": "Numpy",
-    "subtopic": "Vectorization and broadcasting",
-    "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "For x shaped (b,h,w), average across batch axis only; return shape (h,w).",
-    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=0, keepdim=False)",
-    "difficulty_score": 28,
-    "difficulty_label": "easy",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Average over the batch axis only and return shape (h, w).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[1.,2.],[3.,4.]],[[5.,6.],[7.,8.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[[3.0,4.0],[5.0,6.0]]"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[2.]],[[8.]],[[4.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[[4.6666665]]"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "output": "4.5",
-        "why": "With no dim, mean collapses EVERY axis to a single number. Reducing only the batch axis needs dim=0."
-      }
-    ],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
     "id": 1475,
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
@@ -55881,46 +55954,6 @@
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   },
   {
-    "id": 1476,
-    "topic": "Numpy",
-    "subtopic": "Vectorization and broadcasting",
-    "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "For x shaped (b,h,w), return one mean per image by reducing both spatial axes.",
-    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(-2,-1))",
-    "difficulty_score": 30,
-    "difficulty_label": "easy",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Return one mean per image, shape (b,), by reducing both spatial axes.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[2.0, 4.0], [6.0, 8.0]], [[1.0, 3.0], [5.0, 7.0]]])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[2.,4.],[6.,8.]],[[1.,3.],[5.,7.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[5.0,4.0]"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[-3.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[-3.0]"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "output": "[[4.0, 6.0], [3.0, 5.0]]",
-        "why": "Reducing only dim=1 leaves shape (b, w): one value per column of each image. Both spatial axes have to go: dim=(1, 2) or dim=(-2, -1)."
-      }
-    ],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
     "id": 1477,
     "topic": "Numpy",
     "subtopic": "Vectorization and broadcasting",
@@ -55952,46 +55985,6 @@
       {
         "output": "[6.0, 15.0]",
         "why": "Without keepdim=True the reduced axis is dropped and the result is shape (r,), which will not broadcast back against x's rows."
-      }
-    ],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
-    "id": 1478,
-    "topic": "Numpy",
-    "subtopic": "Vectorization and broadcasting",
-    "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "For x shaped (b,h,w), return means shaped (b,1,1), ready to broadcast over each image.",
-    "answer_code": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(1,2), keepdim=True)",
-    "difficulty_score": 36,
-    "difficulty_label": "medium",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Return the per-image means with shape (b, 1, 1), ready to broadcast over each image.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[2.0, 4.0], [6.0, 8.0]]])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[1.,3.],[5.,7.]],[[2.,4.],[6.,8.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[[[4.0]],[[5.0]]]"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[[10.]], [[-2.]]])",
-        "call": "solve(x).tolist()",
-        "expected_expr": "[[[10.0]],[[-2.0]]]"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "output": "[4.0, 5.0]",
-        "why": "The means are right but the shape is (b,): without keepdim=True the two reduced axes vanish, so the result cannot broadcast over x."
       }
     ],
     "provenance": null,
@@ -56072,46 +56065,6 @@
       {
         "output": "[3.6666667461395264, 9.0]",
         "why": "The means are right but the shape is (c,): keepdim=True is what keeps the reduced row axis as a size-1 dimension."
-      }
-    ],
-    "provenance": null,
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
-    "id": 1481,
-    "topic": "Numpy",
-    "subtopic": "Vectorization and broadcasting",
-    "subtopic_key": "Numpy: Vectorization and broadcasting",
-    "question_text": "For any float tensor x, return its overall mean as a Python float.",
-    "answer_code": "import torch as t\n\ndef solve(x):\n    return float(x.mean())",
-    "difficulty_score": 24,
-    "difficulty_label": "easy",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return the mean of every element of the float tensor x as a plain Python float.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 3.0], [5.0, 7.0]])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[1.,3.],[5.,7.]])",
-        "call": "solve(x)",
-        "expected_expr": "4.0"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([[-2.]])",
-        "call": "solve(x)",
-        "expected_expr": "-2.0"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "output": "8.0",
-        "why": "len(x) is the size of the FIRST axis only, so this divides a 2-D tensor's total by its row count instead of by the number of elements."
       }
     ],
     "provenance": null,
@@ -56725,54 +56678,6 @@
       {
         "output": "[[1, -2], False]",
         "why": "A dtype never equals a string. Compare with the dtype object: x.dtype == t.float32."
-      }
-    ],
-    "provenance": {
-      "model": "GPT-5.6 Luna",
-      "strength": "weaker model"
-    },
-    "expected_artifact_type": "stdout",
-    "supports_visual_output": false,
-    "source_type": "csv",
-    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
-  },
-  {
-    "id": 1495,
-    "topic": "Numpy",
-    "subtopic": "Dtypes, .to(), and memory size",
-    "subtopic_key": "Numpy: Dtypes, .to(), and memory size",
-    "question_text": "Return the truncating int64 conversion and the original values in one tuple.",
-    "answer_code": "import torch as t\n\ndef solve(x):\n    y=x.to(t.int64)\n    return (y.tolist(), x.tolist())",
-    "difficulty_score": 32,
-    "difficulty_label": "easy",
-    "expected_output": "",
-    "language": "python",
-    "primary_library": "torch",
-    "task_type": "function_impl",
-    "function_name": "solve",
-    "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return (x converted to int64 as a list, x's original values as a list). The conversion truncates toward zero.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([2.8, -2.8])))\n",
-    "test_cases": [
-      {
-        "setup_code": "import torch as t\nx=t.tensor([2.8,-2.8])",
-        "call": "solve(x)",
-        "expected_expr": "([2, -2], [2.799999952316284, -2.799999952316284])"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([0.1,9.9])",
-        "call": "solve(x)",
-        "expected_expr": "([0, 9], [0.10000000149011612, 9.899999618530273])"
-      },
-      {
-        "setup_code": "import torch as t\nx=t.tensor([-1.0])",
-        "call": "solve(x)",
-        "expected_expr": "([-1], [-1.0])"
-      }
-    ],
-    "submission_mode": "function",
-    "wrong_examples": [
-      {
-        "output": "[[3, -3], [2.799999952316284, -2.799999952316284]]",
-        "why": ".to(t.int64) truncates toward zero: 2.8 -> 2 and -2.8 -> -2. Rounding first gives 3 and -3."
       }
     ],
     "provenance": {

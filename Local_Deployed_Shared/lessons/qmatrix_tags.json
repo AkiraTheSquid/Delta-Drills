@@ -9873,20 +9873,6 @@
   ],
   "source": "kp-independent"
  },
- "971": {
-  "target_kcs": [
-   "numpy.ranges"
-  ],
-  "supporting_kcs": [
-   "numpy.constructors",
-   "numpy.slicing-views"
-  ],
-  "new_syntax": [
-   "torch.arange",
-   "torch.linspace"
-  ],
-  "source": "kp-integrated"
- },
  "972": {
   "target_kcs": [
    "numpy.ranges"
@@ -10004,28 +9990,6 @@
   "source": "kp-guided"
  },
  "978": {
-  "target_kcs": [
-   "numpy.stack-concat-interleave"
-  ],
-  "supporting_kcs": [
-   "numpy.reshape-flatten",
-   "numpy.slicing-views"
-  ],
-  "new_syntax": [
-   "Tensor.ravel",
-   "torch.cat",
-   "torch.cat#dim",
-   "torch.column_stack",
-   "torch.empty",
-   "torch.empty#dtype",
-   "torch.hstack",
-   "torch.stack",
-   "torch.stack#dim",
-   "torch.vstack"
-  ],
-  "source": "kp-independent"
- },
- "979": {
   "target_kcs": [
    "numpy.stack-concat-interleave"
   ],
@@ -16134,20 +16098,6 @@
   ],
   "source": "kp-independent"
  },
- "1353": {
-  "target_kcs": [
-   "numpy.reshape-flatten"
-  ],
-  "supporting_kcs": [
-   "numpy.ndarray-model",
-   "numpy.ranges"
-  ],
-  "new_syntax": [
-   "Tensor.flatten",
-   "Tensor.reshape"
-  ],
-  "source": "kp-independent"
- },
  "1354": {
   "target_kcs": [
    "numpy.reshape-flatten"
@@ -18258,22 +18208,6 @@
   ],
   "source": "kp-independent"
  },
- "1474": {
-  "target_kcs": [
-   "numpy.axis-reductions"
-  ],
-  "supporting_kcs": [
-   "numpy.aggregations",
-   "numpy.broadcasting-rules"
-  ],
-  "new_syntax": [
-   "Tensor.mean#dim",
-   "Tensor.mean#keepdim",
-   "Tensor.sum#dim",
-   "syntax.bool-literal"
-  ],
-  "source": "kp-independent"
- },
  "1475": {
   "target_kcs": [
    "numpy.axis-reductions"
@@ -18290,39 +18224,7 @@
   ],
   "source": "kp-independent"
  },
- "1476": {
-  "target_kcs": [
-   "numpy.axis-reductions"
-  ],
-  "supporting_kcs": [
-   "numpy.aggregations",
-   "numpy.broadcasting-rules"
-  ],
-  "new_syntax": [
-   "Tensor.mean#dim",
-   "Tensor.mean#keepdim",
-   "Tensor.sum#dim",
-   "syntax.bool-literal"
-  ],
-  "source": "kp-independent"
- },
  "1477": {
-  "target_kcs": [
-   "numpy.axis-reductions"
-  ],
-  "supporting_kcs": [
-   "numpy.aggregations",
-   "numpy.broadcasting-rules"
-  ],
-  "new_syntax": [
-   "Tensor.mean#dim",
-   "Tensor.mean#keepdim",
-   "Tensor.sum#dim",
-   "syntax.bool-literal"
-  ],
-  "source": "kp-independent"
- },
- "1478": {
   "target_kcs": [
    "numpy.axis-reductions"
   ],
@@ -18355,22 +18257,6 @@
   "source": "kp-independent"
  },
  "1480": {
-  "target_kcs": [
-   "numpy.axis-reductions"
-  ],
-  "supporting_kcs": [
-   "numpy.aggregations",
-   "numpy.broadcasting-rules"
-  ],
-  "new_syntax": [
-   "Tensor.mean#dim",
-   "Tensor.mean#keepdim",
-   "Tensor.sum#dim",
-   "syntax.bool-literal"
-  ],
-  "source": "kp-independent"
- },
- "1481": {
   "target_kcs": [
    "numpy.axis-reductions"
   ],
@@ -18617,24 +18503,6 @@
    "torch.uint8"
   ],
   "source": "kp-independent"
- },
- "1495": {
-  "target_kcs": [
-   "numpy.dtype-astype"
-  ],
-  "supporting_kcs": [
-   "numpy.ndarray-model"
-  ],
-  "new_syntax": [
-   "Tensor.element_size",
-   "Tensor.to",
-   "builtin.getattr",
-   "torch.arange#dtype",
-   "torch.float64",
-   "torch.int16",
-   "torch.uint8"
-  ],
-  "source": "kp-integrated"
  },
  "1496": {
   "target_kcs": [

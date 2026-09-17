@@ -6,7 +6,7 @@ new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype
 faded: [230, 215, 51, 649, 650, 651]
 guided: [87]
 independent: [19, 652, 653, 654, 655, 656, 1483, 1484, 1485, 1486, 1487, 1488, 1489, 1490, 1491, 1492, 1493, 1494]
-integrated: [657, 658, 659, 1495, 1496, 1497, 1498, 1499, 1500]
+integrated: [657, 658, 659, 1496, 1497, 1498, 1499, 1500]
 ---
 
 ## Concept: .to() — converting an existing tensor

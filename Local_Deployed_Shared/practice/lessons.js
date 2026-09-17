@@ -722,10 +722,17 @@ const LessonGate = (() => {
         }
         questionText.scrollTop = 0;
         if (typeof window.scrollTo === "function") window.scrollTo({ top: 0 });
-        const lessonCode = colabHref
+        /* A lesson fence may end in a `# Hidden checks` tail (asserts the
+           grader runs, never meant for the learner's eyes). The cell builder
+           in notebook-cells.js splits that off; the plain editor reset here
+           did not, so kp-ranges' linspace example rendered its asserts. */
+        const rawLessonCode = colabHref
           ? DEFAULT_EDITOR
           : (page.seg.worked_example_code ||
             _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR);
+        const lessonCode = window.DeltaNotebookCells?.splitChecks
+          ? (window.DeltaNotebookCells.splitChecks(rawLessonCode).code || DEFAULT_EDITOR) + "\n"
+          : rawLessonCode;
         if (window.DeltaNotebook) window.DeltaNotebook.reset(lessonCode, { addScratch: false });
         else editor.value = lessonCode;
         if (output) output.textContent = "";

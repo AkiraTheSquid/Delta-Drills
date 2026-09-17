@@ -6,7 +6,7 @@ new_syntax: [torch.arange, torch.linspace]
 faded: [229, 242, 214, 959, 960, 961, 962, 963]
 guided: [524, 964, 965]
 independent: [53, 966, 967, 968, 969, 970]
-integrated: [971, 972, 973]
+integrated: [972, 973]
 ---
 
 ## Concept: t.arange — the stop is exclusive

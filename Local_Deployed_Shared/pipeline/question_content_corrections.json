@@ -1,228 +1,689 @@
 {
-  "224": {
-    "wrong_examples": [
-      {
-        "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
-        "output": "(True, 1, [1, 2, 3])",
-        "why": "`rows[0]` builds a tensor from ONE row \u2014 1 axis, not 2. The whole nested list has to become one block, not just its first row."
-      }
-    ]
-  },
-  "391": {
-    "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
-    "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
-  },
-  "485": {
-    "wrong_examples": [
-      {
-        "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
-        "output": "(3, (2, 2, 2), 2)",
-        "why": "`len()` is the first axis only \u2014 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
-      }
-    ]
-  },
-  "532": {
-    "wrong_examples": [
-      {
-        "call": "solve([[7, 8], [9, 10]])",
-        "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
-        "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
-      }
-    ]
-  },
-  "533": {
-    "wrong_examples": [
-      {
-        "call": "solve([7])",
-        "output": "tensor(7)",
-        "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
-      }
-    ]
-  },
-  "534": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
-        "output": "tensor([[True, True],\n        [True, True]])",
-        "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
-      }
-    ]
-  },
-  "540": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(2, 2)",
-        "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
-      }
-    ]
-  },
-  "549": {
-    "wrong_examples": [
-      {
-        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
-        "output": "((2, 2, 2), 3, False)",
-        "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that \u2014 it is not the number of axes."
-      }
-    ]
-  },
-  "550": {
-    "wrong_examples": [
-      {
-        "call": "solve([1, 2, 3])",
-        "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
-        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, an input with more than one element raises instead of returning None."
-      }
-    ]
-  },
-  "551": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
-        "output": "(tensor([[True, True],\n        [True, True]]), True)",
-        "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
-      }
-    ]
-  },
-  "553": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(True, False, False)",
-        "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
-      }
-    ]
-  },
-  "560": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "((2, 3), 'torch.int64', 2)",
-        "why": "The last slot is the ELEMENT count, not the axis count."
-      }
-    ]
-  },
-  "564": {
-    "wrong_examples": [
-      {
-        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
-        "output": "(3, (2, 2, 2), 2, 'torch.int64')",
-        "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
-      }
-    ]
-  },
-  "565": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(False, False, True, False)",
-        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves two of the four answers wrong."
-      }
-    ]
-  },
-  "566": {
-    "wrong_examples": [
-      {
-        "call": "solve([7])",
-        "output": "(1, tensor(7), 'torch.int64')",
-        "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
-      }
-    ]
-  },
-  "607": {
-    "wrong_examples": [
-      {
-        "output": "(3, 2)",
-        "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
-      }
-    ]
-  },
-  "608": {
-    "wrong_examples": [
-      {
-        "output": "('HI', 2, <built-in function sqrt>)",
-        "why": "The third slot hands back a function object instead of the number it computes \u2014 the parentheses are what make it a call."
-      }
-    ]
-  },
-  "623": {
-    "wrong_examples": [
-      {
-        "output": "(False, (3, 2))",
-        "why": "Cutting the same run to the TRANSPOSE's shape (axis lengths swapped) is neither a transpose nor x \u2014 the numbers keep their reading order, the grid is just a different shape. The round trip has to use x's own shape."
-      }
-    ]
-  },
-  "628": {
-    "wrong_examples": [
-      {
-        "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
-        "why": "The prompt fixes the COLUMN count, which is the last axis \u2014 so the -1 goes first. Putting the fixed count first fixes the row count instead."
-      }
-    ]
-  },
-  "648": {
-    "wrong_examples": [
-      {
-        "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
-        "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else \u2014 the identity, scaled by v."
-      }
-    ]
-  },
-  "668": {
-    "wrong_examples": [
-      {
-        "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
-        "why": "argsort answers WHERE the sorted values came from \u2014 indices, not values. The first two slots ask for the sorted values themselves."
-      }
-    ]
-  },
-  "675": {
-    "wrong_examples": [
-      {
-        "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
-        "why": "The first row asked for is the TRANSPOSE's \u2014 column 0 of a. Taking row 0 of a itself hands back a's own first row."
-      }
-    ]
-  },
-  "676": {
-    "wrong_examples": [
-      {
-        "output": "((3, 2), 'torch.float32', 2)",
-        "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
-      }
-    ]
-  },
-  "679": {
-    "wrong_examples": [
-      {
-        "output": "((4,), [1, 1, 2, 3])",
-        "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
-      }
-    ]
-  },
-  "696": {
-    "wrong_examples": [
-      {
-        "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
-        "why": "A generator that never had the seed applied starts from PyTorch's fixed default seed, so the seed argument is ignored and every call replays the same default sequence whatever seed was passed."
-      }
-    ]
-  },
-  "810": {
-    "wrong_examples": [
-      {
-        "output": "TypeError: can't assign a list to a torch.FloatTensor",
-        "why": "A Python list cannot be written into a tensor slice \u2014 TypeError. The row values have to become a tensor before they are copied in."
-      }
-    ]
-  },
-  "845": {
-    "wrong_examples": [
-      {
-        "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
-        "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
-      }
-    ]
-  }
+ "224": {
+  "wrong_examples": [
+   {
+    "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
+    "output": "(True, 1, [1, 2, 3])",
+    "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. The whole nested list has to become one block, not just its first row."
+   }
+  ]
+ },
+ "391": {
+  "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
+  "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
+ },
+ "485": {
+  "wrong_examples": [
+   {
+    "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
+    "output": "(3, (2, 2, 2), 2)",
+    "why": "`len()` is the first axis only — 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
+   }
+  ]
+ },
+ "532": {
+  "wrong_examples": [
+   {
+    "call": "solve([[7, 8], [9, 10]])",
+    "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
+    "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
+   }
+  ]
+ },
+ "533": {
+  "wrong_examples": [
+   {
+    "call": "solve([7])",
+    "output": "tensor(7)",
+    "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
+   }
+  ]
+ },
+ "534": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+    "output": "tensor([[True, True],\n        [True, True]])",
+    "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
+   }
+  ]
+ },
+ "540": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(2, 2)",
+    "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
+   }
+  ]
+ },
+ "549": {
+  "wrong_examples": [
+   {
+    "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+    "output": "((2, 2, 2), 3, False)",
+    "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that — it is not the number of axes."
+   }
+  ]
+ },
+ "550": {
+  "wrong_examples": [
+   {
+    "call": "solve([1, 2, 3])",
+    "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
+    "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, an input with more than one element raises instead of returning None."
+   }
+  ]
+ },
+ "551": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+    "output": "(tensor([[True, True],\n        [True, True]]), True)",
+    "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
+   }
+  ]
+ },
+ "553": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(True, False, False)",
+    "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
+   }
+  ]
+ },
+ "560": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "((2, 3), 'torch.int64', 2)",
+    "why": "The last slot is the ELEMENT count, not the axis count."
+   }
+  ]
+ },
+ "564": {
+  "wrong_examples": [
+   {
+    "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+    "output": "(3, (2, 2, 2), 2, 'torch.int64')",
+    "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
+   }
+  ]
+ },
+ "565": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(False, False, True, False)",
+    "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves two of the four answers wrong."
+   }
+  ]
+ },
+ "566": {
+  "wrong_examples": [
+   {
+    "call": "solve([7])",
+    "output": "(1, tensor(7), 'torch.int64')",
+    "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
+   }
+  ]
+ },
+ "607": {
+  "wrong_examples": [
+   {
+    "output": "(3, 2)",
+    "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
+   }
+  ]
+ },
+ "608": {
+  "wrong_examples": [
+   {
+    "output": "('HI', 2, <built-in function sqrt>)",
+    "why": "The third slot hands back a function object instead of the number it computes — the parentheses are what make it a call."
+   }
+  ]
+ },
+ "623": {
+  "wrong_examples": [
+   {
+    "output": "(False, (3, 2))",
+    "why": "Cutting the same run to the TRANSPOSE's shape (axis lengths swapped) is neither a transpose nor x — the numbers keep their reading order, the grid is just a different shape. The round trip has to use x's own shape."
+   }
+  ]
+ },
+ "628": {
+  "wrong_examples": [
+   {
+    "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
+    "why": "The prompt fixes the COLUMN count, which is the last axis — so the -1 goes first. Putting the fixed count first fixes the row count instead."
+   }
+  ]
+ },
+ "648": {
+  "wrong_examples": [
+   {
+    "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
+    "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else — the identity, scaled by v."
+   }
+  ]
+ },
+ "668": {
+  "wrong_examples": [
+   {
+    "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
+    "why": "argsort answers WHERE the sorted values came from — indices, not values. The first two slots ask for the sorted values themselves."
+   }
+  ]
+ },
+ "675": {
+  "wrong_examples": [
+   {
+    "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
+    "why": "The first row asked for is the TRANSPOSE's — column 0 of a. Taking row 0 of a itself hands back a's own first row."
+   }
+  ]
+ },
+ "676": {
+  "wrong_examples": [
+   {
+    "output": "((3, 2), 'torch.float32', 2)",
+    "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
+   }
+  ]
+ },
+ "679": {
+  "wrong_examples": [
+   {
+    "output": "((4,), [1, 1, 2, 3])",
+    "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
+   }
+  ]
+ },
+ "696": {
+  "wrong_examples": [
+   {
+    "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
+    "why": "A generator that never had the seed applied starts from PyTorch's fixed default seed, so the seed argument is ignored and every call replays the same default sequence whatever seed was passed."
+   }
+  ]
+ },
+ "810": {
+  "wrong_examples": [
+   {
+    "output": "TypeError: can't assign a list to a torch.FloatTensor",
+    "why": "A Python list cannot be written into a tensor slice — TypeError. The row values have to become a tensor before they are copied in."
+   }
+  ]
+ },
+ "845": {
+  "wrong_examples": [
+   {
+    "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+    "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+   }
+  ]
+ },
+ "954": {
+  "wrong_examples": [
+   {
+    "call": "x = t.ones(2, 3)\nrow_scale = t.tensor([1.0, 10.0])\ncol_bias = t.tensor([0.0, 1.0, 2.0])\nsolve(x, row_scale, col_bias).tolist()",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+    "why": "Both vectors were lined up on the wrong axis: row_scale must gain a trailing axis to run down the rows, and col_bias already lines up with the columns as it is."
+   }
+  ]
+ },
+ "955": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([10.0, 20.0, 30.0])\nc = t.tensor([100.0])\nsolve(a, b, c).tolist()",
+    "output": "[[1000.0, 2000.0, 3000.0], [2000.0, 4000.0, 6000.0]]",
+    "why": "Only two of the three were given their own axis; c was left flat, so it lands on the LAST axis together with b instead of on its own third axis."
+   }
+  ]
+ },
+ "956": {
+  "wrong_examples": [
+   {
+    "call": "imgs = t.ones(2, 1, 2, 3)\nmean = t.tensor([0.0, 1.0, 2.0])\ngain = t.tensor([1.0, 10.0])\nsolve(imgs, mean, gain).tolist()",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 3'",
+    "why": "gain has one entry per IMAGE, so it must be reshaped to (b, 1, 1, 1) to broadcast against the batch axis; left flat it lines up with the channel axis and fails or scales the wrong thing."
+   }
+  ]
+ },
+ "978": {
+  "wrong_examples": [
+   {
+    "call": "mats = [t.tensor([1, 5]), t.tensor([4, 2])]\nsolve(mats).tolist()",
+    "output": "5",
+    "why": "cat glues the tensors end to end and the max collapses everything to one number. stack adds a NEW axis so the max can run across the list, position by position."
+   }
+  ]
+ },
+ "980": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([[1, 2], [3, 4]])\npad = 0\nsolve(z, pad).tolist()",
+    "output": "[[0, 0], [1, 2], [3, 4], [0, 0]]",
+    "why": "Padding went on the top and bottom (dim=0), adding rows. A column runs down the rows, so the pad has shape (rows, 1) and joins along dim=1."
+   }
+  ]
+ },
+ "981": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([[1, 2]])\nb = t.tensor([[3, 4]])\nsolve(a, b)",
+    "output": "(([[1, 2, 3, 4]], (1, 4)), ([[1, 2], [3, 4]], (2, 2)))",
+    "why": "The two joins are swapped: the vertical join (rows underneath) must come first."
+   }
+  ]
+ },
+ "982": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1, 2, 3])\nnz = 2\nsolve(z, nz).tolist()",
+    "output": "[1, 0, 0, 2, 0, 0, 3, 0, 0]",
+    "why": "Every entry got nz zeros after it, including the LAST one. The trailing run of zeros has to be cut off: there are no zeros after the final entry."
+   }
+  ],
+  "answer_code": "import torch as t\n\n\ndef solve(z, nz):\n    \"\"\"z's entries in order with nz zeros between each consecutive pair.\"\"\"\n    n = z.shape[0]\n    piled = t.stack([z] + [z * 0] * nz, dim=1)\n    return piled.flatten()[: n * (nz + 1) - nz]\n\n\nprint(solve(t.tensor([1, 2, 3]), 2))\n"
+ },
+ "983": {
+  "wrong_examples": [
+   {
+    "call": "mats = [t.tensor([1.0, 3.0]), t.tensor([3.0, 5.0])]\n(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(mats))",
+    "output": "([1.0, 3.0, 3.0, 5.0], 3.0, 2)",
+    "why": "cat runs the tensors end to end instead of piling them on a new axis, so the mean is one number instead of an elementwise mean across the pile."
+   }
+  ]
+ },
+ "987": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0])\nsolve(z).tolist()",
+    "output": "[-0.3333333432674408, 0.0, 0.3333333432674408]",
+    "why": "Divided by the largest entry instead of by the span (max minus min). The result is only right when the smallest entry is zero."
+   }
+  ]
+ },
+ "988": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([[3.0]])\nsolve(a, b)",
+    "output": "False",
+    "why": "allclose on the two tensors themselves needs matching shapes and asks a different question. Compare the two TOTALS within tolerance."
+   }
+  ]
+ },
+ "989": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([2.0, 2.0, 2.0])\nsolve(z)",
+    "output": "(tensor(2.), True)",
+    "why": "The first item is a 0-d tensor, not a plain Python float. Wrap it in float(...)."
+   }
+  ]
+ },
+ "990": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0, 4.0])\nsolve(z)",
+    "output": "(tensor(10.), tensor(2.5000), tensor(1.), tensor(4.))",
+    "why": "Four 0-d tensors, not four plain Python floats. Each needs float(...) or .item()."
+   }
+  ]
+ },
+ "991": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0])\n(lambda r: (r[0].tolist(), r[1], r[2]))(solve(z))",
+    "output": "([-1.0, 0.0, 1.0], tensor(2.), True)",
+    "why": "The second item is a 0-d tensor, not a Python float, and the verdict was never computed — assert nothing, measure it with allclose against zero."
+   }
+  ]
+ },
+ "992": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 5.0])\nsolve(z)",
+    "output": "(5.0, 3.0, False)",
+    "why": "The first item is the largest entry, not the span. Span is max minus min."
+   }
+  ]
+ },
+ "1313": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-3., 4.])\nsolve(x)",
+    "output": "tensor(25.)",
+    "why": "A 0-d tensor came back, not a Python float. Convert it to a plain number."
+   }
+  ]
+ },
+ "1314": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[0, 2, 0], [3, 0, 4]])\nsolve(x)",
+    "output": "tensor(3)",
+    "why": "The count is still a tensor; the prompt asks for a Python int."
+   }
+  ]
+ },
+ "1315": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[1., 3.], [3., 5.]])\nthreshold = 3.0\nsolve(x, threshold)",
+    "output": "0.75",
+    "why": "Used >= instead of >. Entries exactly equal to the threshold are NOT strictly above it."
+   }
+  ]
+ },
+ "1316": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([0., 0., 10.])\nsolve(x)",
+    "output": "3.3333332538604736",
+    "why": "The mean is not the midpoint of the range. Halfway between the smallest and largest entries is (min + max) / 2."
+   }
+  ]
+ },
+ "1317": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 3.])\nsolve(x)",
+    "output": "2.0",
+    "why": "Summed the squared distances instead of averaging them. Variance is the MEAN squared distance from the mean."
+   }
+  ]
+ },
+ "1318": {
+  "wrong_examples": [
+   {
+    "call": "predicted = t.tensor([1., 4.])\nactual = t.tensor([2., 2.])\nsolve(predicted, actual)",
+    "output": "0.25",
+    "why": "Squared the mean error instead of averaging the squared errors. Positive and negative errors cancel before the square."
+   }
+  ]
+ },
+ "1319": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([[0., -2.], [3., 0.]])\nb = t.tensor([[-5., -1.], [1., 8.]])\nsolve(a, b)",
+    "output": "True",
+    "why": "Treats zero as positive, so a pair like (0, -1) counts as opposite signs. The prompt says a pair containing zero does not count."
+   }
+  ]
+ },
+ "1320": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1., 2., 3.])\nb = t.tensor([[2., 2.]])\nsolve(a, b)",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+    "why": "Subtracting the tensors elementwise assumes they have the same shape. The prompt says they may not; subtract the two totals instead."
+   }
+  ]
+ },
+ "1321": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[0., 4., 4.], [4., 4., 8.]])\nsolve(x)",
+    "output": "5",
+    "why": "Used >= so entries EQUAL to the mean are counted. The prompt asks for strictly above."
+   }
+  ]
+ },
+ "1322": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[3., 1.], [3., 0.]])\nsolve(x)",
+    "output": "2",
+    "why": "That is the count of ties, not the fraction. Divide by the number of entries."
+   }
+  ]
+ },
+ "1323": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-5., 2., 3.])\nsolve(x)",
+    "output": "tensor(5.)",
+    "why": "Boolean indexing works, but the answer is still a tensor, not a Python float."
+   }
+  ]
+ },
+ "1324": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-3., 3.])\nsolve(x)",
+    "output": "tensor(3.)",
+    "why": "Right value, wrong type: a 0-d tensor instead of a Python float."
+   }
+  ]
+ },
+ "1325": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 5.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+    "output": "4.0",
+    "why": "Averaging the products ignores the weight total. A weighted average divides by the sum of the weights, not by the count."
+   }
+  ]
+ },
+ "1326": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([0.])\nb = t.tensor([4., 4., 4.])\nsolve(a, b)",
+    "output": "2.0",
+    "why": "Averaging the two means gives every TENSOR equal weight, not every entry. Pool the totals and divide by the combined count."
+   }
+  ]
+ },
+ "1327": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([2., 6.])\n_before = x.clone()\nsolve(x)",
+    "output": "(tensor([0.2500, 0.7500]), tensor(8.))",
+    "why": "The second item is a 0-d tensor; the prompt wants the total as a Python float."
+   }
+  ]
+ },
+ "1328": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([2., 4., 6.])\nlow = -1.0\nhigh = 1.0\n_before = x.clone()\nsolve(x, low, high)",
+    "output": "(tensor([0.0000, 0.5000, 1.0000]), 4.0)",
+    "why": "Only rescaled to [0, 1]; the prompt asks for [low, high]. Multiply by (high - low) and add low."
+   }
+  ]
+ },
+ "1329": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 2.])\ntarget = t.tensor([2., 5.])\nsolve(x, target)",
+    "output": "2.3333332538604736",
+    "why": "Ratio of totals is not the least-squares scale. The scale minimising the squared error is sum(x*target) / sum(x*x)."
+   }
+  ]
+ },
+ "1330": {
+  "wrong_examples": [
+   {
+    "call": "measured = t.tensor([1., 2.])\ntarget = t.tensor([3., 6.])\nsolve(measured, target)",
+    "output": "(3.0, 10.0)",
+    "why": "The error must be measured AFTER the offset is applied, not on the raw measured tensor."
+   }
+  ]
+ },
+ "1331": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([0., 4.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+    "output": "4.0",
+    "why": "Distances were taken from the plain mean. A weighted variance measures distance from the WEIGHTED mean."
+   }
+  ]
+ },
+ "1332": {
+  "wrong_examples": [
+   {
+    "call": "predicted = t.tensor([0., 1., 3.])\nactual = t.tensor([0., 0., 0.])\ntolerance = 1.0\nsolve(predicted, actual, tolerance)",
+    "output": "(0.3333333333333333, 3.3333332538604736)",
+    "why": "Strict < instead of at-most: an entry exactly tolerance away IS within tolerance."
+   }
+  ]
+ },
+ "964": {
+  "wrong_examples": [
+   {
+    "call": "solve(1.0, 0.0, 5).tolist()",
+    "output": "[0.0, 0.25, 0.5, 0.75, 1.0]",
+    "why": "Runs upward from low to high. The prompt wants it running DOWN: high first, low last — swap the two endpoints."
+   }
+  ]
+ },
+ "965": {
+  "wrong_examples": [
+   {
+    "call": "solve(0, 10, 3)",
+    "output": "12",
+    "why": "Added one more step past the last value produced. arange stops BEFORE stop, and its final element is what was asked for."
+   }
+  ]
+ },
+ "966": {
+  "wrong_examples": [
+   {
+    "call": "solve(0.0, 1.0, 4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "n points give n-1 bins. Cutting into n bins needs n+1 edges."
+   }
+  ]
+ },
+ "967": {
+  "wrong_examples": [
+   {
+    "call": "solve(5).tolist()",
+    "output": "[5, 4, 3, 2]",
+    "why": "The stop is exclusive, so stopping at 1 leaves 1 out. Stop at 0 to include 1."
+   }
+  ]
+ },
+ "968": {
+  "wrong_examples": [
+   {
+    "call": "solve(0.0, 2.0, 0.5).tolist()",
+    "output": "[0.0, 0.5, 1.0, 1.5]",
+    "why": "arange stops BEFORE hi, so the final value is missing. Compute the count and build with an integer arange so rounding cannot drift either."
+   }
+  ],
+  "question_text": "Return the 1-D float tensor holding lo, then lo plus one step, and so on up to and INCLUDING hi. The distance from lo to hi is an exact whole number of steps. Work out how many values that is, then build them from an integer count scaled once, so no rounding error accumulates."
+ },
+ "969": {
+  "wrong_examples": [
+   {
+    "call": "solve(1.0, 4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "With n points the last one lands ON stop. Ask for n+1 and drop the last, or use arange(n) * (stop / n)."
+   }
+  ]
+ },
+ "970": {
+  "wrong_examples": [
+   {
+    "call": "solve(4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "The last position is one whole turn, the same place as zero. n positions around a circle stop one step short of a full turn: an integer count divided by n."
+   }
+  ]
+ },
+ "972": {
+  "wrong_examples": [
+   {
+    "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 4))",
+    "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [0.0, 0.3333333432674408, 0.6666666269302368, 1.0])",
+    "why": "The centres are not n evenly spaced points from lo to hi; they sit halfway between consecutive edges."
+   }
+  ]
+ },
+ "973": {
+  "wrong_examples": [
+   {
+    "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 5))",
+    "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [-0.25, -0.25, -0.25, -0.25])",
+    "why": "The gaps are negated: later minus earlier is grid[1:] - grid[:-1]. (And build the grid once, not three times.)"
+   }
+  ]
+ },
+ "949": {
+  "question_text": "Two shapes are given as plain tuples of ints, `s1` and `s2`. Return the shape that broadcasting them together produces, as a plain tuple of ints. PyTorch can answer this from the shapes alone, without allocating a tensor of either shape."
+ },
+ "957": {
+  "question_text": "Two PyTorch tensors `a` and `b` are given. Return a tuple `(shape, table)`: `shape` is the shape broadcasting them together produces, as a plain tuple of ints, and `table` is their elementwise sum as a nested list. The shape is decided by the broadcasting rules from the two input shapes alone."
+ },
+ "963": {
+  "question_text": "A signal is sampled n times at a rate of hz samples per second, with the first sample taken at time zero. Return the 1-D float tensor of the n sample times in seconds. Build it from an integer count scaled once, so no rounding error accumulates from one sample to the next."
+ },
+ "1342": {
+  "difficulty_score": 44
+ },
+ "1343": {
+  "difficulty_score": 46
+ },
+ "1344": {
+  "difficulty_score": 34
+ },
+ "1345": {
+  "difficulty_score": 36
+ },
+ "1346": {
+  "difficulty_score": 46
+ },
+ "1347": {
+  "difficulty_score": 38
+ },
+ "1348": {
+  "difficulty_score": 40
+ },
+ "1349": {
+  "difficulty_score": 36
+ },
+ "1350": {
+  "difficulty_score": 42
+ },
+ "1351": {
+  "difficulty_score": 48
+ },
+ "1352": {
+  "difficulty_score": 44
+ },
+ "1353": {
+  "difficulty_score": 44
+ },
+ "1354": {
+  "difficulty_score": 46
+ },
+ "1355": {
+  "difficulty_score": 40
+ },
+ "1356": {
+  "difficulty_score": 42
+ },
+ "1357": {
+  "difficulty_score": 56
+ },
+ "1358": {
+  "difficulty_score": 62
+ },
+ "1359": {
+  "difficulty_score": 58
+ },
+ "1360": {
+  "difficulty_score": 60
+ },
+ "1361": {
+  "difficulty_score": 64
+ },
+ "1362": {
+  "difficulty_score": 66
+ }
 }
