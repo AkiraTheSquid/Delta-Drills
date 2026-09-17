@@ -155,6 +155,29 @@ commit_generated_artifacts() {
   fi
 }
 
+# Added 2026-09-17: keep the deploy branch a DESCENDANT of main. Before this,
+# deploy only ever received rsync'd Local_Deployed_Shared/ snapshots, so its
+# tree drifted from main (283 ahead / 553 behind, 5k stale deletions) and
+# every checkpoint re-snapshotted the drift. Now each deploy records main as
+# a merge parent (-s ours keeps history linear on deploy's side), reads main's
+# tree verbatim, and keeps deploy's own .gitignore (it un-ignores the build
+# artifacts main ignores, e.g. arena-book/, which the rsync then re-adds).
+# No-op when main is already an ancestor.
+sync_deploy_branch_to_main() {
+  local main_sha
+  main_sha="$(git -C "$REPO_DIR" rev-parse main)"
+  if git -C "$DEPLOY_DIR" merge-base --is-ancestor "$main_sha" HEAD; then
+    info "deploy already contains main ($main_sha); no sync needed"
+    return 0
+  fi
+  info "Syncing deploy branch tree to main ($main_sha)..."
+  git -C "$DEPLOY_DIR" merge --no-ff -s ours --no-commit "$main_sha" >/dev/null
+  git -C "$DEPLOY_DIR" read-tree --reset -u "$main_sha"
+  git -C "$DEPLOY_DIR" checkout HEAD -- .gitignore
+  git -C "$DEPLOY_DIR" add -- .gitignore
+  git -C "$DEPLOY_DIR" commit -q -m "chore: sync deploy tree to main ${main_sha:0:8}"
+}
+
 require_clean_worktree() {
   local repo_dir="$1"
   local stage="$2"
@@ -348,6 +371,7 @@ info "Syncing Local_Deployed_Shared into deploy branch..."
 git -C "$DEPLOY_DIR" checkout deploy
 mkdir -p "$DEPLOY_SHARED_DIR" "$DEPLOY_DIR/This-Directory-Only"
 auto_commit_if_dirty "$DEPLOY_DIR" "chore: checkpoint deploy worktree before shared sync"
+sync_deploy_branch_to_main
 rsync -a --delete --exclude '.vercel/' "$REPO_SHARED_DIR"/ "$DEPLOY_SHARED_DIR"/
 python3 "$REFRESH_SPLIT_SCRIPT" --root "$DEPLOY_DIR"
 auto_commit_if_dirty "$DEPLOY_DIR" "chore: sync shared deploy payload"
