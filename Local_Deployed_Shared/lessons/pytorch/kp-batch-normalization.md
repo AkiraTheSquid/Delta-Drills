@@ -7,7 +7,7 @@ supporting: ['cnn.module-state', 'numpy.axis-reductions', 'numpy.elementwise-ufu
 previews: []
 faded: [1297, 1298, 1299, 1300]
 guided: []
-independent: [1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309]
+independent: [1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 460, 459]
 integrated: [1310, 1311, 1312]
 ---
 
@@ -251,6 +251,12 @@ Return the effective offset per channel for evaluation, so output equals input t
 
 ### q1309
 Return training-mode channel means and population variances after the affine transform, shape (2,channels), means first. x: float (batch,channels,height,width); g: scale (channels,); b: shift (channels,); eps > 0. Variance is the population variance.
+
+### q460
+Reshape a per-channel vector so it lines up with dim 1 of a (B, C, H, W) tensor.
+
+### q459
+Normalise, scale and shift a (B, C, H, W) tensor with four per-channel vectors reshaped to (1, C, 1, 1).
 
 ## Integrated practice
 

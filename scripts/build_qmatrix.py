@@ -27,15 +27,15 @@ LEFTOVER_TARGETS = {
     # 38 of these 77 entries named a concept the course no
     # longer teaches, or a drill retired with it. See
     # Local_Deployed_Shared/pipeline/retired_question_ids.json.
-    # 103 kept back from the 2026-08-30 retirement because it is the only
+    # 103 was kept back from the 2026-08-30 retirement because it is the only
     # trainer of a gating BKT atom (softmax-from-logits, which gates
-    # cross-entropy-loss); re-homed onto the surviving concept that owns what
-    # it actually does. See pipeline/retired_question_ids.json.
-    # 198 sat beside it until 2026-09-10, when its atom boolean-mask-combine
-    # got two honest trainers (q145, q12) and the drill was retired. These two
-    # are the ONLY ids that still fall through to this map -- every other entry
-    # below is now claimed by a KP and reached by the kp-* routes instead.
-    103: "numpy.axis-reductions",
+    # cross-entropy-loss) and sat here under numpy.axis-reductions until
+    # 2026-09-17, when its solution was rewritten in torch and kp-stable-
+    # probabilities claimed it as a Solo drill. 198 sat beside it until
+    # 2026-09-10, when its atom boolean-mask-combine got two honest trainers
+    # (q145, q12) and the drill was retired. Nothing falls through to this
+    # map any more -- every entry below is claimed by a KP and reached by the
+    # kp-* routes instead; the map stays as the audit trail of who owned what.
     1: "numpy.argmin-argmax", 48: "numpy.constructors",
     63: "numpy.elementwise-ufuncs", 74: "numpy.slicing-views",
     85: "numpy.boolean-masking", 87: "numpy.dtype-astype",
@@ -115,11 +115,16 @@ def build():
 
     easy = {qid for qid, q in bank.items() if q["curriculum"]["topic"] in EASY_TOPICS}
     missing = easy - set(tags)
-    extra = set(tags) - easy
+    # A KP may claim a drill from outside EASY_TOPICS (2026-09-17: the parked
+    # CNN / PyTorch-Fundamentals block q405-479 is folded onto the ar-02 pages
+    # one drill at a time, and the page is the authority on what it teaches).
+    # What stays refused is a tag naming an id the bank does not hold at all:
+    # that is a typo, or a page exported ahead of its CSV.
+    extra = set(tags) - set(bank)
     if missing:
         raise SystemExit(f"{len(missing)} easy questions untagged: {sorted(missing)[:12]}")
     if extra:
-        raise SystemExit(f"tags reference non-easy questions: {sorted(extra)}")
+        raise SystemExit(f"tags reference questions not in the bank: {sorted(extra)}")
 
     out = LESSONS_DIR / "qmatrix_tags.json"
     out.write_text(json.dumps({str(k): tags[k] for k in sorted(tags)}, indent=1))

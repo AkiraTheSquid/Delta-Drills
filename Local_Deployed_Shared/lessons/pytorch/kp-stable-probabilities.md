@@ -7,7 +7,7 @@ supporting: ['numpy.axis-reductions', 'numpy.elementwise-ufuncs', 'numpy.broadca
 previews: []
 faded: [1032, 1033, 1034, 1035]
 guided: []
-independent: [1036, 1037, 1038, 1039, 1040, 1041, 1080, 1081, 1082]
+independent: [1036, 1037, 1038, 1039, 1040, 1041, 1080, 1081, 1082, 103]
 integrated: [1042, 1043, 1044]
 ---
 
@@ -195,6 +195,9 @@ Return squared distance of each class distribution from uniform, shape (b,). x: 
 
 ### q1082
 Return effective number of equally likely classes, defined as the exponential of entropy, shape (b,). x: logits (b,c), finite float.
+
+### q103
+Softmax of a logit vector that survives entries like 1000 — shift before exponentiating.
 
 ## Integrated practice
 
