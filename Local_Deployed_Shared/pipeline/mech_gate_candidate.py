@@ -53,7 +53,7 @@ from pathlib import Path
 _sys_path_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_sys_path_root))
 
-from delta_paths import THIS_DIR_ONLY  # noqa: E402
+from delta_paths import THIS_DIR_ONLY, ensure_torch_python  # noqa: E402
 
 MIN_CASES, MAX_CASES = 3, 6
 
@@ -300,6 +300,7 @@ def gate_candidate(candidate: dict, code_runner) -> list[str]:
 
 
 def main() -> None:
+    ensure_torch_python()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", help="candidate .json, or .jsonl with --batch")
     parser.add_argument("--batch", action="store_true", help="gate a JSONL of candidates")

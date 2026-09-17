@@ -288,9 +288,18 @@ const LessonGate = (() => {
         list = null;
       }
     };
+    /* A quote's body is MARKDOWN, not a sentence. The compiled ARENA cells
+       put a `##### Learning Objectives` heading, a blank line and a bullet
+       list inside one `>` block, and every exercise's difficulty box is a
+       ```yaml fence inside one — 1006 quotes across the notebooks, ~700 with
+       block structure. Joining the lines with spaces and running `inline()`
+       printed those as one run-on paragraph with a literal `#####` in it.
+       Rendering the body through this same function keeps the quote's own
+       headings, lists, paragraphs and fences at the same depth they were
+       authored, and nests a `> >` quote the same way. */
     const flushQuote = () => {
       if (quote.length) {
-        out.push("<blockquote>" + inline(quote.join(" ")) + "</blockquote>");
+        out.push("<blockquote>" + md(quote.join("\n"), { renderCode, headingLevels }) + "</blockquote>");
         quote = [];
       }
     };

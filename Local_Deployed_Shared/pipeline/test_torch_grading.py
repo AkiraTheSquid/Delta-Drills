@@ -14,7 +14,11 @@ from pathlib import Path
 _sys_path_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_sys_path_root))
 
-from delta_paths import THIS_DIR_ONLY  # noqa: E402
+from delta_paths import THIS_DIR_ONLY, ensure_torch_python  # noqa: E402
+
+# A test of torch grading that has no torch is not a test. Script, not a
+# module: pipeline/watch.py only ast.parses it, never imports it.
+ensure_torch_python()
 
 FAILED = 0
 

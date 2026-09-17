@@ -69,7 +69,8 @@ function md(text) {
   let i = 0, list = null, para = [], quote = [];
   const flushPara = () => { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } };
   const flushList = () => { if (list) { out.push('</' + list + '>'); list = null; } };
-  const flushQuote = () => { if (quote.length) { out.push('<blockquote>' + inline(quote.join(' ')) + '</blockquote>'); quote = []; } };
+  // The quote body is markdown (headings, lists, fences), not one sentence — render it recursively.
+  const flushQuote = () => { if (quote.length) { out.push('<blockquote>' + md(quote.join('\n')) + '</blockquote>'); quote = []; } };
   while (i < lines.length) {
     const line = lines[i];
     const fence = line.match(/^```(.*)$/);

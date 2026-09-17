@@ -2595,10 +2595,6 @@
      "solo_items": [],
      "integrated_items": [
       {
-       "question_id": 971,
-       "prompt": "Return an inclusive range and its length."
-      },
-      {
        "question_id": 972,
        "prompt": "Return equal-bin edges and centres."
       },
@@ -2834,10 +2830,6 @@
       {
        "question_id": 659,
        "prompt": "Two conversions from one tensor, and the original untouched."
-      },
-      {
-       "question_id": 1495,
-       "prompt": "Combine runtime dtype lookup with conversion and memory accounting."
       },
       {
        "question_id": 1496,
@@ -3240,11 +3232,6 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 1353,
-       "prompt": "Write every row end through one axis.",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1354,
        "prompt": "Rewrite one whole batch.",
        "worked_example_code": ""
@@ -3317,7 +3304,6 @@
       1350,
       1351,
       1352,
-      1353,
       1354,
       1355,
       1356
@@ -4933,28 +4919,13 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 1474,
-       "prompt": "A batch-axis mean, leaving height and width.",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1475,
        "prompt": "Per-image sums over both spatial axes.",
        "worked_example_code": ""
       },
       {
-       "question_id": 1476,
-       "prompt": "Per-image means using negative trailing axes.",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1477,
        "prompt": "Row sums retaining length-one axis for broadcasting.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1478,
-       "prompt": "Per-image means retaining both spatial axes.",
        "worked_example_code": ""
       },
       {
@@ -4965,11 +4936,6 @@
       {
        "question_id": 1480,
        "prompt": "Column means retaining the reduced axis.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1481,
-       "prompt": "Whole-tensor mean returned as a Python float.",
        "worked_example_code": ""
       },
       {
@@ -5003,14 +4969,10 @@
       1471,
       1472,
       1473,
-      1474,
       1475,
-      1476,
       1477,
-      1478,
       1479,
       1480,
-      1481,
       1482
      ],
      "misconceptions_markdown": "- **\"axis=0 gives row sums.\"** \u2014 axis=0 REMOVES axis 0: the rows collapse\n  together, yielding one result per column. Cross the axis out of the shape\n  tuple and read what's left.\n- **\"keepdims is cosmetic.\"** \u2014 It preserves alignment for broadcasting.\n  `x - x.mean(dim=1)` on a square matrix runs WITHOUT error and quietly\n  subtracts along the wrong axis; `keepdims=True` (shape (r,1)) makes the\n  intended row-wise alignment explicit and correct.\n- **\"Reducing two axes needs two calls.\"** \u2014 `axis=(1, 2)` collapses both in\n  one pass. Chained single-axis calls also shift the axis numbering between\n  calls \u2014 a tuple avoids that trap entirely.",
@@ -5256,7 +5218,6 @@
       238,
       159,
       978,
-      979,
       980
      ],
      "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead.",

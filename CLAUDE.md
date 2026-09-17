@@ -134,10 +134,13 @@ skill report the same thing from the other side.
   on `types-and-conversion` (where `"42" == 42` is already a named misconception)
   resolved 38 baseline violations at a cost of one coverage obligation, met by q715 and
   q717. The other undeclared operators have not been checked — this was one symbol.
-- ⚠️ **Run the pipeline under `This-Directory-Only/backend/.venv/bin/python3`.** Bare
-  `python3` has no torch: `validate_lessons.py` reports every torch drill broken, and
-  `export_questions_json.py` prints "torch preload failed" and leaves 40 questions'
-  `expected_output` stale instead of recomputing them.
+- ⚠️ **The pipeline needs torch = `This-Directory-Only/backend/.venv/bin/python3`.** Bare
+  `python3` has none. Since 2026-09-17 the code-running gates (`audit_question_bank.py`,
+  `export_questions_json.py`, `test_torch_grading.py`, `mech_gate_candidate.py`,
+  `validate_function_bank.py`, `validate_lessons.py`, `lessons/checks.py`) re-exec
+  themselves under that venv via `delta_paths.ensure_torch_python()`; before that a
+  bare run filed 1111/1243 questions as `torch_unavailable` and left `expected_output`
+  stale — quietly. One-off scripts you write still need the venv path explicitly.
 
 - **ARENA 0.1 `make_rays_1d` lesson `tr-1` landed** (2026-09-06): four KCs under
   `lessons/pytorch/` — `torch.out-argument`, `torch.slice-assignment`,

@@ -36,6 +36,10 @@ from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_quest
 import lesson_quality as quality
 sys.path.insert(0, str(LESSONS_DIR))
 from checks import run_checked
+# append, not insert(0): Local_Deployed_Shared carries its own watch.py and
+# practice_engine.py, and this module is imported by scripts/watch.py.
+sys.path.append(str(REPO / "Local_Deployed_Shared"))
+from delta_paths import ensure_torch_python  # noqa: E402
 
 EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays)
 
@@ -469,4 +473,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    # Bare python3 has no torch and calls every torch fence broken. Main-only:
+    # scripts/watch.py imports this module and must not be exec'd away.
+    ensure_torch_python()
     sys.exit(main(sys.argv[1:]))

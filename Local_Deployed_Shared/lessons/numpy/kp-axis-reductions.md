@@ -280,29 +280,17 @@ Per-column totals from a matrix.
 ### q1473
 Per-row means from a matrix.
 
-### q1474
-A batch-axis mean, leaving height and width.
-
 ### q1475
 Per-image sums over both spatial axes.
 
-### q1476
-Per-image means using negative trailing axes.
-
 ### q1477
 Row sums retaining length-one axis for broadcasting.
-
-### q1478
-Per-image means retaining both spatial axes.
 
 ### q1479
 A tuple reduction over the first two axes.
 
 ### q1480
 Column means retaining the reduced axis.
-
-### q1481
-Whole-tensor mean returned as a Python float.
 
 ### q1482
 Per-image sums retaining every reduced axis.

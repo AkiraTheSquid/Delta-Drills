@@ -396,9 +396,6 @@ A run of integers in a named dtype, fully described.
 ### q659
 Two conversions from one tensor, and the original untouched.
 
-### q1495
-Combine runtime dtype lookup with conversion and memory accounting.
-
 ### q1496
 Describe a converted tensor's values, shape, dtype, and byte count.
 

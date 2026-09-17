@@ -108,5 +108,9 @@ def check_compiled_examples(directory):
 
 
 if __name__ == '__main__':
+    import sys
     from pathlib import Path
+    sys.path.append(str(Path(__file__).resolve().parent.parent))
+    from delta_paths import ensure_torch_python
+    ensure_torch_python()  # the cells are torch; bare python3 fails them all
     print(f'PASS: {check_compiled_examples(Path(__file__).parent)} runnable cells asserted')
