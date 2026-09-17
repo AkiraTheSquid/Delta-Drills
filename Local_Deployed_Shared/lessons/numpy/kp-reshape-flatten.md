@@ -691,9 +691,6 @@ Separate row ends from row starts.
 ### q1352
 Write every row start through one axis.
 
-### q1353
-Write every row end through one axis.
-
 ### q1354
 Rewrite one whole batch.
 

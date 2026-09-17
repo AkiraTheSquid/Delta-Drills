@@ -2595,10 +2595,6 @@
      "solo_items": [],
      "integrated_items": [
       {
-       "question_id": 971,
-       "prompt": "Return an inclusive range and its length."
-      },
-      {
        "question_id": 972,
        "prompt": "Return equal-bin edges and centres."
       },
@@ -2834,10 +2830,6 @@
       {
        "question_id": 659,
        "prompt": "Two conversions from one tensor, and the original untouched."
-      },
-      {
-       "question_id": 1495,
-       "prompt": "Combine runtime dtype lookup with conversion and memory accounting."
       },
       {
        "question_id": 1496,
@@ -3237,11 +3229,6 @@
       {
        "question_id": 1352,
        "prompt": "Write every row start through one axis.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1353,
-       "prompt": "Write every row end through one axis.",
        "worked_example_code": ""
       },
       {
@@ -4932,28 +4919,13 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 1474,
-       "prompt": "A batch-axis mean, leaving height and width.",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1475,
        "prompt": "Per-image sums over both spatial axes.",
        "worked_example_code": ""
       },
       {
-       "question_id": 1476,
-       "prompt": "Per-image means using negative trailing axes.",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1477,
        "prompt": "Row sums retaining length-one axis for broadcasting.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1478,
-       "prompt": "Per-image means retaining both spatial axes.",
        "worked_example_code": ""
       },
       {
@@ -4964,11 +4936,6 @@
       {
        "question_id": 1480,
        "prompt": "Column means retaining the reduced axis.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1481,
-       "prompt": "Whole-tensor mean returned as a Python float.",
        "worked_example_code": ""
       },
       {

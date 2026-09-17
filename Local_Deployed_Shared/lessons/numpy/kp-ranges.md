@@ -348,9 +348,6 @@ From the drill bank: q970 (equally spaced positions around a circle).
 
 ## Integrated practice
 
-### q971
-Return an inclusive range and its length.
-
 ### q972
 Return equal-bin edges and centres.
 
