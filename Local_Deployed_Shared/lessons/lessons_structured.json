@@ -7791,6 +7791,11 @@
        "question_id": 1082,
        "prompt": "Return effective number of equally likely classes, defined as the exponential of entropy, shape (b,). x: logits (b,c), finite float.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 103,
+       "prompt": "Softmax of a logit vector that survives entries like 1000 \u2014 shift before exponentiating.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -7816,7 +7821,8 @@
       1041,
       1080,
       1081,
-      1082
+      1082,
+      103
      ],
      "misconceptions_markdown": "- **Subtracting the maximum changes the probabilities.** It multiplies numerator and denominator by the same factor; the ratio is unchanged.\n- **Log-softmax is `log(softmax(x))`.** Mathematically yes, numerically no: the probability underflows to zero first. Compute score minus log-sum-exp instead.\n- **The row maximum must be squeezed before subtracting.** `max(dim=1, keepdim=True)[0]` is `(b, 1)` and broadcasts across the row; the squeezed `(b,)` form does not line up.\n- **`exp` of a large score is just a large number.** Past about `88` for float32 it is infinity, and every later step is `nan`.",
      "notes_markdown": ""
@@ -10137,6 +10143,31 @@
        "question_id": 1261,
        "prompt": "Return the response of locally mean-centred image patches to the filters. Patch means include padding and all input channels. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: stride \u2265 1; p: zero padding on every side. The kernel fits the padded input.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 405,
+       "prompt": "The output side length from input side, kernel, stride and padding, by integer arithmetic.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 406,
+       "prompt": "Same formula, returned as a plain int \u2014 read the four names in the right order.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 408,
+       "prompt": "How many multiplications feed ONE output value: channels times kernel area.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 409,
+       "prompt": "The padding that keeps the size unchanged at stride 1, for an odd kernel.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 416,
+       "prompt": "Learnable parameter count of a 2-D filter layer, with and without a per-filter offset.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10162,7 +10193,12 @@
       1258,
       1259,
       1260,
-      1261
+      1261,
+      405,
+      406,
+      408,
+      409,
+      416
      ],
      "misconceptions_markdown": "- **Stride scales the kernel strides too.** Only the output-position strides are multiplied by `S`; kernel strides stay one image step.\n- **A square test image is enough.** It hides a row/column swap; use rectangular images and kernels.\n- **`F.conv2d` flips the kernel.** It does not; it is the windowed sum with the weight as given.\n- **More output channels means a bigger fan-in.** Fan-in is `in_channels * kh * kw`; output channels only set how many filters exist.",
      "notes_markdown": ""
@@ -10298,6 +10334,11 @@
        "question_id": 1277,
        "prompt": "Return root-mean-square activation per example/channel, shape (batch,channels). x: float (batch,channels,height,width).",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 418,
+       "prompt": "Collapse each channel's spatial map to one number: a (B, C, H, W) map becomes (B, C).",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10323,7 +10364,8 @@
       1274,
       1275,
       1276,
-      1277
+      1277,
+      418
      ],
      "misconceptions_markdown": "- **Global pooling returns one number per image.** It returns one per channel per image, shape `(batch, channels)`.\n- **Zero padding is fine for max pooling.** A zero beats every negative activation; pad with `-inf`.\n- **Pooling reduces the channel axis.** It never does; channels are distinct features and stay separate.\n- **`x.max(dim=(2, 3))` works like `mean`.** `max` takes one axis at a time; reduce twice and index `[0]` for the values.",
      "notes_markdown": ""
@@ -10474,6 +10516,16 @@
        "question_id": 1309,
        "prompt": "Return training-mode channel means and population variances after the affine transform, shape (2,channels), means first. x: float (batch,channels,height,width); g: scale (channels,); b: shift (channels,); eps > 0. Variance is the population variance.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 460,
+       "prompt": "Reshape a per-channel vector so it lines up with dim 1 of a (B, C, H, W) tensor.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 459,
+       "prompt": "Normalise, scale and shift a (B, C, H, W) tensor with four per-channel vectors reshaped to (1, C, 1, 1).",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10499,7 +10551,9 @@
       1306,
       1307,
       1308,
-      1309
+      1309,
+      460,
+      459
      ],
      "misconceptions_markdown": "- **Statistics are per image.** They are per channel, pooled over every example in the batch and every pixel; a per-image mean would erase the difference between a bright image and a dark one.\n- **Variance uses `n-1`.** BatchNorm uses the population variance; `x.var()`'s default correction gives a different number.\n- **Evaluation mode still updates the buffers.** It reads them and leaves them alone; only training mode writes.\n- **The running update is part of the gradient path.** It is bookkeeping done under `no_grad`; the normalized output, not the buffer write, is what gradients flow through.",
      "notes_markdown": ""
@@ -10661,6 +10715,11 @@
        "question_id": 1385,
        "prompt": "Given a Sequential chain `m` and a tensor `x`, return the list of intermediate results: element `i` is the tensor after the first `i+1` children have been applied, so the list has one entry per child and its last entry equals the full chain's output. Return an empty list for an empty chain.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 423,
+       "prompt": "Subclass the base class, register one affine layer as an attribute, apply it in forward \u2014 return an instance.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10683,7 +10742,8 @@
       1382,
       1383,
       1384,
-      1385
+      1385,
+      423
      ],
      "misconceptions_markdown": "- **A Python list of modules is a chain.** Only registered children are seen by `parameters()` and `state_dict()`; a list attribute computes but cannot be trained or saved.\n- **`Sequential` applies modules to the original input.** Each step receives the previous step's output; only the first sees `x`.\n- **A `ReLU` module has parameters.** It is a parameter-free step; it exists as a module so it can sit in a chain.\n- **`t.nn.Linear(a, b)` has a weight of shape `(a, b)`.** The weight is `(out, in)`, so `(b, a)`; the forward multiplies by its transpose.",
      "notes_markdown": ""
@@ -11466,6 +11526,11 @@
        "question_id": 1454,
        "prompt": "Given a classifier `m` in evaluation mode, a batch `x` and integer labels `y`, return the cross-entropy loss of the logits against the labels as a Python float, computed without recording gradients.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 425,
+       "prompt": "One update of a scalar model by hand: the squared-error slope, then the descent step, as arithmetic.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -11488,7 +11553,8 @@
       1451,
       1452,
       1453,
-      1454
+      1454,
+      425
      ],
      "misconceptions_markdown": "- **Backward overwrites the gradient.** It accumulates; without a zero-grad every step, step `n` uses the sum of `n` gradients.\n- **The optimizer computes the gradient.** Backward does; the optimizer only applies the update rule to the gradients it finds.\n- **Adam's first step is proportional to the gradient.** Every value with a nonzero gradient moves by almost exactly the learning rate whatever the gradient's size; the running statistics only shape later steps.\n- **Eval mode disables gradients.** It only changes how batch norm and similar layers behave; `no_grad` is a separate switch.",
      "notes_markdown": ""

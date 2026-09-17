@@ -637,14 +637,19 @@
  },
  "103": {
   "target_kcs": [
-   "numpy.axis-reductions"
+   "tensor.stable-probabilities"
   ],
   "supporting_kcs": [
-   "numpy.aggregations",
-   "numpy.broadcasting-rules"
+   "numpy.axis-reductions",
+   "numpy.elementwise-ufuncs",
+   "numpy.broadcasting-rules",
+   "numpy.ranges"
   ],
-  "new_syntax": [],
-  "source": "leftover-assignment"
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-independent"
  },
  "104": {
   "target_kcs": [
@@ -2288,6 +2293,178 @@
    "einops.grids-montage"
   ],
   "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "405": {
+  "target_kcs": [
+   "cnn.convolution-2d"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-1d",
+   "cnn.module-state",
+   "numpy.stack-concat-interleave",
+   "numpy.sorting",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [
+   "torch.nn.functional.conv2d"
+  ],
+  "source": "kp-independent"
+ },
+ "406": {
+  "target_kcs": [
+   "cnn.convolution-2d"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-1d",
+   "cnn.module-state",
+   "numpy.stack-concat-interleave",
+   "numpy.sorting",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [
+   "torch.nn.functional.conv2d"
+  ],
+  "source": "kp-independent"
+ },
+ "408": {
+  "target_kcs": [
+   "cnn.convolution-2d"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-1d",
+   "cnn.module-state",
+   "numpy.stack-concat-interleave",
+   "numpy.sorting",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [
+   "torch.nn.functional.conv2d"
+  ],
+  "source": "kp-independent"
+ },
+ "409": {
+  "target_kcs": [
+   "cnn.convolution-2d"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-1d",
+   "cnn.module-state",
+   "numpy.stack-concat-interleave",
+   "numpy.sorting",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [
+   "torch.nn.functional.conv2d"
+  ],
+  "source": "kp-independent"
+ },
+ "416": {
+  "target_kcs": [
+   "cnn.convolution-2d"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-1d",
+   "cnn.module-state",
+   "numpy.stack-concat-interleave",
+   "numpy.sorting",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [
+   "torch.nn.functional.conv2d"
+  ],
+  "source": "kp-independent"
+ },
+ "418": {
+  "target_kcs": [
+   "cnn.pooling"
+  ],
+  "supporting_kcs": [
+   "cnn.convolution-2d",
+   "numpy.axis-reductions",
+   "numpy.argmin-argmax",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "423": {
+  "target_kcs": [
+   "cnn.sequential"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "cnn.batch-normalization",
+   "python.control-flow",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "Tensor.add_module",
+   "Tensor._modules",
+   "torch.nn.Sequential",
+   "torch.nn.ReLU",
+   "torch.nn.Linear",
+   "Tensor.weight"
+  ],
+  "source": "kp-independent"
+ },
+ "425": {
+  "target_kcs": [
+   "cnn.training-loop"
+  ],
+  "supporting_kcs": [
+   "cnn.mlp",
+   "tensor.classifier-evaluation",
+   "python.control-flow",
+   "cnn.batch-normalization",
+   "cnn.feature-extraction"
+  ],
+  "new_syntax": [
+   "Tensor.backward",
+   "Tensor.grad",
+   "torch.optim.Adam",
+   "Tensor.step",
+   "Tensor.zero_grad",
+   "torch.nn.functional.cross_entropy",
+   "Tensor.eval",
+   "Tensor.train"
+  ],
+  "source": "kp-independent"
+ },
+ "459": {
+  "target_kcs": [
+   "cnn.batch-normalization"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "numpy.axis-reductions",
+   "numpy.elementwise-ufuncs",
+   "python.control-flow",
+   "numpy.stack-concat-interleave"
+  ],
+  "new_syntax": [
+   "syntax.with",
+   "torch.no_grad",
+   "Tensor.training"
+  ],
+  "source": "kp-independent"
+ },
+ "460": {
+  "target_kcs": [
+   "cnn.batch-normalization"
+  ],
+  "supporting_kcs": [
+   "cnn.module-state",
+   "numpy.axis-reductions",
+   "numpy.elementwise-ufuncs",
+   "python.control-flow",
+   "numpy.stack-concat-interleave"
+  ],
+  "new_syntax": [
+   "syntax.with",
+   "torch.no_grad",
+   "Tensor.training"
+  ],
   "source": "kp-independent"
  },
  "480": {

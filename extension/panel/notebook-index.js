@@ -81,7 +81,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-00",
       "file": "ar-00-arena-0-0---tensor-reasoning.ipynb",
-      "problems": 91
+      "problems": 92
     },
     {
       "id": "ar-01",
@@ -97,7 +97,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-02",
       "file": "ar-02-arena-0-2---neural-networks-and-resnets.ipynb",
-      "problems": 180
+      "problems": 190
     }
   ],
   "subtopics": {

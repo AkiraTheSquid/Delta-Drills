@@ -928,9 +928,6 @@
     "Tensor.max",
     "Tensor.sum"
    ],
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "numpy.ndarray-model": [
     "torch.tensor"
    ],
@@ -939,8 +936,7 @@
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.attribute",
@@ -22158,9 +22154,6 @@
    ]
   },
   "405": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
@@ -22178,16 +22171,12 @@
    ]
   },
   "406": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
@@ -22239,16 +22228,12 @@
    ]
   },
   "408": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
@@ -22263,16 +22248,12 @@
    ]
   },
   "409": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
@@ -22468,9 +22449,6 @@
    "cnn.convolution-2d": [
     "torch.nn.functional.conv2d"
    ],
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "numpy.constructors": [
     "torch.ones"
    ],
@@ -22533,9 +22511,6 @@
    "numpy.axis-reductions": [
     "syntax.bool-literal"
    ],
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
@@ -22544,8 +22519,7 @@
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
@@ -22601,9 +22575,6 @@
    ],
    "numpy.axis-reductions": [
     "Tensor.mean#dim"
-   ],
-   "numpy.broadcasting-rules": [
-    "syntax.none"
    ],
    "numpy.constructors": [
     "torch.zeros"
@@ -22775,12 +22746,6 @@
     "syntax.class",
     "torch.nn.Module"
    ],
-   "cnn.sequential": [
-    "torch.nn.Linear"
-   ],
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
@@ -22830,16 +22795,12 @@
    ]
   },
   "425": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "python.calling-functions": [
     "syntax.call"
    ],
    "python.defining-functions": [
     "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
+    "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
@@ -24070,9 +24031,6 @@
    ]
   },
   "459": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "numpy.dtype-astype": [
     "torch.arange#dtype"
    ],
@@ -24141,9 +24099,6 @@
    ]
   },
   "460": {
-   "numpy.broadcasting-rules": [
-    "syntax.none"
-   ],
    "numpy.ndarray-model": [
     "Tensor.shape",
     "torch.tensor"

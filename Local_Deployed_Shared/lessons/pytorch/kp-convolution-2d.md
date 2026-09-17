@@ -7,7 +7,7 @@ supporting: ['cnn.convolution-1d', 'cnn.module-state', 'numpy.stack-concat-inter
 previews: []
 faded: [1251, 1249, 1252, 1250]
 guided: []
-independent: [1253, 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 405, 406, 408, 409, 414, 416]
+independent: [1253, 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 405, 406, 408, 409, 416]
 integrated: [1262, 1263, 1264]
 ---
 
@@ -231,9 +231,6 @@ How many multiplications feed ONE output value: channels times kernel area.
 
 ### q409
 The padding that keeps the size unchanged at stride 1, for an odd kernel.
-
-### q414
-Run a filter bank over a batch with the functional call, no module — predict the spatial size first.
 
 ### q416
 Learnable parameter count of a 2-D filter layer, with and without a per-filter offset.
