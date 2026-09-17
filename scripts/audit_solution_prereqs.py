@@ -56,7 +56,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from audit_lesson_syntax import ASSUMED, LESSONS, lesson_order, page_symbols  # noqa: E402
+from audit_lesson_syntax import ASSUMED, LESSONS, REGISTRY, lesson_order, page_symbols  # noqa: E402
 from solution_symbols import aliases, bound_names, collect  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +94,38 @@ def declaring_kcs() -> tuple[dict[str, str], dict[str, str]]:
     declared = {sym: min(kcs, key=lambda k: rank.get(k, 10**6))
                 for sym, kcs in declared_all.items()}
     return declared, kc_of_page
+
+
+def ancestors() -> dict[str, set[str]]:
+    """kc -> every KC transitively BEFORE it in the prerequisite lattice.
+
+    Added 2026-09-17. "Taught at or before" used to mean registry RANK, which
+    is a linear order over every branch of the course at once: a symbol owned
+    by an earlier page on an unrelated branch passed. At serve time nothing
+    requires that branch — the runtime gate (kc_graph.question_kc_gate) only
+    asks that the drill's own prerequisite chain be learned — so the learner
+    could meet the symbol having neither mastered nor read the page that
+    teaches it. 532 symbol uses on 374 drills were in that state. The rule the
+    runtime can honour is the lattice one: the owner must be the drill's KC or
+    one of its ancestors. Rank still orders the report and breaks owner ties.
+    """
+    reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    prereqs = {kc["id"]: list(kc.get("prereqs") or []) for kc in reg["kcs"]}
+    memo: dict[str, set[str]] = {}
+
+    def walk(kc: str, trail: tuple[str, ...] = ()) -> set[str]:
+        if kc in memo:
+            return memo[kc]
+        if kc in trail:
+            raise SystemExit(f"kc_registry.json: prerequisite cycle through {kc}")
+        out: set[str] = set()
+        for p in prereqs.get(kc, []):
+            out.add(p)
+            out |= walk(p, trail + (kc,))
+        memo[kc] = out
+        return out
+
+    return {kc: walk(kc) for kc in prereqs}
 
 
 def question_symbols(q: dict, surface: str) -> set[str]:
@@ -146,6 +178,7 @@ def find(surfaces: tuple[str, ...], only_qid: int | None = None) -> list[dict]:
     qmatrix = json.loads(QMATRIX.read_text(encoding="utf-8"))
     declared, kc_of_page = declaring_kcs()
     rank = lesson_order(kc_of_page)
+    before = ancestors()
 
     out: list[dict] = []
     for q in questions:
@@ -157,6 +190,12 @@ def find(surfaces: tuple[str, ...], only_qid: int | None = None) -> list[dict]:
         if not ranked:
             continue
         my_rank, my_kc = min(ranked)
+        # What the runtime gate guarantees is learned when this drill is
+        # served: its target KCs' prerequisite closure. Plus the targets
+        # themselves, which the exposure gate guarantees are READ.
+        reachable = set(targets)
+        for k in targets:
+            reachable |= before.get(k, set())
         for surface in surfaces:
             for sym in sorted(question_symbols(q, surface)):
                 if sym in SELF_DEFINED:
@@ -164,10 +203,14 @@ def find(surfaces: tuple[str, ...], only_qid: int | None = None) -> list[dict]:
                 owner = owner_of(sym, declared, rank)
                 if owner is None:
                     kind = "unowned"
+                elif owner in reachable:
+                    continue
                 elif rank.get(owner, -1) > my_rank:
                     kind = "late"
                 else:
-                    continue
+                    # Taught earlier in the course, on a branch this drill's
+                    # concept does not descend from.
+                    kind = "unrelated"
                 out.append({
                     "qid": qid, "kc": my_kc, "surface": surface, "symbol": sym,
                     "kind": kind, "owner": owner,
@@ -212,8 +255,9 @@ def report(violations: list[dict], args) -> int:
     if not args.summary and not args.by_symbol:
         for v in sorted(shown, key=lambda v: (v["qid"], v["surface"], v["symbol"])):
             tag = "ASSUMED " if v["assumed"] else ""
-            where = f"first taught by {v['owner']}" if v["kind"] == "late" \
-                else "taught by NO lesson"
+            where = {"late": f"first taught by {v['owner']}",
+                     "unrelated": f"taught by {v['owner']}, not a prerequisite"
+                     }.get(v["kind"], "taught by NO lesson")
             print(f"q{v['qid']:<4} [{v['kc']}] {v['surface']:8s} {tag}{v['symbol']} — {where}")
         print()
 
@@ -222,7 +266,8 @@ def report(violations: list[dict], args) -> int:
         owners = {v["symbol"]: (v["kind"], v["owner"]) for v in shown}
         for sym, n in per.most_common():
             kind, owner = owners[sym]
-            where = f"late — {owner}" if kind == "late" else "UNOWNED"
+            where = {"late": f"late — {owner}",
+                     "unrelated": f"unrelated — {owner}"}.get(kind, "UNOWNED")
             flag = " (ASSUMED)" if sym in ASSUMED else ""
             print(f"{n:5d}  {sym:38s} {where}{flag}")
         print()
@@ -231,7 +276,8 @@ def report(violations: list[dict], args) -> int:
     by_surface = Counter(v["surface"] for v in violations)
     per_kc = Counter(v["kc"] for v in violations)
     print(f"violations      : {len(violations)}  "
-          f"(unowned {by_kind['unowned']}, late {by_kind['late']})")
+          f"(unowned {by_kind['unowned']}, late {by_kind['late']}, "
+          f"unrelated {by_kind['unrelated']})")
     print(f"  of which the old ASSUMED list would have hidden: "
           f"{sum(1 for v in violations if v['assumed'])}")
     for s in SURFACES:

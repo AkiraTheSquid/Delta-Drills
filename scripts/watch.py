@@ -239,6 +239,26 @@ def check_solution_prereq_ratchet():
         'if that is deliberate, this assertion is the thing to update')
 
 
+def check_symbol_index_is_current():
+    """lessons/question_symbol_kcs.json must match what the bank would build now.
+
+    The runtime syntax gate (backend/app/symbol_gate.py) reads that file to
+    hold a drill back until every KC that teaches a symbol it uses is learned
+    or read. A stale index gates on last month's symbols: a drill rewritten
+    to use `torch.arange` ships ungated, a page that stopped declaring
+    something keeps blocking on it. Regenerate with
+    scripts/build_symbol_prereqs.py whenever questions.json, qmatrix_tags.json
+    or a KP's `new_syntax:` changes.
+    """
+    import json
+    import build_symbol_prereqs as B
+
+    want = json.dumps(B.build(), indent=1, sort_keys=True) + '\n'
+    have = B.OUT.read_text(encoding='utf-8') if B.OUT.exists() else ''
+    assert have == want, (
+        f'{B.OUT.name} is stale — run python3 scripts/build_symbol_prereqs.py')
+
+
 def check_solution_symbol_coverage():
     """The collector must not walk past a construct without naming it.
 
@@ -400,6 +420,7 @@ if __name__ == '__main__':
         sys.exit(1)
     checks = [check_imports, check_public_api, check_invariants, check_colab_grader,
               check_solution_prereq_ratchet, check_solution_symbol_coverage,
+              check_symbol_index_is_current,
               check_arena_grounding_ratchet, check_declared_symbols_are_drilled,
               check_arena_index_is_current, check_graph_structure_ratchet,
               check_prose_prereq_ratchet]
