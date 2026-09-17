@@ -2,7 +2,7 @@
 kc: numpy.dtype-astype
 title: Dtypes, .to(), and memory size
 supporting: [numpy.ndarray-model]
-new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype, torch.float64, torch.int16]
+new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype, torch.float64, torch.int16, torch.uint8]
 faded: [230, 215, 51, 649, 650, 651]
 guided: [87]
 independent: [19, 652, 653, 654, 655, 656, 1483, 1484, 1485, 1486, 1487, 1488, 1489, 1490, 1491, 1492, 1493, 1494]
@@ -22,6 +22,10 @@ To convert an existing tensor: **`x.to(new_dtype)`** (this is PyTorch's
 original is untouched; there is no in-place dtype change. Converting
 float→int **truncates toward zero** rather than rounding: `1.9 → 1`,
 `-1.9 → -1`.
+Narrowing an *integer* tensor into an integer dtype that can't hold the
+value **wraps around** rather than erroring: `uint8` holds only 0..255, so
+`256 → 0` and `-1 → 255`. (A float that is out of range for the target
+integer dtype has no defined result — don't rely on it.)
 
 ```python
 import torch as t

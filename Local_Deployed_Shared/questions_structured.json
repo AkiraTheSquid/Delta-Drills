@@ -63025,7 +63025,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return the sum of each row of the 2-D float tensor x, shape (r,).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[2.0, 4.0, 6.0], [1.0, 3.0, 5.0]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[2.,4.,6.],[1.,3.,5.]])",
@@ -63039,7 +63039,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[3.0, 7.0, 11.0]",
+          "why": "dim names the axis that DISAPPEARS. dim=0 collapses the rows and leaves one sum per column; per-row sums need dim=1."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=1)",
       "expected_output": "",
@@ -63066,10 +63071,26 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": null,
-      "test_cases": [],
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return the sum of each column of the 2-D integer tensor x, shape (c,).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2], [10, 20], [100, 200]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[1,2],[10,20],[100,200]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[111,222]"
+        },
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[7,8,9]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[7,8,9]"
+        }
+      ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[3, 30, 300]",
+          "why": "dim=1 collapses the columns, giving one sum per row. Per-column sums reduce dim=0."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(0,))",
       "expected_output": "",
@@ -63096,7 +63117,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return the mean of each row of the 2-D float tensor x, shape (r,).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[1.,2.,3.],[10.,20.,30.]])",
@@ -63110,7 +63131,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[5.5, 11.0, 16.5]",
+          "why": "dim=0 averages DOWN the columns. A per-row mean reduces across dim=1."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=1)",
       "expected_output": "",
@@ -63137,10 +63163,26 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": null,
-      "test_cases": [],
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Average over the batch axis only and return shape (h, w).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[[1.,2.],[3.,4.]],[[5.,6.],[7.,8.]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[3.0,4.0],[5.0,6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[[2.]],[[8.]],[[4.]]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[4.6666665]]"
+        }
+      ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "4.5",
+          "why": "With no dim, mean collapses EVERY axis to a single number. Reducing only the batch axis needs dim=0."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=0, keepdim=False)",
       "expected_output": "",
@@ -63167,7 +63209,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Return one sum per image, shape (b,), by reducing both spatial axes.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[[1.,2.],[3.,4.]],[[5.,6.],[7.,8.]]])",
@@ -63181,7 +63223,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[[6.0, 8.0], [10.0, 12.0]]",
+          "why": "dim=0 reduces the BATCH axis and keeps the spatial ones, giving an (h, w) map instead of one number per image. Pass both spatial axes: dim=(1, 2)."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(1,2))",
       "expected_output": "",
@@ -63208,7 +63255,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Return one mean per image, shape (b,), by reducing both spatial axes.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[2.0, 4.0], [6.0, 8.0]], [[1.0, 3.0], [5.0, 7.0]]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[[2.,4.],[6.,8.]],[[1.,3.],[5.,7.]]])",
@@ -63222,7 +63269,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[[4.0, 6.0], [3.0, 5.0]]",
+          "why": "Reducing only dim=1 leaves shape (b, w): one value per column of each image. Both spatial axes have to go: dim=(1, 2) or dim=(-2, -1)."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(-2,-1))",
       "expected_output": "",
@@ -63249,7 +63301,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (r, c). Return the row sums with shape (r, 1), keeping the reduced axis.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[1.,2.,3.],[4.,5.,6.]])",
@@ -63263,7 +63315,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[6.0, 15.0]",
+          "why": "Without keepdim=True the reduced axis is dropped and the result is shape (r,), which will not broadcast back against x's rows."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=1, keepdim=True)",
       "expected_output": "",
@@ -63290,7 +63347,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, h, w). Return the per-image means with shape (b, 1, 1), ready to broadcast over each image.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[1.0, 3.0], [5.0, 7.0]], [[2.0, 4.0], [6.0, 8.0]]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[[1.,3.],[5.,7.]],[[2.,4.],[6.,8.]]])",
@@ -63304,7 +63361,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[4.0, 5.0]",
+          "why": "The means are right but the shape is (b,): without keepdim=True the two reduced axes vanish, so the result cannot broadcast over x."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(1,2), keepdim=True)",
       "expected_output": "",
@@ -63331,10 +63393,26 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": null,
-      "test_cases": [],
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (a, b, c). Sum over axes 0 and 1 together and return shape (c,).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.arange(12).reshape(2, 2, 3)))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx=t.arange(12).reshape(2,2,3)",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[18,22,26]"
+        },
+        {
+          "setup_code": "import torch as t\nx=t.ones(1,3,2,dtype=t.int64)",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[3,3]"
+        }
+      ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[[6, 8, 10], [12, 14, 16]]",
+          "why": "One dim reduces one axis: the result is still (b, c). Reduce both, dim=(0, 1), or reduce dim=0 twice."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=0).sum(dim=0)",
       "expected_output": "",
@@ -63361,10 +63439,26 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": null,
-      "test_cases": [],
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (r, c). Return the column means with shape (1, c).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 5.0], [3.0, 9.0], [7.0, 13.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[1.,5.],[3.,9.],[7.,13.]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[3.6666667,9.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nx=t.tensor([[4.,8.]])",
+          "call": "solve(x).tolist()",
+          "expected_expr": "[[4.0,8.0]]"
+        }
+      ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[3.6666667461395264, 9.0]",
+          "why": "The means are right but the shape is (c,): keepdim=True is what keeps the reduced row axis as a size-1 dimension."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.mean(dim=(0,), keepdim=True)",
       "expected_output": "",
@@ -63391,7 +63485,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return the mean of every element of the float tensor x as a plain Python float.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 3.0], [5.0, 7.0]])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([[1.,3.],[5.,7.]])",
@@ -63405,7 +63499,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "8.0",
+          "why": "len(x) is the size of the FIRST axis only, so this divides a 2-D tensor's total by its row count instead of by the number of elements."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return float(x.mean())",
       "expected_output": "",
@@ -63432,10 +63531,10 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x has shape (b, c, h, w). Return one sum per image, keeping shape (b, 1, 1, 1).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.arange(16.0).reshape(1, 2, 2, 4)))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.arange(16,dtype=t.float32).reshape(1,2,2,4)",
+          "setup_code": "import torch as t\nx=t.arange(16.).reshape(1,2,2,4)",
           "call": "solve(x).tolist()",
           "expected_expr": "[[[[120.0]]]]"
         },
@@ -63446,7 +63545,12 @@
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "[120.0]",
+          "why": "The sums are right but the result is shape (b,): keepdim=True keeps each reduced axis as size 1 so the result broadcasts over x."
+        }
+      ],
       "provenance": null,
       "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.sum(dim=(1,2,3), keepdim=True)",
       "expected_output": "",
@@ -63468,42 +63572,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Convert x to float32 and return its values.",
+      "question_text": "Convert x to float32 and return the converted tensor. The grader checks both the values and the dtype of what you return.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to float32 and return the converted tensor.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 2, 3])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([1, 2, 3])",
-          "call": "solve(x)",
-          "expected_expr": "[1.0, 2.0, 3.0]"
+          "call": "(lambda y: (y.tolist(), str(y.dtype)))(solve(x))",
+          "expected_expr": "([1.0, 2.0, 3.0], 'torch.float32')"
         },
         {
           "setup_code": "import torch as t\nx=t.tensor([-2, 0])",
-          "call": "solve(x)",
-          "expected_expr": "[-2.0, 0.0]"
+          "call": "(lambda y: (y.tolist(), str(y.dtype)))(solve(x))",
+          "expected_expr": "([-2.0, 0.0], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([5])",
-          "call": "solve(x)",
-          "expected_expr": "[5.0]"
+          "setup_code": "import torch as t\nx=t.tensor([5], dtype=t.bfloat16)",
+          "call": "(lambda y: (y.tolist(), str(y.dtype)))(solve(x))",
+          "expected_expr": "([5.0], 'torch.float32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, 2, 3], 'torch.int64']",
+          "why": "Nothing was converted: x is still int64. .to(t.float32) hands back the float32 copy; x itself never changes."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.to(t.float32).tolist()",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.to(t.float32)",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63528,7 +63631,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert the float tensor x to int64 and return the values as a list. The conversion truncates toward zero.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.9, -1.9, 0.5])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([1.9, -1.9, 0.5])",
@@ -63549,9 +63652,8 @@
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[2, -2, 0]",
+          "why": ".to(t.int64) truncates toward zero (1.9 -> 1, -1.9 -> -1). Rounding first is a different operation and gives different answers."
         }
       ],
       "provenance": {
@@ -63578,42 +63680,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return the dtype name after converting x to float64.",
+      "question_text": "Convert x to int32 and return the name of the resulting dtype as a string.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to int32 and return the name of the resulting dtype as a string.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.tensor([1, 2])",
+          "setup_code": "import torch as t\nx=t.tensor([1.0, 2.0])",
           "call": "solve(x)",
-          "expected_expr": "'torch.float64'"
+          "expected_expr": "'torch.int32'"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.5])",
+          "setup_code": "import torch as t\nx=t.tensor([True])",
           "call": "solve(x)",
-          "expected_expr": "'torch.float64'"
+          "expected_expr": "'torch.int32'"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([])",
+          "setup_code": "import torch as t\nx=t.tensor([7], dtype=t.int64)",
           "call": "solve(x)",
-          "expected_expr": "'torch.float64'"
+          "expected_expr": "'torch.int32'"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "'torch.float32'",
+          "why": "That is the dtype x already had. Convert first, then read the dtype off the converted tensor."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return str(x.to(t.float64).dtype)",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return str(x.to(t.int32).dtype)",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63633,42 +63734,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return whether converting x to its existing dtype gives the same object.",
+      "question_text": "Convert x to the dtype it already has and return the result. The grader checks that it gets back the same tensor object, not a copy: .to() with a matching dtype returns x itself.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to the dtype it already has and return the result. The grader checks that it gets back the very same tensor: .to() with a matching dtype is a no-op that returns x itself, not a copy.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 2])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([1, 2])",
-          "call": "solve(x)",
+          "call": "solve(x) is x",
           "expected_expr": "True"
         },
         {
           "setup_code": "import torch as t\nx=t.tensor([1.5])",
-          "call": "solve(x)",
+          "call": "solve(x) is x",
           "expected_expr": "True"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([], dtype=t.int16)",
-          "call": "solve(x)",
-          "expected_expr": "True"
+          "setup_code": "import torch as t\nx=t.tensor([], dtype=t.int32)",
+          "call": "(solve(x) is x, str(solve(x).dtype))",
+          "expected_expr": "(True, 'torch.int32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "False",
+          "why": "Rebuilding the tensor from its values makes a NEW object with the same dtype. x.to(x.dtype) returns x itself, so the grader's identity check fails here."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.to(x.dtype) is x",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.to(x.dtype)",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63693,30 +63793,29 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(n, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(n, name):\n    \"\"\"Build the values 0 through n-1 in the dtype named by `name` and return (values as a list, dtype name as a string).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(4, 'int32'))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nn=4; name=\"int16\"",
+          "setup_code": "import torch as t\nn=4; name=\"int32\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0, 1, 2, 3], 'torch.int16')"
+          "expected_expr": "([0, 1, 2, 3], 'torch.int32')"
         },
         {
-          "setup_code": "import torch as t\nn=3; name=\"float64\"",
+          "setup_code": "import torch as t\nn=3; name=\"float32\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0.0, 1.0, 2.0], 'torch.float64')"
+          "expected_expr": "([0.0, 1.0, 2.0], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nn=1; name=\"int8\"",
+          "setup_code": "import torch as t\nn=1; name=\"uint8\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0], 'torch.int8')"
+          "expected_expr": "([0], 'torch.uint8')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "solve(3,\"float32\")",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[0, 1, 2, 3], 'torch.int64']",
+          "why": "`name` was never used, so the default dtype (int64) came back. The string has to be turned into a torch dtype object and passed as dtype=."
         }
       ],
       "provenance": {
@@ -63743,42 +63842,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Create n ones using a dtype name and return bytes per element.",
+      "question_text": "Create n ones in the dtype named by `name` and return (the values as a list, the dtype name as a string, the element count).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(n, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(n, name):\n    \"\"\"Create n ones in the dtype named by `name` and return (values as a list, dtype name as a string, element count).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 'int32'))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nn=3; name=\"float32\"",
+          "setup_code": "import torch as t\nn=3; name=\"int32\"",
           "call": "solve(n,name)",
-          "expected_expr": "4"
+          "expected_expr": "([1, 1, 1], 'torch.int32', 3)"
         },
         {
-          "setup_code": "import torch as t\nn=2; name=\"float64\"",
+          "setup_code": "import torch as t\nn=2; name=\"float32\"",
           "call": "solve(n,name)",
-          "expected_expr": "8"
+          "expected_expr": "([1.0, 1.0], 'torch.float32', 2)"
         },
         {
-          "setup_code": "import torch as t\nn=5; name=\"int16\"",
+          "setup_code": "import torch as t\nn=4; name=\"bool\"",
           "call": "solve(n,name)",
-          "expected_expr": "2"
+          "expected_expr": "([True, True, True, True], 'torch.bool', 4)"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "solve(3,\"float32\")",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1.0, 1.0, 1.0], 'torch.float32', 3]",
+          "why": "`name` was never used, so the ones came out in the default float32. The string has to be turned into a torch dtype and passed as dtype=."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(n, name):\n    return t.ones(n, dtype=getattr(t, name)).element_size()",
+      "canonical_solution": "import torch as t\n\ndef solve(n, name):\n    y = t.ones(n, dtype=getattr(t, name))\n    return (y.tolist(), str(y.dtype), y.numel())",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63798,42 +63896,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return total bytes occupied by x.",
+      "question_text": "Convert x to uint8 and return the values as a plain list. uint8 holds only 0..255, so values outside that range wrap around.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to uint8 and return the values as a list. uint8 holds only 0..255; anything outside wraps around.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([256, 257, 1])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.zeros((2,3), dtype=t.float32)",
+          "setup_code": "import torch as t\nx=t.tensor([256, 257, 1])",
           "call": "solve(x)",
-          "expected_expr": "24"
+          "expected_expr": "[0, 1, 1]"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros((4,), dtype=t.int16)",
+          "setup_code": "import torch as t\nx=t.tensor([0, 255])",
           "call": "solve(x)",
-          "expected_expr": "8"
+          "expected_expr": "[0, 255]"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros((1,2,2), dtype=t.float64)",
+          "setup_code": "import torch as t\nx=t.tensor([-1])",
           "call": "solve(x)",
-          "expected_expr": "32"
+          "expected_expr": "[255]"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[256, 257, 1]",
+          "why": "No conversion happened, so 256 came back as 256. uint8 holds only 0..255 and larger values wrap around (256 -> 0)."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.numel() * x.element_size()",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return x.to(t.uint8).tolist()",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63853,42 +63950,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return x converted to int16 as a plain list, leaving x itself unchanged.",
+      "question_text": "Return x converted to int32 as a plain list, together with the dtype name of x itself, leaving x unchanged. Return (values, dtype name).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return (x converted to int32 as a plain list, the dtype name of x itself as a string). x must be left unchanged.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.9, -1.9])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.9,-2.9])",
+          "setup_code": "import torch as t\nx=t.tensor([1.9, -1.9])",
           "call": "solve(x)",
-          "expected_expr": "([1, -2], 'torch.float32')"
+          "expected_expr": "([1, -1], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([7], dtype=t.int64)",
+          "setup_code": "import torch as t\nx=t.tensor([True, False])",
           "call": "solve(x)",
-          "expected_expr": "([7], 'torch.int64')"
+          "expected_expr": "([1, 0], 'torch.bool')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([])",
+          "setup_code": "import torch as t\nx=t.tensor([3], dtype=t.int64)",
           "call": "solve(x)",
-          "expected_expr": "([], 'torch.float32')"
+          "expected_expr": "([3], 'torch.int64')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, -1], 'torch.int32']",
+          "why": "That reports the COPY's dtype. .to() never changes x, so the second slot has to be str(x.dtype), which is still float32."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    y=x.to(t.int16)\n    return (y.tolist(), str(x.dtype))",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    y = x.to(t.int32)\n    return (y.tolist(), str(x.dtype))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63908,42 +64004,41 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return values, dtype string, and bytes per element for an arange with named dtype.",
+      "question_text": "Build the values 0 through n-1 in the dtype named by `name`, then convert them to bool. Return (original values as a list, bool values as a list, original dtype name as a string).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(n, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(n, name):\n    \"\"\"Build 0 through n-1 in the dtype named by `name`, convert that to bool, and return (original values, bool values, original dtype name).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 'float32'))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nn=3; name=\"float32\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0.0, 1.0, 2.0], 'torch.float32', 4)"
+          "expected_expr": "([0.0, 1.0, 2.0], [False, True, True], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nn=2; name=\"int16\"",
+          "setup_code": "import torch as t\nn=2; name=\"int32\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0, 1], 'torch.int16', 2)"
+          "expected_expr": "([0, 1], [False, True], 'torch.int32')"
         },
         {
-          "setup_code": "import torch as t\nn=4; name=\"float64\"",
+          "setup_code": "import torch as t\nn=1; name=\"int64\"",
           "call": "solve(n,name)",
-          "expected_expr": "([0.0, 1.0, 2.0, 3.0], 'torch.float64', 8)"
+          "expected_expr": "([0], [False], 'torch.int64')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "solve(3,\"float32\")",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[0, 1, 2], [False, True, True], 'torch.int64']",
+          "why": "`name` never reached the range, so it was built as the default int64 and the dtype slot is wrong. Build it with dtype= made from the name."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(n, name):\n    z=t.arange(n, dtype=getattr(t,name))\n    return (z.tolist(), str(z.dtype), z.element_size())",
+      "canonical_solution": "import torch as t\n\ndef solve(n, name):\n    z = t.arange(n, dtype=getattr(t, name))\n    return (z.tolist(), z.to(t.bool).tolist(), str(z.dtype))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -63968,7 +64063,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to bool and return (the bool values as a list, the dtype name of the ORIGINAL x as a string).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([0, 1, 2, -1])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([0,1,2,-1])",
@@ -63981,17 +64076,16 @@
           "expected_expr": "([False, True], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([], dtype=t.int16)",
+          "setup_code": "import torch as t\nx=t.tensor([], dtype=t.int32)",
           "call": "solve(x)",
-          "expected_expr": "([], 'torch.int16')"
+          "expected_expr": "([], 'torch.int32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[False, True, True, True], 'torch.bool']",
+          "why": "That reports the converted tensor's dtype, which is always bool. The original dtype is still on x: str(x.dtype)."
         }
       ],
       "provenance": {
@@ -64018,42 +64112,41 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Return float32 and float64 bytes for the same number of elements as x.",
+      "question_text": "Convert x to int64, then convert that int64 tensor back to float32. Return (the int64 values as a list, the round-tripped float32 values as a list). Going through an int dtype loses the fractional parts for good.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to int64, then convert that int64 tensor back to float32. Return (int64 values as a list, round-tripped float32 values as a list).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.5, -2.5])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.zeros((2,3))",
+          "setup_code": "import torch as t\nx=t.tensor([1.5, -2.5])",
           "call": "solve(x)",
-          "expected_expr": "(24, 48)"
+          "expected_expr": "([1, -2], [1.0, -2.0])"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros(1)",
+          "setup_code": "import torch as t\nx=t.tensor([3.0, 4.0])",
           "call": "solve(x)",
-          "expected_expr": "(4, 8)"
+          "expected_expr": "([3, 4], [3.0, 4.0])"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros((2,2,2))",
+          "setup_code": "import torch as t\nx=t.tensor([0.9])",
           "call": "solve(x)",
-          "expected_expr": "(32, 64)"
+          "expected_expr": "([0], [0.0])"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, -2], [1.5, -2.5]]",
+          "why": "The second slot has to come from the int64 copy, not from x. Reading x directly reports the fractions the int conversion already dropped."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return (x.numel()*t.tensor([],dtype=t.float32).element_size(), x.numel()*t.tensor([],dtype=t.float64).element_size())",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    y = x.to(t.int64)\n    return (y.tolist(), y.to(t.float32).tolist())",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -64078,17 +64171,17 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x, name):\n    \"\"\"Convert x to the dtype named by `name` and return (converted values as a list, whether x's ORIGINAL dtype is float32).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.5, -2.5]), 'int32'))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.5,-2.5]); name=\"int16\"",
+          "setup_code": "import torch as t\nx=t.tensor([1.5,-2.5]); name=\"int32\"",
           "call": "solve(x,name)",
           "expected_expr": "([1, -2], True)"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([2.0]); name=\"float64\"",
+          "setup_code": "import torch as t\nx=t.tensor([2.0]); name=\"int64\"",
           "call": "solve(x,name)",
-          "expected_expr": "([2.0], True)"
+          "expected_expr": "([2], True)"
         },
         {
           "setup_code": "import torch as t\nx=t.tensor([1,2]); name=\"float32\"",
@@ -64099,9 +64192,8 @@
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.5,-2.5]); name=\"int16\"\nsolve(x,name)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, -2], False]",
+          "why": "A dtype never equals a string. Compare with the dtype object: x.dtype == t.float32."
         }
       ],
       "provenance": {
@@ -64133,7 +64225,7 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Return (x converted to int64 as a list, x's original values as a list). The conversion truncates toward zero.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([2.8, -2.8])))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([2.8,-2.8])",
@@ -64154,9 +64246,8 @@
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[3, -3], [2.799999952316284, -2.799999952316284]]",
+          "why": ".to(t.int64) truncates toward zero: 2.8 -> 2 and -2.8 -> -2. Rounding first gives 3 and -3."
         }
       ],
       "provenance": {
@@ -64183,42 +64274,41 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For x, return dtype name, element size, and total bytes without changing x.",
+      "question_text": "Convert x to int32 and keep the result in a new variable. Then return (x's own values as a list, x's own dtype name as a string): the original tensor must come back untouched.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Convert x to int32 into a NEW variable, then return (x's own values as a list, x's own dtype name) to show the original was not touched.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.9, -1.9])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.zeros((2,2),dtype=t.float32)",
+          "setup_code": "import torch as t\nx=t.tensor([1.9, -1.9])",
           "call": "solve(x)",
-          "expected_expr": "('torch.float32', 4, 16)"
+          "expected_expr": "([1.9, -1.9], 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros(3,dtype=t.int16)",
+          "setup_code": "import torch as t\nx=t.tensor([True])",
           "call": "solve(x)",
-          "expected_expr": "('torch.int16', 2, 6)"
+          "expected_expr": "([True], 'torch.bool')"
         },
         {
-          "setup_code": "import torch as t\nx=t.zeros((1,),dtype=t.float64)",
+          "setup_code": "import torch as t\nx=t.tensor([2.5])",
           "call": "solve(x)",
-          "expected_expr": "('torch.float64', 8, 8)"
+          "expected_expr": "([2.5], 'torch.float32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, -1], 'torch.int32']",
+          "why": "Assigning the result back to the name x makes the function report the int32 copy. The original tensor is still float32; keep the copy under a different name."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    return (str(x.dtype), x.element_size(), x.numel()*x.element_size())",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    y = x.to(t.int32)\n    return (x.tolist(), str(x.dtype))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -64238,42 +64328,42 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Convert x to the named dtype and report whether the conversion changed object identity.",
+      "question_text": "Convert x to the dtype named by `name` and return the converted tensor. The grader also checks identity: when the dtype already matches, .to() returns x itself, otherwise it returns a new tensor.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x, name):\n    \"\"\"Convert x to the dtype named by `name` and return the converted tensor. When the dtype already matches, .to() returns x itself; otherwise it returns a new tensor and x is untouched.\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 2]), 'float32'))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nx=t.tensor([1,2]); name=\"float32\"",
-          "call": "solve(x,name)",
+          "call": "(lambda y: (y.tolist(), y is x))(solve(x,name))",
           "expected_expr": "([1.0, 2.0], False)"
         },
         {
           "setup_code": "import torch as t\nx=t.tensor([1,2]); name=\"int64\"",
-          "call": "solve(x,name)",
+          "call": "(lambda y: (y.tolist(), y is x))(solve(x,name))",
           "expected_expr": "([1, 2], True)"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.5]); name=\"int16\"",
-          "call": "solve(x,name)",
+          "setup_code": "import torch as t\nx=t.tensor([1.5]); name=\"int32\"",
+          "call": "(lambda y: (y.tolist(), y is x))(solve(x,name))",
           "expected_expr": "([1], False)"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.5,-2.5]); name=\"int16\"\nsolve(x,name)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, 2], False]",
+          "why": "clone() always makes a new tensor, so even a matching dtype hands back a copy. Plain .to() returns x itself when nothing needs converting.",
+          "call": "x=t.tensor([1,2]); name=\"int64\"\n(lambda y: (y.tolist(), y is x))(solve(x,name))"
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x, name):\n    y=x.to(getattr(t,name))\n    return (y.tolist(), y is x)",
+      "canonical_solution": "import torch as t\n\ndef solve(x, name):\n    return x.to(getattr(t, name))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -64293,42 +64383,41 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Create a float64 arange, convert it to int16, and return both value lists and both byte sizes.",
+      "question_text": "Build the values 0 through n-1 as float32, convert that tensor to int64, then convert the int64 tensor to bool. Return (float32 values as a list, int64 values as a list, bool values as a list, a tuple of the three dtype names as strings).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(n):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"Build 0 through n-1 as float32, convert it to int64, then convert that to bool. Return (float32 values, int64 values, bool values, (the three dtype names)).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t\nn=3",
           "call": "solve(n)",
-          "expected_expr": "([0.0, 1.0, 2.0], [0, 1, 2], 8, 2)"
+          "expected_expr": "([0.0, 1.0, 2.0], [0, 1, 2], [False, True, True], ('torch.float32', 'torch.int64', 'torch.bool'))"
         },
         {
           "setup_code": "import torch as t\nn=1",
           "call": "solve(n)",
-          "expected_expr": "([0.0], [0], 8, 2)"
+          "expected_expr": "([0.0], [0], [False], ('torch.float32', 'torch.int64', 'torch.bool'))"
         },
         {
-          "setup_code": "import torch as t\nn=0",
+          "setup_code": "import torch as t\nn=2",
           "call": "solve(n)",
-          "expected_expr": "([], [], 8, 2)"
+          "expected_expr": "([0.0, 1.0], [0, 1], [False, True], ('torch.float32', 'torch.int64', 'torch.bool'))"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "solve(3)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[0, 1, 2], [0, 1, 2], [False, True, True], ['torch.int64', 'torch.int64', 'torch.bool']]",
+          "why": "Building the range without dtype= gives int64, so the first dtype name is wrong even though the numbers look the same. Ask for float32 explicitly."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(n):\n    a=t.arange(n,dtype=t.float64)\n    b=a.to(t.int16)\n    return (a.tolist(), b.tolist(), a.element_size(), b.element_size())",
+      "canonical_solution": "import torch as t\n\ndef solve(n):\n    a = t.arange(n, dtype=t.float32)\n    b = a.to(t.int64)\n    c = b.to(t.bool)\n    return (a.tolist(), b.tolist(), c.tolist(), (str(a.dtype), str(b.dtype), str(c.dtype)))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -64348,42 +64437,41 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given x and a dtype name, return converted values, original dtype, and total bytes of the converted tensor.",
+      "question_text": "Convert x to the dtype named by `name`. Return (the converted values as a list, the dtype name of the ORIGINAL x as a string, the dtype name of the converted tensor as a string).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x, name):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x, name):\n    \"\"\"Convert x to the dtype named by `name` and return (converted values as a list, dtype name of the ORIGINAL x, dtype name of the converted tensor).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.5, 2.5]), 'int64'))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.5,-2.5]); name=\"int16\"",
+          "setup_code": "import torch as t\nx=t.tensor([1.5, 2.5]); name=\"int64\"",
           "call": "solve(x,name)",
-          "expected_expr": "([1, -2], 'torch.float32', 4)"
+          "expected_expr": "([1, 2], 'torch.float32', 'torch.int64')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([1,2,3]); name=\"float64\"",
+          "setup_code": "import torch as t\nx=t.tensor([0, 1]); name=\"bool\"",
           "call": "solve(x,name)",
-          "expected_expr": "([1.0, 2.0, 3.0], 'torch.int64', 24)"
+          "expected_expr": "([False, True], 'torch.int64', 'torch.bool')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([]); name=\"float32\"",
+          "setup_code": "import torch as t\nx=t.tensor([3]); name=\"float32\"",
           "call": "solve(x,name)",
-          "expected_expr": "([], 'torch.float32', 0)"
+          "expected_expr": "([3.0], 'torch.int64', 'torch.float32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.5,-2.5]); name=\"int16\"\nsolve(x,name)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[1, 2], 'torch.int64', 'torch.int64']",
+          "why": "The middle slot asks for x's original dtype, not the converted one. .to() leaves x alone, so str(x.dtype) still says float32."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x, name):\n    y=x.to(getattr(t,name))\n    return (y.tolist(), str(x.dtype), y.numel()*y.element_size())",
+      "canonical_solution": "import torch as t\n\ndef solve(x, name):\n    y = x.to(getattr(t, name))\n    return (y.tolist(), str(x.dtype), str(y.dtype))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -64403,42 +64491,41 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "For x, make float32 and int16 versions and return each dtype name, values, and total bytes.",
+      "question_text": "Make a float32 version and a uint8 version of x, each converted straight from x. Return ((float32 values as a list, its dtype name), (uint8 values as a list, its dtype name), the dtype name of x itself). uint8 holds only 0..255 (an integer outside that range wraps around; a float is truncated toward zero); x must be left unchanged.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(x):\n    return None",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Make a float32 version and a uint8 version of x, each converted from x directly. Return ((float32 values, dtype name), (uint8 values, dtype name), x's own dtype name).\"\"\"\n    pass\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.7, 2.7])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nx=t.tensor([1.5,-2.5])",
+          "setup_code": "import torch as t\nx=t.tensor([1.7, 2.7])",
           "call": "solve(x)",
-          "expected_expr": "(([1.5, -2.5], 'torch.float32', 8), ([1, -2], 'torch.int16', 4))"
+          "expected_expr": "(([1.7, 2.7], 'torch.float32'), ([1, 2], 'torch.uint8'), 'torch.float32')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([3,4,5])",
+          "setup_code": "import torch as t\nx=t.tensor([True, False])",
           "call": "solve(x)",
-          "expected_expr": "(([3.0, 4.0, 5.0], 'torch.float32', 12), ([3, 4, 5], 'torch.int16', 6))"
+          "expected_expr": "(([1.0, 0.0], 'torch.float32'), ([1, 0], 'torch.uint8'), 'torch.bool')"
         },
         {
-          "setup_code": "import torch as t\nx=t.tensor([])",
+          "setup_code": "import torch as t\nx=t.tensor([300])",
           "call": "solve(x)",
-          "expected_expr": "(([], 'torch.float32', 0), ([], 'torch.int16', 0))"
+          "expected_expr": "(([300.0], 'torch.float32'), ([44], 'torch.uint8'), 'torch.int64')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "x=t.tensor([1.9,-1.9])\nsolve(x)",
-          "output": "(wrong result demonstrating the misconception)",
-          "why": "The tempting alternative produces a different result on this input, so it does not satisfy the requested dtype, identity, truncation, or byte-accounting behavior."
+          "output": "[[[1.0, 2.0], 'torch.float32'], [[1, 2], 'torch.uint8'], 'torch.float32']",
+          "why": "The float32 version was made from the uint8 copy, so its fractions were already gone. Each version has to be converted from x itself."
         }
       ],
       "provenance": {
         "model": "GPT-5.6 Luna",
         "strength": "weaker model"
       },
-      "canonical_solution": "import torch as t\n\ndef solve(x):\n    a=x.to(t.float32)\n    b=x.to(t.int16)\n    return ((a.tolist(),str(a.dtype),a.numel()*a.element_size()), (b.tolist(),str(b.dtype),b.numel()*b.element_size()))",
+      "canonical_solution": "import torch as t\n\ndef solve(x):\n    a = x.to(t.float32)\n    b = x.to(t.uint8)\n    return ((a.tolist(), str(a.dtype)), (b.tolist(), str(b.dtype)), str(x.dtype))",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false

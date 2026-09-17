@@ -452,6 +452,15 @@ def select_next_subtopic(user_state: UserPracticeState, questions: list) -> Opti
 
     cands = _eligible(skip_served=True)
     if not cands:
+        # Every eligible drill has been served: recycle. Confirm the recycle
+        # actually yields something BEFORE clearing the served log — when the
+        # pool is empty for another reason (all locked) the history stays.
+        recycled = _eligible(skip_served=False)
+        if recycled:
+            for st_name in subtopics:
+                user_state.get_subtopic_state(st_name).served_question_ids.clear()
+            cands = recycled
+    if not cands:
         return None
     # least-served first, then best difficulty fit, then genuinely-easiest
     # entry question, then alpha for determinism
@@ -479,6 +488,10 @@ def pick_question(user_state: UserPracticeState, questions: list) -> Optional[di
     # Filter to this subtopic, excluding already-served
     served = set(sub_state.served_question_ids)
     candidates = [q for q in questions if q["subtopic"] == subtopic and q["id"] not in served]
+
+    if not candidates:
+        # Shouldn't happen (select_next_subtopic checks), but fallback
+        candidates = [q for q in questions if q["subtopic"] == subtopic]
 
     if not candidates:
         return None

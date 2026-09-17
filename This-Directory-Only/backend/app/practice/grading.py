@@ -54,13 +54,14 @@ def select_question_for_difficulty(
     if not pool:
         return None
 
-    # For learners whose target difficulty is elevated (>= 35.0), bypass primitive
-    # language drills (difficulty <= 15, e.g. single-slice x[:k]) if richer
-    # drills exist in the pool.
-    if target_difficulty >= 35.0:
-        non_primitive = [q for q in pool if q.difficulty_score > 15]
-        if non_primitive:
-            pool = non_primitive
+    # No "skip primitive drills above target 35" filter here (added 2026-09-15,
+    # reverted 2026-09-16). On the unseen path the REACH band below already
+    # excludes a difficulty-15 drill for any target >= 35; on the recycle path
+    # the filter shrank a spent pool, and a pool of one is exactly what the
+    # last-served guard in question_pick.pick_for_subtopic turns into a
+    # SubtopicDry — the concept then drops out of the queue (the 09-06/09-09
+    # "same problem forever" and 409 class). Recycling must rotate over the
+    # whole pool.
 
     if unseen:
         ranked = sorted(pool, key=lambda q: abs(q.difficulty_score - target_difficulty))

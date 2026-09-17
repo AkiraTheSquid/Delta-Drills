@@ -41,8 +41,23 @@ const LessonGate = (() => {
     } catch (_) {}
   };
 
+  const _unmarkLocalExposure = (kcs) => {
+    try {
+      const map = _localExposure();
+      kcs.forEach((kc) => { delete map[kc]; });
+      localStorage.setItem(_exposureKey(), JSON.stringify(map));
+    } catch (_) {}
+  };
+
   const _markBackendExposure = async (kcs) => {
     if (practiceMode !== "backend") return;
+    // The server's kc_exposure is what unlocks the NEXT segment's drills
+    // (lessons.question_is_segment_unlocked), so a lost POST is no longer
+    // "the lesson may show again on another device": with the local mark kept
+    // the gate never re-fires here, the server never learns the segment was
+    // taught, and every later segment stays locked. Roll the local mark back
+    // so the lesson is offered again and the POST gets another try.
+    let ok = false;
     try {
       const res = await apiFetch("/api/practice/exposure", {
         method: "POST",
@@ -50,9 +65,9 @@ const LessonGate = (() => {
         body: JSON.stringify({ kcs }),
       });
       if (res.status === 401) handleExpiredToken();
-    } catch (_) {
-      // Lost POST only means lesson may appear again on another device.
-    }
+      ok = res.ok;
+    } catch (_) {}
+    if (!ok) _unmarkLocalExposure(kcs);
   };
 
   const _fetchJson = async (path) => {
@@ -132,11 +147,12 @@ const LessonGate = (() => {
   });
 
   const _pendingSteps = async (question) => {
-    // `attempt_first` used to skip this guard. That let an intermediate-level
-    // learner receive an API before its lesson, exactly when they most need
-    // first-exposure teaching. A placement diagnostic remains an assessment
-    // of prior knowledge, not ordinary practice, so it alone stays exempt.
-    if (question?.diagnostic_active) return [];
+    // `attempt_first` is the learner's OWN choice — the notebook dialog's
+    // "Try the problem first" radio, stamped by practice/kc-practice.js and
+    // by nothing else (see the comment block at the end of `maybeShow`).
+    // Teaching the lesson first anyway makes that radio a lie; it was
+    // removed on 2026-09-15 and put back 2026-09-16.
+    if (question?.diagnostic_active || question?.attempt_first) return [];
     if (practiceMode === "backend") {
       /* 🔴 …MINUS ANYTHING THIS BROWSER HAS ALREADY SHOWN.
 
@@ -569,6 +585,7 @@ const LessonGate = (() => {
 
   const maybeShow = async (question, onDone, forceKcs = null) => {
     try {
+      if (question?.attempt_first) return false;
       // Content first: a local-mode step is read out of the KP's own segment
       // list, so `_pendingSteps` cannot answer before the lessons have loaded.
       await _ensureLessons();
