@@ -26,7 +26,7 @@ import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
-from delta_paths import CSV_DIR, REPO_DIR, SHARED_DIR, THIS_DIR_ONLY, get_chatgpt_runtime_dir
+from delta_paths import CSV_DIR, REPO_DIR, SHARED_DIR, THIS_DIR_ONLY, ensure_torch_python, get_chatgpt_runtime_dir
 
 CHATGPT_RUNTIME_DIR = get_chatgpt_runtime_dir()
 OUT_PATH = SHARED_DIR / "questions.json"
@@ -829,6 +829,9 @@ def recompute_expected_outputs(questions: list) -> None:
 
 
 def main() -> None:
+    # Without torch the exporter keeps every torch question's stale
+    # expected_output instead of recomputing it — silently.
+    ensure_torch_python()
     questions = load_questions()
     if not questions:
         print("ERROR: no questions were exported", file=sys.stderr)

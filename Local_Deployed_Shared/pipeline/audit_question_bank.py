@@ -46,7 +46,7 @@ from pathlib import Path
 _sys_path_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_sys_path_root))
 
-from delta_paths import THIS_DIR_ONLY, get_backend_python, get_chatgpt_runtime_dir
+from delta_paths import THIS_DIR_ONLY, ensure_torch_python, get_backend_python, get_chatgpt_runtime_dir
 
 QUESTIONS_PATH = THIS_DIR_ONLY / "questions_full.json"
 REPORT_PATH = get_chatgpt_runtime_dir() / "bank_audit_report.json"
@@ -782,6 +782,7 @@ BLOCKING_CHECKS = {"starter_syntax", "grading_gameable", "degenerate_expected",
 
 
 def main() -> None:
+    ensure_torch_python()  # bare python3 files 1111 questions as unscanned
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--confirm", action="store_true",
                         help="confirm precompute leaks against the real grading harness")
