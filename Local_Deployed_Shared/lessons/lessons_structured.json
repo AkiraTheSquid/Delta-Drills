@@ -1253,6 +1253,11 @@
        "question_id": 601,
        "prompt": "Two answers from one function \u2014 sum and product, in a single return.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1526,
+       "prompt": "A default rate the caller can override.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -1263,11 +1268,16 @@
       {
        "question_id": 603,
        "prompt": "A default that decides which of two orders comes back."
+      },
+      {
+       "question_id": 1527,
+       "prompt": "A helper defined inside, reading a default the caller may change."
       }
      ],
      "independent_items": [
       600,
-      601
+      601,
+      1526
      ],
      "misconceptions_markdown": "- **\"The function ran, so it returned something.\"** \u2014 Only `return` returns.\n  Without it every call hands back `None`.\n- **\"Two returns give two answers.\"** \u2014 The first one ends the call. A tuple is\n  how one return carries several values.\n- **\"Parameters are variables I set.\"** \u2014 They are named by the `def` line and\n  filled in by the caller, fresh on every call.",
      "notes_markdown": ""
@@ -1342,6 +1352,11 @@
        "question_id": 607,
        "prompt": "The same module under a shorter name, rounding both ways.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1528,
+       "prompt": "A module attribute that is a number, not a call.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -1352,11 +1367,16 @@
       {
        "question_id": 609,
        "prompt": "`append` changes the list and hands back `None` \u2014 so return the list."
+      },
+      {
+       "question_id": 1529,
+       "prompt": "A list method, a string method, a built-in and a module function together."
       }
      ],
      "independent_items": [
       606,
-      607
+      607,
+      1528
      ],
      "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place.",
      "notes_markdown": ""
@@ -2008,6 +2028,16 @@
        "question_id": 523,
        "prompt": "The transpose and its packed copy: which one reads `a`'s block, and what do the numbers look like?",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1524,
+       "prompt": "A column selection: same start, but is it still one straight run?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1525,
+       "prompt": "Transpose, pack, transpose back: same numbers, whose memory?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -2026,7 +2056,9 @@
      ],
      "independent_items": [
       553,
-      523
+      523,
+      1524,
+      1525
      ],
      "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it.",
      "notes_markdown": ""
@@ -2420,10 +2452,53 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 189,
+       "prompt": "Rotate a matrix by k quarter-turns.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1501,
+       "prompt": "The last k values of a vector, in order.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1502,
+       "prompt": "The 2\u00d72 corner where the last rows meet the last columns.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1503,
+       "prompt": "Every second value, starting from the second one.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1504,
+       "prompt": "Reverse one row of a copy; leave the input untouched.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1505,
+       "prompt": "Paint the frame of a copy, leave the inside and the input alone."
+      },
+      {
+       "question_id": 1506,
+       "prompt": "Cut a square from the corner, then turn it."
+      },
+      {
+       "question_id": 1507,
+       "prompt": "Flip alternate columns of a copy; stepping and writing through a view together."
+      }
+     ],
      "independent_items": [
-      189
+      189,
+      1501,
+      1502,
+      1503,
+      1504
      ],
      "misconceptions_markdown": "- The stop is a boundary, not a selected index.\n- Negative indices count from the end; negative slice steps are unsupported.\n- Slices share storage. Clone before writing when the original must stay unchanged.",
      "notes_markdown": ""
@@ -4346,8 +4421,42 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 510,
+       "prompt": "Transpose a matrix and read back its new shape.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 511,
+       "prompt": "A matrix applied to a vector: which axis vanishes?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 512,
+       "prompt": "Solve a @ x = b, then verify a @ x really does reproduce b.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 513,
+       "prompt": "Apply a whole BATCH of matrices to one vector with a single operator.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1521,
+       "prompt": "Solve a system whose matrix is the transpose of the one you are handed."
+      },
+      {
+       "question_id": 1522,
+       "prompt": "Several right-hand sides at once, then verify the whole block."
+      },
+      {
+       "question_id": 1523,
+       "prompt": "One solver call for a whole batch of systems sharing a right-hand side."
+      }
+     ],
      "independent_items": [
       510,
       511,
@@ -4458,12 +4567,55 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 232,
+       "prompt": "Divisibility mask \u2014 the condition is a modulo comparison.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 145,
+       "prompt": "Local peaks: strictly greater than BOTH neighbours, endpoints excluded.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 202,
+       "prompt": "Keep the rows that are NOT constant.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1512,
+       "prompt": "Zero out the negatives in a copy.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1513,
+       "prompt": "Count the values inside an open interval.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1514,
+       "prompt": "Keep only what beats the opening value.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1515,
+       "prompt": "Select columns by a test that looks down each one."
+      },
+      {
+       "question_id": 1516,
+       "prompt": "Two masks, two writes: pull the outliers back to the nearest bound."
+      }
+     ],
      "independent_items": [
       232,
       145,
-      202
+      202,
+      1512,
+      1513,
+      1514
      ],
      "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`.",
      "notes_markdown": ""
@@ -4562,12 +4714,49 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 24,
+       "prompt": "Replace the first largest value with zero, in a copy.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 61,
+       "prompt": "The VALUE closest to v: transform, find the position, then read the original.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 168,
+       "prompt": "Per-row position of the maximum, breaking ties by the LAST occurrence instead of the default first.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1508,
+       "prompt": "Per column, where the smallest value sits.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1509,
+       "prompt": "Locate the overall maximum as a row-and-column pair.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1510,
+       "prompt": "Closest-to-target, but one answer per row."
+      },
+      {
+       "question_id": 1511,
+       "prompt": "The runner-up's position, without disturbing the input."
+      }
+     ],
      "independent_items": [
       24,
       61,
-      168
+      168,
+      1508,
+      1509
      ],
      "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner.",
      "notes_markdown": ""
@@ -5070,12 +5259,49 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
-     "integrated_items": [],
+     "solo_items": [
+      {
+       "question_id": 141,
+       "prompt": "Diagonal of a @ b WITHOUT computing the full product \u2014 think about which dots the diagonal actually needs: row i of a with COLUMN i of b.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 515,
+       "prompt": "Rescale every row to unit length.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 95,
+       "prompt": "RGB to grayscale \u2014 a weighted sum over the channel axis, no loops.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1517,
+       "prompt": "Each row dotted with itself.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1518,
+       "prompt": "Every row of one matrix against every row of another.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1519,
+       "prompt": "A linear layer: contract, then add a bias to every row."
+      },
+      {
+       "question_id": 1520,
+       "prompt": "All-pairs squared distances from three dot-product pieces."
+      }
+     ],
      "independent_items": [
       141,
       515,
-      95
+      95,
+      1517,
+      1518
      ],
      "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\".",
      "notes_markdown": ""

@@ -5,7 +5,8 @@ supporting: [numpy.slicing-views, numpy.elementwise-ufuncs, numpy.aggregations]
 new_syntax: [torch.count_nonzero, syntax.bitwise]
 faded: [236, 52, 12]
 guided: [85]
-independent: [232, 145, 202]
+independent: [232, 145, 202, 1512, 1513, 1514]
+integrated: [1515, 1516]
 ---
 
 ## Concept: the comparison IS the mask
@@ -184,14 +185,33 @@ def solve(z):
 3. `z[~(z == 0).all(dim=1)]` — an all-zero input drops to a (0, c) tensor
    by itself, which is exactly the required empty result.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q232 (divisibility mask — the condition is a modulo
-comparison).
+### q232
+Divisibility mask — the condition is a modulo comparison.
 
-Also from the bank: q145 (local peaks: strictly greater than BOTH
-neighbours, endpoints excluded), q202 (keep the rows that are NOT
-constant).
+### q145
+Local peaks: strictly greater than BOTH neighbours, endpoints excluded.
+
+### q202
+Keep the rows that are NOT constant.
+
+### q1512
+Zero out the negatives in a copy.
+
+### q1513
+Count the values inside an open interval.
+
+### q1514
+Keep only what beats the opening value.
+
+## Integrated practice
+
+### q1515
+Select columns by a test that looks down each one.
+
+### q1516
+Two masks, two writes: pull the outliers back to the nearest bound.
 
 ## Misconceptions
 

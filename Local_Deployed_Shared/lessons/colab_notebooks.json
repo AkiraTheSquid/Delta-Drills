@@ -8,7 +8,7 @@
       "topic": "Python",
       "subtopic_key": "Python: Getting started",
       "file": "py-0-python-you-need-first.ipynb",
-      "problems": 108
+      "problems": 110
     },
     {
       "id": "np-1",
@@ -16,7 +16,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-arrays-from-the-ground-up.ipynb",
-      "problems": 241
+      "problems": 247
     },
     {
       "id": "np-2",
@@ -24,7 +24,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Indexing and selection",
       "file": "np-2-indexing-and-selection.ipynb",
-      "problems": 14
+      "problems": 19
     },
     {
       "id": "np-3",
@@ -32,7 +32,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 55
+      "problems": 57
     },
     {
       "id": "eo-1",
@@ -208,6 +208,8 @@
     "793": "py-0",
     "794": "py-0",
     "795": "py-0",
+    "1526": "py-0",
+    "1528": "py-0",
     "8": "np-1",
     "19": "np-1",
     "23": "np-1",
@@ -449,6 +451,12 @@
     "1492": "np-1",
     "1493": "np-1",
     "1494": "np-1",
+    "1501": "np-1",
+    "1502": "np-1",
+    "1503": "np-1",
+    "1504": "np-1",
+    "1524": "np-1",
+    "1525": "np-1",
     "1": "np-2",
     "12": "np-2",
     "24": "np-2",
@@ -463,6 +471,11 @@
     "219": "np-2",
     "232": "np-2",
     "236": "np-2",
+    "1508": "np-2",
+    "1509": "np-2",
+    "1512": "np-2",
+    "1513": "np-2",
+    "1514": "np-2",
     "37": "np-3",
     "84": "np-3",
     "89": "np-3",
@@ -518,6 +531,8 @@
     "1479": "np-3",
     "1480": "np-3",
     "1482": "np-3",
+    "1517": "np-3",
+    "1518": "np-3",
     "313": "eo-1",
     "314": "eo-1",
     "315": "eo-1",

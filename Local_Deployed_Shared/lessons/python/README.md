@@ -134,6 +134,7 @@
     production outage.
 
 ## Recent Changes
+- 2026-09-17: 4 drills (ids 1526–1529) — `defining-functions` Solo +1 (q1526, a default argument) / Integrated +1 (q1527, an inner helper with a default), `dots-and-imports` Solo +1 (q1528, `math.pi`) / Integrated +1 (q1529, list copy + `append` + `math.floor`). Expected values and near-miss outputs produced by running the code (scratch generator). 🔴 A wrong-example `why` may not name a call the answer makes (`append`) — `audit_question_bank.py` blocks it as `answer_leak_in_wrong_example`. Critic skipped: codex quota exhausted until 2026-09-19.
 - 2026-08-29: `watch.py` gained the two standing content guards. The three
   drills recorded ACTIVE below (q578, q585, q603) are now MECHANISED —
   they sit in the recorded baseline rather than being remembered in prose,

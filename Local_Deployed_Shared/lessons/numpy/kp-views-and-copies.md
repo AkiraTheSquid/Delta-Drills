@@ -5,7 +5,7 @@ supporting: []
 new_syntax: [Tensor.contiguous, Tensor.data_ptr, Tensor.is_contiguous]
 faded: [616, 617, 618, 536]
 guided: []
-independent: [553, 523]
+independent: [553, 523, 1524, 1525]
 integrated: [535, 561, 565]
 ---
 
@@ -361,6 +361,12 @@ Three tensors, one question each: `a`, its transpose, and the packed copy — wh
 
 ### q523
 The transpose and its packed copy: which one reads `a`'s block, and what do the numbers look like?
+
+### q1524
+A column selection: same start, but is it still one straight run?
+
+### q1525
+Transpose, pack, transpose back: same numbers, whose memory?
 
 ## Integrated practice
 
