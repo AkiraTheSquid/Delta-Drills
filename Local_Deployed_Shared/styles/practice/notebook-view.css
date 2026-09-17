@@ -270,11 +270,37 @@
   text-decoration: none;
 }
 
+/* h5/h6 exist in the corpus only inside quotes — every compiled ARENA section
+   opens with a `> ##### Learning Objectives` block. LessWrong never sets
+   them, so this is the h4 rule one step down: body serif, weight carried,
+   body size. Unstyled, the browser's h5 is a 0.83em bold sans. */
+.nbv-md h5,
+.nbv-md h6 {
+  color: var(--prose-subhead);
+  font-family: var(--prose-font);
+  font-size: calc(18.2px * var(--anb-zoom, 1));
+  font-weight: 600;
+  line-height: calc(26px * var(--anb-zoom, 1));
+  margin: calc(18.2px * var(--anb-zoom, 1)) 0 calc(6.5px * var(--anb-zoom, 1));
+}
+
+/* A quote's body is rendered as markdown (practice/lessons.js `md`), so it
+   holds block children — a heading, a list, a fence — not one inline run.
+   The rule down the left is the quote; the first and last child's own outer
+   margins would otherwise open a gap between the rule's ends and the text. */
 .nbv-md blockquote {
   border-left: 3px solid var(--border);
   color: var(--text);
   margin: calc(18.2px * var(--anb-zoom, 1)) 0;
   padding-left: calc(18px * var(--anb-zoom, 1));
+}
+
+.nbv-md blockquote > :first-child {
+  margin-top: 0;
+}
+
+.nbv-md blockquote > :last-child {
+  margin-bottom: 0;
 }
 
 /* 🔴 INLINE PROSE CODE ONLY — a `code` span sitting INSIDE a sentence. A
