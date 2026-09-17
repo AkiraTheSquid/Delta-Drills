@@ -303,6 +303,33 @@
   margin-bottom: 0;
 }
 
+/* A pipe table in prose (practice/lessons.js `md`, 2026-09-17). `display:
+   block` + `overflow-x` so a wide one (0.0's three-column shortcuts table)
+   scrolls inside the cell instead of pushing the page sideways; `width:
+   max-content` keeps it from stretching to the column when it is narrow.
+   Cell alignment comes inline from the delimiter row, so none is set here. */
+.nbv-md table {
+  border-collapse: collapse;
+  display: block;
+  font-size: calc(14.5px * var(--anb-zoom, 1));
+  margin: calc(14px * var(--anb-zoom, 1)) 0;
+  max-width: 100%;
+  overflow-x: auto;
+  width: max-content;
+}
+
+.nbv-md th,
+.nbv-md td {
+  border: 1px solid var(--border);
+  padding: calc(4px * var(--anb-zoom, 1)) calc(10px * var(--anb-zoom, 1));
+  vertical-align: top;
+}
+
+.nbv-md th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
 /* 🔴 INLINE PROSE CODE ONLY — a `code` span sitting INSIDE a sentence. A
    fenced block is also `.nbv-md code`, and it is not this: the code-cell
    section below claims `pre > code` back off this rule. The runnable cell's

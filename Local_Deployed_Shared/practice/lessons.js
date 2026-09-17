@@ -268,6 +268,49 @@ const LessonGate = (() => {
      a whole lesson at once — lesson title, KP titles, segment titles, problem
      headers — and the depths are the only thing that says which of those
      contains which. Flattened, a 656-cell notebook is 400 identical bumps. */
+  /* Pipe tables — `| a | b |` rows under a `|:---|---:|` delimiter row.
+
+     Added 2026-09-17 for the ARENA notebooks: 0.0's VSCode shortcuts table
+     rendered as one paragraph of pipes. Leading indent is allowed because
+     that table sits INSIDE a list item, four spaces in, and the list branch
+     below hands such a line back rather than gluing it onto the item. The
+     alignment column is honoured (`:--` / `--:` / `:-:`) since a shortcuts
+     table centres every cell on purpose. Nothing authored in lessons/ uses a
+     table today, so every existing page keeps its shape. */
+  const _TABLE_ROW = /^\s*\|.*\|\s*$/;
+  const _TABLE_DELIM = /^(?=.*\|)\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/;
+  const _tableStartsAt = (lines, i) =>
+    _TABLE_ROW.test(lines[i] || "") && _TABLE_DELIM.test(lines[i + 1] || "");
+  const _splitRow = (line) => {
+    const cells = line.trim().split("|");
+    if (cells[0].trim() === "") cells.shift();
+    if (cells.length && cells[cells.length - 1].trim() === "") cells.pop();
+    return cells.map((cell) => cell.trim());
+  };
+  const _renderTable = (lines, start) => {
+    const head = _splitRow(lines[start]);
+    const aligns = _splitRow(lines[start + 1]).map((spec) => {
+      const left = spec.startsWith(":");
+      const right = spec.endsWith(":");
+      return left && right ? "center" : right ? "right" : left ? "left" : "";
+    });
+    const td = (tag, cell, col) =>
+      `<${tag}${aligns[col] ? ` style="text-align:${aligns[col]}"` : ""}>${inline(cell)}</${tag}>`;
+    const row = (tag, cells) =>
+      "<tr>" + cells.map((cell, col) => td(tag, cell, col)).join("") + "</tr>";
+    const body = [];
+    let i = start + 2;
+    while (i < lines.length && _TABLE_ROW.test(lines[i])) {
+      body.push(row("td", _splitRow(lines[i])));
+      i++;
+    }
+    const html =
+      "<table><thead>" + row("th", head) + "</thead>" +
+      (body.length ? "<tbody>" + body.join("") + "</tbody>" : "") +
+      "</table>";
+    return { html, next: i };
+  };
+
   const md = (text, { renderCode = true, headingLevels = false } = {}) => {
     if (!text) return "";
     const lines = text.split("\n");
@@ -352,6 +395,15 @@ const LessonGate = (() => {
         i++;
         continue;
       }
+      if (_tableStartsAt(lines, i)) {
+        flushPara();
+        flushList();
+        flushQuote();
+        const table = _renderTable(lines, i);
+        out.push(table.html);
+        i = table.next;
+        continue;
+      }
       const item = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
       if (item) {
         flushPara();
@@ -364,7 +416,12 @@ const LessonGate = (() => {
         }
         let itemText = item[3];
         i++;
-        while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i])) {
+        while (
+          i < lines.length &&
+          /^\s{2,}\S/.test(lines[i]) &&
+          !/^\s*([-*]|\d+\.)\s/.test(lines[i]) &&
+          !_tableStartsAt(lines, i)
+        ) {
           itemText += " " + lines[i].trim();
           i++;
         }

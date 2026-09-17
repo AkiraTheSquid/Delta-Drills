@@ -218,12 +218,22 @@ _TAG_SUBS = [
 # figure below" with no figure and no explanation.
 _IFRAME_RE = re.compile(r'<iframe\b[^>]*?\bsrc="([^"]+)"[^>]*>.*?</iframe>', re.I | re.S)
 
-_BLOCKQUOTE_RE = re.compile(r"<blockquote>(.*?)</blockquote>", re.I | re.S)
+# A quote runs to its closing tag OR to the end of the text. The second case
+# is not a malformed notebook: `_split_markdown` cuts a markdown cell at every
+# `<details>`, and upstream's prerequisites page wraps question + `<details>
+# <summary>Answer` in ONE `<blockquote>` (0.0, 12 of them). The cut lands
+# inside the quote, so the part before it ends with an unclosed `<blockquote>`
+# and the part after begins with a bare `</blockquote>`. Unhandled, both tags
+# printed to the learner verbatim (seen 2026-09-17) — this renderer escapes
+# what it does not know. The open half is quoted to its end, so the question
+# still reads as a quote above its collapsed answer; the stray close is dropped
+# by `_LEFTOVER_TAG_RE`.
+_BLOCKQUOTE_RE = re.compile(r"<blockquote>(.*?)(?:</blockquote>|\Z)", re.I | re.S)
 
 # What is left after the substitutions above: <span>, <div>, <p>, stray closing
 # tags. Removed rather than escaped — an unmatched `<span style=…>` printed to
 # the learner is noise either way, and the text inside it is the content.
-_LEFTOVER_TAG_RE = re.compile(r"</?(?:span|div|p|ul|ol|li|table|thead|tbody|tr|td|th|font|u|hr)\b[^>]*>", re.I)
+_LEFTOVER_TAG_RE = re.compile(r"</?(?:span|div|p|ul|ol|li|table|thead|tbody|tr|td|th|font|u|hr|blockquote)\b[^>]*>", re.I)
 
 
 def _quote(inner: str) -> str:
@@ -231,9 +241,17 @@ def _quote(inner: str) -> str:
     return "\n".join(("> " + line) if line.strip() else ">" for line in body.split("\n"))
 
 
+# `### Linear Algebra**` — ten headings in 0.0 carry an unpaired trailing `**`
+# (an upstream typo; it prints as two asterisks on the Streamlit page too).
+# Only a heading line, only a trailing pair with no opener: a heading that IS
+# bold, `### **Title**`, keeps its markers.
+_HEADING_STRAY_BOLD_RE = re.compile(r"^(#{1,6}[ \t]+(?:(?!\*\*).)*?)\*\*[ \t]*$", re.M)
+
+
 def _to_markdown(src: str) -> str:
     """Upstream markdown-with-HTML -> the subset the app's renderer reads."""
     text = _IFRAME_RE.sub(lambda m: f"[Interactive figure — opens upstream ↗]({m.group(1)})", src)
+    text = _HEADING_STRAY_BOLD_RE.sub(r"\1", text)
     text = _BLOCKQUOTE_RE.sub(lambda m: _quote(_to_markdown(m.group(1))), text)
     for pattern, repl in _TAG_SUBS:
         text = pattern.sub(repl, text)
