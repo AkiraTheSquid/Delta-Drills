@@ -128,6 +128,7 @@
   - Status: `RESOLVED` (2026-08-13) in the generator. Republishing the notebooks is what puts it in front of a learner.
 
 ## Recent Changes
+- 2026-09-17: `compile_arena_notebooks.py` — a `<blockquote>` that a `<details>` cut splits (0.0's question + Answer pattern, 12 of them) no longer leaks literal `<blockquote>`/`</blockquote>` into the prose cells: the open half quotes to end-of-text, the stray close is dropped with the other leftover tags. Unpaired trailing `**` on a heading line (ten upstream typos in 0.0) stripped. Recompile changes `arena-0-0.json` only.
 - 2026-09-01: `audit_prose_prereqs.py` added — 40 baseline findings (e.g. kp-dots-and-imports says "tensor" one lesson before numpy.ndarray-model defines it). Inline+fenced code stripped, mirroring jargon.js.
 - 2026-09-01: `audit_graph_structure.py` added (64 baseline findings: 41 edge-missing, 23 difficulty; 0 same-move after the string-constant fix). Wired into watch.py as a ratchet, mutation-verified.
 

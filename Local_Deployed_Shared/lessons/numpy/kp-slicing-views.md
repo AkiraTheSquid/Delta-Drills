@@ -6,7 +6,8 @@ new_syntax: [Tensor.clone, syntax.multi-axis-index, syntax.slice, syntax.slice-s
 concepts: [slice-bounds, rows-and-columns, reversing, quarter-turns, writing-through-views, copying-before-writing]
 faded: [506, 507, 233, 75, 231, 74]
 guided: [76]
-independent: [189]
+independent: [189, 1501, 1502, 1503, 1504]
+integrated: [1505, 1506, 1507]
 ---
 
 ## Concept: Choose a stretch of values
@@ -373,9 +374,33 @@ def solve(z, step, v):
 ### q76
 Mirror each row left-right, then mirror the row order top-bottom. Choose one axis for each result.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q189 (rotate a matrix by k quarter-turns).
+### q189
+Rotate a matrix by k quarter-turns.
+
+### q1501
+The last k values of a vector, in order.
+
+### q1502
+The 2×2 corner where the last rows meet the last columns.
+
+### q1503
+Every second value, starting from the second one.
+
+### q1504
+Reverse one row of a copy; leave the input untouched.
+
+## Integrated practice
+
+### q1505
+Paint the frame of a copy, leave the inside and the input alone.
+
+### q1506
+Cut a square from the corner, then turn it.
+
+### q1507
+Flip alternate columns of a copy; stepping and writing through a view together.
 
 ## Misconceptions
 

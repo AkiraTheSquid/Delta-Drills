@@ -5,8 +5,8 @@ supporting: [python.calling-functions]
 new_syntax: [syntax.def, syntax.default-argument, syntax.docstring, syntax.return]
 faded: [598, 599]
 guided: []
-independent: [600, 601]
-integrated: [602, 603]
+independent: [600, 601, 1526]
+integrated: [602, 603, 1527]
 ---
 
 ## Concept
@@ -201,6 +201,9 @@ assert _delta_output == 'one argument : 14\ntwo arguments: 35\n'
 ### q601
 Two answers from one function — sum and product, in a single return.
 
+### q1526
+A default rate the caller can override.
+
 ## Integrated practice
 
 ### q602
@@ -208,6 +211,9 @@ A helper function defined inside, then called twice.
 
 ### q603
 A default that decides which of two orders comes back.
+
+### q1527
+A helper defined inside, reading a default the caller may change.
 
 ## Misconceptions
 

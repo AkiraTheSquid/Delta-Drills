@@ -6,7 +6,7 @@
    "topic": "Python",
    "subtopic_key": "Python: Getting started",
    "file": "py-0.json",
-   "cells": 705,
+   "cells": 713,
    "questions": [
     568,
     569,
@@ -115,7 +115,9 @@
     792,
     793,
     794,
-    795
+    795,
+    1526,
+    1528
    ],
    "kcs": [
     "python.values-and-names",
@@ -134,7 +136,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Core array literacy",
    "file": "np-1.json",
-   "cells": 1579,
+   "cells": 1603,
    "questions": [
     8,
     19,
@@ -376,7 +378,13 @@
     1491,
     1492,
     1493,
-    1494
+    1494,
+    1501,
+    1502,
+    1503,
+    1504,
+    1524,
+    1525
    ],
    "kcs": [
     "numpy.ndarray-model",
@@ -442,7 +450,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Indexing and selection",
    "file": "np-2.json",
-   "cells": 89,
+   "cells": 109,
    "questions": [
     1,
     12,
@@ -457,7 +465,12 @@
     202,
     219,
     232,
-    236
+    236,
+    1508,
+    1509,
+    1512,
+    1513,
+    1514
    ],
    "kcs": [
     "numpy.boolean-masking",
@@ -478,7 +491,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "file": "np-3.json",
-   "cells": 319,
+   "cells": 327,
    "questions": [
     37,
     84,
@@ -534,7 +547,9 @@
     1477,
     1479,
     1480,
-    1482
+    1482,
+    1517,
+    1518
    ],
    "kcs": [
     "numpy.broadcasting-rules",

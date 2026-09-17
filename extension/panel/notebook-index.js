@@ -9,7 +9,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Python",
       "subtopic_key": "Python: Getting started",
       "file": "py-0-python-you-need-first.ipynb",
-      "problems": 108
+      "problems": 110
     },
     {
       "id": "np-1",
@@ -17,7 +17,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-arrays-from-the-ground-up.ipynb",
-      "problems": 241
+      "problems": 247
     },
     {
       "id": "np-2",
@@ -25,7 +25,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Indexing and selection",
       "file": "np-2-indexing-and-selection.ipynb",
-      "problems": 14
+      "problems": 19
     },
     {
       "id": "np-3",
@@ -33,7 +33,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 55
+      "problems": 57
     },
     {
       "id": "eo-1",

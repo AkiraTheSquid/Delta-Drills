@@ -5,8 +5,8 @@ supporting: [python.calling-functions, python.lists-and-tuples]
 new_syntax: [list.append, math.ceil, math.floor, math.pi, math.sqrt, str.upper, syntax.attribute, syntax.import, syntax.import-as]
 faded: [604, 605]
 guided: []
-independent: [606, 607]
-integrated: [608, 609]
+independent: [606, 607, 1528]
+integrated: [608, 609, 1529]
 ---
 
 ## Concept
@@ -205,6 +205,9 @@ assert _delta_output == 'the value goes BEFORE the dot: ABC\nthe value goes INSI
 ### q607
 The same module under a shorter name, rounding both ways.
 
+### q1528
+A module attribute that is a number, not a call.
+
 ## Integrated practice
 
 ### q608
@@ -212,6 +215,9 @@ A method, a built-in call, and a module function, in one answer.
 
 ### q609
 `append` changes the list and hands back `None` — so return the list.
+
+### q1529
+A list method, a string method, a built-in and a module function together.
 
 ## Misconceptions
 

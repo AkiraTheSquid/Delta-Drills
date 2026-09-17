@@ -1474,3 +1474,32 @@
 {"question_id": 1498, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
 {"question_id": 1499, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
 {"question_id": 1500, "atoms": [{"atom_id": "tensor-wraps-ndarray", "confidence": 0.9}]}
+{"question_id": 1501, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1502, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1503, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1504, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1505, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1506, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}, {"atom_id": "permute-backward-argsort", "confidence": 0.7}]}
+{"question_id": 1507, "atoms": [{"atom_id": "slice-view-mutation", "confidence": 0.7}]}
+{"question_id": 1508, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.7}]}
+{"question_id": 1509, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.7}]}
+{"question_id": 1510, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.7}, {"atom_id": "broadcasting-rules", "confidence": 0.7}]}
+{"question_id": 1511, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.7}, {"atom_id": "index-by-tensor", "confidence": 0.7}]}
+{"question_id": 1512, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.7}]}
+{"question_id": 1513, "atoms": [{"atom_id": "boolean-mask-combine", "confidence": 0.7}, {"atom_id": "any-reduce-axis", "confidence": 0.7}]}
+{"question_id": 1514, "atoms": [{"atom_id": "boolean-mask-combine", "confidence": 0.7}]}
+{"question_id": 1515, "atoms": [{"atom_id": "any-reduce-axis", "confidence": 0.7}, {"atom_id": "boolean-mask-combine", "confidence": 0.7}]}
+{"question_id": 1516, "atoms": [{"atom_id": "boolean-mask-broadcast-assignment", "confidence": 0.7}, {"atom_id": "boolean-mask-combine", "confidence": 0.7}]}
+{"question_id": 1517, "atoms": [{"atom_id": "matvec", "confidence": 0.7}]}
+{"question_id": 1518, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.7}, {"atom_id": "matvec", "confidence": 0.7}]}
+{"question_id": 1519, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.7}, {"atom_id": "broadcasting-rules", "confidence": 0.7}]}
+{"question_id": 1520, "atoms": [{"atom_id": "matmul-2d", "confidence": 0.7}, {"atom_id": "broadcasting-rules", "confidence": 0.7}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.7}]}
+{"question_id": 1521, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.7}, {"atom_id": "matmul-2d", "confidence": 0.7}]}
+{"question_id": 1522, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.7}, {"atom_id": "matmul-2d", "confidence": 0.7}]}
+{"question_id": 1523, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.7}, {"atom_id": "matmul-2d", "confidence": 0.7}]}
+{"question_id": 1524, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.7}]}
+{"question_id": 1525, "atoms": [{"atom_id": "view-vs-reshape", "confidence": 0.7}]}
+{"question_id": 1526, "atoms": [{"atom_id": "python-defining-functions", "confidence": 0.7}]}
+{"question_id": 1527, "atoms": [{"atom_id": "python-defining-functions", "confidence": 0.7}]}
+{"question_id": 1528, "atoms": [{"atom_id": "python-dots-and-imports", "confidence": 0.7}]}
+{"question_id": 1529, "atoms": [{"atom_id": "python-dots-and-imports", "confidence": 0.7}]}

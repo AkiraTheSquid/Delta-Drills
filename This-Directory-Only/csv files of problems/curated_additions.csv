@@ -9526,3 +9526,177 @@ def solve(x):
     a=x.to(t.float32)
     b=x.to(t.int16)
     return ((a.tolist(),str(a.dtype),a.numel()*a.element_size()), (b.tolist(),str(b.dtype),b.numel()*b.element_size()))",48
+Numpy,Indexing and selection,"Given a 1-D tensor `x` and a positive int `k` no larger than its length, return the last `k` elements as a 1-D tensor, in their original order.","import torch as t
+
+
+def solve(x, k):
+    return x[-k:]",22,
+Numpy,Indexing and selection,"Given a 2-D tensor `z` with at least 2 rows and 2 columns, return its bottom-right 2×2 block as a nested list of shape `(2, 2)`.","import torch as t
+
+
+def solve(z):
+    return z[-2:, -2:].tolist()",30,
+Numpy,Indexing and selection,"Given a 1-D tensor `x`, return the elements at odd positions (indices 1, 3, 5, …) as a 1-D tensor. An input with fewer than 2 elements gives an empty tensor.","import torch as t
+
+
+def solve(x):
+    return x[1::2]",26,
+Numpy,Indexing and selection,"Given a 2-D tensor `z` and a row index `r`, return a new tensor equal to `z` except that row `r` is reversed left-to-right. `z` itself must not change.","import torch as t
+
+
+def solve(z, r):
+    out = z.clone()
+    out[r] = t.flip(z[r], [0])
+    return out",40,
+Numpy,Indexing and selection,"Given a 2-D tensor `z` with at least 3 rows and 3 columns and a value `v`, return a new tensor whose border (first and last row, first and last column) is set to `v` and whose interior is unchanged. `z` itself must not change.","import torch as t
+
+
+def solve(z, v):
+    out = z.clone()
+    out[0, :] = v
+    out[-1, :] = v
+    out[:, 0] = v
+    out[:, -1] = v
+    return out",48,
+Numpy,Indexing and selection,"Given a 2-D tensor `z` and an int `k` (at most the smaller of its two sizes), return a tuple `(block, turned)` of nested lists: the top-left `k×k` block of `z`, and that same block rotated a quarter-turn counterclockwise.","import torch as t
+
+
+def solve(z, k):
+    block = z[:k, :k]
+    return (block.tolist(), t.rot90(block).tolist())",52,
+Numpy,Indexing and selection,"Given a 2-D tensor `z`, return a new tensor in which every even-index column (0, 2, 4, …) is reversed top-to-bottom and every other column is unchanged. `z` itself must not change.","import torch as t
+
+
+def solve(z):
+    out = z.clone()
+    out[:, ::2] = t.flip(z[:, ::2], [0])
+    return out",58,
+Numpy,Indexing and selection,"Given a 2-D tensor `z`, return a 1-D integer tensor holding, for each column, the row index of that column's smallest value (first occurrence on ties).","import torch as t
+
+
+def solve(z):
+    return t.argmin(z, dim=0)",28,
+Numpy,Indexing and selection,"Given a 2-D tensor `z`, return the `(row, col)` position of its largest entry as a tuple of two plain ints. If the maximum appears more than once, use the first occurrence in reading order (row by row).","import torch as t
+
+
+def solve(z):
+    flat = int(z.argmax())
+    cols = z.shape[1]
+    return (flat // cols, flat % cols)",44,
+Numpy,Indexing and selection,"Given a 2-D float tensor `z` and a scalar `target`, return a 1-D integer tensor holding, for each row, the column index of the entry closest to `target` (smallest absolute difference; first occurrence on ties).","import torch as t
+
+
+def solve(z, target):
+    return t.argmin(t.abs(z - target), dim=1)",50,
+Numpy,Indexing and selection,"Given a 1-D float tensor `x` with at least two elements and all values distinct, return the index of its SECOND-largest element as a plain int. `x` must not be modified.","import torch as t
+
+
+def solve(x):
+    tmp = x.clone()
+    tmp[t.argmax(tmp)] = float('-inf')
+    return int(t.argmax(tmp))",54,
+Numpy,Indexing and selection,"Given a 1-D integer tensor `x`, return a new tensor in which every negative entry is replaced by 0 and every other entry is unchanged. `x` itself must not change.","import torch as t
+
+
+def solve(x):
+    out = x.clone()
+    out[out < 0] = 0
+    return out",30,
+Numpy,Indexing and selection,"Given a 1-D tensor `x` and two numbers `lo < hi`, return how many entries lie strictly between them (`lo < entry < hi`) as a plain int.","import torch as t
+
+
+def solve(x, lo, hi):
+    return int(t.count_nonzero((x > lo) & (x < hi)))",32,
+Numpy,Indexing and selection,"Given a 1-D tensor `x` with at least one element, return a 1-D tensor of the entries that are strictly greater than the FIRST entry, in their original order (empty if there are none).","import torch as t
+
+
+def solve(x):
+    return x[x > x[0]]",34,
+Numpy,Indexing and selection,"Given a 2-D integer tensor `z`, return the 2-D tensor made of the columns of `z` that contain at least one negative entry, in their original order. If no column qualifies, return a tensor with the same number of rows and zero columns.","import torch as t
+
+
+def solve(z):
+    return z[:, (z < 0).any(dim=0)]",50,
+Numpy,Indexing and selection,"Given a 1-D integer tensor `x` and bounds `lo <= hi`, return a new tensor where every entry below `lo` becomes `lo`, every entry above `hi` becomes `hi`, and everything in between is unchanged. `x` must not change, and do not use a clamping function.","import torch as t
+
+
+def solve(x, lo, hi):
+    out = x.clone()
+    out[out < lo] = lo
+    out[out > hi] = hi
+    return out",52,
+Numpy,Vectorization and broadcasting,"Given a 2-D float tensor `x` of shape `(n, d)`, return a 1-D tensor of length `n` holding the SQUARED length of each row (the dot product of the row with itself). Do not use Python loops.","import torch as t
+
+
+def solve(x):
+    return (x * x).sum(dim=1)",28,
+Numpy,Vectorization and broadcasting,"Given float tensors `a` of shape `(n, d)` and `b` of shape `(m, d)`, return the `(n, m)` tensor whose entry `[i, j]` is the dot product of row `i` of `a` with row `j` of `b`. Do not use Python loops.","import torch as t
+
+
+def solve(a, b):
+    return a @ b.T",40,
+Numpy,Vectorization and broadcasting,"Given a batch `x` of shape `(n, d)`, a weight matrix `w` of shape `(d, k)` and a bias vector `b` of shape `(k,)`, return the `(n, k)` tensor whose row `i` is row `i` of `x` combined with `w`, plus the bias added to every row. Do not use Python loops.","import torch as t
+
+
+def solve(x, w, b):
+    return x @ w + b",46,
+Numpy,Vectorization and broadcasting,"Given float tensors `p` of shape `(n, d)` and `q` of shape `(m, d)`, return the `(n, m)` tensor of SQUARED distances between every row of `p` and every row of `q`, without Python loops. Use the expansion |p|² + |q|² − 2·p·q, so the answer comes from squared lengths kept as columns and rows plus one matrix product.","import torch as t
+
+
+def solve(p, q):
+    pp = (p * p).sum(dim=1, keepdim=True)
+    qq = (q * q).sum(dim=1)
+    return pp + qq - 2 * (p @ q.T)",62,
+Numpy,Vectorization and broadcasting,"Given an invertible square float matrix `a` and a vector `b`, return the vector `x` that satisfies `a.T @ x = b` as a plain list rounded to 4 decimals. Solve the system directly rather than forming an inverse.","import torch as t
+
+
+def solve(a, b):
+    x = t.linalg.solve(a.T, b)
+    return [round(v, 4) for v in x.tolist()]",52,
+Numpy,Vectorization and broadcasting,"Given an invertible square float matrix `a` of shape `(n, n)` and a matrix `b` of shape `(n, k)`, return a tuple `(x_rounded, checks_out)`: the `(n, k)` solution of `a @ x = b` as a nested list rounded to 4 decimals, and a bool saying whether `a @ x` reproduces `b` to within 1e-4.","import torch as t
+
+
+def solve(a, b):
+    x = t.linalg.solve(a, b)
+    rounded = [[round(v, 4) for v in row] for row in x.tolist()]
+    return (rounded, bool(t.allclose(a @ x, b, atol=1e-4)))",56,
+Numpy,Vectorization and broadcasting,"Given a batch `mats` of invertible square float matrices, shape `(batch, n, n)`, and a matching batch of right-hand sides `b` of shape `(batch, n)`, return a tuple `(values, shape)`: the solutions of `mats[i] @ x_i = b[i]` for every `i`, as a nested list rounded to 4 decimals, and the result's shape as a plain tuple. Use ONE solver call — the solver treats leading axes as a batch, just as `@` does.","import torch as t
+
+
+def solve(mats, b):
+    x = t.linalg.solve(mats, b)
+    return ([[round(v, 4) for v in row] for row in x.tolist()], tuple(x.shape))",60,
+Numpy,Core array literacy,"Given a nested list `rows` of one or more equal-length inner lists of integers, and a valid row index `r` of the TRANSPOSE, build the tensor `a` from `rows`, take its transpose, and select row `r` of that transpose with a single integer index. Return a tuple of two bools: does that row start where `a` starts, and is it in reading order?","import torch as t
+
+
+def solve(rows, r):
+    a = t.tensor(rows)
+    part = a.T[r]
+    return (part.data_ptr() == a.data_ptr(), part.is_contiguous())",34,
+Numpy,Core array literacy,"Given a nested list `rows` of one or more equal-length inner lists of integers, build the tensor `a`, take its transpose, make a packed copy of that, and transpose the copy back. Return a tuple of two bools: does the final tensor hold the same values as `a`, and does it start where `a`'s block starts? (Packing something already in reading order hands back the same tensor.)","import torch as t
+
+
+def solve(rows):
+    a = t.tensor(rows)
+    back = a.T.contiguous().T
+    return (t.equal(back, a), back.data_ptr() == a.data_ptr())",38,
+Python,Getting started,"Write a function solve(price, tax=0.5) that returns the price with the tax added on top: `price + price * tax`. A caller who passes only the price gets the default rate; a caller who passes a second argument gets their own rate.","def solve(price, tax=0.5):
+    return price + price * tax",26,
+Python,Getting started,"Write a function solve(values, scale=2) that defines its OWN helper function inside itself, one that multiplies a number by `scale`, calls that helper on the first and last item of `values`, and returns the tuple (first_scaled, last_scaled, scale). The default scale must be 2.","def solve(values, scale=2):
+    def grow(n):
+        """"""n multiplied by scale.""""""
+        return n * scale
+
+    return (grow(values[0]), grow(values[-1]), scale)",40,
+Python,Getting started,"Write a function solve(r) that returns the area of a circle of radius r, rounded to 2 decimals. The `math` module holds the constant you need; reach it with a dot and NO parentheses, since it is a value, not a function.","import math
+
+
+def solve(r):
+    return round(math.pi * r * r, 2)",28,
+Python,Getting started,"Write a function solve(items, text) that appends the CAPITALISED text to a COPY of the list `items` and returns the tuple (grown, half): the extended copy, and the length of the extended copy divided by 2 and rounded DOWN using the `math` module.","import math
+
+
+def solve(items, text):
+    grown = list(items)
+    grown.append(text.upper())
+    return (grown, math.floor(len(grown) / 2))",44,

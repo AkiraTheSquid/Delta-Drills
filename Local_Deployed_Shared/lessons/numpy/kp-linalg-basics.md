@@ -6,6 +6,7 @@ new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107]
 guided: [508, 509]
 independent: [510, 511, 512, 513]
+integrated: [1521, 1522, 1523]
 ---
 
 ## Concept: two multiplications — * vs @
@@ -217,12 +218,30 @@ def solve(a, b):
 2. `*` pairs entries in place; `@` contracts a's columns against b's rows.
 3. `((a * b).tolist(), (a @ b).tolist())`.
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q510 (transpose a matrix and read back its new shape).
-From the drill bank: q511 (matrix @ vector — which axis vanishes?).
-From the drill bank: q512 (solve a @ x = b, then verify a @ x really does reproduce b).
-From the drill bank: q513 (apply a whole BATCH of matrices to one vector with a single @).
+### q510
+Transpose a matrix and read back its new shape.
+
+### q511
+A matrix applied to a vector: which axis vanishes?
+
+### q512
+Solve a @ x = b, then verify a @ x really does reproduce b.
+
+### q513
+Apply a whole BATCH of matrices to one vector with a single operator.
+
+## Integrated practice
+
+### q1521
+Solve a system whose matrix is the transpose of the one you are handed.
+
+### q1522
+Several right-hand sides at once, then verify the whole block.
+
+### q1523
+One solver call for a whole batch of systems sharing a right-hand side.
 
 ## Misconceptions
 

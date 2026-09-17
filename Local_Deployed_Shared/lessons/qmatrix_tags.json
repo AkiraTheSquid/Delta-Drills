@@ -18593,5 +18593,460 @@
    "torch.uint8"
   ],
   "source": "kp-integrated"
+ },
+ "1501": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
+ },
+ "1502": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
+ },
+ "1503": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
+ },
+ "1504": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-independent"
+ },
+ "1505": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1506": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1507": {
+  "target_kcs": [
+   "numpy.slicing-views"
+  ],
+  "supporting_kcs": [
+   "numpy.ndarray-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1508": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-independent"
+ },
+ "1509": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-independent"
+ },
+ "1510": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1511": {
+  "target_kcs": [
+   "numpy.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1512": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-independent"
+ },
+ "1513": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-independent"
+ },
+ "1514": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-independent"
+ },
+ "1515": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1516": {
+  "target_kcs": [
+   "numpy.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "numpy.slicing-views",
+   "numpy.elementwise-ufuncs",
+   "numpy.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1517": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-independent"
+ },
+ "1518": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-independent"
+ },
+ "1519": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-integrated"
+ },
+ "1520": {
+  "target_kcs": [
+   "numpy.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "numpy.linalg-basics",
+   "numpy.axis-reductions",
+   "numpy.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-integrated"
+ },
+ "1521": {
+  "target_kcs": [
+   "numpy.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1522": {
+  "target_kcs": [
+   "numpy.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1523": {
+  "target_kcs": [
+   "numpy.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "numpy.aggregations",
+   "numpy.elementwise-ufuncs"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1524": {
+  "target_kcs": [
+   "numpy.views-and-copies"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.is_contiguous"
+  ],
+  "source": "kp-independent"
+ },
+ "1525": {
+  "target_kcs": [
+   "numpy.views-and-copies"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.contiguous",
+   "Tensor.data_ptr",
+   "Tensor.is_contiguous"
+  ],
+  "source": "kp-independent"
+ },
+ "1526": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-independent"
+ },
+ "1527": {
+  "target_kcs": [
+   "python.defining-functions"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions"
+  ],
+  "new_syntax": [
+   "syntax.def",
+   "syntax.default-argument",
+   "syntax.docstring",
+   "syntax.return"
+  ],
+  "source": "kp-integrated"
+ },
+ "1528": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-independent"
+ },
+ "1529": {
+  "target_kcs": [
+   "python.dots-and-imports"
+  ],
+  "supporting_kcs": [
+   "python.calling-functions",
+   "python.lists-and-tuples"
+  ],
+  "new_syntax": [
+   "list.append",
+   "math.ceil",
+   "math.floor",
+   "math.pi",
+   "math.sqrt",
+   "str.upper",
+   "syntax.attribute",
+   "syntax.import",
+   "syntax.import-as"
+  ],
+  "source": "kp-integrated"
  }
 }

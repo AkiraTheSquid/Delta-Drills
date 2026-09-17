@@ -17451,6 +17451,287 @@
     "builtin.print"
    ]
   },
+  "1501": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign"
+   ]
+  },
+  "1502": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1503": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ]
+  },
+  "1504": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1505": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1506": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1507": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1508": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ]
+  },
+  "1509": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
   "151": {
    "numpy.constructors": [
     "torch.ones"
@@ -17480,6 +17761,693 @@
    "python.values-and-names": [
     "builtin.print",
     "syntax.arith",
+    "syntax.tuple"
+   ]
+  },
+  "1510": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign"
+   ]
+  },
+  "1511": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.slicing-views": [
+    "Tensor.clone"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float",
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1512": {
+   "numpy.aggregations": [
+    "syntax.compare"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.slicing-views": [
+    "Tensor.clone"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1513": {
+   "numpy.aggregations": [
+    "syntax.compare"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ]
+  },
+  "1514": {
+   "numpy.aggregations": [
+    "syntax.compare"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ]
+  },
+  "1515": {
+   "numpy.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim",
+    "syntax.compare"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.tuple",
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1516": {
+   "numpy.aggregations": [
+    "syntax.compare"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.slicing-views": [
+    "Tensor.clone"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1517": {
+   "numpy.aggregations": [
+    "Tensor.sum"
+   ],
+   "numpy.axis-reductions": [
+    "Tensor.sum#dim"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1518": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.transpose-axes": [
+    "Tensor.T"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1519": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1520": {
+   "numpy.aggregations": [
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "numpy.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.transpose-axes": [
+    "Tensor.T"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1521": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "numpy.transpose-axes": [
+    "Tensor.T"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.control-flow": [
+    "syntax.comprehension"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.round"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ]
+  },
+  "1522": {
+   "numpy.aggregations": [
+    "torch.allclose",
+    "torch.allclose#atol"
+   ],
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.control-flow": [
+    "syntax.comprehension"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.bool",
+    "builtin.round"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1523": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.control-flow": [
+    "syntax.comprehension"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.tuple",
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.round"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1524": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "torch.tensor"
+   ],
+   "numpy.transpose-axes": [
+    "Tensor.T"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1525": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "numpy.ndarray-model": [
+    "torch.equal",
+    "torch.tensor"
+   ],
+   "numpy.transpose-axes": [
+    "Tensor.T"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1526": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign"
+   ]
+  },
+  "1527": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ]
+  },
+  "1528": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.types-and-conversion": [
+    "builtin.round"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign"
+   ]
+  },
+  "1529": {
+   "numpy.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return",
+    "syntax.docstring"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.len",
+    "builtin.list",
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
     "syntax.tuple"
    ]
   },

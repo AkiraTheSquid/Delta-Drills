@@ -5,7 +5,8 @@ supporting: [numpy.linalg-basics, numpy.axis-reductions, numpy.broadcasting-rule
 new_syntax: [torch.dot]
 faded: [37, 144, 121]
 guided: [514]
-independent: [141, 515, 95]
+independent: [141, 515, 95, 1517, 1518]
+integrated: [1519, 1520]
 ---
 
 ## Concept: the dot product — multiply, then sum
@@ -172,16 +173,22 @@ def solve(a, b):
     return (a * b).sum(dim=1)
 ```
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q141 (diagonal of a @ b WITHOUT computing the full
-product — think about which dots the diagonal actually needs: row i of a
-with COLUMN i of b).
+### q141
+Diagonal of a @ b WITHOUT computing the full product — think about which dots the diagonal actually needs: row i of a with COLUMN i of b.
 
-From the drill bank: q515 (rescale every row to unit length).
+### q515
+Rescale every row to unit length.
 
-Also from the bank: q95 (RGB to grayscale — a weighted sum over the
-channel axis, no loops).
+### q95
+RGB to grayscale — a weighted sum over the channel axis, no loops.
+
+### q1517
+Each row dotted with itself.
+
+### q1518
+Every row of one matrix against every row of another.
 
 ## Guided practice
 
@@ -190,6 +197,14 @@ channel axis, no loops).
    steps it is made of.
 2. Multiply the pairs elementwise, then collapse the result to one number.
 3. `float((a * b).sum())`.
+
+## Integrated practice
+
+### q1519
+A linear layer: contract, then add a bias to every row.
+
+### q1520
+All-pairs squared distances from three dot-product pieces.
 
 ## Misconceptions
 
