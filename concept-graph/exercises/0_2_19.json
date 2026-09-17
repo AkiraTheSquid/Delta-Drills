@@ -1,0 +1,24 @@
+{
+  "exercise_id": "0_2_19",
+  "title": "implement 2D minimal convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_19_exercise-implement-2d-minimal-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 19,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "oh = h - kh + 1; ow = w - kw + 1 (minimal form, no stride/padding)"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "s_b, s_ic, s_h, s_w = x.stride() — pulls all 4 input strides"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x_strided = x.as_strided(size=(b, ic, oh, ow, kh, kw), stride=(s_b, s_ic, s_h, s_w, s_h, s_w)) — 2-spatial-dim windowing; output_h/output_w windows reuse the same h/w strides as the kernel dims"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x_strided, weights, 'b ic oh ow kh kw, oc ic kh kw -> b oc oh ow')"},
+    {"id": "conv-windowing-2d", "role": "core", "evidence": "the exercise IS this atom — 6D strided view + einsum for 2D conv from scratch"},
+    {"id": "conv-channel-sum", "role": "core", "evidence": "ic on both sides of einsum spec — contracted dimension"},
+    {"id": "conv-kernel-shape", "role": "core", "evidence": "weights: Float[Tensor, 'out_channels in_channels kernel_height kernel_width'] — the proposed 4D conv-kernel-shape atom in its canonical form"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "7-atom exercise — exact 2D mirror of 0_2_18. The duplication of strides (stride=(s_b, s_ic, s_h, s_w, s_h, s_w)) is the subtle teaching point — the OUTPUT spatial dims share strides with the KERNEL spatial dims, because both index into the same input rows/columns. Re-confirms conv-windowing-2d, conv-channel-sum, conv-kernel-shape."
+}

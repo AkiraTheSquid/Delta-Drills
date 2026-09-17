@@ -1,0 +1,24 @@
+{
+  "exercise_id": "0_1_1",
+  "title": "implement intersect_ray_1d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_1_exercise-implement-intersect-ray-1d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 1,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "ray-parametric-form", "role": "core", "evidence": "markdown sets R(u)=O+uD vs O(v)=L_1+v(L_2-L_1); learner must internalize the form to derive the 2x2 system"},
+    {"id": "segment-line-intersect-2d", "role": "core", "evidence": "the whole exercise derives uD - v(L1-L2) = L1-O and solves the 2x2 system; this atom IS the exercise"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "mat = t.stack([D, L_1 - L_2], dim=-1); dedicated 'Aside - difference between stack and concatenate' dropdown teaches the distinction"},
+    {"id": "unbind-tuple-unpack", "role": "core", "evidence": "O, D = ray and L_1, L_2 = segment — first-axis Python unpacking after slicing to 2D"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "sol = t.linalg.solve(mat, vec) — unbatched scalar instance, but the API is the same; this exercise introduces the function"},
+    {"id": "try-except-solve", "role": "core", "evidence": "try: sol = t.linalg.solve(...); except RuntimeError: return False — exercise dropdown 'Failing Solve' explicitly directs the learner to catch the exception"},
+    {"id": "slice-view-mutation", "role": "incidental", "evidence": "ray = ray[:, :2] and segment = segment[:, :2] discard the z dim via basic indexing — view, no mutation, so this is the slice-as-view side of the atom"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Introduces three load-bearing atoms (segment-line-intersect-2d, linalg-solve-batched, try-except-solve) in one exercise. The try-except path is the explicit lesson — it's the manual scalar fallback that 0_1_2 replaces with singular-matrix-mask-trick. Confirms stack-vs-cat: the exercise teaches it via dedicated aside, which is unusual."
+}

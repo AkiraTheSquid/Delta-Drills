@@ -17,4 +17,9 @@ To update the deploy worktree, run:
 Canonical implementation:
 `/home/stellar-thread/Applications/Delta-Drills-Local/This-Directory-Only/scripts/deploy_delta_drills.sh`
 
-This worktree's `scripts/deploy_delta_drills.sh` is only a forwarding wrapper to that canonical script.
+The copy under the deploy worktree is only a forwarding wrapper and should not be edited directly.
+
+`/home/stellar-thread/Applications/Delta-Drills-Local/Local_Deployed_Shared/` is the
+single shared frontend source of truth. It must stay identical to
+`/home/stellar-thread/Applications/Delta-Drills-Deployed/Local_Deployed_Shared/`,
+and `deploy_delta_drills` is what enforces that sync.

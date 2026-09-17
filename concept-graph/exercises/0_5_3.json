@@ -1,0 +1,37 @@
+{
+  "exercise_id": "0_5_3",
+  "title": "write your VAE training loop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_3_exercise-write-your-vae-training-loop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 3,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "kl-divergence-gaussian-closed-form", "role": "core", "evidence": "kl_div_loss = (0.5 * (mu**2 + t.exp(2 * logsigma) - 1) - logsigma).mean() * self.args.beta_kl — exact analytic KL between N(mu, sigma^2) and N(0,1)"},
+    {"id": "elbo-loss-sum-with-beta", "role": "core", "evidence": "reconstruction_loss = nn.MSELoss()(img, img_reconstructed); kl_div_loss = (...).mean() * self.args.beta_kl; loss = reconstruction_loss + kl_div_loss — recon + beta-weighted KL"},
+    {"id": "mse-reconstruction-loss", "role": "core", "evidence": "reconstruction_loss = nn.MSELoss()(img, img_reconstructed) inside training_step"},
+    {"id": "training-step-cycle", "role": "core", "evidence": "loss.backward(); self.optimizer.step(); self.optimizer.zero_grad() inside training_step"},
+    {"id": "log-samples-eval-callback", "role": "core", "evidence": "@t.inference_mode() log_samples(self): output = self.model(HOLDOUT_DATA)[0]; wandb.log({'images': [wandb.Image(arr) for arr in output.cpu().numpy()]}, step=self.step)"},
+    {"id": "holdout-data-one-per-class", "role": "core", "evidence": "HOLDOUT_DATA tensor built at top of notebook (one image per MNIST class) used in log_samples"},
+    {"id": "dataclass-training-args", "role": "core", "evidence": "@dataclass class VAEArgs(AutoencoderArgs): wandb_project='day5-vae-mnist'; beta_kl: float = 0.1 — subclasses AutoencoderArgs to add beta_kl"},
+    {"id": "wandb-init-run", "role": "core", "evidence": "wandb.init(project=self.args.wandb_project, name=self.args.wandb_name); wandb.watch(self.model)"},
+    {"id": "wandb-log-step", "role": "core", "evidence": "wandb.log(dict(reconstruction_loss=reconstruction_loss.item(), kl_div_loss=kl_div_loss.item(), mean=mu.mean(), std=t.exp(logsigma).mean(), total_loss=loss.item()), step=self.step)"},
+    {"id": "wandb-watch-model", "role": "core", "evidence": "wandb.watch(self.model) inside train()"},
+    {"id": "wandb-finish", "role": "core", "evidence": "if self.args.use_wandb: wandb.finish() at end of train()"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on log_samples"},
+    {"id": "tqdm-postfix-metrics", "role": "core", "evidence": "progress_bar = tqdm(self.trainloader, ascii=True); progress_bar.set_description(f'{epoch=:02d}, {loss=:.4f}, batches={self.step:05d}')"},
+    {"id": "loss-item-scalar-extract", "role": "core", "evidence": "reconstruction_loss.item(), kl_div_loss.item(), loss.item() in wandb.log dict"},
+    {"id": "dataloader-batching", "role": "incidental", "evidence": "self.trainloader = DataLoader(self.trainset, batch_size=args.batch_size, shuffle=True, num_workers=8)"},
+    {"id": "tensor-to-device", "role": "incidental", "evidence": "img = img.to(device) inside training_step"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "mu-logsigma-encoder-head", "reason": "Seed listed this as firing in 3 — but VAE is already constructed in 0_5_2; this exercise only calls self.model(img) which returns (img_reconstructed, mu, logsigma). The head implementation lives in 0_5_2."},
+    {"id": "reparameterization-trick", "reason": "Same as above — the reparam line z = mu + sigma * t.randn_like(sigma) is inside VAE.sample_latent_vector defined in 0_5_2; 0_5_3 only consumes the (mu, logsigma) outputs to compute KL."},
+    {"id": "randn-like-noise-source", "reason": "The randn_like call lives in VAE.sample_latent_vector (0_5_2). 0_5_3 only computes loss terms — no random sampling here."}
+  ],
+  "notes": "16 atoms — above seed prediction of 11. Seed predicted 3 §2 atoms (mu-logsigma, reparam, randn-like) re-firing here, but they actually fire only at VAE construction (0_5_2) — same composition-without-implementation pattern as part4 Q14. Logged 3 FPs. Cross-part reuses (wandb cluster, tqdm, inference-mode, loss-item) all fire as in 0_5_1."
+}

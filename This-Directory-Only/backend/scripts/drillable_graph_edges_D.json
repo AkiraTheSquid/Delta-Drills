@@ -1,0 +1,618 @@
+{
+ "cluster": "D",
+ "n_dependents": 51,
+ "edges": [
+  {
+   "prerequisite_id": "topk-predictions",
+   "dependent_id": "argmax-accuracy-eval",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.7,
+   "rationale": "top-1 is the k=1 case of top-k accuracy"
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "argmax-accuracy-eval",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "accuracy computed under inference_mode val pass"
+  },
+  {
+   "prerequisite_id": "ema-first-moment",
+   "dependent_id": "bias-correction-divide",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "bias-correct divides the EMA moment buffer"
+  },
+  {
+   "prerequisite_id": "ema-second-moment",
+   "dependent_id": "bias-correction-divide",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "bias-correct divides second-moment EMA too"
+  },
+  {
+   "prerequisite_id": "step-counter-increment",
+   "dependent_id": "bias-correction-divide",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "correction needs step counter t in 1-beta**t"
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "cross-entropy-classification-loss",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.85,
+   "rationale": "stable CE built on logsumexp trick"
+  },
+  {
+   "prerequisite_id": "arange-fancy-index-cross-entropy",
+   "dependent_id": "cross-entropy-classification-loss",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "gather true-class logit by arange index"
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "ema-first-moment",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "EMA needs a per-param zeros_like moment buffer"
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "ema-first-moment",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "in-place EMA buffer update"
+  },
+  {
+   "prerequisite_id": "sgd-vanilla-from-scratch",
+   "dependent_id": "optimizer-loop-on-tensor",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.7,
+   "confidence": 0.8,
+   "rationale": "loop generalizes the single-step in-place SGD update"
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "optimizer-loop-on-tensor",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "step does in-place leaf param update"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "step-counter-increment",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "counter increments after the optimizer step"
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "trainer-class-skeleton",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "_step runs the canonical training-step cycle"
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "trainer-class-skeleton",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "validate() runs the no-grad eval pass"
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "trainer-class-skeleton",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "trainer drives a Module's params"
+  },
+  {
+   "prerequisite_id": "logsumexp-cross-entropy",
+   "dependent_id": "backward-on-scalar-loss",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "loss tensor reduced to scalar then backward"
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "inplace-param-update",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "in-place update via copy_ on the leaf"
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "inplace-param-update",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "in-place leaf update needs inference_mode"
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "optimizer-init-params-list",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "params() generator yields Parameters to list"
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "training-step-cycle",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.85,
+   "rationale": "backward on scalar loss is a step in the cycle"
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "training-step-cycle",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.85,
+   "rationale": "zero_grad is one of the five canonical calls"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "training-step-cycle",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "optimizer.step is a call in the cycle"
+  },
+  {
+   "prerequisite_id": "inference-mode-step",
+   "dependent_id": "validation-no-grad",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "no_grad and inference_mode both disable grad for val"
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "zero-grad-set-none",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "zero_grad iterates params and clears .grad"
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "clip-grad-norm-pre-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "clip reads each param .grad to compute global norm"
+  },
+  {
+   "prerequisite_id": "vector-normalize-keepdim",
+   "dependent_id": "clip-grad-norm-pre-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "rescale grads by max-norm ratio"
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "ema-second-moment",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "second-moment EMA needs a zeros_like buffer"
+  },
+  {
+   "prerequisite_id": "ema-first-moment",
+   "dependent_id": "ema-second-moment",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "same EMA pattern on squared grads"
+  },
+  {
+   "prerequisite_id": "optimizer-state-tensor-buffers",
+   "dependent_id": "momentum-buffer-update",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "momentum needs a per-param buffer"
+  },
+  {
+   "prerequisite_id": "buffer-copy_-inplace",
+   "dependent_id": "momentum-buffer-update",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "in-place momentum buffer update via copy_"
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "optimizer-state-tensor-buffers",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "allocate one buffer per materialized param"
+  },
+  {
+   "prerequisite_id": "weight-decay-l2-add",
+   "dependent_id": "weight-decay-decoupled",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "decoupled decay is the alternative to L2-add decay"
+  },
+  {
+   "prerequisite_id": "inplace-param-update",
+   "dependent_id": "weight-decay-decoupled",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "theta*=1-lr*lmda rescales params in place"
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "weight-decay-l2-add",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "fold lambda*theta into the gradient buffer"
+  },
+  {
+   "prerequisite_id": "nested-param-group-loop",
+   "dependent_id": "hparam-precedence-merge",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "per-group precedence merge in param_groups"
+  },
+  {
+   "prerequisite_id": "params-iterable-vs-groups",
+   "dependent_id": "nested-param-group-loop",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "loop iterates normalized param_groups"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "nested-param-group-loop",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "nested loop generalizes the flat optimizer step"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "optimizer-class-dispatch",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "dispatched optimizer reused in the SGD-style loop"
+  },
+  {
+   "prerequisite_id": "params-iterable-vs-groups",
+   "dependent_id": "param-group-dict-list",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "differential-LR groups are the dict-list form"
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "params-iterable-vs-groups",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "normalize flat iterable into param_groups"
+  },
+  {
+   "prerequisite_id": "nn-parameter-wrap",
+   "dependent_id": "params-iterable-vs-groups",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "params= accepts Parameter iterables"
+  },
+  {
+   "prerequisite_id": "sweep-config-dict",
+   "dependent_id": "sweep-hparam-distribution",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "choosing distributions is part of building the sweep config"
+  },
+  {
+   "prerequisite_id": "validation-no-grad",
+   "dependent_id": "log-samples-eval-callback",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "periodic eval callback runs under no-grad"
+  },
+  {
+   "prerequisite_id": "wandb-log-step",
+   "dependent_id": "log-samples-eval-callback",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "callback logs N samples to the wandb sink"
+  },
+  {
+   "prerequisite_id": "examples-seen-step-axis",
+   "dependent_id": "tqdm-postfix-metrics",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "postfix shows live loss + examples_seen"
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-config-into-args",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "sweep config arrives via wandb run init"
+  },
+  {
+   "prerequisite_id": "dataclasses-replace-args",
+   "dependent_id": "wandb-config-into-args",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "overwrite dataclass args from the config"
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-finish",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.8,
+   "rationale": "finish closes the run that init opened"
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-log-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "logging requires an open wandb run"
+  },
+  {
+   "prerequisite_id": "examples-seen-step-axis",
+   "dependent_id": "wandb-log-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "log loss against examples_seen step axis"
+  },
+  {
+   "prerequisite_id": "wandb-init-run",
+   "dependent_id": "wandb-watch-model",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "watch attaches to an open run"
+  },
+  {
+   "prerequisite_id": "reduce-gather-sum",
+   "dependent_id": "all-reduce-compose",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "reduce-to-rank-0 is half of all_reduce"
+  },
+  {
+   "prerequisite_id": "broadcast-source-fanout",
+   "dependent_id": "all-reduce-compose",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "broadcast-from-rank-0 is the other half"
+  },
+  {
+   "prerequisite_id": "reduce-op-mean-divide",
+   "dependent_id": "all-reduce-compose",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "mean variant divides after the sum reduce"
+  },
+  {
+   "prerequisite_id": "all-reduce-compose",
+   "dependent_id": "all-reduce-eval-metrics",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "average per-rank eval loss via all_reduce"
+  },
+  {
+   "prerequisite_id": "reduce-op-mean-divide",
+   "dependent_id": "all-reduce-eval-metrics",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "mean reduction of the eval loss"
+  },
+  {
+   "prerequisite_id": "all-reduce-compose",
+   "dependent_id": "all-reduce-grad-sync",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.85,
+   "rationale": "sync grads with op=mean all_reduce"
+  },
+  {
+   "prerequisite_id": "param-grad-access",
+   "dependent_id": "all-reduce-grad-sync",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "iterate params to all_reduce each .grad"
+  },
+  {
+   "prerequisite_id": "broadcast-source-fanout",
+   "dependent_id": "broadcast-initial-weights",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.8,
+   "rationale": "fan rank-0 params to all ranks"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "broadcast-initial-weights",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "broadcast threads rank/world_size"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "dist-send-recv-pair",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "send/recv loop over ranks needs world_size"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "distributed-sampler-shard",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "sampler shards by rank/world_size"
+  },
+  {
+   "prerequisite_id": "init-process-group-nccl",
+   "dependent_id": "mp-spawn-workers",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "each spawned worker inits its process group"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "mp-spawn-workers",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "spawn passes rank up to world_size"
+  },
+  {
+   "prerequisite_id": "tensor-to-device",
+   "dependent_id": "per-rank-cuda-device",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "pin device per rank specializes generic to-device"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "per-rank-cuda-device",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "device index derived from rank"
+  },
+  {
+   "prerequisite_id": "rank-world-size-args",
+   "dependent_id": "rank0-only-side-effects",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "guard side effects on rank==0"
+  },
+  {
+   "prerequisite_id": "reduce-gather-sum",
+   "dependent_id": "reduce-op-mean-divide",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "mean reduce = sum reduce then divide"
+  }
+ ]
+}

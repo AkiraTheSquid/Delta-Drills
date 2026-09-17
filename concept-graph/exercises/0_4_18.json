@@ -1,0 +1,28 @@
+{
+  "exercise_id": "0_4_18",
+  "title": "implement Linear",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_18_exercise-implement-linear.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 18,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "linear-affine-on-custom-tensor", "role": "core", "evidence": "out = x @ self.weight.T; if self.bias is not None: out = out + self.bias — exact 'x @ W.T + b' affine forward, using the custom Tensor's @ and .T"},
+    {"id": "kaiming-uniform-sf-init", "role": "core", "evidence": "sf = in_features**-0.5; self.weight = Parameter(Tensor(sf * (2 * np.random.rand(out_features, in_features) - 1))) — uniform in [-sf, sf] with sf = 1/sqrt(in_features)"},
+    {"id": "parameter-wrap-around-tensor", "role": "core", "evidence": "self.weight = Parameter(Tensor(sf * (2 * np.random.rand(...) - 1))); self.bias = Parameter(Tensor(...)) — the Parameter(Tensor(np.random...)) two-step wrap explicitly required by markdown: 'Don't forget to wrap your weights as Parameter(Tensor(...))'"},
+    {"id": "parameter-subclass-of-tensor", "role": "core", "evidence": "class Linear(Module): weight: Parameter; bias: Parameter | None — Parameter type annotations and instantiation; test asserts isinstance(linear.weight, Tensor) and linear.weight.requires_grad"},
+    {"id": "module-base-class-custom", "role": "core", "evidence": "class Linear(Module): super().__init__() — inherits from the hand-rolled Module class; ReLU(Module) and MLP(Module) shown below"},
+    {"id": "nn-module-subclass", "role": "core", "evidence": "Same nn.Module subclass pattern applied to the custom Module: override __init__/forward, call super().__init__() (R9.3 cross-part reuse)"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "Parameter wraps learnable tensors so Module.parameters() finds them (R9.2 cross-part reuse — semantics identical to torch.nn.Parameter)"},
+    {"id": "tensor-wraps-ndarray", "role": "core", "evidence": "Tensor(sf * (2 * np.random.rand(...) - 1)) — ndarray-backed Tensor construction throughout init"},
+    {"id": "module-extra-repr", "role": "core", "evidence": "def extra_repr(self) -> str: return f'in_features={...}, out_features={...}, bias={self.bias is not None}' — provided as part of the class scaffold"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "reshape-back", "reason": "Seed predicted reshape-back would fire here because MLP.forward does x.reshape((x.shape[0], 28*28)). However, the actual coding task is the Linear class only; the MLP class is shown as a downstream demo but the user isn't writing reshape_back here (that was 0_4_12)."}
+  ],
+  "notes": "9 atoms — under seed prediction of 11. The custom Linear is structurally identical to torch.nn.Linear (R9 atoms reuse cleanly); the new content is the Parameter(Tensor(...)) double-wrap and the sf init scale. MLP class shown as demo but not the exercise focus."
+}

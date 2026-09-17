@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_1_7",
+  "title": "rotation matrix",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_7_exercise-rotation-matrix.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 7,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "rotation-matrix-3d", "role": "core", "evidence": "t.tensor([[cos(theta), 0, sin(theta)], [0, 1, 0], [-sin(theta), 0, cos(theta)]]) — hand-built R_y from cos/sin of a scalar tensor; markdown links to Wikipedia 'Basic 3D rotations'"},
+    {"id": "cuda-empty-cache", "role": "incidental", "evidence": "raytrace_mesh_video driver loop (provided code) calls t.cuda.empty_cache() each frame; learner reads but doesn't write this — flagged for 0_1_8 where GPU code becomes core"},
+    {"id": "einops-rearrange-flatten", "role": "incidental", "evidence": "post-processing einops.rearrange(dists, 'frames (y z) -> frames y z', y=num_pixels_y) in the driver block — same (y z) grammar as 0_1_3, used here for visualization unflatten"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "stack-vs-cat", "reason": "seed predicted but solution uses t.tensor([[...]]) literal construction; no stack involved. Could have used stack — exercise is small enough that it's a stylistic choice"}
+  ],
+  "notes": "Smallest exercise of part1 — the implementation is literally a 4-line tensor literal. rotation-matrix-3d is the single core atom; the other two atoms come from driver/visualization code the learner runs (but doesn't write). Confirms rotation-matrix-3d as a singleton (only this exercise). The video-driver framework code (raytrace_mesh_video, einops.rearrange for display) recurs in 0_1_8 and 0_1_9, but the learner just runs it."
+}

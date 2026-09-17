@@ -1,0 +1,1257 @@
+{
+  "retired": [
+    3,
+    55,
+    65,
+    83,
+    96,
+    125,
+    157,
+    387
+  ],
+  "drifted": [
+    {
+      "id": 2,
+      "ratio": 0.977,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 7,
+      "ratio": 0.975,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 8,
+      "ratio": 0.755,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 10,
+      "ratio": 0.943,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 11,
+      "ratio": 0.749,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 17,
+      "ratio": 0.825,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 40,
+      "ratio": 0.879,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 42,
+      "ratio": 0.852,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 51,
+      "ratio": 0.872,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 59,
+      "ratio": 0.795,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 67,
+      "ratio": 0.971,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 72,
+      "ratio": 0.616,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 73,
+      "ratio": 0.676,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 76,
+      "ratio": 0.838,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 87,
+      "ratio": 0.884,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 90,
+      "ratio": 0.836,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 91,
+      "ratio": 0.557,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 99,
+      "ratio": 0.732,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 100,
+      "ratio": 0.762,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 101,
+      "ratio": 0.739,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 102,
+      "ratio": 0.953,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 104,
+      "ratio": 0.719,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 106,
+      "ratio": 0.903,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 108,
+      "ratio": 0.914,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 110,
+      "ratio": 0.949,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 111,
+      "ratio": 0.742,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 113,
+      "ratio": 0.425,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 116,
+      "ratio": 0.705,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 117,
+      "ratio": 0.562,
+      "reason": "shape",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 118,
+      "ratio": 0.843,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 119,
+      "ratio": 0.696,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 120,
+      "ratio": 0.887,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 128,
+      "ratio": 0.979,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 133,
+      "ratio": 0.945,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 146,
+      "ratio": 0.696,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 147,
+      "ratio": 0.767,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 148,
+      "ratio": 0.385,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 150,
+      "ratio": 0.972,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 152,
+      "ratio": 0.821,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 153,
+      "ratio": 0.757,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 154,
+      "ratio": 0.939,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 158,
+      "ratio": 0.758,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 162,
+      "ratio": 0.742,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 165,
+      "ratio": 0.983,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 166,
+      "ratio": 0.954,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 167,
+      "ratio": 0.615,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 169,
+      "ratio": 0.966,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 170,
+      "ratio": 0.978,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 172,
+      "ratio": 0.849,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 174,
+      "ratio": 0.629,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 175,
+      "ratio": 0.655,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 176,
+      "ratio": 0.662,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 180,
+      "ratio": 0.624,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 182,
+      "ratio": 0.952,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 185,
+      "ratio": 0.505,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 187,
+      "ratio": 0.767,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 191,
+      "ratio": 0.524,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 194,
+      "ratio": 0.461,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 195,
+      "ratio": 0.549,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 196,
+      "ratio": 0.672,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 200,
+      "ratio": 0.721,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 204,
+      "ratio": 0.895,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 205,
+      "ratio": 0.404,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 206,
+      "ratio": 0.789,
+      "reason": "shape",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 209,
+      "ratio": 0.828,
+      "reason": "shape",
+      "subtopic": "Numpy: Applied patterns and advanced"
+    },
+    {
+      "id": 215,
+      "ratio": 0.919,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 218,
+      "ratio": 0.92,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 233,
+      "ratio": 0.912,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Core array literacy"
+    },
+    {
+      "id": 234,
+      "ratio": 0.963,
+      "reason": "semantic-token",
+      "subtopic": "Numpy: Vectorization and broadcasting"
+    },
+    {
+      "id": 241,
+      "ratio": 0.856,
+      "reason": "shape",
+      "subtopic": "Numpy: Indexing and selection"
+    },
+    {
+      "id": 386,
+      "ratio": 0.917,
+      "reason": "semantic-token",
+      "subtopic": "Einops: Reduce"
+    },
+    {
+      "id": 415,
+      "ratio": 0.835,
+      "reason": "shape",
+      "subtopic": "CNN: Conv2d module mechanics"
+    },
+    {
+      "id": 440,
+      "ratio": 0.863,
+      "reason": "shape",
+      "subtopic": "PyTorch Fundamentals: Cross-Entropy Loss on Logits"
+    },
+    {
+      "id": 457,
+      "ratio": 0.957,
+      "reason": "semantic-token",
+      "subtopic": "Optimizers: EWMA running statistics (BatchNorm / Adam / RMSprop)"
+    },
+    {
+      "id": 464,
+      "ratio": 0.535,
+      "reason": "shape",
+      "subtopic": "CNNs: Padding for Max Pooling"
+    }
+  ],
+  "residue": [
+    {
+      "id": 11,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 17,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 19,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 29,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 32,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 34,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 35,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 40,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 42,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 43,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 47,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 50,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 53,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 62,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 63,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 64,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 66,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 68,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 69,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 72,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 73,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 75,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 76,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 80,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 86,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 87,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 90,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 91,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 100,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 105,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 110,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 111,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 113,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 116,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 118,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 119,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 122,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 123,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 131,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 132,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 143,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 147,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 152,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 155,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 158,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 163,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 171,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 174,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 180,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 182,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 185,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 187,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 189,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 192,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 195,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 204,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 206,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 208,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 210,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 212,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 214,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 215,
+      "explanation": true,
+      "hint": true
+    },
+    {
+      "id": 216,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 228,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 239,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 241,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 242,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 259,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 271,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 273,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 275,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 285,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 319,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 327,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 330,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 335,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 338,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 344,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 345,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 352,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 358,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 374,
+      "explanation": true,
+      "hint": false
+    },
+    {
+      "id": 388,
+      "explanation": true,
+      "hint": false
+    }
+  ],
+  "clean": [
+    1,
+    4,
+    5,
+    6,
+    12,
+    14,
+    15,
+    16,
+    18,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    30,
+    31,
+    36,
+    37,
+    38,
+    41,
+    46,
+    48,
+    49,
+    52,
+    58,
+    60,
+    61,
+    70,
+    71,
+    74,
+    77,
+    78,
+    79,
+    81,
+    82,
+    84,
+    85,
+    89,
+    92,
+    93,
+    94,
+    95,
+    97,
+    98,
+    103,
+    107,
+    109,
+    112,
+    114,
+    115,
+    121,
+    124,
+    126,
+    127,
+    129,
+    130,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    144,
+    145,
+    149,
+    151,
+    156,
+    159,
+    160,
+    164,
+    168,
+    173,
+    177,
+    181,
+    183,
+    184,
+    186,
+    190,
+    193,
+    197,
+    198,
+    199,
+    201,
+    202,
+    207,
+    211,
+    213,
+    217,
+    219,
+    220,
+    224,
+    225,
+    227,
+    229,
+    230,
+    231,
+    232,
+    235,
+    236,
+    237,
+    238,
+    240,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268,
+    269,
+    270,
+    272,
+    274,
+    276,
+    277,
+    278,
+    279,
+    280,
+    282,
+    283,
+    284,
+    286,
+    287,
+    288,
+    289,
+    290,
+    291,
+    292,
+    293,
+    294,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    320,
+    321,
+    322,
+    323,
+    324,
+    325,
+    326,
+    328,
+    329,
+    331,
+    332,
+    333,
+    334,
+    336,
+    337,
+    339,
+    340,
+    341,
+    342,
+    343,
+    346,
+    347,
+    348,
+    349,
+    350,
+    351,
+    353,
+    354,
+    355,
+    356,
+    357,
+    359,
+    360,
+    361,
+    362,
+    363,
+    364,
+    365,
+    367,
+    368,
+    369,
+    370,
+    371,
+    372,
+    373,
+    375,
+    376,
+    377,
+    378,
+    379,
+    380,
+    381,
+    382,
+    383,
+    384,
+    385,
+    389,
+    390,
+    391,
+    392,
+    393,
+    394,
+    395,
+    396,
+    397,
+    398,
+    399,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    416,
+    417,
+    418,
+    419,
+    420,
+    421,
+    422,
+    423,
+    424,
+    425,
+    426,
+    427,
+    428,
+    429,
+    430,
+    431,
+    432,
+    433,
+    434,
+    435,
+    436,
+    437,
+    438,
+    439,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    447,
+    448,
+    449,
+    450,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    475,
+    476,
+    477,
+    478,
+    479
+  ],
+  "no_authoring": [
+    480,
+    481,
+    482,
+    483,
+    484,
+    485,
+    486,
+    487,
+    488,
+    489,
+    490,
+    491,
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520,
+    521,
+    522,
+    523,
+    524,
+    525,
+    526,
+    527,
+    528,
+    529,
+    530,
+    531
+  ],
+  "answer_not_torch": []
+}

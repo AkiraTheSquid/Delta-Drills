@@ -44,3 +44,7 @@ This-Directory-Only/mathpix processor/pdf_path_convert.txt
 graphify-out/
 testsprite_tests/tmp/
 testsprite_tests/tmp/config.json
+
+# deploy branch: never ship the arena-book build venv
+Local_Deployed_Shared/arena-book/.venv/
+Local_Deployed_Shared/arena-book/_sources/.venv/

@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_3_8",
+  "title": "define a sweep config & update args",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_8_exercise-define-a-sweep-config-update-args.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 8,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "sweep-config-dict", "role": "core", "evidence": "sweep_config = dict(method='random', metric=dict(name='accuracy', goal='maximize'), parameters=dict(...)) — declarative sweep config with method/metric/parameters keys"},
+    {"id": "sweep-hparam-distribution", "role": "core", "evidence": "learning_rate=dict(min=1e-4, max=1e-1, distribution='log_uniform_values'); batch_size=dict(values=[32, 64, 128, 256]); weight_decay_bool=dict(values=[True, False]) — both log_uniform_values and discrete values forms"},
+    {"id": "sweep-agent-launch", "role": "core", "evidence": "sweep_id = wandb.sweep(sweep=sweep_config, project='day3-resnet-sweep'); wandb.agent(sweep_id=sweep_id, function=train, count=3)"},
+    {"id": "wandb-config-into-args", "role": "core", "evidence": "args = update_args(args, dict(wandb.config)) inside train() — read sampled hparams from wandb.config and write onto dataclass args"},
+    {"id": "wandb-init-run", "role": "core", "evidence": "wandb.init(project=args.wandb_project, name=args.wandb_name, reinit=False) inside train()"},
+    {"id": "wandb-finish", "role": "core", "evidence": "wandb.finish() after wandb.agent returns"},
+    {"id": "dataclass-training-args", "role": "core", "evidence": "args = WandbResNetFinetuningArgs() — sweep targets the same dataclass; update_args mutates fields on it"},
+    {"id": "dataclasses-replace-args", "role": "core", "evidence": "Alternate solution shown in details block: 'return replace(args, **sampled_parameters)' using dataclasses.replace — explicitly presented as the cleaner alternative"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — matches seed prediction of 8 exactly. The wandb-sweep cluster (sweep-config-dict + sweep-hparam-distribution + sweep-agent-launch + wandb-config-into-args) all fire as predicted. dataclasses-replace-args is the alternate solution shown explicitly, so it's a core tag. The training loop itself is delegated to WandbResNetFinetuner (already-tagged in 0_3_7), so loop atoms don't recur here."
+}

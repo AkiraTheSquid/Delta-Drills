@@ -1,0 +1,30 @@
+{
+  "exercise_id": "0_5_5",
+  "title": "building your GAN",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_5_exercise-building-your-gan.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 5,
+  "difficulty": 5,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "encoder-decoder-symmetric", "role": "core", "evidence": "Generator.hidden_layers stacks ConvTranspose2d(c_in, c_out, 4, 2, 1) blocks; Discriminator.hidden_layers stacks Conv2d(c_in, c_out, 4, 2, 1) blocks — DCGAN's generator/discriminator are stride-2 mirrors with the same channel-list (reversed for generator)"},
+    {"id": "rearrange-as-sequential-layer", "role": "core", "evidence": "Generator: Rearrange('b (ic h w) -> b ic h w', h=first_height, w=first_height) inside project_and_reshape Sequential; Discriminator: Rearrange('b c h w -> b (c h w)') inside classifier Sequential"},
+    {"id": "no-relu-on-final-layer", "role": "core", "evidence": "Generator's last block: ReLU() if i < n_layers - 1 else Tanh() — Tanh (not ReLU) on the very last block; no activation between Tanh and output. Markdown explicitly: 'we don't include a ReLU in the very last layer of the decoder or generator'"},
+    {"id": "generator-project-and-reshape", "role": "core", "evidence": "self.project_and_reshape = Sequential(Linear(latent_dim_size, first_size, bias=False), Rearrange('b (ic h w) -> b ic h w', h=first_height, w=first_height), BatchNorm2d(hidden_channels[0]), ReLU()) — the canonical Linear+Rearrange+BN+ReLU pattern transforming 1D latent to small feature map"},
+    {"id": "convtranspose-bn-activation-block", "role": "core", "evidence": "for i, (c_in, c_out) in enumerate(...): conv_layer = [ConvTranspose2d(c_in, c_out, 4, 2, 1), ReLU() if i < n_layers - 1 else Tanh()]; if i < n_layers - 1: conv_layer.insert(1, BatchNorm2d(c_out)) — ConvT->BN->ReLU canonical generator block, Tanh on last"},
+    {"id": "conv-leakyrelu-block-discriminator", "role": "core", "evidence": "for i, (c_in, c_out) in enumerate(...): conv_layer = [Conv2d(c_in, c_out, 4, 2, 1), LeakyReLU(0.2)]; if i > 0: conv_layer.insert(1, BatchNorm2d(c_out)) — Conv->(BN)->LeakyReLU(0.2) discriminator block, BN skipped on first layer"},
+    {"id": "discriminator-classifier-head", "role": "core", "evidence": "self.classifier = Sequential(Rearrange('b c h w -> b (c h w)'), Linear(final_size, 1, bias=False), Sigmoid()) — flatten + Linear(1) + Sigmoid producing per-image real/fake probability"},
+    {"id": "dcgan-wrapper-netG-netD", "role": "core", "evidence": "class DCGAN(nn.Module): netD: Discriminator; netG: Generator; __init__ creates self.netD = Discriminator(...); self.netG = Generator(...); NO forward method — callers invoke model.netG(...) / model.netD(...)"},
+    {"id": "channel-list-reverse-build", "role": "core", "evidence": "Generator: 'Reverse hidden channels, so they're in chronological order' hidden_channels = hidden_channels[::-1]; Discriminator: builds in given order in_channels = [img_channels] + hidden_channels[:-1] — shared hidden_channels list, reversed by generator"},
+    {"id": "nn-module-subclass", "role": "incidental", "evidence": "class Generator(nn.Module), class Discriminator(nn.Module), class DCGAN(nn.Module) — three module subclasses"},
+    {"id": "module-composition", "role": "incidental", "evidence": "Generator/Discriminator built from Sequential of Linear/Conv2d/ConvTranspose2d/BatchNorm2d/ReLU/LeakyReLU/Tanh/Rearrange/Sigmoid"},
+    {"id": "batchnorm-affine-params", "role": "incidental", "evidence": "BatchNorm2d(hidden_channels[0]) and BatchNorm2d(c_out) used throughout generator/discriminator blocks"},
+    {"id": "conv-output-shape", "role": "incidental", "evidence": "assert img_size % (2**n_layers) == 0, 'activation size must double at each layer' — explicit reasoning about conv output shape doubling; first_height = img_size // (2**n_layers)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "13 atoms — matches seed prediction of 13 exactly. The densest single-architecture exercise in part5: fires all 6 §3 GAN-architecture atoms + 3 of 4 §1 atoms (encoder-decoder-symmetric, rearrange-as-sequential, no-relu-on-final) + 4 incidental cross-part reuses (Module subclass, composition, BN, conv-output-shape). bottleneck-latent-projection does NOT fire here — Generator uses project_and_reshape (a single Linear, not 2-Linear bottleneck) and Discriminator has no bottleneck (just downsampling + flat classifier)."
+}

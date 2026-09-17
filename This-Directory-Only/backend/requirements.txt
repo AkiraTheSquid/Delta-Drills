@@ -1,0 +1,22 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3
+python-multipart==0.0.12
+passlib[argon2]==1.7.4
+argon2-cffi==23.1.0
+PyJWT==2.10.1
+pydantic==2.10.6
+pydantic-settings==2.6.1
+bleach==6.2.0
+email-validator==2.1.1
+google-auth==2.38.0      # Sign in with Google: verify Google ID tokens (/auth/google)
+requests==2.32.3         # transport used by google-auth to fetch Google's signing certs
+pypdf==5.1.0
+openai>=1.40.0
+tiktoken>=0.5.0
+mpxpy==0.0.20
+numpy>=1.24.0
+einops>=0.7.0  # backend code grader: einops/visual questions import it in setup_code and user code
+torch>=2.0  # CPU wheel; required for backend code grader to exec CNN questions. Install via: pip install --index-url https://download.pytorch.org/whl/cpu torch
+modal>=1.5,<2  # notebook kernels: one sandbox per learner (app/modal_kernel.py); optional at runtime, fork fallback without credentials

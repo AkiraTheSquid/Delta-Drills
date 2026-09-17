@@ -1,0 +1,27 @@
+{
+  "exercise_id": "0_1_6",
+  "title": "implement raytrace_mesh",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_6_exercise-implement-raytrace-mesh.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 6,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "ray (O, D); s along D gives the distance after Dx scaling"},
+    {"id": "triangle-barycentric", "role": "core", "evidence": "same -D, B-A, C-A stack and inside-test as 0_1_5, now over (NR, NT, 3, 3)"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "einops.repeat(triangles, 'NT pts dims -> pts NR NT dims', NR=NR) AND einops.repeat(rays, 'NR pts dims -> pts NR NT dims', NT=NT) — double-broadcast for full (NR, NT) batch"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "mat = t.stack([-D, B - A, C - A], dim=-1) on (NR, NT, 3, 3)"},
+    {"id": "unbind-tuple-unpack", "role": "core", "evidence": "A, B, C = triangles and O, D = rays after the repeat (first-axis unpacking); s, u, v = sol.unbind(-1)"},
+    {"id": "singular-matrix-mask-trick", "role": "core", "evidence": "dets = t.linalg.det(mat); is_singular = dets.abs() < 1e-8; mat[is_singular] = t.eye(3); ~is_singular in final AND"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "t.linalg.solve over (NR, NT, 3, 3) — two batch dims; markdown explicitly reminds 'most batched operations can accept multiple dimensions as being batch dims'"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular"},
+    {"id": "inf-masking", "role": "core", "evidence": "s[~intersects] = float('inf') — overwrites non-hits so subsequent min reduction skips them naturally"},
+    {"id": "einops-reduce-min", "role": "core", "evidence": "einops.reduce(s, 'NR NT -> NR', 'min') — explicit min reduction over the triangle axis"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "10 atoms — densest pure-geometry exercise. Generalizes raytrace_triangle from 1 triangle to NT triangles by adding a second batch dim throughout. New atoms vs 0_1_5: inf-masking (distance-vs-hit unification trick) and einops-reduce-min. The (NR, NT) double broadcast via einops.repeat is the load-bearing structural insight. Note s *= D[..., 0] is a one-off scaling step — no new atom warranted."
+}

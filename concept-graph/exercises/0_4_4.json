@@ -1,0 +1,19 @@
+{
+  "exercise_id": "0_4_4",
+  "title": "implement BackwardFuncLookup",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_4_exercise-implement-backwardfunclookup.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 4,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "backward-func-lookup", "role": "core", "evidence": "Class definition: self.back_funcs = {}; add_back_func stores at key (forward_fn, arg_position); get_back_func retrieves at same key — the exact dict-keyed-by-tuple structure this atom names"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "Smoke test in cell shows the canonical registration sequence: BACK_FUNCS.add_back_func(np.log, 0, log_back); BACK_FUNCS.add_back_func(np.multiply, 0, multiply_back0); BACK_FUNCS.add_back_func(np.multiply, 1, multiply_back1)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "2 atoms — under seed prediction of 4. This is a pure lookup-table exercise; the §5 dispatcher atoms (wrap_forward_fn, is_differentiable, unbox-args, box-array, kwargs-pass-through) are NOT yet exercised here — they show up starting in 0_4_5 (log_forward) and culminate in 0_4_7 (wrap_forward_fn). The seed's prediction count (4) over-counted by absorbing §5 atoms that actually fire later."
+}

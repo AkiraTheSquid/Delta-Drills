@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "delta-drills-content": {
+      "command": "./content-mcp/bin/dd-content-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}

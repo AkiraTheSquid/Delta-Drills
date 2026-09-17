@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_4_19",
+  "title": "implement cross_entropy",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_19_exercise-implement-cross-entropy.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 19,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "logsumexp-cross-entropy", "role": "core", "evidence": "logprobs = logits - logits.exp().sum(-1, keepdim=True).log() — the log-softmax identity logprobs = logits - log(sum(exp(logits))); help dropdown explicitly derives this"},
+    {"id": "arange-fancy-index-cross-entropy", "role": "core", "evidence": "return -logprobs[arange(0, batch_size), true_labels] — the canonical 'pick correct class per row' arange+labels gather"},
+    {"id": "tensor-wraps-ndarray", "role": "core", "evidence": "Solution operates entirely over the custom Tensor (logits.exp(), .sum(-1, keepdim=True), .log(), [arange(...), ...] all dispatch through the autograd-tracking Tensor methods)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "exp-back", "reason": "Seed flagged exp-back as predicted for 0_4_19, but exp_back is registered in 0_4_11 and only INVOKED here via autograd — no exp_back code is written in this exercise. Same logic as reshape-back/getitem-back/sum-back: the §2 atoms fire at their eponymous exercise, not at downstream composers."},
+    {"id": "reshape-back", "reason": "Seed flagged reshape-back for 0_4_19 but cross_entropy doesn't call reshape — the only reshape in this notebook is implicit in earlier MLP usage, not in the cross_entropy fn itself."},
+    {"id": "sum-back-expand-broadcast", "reason": "Seed flagged sum-back for 0_4_19 but again: sum is INVOKED via .sum(-1, keepdim=True), the sum_back code lives in 0_4_14. No new sum_back code here."},
+    {"id": "getitem-back-add-at", "reason": "Seed flagged getitem-back-add-at for 0_4_19 but getitem_back is registered in 0_4_14; the [arange, true_labels] indexing is autograd-dispatched, no new getitem_back code is written here."}
+  ],
+  "notes": "3 atoms — under seed prediction of 11. Major divergence from seed: I treat the §2 per-op atoms as firing at their REGISTRATION exercise (0_4_10..17), not at every downstream composer. The cross_entropy code is just (a) the log-softmax identity and (b) the arange-fancy-index gather; both are part4-novel concepts atomized as 7.6 and 7.7. Logged 4 seed-FPs (exp/reshape/sum/getitem _back) — see notes. Question: should §2 atoms re-fire on composers? Logged to REVIEW_QUEUE as Q14 (Part 4 / tagging)."
+}

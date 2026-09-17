@@ -1,0 +1,41 @@
+from __future__ import annotations
+
+import logging
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.auth_router import router as auth_router
+from app.about_page_router import router as about_page_router
+from app.chapters_router import router as chapters_router
+from app.jobs_router import router as jobs_router
+from app.lifecycle import register_lifecycle
+from app.practice import router as practice_router
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="PDF Split Tool Backend", version="0.1.0")
+
+
+register_lifecycle(app)
+
+app.include_router(practice_router)
+app.include_router(auth_router)
+app.include_router(about_page_router)
+app.include_router(jobs_router)
+app.include_router(chapters_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+def health() -> dict:
+    # A zero count = every concept served the bare prior (app/kc_data_health).
+    from app.kc_data_health import lattice_data_health
+    return {"status": "ok", "lattice": lattice_data_health()}

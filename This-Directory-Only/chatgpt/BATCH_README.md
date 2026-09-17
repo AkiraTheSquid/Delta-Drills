@@ -71,6 +71,7 @@ As of the latest conversion pass:
 - [scripts/build_function_mode_requests.py](/home/stellar-thread/Applications/Delta-Drills-Local/scripts/build_function_mode_requests.py)
 - [scripts/build_function_bank.py](/home/stellar-thread/Applications/Delta-Drills-Local/scripts/build_function_bank.py)
 - [scripts/validate_function_bank.py](/home/stellar-thread/Applications/Delta-Drills-Local/scripts/validate_function_bank.py)
+- [scripts/test_function_validator.py](/home/stellar-thread/Applications/Delta-Drills-Local/scripts/test_function_validator.py)
 - [scripts/build_function_mode_repair_requests.py](/home/stellar-thread/Applications/Delta-Drills-Local/scripts/build_function_mode_repair_requests.py)
 
 ### What These Files Do
@@ -91,6 +92,51 @@ As of the latest conversion pass:
 - `build_function_bank.py`
   - runs the end-to-end function-bank refresh sequence
   - export -> validate -> build repair requests -> run repair retries -> re-export -> re-validate
+
+- `validate_function_bank.py`
+  - standalone deterministic validator for the exported `questions.json`
+  - checks whether function-mode questions have coherent test fixtures and whether the canonical solution passes the generated tests
+  - should be runnable on its own, outside the LLM batch flow
+  - writes failures to `chatgpt/function_mode_validation_failures.jsonl`
+
+- `test_function_validator.py`
+  - deterministic regression suite for the validator itself
+  - tests known-good and known-bad validator cases so the validator does not silently become too strict or too weak
+  - writes validator health status to `chatgpt/validator_health.txt`
+  - first line is:
+    - `0` if the validator regression suite passes
+    - `1` if the validator regression suite fails
+  - subsequent lines list each regression case by name and whether it passed or failed
+
+## Standalone Validator Workflow
+
+The validator is meant to be used directly, not only through `build_function_bank.py`.
+
+Run the validator regression suite first:
+```bash
+python3 scripts/test_function_validator.py
+```
+
+Then inspect:
+- `chatgpt/validator_health.txt`
+
+Interpretation of `validator_health.txt`:
+- first line `0` means the validator regression cases passed
+- first line `1` means at least one validator regression case failed
+- each later line is one named regression case, with expected vs actual validator behavior
+
+Then run the bank validator itself:
+```bash
+python3 scripts/validate_function_bank.py
+```
+
+Then inspect:
+- `chatgpt/function_mode_validation_failures.jsonl`
+
+Important:
+- `test_function_validator.py` validates the validator
+- `validate_function_bank.py` validates the exported question bank
+- these are different checks and both should be runnable independently
 
 ## Important Warning
 
@@ -117,31 +163,61 @@ If you come back to this later, do not assume `function_mode_overrides.jsonl` is
 python3 scripts/export_questions_json.py
 ```
 
-2. Generate pending LLM normalization requests:
+2. Run the validator regression suite:
+```bash
+python3 scripts/test_function_validator.py
+```
+
+3. Check validator health:
+```bash
+cat chatgpt/validator_health.txt
+```
+
+4. Run the standalone bank validator:
+```bash
+python3 scripts/validate_function_bank.py
+```
+
+5. Generate pending LLM normalization requests:
 ```bash
 python3 scripts/build_function_mode_requests.py
 ```
 
-3. Run the repair/conversion worker with an interpreter that has `openai` installed.
+6. Run the repair/conversion worker with an interpreter that has `openai` installed.
 In this repo, the backend venv currently works:
 ```bash
 /home/stellar-thread/Applications/Delta-Drills-Local/backend/.venv/bin/python3 chatgpt/function_mode_batch.py
 ```
 
-4. Preferred full loop:
+7. Preferred full loop:
 ```bash
 python3 scripts/build_function_bank.py
 ```
 
-5. Inspect:
+8. Inspect:
 - `chatgpt/function_mode_overrides.jsonl` for validated repairs
 - `chatgpt/function_mode_rejected.jsonl` for questions that failed all retries
 - `chatgpt/function_mode_deleted_ids.json` for IDs excluded from export
+- `chatgpt/function_mode_validation_failures.jsonl` for bank-level validation failures
+- `chatgpt/validator_health.txt` for validator-regression status
 
-6. Re-export after any manual changes:
+9. Re-export after any manual changes:
 ```bash
 python3 scripts/export_questions_json.py
 ```
+
+## Current Caveat
+
+The validator architecture is now explicitly split into:
+- validator-regression checks (`test_function_validator.py`)
+- bank validation (`validate_function_bank.py`)
+
+That split is intentional and should be preserved.
+
+However, do not assume the validator is fully solved yet just because these scripts exist.
+At the moment, the validator runtime still needs more work for some `einops` cases, so:
+- the validator infrastructure is in place
+- the validator health file is now the quickest way to see if the validator itself is currently trustworthy
 
 ## Why Function Mode
 

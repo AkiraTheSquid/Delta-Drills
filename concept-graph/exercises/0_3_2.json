@@ -1,0 +1,31 @@
+{
+  "exercise_id": "0_3_2",
+  "title": "implement RMSprop",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_2_exercise-implement-rmsprop.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 2,
+  "difficulty": 3,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "self.params = list(params)  # turn params into a list (because it might be a generator)"},
+    {"id": "optimizer-state-tensor-buffers", "role": "core", "evidence": "self.b = [t.zeros_like(p) for p in self.params]; self.v = [t.zeros_like(p) for p in self.params] — two buffers per param"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for p in self.params: p.grad = None"},
+    {"id": "param-grad-access", "role": "core", "evidence": "g = theta.grad inside step"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "theta -= self.lr * g  # inplace operation, to modify params"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "v.copy_(self.alpha * v + (1 - self.alpha) * g.pow(2))  # inplace operation, to modify value in self.v ; b.copy_(self.mu * b + g)"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on step"},
+    {"id": "weight-decay-l2-add", "role": "core", "evidence": "if self.lmda != 0: g = g + self.lmda * theta — same L2 weight decay fold as SGD"},
+    {"id": "ema-second-moment", "role": "core", "evidence": "v.copy_(self.alpha * v + (1 - self.alpha) * g.pow(2)) — EMA of squared gradients, RMSprop's v; pseudocode 'v_t <- alpha*v_{t-1} + (1-alpha)*g_t^2'"},
+    {"id": "sqrt-eps-stabilize", "role": "core", "evidence": "g = g / (v.sqrt() + self.eps) — per-coord adaptive scaling with eps floor; pseudocode 'g_t <- g_t / (sqrt(v_t) + epsilon)'"},
+    {"id": "momentum-buffer-update", "role": "core", "evidence": "if self.mu > 0: b.copy_(self.mu * b + g); g = b — classical momentum reused; pseudocode 'b_t <- mu*b_{t-1} + g_t'"},
+    {"id": "conditional-hparam-branch", "role": "core", "evidence": "if self.lmda != 0 / if self.mu > 0 — both conditional hparam shortcuts retained"},
+    {"id": "pseudocode-to-code-translate", "role": "core", "evidence": "Markdown gives 8-line LaTeX pseudocode; exercise is mechanical translation"},
+    {"id": "optimizer-repr-string", "role": "core", "evidence": "f'RMSprop(lr={self.lr}, eps={self.eps}, momentum={self.mu}, weight_decay={self.lmda}, alpha={self.alpha})' — provided in template"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "14 atoms — slightly above seed prediction of 11. The seed didn't predict optimizer-repr-string for this exercise but it IS in the template. The optimizer-impl spine (atoms 1.1-1.7 + 1.9) is identical to SGD's; RMSprop adds ema-second-moment + sqrt-eps-stabilize on top of SGD's momentum-buffer-update + weight-decay-l2-add."
+}

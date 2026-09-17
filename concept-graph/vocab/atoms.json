@@ -1,0 +1,1720 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-05-18",
+  "source": "hand-drafted seed vocab for ARENA chapter0 parts 1-3",
+  "status": "seed",
+  "atoms": [
+    {
+      "id": "nn-module-subclass",
+      "label": "nn.Module subclass",
+      "definition": "Inherit nn.Module, override __init__ and forward, call super().__init__().",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "nn-parameter-wrap",
+      "label": "nn.Parameter wrap",
+      "definition": "Wrap learnable tensors in nn.Parameter so .parameters() finds them and the optimizer updates them.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "module-extra-repr",
+      "label": "extra_repr override",
+      "definition": "Override extra_repr on nn.Module to customize the printed representation.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "module-composition",
+      "label": "sub-module registration",
+      "definition": "Assigning child nn.Module instances as attributes auto-registers them as sub-modules.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "state-dict-load",
+      "label": "load pretrained weights",
+      "definition": "Use load_state_dict to copy weights from another module; handles key renaming between custom modules and torchvision.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "broadcasting-rules",
+      "label": "broadcast shape align",
+      "definition": "Right-align dims; size-1 dims stretch; mismatched non-1 dims error.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "einsum-contraction",
+      "label": "einsum / einops.einsum",
+      "definition": "Label-string contraction over named dimensions; replaces nested loops with a declarative spec.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "matmul-2d",
+      "label": "matrix-matrix mult",
+      "definition": "Standard 2D matmul; contract last axis of A with first axis of B.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "matvec",
+      "label": "matrix-vector mult",
+      "definition": "Special-case matmul; contract last axis of matrix with vector.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "tensor-reshape-view",
+      "label": "reshape / view / flatten",
+      "definition": "Rearrange dimensions without copy when contiguous; view requires contiguity, reshape may copy.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "contiguous-layout",
+      "label": "row-major storage",
+      "definition": "Tensors stored in contiguous row-major memory; .stride() returns per-dim element offsets.",
+      "domain": "strided-memory",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "as-strided-windowing",
+      "label": "as_strided overlap windows",
+      "definition": "Build sliding windows over a tensor with zero copy by reusing strides on a new shape.",
+      "domain": "strided-memory",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "stride-zero-broadcast",
+      "label": "stride=0 repeat trick",
+      "definition": "Stride 0 along a dimension causes that dim to repeat the same memory; no-copy broadcast.",
+      "domain": "strided-memory",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "diagonal-via-strides",
+      "label": "diagonal via stride-sum",
+      "definition": "1D walk with stride equal to (row_stride + col_stride) reads the diagonal.",
+      "domain": "strided-memory",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-output-shape",
+      "label": "output-shape formula",
+      "definition": "out = (W - K + 2P) / S + 1 with floor division.",
+      "domain": "convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-windowing-1d",
+      "label": "1D conv via windowed einsum",
+      "definition": "as_strided to slide a 1D kernel window, einsum to contract kernel with window.",
+      "domain": "convolution",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-windowing-2d",
+      "label": "2D conv via windowed einsum",
+      "definition": "Same as 1D but with two spatial dimensions.",
+      "domain": "convolution",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-channel-sum",
+      "label": "sum over in_channels",
+      "definition": "Einsum reduces the in-channel dimension into the out-channel dimension via the kernel.",
+      "domain": "convolution",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-padding-zero",
+      "label": "zero-padding edges",
+      "definition": "Append and prepend zeros around spatial dimensions before windowing.",
+      "domain": "convolution",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-stride-downsample",
+      "label": "stride > 1 downsample",
+      "definition": "Stride greater than 1 reduces spatial output dim by that factor.",
+      "domain": "convolution",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "maxpool-reduce",
+      "label": "maxpool over window",
+      "definition": "Max-reduce each window of a strided view.",
+      "domain": "pooling",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "avgpool-reduce",
+      "label": "avgpool over window",
+      "definition": "Mean-reduce each window (often global average pool at the end of a CNN).",
+      "domain": "pooling",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "batchnorm-running-stats",
+      "label": "running mean/var buffers",
+      "definition": "EMA-updated running mean and variance buffers; used in eval mode in place of batch statistics.",
+      "domain": "normalization",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "batchnorm-affine-params",
+      "label": "learnable scale and shift",
+      "definition": "Learnable gamma and beta applied after normalization.",
+      "domain": "normalization",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "train-eval-mode-branch",
+      "label": "self.training branch",
+      "definition": "Code path diverges on self.training flag; dropout and batchnorm behave differently in train vs eval.",
+      "domain": "normalization",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "relu-elementwise-max",
+      "label": "ReLU = max(x, 0)",
+      "definition": "Per-element max with zero; the canonical nonlinear activation.",
+      "domain": "activation",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "residual-skip-add",
+      "label": "identity skip connection",
+      "definition": "output = F(x) + (shortcut(x) or x); the ResNet defining feature.",
+      "domain": "architecture-composition",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "1x1-conv-channel-reshape",
+      "label": "1x1 conv channel reshape",
+      "definition": "Convolution with kernel size 1; changes channel count without spatial mixing.",
+      "domain": "architecture-composition",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "block-group-stack",
+      "label": "repeat N identical blocks",
+      "definition": "nn.Sequential of N blocks where only the first changes stride; the rest preserve shape.",
+      "domain": "architecture-composition",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "resnet-stem",
+      "label": "initial conv+bn+relu+maxpool",
+      "definition": "Standard ResNet input pattern: 7x7 conv stride 2, batchnorm, ReLU, 3x3 maxpool stride 2.",
+      "domain": "architecture-composition",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dataloader-batching",
+      "label": "DataLoader batch and shuffle",
+      "definition": "torch.utils.data.DataLoader wraps a Dataset with batching, shuffling, and parallel loading.",
+      "domain": "training-infra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "training-step-cycle",
+      "label": "fwd-loss-back-step-zero",
+      "definition": "Forward pass, loss, backward, optimizer.step, optimizer.zero_grad; the inner training loop.",
+      "domain": "training-infra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "validation-no-grad",
+      "label": "no_grad eval pass",
+      "definition": "torch.no_grad() context plus accuracy accumulator; runs at epoch end without gradient tracking.",
+      "domain": "training-infra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "freeze-requires-grad",
+      "label": "freeze params",
+      "definition": "Set requires_grad = False on a subset of parameters to exclude them from optimization.",
+      "domain": "transfer-learning",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "replace-final-head",
+      "label": "swap classifier head",
+      "definition": "Replace the last Linear layer with a new one matching the target num_classes.",
+      "domain": "transfer-learning",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "topk-predictions",
+      "label": "top-k logits to labels",
+      "definition": "torch.topk on output logits to produce ranked class predictions.",
+      "domain": "transfer-learning",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "tensor-zeros-init",
+      "label": "preallocate with t.zeros",
+      "definition": "Allocate an output tensor with t.zeros(shape, dtype=...), then fill via slice-assignment; the canonical 'write-into-a-buffer' pattern.",
+      "domain": "tensor-construction",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "linspace-out-param",
+      "label": "t.linspace with out=",
+      "definition": "Write a 1D ramp directly into a view of an existing tensor via the out= kwarg, avoiding an intermediate allocation.",
+      "domain": "tensor-construction",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "slice-view-mutation",
+      "label": "slice = write-back view",
+      "definition": "Basic indexing like tensor[:, 1, 1] returns a view sharing storage; assigning into it mutates the original tensor.",
+      "domain": "tensor-construction",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "index-by-tensor",
+      "label": "gather via int-tensor index",
+      "definition": "values[indices] selects rows or elements by a tensor of integer indices; the gather pattern for picking per-ray nearest-triangle attributes.",
+      "domain": "tensor-construction",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "stack-vs-cat",
+      "label": "t.stack vs t.cat",
+      "definition": "stack introduces a new dim, cat joins along an existing one; choose stack when assembling vectors as columns or rows of a new matrix.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "unbind-tuple-unpack",
+      "label": "unbind along axis",
+      "definition": "t.unbind(dim) (or Python first-axis unpacking) splits a tensor into a tuple along one axis; used to destructure O, D = rays and s, u, v = sol.",
+      "domain": "tensor-algebra",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "einops-repeat-broadcast",
+      "label": "einops.repeat for outer product",
+      "definition": "repeat('a p d -> a b p d', b=N) inserts a new broadcast dim; the canonical pair-every-with-every pattern for batched intersection tests.",
+      "domain": "einops-patterns",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "einops-rearrange-flatten",
+      "label": "(y z) flatten / unflatten",
+      "definition": "rearrange('... (y z) -> ... y z', y=Y) folds or unfolds a product axis into two named axes; replaces .view/.reshape with self-documenting syntax.",
+      "domain": "einops-patterns",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "einops-reduce-min",
+      "label": "einops.reduce with min/max/mean",
+      "definition": "Reduce along a named axis with a chosen reduction op; here used to take the min distance over the NT (triangles) axis.",
+      "domain": "einops-patterns",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "linalg-solve-batched",
+      "label": "t.linalg.solve with batch dims",
+      "definition": "Solve Ax = b; accepts arbitrary leading batch dims on A (...nn) and b (...n), so per-ray-per-triangle solves run as a single call.",
+      "domain": "linear-algebra",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "singular-matrix-mask-trick",
+      "label": "replace singular with identity",
+      "definition": "Compute det, mark |det| < eps as singular, set mat[is_singular] = t.eye(n) so batched solve doesn't throw, then AND-out singular results at the end.",
+      "domain": "linear-algebra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "try-except-solve",
+      "label": "catch RuntimeError on solve",
+      "definition": "Unbatched fallback for handling singular matrices: wrap linalg.solve in try/except and return a default; replaced by the mask trick once batched.",
+      "domain": "linear-algebra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "cross-product-normal",
+      "label": "t.cross for surface normal",
+      "definition": "t.cross(edge1, edge2, dim=...) produces a vector perpendicular to a triangle face; used for Lambertian lighting.",
+      "domain": "linear-algebra",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "vector-normalize-keepdim",
+      "label": "divide by norm(keepdim=True)",
+      "definition": "Unit-normalize a batch of vectors via .norm(dim=-1, keepdim=True); keepdim preserves the dim for broadcast division.",
+      "domain": "linear-algebra",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "ray-parametric-form",
+      "label": "R(u) = O + uD",
+      "definition": "A ray is (origin, direction); points on it are O + uD for u >= 0. The fundamental representation that every ray-tracing exercise builds on.",
+      "domain": "geometry",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "segment-line-intersect-2d",
+      "label": "solve 2x2 ray-vs-segment",
+      "definition": "Set O + uD = L1 + v(L2-L1), stack [D, L1-L2] as columns, solve a 2x2 system; intersection iff u >= 0 and 0 <= v <= 1.",
+      "domain": "geometry",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "triangle-barycentric",
+      "label": "Moller-Trumbore barycentric",
+      "definition": "Parametrize triangle as A + u(B-A) + v(C-A); solve [-D, B-A, C-A] [s,u,v]^T = O - A; inside iff s,u,v >= 0 and u+v <= 1.",
+      "domain": "geometry",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "rotation-matrix-3d",
+      "label": "hand-built rotation about axis",
+      "definition": "Construct R_y(theta) (or R_x, R_z) from cos/sin of a scalar tensor; apply by points @ R.",
+      "domain": "geometry",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "boolean-mask-combine",
+      "label": "&, ~, | on bool tensors",
+      "definition": "Combine per-element predicates with bitwise ops; final mask is the AND of all geometric constraints (s>=0, u>=0, v>=0, u+v<=1, ~singular).",
+      "domain": "boolean-masking",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "any-reduce-axis",
+      "label": ".any(dim=...) reduction",
+      "definition": "Reduce a boolean tensor by OR-along an axis; e.g. 'does any segment intersect this ray?' collapses an (nrays, nsegments) mask to (nrays,).",
+      "domain": "boolean-masking",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "inf-masking",
+      "label": "tensor[mask] = float('inf')",
+      "definition": "Overwrite non-hit entries with +/-inf so a subsequent min/max reduction naturally skips them without a separate masked-reduce.",
+      "domain": "boolean-masking",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "where-clip-negative",
+      "label": "t.where to clip / branch",
+      "definition": "Per-element select; here used to truncate negative dot products to zero (Lambertian intensity) and to zero-out rays that hit nothing.",
+      "domain": "boolean-masking",
+      "dd_coverage": "DD-Y",
+      "status": "accepted"
+    },
+    {
+      "id": "tensor-to-device",
+      "label": ".to('cuda') / .cpu()",
+      "definition": "Move a tensor between devices; returns a new tensor that must be reassigned. .cuda()/.cpu() are shorthand.",
+      "domain": "device-perf",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "cuda-empty-cache",
+      "label": "t.cuda.empty_cache()",
+      "definition": "Release cached GPU allocator memory between frames in a long render loop to avoid OOM.",
+      "domain": "device-perf",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "device-consistent-construct",
+      "label": "construct tensors on same device",
+      "definition": "Helper tensors built inside a GPU computation (e.g. t.eye(3)) must be .to(device) to match operands; mismatched devices raise.",
+      "domain": "device-perf",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "optimizer-init-params-list",
+      "label": "params as list, not generator",
+      "definition": "self.params = list(params) in optimizer __init__; turns the iterable into a list so iterating it later (in step) doesn't exhaust a generator.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "optimizer-state-tensor-buffers",
+      "label": "per-param zeros_like buffers",
+      "definition": "Allocate one state tensor per parameter at init time (self.b = [t.zeros_like(p) for p in self.params]); the canonical per-parameter EMA-buffer pattern.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "zero-grad-set-none",
+      "label": "grad = None as zero",
+      "definition": "for p in self.params: p.grad = None \u2014 None is treated as zero on first access and saves memory vs. an explicit zero tensor.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "param-grad-access",
+      "label": "read theta.grad",
+      "definition": "Every optimizer step reads the gradient tensor PyTorch has populated on each parameter via .grad.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "inplace-param-update",
+      "label": "theta -= lr * g in-place",
+      "definition": "Mutating the parameter tensor in place is required; reassigning would unhook it from the autograd graph and from the optimizer's view of self.params.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "buffer-copy_-inplace",
+      "label": "buf.copy_(new) for state",
+      "definition": "Update an EMA buffer via .copy_(...) so the buffer's underlying storage is overwritten; necessary because the buffer reference is shared with self.b.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "inference-mode-step",
+      "label": "@t.inference_mode() on step",
+      "definition": "Decorate the optimizer's step method so its tensor ops don't build an autograd graph (similar to no_grad but cheaper).",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "step-counter-increment",
+      "label": "self.t += 1 for bias correction",
+      "definition": "Track a Python int step counter so Adam/AdamW can compute 1 - beta**t bias correction; must be incremented after each update.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "weight-decay-l2-add",
+      "label": "L2-style g += lambda*theta",
+      "definition": "SGD/RMSprop/Adam-style weight decay: fold lambda*theta into the gradient before the momentum/variance update.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "weight-decay-decoupled",
+      "label": "AdamW: theta *= (1 - gamma*lambda)",
+      "definition": "Decoupled weight decay applied directly to the parameter, independent of the gradient-based update; AdamW's defining change vs. Adam.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "momentum-buffer-update",
+      "label": "b <- mu*b + g",
+      "definition": "Classical SGD momentum: running sum of gradients with leak factor mu, then use b as the effective gradient.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "ema-first-moment",
+      "label": "m <- beta1*m + (1-beta1)*g",
+      "definition": "Exponentially weighted moving average of gradients (Adam/AdamW first moment); distinct from momentum because of the (1-beta1) factor that caps terminal velocity.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "ema-second-moment",
+      "label": "v <- beta2*v + (1-beta2)*g^2",
+      "definition": "EMA of squared gradients (RMSprop's v, Adam/AdamW's v); used to scale per-coordinate learning rate.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "bias-correction-divide",
+      "label": "m_hat = m / (1 - beta^t)",
+      "definition": "Divide first/second moment EMAs by 1 - beta^t so early-step estimates aren't biased toward zero (Adam/AdamW).",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sqrt-eps-stabilize",
+      "label": "g / (sqrt(v) + eps)",
+      "definition": "Per-coordinate adaptive scaling with an eps floor under the sqrt to avoid divide-by-zero (RMSprop/Adam denominator).",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "conditional-hparam-branch",
+      "label": "if mu != 0: ... shortcut",
+      "definition": "Skip the momentum/weight-decay block when the hyperparameter is zero; needed so momentum-less SGD behaves exactly like vanilla gradient descent in tests.",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "optimizer-loop-on-tensor",
+      "label": "optim over a non-model tensor",
+      "definition": "Pass (xy,) to an optimizer to do gradient descent on a single tensor that represents (x, y) coordinates, not model parameters.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "requires-grad-leaf-assert",
+      "label": "assert xy.requires_grad",
+      "definition": "Sanity-check before optimizing: a leaf tensor must have requires_grad=True or .backward() and .step() will silently do nothing.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "detach-clone-snapshot",
+      "label": "xy.detach().clone() per step",
+      "definition": "Record an inert copy of the parameter at each step so the trajectory list isn't a list of aliases to the live (in-place-updated) tensor.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "backward-on-scalar-loss",
+      "label": "fn(x, y).backward()",
+      "definition": "Compute gradients into .grad by calling .backward() on a scalar tensor returned by the loss function.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "t-stack-trajectory",
+      "label": "t.stack(xy_list)",
+      "definition": "Concatenate the per-step snapshot tensors into a single (n+1, 2) trajectory tensor for plotting.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "optimizer-class-dispatch",
+      "label": "optimizer_class(**kwargs)",
+      "definition": "Accept the optimizer constructor and a hparam dict as arguments, so different optimizers can be swapped without rewriting the loop.",
+      "domain": "optim-loop-harness",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "param-group-dict-list",
+      "label": "[{'params':..., 'lr':...}] input",
+      "definition": "Parameters can be passed as a list of dicts so different subsets get different hyperparameters (e.g. higher lr on the head).",
+      "domain": "parameter-groups",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "hparam-precedence-merge",
+      "label": "group > kwarg > default",
+      "definition": "Resolve a per-group hyperparameter by dict-merging defaults, kwargs, and the group dict in priority order ({**defaults, **kwargs, **group}).",
+      "domain": "parameter-groups",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "params-iterable-vs-groups",
+      "label": "dispatch on input shape",
+      "definition": "Branch in __init__ based on whether params is a flat iterable or already a list of group dicts; wrap the flat case as [{'params': params}].",
+      "domain": "parameter-groups",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "nested-param-group-loop",
+      "label": "double-loop over groups+params",
+      "definition": "Both step and zero_grad get an outer loop over self.param_groups and an inner loop over each group's params, using group-specific hparams.",
+      "domain": "parameter-groups",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dataclass-training-args",
+      "label": "@dataclass Args object",
+      "definition": "Bundle all training hyperparameters (lr, batch_size, epochs, wandb names) into a single @dataclass so the trainer's signature stays flat.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "trainer-class-skeleton",
+      "label": "pre_training_setup + training_step + evaluate + train",
+      "definition": "Factor a training run into a class with these four lifecycle methods, so subclasses can override one piece at a time (e.g. add wandb, add DDP).",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "trainer-subclass-extend",
+      "label": "inherit + super().pre_training_setup()",
+      "definition": "Extend a parent trainer by subclassing and calling super() on lifecycle methods, instead of rewriting the entire class.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "cross-entropy-classification-loss",
+      "label": "F.cross_entropy(logits, labels)",
+      "definition": "The standard supervised-classification loss (combines log-softmax + NLL); takes raw logits, not probabilities.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "argmax-accuracy-eval",
+      "label": "(logits.argmax(dim=1) == labels).sum()",
+      "definition": "Per-batch correct count for top-1 accuracy; sum across batches and divide by total samples.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "tqdm-postfix-metrics",
+      "label": "pbar.set_postfix(loss=...)",
+      "definition": "Wrap an epoch's dataloader in tqdm(...) and call set_postfix to surface live loss/accuracy/examples-seen next to the bar.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wandb-init-run",
+      "label": "wandb.init(project, name, config)",
+      "definition": "Open a new wandb run, passing the dataclass args as config so all hyperparameters are saved alongside the metrics.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wandb-log-step",
+      "label": "wandb.log({...}, step=N)",
+      "definition": "Append a metric dict at the given x-axis step (we use examples_seen so different batch sizes are comparable).",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wandb-watch-model",
+      "label": "wandb.watch(module, log_freq)",
+      "definition": "Register a sub-module so wandb logs its parameter and gradient histograms automatically; log_freq set per-batch-count.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wandb-finish",
+      "label": "wandb.finish()",
+      "definition": "Explicitly close the run so the next call to wandb.init starts cleanly (matters inside loops/sweeps).",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "examples-seen-step-axis",
+      "label": "examples_seen += imgs.shape[0]",
+      "definition": "Maintain an integer counter of training examples processed, use it as step= for wandb.log instead of the iteration count.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sweep-config-dict",
+      "label": "dict(method, metric, parameters)",
+      "definition": "Declarative wandb-sweep config: search method (random/bayes/grid), metric to optimize, and a distribution per hyperparameter.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sweep-hparam-distribution",
+      "label": "log_uniform_values / values",
+      "definition": "Per-hparam distribution spec: min/max + distribution for continuous, values=[...] for categorical.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sweep-agent-launch",
+      "label": "wandb.sweep + wandb.agent",
+      "definition": "Register a sweep config (gets a sweep_id), then run an agent that calls a no-arg train() function N times.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wandb-config-into-args",
+      "label": "update_args(args, wandb.config)",
+      "definition": "Inside the agent's train(), read sampled hparams from wandb.config and write them onto the dataclass args before training.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "rank-world-size-args",
+      "label": "per-rank function signature",
+      "definition": "Every distributed function takes (rank, world_size, ...) so each spawned process knows its index and the total count.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dist-send-recv-pair",
+      "label": "dist.send / dist.recv",
+      "definition": "Point-to-point primitives: each send(dst=k) on one rank must be matched by a recv(src=k') on rank k; the building blocks of all collectives.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "broadcast-source-fanout",
+      "label": "one-rank-sends-to-all",
+      "definition": "Implement broadcast by having the source rank loop dist.send to every other rank, while non-source ranks dist.recv from src and copy_ into the local tensor.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "reduce-gather-sum",
+      "label": "all-send-then-dst-accumulates",
+      "definition": "Implement reduce by having every non-dst rank dist.send, while dst loops dist.recv into a fresh buffer and accumulates into the local tensor.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "all-reduce-compose",
+      "label": "reduce + broadcast",
+      "definition": "Compose all_reduce = reduce(dst=0) then broadcast(src=0); the simplest (non-ring) all-reduce algorithm.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "reduce-op-mean-divide",
+      "label": "tensor /= world_size",
+      "definition": "Implement op='mean' by reducing-sum then dividing by world_size in place; equivalent to averaging across processes.",
+      "domain": "distributed-primitives",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "init-process-group-nccl",
+      "label": "dist.init_process_group('nccl', rank, world_size)",
+      "definition": "Mandatory per-process setup that registers the rank in the NCCL communicator; must be paired with destroy_process_group() at the end.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "mp-spawn-workers",
+      "label": "mp.spawn(fn, args, nprocs)",
+      "definition": "Launch nprocs worker processes, each running fn(rank, *args); the canonical entry point for a single-node multi-GPU job.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "per-rank-cuda-device",
+      "label": "t.device(f'cuda:{rank}')",
+      "definition": "Each rank pins itself to one GPU by index = rank; model and tensors must be moved to this device.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "broadcast-initial-weights",
+      "label": "sync model state from rank 0",
+      "definition": "After constructing the model independently on each rank, broadcast every param.data from rank 0 so all replicas start identical.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "all-reduce-grad-sync",
+      "label": "average grads across ranks",
+      "definition": "After loss.backward() and before optimizer.step(), all-reduce each param.grad with op='mean' so every rank updates with the global gradient.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "distributed-sampler-shard",
+      "label": "DistributedSampler(ds, num_replicas, rank)",
+      "definition": "Shard a dataset across ranks so each process sees a disjoint slice each epoch; remember to call set_epoch(epoch) to reshuffle.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "rank0-only-side-effects",
+      "label": "if rank == 0: wandb.log(...)",
+      "definition": "Guard wandb/print/save calls so only one rank performs them, preventing duplicate runs/files.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "all-reduce-eval-metrics",
+      "label": "sync accuracy across ranks",
+      "definition": "After per-rank eval, pack (total_correct, total_samples) into a tensor and all-reduce-sum so the final accuracy is over the whole test set.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "optimizer-repr-string",
+      "label": "__repr__ hparam summary",
+      "definition": "Every optimizer implementation defines __repr__ returning a string like 'SGD(lr=..., momentum=..., weight_decay=...)'; used in test output and tqdm postfix.",
+      "domain": "optimizer-state-plumbing",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "pseudocode-to-code-translate",
+      "label": "LaTeX greek to tensor ops",
+      "definition": "Mechanical translation from indexed pseudocode (b_t <- mu*b_{t-1} + g_t) into Python tensor ops using running buffers; the core skill of all four optimizer-impl exercises (SGD/RMSprop/Adam/AdamW).",
+      "domain": "optimizer-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "loss-item-scalar-extract",
+      "label": "loss.item() for logging",
+      "definition": "Call .item() on a 0-dim loss tensor to get a Python float before passing it to wandb.log or an f-string; required because tensors can't be JSON-serialized.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dataloader-pin-memory-workers",
+      "label": "num_workers + pin_memory DataLoader",
+      "definition": "Configure DataLoader for GPU efficiency: parallel workers prefetch batches, pinned memory enables async host-to-device copies; the standard ResNet-on-CIFAR throughput pattern.",
+      "domain": "training-scaffolding",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dataclasses-replace-args",
+      "label": "replace(args, **sampled)",
+      "definition": "Use dataclasses.replace to clone the args dataclass with multiple fields overridden in one expression; cleaner alternative to per-field assignment in wandb sweep update_args.",
+      "domain": "wandb",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "time-stage-instrumentation",
+      "label": "time.time() per training phase",
+      "definition": "Instrument each phase of the distributed training step with time.time() deltas and log per-phase durations (fwd_time, bwd_time, dist_time) to wandb; the standard 'is my GPU saturated, is all_reduce the bottleneck?' debugging pattern.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "model-save-state-dict",
+      "label": "t.save(model.state_dict(), path)",
+      "definition": "Persist a trained model's parameters at the end of training; called from rank 0 only in DDP runs because all replicas hold identical state.",
+      "domain": "ddp-integration",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "backward-fn-signature",
+      "label": "(grad_out, out, x, ...) -> grad_in",
+      "definition": "Every backward function takes grad_out (dL/d(out)), out (the forward output), and the original positional args of the forward fn; returns the gradient wrt one specific input. Canonical per-op rule signature.",
+      "domain": "backward-rule-pattern",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "chain-rule-elementwise",
+      "label": "dL/dx = grad_out * d(out)/dx",
+      "definition": "For an elementwise forward out = f(x), the backward is pointwise multiplication of grad_out with the local derivative; the Jacobian is diagonal so no sum/matmul required.",
+      "domain": "backward-rule-pattern",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "grad-expressed-in-out",
+      "label": "derivative via out, not x",
+      "definition": "Sometimes the local derivative is computationally cheaper expressed via out (e.g. d(exp)/dx = out); the reason backward fn signatures include both out and x.",
+      "domain": "backward-rule-pattern",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "arg-position-back-functions",
+      "label": "multiply_back0 vs multiply_back1",
+      "definition": "For multi-arg forwards, define one backward per positional input (_back0 for arg 0, _back1 for arg 1); not symmetric in general (e.g. division).",
+      "domain": "backward-rule-pattern",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "log-back",
+      "label": "dL/dx = grad_out / x",
+      "definition": "Derivative of np.log; elementwise division of grad_out by the input. The canonical first backward rule.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "multiply-back",
+      "label": "dL/dx = unbroadcast(y * grad_out, x)",
+      "definition": "Derivative of elementwise x*y wrt x; multiply by the other operand then unbroadcast back to original shape.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "negative-back",
+      "label": "dL/dx = -grad_out",
+      "definition": "Derivative of np.negative; trivial sign flip of grad_out.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "exp-back",
+      "label": "dL/dx = out * grad_out",
+      "definition": "Derivative of np.exp; uses out (the precomputed exp(x)) directly. Canonical 'use out, not x' example.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "reshape-back",
+      "label": "np.reshape(grad_out, x.shape)",
+      "definition": "Derivative of np.reshape; reshape the incoming gradient back to the original input shape (the inverse reshape).",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "permute-back-argsort",
+      "label": "np.transpose(grad_out, np.argsort(axes))",
+      "definition": "Derivative of np.transpose with permutation axes; invert the permutation via np.argsort(axes), then re-transpose grad_out.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sum-back-expand-broadcast",
+      "label": "expand_dims then broadcast_to(x.shape)",
+      "definition": "Derivative of np.sum with dim/keepdim; if keepdim=False re-insert summed dims with np.expand_dims, then broadcast_to original shape.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "max-back-tied-half",
+      "label": "(x > y) + 0.5*(x == y) mask",
+      "definition": "Derivative of np.maximum; 1 where this arg strictly wins, 0.5 on ties (PyTorch convention), then multiply by grad_out and unbroadcast.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "matmul-back-transpose-pair",
+      "label": "grad_out @ y.T, x.T @ grad_out",
+      "definition": "Derivative of 2D x @ y; gradient wrt x is grad_out @ y.T, gradient wrt y is x.T @ grad_out. The defining identity of matmul backprop.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "add-sub-div-back-lambdas",
+      "label": "bulk-register lambdas with unbroadcast",
+      "definition": "For add/subtract/true_divide, the backwards are one-line lambdas: e.g. unbroadcast(g, x) for add-arg0, unbroadcast(-g, y) for sub-arg1, unbroadcast(g*(-x/y**2), y) for div-arg1.",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "getitem-back-add-at",
+      "label": "np.add.at(zeros_like(x), index, grad_out)",
+      "definition": "Derivative of indexing x[index]: scatter grad_out into a zero tensor at the indexed positions, using np.add.at so repeated indices accumulate (not overwrite).",
+      "domain": "backward-rules-per-op",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "unbroadcast-pattern",
+      "label": "shrink grad back to original shape",
+      "definition": "When a forward op broadcast x to a larger shape, its backward must sum grad_out back down to x.shape to undo the broadcast. Two-step inverse: sum prepended dims, then sum size-1 dims with keepdims=True.",
+      "domain": "broadcast-in-backward",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sum-and-broadcast-duality",
+      "label": "sum is the dual of broadcast",
+      "definition": "Broadcasting in forward = summing in backward, and vice versa; the unifying intuition for both unbroadcast (multiply/add/max backwards) and sum_back (sum backward).",
+      "domain": "broadcast-in-backward",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "coerce-float-arg-to-array",
+      "label": "if not isinstance(y, Arr): y = np.array(y)",
+      "definition": "Backward functions for binary ops must coerce Python-scalar operands to ndarray so shape operations (unbroadcast, multiplication) don't blow up.",
+      "domain": "broadcast-in-backward",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "tensor-wraps-ndarray",
+      "label": "Tensor(array, requires_grad, recipe, grad)",
+      "definition": "The custom Tensor wrapper class holds a np.ndarray plus four fields: requires_grad, recipe, grad, is_leaf. The graph-building shell around raw numpy.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "recipe-dataclass",
+      "label": "Recipe(func, args, kwargs, parents)",
+      "definition": "A @dataclass capturing exactly the data needed to run the backward pass for one node: the forward fn, its raw-array args, kwargs, and a {arg_idx: parent_tensor} dict.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "requires-grad-propagation",
+      "label": "OR over input flags & global toggle",
+      "definition": "out.requires_grad = grad_tracking_enabled AND is_differentiable AND any(input.requires_grad for input in args). A tensor needs grad iff tracking is on, the op is differentiable, AND at least one input needs grad.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "grad-tracking-global-toggle",
+      "label": "grad_tracking_enabled module-level bool",
+      "definition": "A process-wide flag (set/reset by NoGrad context manager); when False, no recipe is created and requires_grad is forced False. Equivalent of torch.no_grad().",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "parents-dict-by-argidx",
+      "label": "{argnum: parent_tensor} for Tensor inputs only",
+      "definition": "Recipe.parents is a dict keyed by positional-arg-index, holding ONLY the Tensor inputs (skip ints/floats); lets backprop walk the right edges and dispatch the right _backN function.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "leaf-tensor-condition",
+      "label": "is_leaf = recipe is None and requires_grad",
+      "definition": "Leaf tensors are user-created tensors (no recipe) that the user wants gradients on; they accumulate .grad rather than just propagating it.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "grad-accumulate-on-leaf",
+      "label": "node.grad = grad_in if grad is None else grad + grad_in",
+      "definition": "During backprop, leaf gradients accumulate (not overwrite) so multiple paths from L to the same leaf all contribute; implemented as 'create on first hit, else add'.",
+      "domain": "autograd-object",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "backward-func-lookup",
+      "label": "dict keyed by (forward_fn, arg_position)",
+      "definition": "BackwardFuncLookup is essentially {(np.log, 0): log_back, (np.multiply, 0): multiply_back0, ...}; add_back_func / get_back_func are dict insert/lookup over that key.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "wrap-forward-fn-generic",
+      "label": "numpy-fn -> Tensor-fn factory",
+      "definition": "wrap_forward_fn(numpy_func, is_differentiable=True) returns a closure that unboxes Tensor args to arrays, calls numpy_func, boxes the result, and attaches a Recipe. The single-most-leveraged factory in part 4.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "register-back-fn-after-wrap",
+      "label": "add_back_func(np.fn, argpos, back_fn) per new op",
+      "definition": "Adding a new differentiable op: (a) wrap its forward with wrap_forward_fn, (b) register one _back per differentiable arg position. The 2-step 'extend the framework' idiom.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "is-differentiable-flag",
+      "label": "wrap_forward_fn(fn, is_differentiable=False)",
+      "definition": "For argmax/equal etc., still wrap so unboxing/boxing happens, but skip Recipe construction entirely; output requires_grad is always False.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "unbox-args-tensor-to-array",
+      "label": "a.array if isinstance(a, Tensor) else a",
+      "definition": "Inside wrap_forward_fn, map over args to extract underlying ndarrays (keeping non-Tensor scalars as-is) so numpy never sees a Tensor object.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "box-array-to-tensor-with-recipe",
+      "label": "construct Tensor + attach Recipe",
+      "definition": "After running the numpy fn, wrap the result in a Tensor, set requires_grad, and (iff requires_grad) build Recipe(func, arg_arrays, kwargs, parents) and assign it to out.recipe.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "kwargs-pass-through-recipe",
+      "label": "forward kwargs stored on Recipe, replayed in back fn",
+      "definition": "Kwargs (e.g. dim, keepdim, axes, new_shape) must be forwarded both to numpy_func AND stored on the Recipe so backward fns can read them with the same names. The sum_back(dim=..., keepdim=...) failure mode.",
+      "domain": "fwd-back-dispatcher",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dfs-three-set-toposort",
+      "label": "perm / temp / result DFS pattern",
+      "definition": "Classic depth-first topological sort: perm set = fully done, temp set = currently in DFS stack (cycle detector), result list = post-order append. Visit children before appending self.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "cycle-detection-temp-set",
+      "label": "raise on revisit in temp",
+      "definition": "During DFS, if you reach a node already in the temp set, the graph has a cycle; raise. Distinguishes 'already done' (perm, return) from 'found cycle' (temp, raise).",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "get-children-callable-param",
+      "label": "toposort takes get_children fn",
+      "definition": "Decouple the toposort from the node type by passing get_children: Callable[[Node], list[Node]] as a parameter; lets the same fn work for Node (tests) and Tensor (real).",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sorted-computational-graph",
+      "label": "reverse-topo from end_node via recipe.parents",
+      "definition": "topological_sort(end_node, get_parents)[::-1] where get_parents(t) = list(t.recipe.parents.values()) returns Tensors in execution-friendly order (root first, leaves last).",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "backprop-pop-outgrad-loop",
+      "label": "iterate sorted graph, popping grads[node]",
+      "definition": "The main backprop loop: for each node in reverse-topo order, pop its accumulated outgrad from a grads dict; if leaf, set .grad; else, run each parent's backward fn and accumulate into grads[parent].",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dispatch-back-fn-from-recipe",
+      "label": "BACK_FUNCS.get_back_func(node.recipe.func, argnum)",
+      "definition": "Inside the backprop loop, look up the correct backward fn by (the node's forward func, the parent's argnum); the moment the lookup table earns its keep.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "back-fn-call-with-recipe-args",
+      "label": "back_fn(outgrad, node.array, *recipe.args, **recipe.kwargs)",
+      "definition": "The exact backward-call shape: outgrad first, then the cached out (= node.array), then the original raw-array args and kwargs from the Recipe.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "grads-dict-accumulate-parents",
+      "label": "grads[parent] = in_grad if new else grads[parent] + in_grad",
+      "definition": "Inside the backprop loop, accumulate per-parent gradient contributions in a dict[Tensor, Arr] keyed by tensor identity; multiple paths sum here.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "end-grad-default-ones-like",
+      "label": "ones_like(end_node.array) if end_grad is None",
+      "definition": "When no end_grad is supplied, use ones_like(end_node.array); equivalent to backpropagating from L = end_node.sum(). The directional-derivative default.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "manual-chain-forward-and-back",
+      "label": "hand-write forward+backward chain w/o autograd",
+      "definition": "Warm-up exercise: implement a small computational graph (e.g. g = log(d*log(c) * (a*b))) and propagate grads using only per-op _back functions, manually plumbing grad_out along each edge.",
+      "domain": "toposort-and-backprop",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "parameter-subclass-of-tensor",
+      "label": "Parameter(Tensor) w/ requires_grad=True",
+      "definition": "A Parameter is a custom Tensor subclass flagged as learnable; Module.parameters() walks fields and yields the Parameters so the optimizer can update them.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "module-base-class-custom",
+      "label": "hand-rolled Module with __call__ = forward",
+      "definition": "Minimal substitute for nn.Module over the custom Tensor: stores child modules/params as attributes, implements parameters() recursion and extra_repr.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "linear-affine-on-custom-tensor",
+      "label": "x @ self.weight.T + self.bias",
+      "definition": "The forward of the custom Linear: matmul against a transposed weight, optionally add a 1-D bias. Identical math to torch.nn.Linear but uses the custom @ and .T ops.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "kaiming-uniform-sf-init",
+      "label": "sf = in_features**-0.5; rand in [-sf, sf]",
+      "definition": "Linear weight init: scale uniform [-sf, sf] with sf = 1/sqrt(in_features) (fan-in Kaiming/He uniform); same scheme for bias.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "parameter-wrap-around-tensor",
+      "label": "Parameter(Tensor(...)) two-step wrap",
+      "definition": "Weights & biases are created as Parameter(Tensor(np.random...)) so they're (a) ndarray-backed, (b) Tensor-wrapped, (c) Parameter-flagged.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "logsumexp-cross-entropy",
+      "label": "logprobs = logits - logsumexp(logits, dim=-1)",
+      "definition": "Cross-entropy via the log-softmax identity: logprobs[i,j] = logits[i,j] - log(sum(exp(logits[i,:]))), then negate the indexed correct-label logprobs.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "arange-fancy-index-cross-entropy",
+      "label": "logprobs[arange(0, B), true_labels]",
+      "definition": "Canonical 'pick the correct class per row' idiom: a length-B aranged index along axis 0, plus the int label tensor along axis 1, gives a length-B vector of correct-class logprobs.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "sgd-vanilla-from-scratch",
+      "label": "with NoGrad(): for p in params: p -= p.grad * lr",
+      "definition": "Minimal SGD on the custom Tensor: zero_grad sets all p.grad = None, step subtracts p.grad * lr in place under NoGrad() to keep the update off the autograd graph.",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "no-grad-context-mgr-update",
+      "label": "with NoGrad(): p -= ... during optimizer step",
+      "definition": "Parameter updates use the custom NoGrad context manager to flip grad_tracking_enabled off temporarily; analogous to torch.no_grad() around optimizer.step().",
+      "domain": "custom-autograd-layers",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "non-diff-fn-wrap",
+      "label": "argmax/eq via wrap_forward_fn(is_differentiable=False)",
+      "definition": "Non-differentiable ops still need wrapping (so unboxing works), but their outputs always have requires_grad=False and recipe=None.",
+      "domain": "misc-safety-nondiff",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "inplace-op-unsafe-warning",
+      "label": "in-place mutation breaks recorded args",
+      "definition": "Running add_ after a forward whose Recipe captured the pre-mutation array yields wrong gradients; torch raises, custom impl just warns. Why we generally avoid in-place during backprop.",
+      "domain": "misc-safety-nondiff",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "rmul-scalar-tensor-mix",
+      "label": "__rmul__ for 2 * tensor to dispatch correctly",
+      "definition": "The Tensor class needs both __mul__ and __rmul__ so 2 * t (where Python first asks int.__mul__) falls through to the Tensor's reverse op.",
+      "domain": "misc-safety-nondiff",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "encoder-decoder-symmetric",
+      "label": "mirrored conv / transposed-conv stack",
+      "definition": "Autoencoder/VAE/GAN-generator pattern: encoder downsamples via Conv2d(stride=2), decoder mirrors via ConvTranspose2d(stride=2) with same channel counts in reverse. The defining structural symmetry of every reconstruction/generation model.",
+      "domain": "generative-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "bottleneck-latent-projection",
+      "label": "flatten -> Linear(hidden) -> Linear(latent)",
+      "definition": "End-of-encoder pattern: Rearrange('b c h w -> b (c h w)') then two Linears with ReLU between to project conv features down to the latent dimension. Mirror in decoder to expand back.",
+      "domain": "generative-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "rearrange-as-sequential-layer",
+      "label": "einops.layers.torch.Rearrange in nn.Sequential",
+      "definition": "Use Rearrange('b c h w -> b (c h w)') (and inverse) as a stateless module inside nn.Sequential so flatten/unflatten lives in the module list rather than forward(). The canonical idiom for keeping forward() trivial.",
+      "domain": "generative-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "no-relu-on-final-layer",
+      "label": "last decoder/generator layer is bare",
+      "definition": "The very last ConvTranspose2d (or Linear) in a decoder/generator has no ReLU/activation after it; the model needs freedom to produce any output value, not just non-negative ones. Common gotcha when copy-pasting block patterns.",
+      "domain": "generative-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "mu-logsigma-encoder-head",
+      "label": "encoder outputs (mu, logsigma) pair",
+      "definition": "Replace single-vector encoder output with TWO vectors of size latent_dim: mean mu and log std logsigma. Implemented by doubling the final Linear out_features then Rearrange('b (n d) -> n b d', n=2).",
+      "domain": "vae-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "reparameterization-trick",
+      "label": "z = mu + sigma * randn_like(sigma)",
+      "definition": "Sample latents in a way that keeps gradients flowing: draw eps ~ N(0,1), then z = mu + exp(logsigma) * eps. eps is non-learnable so backprop sees z as a deterministic function of (mu, logsigma). The single defining trick of VAEs.",
+      "domain": "vae-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "kl-divergence-gaussian-closed-form",
+      "label": "0.5 * (mu^2 + exp(2*logsigma) - 1) - logsigma",
+      "definition": "Analytic KL between N(mu, sigma^2) and N(0, 1), per-element. Mean over batch to get the loss term. The 'regularize latents toward standard normal' half of the VAE objective.",
+      "domain": "vae-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "elbo-loss-sum-with-beta",
+      "label": "loss = recon_loss + beta_kl * kl_loss",
+      "definition": "Total VAE loss is reconstruction + a beta-weighted KL term. beta_kl is a scalar hparam; tuning it trades reconstruction sharpness vs latent-space regularity.",
+      "domain": "vae-math",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "randn-like-noise-source",
+      "label": "t.randn_like(sigma) for matched-shape noise",
+      "definition": "Generate standard-normal noise with the same shape, dtype, and device as an existing tensor; the canonical 'where do I get eps from' answer in VAE reparam + GAN-generator latent sampling.",
+      "domain": "vae-math",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "generator-project-and-reshape",
+      "label": "latent_dim -> (C, H0, W0) via Linear + Rearrange",
+      "definition": "First layer of DCGAN generator: Linear(latent_dim, C*H0*W0, bias=False) followed by Rearrange('b (c h w) -> b c h w'), BatchNorm2d, ReLU. Transforms 1D latent into a small feature map ready for transposed convs.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "convtranspose-bn-activation-block",
+      "label": "ConvT -> BatchNorm -> ReLU/Tanh",
+      "definition": "Canonical generator block: doubles spatial size, normalizes, applies activation. Tanh (not ReLU) on the very last block so output is in [-1, 1] matching Normalize((0.5,...), (0.5,...)) preprocessing.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-leakyrelu-block-discriminator",
+      "label": "Conv -> (BN) -> LeakyReLU",
+      "definition": "Canonical DCGAN discriminator block: stride-2 conv to halve spatial size, BatchNorm (skipped on first layer), LeakyReLU(0.2) as the activation. The downsampling mirror of the generator block.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "discriminator-classifier-head",
+      "label": "flatten -> Linear(1) -> Sigmoid",
+      "definition": "End-of-discriminator: Rearrange('b c h w -> b (c h w)'), Linear(final_size, 1, bias=False), Sigmoid(). Produces a per-image real/fake probability scalar.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "dcgan-wrapper-netG-netD",
+      "label": "DCGAN(nn.Module) with .netG / .netD",
+      "definition": "Thin wrapper module that holds both generator (self.netG) and discriminator (self.netD) as submodules but has no forward() \u2014 callers invoke model.netG(...) and model.netD(...) directly. The 2-network-in-one-Module idiom.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "channel-list-reverse-build",
+      "label": "hidden_channels reversed for generator",
+      "definition": "Generator and discriminator share a hidden_channels list; discriminator builds in given order (innermost to outermost = chronological for downsampler), generator reverses it before iterating. 'Configure both halves from one list' pattern.",
+      "domain": "gan-architecture",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "bce-log-loss-real-fake",
+      "label": "-log(D(x)).mean() - log(1-D(G(z))).mean()",
+      "definition": "Discriminator loss: maximize log(D(real)) + log(1-D(fake)) <-> minimize the negative. Manual log-form (not nn.BCELoss) because the labels are constant 1s and 0s. The defining minimax objective term.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "generator-loss-fool-discriminator",
+      "label": "-log(D(G(z))).mean()",
+      "definition": "Generator loss: maximize log(D(G(z))) <-> minimize the negative. NOT -log(1-D(G(z))) (the symmetric form) \u2014 the standard 'non-saturating' trick to give the generator stronger gradients early in training.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "detach-stop-gradient-trick",
+      "label": "img_fake.detach() into discriminator",
+      "definition": "When training the discriminator on fake images, pass img_fake.detach() so backprop through the loss only updates D, not G. Without detach the generator would receive an update from D's own gradient step, which is wrong. The single most-recognizable GAN-training idiom.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "two-optimizers-alternating-step",
+      "label": "self.optG + self.optD, alternating",
+      "definition": "DCGAN has one Adam optimizer per network; each iteration calls optD.zero_grad() -> D loss -> D.step(), then optG.zero_grad() -> G loss -> G.step(). The two networks train independently in the same loop.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "noise-batch-from-latent",
+      "label": "t.randn(batch, latent_dim).to(device)",
+      "definition": "Fresh random latent batch per training iteration: shape (batch_size, latent_dim_size), on device, NOT inside the model. Feeds the generator to produce a new fake batch each step.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "clip-grad-norm-pre-step",
+      "label": "nn.utils.clip_grad_norm_(params, max_norm)",
+      "definition": "Clip the global gradient norm of a parameter group to a max value, called between loss.backward() and optimizer.step(). Standard GAN-stability tool; clip_grad_norm: float | None = 1.0 is a default arg.",
+      "domain": "gan-training",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "dcgan-normal-init-002",
+      "label": "nn.init.normal_(w, 0.0, 0.02)",
+      "definition": "Per the DCGAN paper, init all Conv / ConvTranspose / Linear weights from N(0, 0.02). The 'magic number' init that makes DCGANs converge.",
+      "domain": "dcgan-init",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "bn-weight-bias-init-pattern",
+      "label": "BN weight ~ N(1, 0.02), bias = 0",
+      "definition": "BatchNorm layers get their multiplicative weight initialized around 1 (not 0, since BN multiplies), and the additive bias set to exactly zero. Always paired with dcgan-normal-init-002 in DCGAN init.",
+      "domain": "dcgan-init",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "module-modules-iter-isinstance-dispatch",
+      "label": "for m in model.modules(): isinstance(m, ...)",
+      "definition": "Walk the full module tree with .modules(), then dispatch initialization (or any per-type op) using isinstance(m, (Conv2d, Linear, ...)). The canonical 'do something to every layer of a specific type' idiom.",
+      "domain": "dcgan-init",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "convT-as-flipped-padded-conv",
+      "label": "pad(k-1) + flip kernel -> conv",
+      "definition": "Core identity: a transposed convolution (no stride, no padding) equals a regular convolution with (k-1) zero-padding on each side AND the kernel flipped along its spatial axes. The mathematical key that lets you implement convT in terms of conv.",
+      "domain": "transposed-convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "convT-kernel-axis-swap",
+      "label": "rearrange 'i o k -> o i k'",
+      "definition": "Transposed-conv kernels store channels as (in, out, kernel...) (opposite of conv's (out, in, kernel...)); conversion to a conv-compatible kernel is an einops rearrange swapping the first two axes, applied after the spatial flip.",
+      "domain": "transposed-convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "fractional-stride-zero-insertion",
+      "label": "insert (s-1) zeros between input elements",
+      "definition": "Stride-s transposed conv = insert (s-1) zeros between every pair of adjacent input elements, THEN do a stride-1 transposed conv. Implemented by allocating a zeros tensor of the spaced shape, then x_new[..., ::s] = x. The 'fractional stride' that turns convT into an upsampler.",
+      "domain": "transposed-convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "padding-amount-formula-convT",
+      "label": "pad_actual = k - 1 - padding",
+      "definition": "The padding kwarg on conv_transpose SUBTRACTS from the implicit (k-1) zero-padding (rather than adding to it like in regular conv). The non-obvious sign-flip that trips everyone up.",
+      "domain": "transposed-convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "convT-init-uniform-by-kernel",
+      "label": "sf = 1/sqrt(out * kH * kW); Unif[-sf, sf]",
+      "definition": "PyTorch's ConvTranspose2d weight init: uniform [-sqrt(k), sqrt(k)] with k = 1 / (out_channels * kernel_h * kernel_w). Note the denominator uses out_channels, mirroring the fan-out convention (vs Linear's fan-in).",
+      "domain": "transposed-convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "mse-reconstruction-loss",
+      "label": "nn.MSELoss()(img, img_reconstructed)",
+      "definition": "Standard pixel-wise L2 loss between an input and its reconstruction; used in autoencoder and VAE training. Applied to raw tensors, no per-pixel reduction kwargs needed.",
+      "domain": "generative-training-scaffold",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "log-samples-eval-callback",
+      "label": "@t.inference_mode() log_samples(self)",
+      "definition": "Trainer method that runs the model in inference mode on holdout data (or generates from random noise for GANs), normalizes output to uint8, and logs as wandb.Image(...). Called every args.log_every_n_steps. The 'watch your model train' hook.",
+      "domain": "generative-training-scaffold",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "holdout-data-one-per-class",
+      "label": "dict-of-class-to-image, then stack",
+      "definition": "Construct a fixed HOLDOUT_DATA tensor of shape (10, 1, 28, 28) by iterating the test loader and keeping one example per MNIST class. Used to monitor reconstruction quality across all digit classes during training.",
+      "domain": "generative-training-scaffold",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "model-train-eval-toggle-around-sample",
+      "label": "netG.eval() ... netG.train()",
+      "definition": "Wrap sampling/inference code with .eval() then restore .train() afterwards, so dropout/BN behave correctly during the sample step without disturbing the training loop. The GAN-generator-specific instance of this pattern.",
+      "domain": "generative-training-scaffold",
+      "dd_coverage": "DD-?",
+      "status": "seed"
+    },
+    {
+      "id": "kaiming-uniform-init",
+      "label": "Kaiming uniform init",
+      "definition": "Sample uniformly with bound +/-1/sqrt(fan_in); the default init pattern for Linear/Conv weight and bias.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-?",
+      "status": "accepted"
+    },
+    {
+      "id": "register-buffer",
+      "label": "register_buffer for non-learnable state",
+      "definition": "Use self.register_buffer(name, tensor) for state that participates in state_dict but not in optimization (running stats, attention masks, position encodings).",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "conv-kernel-shape",
+      "label": "conv kernel layout",
+      "definition": "Weight tensor shape (out_channels, in_channels, kernel_dims...); 1D=(oc,ic,kw), 2D=(oc,ic,kh,kw).",
+      "domain": "convolution",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    },
+    {
+      "id": "functional-module-wrap",
+      "label": "Module wraps F.* op",
+      "definition": "Module is a parameter container; forward delegates to torch.nn.functional.* with self.weight as kernel; pattern for Conv2d, BatchNorm2d, MaxPool2d wrappers.",
+      "domain": "pytorch-module-mechanics",
+      "dd_coverage": "DD-N",
+      "status": "accepted"
+    }
+  ]
+}

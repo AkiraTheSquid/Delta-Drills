@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_2_23",
+  "title": "implement 2D max pooling",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_23_exercise-implement-2d-max-pooling.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 23,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "oh = 1 + (h - kh) // stride_h; ow = 1 + (w - kw) // stride_w — same formula as conv, just applied to maxpool"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "s_b, s_c, s_h, s_w = x_padded.stride()"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x_strided = x_padded.as_strided(size=(b, ic, oh, ow, kh, kw), stride=(s_b, s_c, s_h * stride_h, s_w * stride_w, s_h, s_w)) — identical structure to conv2d"},
+    {"id": "maxpool-reduce", "role": "core", "evidence": "return x_strided.amax(dim=(-1, -2)) — max-reduce over the two kernel dims; exercise explicitly contrasts with conv: 'simply taking max over those dimensions rather than a dot product with the kernel'"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "x_padded = pad2d(x, ..., pad_value=-t.inf) — KEY teaching point in dropdown: pad with -inf (not 0) so padded cells lose the max; same padding mechanism, different fill value"},
+    {"id": "conv-stride-downsample", "role": "core", "evidence": "stride scales the output-position dim strides in as_strided; default stride=kernel_size for maxpool (vs default stride=1 for conv)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "nn-module-subclass", "reason": "this is the plain function maxpool2d (not a MaxPool2d nn.Module); the Module wrapper is composed into ResNet34 in 0_2_9 but never explicitly defined as an exercise"}
+  ],
+  "notes": "6-atom exercise — heavy reuse of the conv2d skeleton with the kernel-multiplication swapped for an amax reduction. Validates that maxpool-reduce belongs in the convolution-windowing-and-aggregation family (same windowing primitive, different aggregator). The pad_value=-t.inf trick is a memorable cross-atom interaction (conv-padding-zero + maxpool-reduce) — possibly worth a future 'padding-and-reduction-compatibility' atom if other reductions show similar issues."
+}

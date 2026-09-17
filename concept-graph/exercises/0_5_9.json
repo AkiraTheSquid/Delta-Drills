@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_5_9",
+  "title": "1D transposed convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_9_exercise-1d-transposed-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 9,
+  "difficulty": 5,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "convT-as-flipped-padded-conv", "role": "core", "evidence": "x_mod = pad1d(x_spaced_out, left=padding_amount, right=padding_amount, pad_value=0); weights_mod = einops.rearrange(weights.flip(-1), 'i o w -> o i w'); return conv1d_minimal(x_mod, weights_mod) — same flip+pad+conv identity, now generalized with stride/padding"},
+    {"id": "convT-kernel-axis-swap", "role": "core", "evidence": "einops.rearrange(weights.flip(-1), 'i o w -> o i w') — (i,o,w) -> (o,i,w) axis swap, same as 0_5_8"},
+    {"id": "fractional-stride-zero-insertion", "role": "core", "evidence": "fractional_stride_1d(x, stride): width_new = width + (stride - 1) * (width - 1); x_new = t.zeros(size=(batch, in_channels, width_new), dtype=x.dtype, device=x.device); x_new[..., ::stride] = x — insert (s-1) zeros between adjacent elements"},
+    {"id": "padding-amount-formula-convT", "role": "core", "evidence": "padding_amount = kernel_width - 1 - padding; assert padding_amount >= 0; markdown: 'in transposed convolutions, we pad the input by kernel_size - 1 - padding'"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "pad1d(x_spaced_out, left=padding_amount, right=padding_amount, pad_value=0) — part2's pad1d reused"},
+    {"id": "conv-windowing-1d", "role": "core", "evidence": "return conv1d_minimal(x_mod, weights_mod) — part2's conv1d_minimal as workhorse"},
+    {"id": "tensor-zeros-init", "role": "core", "evidence": "x_new = t.zeros(size=x_new_shape, dtype=x.dtype, device=x.device) inside fractional_stride_1d — preallocate-then-slice-assign pattern from part1"},
+    {"id": "slice-view-mutation", "role": "core", "evidence": "x_new[..., ::stride] = x — write original elements into strided positions of the zeros buffer; markdown help: 'initialise an array of zeros with the appropriate size, then slicing to set its elements from x'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — slightly above seed prediction of 7. The fully-general convT exercise: introduces both fractional_stride and padding-amount formulas. Reuses tensor-zeros-init + slice-view-mutation from part1, conv-padding-zero + conv-windowing-1d from part2. Densest cross-part reuse exercise in part5."
+}

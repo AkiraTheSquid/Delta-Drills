@@ -1,0 +1,483 @@
+{
+ "cluster": "E",
+ "n_dependents": 25,
+ "edges": [
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "bce-log-loss-real-fake",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.75,
+   "rationale": "loss consumes D's sigmoid real/fake scalar"
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "bce-log-loss-real-fake",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "BCE reduced to scalar before backward"
+  },
+  {
+   "prerequisite_id": "detach-stop-gradient-trick",
+   "dependent_id": "bce-log-loss-real-fake",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "fake batch detached on D-step loss"
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "bn-weight-bias-init-pattern",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "init targets BN affine weight/bias params"
+  },
+  {
+   "prerequisite_id": "module-modules-iter-isinstance-dispatch",
+   "dependent_id": "bn-weight-bias-init-pattern",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "dispatch BN modules by isinstance to init"
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "bottleneck-latent-projection",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "Linear projects flattened batch to latent"
+  },
+  {
+   "prerequisite_id": "einops-rearrange-flatten",
+   "dependent_id": "bottleneck-latent-projection",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "flatten conv features before linear bottleneck"
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "bottleneck-latent-projection",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "Rearrange layer flattens/unflattens in Sequential"
+  },
+  {
+   "prerequisite_id": "encoder-decoder-symmetric",
+   "dependent_id": "bottleneck-latent-projection",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "bottleneck is the autoencoder's latent middle"
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "broadcast-source-fanout",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "label indices gather rows from embedding table"
+  },
+  {
+   "prerequisite_id": "broadcasting-rules",
+   "dependent_id": "broadcast-source-fanout",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "fanned embedding broadcasts over batch"
+  },
+  {
+   "prerequisite_id": "encoder-decoder-symmetric",
+   "dependent_id": "channel-list-reverse-build",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "reversed channels build symmetric enc/dec"
+  },
+  {
+   "prerequisite_id": "conv-stride-downsample",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "strided conv halves spatial dims in block"
+  },
+  {
+   "prerequisite_id": "conv-kernel-shape",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "block configures conv kernel channels"
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "LeakyReLU is the activation in the block"
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "conv-leakyrelu-block-discriminator",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "BN follows conv in downsample block"
+  },
+  {
+   "prerequisite_id": "fractional-stride-zero-insertion",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "convT upsamples via zero-insertion stride"
+  },
+  {
+   "prerequisite_id": "padding-amount-formula-convT",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "convT output size needs padding formula"
+  },
+  {
+   "prerequisite_id": "convT-as-flipped-padded-conv",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "upsample block uses ConvTranspose2d"
+  },
+  {
+   "prerequisite_id": "batchnorm-affine-params",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "BN follows convT in upsample block"
+  },
+  {
+   "prerequisite_id": "relu-elementwise-max",
+   "dependent_id": "convtranspose-bn-activation-block",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "ReLU activation in generator block"
+  },
+  {
+   "prerequisite_id": "module-modules-iter-isinstance-dispatch",
+   "dependent_id": "dcgan-normal-init-002",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "apply dispatches per-module-type init"
+  },
+  {
+   "prerequisite_id": "kaiming-uniform-sf-init",
+   "dependent_id": "dcgan-normal-init-002",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "normal-0.02 init alternative to kaiming"
+  },
+  {
+   "prerequisite_id": "module-base-class-custom",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "wrapper is a Module holding two subnets"
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "separate optimizers over each subnet's params"
+  },
+  {
+   "prerequisite_id": "generator-project-and-reshape",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.65,
+   "rationale": "netG is the generator subnet"
+  },
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "dcgan-wrapper-netG-netD",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "confidence": 0.65,
+   "rationale": "netD is the discriminator subnet"
+  },
+  {
+   "prerequisite_id": "detach-clone-snapshot",
+   "dependent_id": "detach-stop-gradient-trick",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "stop-grad specializes detach to block G grads"
+  },
+  {
+   "prerequisite_id": "einops-rearrange-flatten",
+   "dependent_id": "discriminator-classifier-head",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "flatten feature map before linear head"
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "discriminator-classifier-head",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "linear maps features to scalar logit"
+  },
+  {
+   "prerequisite_id": "mse-reconstruction-loss",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "ELBO = reconstruction MSE + beta*KL"
+  },
+  {
+   "prerequisite_id": "kl-divergence-gaussian-closed-form",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.85,
+   "rationale": "ELBO sums KL term scaled by beta"
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "elbo-loss-sum-with-beta",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "ELBO scalarized before backward"
+  },
+  {
+   "prerequisite_id": "bce-log-loss-real-fake",
+   "dependent_id": "generator-loss-fool-discriminator",
+   "relation": "alternative-to",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "G loss mirrors D BCE with flipped target"
+  },
+  {
+   "prerequisite_id": "discriminator-classifier-head",
+   "dependent_id": "generator-loss-fool-discriminator",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "G loss scored by D's real/fake head"
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "generator-project-and-reshape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "linear projects latent to spatial seed"
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "generator-project-and-reshape",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "Rearrange reshapes projection to feature map"
+  },
+  {
+   "prerequisite_id": "index-by-tensor",
+   "dependent_id": "holdout-data-one-per-class",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "index-select one example per class label"
+  },
+  {
+   "prerequisite_id": "mu-logsigma-encoder-head",
+   "dependent_id": "kl-divergence-gaussian-closed-form",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "KL computed from encoder mu and logsigma"
+  },
+  {
+   "prerequisite_id": "module-composition",
+   "dependent_id": "module-modules-iter-isinstance-dispatch",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "iterate registered child modules"
+  },
+  {
+   "prerequisite_id": "backward-on-scalar-loss",
+   "dependent_id": "mse-reconstruction-loss",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "MSE reduced to scalar before backward"
+  },
+  {
+   "prerequisite_id": "linear-affine-on-custom-tensor",
+   "dependent_id": "mu-logsigma-encoder-head",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "single linear emits concatenated mu/logsigma"
+  },
+  {
+   "prerequisite_id": "rearrange-as-sequential-layer",
+   "dependent_id": "mu-logsigma-encoder-head",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "Rearrange split head separates mu/logsigma"
+  },
+  {
+   "prerequisite_id": "randn-like-noise-source",
+   "dependent_id": "noise-batch-from-latent",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.5,
+   "confidence": 0.7,
+   "rationale": "spatial-prefix noise specializes randn sampling"
+  },
+  {
+   "prerequisite_id": "tensor-zeros-init",
+   "dependent_id": "randn-like-noise-source",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "randn_like mirrors zeros-like construction pattern"
+  },
+  {
+   "prerequisite_id": "randn-like-noise-source",
+   "dependent_id": "reparameterization-trick",
+   "relation": "part-of",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.8,
+   "rationale": "reparam draws eps via randn_like"
+  },
+  {
+   "prerequisite_id": "mu-logsigma-encoder-head",
+   "dependent_id": "reparameterization-trick",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.7,
+   "rationale": "reparam combines encoder mu and sigma"
+  },
+  {
+   "prerequisite_id": "optimizer-init-params-list",
+   "dependent_id": "requires-grad-leaf-assert",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "asserts run when materializing optimizer params"
+  },
+  {
+   "prerequisite_id": "stack-vs-cat",
+   "dependent_id": "t-stack-trajectory",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.75,
+   "rationale": "trajectory built by stacking per-step latents"
+  },
+  {
+   "prerequisite_id": "detach-clone-snapshot",
+   "dependent_id": "t-stack-trajectory",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.65,
+   "rationale": "snapshot each step before stacking"
+  },
+  {
+   "prerequisite_id": "optimizer-loop-on-tensor",
+   "dependent_id": "two-optimizers-alternating-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "each step runs a manual optimizer update"
+  },
+  {
+   "prerequisite_id": "training-step-cycle",
+   "dependent_id": "two-optimizers-alternating-step",
+   "relation": "refines",
+   "is_encompassing": true,
+   "propagation_weight": 0.6,
+   "confidence": 0.7,
+   "rationale": "two interleaved training-step cycles"
+  },
+  {
+   "prerequisite_id": "zero-grad-set-none",
+   "dependent_id": "two-optimizers-alternating-step",
+   "relation": "uses",
+   "is_encompassing": false,
+   "propagation_weight": 0.0,
+   "confidence": 0.6,
+   "rationale": "each optimizer zero_grads between steps"
+  }
+ ]
+}

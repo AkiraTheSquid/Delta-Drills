@@ -1,0 +1,30 @@
+{
+  "exercise_id": "0_3_10",
+  "title": "implement all_reduce",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_10_exercise-implement-all-reduce.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 10,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "rank-world-size-args", "role": "core", "evidence": "def reduce(tensor, rank, world_size, dst=0, op): / def all_reduce(tensor, rank, world_size, op): — both take (rank, world_size) explicitly"},
+    {"id": "dist-send-recv-pair", "role": "core", "evidence": "if rank != dst: dist.send(tensor, dst=dst) else: ... dist.recv(received_tensor, src=other_rank) — matched send/recv primitive in reduce"},
+    {"id": "reduce-gather-sum", "role": "core", "evidence": "for other_rank in range(world_size): if other_rank != dst: received_tensor = t.zeros_like(tensor); dist.recv(received_tensor, src=other_rank); tensor += received_tensor — dst loops recv into fresh buffers and accumulates"},
+    {"id": "all-reduce-compose", "role": "core", "evidence": "def all_reduce(...): reduce(tensor, rank, world_size, dst=0, op=op); broadcast(tensor, rank, world_size, src=0) — literal reduce-then-broadcast composition"},
+    {"id": "reduce-op-mean-divide", "role": "core", "evidence": "if op == 'mean': tensor /= world_size — implement mean by sum-then-divide-in-place"},
+    {"id": "init-process-group-nccl", "role": "core", "evidence": "dist.init_process_group(backend='nccl', rank=rank, world_size=world_size) ... dist.destroy_process_group() inside run_simple_model"},
+    {"id": "mp-spawn-workers", "role": "core", "evidence": "mp.spawn(run_simple_model, args=(world_size,), nprocs=world_size, join=True) — canonical entry point"},
+    {"id": "per-rank-cuda-device", "role": "core", "evidence": "device = t.device(f'cuda:{rank}'); model = SimpleModel().to(device) — each rank pins to one GPU by index"},
+    {"id": "tensor-to-device", "role": "core", "evidence": "model = SimpleModel().to(device); input = t.tensor([rank], dtype=t.float32, device=device)"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "self.param = t.nn.Parameter(t.tensor([2.0])) inside SimpleModel — the toy class wraps a scalar so it's optimizable"},
+    {"id": "all-reduce-grad-sync", "role": "incidental", "evidence": "all_reduce(model.param.grad, rank, world_size) — the run_simple_model demo applies the just-implemented all_reduce to a single param.grad, foreshadowing the DDP pattern in 0_3_11"},
+    {"id": "training-step-cycle", "role": "incidental", "evidence": "output = model(input); loss = output.pow(2).sum(); loss.backward(); optimizer.step() — degenerate training step inside the demo driver"},
+    {"id": "backward-on-scalar-loss", "role": "incidental", "evidence": "loss = output.pow(2).sum(); loss.backward() inside the demo"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "13 atoms — above seed prediction of 10. The reduce/all_reduce protocol itself is 5 atoms; the run_simple_model demo driver adds 5 more DDP-integration atoms (init-process-group / mp-spawn-workers / per-rank-cuda-device / tensor-to-device / nn-parameter-wrap) plus 3 incidentals showing a tiny training step. The demo block is INSIDE this exercise's cells (verified). Marking demo-loop atoms incidental because the exercise's coding focus is reduce/all_reduce."
+}

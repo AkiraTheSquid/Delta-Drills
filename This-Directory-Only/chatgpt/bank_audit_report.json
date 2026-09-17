@@ -1,0 +1,852 @@
+{
+ "total": 1251,
+ "questions": {
+  "64": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['equal']"
+   }
+  ],
+  "103": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['exp']"
+   }
+  ],
+  "214": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "229": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "313": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "317": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
+  "324": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "333": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "334": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "336": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "348": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
+  "349": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "351": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
+  "355": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
+  "361": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "363": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "365": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "376": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "377": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "381": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "385": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['repeat']"
+   }
+  ],
+  "391": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['rearrange']"
+   }
+  ],
+  "399": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reduce']"
+   }
+  ],
+  "410": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['new_full']"
+   }
+  ],
+  "413": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['numel', 'parameters']"
+   }
+  ],
+  "414": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['conv2d']"
+   }
+  ],
+  "419": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['Flatten']"
+   }
+  ],
+  "420": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BatchNorm2d', 'numel']"
+   }
+  ],
+  "422": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['train']"
+   }
+  ],
+  "423": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['Linear']"
+   }
+  ],
+  "424": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['randn']"
+   }
+  ],
+  "426": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['inference_mode']"
+   }
+  ],
+  "427": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['parameters', 'requires_grad_']"
+   }
+  ],
+  "429": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['amax']"
+   }
+  ],
+  "430": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['amax']"
+   }
+  ],
+  "431": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['amax', 'unfold']"
+   }
+  ],
+  "433": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['normal_']"
+   }
+  ],
+  "434": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['empty', 'manual_seed', 'mean', 'normal_', 'std', 'tolist']"
+   }
+  ],
+  "435": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['backward']"
+   }
+  ],
+  "436": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['exp']"
+   }
+  ],
+  "437": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['outer']"
+   }
+  ],
+  "439": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['cross_entropy', 'log_softmax']"
+   }
+  ],
+  "442": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['detach', 'no_grad', 'tensor']"
+   }
+  ],
+  "444": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['make_params', 'numel']"
+   }
+  ],
+  "445": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['parameters']"
+   }
+  ],
+  "446": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['item', 'tensor']"
+   }
+  ],
+  "448": [
+   {
+    "check": "precompute_leak",
+    "var": "hw",
+    "detail": "post-setup var 'hw' already equals the expected value"
+   }
+  ],
+  "450": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['backward']"
+   }
+  ],
+  "453": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['var']"
+   }
+  ],
+  "454": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean', 'var']"
+   }
+  ],
+  "455": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BatchNorm2d', 'allclose', 'sqrt']"
+   }
+  ],
+  "457": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ones', 'zeros']"
+   }
+  ],
+  "459": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['sqrt']"
+   }
+  ],
+  "461": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['reshape']"
+   }
+  ],
+  "462": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['pad', 'unfold']"
+   }
+  ],
+  "463": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['MaxPool1d']"
+   }
+  ],
+  "468": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['Linear']"
+   }
+  ],
+  "469": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['Scale']"
+   }
+  ],
+  "470": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['Linear', 'MyBlock']"
+   }
+  ],
+  "471": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['is_grad_enabled', 'set_grad_enabled']"
+   }
+  ],
+  "472": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['is_grad_enabled']"
+   }
+  ],
+  "473": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['no_grad']"
+   }
+  ],
+  "474": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['backward']"
+   }
+  ],
+  "476": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean', 'no_grad']"
+   }
+  ],
+  "477": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['numel', 'parameters', 'requires_grad_']"
+   }
+  ],
+  "478": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['model', 'requires_grad_']"
+   }
+  ],
+  "480": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['tensor']"
+   }
+  ],
+  "482": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['numel']"
+   }
+  ],
+  "483": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['numel']"
+   }
+  ],
+  "495": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['item']"
+   }
+  ],
+  "523": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['contiguous', 'data_ptr']"
+   }
+  ],
+  "524": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "532": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "544": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "550": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/4 graded cases"
+   }
+  ],
+  "581": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "603": [
+   {
+    "check": "precompute_leak",
+    "var": "example",
+    "detail": "post-setup var 'example' already equals the expected value"
+   }
+  ],
+  "604": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['sqrt']"
+   }
+  ],
+  "605": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['upper']"
+   }
+  ],
+  "609": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['append']"
+   }
+  ],
+  "799": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "801": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace']"
+   }
+  ],
+  "802": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
+   }
+  ],
+  "803": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace']"
+   }
+  ],
+  "804": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange', 'zeros']"
+   }
+  ],
+  "805": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace']"
+   }
+  ],
+  "806": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace']"
+   }
+  ],
+  "807": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
+   }
+  ],
+  "808": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace', 'ones']"
+   }
+  ],
+  "810": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['copy_']"
+   }
+  ],
+  "811": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['zeros']"
+   }
+  ],
+  "812": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "813": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['tolist']"
+   }
+  ],
+  "815": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange', 'copy_']"
+   }
+  ],
+  "816": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['zeros']"
+   }
+  ],
+  "817": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "819": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['copy_']"
+   }
+  ],
+  "826": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['arange']"
+   }
+  ],
+  "839": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['linspace']"
+   }
+  ],
+  "1176": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1181": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['item']"
+   }
+  ],
+  "1183": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['first', 'second']"
+   }
+  ],
+  "1235": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1251": [
+   {
+    "check": "precompute_leak",
+    "var": "x",
+    "detail": "post-setup var 'x' already equals the expected value"
+   }
+  ],
+  "1299": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1302": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1305": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1306": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1310": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1311": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1312": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['mean']"
+   }
+  ],
+  "1392": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1394": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1397": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1398": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1399": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1400": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'right']"
+   }
+  ],
+  "1401": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['left', 'relu', 'right']"
+   }
+  ],
+  "1402": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1406": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1407": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1409": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock', 'blocks']"
+   }
+  ],
+  "1410": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1411": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1412": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResidualBlock']"
+   }
+  ],
+  "1415": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers', 'residual_layers']"
+   }
+  ],
+  "1416": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['lin']"
+   }
+  ],
+  "1419": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'residual_layers']"
+   }
+  ],
+  "1421": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['net']"
+   }
+  ],
+  "1423": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'head', 'in_layers', 'residual_layers']"
+   }
+  ],
+  "1425": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['BlockGroup', 'in_layers', 'out_layers']"
+   }
+  ],
+  "1431": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['parameters']"
+   }
+  ],
+  "1438": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ResNet']"
+   }
+  ],
+  "1460": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1461": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1465": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1467": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1468": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ],
+  "1469": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['apply']"
+   }
+  ]
+ },
+ "counts": {
+  "answer_symbol_in_prompt": 130,
+  "precompute_leak": 8,
+  "starter_passes_some_cases": 1
+ }
+}

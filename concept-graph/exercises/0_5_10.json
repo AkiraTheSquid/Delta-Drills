@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_5_10",
+  "title": "2D transposed convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_10_exercise-2d-transposed-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 10,
+  "difficulty": 4,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "convT-as-flipped-padded-conv", "role": "core", "evidence": "x_mod = pad2d(x_spaced_out, left=pad_w_actual, right=pad_w_actual, top=pad_h_actual, bottom=pad_h_actual, pad_value=0); weights_mod = einops.rearrange(weights.flip(-1, -2), 'i o h w -> o i h w'); return conv2d_minimal(x_mod, weights_mod) — same identity in 2D"},
+    {"id": "convT-kernel-axis-swap", "role": "core", "evidence": "einops.rearrange(weights.flip(-1, -2), 'i o h w -> o i h w') — (i,o,h,w) -> (o,i,h,w) axis swap, plus 2-axis flip for 2D"},
+    {"id": "fractional-stride-zero-insertion", "role": "core", "evidence": "fractional_stride_2d(x, stride_h, stride_w): width_new = width + (stride_w-1)*(width-1); height_new = height + (stride_h-1)*(height-1); x_new = t.zeros(...); x_new[..., ::stride_h, ::stride_w] = x — 2D version of the (s-1)-zeros-between-elements trick"},
+    {"id": "padding-amount-formula-convT", "role": "core", "evidence": "pad_h_actual = kernel_height - 1 - padding_h; pad_w_actual = kernel_width - 1 - padding_w; assert min(pad_h_actual, pad_w_actual) >= 0 — same k-1-padding formula in both dims"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "pad2d(x_spaced_out, left=pad_w_actual, right=pad_w_actual, top=pad_h_actual, bottom=pad_h_actual, pad_value=0) — part2's pad2d reused"},
+    {"id": "conv-windowing-2d", "role": "core", "evidence": "return conv2d_minimal(x_mod, weights_mod) — part2's conv2d_minimal as workhorse"},
+    {"id": "tensor-zeros-init", "role": "core", "evidence": "x_new = t.zeros(size=x_new_shape, dtype=x.dtype, device=x.device) inside fractional_stride_2d"},
+    {"id": "slice-view-mutation", "role": "core", "evidence": "x_new[..., ::stride_h, ::stride_w] = x — 2D strided assignment"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — matches seed prediction of 8. Direct 2D port of 0_5_9 logic with no new atoms. Same 4 §6 transposed-conv atoms + 4 cross-part reuses (pad2d, conv2d_minimal, zeros-init, slice-view-mutation). The 2D-specific touches (force_pair, dual-axis flip, dual-axis stride) are absorbed into the existing atoms — no new failure modes."
+}

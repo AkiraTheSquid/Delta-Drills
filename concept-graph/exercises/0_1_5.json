@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_1_5",
+  "title": "implement raytrace_triangle",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_5_exercise-implement-raytrace-triangle.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 5,
+  "difficulty": 4,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "same (O, D) form, used to derive the per-ray solve"},
+    {"id": "triangle-barycentric", "role": "core", "evidence": "stack([-D, B-A, C-A]) and the (s>=0 & u>=0 & v>=0 & u+v<=1) inside-test — Moller-Trumbore lifted to batched form"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "A, B, C = einops.repeat(triangle, 'pts dims -> pts NR dims', NR=NR) — broadcast triangle across rays"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "mat = t.stack([-D, B - A, C - A], dim=-1) on (NR, 3, 3)"},
+    {"id": "unbind-tuple-unpack", "role": "core", "evidence": "O, D = rays.unbind(dim=1) and s, u, v = sol.unbind(dim=-1) — explicit unbind on non-first axes"},
+    {"id": "singular-matrix-mask-trick", "role": "core", "evidence": "dets = t.linalg.det(mat); is_singular = dets.abs() < 1e-8; mat[is_singular] = t.eye(3); ... & ~is_singular — same trick as 0_1_2, now with 3x3"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "t.linalg.solve(mat, vec) on (NR, 3, 3) batched"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & ~is_singular — five predicates ANDed"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — first dense composing exercise of part1, exactly as predicted. The singular-matrix-mask-trick recurs here in 3x3 form; triangle-barycentric stays composite (Moller-Trumbore matrix + inside-test fire together every time, as predicted in seed Q4). einops.repeat is the natural way to broadcast a single triangle across NR rays."
+}

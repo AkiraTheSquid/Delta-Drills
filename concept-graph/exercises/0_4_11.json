@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_4_11",
+  "title": "exp",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_11_exercise-exp.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 11,
+  "difficulty": 1,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "exp-back", "role": "core", "evidence": "return out * grad_out — derivative of exp expressed in out, the canonical 'use out, not x' example"},
+    {"id": "grad-expressed-in-out", "role": "core", "evidence": "Markdown explicitly: 'The backward function should express the result in terms of the out parameter - this more efficient than expressing it in terms of x' — the defining example of why backward fn signatures include both"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def exp_back(grad_out: Arr, out: Arr, x: Arr) -> Arr"},
+    {"id": "chain-rule-elementwise", "role": "core", "evidence": "Elementwise exp: dL/dx = d(out)/dx * grad_out = out * grad_out — diagonal Jacobian"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "exp = wrap_forward_fn(np.exp); BACK_FUNCS.add_back_func(np.exp, 0, exp_back)"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "exp = wrap_forward_fn(np.exp) — factory reuse"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — exactly matches seed prediction. The canonical illustration of grad-expressed-in-out (the contrast atom that 0_4_0's log can't fire)."
+}

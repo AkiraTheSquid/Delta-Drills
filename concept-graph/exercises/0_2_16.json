@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_2_16",
+  "title": "matrix-matrix multiplication",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_16_exercise-matrix-matrix-multiplication.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 16,
+  "difficulty": 4,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "matmul-2d", "role": "core", "evidence": "as_strided_mm(matA, matB) — implements torch.matmul for 2D-by-2D from scratch"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "sA0, sA1 = matA.stride(); sB0, sB1 = matB.stride() — pulls strides from both inputs"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "matA_expanded = matA.as_strided(expanded_size, (sA0, sA1, 0)); matB_expanded = matB.as_strided(expanded_size, (0, sB0, sB1))"},
+    {"id": "stride-zero-broadcast", "role": "core", "evidence": "stride 0 in last dim of A and first dim of B — A is broadcast over k-axis, B is broadcast over i-axis; classic ij,jk -> ijk expansion via strides"},
+    {"id": "broadcasting-rules", "role": "incidental", "evidence": "(matA_expanded * matB_expanded).sum(dim=1) — elementwise multiply of two (i, j, k) tensors; the broadcast was set up manually"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5-atom mirror of 0_2_15 but for full matmul. Together with 0_2_15, validates that matvec and matmul-2d are not redundant atoms — they share strided-broadcast machinery but the contraction shape and the i,j,k expansion are subtly different (matvec needs one broadcast, matmul needs two). Worth keeping both atoms."
+}

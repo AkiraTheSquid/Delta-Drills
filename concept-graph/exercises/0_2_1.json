@@ -1,0 +1,26 @@
+{
+  "exercise_id": "0_2_1",
+  "title": "implement Linear",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_1_exercise-implement-linear.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 1,
+  "difficulty": 2,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class Linear(nn.Module): super().__init__()"},
+    {"id": "nn-parameter-wrap", "role": "core", "evidence": "self.weight = nn.Parameter(...); conditional self.bias = nn.Parameter(...) or None"},
+    {"id": "module-extra-repr", "role": "core", "evidence": "extra_repr required; explicit gotcha in dropdown about printing the bool not the tensor"},
+    {"id": "kaiming-uniform-init", "role": "core", "evidence": "uniform sample with bound +/- 1/sqrt(in_features) for both weight and bias"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x, self.weight, '... in_feats, out_feats in_feats -> ... out_feats')"},
+    {"id": "broadcasting-rules", "role": "core", "evidence": "x += self.bias broadcasts (out_features,) over leading batch dims represented by '...'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "matmul-2d", "reason": "the contraction is expressed via einsum, not via @ operator; einsum-contraction subsumes it. Arguably both apply but einsum is the more accurate skill being tested here"},
+    {"id": "tensor-reshape-view", "reason": "no reshape/view called; the einsum string handles the leading-dim flexibility via '...' rather than reshape"}
+  ],
+  "notes": "Confirms kaiming-uniform-init as a recurring atom (now seen in 0_2_1 and 0_2_4 — not a one-off). Also surfaces a pattern worth watching: 'optional parameter via if-else None' for the bias=False case. Not yet promoting to an atom; will revisit if it appears in 3+ exercises."
+}

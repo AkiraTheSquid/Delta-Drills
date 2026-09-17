@@ -1,0 +1,4881 @@
+{
+ "curriculum": "arena-chap0-drillable",
+ "n_atoms": 207,
+ "atoms": [
+  {
+   "id": "1x1-conv-channel-reshape",
+   "title": "prove 1x1 Conv2d equals per-pixel Linear",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: 1x1 conv channel-reshape",
+   "description": "1x1-conv-channel-reshape \u2014 ex1: prove 1x1 Conv2d equals per-pixel Linear",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    }
+   ]
+  },
+  {
+   "id": "all-reduce-compose",
+   "title": "compose all_reduce from reduce plus broadcast",
+   "topic": "Distributed",
+   "subtopic": "Distributed: all_reduce composition",
+   "description": "all-reduce-compose \u2014 ex1: compose all_reduce from reduce plus broadcast",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.all_reduce",
+     "role": "primary",
+     "notes": "All-reduce composed as reduce-to-rank-0 (sum or mean) followed by broadcast-from-rank-0; just a 2-line composition of the primitives."
+    }
+   ]
+  },
+  {
+   "id": "all-reduce-eval-metrics",
+   "title": "average a per-rank eval loss across ranks",
+   "topic": "Distributed",
+   "subtopic": "Distributed: all_reduce eval metrics",
+   "description": "all-reduce-eval-metrics \u2014 ex1: average a per-rank eval loss across ranks",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "all-reduce-grad-sync",
+   "title": "synchronize gradients across ranks with all_reduce",
+   "topic": "Distributed",
+   "subtopic": "Distributed: all_reduce grad sync",
+   "description": "all-reduce-grad-sync \u2014 ex1: synchronize gradients across ranks with all_reduce",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "any-reduce-axis",
+   "title": "row-wise any() to flag rows containing any True",
+   "topic": "Misc Cleanup",
+   "subtopic": "Numpy: any() reduce along axis",
+   "description": "any-reduce-axis \u2014 ex1: row-wise any() to flag rows containing any True",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    },
+    {
+     "ref": "part2.AveragePool",
+     "role": "primary",
+     "notes": "Global avg pool: mean over spatial dims (2,3) collapses (B,C,H,W) -> (B,C)."
+    },
+    {
+     "ref": "part2.ex_126",
+     "role": "primary",
+     "notes": "Trace via as_strided: pull diagonal with stride = row_stride + col_stride, then .sum()."
+    }
+   ]
+  },
+  {
+   "id": "arange-fancy-index-cross-entropy",
+   "title": "pick per-sample target logits via logits[arange(B), target]",
+   "topic": "Custom Tensor",
+   "subtopic": "Loss: arange fancy-index cross-entropy",
+   "description": "arange-fancy-index-cross-entropy \u2014 ex1: pick per-sample target logits via logits[arange(B), target]",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.gather_2d",
+     "role": "primary",
+     "notes": "Solution = matrix.gather(1, indexes). Pure torch.gather along dim=1; arange-fancy-index-cross-entropy is the closest atom for per-row-index gather muscle memory."
+    },
+    {
+     "ref": "part0.total_price_gather",
+     "role": "primary",
+     "notes": "Solution = prices.gather(0, items).sum().item(). torch.gather along dim=0 then scalar extract."
+    },
+    {
+     "ref": "part0.batched_cross_entropy_loss",
+     "role": "primary",
+     "notes": "Solution composes batched_logsoftmax then gathers true-class log-probs via rearrange(labels,'n -> n 1') + gather(dim=1). Direct cross-entropy + gather-at-label-index recipe."
+    },
+    {
+     "ref": "part4.cross_entropy",
+     "role": "primary",
+     "notes": "Stable cross-entropy via logits - logsumexp, then -logprobs[arange(B), labels]."
+    }
+   ]
+  },
+  {
+   "id": "arg-position-back-functions",
+   "title": "write div_back0 and div_back1 \u2014 asymmetric per-arg back fns",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Arg-position back funcs",
+   "description": "arg-position-back-functions \u2014 ex1: write div_back0 and div_back1 \u2014 asymmetric per-arg back fns",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    },
+    {
+     "ref": "part4.BackwardFuncLookup",
+     "role": "primary",
+     "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+    },
+    {
+     "ref": "part4.max",
+     "role": "primary",
+     "notes": "maximum_back0/1 with 50/50 tie-splitting via boolean masks, then unbroadcast onto x/y."
+    }
+   ]
+  },
+  {
+   "id": "argmax-accuracy-eval",
+   "title": "top-1 classification accuracy from logits",
+   "topic": "Adam Trainer",
+   "subtopic": "Eval: argmax accuracy",
+   "description": "argmax-accuracy-eval \u2014 ex1: top-1 classification accuracy from logits",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "as-strided-noncontig-source",
+   "title": "Non-contiguous tensor strides pitfall",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "Input matrices to as_strided may themselves be non-contiguous (e.g. transposed); always use the input's .stride() rather than assuming the last stride is 1.",
+   "tags": [
+    "part2",
+    "arena-conf-medium"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_122",
+     "role": "primary",
+     "notes": "Design (size, stride) pairs for as_strided to produce slices, repeats (stride 0), and diagonal views over a 1D source."
+    },
+    {
+     "ref": "part2.ex_126",
+     "role": "primary",
+     "notes": "Trace via as_strided: pull diagonal with stride = row_stride + col_stride, then .sum()."
+    },
+    {
+     "ref": "part2.ex_129",
+     "role": "primary",
+     "notes": "matmul as as_strided broadcast: expand vec to mat shape with row-stride 0, elementwise multiply, sum over inner dim."
+    },
+    {
+     "ref": "part2.ex_132",
+     "role": "primary",
+     "notes": "matmul via as_strided: build 3D views (dA0,dA1,dB1) with stride-0 broadcast axes, elementwise multiply, sum over shared dim."
+    }
+   ]
+  },
+  {
+   "id": "as-strided-windowing",
+   "title": "compute size + stride args for a 1-D sliding window",
+   "topic": "Tensor Mechanics",
+   "subtopic": "PyTorch: as_strided windowing",
+   "description": "as-strided-windowing \u2014 ex1: compute size + stride args for a 1-D sliding window",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_122",
+     "role": "primary",
+     "notes": "Design (size, stride) pairs for as_strided to produce slices, repeats (stride 0), and diagonal views over a 1D source."
+    },
+    {
+     "ref": "part2.ex_137",
+     "role": "primary",
+     "notes": "Single-channel 1D conv: as_strided sliding windows of width kw, einsum 'ow kw, kw -> ow' contraction."
+    },
+    {
+     "ref": "part2.ex_140",
+     "role": "primary",
+     "notes": "Batched multi-channel 1D conv: 4D as_strided view (b,ic,ow,kw) + einsum that contracts ic and kw to produce (b,oc,ow)."
+    },
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    }
+   ]
+  },
+  {
+   "id": "avgpool-reduce",
+   "title": "build AvgPool2d via einops.reduce",
+   "topic": "Cnn Extras",
+   "subtopic": "CNN: AvgPool as reduce",
+   "description": "avgpool-reduce \u2014 ex1: build AvgPool2d via einops.reduce",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.AveragePool",
+     "role": "primary",
+     "notes": "Global avg pool: mean over spatial dims (2,3) collapses (B,C,H,W) -> (B,C)."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "back-fn-call-with-recipe-args",
+   "title": "call a dispatched back_fn with (grad_out, node.array, *args, **kwargs)",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: back fn call with recipe args",
+   "description": "back-fn-call-with-recipe-args \u2014 ex1: call a dispatched back_fn with (grad_out, node.array, *args, **kwargs)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "backprop-pop-outgrad-loop",
+   "title": "implement the main reverse-pass loop over a sorted graph",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: backprop pop-outgrad loop",
+   "description": "backprop-pop-outgrad-loop \u2014 ex1: implement the main reverse-pass loop over a sorted graph",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "backward-fn-signature",
+   "title": "write log_back with the canonical (grad_out, out, x) signature",
+   "topic": "Backprop",
+   "subtopic": "Backprop: backward fn signature",
+   "description": "backward-fn-signature \u2014 ex1: write log_back with the canonical (grad_out, out, x) signature",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_back",
+     "role": "primary",
+     "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+    },
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    },
+    {
+     "ref": "part4.negative",
+     "role": "primary",
+     "notes": "negative_back returns -grad_out; wired into BACK_FUNCS after wrapping np.negative."
+    }
+   ]
+  },
+  {
+   "id": "backward-func-lookup",
+   "title": "BackwardFuncLookup registry",
+   "topic": "Backprop",
+   "subtopic": "Backprop",
+   "description": "A dict from (forward_fn, arg_index) to the corresponding backward function; lets the generic backprop dispatch to per-arg gradient code.",
+   "tags": [
+    "part4",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.BackwardFuncLookup",
+     "role": "primary",
+     "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+    }
+   ]
+  },
+  {
+   "id": "backward-on-scalar-loss",
+   "title": "reduce per-sample loss to a scalar before backward",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: backward()",
+   "description": "backward-on-scalar-loss \u2014 ex1: reduce per-sample loss to a scalar before backward",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    },
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    }
+   ]
+  },
+  {
+   "id": "batchnorm-affine-params",
+   "title": "apply BatchNorm's affine step to a normalized tensor",
+   "topic": "Cnn Extras",
+   "subtopic": "CNN: BatchNorm affine params",
+   "description": "batchnorm-affine-params \u2014 ex1: apply BatchNorm's affine step to a normalized tensor",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    },
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    },
+    {
+     "ref": "part5.ex_70",
+     "role": "primary",
+     "notes": "Iterate model.modules() and dispatch on isinstance: ConvTranspose2d/Conv2d/Linear weights get N(0, 0.02); BatchNorm2d gamma gets N(1, 0.02) and beta is zeroed, all by mutating .weight.data / .bias.dat"
+    }
+   ]
+  },
+  {
+   "id": "batchnorm-running-stats",
+   "title": "EMA-update running_mean and running_var in train mode",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: BatchNorm running stats",
+   "description": "batchnorm-running-stats \u2014 ex1: EMA-update running_mean and running_var in train mode",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    }
+   ]
+  },
+  {
+   "id": "bce-log-loss-real-fake",
+   "title": "discriminator BCE loss = BCE(D(real), 1) + BCE(D(fake), 0)",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: BCE log loss real/fake",
+   "description": "bce-log-loss-real-fake \u2014 ex1: discriminator BCE loss = BCE(D(real), 1) + BCE(D(fake), 0)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "bias-correction-divide",
+   "title": "bias-correct an Adam moment: m_hat = m / (1 - beta**t)",
+   "topic": "Adam Trainer",
+   "subtopic": "Optimizer: Adam bias-correction divide",
+   "description": "bias-correction-divide \u2014 ex1: bias-correct an Adam moment: m_hat = m / (1 - beta**t)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "block-group-stack",
+   "title": "build a ResNet BlockGroup from toy blocks",
+   "topic": "Cnn Extras",
+   "subtopic": "CNN: BlockGroup stack",
+   "description": "block-group-stack \u2014 ex1: build a ResNet BlockGroup from toy blocks",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.BlockGroup",
+     "role": "primary",
+     "notes": "Stacks ResidualBlocks in Sequential; first block applies the downsample stride, rest are shape-preserving."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "bn-weight-bias-init-pattern",
+   "title": "BatchNorm init \u2014 weight ~ N(1, 0.02), bias = 0",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: BN weight=1 bias=0 init",
+   "description": "bn-weight-bias-init-pattern \u2014 ex1: BatchNorm init \u2014 weight ~ N(1, 0.02), bias = 0",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_70",
+     "role": "primary",
+     "notes": "Iterate model.modules() and dispatch on isinstance: ConvTranspose2d/Conv2d/Linear weights get N(0, 0.02); BatchNorm2d gamma gets N(1, 0.02) and beta is zeroed, all by mutating .weight.data / .bias.dat"
+    }
+   ]
+  },
+  {
+   "id": "boolean-mask-combine",
+   "title": "five-predicate ray-triangle inside test",
+   "topic": "Einops Advanced",
+   "subtopic": "Numpy: Boolean mask combine",
+   "description": "boolean-mask-combine \u2014 ex1: five-predicate ray-triangle inside test",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    },
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    }
+   ]
+  },
+  {
+   "id": "boolean-mask-identity-replace",
+   "title": "Singular-matrix identity substitution trick",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "For batched linear solves, detect singular sub-matrices, replace them with the identity so solve does not throw, then mask out their fake solutions in the final boolean.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.max",
+     "role": "primary",
+     "notes": "maximum_back0/1 with 50/50 tie-splitting via boolean masks, then unbroadcast onto x/y."
+    }
+   ]
+  },
+  {
+   "id": "bottleneck-latent-projection",
+   "title": "encode flat batch into latent + 2-D scatter",
+   "topic": "Generative",
+   "subtopic": "Generative: Bottleneck latent projection",
+   "description": "bottleneck-latent-projection \u2014 ex1: encode flat batch into latent + 2-D scatter",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.Autoencoder",
+     "role": "primary",
+     "notes": "Symmetric conv-encoder / convT-decoder around a Linear bottleneck, with einops Rearrange used as a Sequential layer to flatten/unflatten."
+    },
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    }
+   ]
+  },
+  {
+   "id": "box-array-to-tensor-with-recipe",
+   "title": "box raw output into MiniTensor + attach Recipe when grad-tracked",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: Box array as Tensor + recipe",
+   "description": "box-array-to-tensor-with-recipe \u2014 ex1: box raw output into MiniTensor + attach Recipe when grad-tracked",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "broadcast-initial-weights",
+   "title": "broadcast rank-0 weights to all ranks at start",
+   "topic": "Distributed",
+   "subtopic": "Distributed: broadcast initial weights",
+   "description": "broadcast-initial-weights \u2014 ex1: broadcast rank-0 weights to all ranks at start",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "broadcast-source-fanout",
+   "title": "fan a class-embedding table to a batch via labels",
+   "topic": "Generative",
+   "subtopic": "Generative: Broadcast source fan-out",
+   "description": "broadcast-source-fanout \u2014 ex1: fan a class-embedding table to a batch via labels",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.broadcast",
+     "role": "primary",
+     "notes": "Source rank sends the tensor to each non-source rank via dist.send; non-source ranks allocate a receive buffer, dist.recv, and copy_ into the target tensor."
+    },
+    {
+     "ref": "part3.all_reduce",
+     "role": "primary",
+     "notes": "All-reduce composed as reduce-to-rank-0 (sum or mean) followed by broadcast-from-rank-0; just a 2-line composition of the primitives."
+    }
+   ]
+  },
+  {
+   "id": "broadcasting-rules",
+   "title": "NumPy/PyTorch broadcasting rules",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "When operating on tensors of different shapes, dimensions of size 1 are stretched to match larger shapes; missing leading dims are treated as size 1.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_60",
+     "role": "primary",
+     "notes": "Solution does reduce(mean) then repeat back to original length then subtracts. Exercises reduce + repeat round-trip; subtraction relies on aligned shape (broadcast adjacent)."
+    },
+    {
+     "ref": "part0.ex_63",
+     "role": "primary",
+     "notes": "Solution = (temps - repeat(avg)) / repeat(std). Two reduces (mean, std via t.std passed in) plus two repeats; elementwise op on aligned shape."
+    },
+    {
+     "ref": "part0.ex_66",
+     "role": "primary",
+     "notes": "Solution = matrix / matrix.norm(dim=1, keepdim=True). Direct vector-normalize-keepdim drill; broadcast (m,n)/(m,1)."
+    },
+    {
+     "ref": "part0.ex_69",
+     "role": "primary",
+     "notes": "Solution = normalize_rows(matrix) @ matrix_normalized.T. Composes row-normalize with 2-D matmul."
+    }
+   ]
+  },
+  {
+   "id": "buffer-copy_-inplace",
+   "title": "update a BatchNorm running_mean buffer with copy_",
+   "topic": "Backprop",
+   "subtopic": "PyTorch: in-place buffer copy",
+   "description": "buffer-copy_-inplace \u2014 ex1: update a BatchNorm running_mean buffer with copy_",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "chain-rule-elementwise",
+   "title": "write sigmoid_back and relu_back from the elementwise chain rule",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Elementwise chain rule",
+   "description": "chain-rule-elementwise \u2014 ex1: write sigmoid_back and relu_back from the elementwise chain rule",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_back",
+     "role": "primary",
+     "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+    },
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    },
+    {
+     "ref": "part4.ReLU",
+     "role": "primary",
+     "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+    }
+   ]
+  },
+  {
+   "id": "channel-list-reverse-build",
+   "title": "build symmetric encoder/decoder channel pairs from a reversed list",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: channel-list reverse build",
+   "description": "channel-list-reverse-build \u2014 ex1: build symmetric encoder/decoder channel pairs from a reversed list",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "clip-grad-norm-pre-step",
+   "title": "clip grads to a max global L2 norm before optimizer.step",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: clip_grad_norm pre-step",
+   "description": "clip-grad-norm-pre-step \u2014 ex1: clip grads to a max global L2 norm before optimizer.step",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "coerce-float-arg-to-array",
+   "title": "coerce_to_array: wrap int/float as 0-D tensor, pass-through others",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: Coerce float arg to array",
+   "description": "coerce-float-arg-to-array \u2014 ex1: coerce_to_array: wrap int/float as 0-D tensor, pass-through others",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    }
+   ]
+  },
+  {
+   "id": "conditional-hparam-branch",
+   "title": "Linear with optional bias gated by use_bias flag",
+   "topic": "Numerical Modules",
+   "subtopic": "PyTorch: Conditional hparam branch",
+   "description": "conditional-hparam-branch \u2014 ex1: Linear with optional bias gated by use_bias flag",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.args",
+     "role": "primary",
+     "notes": "Build the wandb sweep_config (method/metric/parameters with log_uniform_values + categorical) and an update_args fn that overrides dataclass fields, including a conditional weight_decay_bool branch."
+    },
+    {
+     "ref": "part4.Linear",
+     "role": "primary",
+     "notes": "Linear over custom Tensor: Kaiming-uniform init (sf=1/sqrt(fan_in)), optional bias, x @ W.T + b."
+    }
+   ]
+  },
+  {
+   "id": "conv-channel-sum",
+   "title": "verify conv2d contracts the IC axis",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: Channel-axis sum semantics",
+   "description": "conv-channel-sum \u2014 ex1: verify conv2d contracts the IC axis",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_140",
+     "role": "primary",
+     "notes": "Batched multi-channel 1D conv: 4D as_strided view (b,ic,ow,kw) + einsum that contracts ic and kw to produce (b,oc,ow)."
+    },
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    },
+    {
+     "ref": "part2.ex_156",
+     "role": "primary",
+     "notes": "Full 1D conv: pad1d input then as_strided with width-stride scaled by `stride`, einsum contraction over ic,kw."
+    },
+    {
+     "ref": "part2.ex_159",
+     "role": "primary",
+     "notes": "Full 2D conv: pad2d, force_pair stride/padding, 6D as_strided with h/w strides scaled, einsum contracts ic,kh,kw."
+    }
+   ]
+  },
+  {
+   "id": "conv-kernel-shape",
+   "title": "introspect a conv2d weight tensor's axes",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: Kernel shape (OC, IC, KH, KW)",
+   "description": "conv-kernel-shape \u2014 ex1: introspect a conv2d weight tensor's axes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    },
+    {
+     "ref": "part2.ex_159",
+     "role": "primary",
+     "notes": "Full 2D conv: pad2d, force_pair stride/padding, 6D as_strided with h/w strides scaled, einsum contracts ic,kh,kw."
+    }
+   ]
+  },
+  {
+   "id": "conv-leakyrelu-block-discriminator",
+   "title": "build a 32x32 to 16x16 discriminator downsampling block",
+   "topic": "Vae Gan",
+   "subtopic": "GAN: Conv+LeakyReLU discriminator block",
+   "description": "conv-leakyrelu-block-discriminator \u2014 ex1: build a 32x32 to 16x16 discriminator downsampling block",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "conv-output-shape",
+   "title": "compute conv2d output shape analytically",
+   "topic": "Geometry Cnn",
+   "subtopic": "CNN: Conv output shape",
+   "description": "conv-output-shape \u2014 ex1: compute conv2d output shape analytically",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_137",
+     "role": "primary",
+     "notes": "Single-channel 1D conv: as_strided sliding windows of width kw, einsum 'ow kw, kw -> ow' contraction."
+    },
+    {
+     "ref": "part2.ex_140",
+     "role": "primary",
+     "notes": "Batched multi-channel 1D conv: 4D as_strided view (b,ic,ow,kw) + einsum that contracts ic and kw to produce (b,oc,ow)."
+    },
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    },
+    {
+     "ref": "part2.ex_156",
+     "role": "primary",
+     "notes": "Full 1D conv: pad1d input then as_strided with width-stride scaled by `stride`, einsum contraction over ic,kw."
+    }
+   ]
+  },
+  {
+   "id": "conv-padding-zero",
+   "title": "build a zero-padded 1-D input by slice assignment",
+   "topic": "Geometry Cnn",
+   "subtopic": "CNN: Conv zero padding",
+   "description": "conv-padding-zero \u2014 ex1: build a zero-padded 1-D input by slice assignment",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part2.ex_149",
+     "role": "primary",
+     "notes": "Allocate new_full(B,C,L+W+R, pad_value), assign x into the central slice [..., left:left+W]."
+    },
+    {
+     "ref": "part2.ex_156",
+     "role": "primary",
+     "notes": "Full 1D conv: pad1d input then as_strided with width-stride scaled by `stride`, einsum contraction over ic,kw."
+    },
+    {
+     "ref": "part2.ex_159",
+     "role": "primary",
+     "notes": "Full 2D conv: pad2d, force_pair stride/padding, 6D as_strided with h/w strides scaled, einsum contracts ic,kh,kw."
+    }
+   ]
+  },
+  {
+   "id": "conv-stride-downsample",
+   "title": "predict strided conv output length",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: Stride downsample arithmetic",
+   "description": "conv-stride-downsample \u2014 ex1: predict strided conv output length",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    },
+    {
+     "ref": "part2.BlockGroup",
+     "role": "primary",
+     "notes": "Stacks ResidualBlocks in Sequential; first block applies the downsample stride, rest are shape-preserving."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "conv-windowing-1d",
+   "title": "build the 1-D conv window view via as_strided",
+   "topic": "Geometry Cnn",
+   "subtopic": "CNN: 1-D conv windowing",
+   "description": "conv-windowing-1d \u2014 ex1: build the 1-D conv window view via as_strided",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_137",
+     "role": "primary",
+     "notes": "Single-channel 1D conv: as_strided sliding windows of width kw, einsum 'ow kw, kw -> ow' contraction."
+    },
+    {
+     "ref": "part2.ex_140",
+     "role": "primary",
+     "notes": "Batched multi-channel 1D conv: 4D as_strided view (b,ic,ow,kw) + einsum that contracts ic and kw to produce (b,oc,ow)."
+    },
+    {
+     "ref": "part2.ex_156",
+     "role": "primary",
+     "notes": "Full 1D conv: pad1d input then as_strided with width-stride scaled by `stride`, einsum contraction over ic,kw."
+    },
+    {
+     "ref": "part5.ex_94",
+     "role": "primary",
+     "notes": "Implement conv_transpose1d as: zero-pad x by kernel_width-1 on each side, flip kernel along width, einops swap i<->o axes, then delegate to conv1d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "conv-windowing-2d",
+   "title": "build the 2-D conv window view via as_strided",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: 2-D conv windowing",
+   "description": "conv-windowing-2d \u2014 ex1: build the 2-D conv window view via as_strided",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    },
+    {
+     "ref": "part2.ex_159",
+     "role": "primary",
+     "notes": "Full 2D conv: pad2d, force_pair stride/padding, 6D as_strided with h/w strides scaled, einsum contracts ic,kh,kw."
+    },
+    {
+     "ref": "part2.ex_165",
+     "role": "primary",
+     "notes": "2D maxpool: pad with -inf, 6D as_strided sliding windows scaled by stride, amax over the last two kernel dims."
+    },
+    {
+     "ref": "part5.ex_103",
+     "role": "primary",
+     "notes": "2D conv_transpose: fractional_stride_2d for stride, kernel_h/w-1-padding for the padding amount, flip kernel on H/W and swap i<->o axes, then conv2d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "convT-as-flipped-padded-conv",
+   "title": "rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: ConvT as flipped padded conv",
+   "description": "convT-as-flipped-padded-conv \u2014 ex1: rebuild ConvTranspose2d as flipped padded Conv2d (stride 1)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_94",
+     "role": "primary",
+     "notes": "Implement conv_transpose1d as: zero-pad x by kernel_width-1 on each side, flip kernel along width, einops swap i<->o axes, then delegate to conv1d_minimal."
+    },
+    {
+     "ref": "part5.ex_103",
+     "role": "primary",
+     "notes": "2D conv_transpose: fractional_stride_2d for stride, kernel_h/w-1-padding for the padding amount, flip kernel on H/W and swap i<->o axes, then conv2d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "convT-kernel-axis-swap",
+   "title": "compare Conv2d and ConvTranspose2d weight shapes",
+   "topic": "Cnn Deep",
+   "subtopic": "CNN: ConvT kernel axis swap",
+   "description": "convT-kernel-axis-swap \u2014 ex1: compare Conv2d and ConvTranspose2d weight shapes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_94",
+     "role": "primary",
+     "notes": "Implement conv_transpose1d as: zero-pad x by kernel_width-1 on each side, flip kernel along width, einops swap i<->o axes, then delegate to conv1d_minimal."
+    },
+    {
+     "ref": "part5.ex_103",
+     "role": "primary",
+     "notes": "2D conv_transpose: fractional_stride_2d for stride, kernel_h/w-1-padding for the padding amount, flip kernel on H/W and swap i<->o axes, then conv2d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "convtranspose-bn-activation-block",
+   "title": "build a 4x4 to 8x8 generator upsampling block",
+   "topic": "Vae Gan",
+   "subtopic": "GAN: ConvT+BN+Activation block",
+   "description": "convtranspose-bn-activation-block \u2014 ex1: build a 4x4 to 8x8 generator upsampling block",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.Autoencoder",
+     "role": "primary",
+     "notes": "Symmetric conv-encoder / convT-decoder around a Linear bottleneck, with einops Rearrange used as a Sequential layer to flatten/unflatten."
+    },
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    },
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "cross-entropy-classification-loss",
+   "title": "manual cross-entropy matches F.cross_entropy on logits",
+   "topic": "Adam Trainer",
+   "subtopic": "Loss: Cross-entropy classification",
+   "description": "cross-entropy-classification-loss \u2014 ex1: manual cross-entropy matches F.cross_entropy on logits",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.batched_cross_entropy_loss",
+     "role": "primary",
+     "notes": "Solution composes batched_logsoftmax then gathers true-class log-probs via rearrange(labels,'n -> n 1') + gather(dim=1). Direct cross-entropy + gather-at-label-index recipe."
+    },
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "cross-product-normal",
+   "title": "unit surface normal of a triangle via cross product",
+   "topic": "Geometry Cnn",
+   "subtopic": "Geometry: Cross-product surface normal",
+   "description": "cross-product-normal \u2014 ex1: unit surface normal of a triangle via cross product",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.ex_79",
+     "role": "primary",
+     "notes": "Extends raytrace_mesh with Lambertian shading: computes triangle normals via cross product of edge vectors, normalizes, dots with the light vector, clips negative dot to zero, and adds ambient intensi"
+    }
+   ]
+  },
+  {
+   "id": "cycle-detection-temp-set",
+   "title": "add temp-set cycle detection to a DFS traversal",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: cycle detection via temp set",
+   "description": "cycle-detection-temp-set \u2014 ex1: add temp-set cycle detection to a DFS traversal",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.topological_sort",
+     "role": "primary",
+     "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+    }
+   ]
+  },
+  {
+   "id": "dataclasses-replace-args",
+   "title": "make a sweep of args variants via dataclasses.replace",
+   "topic": "Hparam Config",
+   "subtopic": "Config: dataclasses.replace args",
+   "description": "dataclasses-replace-args \u2014 ex1: make a sweep of args variants via dataclasses.replace",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.args",
+     "role": "primary",
+     "notes": "Build the wandb sweep_config (method/metric/parameters with log_uniform_values + categorical) and an update_args fn that overrides dataclass fields, including a conditional weight_decay_bool branch."
+    }
+   ]
+  },
+  {
+   "id": "dataloader-batching",
+   "title": "DataLoader for batched iteration",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "Train loaders should shuffle each epoch to decorrelate batches; test loaders generally pass shuffle=False because order does not matter for metrics.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "dataloader-pin-memory-workers",
+   "title": "build a DataLoader with num_workers and pin_memory configured",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: DataLoader pin_memory + workers",
+   "description": "dataloader-pin-memory-workers \u2014 ex1: build a DataLoader with num_workers and pin_memory configured",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "dcgan-normal-init-002",
+   "title": "apply normal(0, 0.02) init to Conv/ConvTranspose via model.apply",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: DCGAN normal init 0.02",
+   "description": "dcgan-normal-init-002 \u2014 ex1: apply normal(0, 0.02) init to Conv/ConvTranspose via model.apply",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_70",
+     "role": "primary",
+     "notes": "Iterate model.modules() and dispatch on isinstance: ConvTranspose2d/Conv2d/Linear weights get N(0, 0.02); BatchNorm2d gamma gets N(1, 0.02) and beta is zeroed, all by mutating .weight.data / .bias.dat"
+    }
+   ]
+  },
+  {
+   "id": "dcgan-wrapper-netG-netD",
+   "title": "wrap two subnets as netG/netD with separate optimizers",
+   "topic": "Generative",
+   "subtopic": "Generative: DCGAN netG+netD wrapper",
+   "description": "dcgan-wrapper-netG-netD \u2014 ex1: wrap two subnets as netG/netD with separate optimizers",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "detach-clone-snapshot",
+   "title": "snapshot a hidden state across an optimizer step",
+   "topic": "Tensor Utils",
+   "subtopic": "PyTorch: detach + clone snapshot",
+   "description": "detach-clone-snapshot \u2014 ex1: snapshot a hidden state across an optimizer step",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    },
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    }
+   ]
+  },
+  {
+   "id": "detach-stop-gradient-trick",
+   "title": "detach G's output during D-step so grad does not flow into G",
+   "topic": "Generative",
+   "subtopic": "GAN: detach stop-gradient trick",
+   "description": "detach-stop-gradient-trick \u2014 ex1: detach G's output during D-step so grad does not flow into G",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "device-consistent-construct",
+   "title": "build a Module that allocates scratch tensors with the right device + dtype",
+   "topic": "Numerical Modules",
+   "subtopic": "PyTorch: Device-consistent tensor construction",
+   "description": "device-consistent-construct \u2014 ex1: build a Module that allocates scratch tensors with the right device + dtype",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_97",
+     "role": "primary",
+     "notes": "fractional_stride_1d builds a zeros tensor of the spaced-out shape on x's dtype/device and assigns x into the strided slice x_new[..., ::stride] = x."
+    }
+   ]
+  },
+  {
+   "id": "dfs-three-set-toposort",
+   "title": "implement three-set DFS topological sort (deps-first, root LAST)",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: DFS three-set toposort",
+   "description": "dfs-three-set-toposort \u2014 ex1: implement three-set DFS topological sort (deps-first, root LAST)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.topological_sort",
+     "role": "primary",
+     "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+    }
+   ]
+  },
+  {
+   "id": "diagonal-via-strides",
+   "title": "extract diagonal of (N, N) via as_strided",
+   "topic": "Cnn Extras",
+   "subtopic": "Numpy: Diagonal via strides",
+   "description": "diagonal-via-strides \u2014 ex1: extract diagonal of (N, N) via as_strided",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_122",
+     "role": "primary",
+     "notes": "Design (size, stride) pairs for as_strided to produce slices, repeats (stride 0), and diagonal views over a 1D source."
+    },
+    {
+     "ref": "part2.ex_126",
+     "role": "primary",
+     "notes": "Trace via as_strided: pull diagonal with stride = row_stride + col_stride, then .sum()."
+    }
+   ]
+  },
+  {
+   "id": "discriminator-classifier-head",
+   "title": "flatten + linear + sigmoid scalar real/fake head",
+   "topic": "Vae Gan",
+   "subtopic": "GAN: Discriminator classifier head",
+   "description": "discriminator-classifier-head \u2014 ex1: flatten + linear + sigmoid scalar real/fake head",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "dispatch-back-fn-from-recipe",
+   "title": "dispatch back fn from (recipe.func, argnum) for every parent",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: dispatch back fn from recipe",
+   "description": "dispatch-back-fn-from-recipe \u2014 ex1: dispatch back fn from (recipe.func, argnum) for every parent",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "dist-send-recv-pair",
+   "title": "implement broadcast via paired dist.send and dist.recv",
+   "topic": "Distributed",
+   "subtopic": "Distributed: dist.send/recv pair",
+   "description": "dist-send-recv-pair \u2014 ex1: implement broadcast via paired dist.send and dist.recv",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.broadcast",
+     "role": "primary",
+     "notes": "Source rank sends the tensor to each non-source rank via dist.send; non-source ranks allocate a receive buffer, dist.recv, and copy_ into the target tensor."
+    }
+   ]
+  },
+  {
+   "id": "distributed-sampler-shard",
+   "title": "shard a dataset across ranks with DistributedSampler",
+   "topic": "Distributed",
+   "subtopic": "Distributed: DistributedSampler shard",
+   "description": "distributed-sampler-shard \u2014 ex1: shard a dataset across ranks with DistributedSampler",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "einops-einsum",
+   "title": "einops.einsum",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Generalized einstein-summation with named axes; multiplies and sums over shared axes per a string pattern, e.g. 'nt dims, dims -> nt'.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.ex_137",
+     "role": "primary",
+     "notes": "Single-channel 1D conv: as_strided sliding windows of width kw, einsum 'ow kw, kw -> ow' contraction."
+    },
+    {
+     "ref": "part2.ex_140",
+     "role": "primary",
+     "notes": "Batched multi-channel 1D conv: 4D as_strided view (b,ic,ow,kw) + einsum that contracts ic and kw to produce (b,oc,ow)."
+    },
+    {
+     "ref": "part2.ex_144",
+     "role": "primary",
+     "notes": "2D minimal conv: 6D as_strided (b,ic,oh,ow,kh,kw), einsum contracts ic,kh,kw to (b,oc,oh,ow)."
+    }
+   ]
+  },
+  {
+   "id": "einops-rearrange",
+   "title": "einops.rearrange",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Reshape/permute/reorder tensor axes via a pattern string like `\"frames (y z) -> frames y z\"`, naming axes for clarity.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_15",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr, 'b c h w -> c (b h) w'). Exercises rearrange-pattern parsing and batch-merge via parenthesized axes."
+    },
+    {
+     "ref": "part0.ex_31",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr[0], 'c h w -> h (c w)'). Pure axis reordering plus channel-into-width flatten."
+    },
+    {
+     "ref": "part0.ex_35",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2). Splits batch into a 2-D grid (parenthesized input axis) then flattens with H and W. unbind-tuple-unpack covers parenthesized"
+    },
+    {
+     "ref": "part0.ex_39",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr[1], 'c h w -> c w h'). Single-element batch slice + pure axis swap."
+    }
+   ]
+  },
+  {
+   "id": "einops-rearrange-flatten",
+   "title": "CNN flatten before the Linear head \u2014 channel + spatial collapse",
+   "topic": "Einops Advanced",
+   "subtopic": "Einops: Rearrange-as-flatten",
+   "description": "einops-rearrange-flatten \u2014 ex1: CNN flatten before the Linear head \u2014 channel + spatial collapse",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_15",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr, 'b c h w -> c (b h) w'). Exercises rearrange-pattern parsing and batch-merge via parenthesized axes."
+    },
+    {
+     "ref": "part0.ex_19",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (2 h) w'). Repeat introduces new axis-2 multiplier inside a flattened group."
+    },
+    {
+     "ref": "part0.ex_23",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'). Slicing first two batch elements, batch-flatten + width-repeat."
+    },
+    {
+     "ref": "part0.ex_27",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (h 2) w'). Stretch along H by inserting a literal repeat factor inside a flattened axis."
+    }
+   ]
+  },
+  {
+   "id": "einops-reduce",
+   "title": "einops.reduce",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Reduce a tensor along named axes using `einops.reduce(t, pattern, op)` where op is one of 'min'/'max'/'sum'/'mean'.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_43",
+     "role": "primary",
+     "notes": "Solution = einops.reduce(arr, '(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)', 'max', h2=2, w2=2, b1=2). Combines reduce-over-pooling-window with batch-grid flatten."
+    },
+    {
+     "ref": "part0.ex_57",
+     "role": "primary",
+     "notes": "Solution = einops.reduce(temps, '(h 7) -> h', 'mean'). Single reduce over a literal-length sub-axis."
+    },
+    {
+     "ref": "part0.ex_60",
+     "role": "primary",
+     "notes": "Solution does reduce(mean) then repeat back to original length then subtracts. Exercises reduce + repeat round-trip; subtraction relies on aligned shape (broadcast adjacent)."
+    },
+    {
+     "ref": "part0.ex_63",
+     "role": "primary",
+     "notes": "Solution = (temps - repeat(avg)) / repeat(std). Two reduces (mean, std via t.std passed in) plus two repeats; elementwise op on aligned shape."
+    }
+   ]
+  },
+  {
+   "id": "einops-reduce-min",
+   "title": "per-channel min floor for a feature map",
+   "topic": "Tensor Utils",
+   "subtopic": "Einops: Reduce with min",
+   "description": "einops-reduce-min \u2014 ex1: per-channel min floor for a feature map",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_43",
+     "role": "primary",
+     "notes": "Solution = einops.reduce(arr, '(b1 b2) c (h h2) (w w2) -> c (b1 h) (b2 w)', 'max', h2=2, w2=2, b1=2). Combines reduce-over-pooling-window with batch-grid flatten."
+    }
+   ]
+  },
+  {
+   "id": "einops-repeat",
+   "title": "einops.repeat",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "einops.repeat expands a tensor by inserting/repeating dims, e.g. \"nrays p d -> nrays nsegments p d\" with nsegments=NS, used to create pairs for batched ops.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_19",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (2 h) w'). Repeat introduces new axis-2 multiplier inside a flattened group."
+    },
+    {
+     "ref": "part0.ex_23",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'). Slicing first two batch elements, batch-flatten + width-repeat."
+    },
+    {
+     "ref": "part0.ex_27",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (h 2) w'). Stretch along H by inserting a literal repeat factor inside a flattened axis."
+    },
+    {
+     "ref": "part0.ex_60",
+     "role": "primary",
+     "notes": "Solution does reduce(mean) then repeat back to original length then subtracts. Exercises reduce + repeat round-trip; subtraction relies on aligned shape (broadcast adjacent)."
+    }
+   ]
+  },
+  {
+   "id": "einops-repeat-broadcast",
+   "title": "every-ray-with-every-triangle pairing without copy",
+   "topic": "Einops Advanced",
+   "subtopic": "Einops: Repeat-as-broadcast",
+   "description": "einops-repeat-broadcast \u2014 ex1: every-ray-with-every-triangle pairing without copy",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_19",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (2 h) w'). Repeat introduces new axis-2 multiplier inside a flattened group."
+    },
+    {
+     "ref": "part0.ex_23",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'). Slicing first two batch elements, batch-flatten + width-repeat."
+    },
+    {
+     "ref": "part0.ex_27",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (h 2) w'). Stretch along H by inserting a literal repeat factor inside a flattened axis."
+    },
+    {
+     "ref": "part0.ex_60",
+     "role": "primary",
+     "notes": "Solution does reduce(mean) then repeat back to original length then subtracts. Exercises reduce + repeat round-trip; subtraction relies on aligned shape (broadcast adjacent)."
+    }
+   ]
+  },
+  {
+   "id": "elbo-loss-sum-with-beta",
+   "title": "beta-weighted ELBO sum + sweep plot",
+   "topic": "Vae Gan",
+   "subtopic": "VAE: ELBO loss sum with beta",
+   "description": "elbo-loss-sum-with-beta \u2014 ex1: beta-weighted ELBO sum + sweep plot",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "ema-first-moment",
+   "title": "Adam m-buffer EMA update m = beta1*m + (1-beta1)*g",
+   "topic": "Adam Trainer",
+   "subtopic": "Optimizer: Adam EMA first moment",
+   "description": "ema-first-moment \u2014 ex1: Adam m-buffer EMA update m = beta1*m + (1-beta1)*g",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "ema-second-moment",
+   "title": "Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: Adam EMA second moment",
+   "description": "ema-second-moment \u2014 ex1: Adam v-buffer EMA update v = beta2*v + (1-beta2)*g^2",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "encoder-decoder-symmetric",
+   "title": "build a tiny autoencoder whose output shape == input shape",
+   "topic": "Numerical Modules",
+   "subtopic": "CNN: Encoder-decoder symmetric layout",
+   "description": "encoder-decoder-symmetric \u2014 ex1: build a tiny autoencoder whose output shape == input shape",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.Autoencoder",
+     "role": "primary",
+     "notes": "Symmetric conv-encoder / convT-decoder around a Linear bottleneck, with einops Rearrange used as a Sequential layer to flatten/unflatten."
+    },
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    }
+   ]
+  },
+  {
+   "id": "end-grad-default-ones-like",
+   "title": "resolve end_grad \u2014 default ones_like, else use .array",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: end-grad ones_like default",
+   "description": "end-grad-default-ones-like \u2014 ex1: resolve end_grad \u2014 default ones_like, else use .array",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    },
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "examples-seen-step-axis",
+   "title": "compute examples_seen = step * batch_size as wandb x-axis",
+   "topic": "Adam Trainer",
+   "subtopic": "Trainer: examples-seen step axis",
+   "description": "examples-seen-step-axis \u2014 ex1: compute examples_seen = step * batch_size as wandb x-axis",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "exp-back",
+   "title": "exp_back \u2014 reuse cached out",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: exp_back",
+   "description": "exp-back \u2014 ex1: exp_back \u2014 reuse cached out",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.exp",
+     "role": "primary",
+     "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+    }
+   ]
+  },
+  {
+   "id": "fractional-stride-zero-insertion",
+   "title": "build the zero-inserted intermediate for stride-2 ConvT",
+   "topic": "Cnn Extras",
+   "subtopic": "CNN: ConvT fractional-stride zero insertion",
+   "description": "fractional-stride-zero-insertion \u2014 ex1: build the zero-inserted intermediate for stride-2 ConvT",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_97",
+     "role": "primary",
+     "notes": "fractional_stride_1d builds a zeros tensor of the spaced-out shape on x's dtype/device and assigns x into the strided slice x_new[..., ::stride] = x."
+    },
+    {
+     "ref": "part5.ex_103",
+     "role": "primary",
+     "notes": "2D conv_transpose: fractional_stride_2d for stride, kernel_h/w-1-padding for the padding amount, flip kernel on H/W and swap i<->o axes, then conv2d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "freeze-requires-grad",
+   "title": "freeze a toy backbone and collect trainable params",
+   "topic": "Cnn Extras",
+   "subtopic": "PyTorch: freeze via requires_grad=False",
+   "description": "freeze-requires-grad \u2014 ex1: freeze a toy backbone and collect trainable params",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_106",
+     "role": "primary",
+     "notes": "Build ResNet34, copy pretrained weights, requires_grad_(False) on all params, swap final Linear head with new n_classes."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    }
+   ]
+  },
+  {
+   "id": "functional-module-wrap",
+   "title": "wrap F.relu in an nn.Module to make it composable",
+   "topic": "Misc Cleanup",
+   "subtopic": "PyTorch: functional module wrap",
+   "description": "functional-module-wrap \u2014 ex1: wrap F.relu in an nn.Module to make it composable",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part5.ex_60",
+     "role": "primary",
+     "notes": "Tanh / LeakyReLU / Sigmoid as nn.Module forward wrappers around elementwise activations (exp-based, where for the leaky negative-slope branch), with extra_repr on LeakyReLU."
+    },
+    {
+     "ref": "part5.ex_106",
+     "role": "primary",
+     "notes": "ConvTranspose2d module wraps a uniform sf*(2*rand-1) Kaiming-style weight as nn.Parameter, forward delegates to conv_transpose2d, with extra_repr listing the configured kwargs."
+    },
+    {
+     "ref": "part4.ReLU",
+     "role": "primary",
+     "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+    }
+   ]
+  },
+  {
+   "id": "generator-loss-fool-discriminator",
+   "title": "generator BCE loss with target=1 on the fake batch",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: Generator loss to fool D",
+   "description": "generator-loss-fool-discriminator \u2014 ex1: generator BCE loss with target=1 on the fake batch",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "generator-project-and-reshape",
+   "title": "latent-to-spatial seed projection + reshape",
+   "topic": "Vae Gan",
+   "subtopic": "GAN: Generator project + reshape",
+   "description": "generator-project-and-reshape \u2014 ex1: latent-to-spatial seed projection + reshape",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "get-children-callable-param",
+   "title": "get_children yields (name, value) for Tensor-valued attributes",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: get_children callable param",
+   "description": "get-children-callable-param \u2014 ex1: get_children yields (name, value) for Tensor-valued attributes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.topological_sort",
+     "role": "primary",
+     "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+    }
+   ]
+  },
+  {
+   "id": "grad-accumulate-on-leaf",
+   "title": "accumulate_grad: leaf.grad = (leaf.grad or 0) + g",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: Grad accumulate on leaf",
+   "description": "grad-accumulate-on-leaf \u2014 ex1: accumulate_grad: leaf.grad = (leaf.grad or 0) + g",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "grad-expressed-in-out",
+   "title": "write sigmoid_back using cached out (no second sigmoid call)",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: grad expressed in out",
+   "description": "grad-expressed-in-out \u2014 ex1: write sigmoid_back using cached out (no second sigmoid call)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.exp",
+     "role": "primary",
+     "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+    }
+   ]
+  },
+  {
+   "id": "grad-tracking-global-toggle",
+   "title": "no_grad context manager built on a module-level toggle",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Grad-tracking toggle",
+   "description": "grad-tracking-global-toggle \u2014 ex1: no_grad context manager built on a module-level toggle",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "grads-dict-accumulate-parents",
+   "title": "accumulate per-parent contributions in the reverse-pass grads dict",
+   "topic": "Custom Tensor",
+   "subtopic": "Backprop: grads dict accumulate parents",
+   "description": "grads-dict-accumulate-parents \u2014 ex1: accumulate per-parent contributions in the reverse-pass grads dict",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "holdout-data-one-per-class",
+   "title": "select one sample per class for the holdout gallery",
+   "topic": "Generative",
+   "subtopic": "Generative: Hold-out one-per-class data",
+   "description": "holdout-data-one-per-class \u2014 ex1: select one sample per class for the holdout gallery",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "hparam-precedence-merge",
+   "title": "merge defaults < config-file < CLI args via dict.update",
+   "topic": "Hparam Config",
+   "subtopic": "Config: hparam precedence merge",
+   "description": "hparam-precedence-merge \u2014 ex1: merge defaults < config-file < CLI args via dict.update",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    },
+    {
+     "ref": "part3.args",
+     "role": "primary",
+     "notes": "Build the wandb sweep_config (method/metric/parameters with log_uniform_values + categorical) and an update_args fn that overrides dataclass fields, including a conditional weight_decay_bool branch."
+    }
+   ]
+  },
+  {
+   "id": "index-by-tensor",
+   "title": "embedding lookup with 2d index tensor",
+   "topic": "Tensor Utils",
+   "subtopic": "PyTorch: index by tensor",
+   "description": "index-by-tensor \u2014 ex1: embedding lookup with 2d index tensor",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.total_price_indexing",
+     "role": "primary",
+     "notes": "Solution = prices[items].sum().item(). Integer-array indexing + scalar extract."
+    },
+    {
+     "ref": "part0.gather_2d",
+     "role": "primary",
+     "notes": "Solution = matrix.gather(1, indexes). Pure torch.gather along dim=1; arange-fancy-index-cross-entropy is the closest atom for per-row-index gather muscle memory."
+    },
+    {
+     "ref": "part0.total_price_gather",
+     "role": "primary",
+     "notes": "Solution = prices.gather(0, items).sum().item(). torch.gather along dim=0 then scalar extract."
+    },
+    {
+     "ref": "part0.batched_cross_entropy_loss",
+     "role": "primary",
+     "notes": "Solution composes batched_logsoftmax then gathers true-class log-probs via rearrange(labels,'n -> n 1') + gather(dim=1). Direct cross-entropy + gather-at-label-index recipe."
+    }
+   ]
+  },
+  {
+   "id": "inf-masking",
+   "title": "causal attention masking with -inf + softmax + viz",
+   "topic": "Einops Advanced",
+   "subtopic": "Numpy: Inf-fill masking trick",
+   "description": "inf-masking \u2014 ex1: causal attention masking with -inf + softmax + viz",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    },
+    {
+     "ref": "part1.ex_76",
+     "role": "primary",
+     "notes": "GPU port of raytrace_mesh: same batched-solve + singular-mask + inf-mask + reduce-min pipeline, with the added requirement of moving tensors to a CUDA device."
+    },
+    {
+     "ref": "part1.ex_79",
+     "role": "primary",
+     "notes": "Extends raytrace_mesh with Lambertian shading: computes triangle normals via cross product of edge vectors, normalizes, dots with the light vector, clips negative dot to zero, and adds ambient intensi"
+    }
+   ]
+  },
+  {
+   "id": "inference-mode-step",
+   "title": "decorate step with inference_mode to allow in-place leaf update",
+   "topic": "Optimizer Internals",
+   "subtopic": "PyTorch: Inference mode step",
+   "description": "inference-mode-step \u2014 ex1: decorate step with inference_mode to allow in-place leaf update",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_96",
+     "role": "primary",
+     "notes": "Decorated @t.inference_mode predict: model.eval(), softmax logits, return max-prob and predicted class via .max(dim=-1)."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    }
+   ]
+  },
+  {
+   "id": "init-process-group-nccl",
+   "title": "init + destroy a process group with gloo",
+   "topic": "Distributed",
+   "subtopic": "Distributed: init_process_group nccl",
+   "description": "init-process-group-nccl \u2014 ex1: init + destroy a process group with gloo",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "inplace-param-update",
+   "title": "in-place vs out-of-place parameter update",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: In-place param update",
+   "description": "inplace-param-update \u2014 ex1: in-place vs out-of-place parameter update",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "is-differentiable-flag",
+   "title": "three-gate requires_grad reading is_differentiable from closure",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: is_differentiable flag",
+   "description": "is-differentiable-flag \u2014 ex1: three-gate requires_grad reading is_differentiable from closure",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "kaiming-uniform-sf-init",
+   "title": "initialize weight as Uniform(-sf, +sf) with sf = 1/sqrt(fan_in)",
+   "topic": "Custom Tensor",
+   "subtopic": "Init: Kaiming uniform SF init",
+   "description": "kaiming-uniform-sf-init \u2014 ex1: initialize weight as Uniform(-sf, +sf) with sf = 1/sqrt(fan_in)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part5.ex_106",
+     "role": "primary",
+     "notes": "ConvTranspose2d module wraps a uniform sf*(2*rand-1) Kaiming-style weight as nn.Parameter, forward delegates to conv_transpose2d, with extra_repr listing the configured kwargs."
+    },
+    {
+     "ref": "part4.Linear",
+     "role": "primary",
+     "notes": "Linear over custom Tensor: Kaiming-uniform init (sf=1/sqrt(fan_in)), optional bias, x @ W.T + b."
+    }
+   ]
+  },
+  {
+   "id": "kl-divergence-gaussian-closed-form",
+   "title": "closed-form Gaussian KL with per-sample bar chart",
+   "topic": "Vae Gan",
+   "subtopic": "VAE: KL divergence Gaussian closed-form",
+   "description": "kl-divergence-gaussian-closed-form \u2014 ex1: closed-form Gaussian KL with per-sample bar chart",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "kwargs-pass-through-recipe",
+   "title": "thread kwargs into forward call AND Recipe",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Kwargs pass-through",
+   "description": "kwargs-pass-through-recipe \u2014 ex1: thread kwargs into forward call AND Recipe",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    },
+    {
+     "ref": "part4.reshape",
+     "role": "primary",
+     "notes": "reshape_back restores x's original shape; new_shape passed through recipe kwargs."
+    },
+    {
+     "ref": "part4.permute",
+     "role": "primary",
+     "notes": "permute_back applies the inverse permutation (argsort of axes) to grad_out."
+    },
+    {
+     "ref": "part4.sum",
+     "role": "primary",
+     "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+    }
+   ]
+  },
+  {
+   "id": "leaf-tensor-condition",
+   "title": "classify tensors as leaf vs interior via the grad_fn condition",
+   "topic": "Misc Cleanup",
+   "subtopic": "Backprop: leaf tensor condition",
+   "description": "leaf-tensor-condition \u2014 ex1: classify tensors as leaf vs interior via the grad_fn condition",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "linalg-solve-batched",
+   "title": "solve a batch of 2x2 systems",
+   "topic": "Geometry Cnn",
+   "subtopic": "PyTorch: Batched linalg.solve",
+   "description": "linalg-solve-batched \u2014 ex1: solve a batch of 2x2 systems",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    }
+   ]
+  },
+  {
+   "id": "linear-affine-on-custom-tensor",
+   "title": "forward pass of Linear over hand-written Tensor wrappers",
+   "topic": "Custom Tensor",
+   "subtopic": "Backprop: Linear affine on custom Tensor",
+   "description": "linear-affine-on-custom-tensor \u2014 ex1: forward pass of Linear over hand-written Tensor wrappers",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.ex_26",
+     "role": "primary",
+     "notes": "Composes Flatten+Linear+ReLU+Linear submodules registered in __init__ and chained in forward."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    },
+    {
+     "ref": "part2.ex_106",
+     "role": "primary",
+     "notes": "Build ResNet34, copy pretrained weights, requires_grad_(False) on all params, swap final Linear head with new n_classes."
+    }
+   ]
+  },
+  {
+   "id": "linspace-out-param",
+   "title": "torch.linspace out= keyword argument",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "torch.linspace and other tensor-creation ops accept an `out=` tensor; writing the result directly into an existing tensor (often a view) instead of allocating a new one.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.make_rays_1d",
+     "role": "primary",
+     "notes": "Allocates a (num_pixels,2,3) zero tensor, writes linspace into a slice via out=, and sets direction x=1 by broadcast-scalar slice mutation; pure ray-parametric origin/direction setup."
+    },
+    {
+     "ref": "part1.make_rays_2d",
+     "role": "primary",
+     "notes": "Builds y and z linspaces, allocates a flat (n_pixels,2,3) ray tensor, and uses einops.repeat to outer-product the grids into the direction slice."
+    }
+   ]
+  },
+  {
+   "id": "log-back",
+   "title": "implement log_back from the elementwise chain rule",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: log_back",
+   "description": "log-back \u2014 ex1: implement log_back from the elementwise chain rule",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_back",
+     "role": "primary",
+     "notes": "Elementwise log back fn \u2014 canonical (grad_out, out, x) signature, returns grad_out / x."
+    },
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    }
+   ]
+  },
+  {
+   "id": "log-samples-eval-callback",
+   "title": "every-K-steps eval callback that logs N samples to a sink",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: log-samples eval callback",
+   "description": "log-samples-eval-callback \u2014 ex1: every-K-steps eval callback that logs N samples to a sink",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    },
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "logsumexp-cross-entropy",
+   "title": "numerically stable cross-entropy via logsumexp",
+   "topic": "Custom Tensor",
+   "subtopic": "Loss: logsumexp cross-entropy",
+   "description": "logsumexp-cross-entropy \u2014 ex1: numerically stable cross-entropy via logsumexp",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.batched_logsumexp",
+     "role": "primary",
+     "notes": "Solution = C + log(sum(exp(matrix - C[:,None]))) with C=max(dim=-1). Direct logsumexp-cross-entropy atom; rearrange used to add the broadcast axis; sum-and-broadcast-duality is the reduce-then-broadca"
+    },
+    {
+     "ref": "part0.batched_logsoftmax",
+     "role": "primary",
+     "notes": "Solution = matrix - C - (matrix - C).exp().sum(dim=1, keepdim=True).log() with C=max(dim=1, keepdim=True). Numerically-stable logsumexp identity expressed as subtract-then-divide style."
+    },
+    {
+     "ref": "part0.batched_cross_entropy_loss",
+     "role": "primary",
+     "notes": "Solution composes batched_logsoftmax then gathers true-class log-probs via rearrange(labels,'n -> n 1') + gather(dim=1). Direct cross-entropy + gather-at-label-index recipe."
+    },
+    {
+     "ref": "part4.cross_entropy",
+     "role": "primary",
+     "notes": "Stable cross-entropy via logits - logsumexp, then -logprobs[arange(B), labels]."
+    }
+   ]
+  },
+  {
+   "id": "loss-item-scalar-extract",
+   "title": "distinguish .item() from .detach().cpu() in a training-loop logger",
+   "topic": "Numerical Modules",
+   "subtopic": "PyTorch: loss.item() scalar extract",
+   "description": "loss-item-scalar-extract \u2014 ex1: distinguish .item() from .detach().cpu() in a training-loop logger",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    }
+   ]
+  },
+  {
+   "id": "manual-chain-forward-and-back",
+   "title": "manually chain forward log/exp and run backward by hand",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: manual chain forward-and-back",
+   "description": "manual-chain-forward-and-back \u2014 ex1: manually chain forward log/exp and run backward by hand",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    }
+   ]
+  },
+  {
+   "id": "matmul-2d",
+   "title": "predict matmul output shape and verify with @",
+   "topic": "Cnn Extras",
+   "subtopic": "Numpy: matmul 2-D",
+   "description": "matmul-2d \u2014 ex1: predict matmul output shape and verify with @",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_69",
+     "role": "primary",
+     "notes": "Solution = normalize_rows(matrix) @ matrix_normalized.T. Composes row-normalize with 2-D matmul."
+    },
+    {
+     "ref": "part2.ex_132",
+     "role": "primary",
+     "notes": "matmul via as_strided: build 3D views (dA0,dA1,dB1) with stride-0 broadcast axes, elementwise multiply, sum over shared dim."
+    },
+    {
+     "ref": "part4.matmul",
+     "role": "primary",
+     "notes": "matmul2d_back0 = grad_out @ y.T; matmul2d_back1 = x.T @ grad_out."
+    }
+   ]
+  },
+  {
+   "id": "matmul-back-transpose-pair",
+   "title": "matmul_back \u2014 grad_out @ y.T and x.T @ grad_out",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: matmul_back transpose pair",
+   "description": "matmul-back-transpose-pair \u2014 ex1: matmul_back \u2014 grad_out @ y.T and x.T @ grad_out",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.matmul",
+     "role": "primary",
+     "notes": "matmul2d_back0 = grad_out @ y.T; matmul2d_back1 = x.T @ grad_out."
+    }
+   ]
+  },
+  {
+   "id": "matvec",
+   "title": "linear layer forward as matvec",
+   "topic": "Tensor Utils",
+   "subtopic": "PyTorch: matrix-vector product",
+   "description": "matvec \u2014 ex1: linear layer forward as matvec",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_129",
+     "role": "primary",
+     "notes": "matmul as as_strided broadcast: expand vec to mat shape with row-stride 0, elementwise multiply, sum over inner dim."
+    }
+   ]
+  },
+  {
+   "id": "max-back-tied-half",
+   "title": "maximum_back with 50/50 tie-splitting",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: max_back with tied half-mass",
+   "description": "max-back-tied-half \u2014 ex1: maximum_back with 50/50 tie-splitting",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.max",
+     "role": "primary",
+     "notes": "maximum_back0/1 with 50/50 tie-splitting via boolean masks, then unbroadcast onto x/y."
+    },
+    {
+     "ref": "part4.ReLU",
+     "role": "primary",
+     "notes": "relu(x) = maximum(x, 0.0) \u2014 reuses the already-wrapped maximum op, no new back fn."
+    }
+   ]
+  },
+  {
+   "id": "maxpool-reduce",
+   "title": "build MaxPool2d via einops.reduce",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: MaxPool as reduce",
+   "description": "maxpool-reduce \u2014 ex1: build MaxPool2d via einops.reduce",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    },
+    {
+     "ref": "part2.ex_165",
+     "role": "primary",
+     "notes": "2D maxpool: pad with -inf, 6D as_strided sliding windows scaled by stride, amax over the last two kernel dims."
+    }
+   ]
+  },
+  {
+   "id": "module-base-class-custom",
+   "title": "build Module: __setattr__ registers params, parameters() walks recursively",
+   "topic": "Custom Tensor",
+   "subtopic": "Backprop: Module base class custom",
+   "description": "module-base-class-custom \u2014 ex1: build Module: __setattr__ registers params, parameters() walks recursively",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ReLU",
+     "role": "primary",
+     "notes": "Tiny nn.Module subclass whose forward returns t.maximum(x, 0); pure elementwise ReLU."
+    },
+    {
+     "ref": "part4.Linear",
+     "role": "primary",
+     "notes": "Linear over custom Tensor: Kaiming-uniform init (sf=1/sqrt(fan_in)), optional bias, x @ W.T + b."
+    }
+   ]
+  },
+  {
+   "id": "module-composition",
+   "title": "child Modules auto-register as attributes",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: Module composition",
+   "description": "module-composition \u2014 ex1: child Modules auto-register as attributes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_26",
+     "role": "primary",
+     "notes": "Composes Flatten+Linear+ReLU+Linear submodules registered in __init__ and chained in forward."
+    },
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    },
+    {
+     "ref": "part2.BlockGroup",
+     "role": "primary",
+     "notes": "Stacks ResidualBlocks in Sequential; first block applies the downsample stride, rest are shape-preserving."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "module-extra-repr",
+   "title": "extra_repr for a Linear-style module",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: Module __repr__",
+   "description": "module-extra-repr \u2014 ex1: extra_repr for a Linear-style module",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part5.ex_60",
+     "role": "primary",
+     "notes": "Tanh / LeakyReLU / Sigmoid as nn.Module forward wrappers around elementwise activations (exp-based, where for the leaky negative-slope branch), with extra_repr on LeakyReLU."
+    },
+    {
+     "ref": "part5.ex_106",
+     "role": "primary",
+     "notes": "ConvTranspose2d module wraps a uniform sf*(2*rand-1) Kaiming-style weight as nn.Parameter, forward delegates to conv_transpose2d, with extra_repr listing the configured kwargs."
+    }
+   ]
+  },
+  {
+   "id": "module-modules-iter-isinstance-dispatch",
+   "title": "count + tag layers by type using model.modules() + isinstance",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: model.modules() isinstance dispatch",
+   "description": "module-modules-iter-isinstance-dispatch \u2014 ex1: count + tag layers by type using model.modules() + isinstance",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_70",
+     "role": "primary",
+     "notes": "Iterate model.modules() and dispatch on isinstance: ConvTranspose2d/Conv2d/Linear weights get N(0, 0.02); BatchNorm2d gamma gets N(1, 0.02) and beta is zeroed, all by mutating .weight.data / .bias.dat"
+    }
+   ]
+  },
+  {
+   "id": "momentum-buffer-update",
+   "title": "in-place momentum buffer update b = mu*b + g",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: Momentum buffer",
+   "description": "momentum-buffer-update \u2014 ex1: in-place momentum buffer update b = mu*b + g",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    }
+   ]
+  },
+  {
+   "id": "mp-spawn-workers",
+   "title": "launch a 2-rank distributed job with mp.spawn",
+   "topic": "Distributed",
+   "subtopic": "Distributed: mp.spawn workers",
+   "description": "mp-spawn-workers \u2014 ex1: launch a 2-rank distributed job with mp.spawn",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "mse-reconstruction-loss",
+   "title": "MSE reconstruction loss",
+   "topic": "VAEs and GANs",
+   "subtopic": "VAEs and GANs",
+   "description": "nn.MSELoss()(target, prediction) \u2014 mean squared error between original image and decoder output, the basic autoencoder objective.",
+   "tags": [
+    "part5",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "mu-logsigma-encoder-head",
+   "title": "single-head Linear + chunk into mu and logsigma",
+   "topic": "Vae Gan",
+   "subtopic": "VAE: mu+logsigma encoder head",
+   "description": "mu-logsigma-encoder-head \u2014 ex1: single-head Linear + chunk into mu and logsigma",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    }
+   ]
+  },
+  {
+   "id": "multiply-back",
+   "title": "implement multiply_back0 / multiply_back1 with unbroadcast",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: multiply_back",
+   "description": "multiply-back \u2014 ex1: implement multiply_back0 / multiply_back1 with unbroadcast",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.forward_and_back",
+     "role": "primary",
+     "notes": "Hand-chain forward log/multiply and back-prop through the small graph using log_back/multiply_back."
+    }
+   ]
+  },
+  {
+   "id": "negative-back",
+   "title": "negative_back \u2014 sign flip of grad_out",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: negative_back",
+   "description": "negative-back \u2014 ex1: negative_back \u2014 sign flip of grad_out",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.negative",
+     "role": "primary",
+     "notes": "negative_back returns -grad_out; wired into BACK_FUNCS after wrapping np.negative."
+    }
+   ]
+  },
+  {
+   "id": "nested-param-group-loop",
+   "title": "manual SGD step via the nested param_groups loop",
+   "topic": "Hparam Config",
+   "subtopic": "Config: nested param-group loop",
+   "description": "nested-param-group-loop \u2014 ex1: manual SGD step via the nested param_groups loop",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    }
+   ]
+  },
+  {
+   "id": "nn-module-subclass",
+   "title": "Subclassing nn.Module",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "Inheriting from nn.Module and implementing __init__ (which calls super().__init__()) plus forward gives a callable module; sub-modules and parameters are auto-registered.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ReLU",
+     "role": "primary",
+     "notes": "Tiny nn.Module subclass whose forward returns t.maximum(x, 0); pure elementwise ReLU."
+    },
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.ex_26",
+     "role": "primary",
+     "notes": "Composes Flatten+Linear+ReLU+Linear submodules registered in __init__ and chained in forward."
+    },
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    }
+   ]
+  },
+  {
+   "id": "nn-parameter-wrap",
+   "title": "Parameter vs raw tensor \u2014 visibility test",
+   "topic": "Pytorch Modules",
+   "subtopic": "PyTorch: nn.Parameter",
+   "description": "nn-parameter-wrap \u2014 ex1: Parameter vs raw tensor \u2014 visibility test",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.Linear",
+     "role": "primary",
+     "notes": "Affine layer: nn.Parameter weight/bias init with sf=1/sqrt(in), einsum forward, optional bias, extra_repr."
+    },
+    {
+     "ref": "part2.Conv2d",
+     "role": "primary",
+     "notes": "Conv2d module: 4D weight (oc,ic,kh,kw) with fan-in scaling, forward delegates to F.conv2d with stride/padding."
+    },
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    },
+    {
+     "ref": "part5.ex_70",
+     "role": "primary",
+     "notes": "Iterate model.modules() and dispatch on isinstance: ConvTranspose2d/Conv2d/Linear weights get N(0, 0.02); BatchNorm2d gamma gets N(1, 0.02) and beta is zeroed, all by mutating .weight.data / .bias.dat"
+    }
+   ]
+  },
+  {
+   "id": "no-grad-context-mgr-update",
+   "title": "implement NoGrad context manager with restore-on-exit",
+   "topic": "Backprop Driver",
+   "subtopic": "Backprop: no_grad ctx-mgr update",
+   "description": "no-grad-context-mgr-update \u2014 ex1: implement NoGrad context manager with restore-on-exit",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.SGD",
+     "role": "primary",
+     "notes": "Vanilla SGD over custom Parameters: zero_grad sets grad=None; step does p -= p.grad*lr under NoGrad."
+    }
+   ]
+  },
+  {
+   "id": "noise-batch-from-latent",
+   "title": "build (B, latent_dim, 1, 1) spatial-prefix noise for DCGAN G",
+   "topic": "Dcgan Final",
+   "subtopic": "GAN: Noise batch from latent_dim",
+   "description": "noise-batch-from-latent \u2014 ex1: build (B, latent_dim, 1, 1) spatial-prefix noise for DCGAN G",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "non-diff-fn-wrap",
+   "title": "wrap a non-differentiable op (eq) \u2014 no Recipe, no requires_grad",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: non-differentiable fn wrap",
+   "description": "non-diff-fn-wrap \u2014 ex1: wrap a non-differentiable op (eq) \u2014 no Recipe, no requires_grad",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "optimizer-class-dispatch",
+   "title": "build an optimizer from a config string via a class-dispatch dict",
+   "topic": "Hparam Config",
+   "subtopic": "Config: Optimizer class dispatch",
+   "description": "optimizer-class-dispatch \u2014 ex1: build an optimizer from a config string via a class-dispatch dict",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    }
+   ]
+  },
+  {
+   "id": "optimizer-init-params-list",
+   "title": "materialize a generator of params into a list at init",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: Optimizer init",
+   "description": "optimizer-init-params-list \u2014 ex1: materialize a generator of params into a list at init",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    }
+   ]
+  },
+  {
+   "id": "optimizer-loop-on-tensor",
+   "title": "manual SGD step: for p in self.params: p -= lr * p.grad",
+   "topic": "Adam Trainer",
+   "subtopic": "Optimizer: optimizer.step loop over params",
+   "description": "optimizer-loop-on-tensor \u2014 ex1: manual SGD step: for p in self.params: p -= lr * p.grad",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    },
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    }
+   ]
+  },
+  {
+   "id": "optimizer-repr-string",
+   "title": "give a hand-rolled SGD a debug-friendly __repr__",
+   "topic": "Misc Cleanup",
+   "subtopic": "Optimizer: __repr__ string",
+   "description": "optimizer-repr-string \u2014 ex1: give a hand-rolled SGD a debug-friendly __repr__",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    }
+   ]
+  },
+  {
+   "id": "optimizer-state-tensor-buffers",
+   "title": "allocate a per-param zeros_like buffer at init",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: Per-param state buffers",
+   "description": "optimizer-state-tensor-buffers \u2014 ex1: allocate a per-param zeros_like buffer at init",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "padding-amount-formula-convT",
+   "title": "predict ConvTranspose2d output size from the padding arg",
+   "topic": "Cnn Extras",
+   "subtopic": "CNN: ConvT padding amount formula",
+   "description": "padding-amount-formula-convT \u2014 ex1: predict ConvTranspose2d output size from the padding arg",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_103",
+     "role": "primary",
+     "notes": "2D conv_transpose: fractional_stride_2d for stride, kernel_h/w-1-padding for the padding amount, flip kernel on H/W and swap i<->o axes, then conv2d_minimal."
+    }
+   ]
+  },
+  {
+   "id": "param-grad-access",
+   "title": "iterate model.parameters() and read .grad with the None guard",
+   "topic": "Backprop",
+   "subtopic": "PyTorch: param.grad access",
+   "description": "param-grad-access \u2014 ex1: iterate model.parameters() and read .grad with the None guard",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    },
+    {
+     "ref": "part4.SGD",
+     "role": "primary",
+     "notes": "Vanilla SGD over custom Parameters: zero_grad sets grad=None; step does p -= p.grad*lr under NoGrad."
+    }
+   ]
+  },
+  {
+   "id": "param-group-dict-list",
+   "title": "build differential-LR param groups for encoder vs head",
+   "topic": "Hparam Config",
+   "subtopic": "Config: param-group dict list",
+   "description": "param-group-dict-list \u2014 ex1: build differential-LR param groups for encoder vs head",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    }
+   ]
+  },
+  {
+   "id": "parameter-subclass-of-tensor",
+   "title": "Parameter subclasses MiniTensor with requires_grad=True default",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: Parameter subclasses Tensor",
+   "description": "parameter-subclass-of-tensor \u2014 ex1: Parameter subclasses MiniTensor with requires_grad=True default",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.Linear",
+     "role": "primary",
+     "notes": "Linear over custom Tensor: Kaiming-uniform init (sf=1/sqrt(fan_in)), optional bias, x @ W.T + b."
+    }
+   ]
+  },
+  {
+   "id": "parameter-wrap-around-tensor",
+   "title": "observe the composition-Parameter anti-pattern breaks isinstance",
+   "topic": "Custom Tensor",
+   "subtopic": "Backprop: Parameter wrap around Tensor",
+   "description": "parameter-wrap-around-tensor \u2014 ex1: observe the composition-Parameter anti-pattern breaks isinstance",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.Linear",
+     "role": "primary",
+     "notes": "Linear over custom Tensor: Kaiming-uniform init (sf=1/sqrt(fan_in)), optional bias, x @ W.T + b."
+    }
+   ]
+  },
+  {
+   "id": "params-iterable-vs-groups",
+   "title": "polymorphic params= signature: flat iterable vs dict-list both normalize to param_groups",
+   "topic": "Hparam Config",
+   "subtopic": "Config: params iterable vs groups",
+   "description": "params-iterable-vs-groups \u2014 ex1: polymorphic params= signature: flat iterable vs dict-list both normalize to param_groups",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    }
+   ]
+  },
+  {
+   "id": "parents-dict-by-argidx",
+   "title": "build parents dict \u2014 skip non-Tensors, keep original argidx",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Parents dict by argidx",
+   "description": "parents-dict-by-argidx \u2014 ex1: build parents dict \u2014 skip non-Tensors, keep original argidx",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "per-rank-cuda-device",
+   "title": "pin per-rank cuda device with a mocked GPU",
+   "topic": "Distributed",
+   "subtopic": "Distributed: per-rank cuda device",
+   "description": "per-rank-cuda-device \u2014 ex1: pin per-rank cuda device with a mocked GPU",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "permute-back-argsort",
+   "title": "permute_back \u2014 inverse permutation via argsort",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: permute_back via argsort",
+   "description": "permute-back-argsort \u2014 ex1: permute_back \u2014 inverse permutation via argsort",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.permute",
+     "role": "primary",
+     "notes": "permute_back applies the inverse permutation (argsort of axes) to grad_out."
+    }
+   ]
+  },
+  {
+   "id": "randn-like-noise-source",
+   "title": "reparameterization noise that inherits dtype",
+   "topic": "Generative",
+   "subtopic": "Generative: randn-like noise source",
+   "description": "randn-like-noise-source \u2014 ex1: reparameterization noise that inherits dtype",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    }
+   ]
+  },
+  {
+   "id": "rank-world-size-args",
+   "title": "thread rank and world_size through a broadcast signature",
+   "topic": "Distributed",
+   "subtopic": "Distributed: rank/world_size args",
+   "description": "rank-world-size-args \u2014 ex1: thread rank and world_size through a broadcast signature",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.broadcast",
+     "role": "primary",
+     "notes": "Source rank sends the tensor to each non-source rank via dist.send; non-source ranks allocate a receive buffer, dist.recv, and copy_ into the target tensor."
+    },
+    {
+     "ref": "part3.all_reduce",
+     "role": "primary",
+     "notes": "All-reduce composed as reduce-to-rank-0 (sum or mean) followed by broadcast-from-rank-0; just a 2-line composition of the primitives."
+    }
+   ]
+  },
+  {
+   "id": "rank0-only-side-effects",
+   "title": "guard checkpoint + log side effects behind if rank == 0",
+   "topic": "Distributed",
+   "subtopic": "Distributed: rank-0-only side effects",
+   "description": "rank0-only-side-effects \u2014 ex1: guard checkpoint + log side effects behind if rank == 0",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.broadcast",
+     "role": "primary",
+     "notes": "Source rank sends the tensor to each non-source rank via dist.send; non-source ranks allocate a receive buffer, dist.recv, and copy_ into the target tensor."
+    },
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "ray-parametric-form",
+   "title": "Ray parametric form",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Representing a ray as origin point O plus a scalar parameter u times direction vector D, with u in [0, infinity), so any point on the ray is R(u) = O + uD.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.make_rays_1d",
+     "role": "primary",
+     "notes": "Allocates a (num_pixels,2,3) zero tensor, writes linspace into a slice via out=, and sets direction x=1 by broadcast-scalar slice mutation; pure ray-parametric origin/direction setup."
+    },
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part1.make_rays_2d",
+     "role": "primary",
+     "notes": "Builds y and z linspaces, allocates a flat (n_pixels,2,3) ray tensor, and uses einops.repeat to outer-product the grids into the direction slice."
+    }
+   ]
+  },
+  {
+   "id": "rearrange-as-sequential-layer",
+   "title": "build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)",
+   "topic": "Numerical Modules",
+   "subtopic": "Einops: Rearrange as nn.Sequential layer",
+   "description": "rearrange-as-sequential-layer \u2014 ex1: build a Conv-flatten-Linear pipeline with Rearrange layer (no forward boilerplate)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_26",
+     "role": "primary",
+     "notes": "Composes Flatten+Linear+ReLU+Linear submodules registered in __init__ and chained in forward."
+    },
+    {
+     "ref": "part5.Autoencoder",
+     "role": "primary",
+     "notes": "Symmetric conv-encoder / convT-decoder around a Linear bottleneck, with einops Rearrange used as a Sequential layer to flatten/unflatten."
+    },
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    },
+    {
+     "ref": "part5.ex_67",
+     "role": "primary",
+     "notes": "DCGAN generator/discriminator: Linear+Rearrange project-and-reshape, reversed hidden_channels list, stacked convT-BN-ReLU (Tanh on final) and conv-LeakyReLU blocks with the classifier head."
+    }
+   ]
+  },
+  {
+   "id": "recipe-dataclass",
+   "title": "define Recipe and construct it for log_forward",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Recipe dataclass",
+   "description": "recipe-dataclass \u2014 ex1: define Recipe and construct it for log_forward",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "reduce-gather-sum",
+   "title": "compare reduce vs gather + manual sum",
+   "topic": "Distributed",
+   "subtopic": "Distributed: reduce.gather + sum",
+   "description": "reduce-gather-sum \u2014 ex1: compare reduce vs gather + manual sum",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.all_reduce",
+     "role": "primary",
+     "notes": "All-reduce composed as reduce-to-rank-0 (sum or mean) followed by broadcast-from-rank-0; just a 2-line composition of the primitives."
+    }
+   ]
+  },
+  {
+   "id": "reduce-op-mean-divide",
+   "title": "implement mean reduction as sum-then-in-place-divide",
+   "topic": "Distributed",
+   "subtopic": "Distributed: reduce-op mean divide",
+   "description": "reduce-op-mean-divide \u2014 ex1: implement mean reduction as sum-then-in-place-divide",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.all_reduce",
+     "role": "primary",
+     "notes": "All-reduce composed as reduce-to-rank-0 (sum or mean) followed by broadcast-from-rank-0; just a 2-line composition of the primitives."
+    }
+   ]
+  },
+  {
+   "id": "register-back-fn-after-wrap",
+   "title": "wire one entry into BACK_FUNCS and dispatch it",
+   "topic": "Backprop",
+   "subtopic": "Backprop: register back fn",
+   "description": "register-back-fn-after-wrap \u2014 ex1: wire one entry into BACK_FUNCS and dispatch it",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.BackwardFuncLookup",
+     "role": "primary",
+     "notes": "Dict keyed by (forward_fn, arg_position) \u2014 add/get back fn registrations."
+    },
+    {
+     "ref": "part4.negative",
+     "role": "primary",
+     "notes": "negative_back returns -grad_out; wired into BACK_FUNCS after wrapping np.negative."
+    },
+    {
+     "ref": "part4.exp",
+     "role": "primary",
+     "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+    },
+    {
+     "ref": "part4.reshape",
+     "role": "primary",
+     "notes": "reshape_back restores x's original shape; new_shape passed through recipe kwargs."
+    }
+   ]
+  },
+  {
+   "id": "register-buffer",
+   "title": "register_buffer for non-trainable state",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "register_buffer stores a tensor on a Module that travels with the model (saved to state_dict, moved with .to) but is not optimized as a parameter; used for running stats in BatchNorm.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    }
+   ]
+  },
+  {
+   "id": "relu-elementwise-max",
+   "title": "ReLU activation",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "Rectified Linear Unit: f(x) = max(x, 0) applied elementwise; the workhorse nonlinearity for vision MLPs/CNNs.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ReLU",
+     "role": "primary",
+     "notes": "Tiny nn.Module subclass whose forward returns t.maximum(x, 0); pure elementwise ReLU."
+    },
+    {
+     "ref": "part2.ex_26",
+     "role": "primary",
+     "notes": "Composes Flatten+Linear+ReLU+Linear submodules registered in __init__ and chained in forward."
+    },
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    },
+    {
+     "ref": "part5.Autoencoder",
+     "role": "primary",
+     "notes": "Symmetric conv-encoder / convT-decoder around a Linear bottleneck, with einops Rearrange used as a Sequential layer to flatten/unflatten."
+    }
+   ]
+  },
+  {
+   "id": "reparameterization-trick",
+   "title": "differentiable Gaussian sampling with gradient check",
+   "topic": "Vae Gan",
+   "subtopic": "VAE: Reparameterization trick",
+   "description": "reparameterization-trick \u2014 ex1: differentiable Gaussian sampling with gradient check",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.VAE",
+     "role": "primary",
+     "notes": "VAE encoder outputs (mu, logsigma) via a Rearrange split head; sample_latent_vector applies the reparam trick z = mu + sigma * randn_like, then symmetric convT decoder."
+    }
+   ]
+  },
+  {
+   "id": "replace-final-head",
+   "title": "swap the final classifier of a toy backbone",
+   "topic": "Resnet Modules",
+   "subtopic": "Transfer: Replace final head",
+   "description": "replace-final-head \u2014 ex1: swap the final classifier of a toy backbone",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_106",
+     "role": "primary",
+     "notes": "Build ResNet34, copy pretrained weights, requires_grad_(False) on all params, swap final Linear head with new n_classes."
+    }
+   ]
+  },
+  {
+   "id": "requires-grad-leaf-assert",
+   "title": "guard optimizer init with leaf + requires_grad asserts",
+   "topic": "Generative",
+   "subtopic": "Generative: requires_grad leaf assert",
+   "description": "requires-grad-leaf-assert \u2014 ex1: guard optimizer init with leaf + requires_grad asserts",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    }
+   ]
+  },
+  {
+   "id": "requires-grad-propagation",
+   "title": "three-gate requires_grad: toggle AND is_differentiable AND any-input",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: requires_grad propagation",
+   "description": "requires-grad-propagation \u2014 ex1: three-gate requires_grad: toggle AND is_differentiable AND any-input",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "reshape-back",
+   "title": "reshape_back \u2014 restore x's original shape",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: reshape_back",
+   "description": "reshape-back \u2014 ex1: reshape_back \u2014 restore x's original shape",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.reshape",
+     "role": "primary",
+     "notes": "reshape_back restores x's original shape; new_shape passed through recipe kwargs."
+    }
+   ]
+  },
+  {
+   "id": "residual-skip-add",
+   "title": "build a toy ResidualBlock with conditional shortcut",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: Residual skip-connection add",
+   "description": "residual-skip-add \u2014 ex1: build a toy ResidualBlock with conditional shortcut",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ResidualBlock",
+     "role": "primary",
+     "notes": "Two-Sequential residual block: left branch (3x3 conv+BN+ReLU+3x3 conv+BN), right branch identity-or-1x1-stride-downsample, sum then ReLU."
+    },
+    {
+     "ref": "part2.BlockGroup",
+     "role": "primary",
+     "notes": "Stacks ResidualBlocks in Sequential; first block applies the downsample stride, rest are shape-preserving."
+    },
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "resnet-stem",
+   "title": "build the ResNet stem and verify the 224 \u2192 56 reduction",
+   "topic": "Resnet Modules",
+   "subtopic": "CNN: ResNet stem block",
+   "description": "resnet-stem \u2014 ex1: build the ResNet stem and verify the 224 \u2192 56 reduction",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ResNet34",
+     "role": "primary",
+     "notes": "Full ResNet34: 7x7 stem conv+BN+ReLU+MaxPool, four BlockGroups with channel/stride schedule, global avgpool + final Linear head."
+    }
+   ]
+  },
+  {
+   "id": "rotation-matrix-3d",
+   "title": "Rodrigues rotation about an arbitrary 3-D axis",
+   "topic": "Geometry Cnn",
+   "subtopic": "Geometry: Rotation matrix 3-D (full)",
+   "description": "rotation-matrix-3d \u2014 ex1: Rodrigues rotation about an arbitrary 3-D axis",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.rotation_matrix",
+     "role": "primary",
+     "notes": "Hand-assembles the 3x3 y-axis rotation matrix from cos/sin(theta); this is exactly the y-axis 3D rotation atom."
+    }
+   ]
+  },
+  {
+   "id": "rotation-matrix-3d-y-axis",
+   "title": "3D rotation matrix around y-axis",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "The 3x3 matrix [[cos\u03b8,0,sin\u03b8],[0,1,0],[-sin\u03b8,0,cos\u03b8]] that rotates a 3D vector counterclockwise about the y-axis by angle \u03b8.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.rotation_matrix",
+     "role": "primary",
+     "notes": "Hand-assembles the 3x3 y-axis rotation matrix from cos/sin(theta); this is exactly the y-axis 3D rotation atom."
+    }
+   ]
+  },
+  {
+   "id": "segment-line-intersect-2d",
+   "title": "intersect a segment with an infinite line in 2-D",
+   "topic": "Geometry Cnn",
+   "subtopic": "Geometry: Segment-line intersect 2-D",
+   "description": "segment-line-intersect-2d \u2014 ex1: intersect a segment with an infinite line in 2-D",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    }
+   ]
+  },
+  {
+   "id": "sgd-vanilla-from-scratch",
+   "title": "single-step SGD: in-place update + zero the grad",
+   "topic": "Custom Tensor",
+   "subtopic": "Optimizer: SGD vanilla from scratch",
+   "description": "sgd-vanilla-from-scratch \u2014 ex1: single-step SGD: in-place update + zero the grad",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.SGD",
+     "role": "primary",
+     "notes": "Vanilla SGD over custom Parameters: zero_grad sets grad=None; step does p -= p.grad*lr under NoGrad."
+    }
+   ]
+  },
+  {
+   "id": "singular-matrix-mask-trick",
+   "title": "solve a batch with some singular matrices",
+   "topic": "Geometry Cnn",
+   "subtopic": "Numpy: Singular matrix mask trick",
+   "description": "singular-matrix-mask-trick \u2014 ex1: solve a batch with some singular matrices",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    },
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    },
+    {
+     "ref": "part1.ex_76",
+     "role": "primary",
+     "notes": "GPU port of raytrace_mesh: same batched-solve + singular-mask + inf-mask + reduce-min pipeline, with the added requirement of moving tensors to a CUDA device."
+    }
+   ]
+  },
+  {
+   "id": "slice-view-mutation",
+   "title": "in-place zero the diagonal via slice-view writes",
+   "topic": "Tensor Mechanics",
+   "subtopic": "PyTorch: Slice view mutation",
+   "description": "slice-view-mutation \u2014 ex1: in-place zero the diagonal via slice-view writes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_23",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'). Slicing first two batch elements, batch-flatten + width-repeat."
+    },
+    {
+     "ref": "part0.ex_39",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr[1], 'c h w -> c w h'). Single-element batch slice + pure axis swap."
+    },
+    {
+     "ref": "part0.collect_rows",
+     "role": "primary",
+     "notes": "Solution = matrix[row_indexes]. Integer-array row indexing."
+    },
+    {
+     "ref": "part0.collect_columns",
+     "role": "primary",
+     "notes": "Solution = matrix[:, column_indexes]. Combine full-row slice with integer-array column index."
+    }
+   ]
+  },
+  {
+   "id": "sorted-computational-graph",
+   "title": "topological sort of the compute graph for the reverse pass",
+   "topic": "Autograd Pt2",
+   "subtopic": "Backprop: Sorted computation graph",
+   "description": "sorted-computational-graph \u2014 ex1: topological sort of the compute graph for the reverse pass",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.topological_sort",
+     "role": "primary",
+     "notes": "Three-set DFS toposort with temp-set cycle detection \u2014 root last in result list."
+    },
+    {
+     "ref": "part4.backprop",
+     "role": "primary",
+     "notes": "Main reverse-pass driver \u2014 pop outgrad, dispatch back_fn from recipe, accumulate per-parent grads."
+    }
+   ]
+  },
+  {
+   "id": "sqrt-eps-stabilize",
+   "title": "rescue a BatchNorm-style normalize from divide-by-zero",
+   "topic": "Numerical Modules",
+   "subtopic": "Numerical: sqrt-eps stabilization",
+   "description": "sqrt-eps-stabilize \u2014 ex1: rescue a BatchNorm-style normalize from divide-by-zero",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "stack-vs-cat",
+   "title": "pick stack or cat from the target shape",
+   "topic": "Tensor Mechanics",
+   "subtopic": "PyTorch: stack vs cat",
+   "description": "stack-vs-cat \u2014 ex1: pick stack or cat from the target shape",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.intersect_rays_1d",
+     "role": "primary",
+     "notes": "Pair-broadcasts rays and segments with einops.repeat, builds an (NR,NS,2,2) matrix, replaces singular dets with identity, batched solves, then ANDs the u,v range checks and reduces with any over the s"
+    },
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    }
+   ]
+  },
+  {
+   "id": "state-dict-load",
+   "title": "state_dict load/save",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "Models expose state_dict() (an OrderedDict of params + buffers) and load_state_dict, used to save weights and copy weights between models with matching structure.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_106",
+     "role": "primary",
+     "notes": "Build ResNet34, copy pretrained weights, requires_grad_(False) on all params, swap final Linear head with new n_classes."
+    }
+   ]
+  },
+  {
+   "id": "step-counter-increment",
+   "title": "step counter increments AFTER optimizer.step",
+   "topic": "Adam Trainer",
+   "subtopic": "Trainer: step counter increment",
+   "description": "step-counter-increment \u2014 ex1: step counter increments AFTER optimizer.step",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "stride-zero-broadcast",
+   "title": "Stride tuple semantics",
+   "topic": "CNNs",
+   "subtopic": "CNNs",
+   "description": "A tensor's stride tuple gives the number of memory elements to step when advancing one position in each dimension. Storage layout is independent of shape.",
+   "tags": [
+    "part2",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_122",
+     "role": "primary",
+     "notes": "Design (size, stride) pairs for as_strided to produce slices, repeats (stride 0), and diagonal views over a 1D source."
+    },
+    {
+     "ref": "part2.ex_129",
+     "role": "primary",
+     "notes": "matmul as as_strided broadcast: expand vec to mat shape with row-stride 0, elementwise multiply, sum over inner dim."
+    },
+    {
+     "ref": "part2.ex_132",
+     "role": "primary",
+     "notes": "matmul via as_strided: build 3D views (dA0,dA1,dB1) with stride-0 broadcast axes, elementwise multiply, sum over shared dim."
+    },
+    {
+     "ref": "part5.ex_97",
+     "role": "primary",
+     "notes": "fractional_stride_1d builds a zeros tensor of the spaced-out shape on x's dtype/device and assigns x into the strided slice x_new[..., ::stride] = x."
+    }
+   ]
+  },
+  {
+   "id": "sum-and-broadcast-duality",
+   "title": "sum_back and broadcast_back as dual ops",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: sum/broadcast duality",
+   "description": "sum-and-broadcast-duality \u2014 ex1: sum_back and broadcast_back as dual ops",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.batched_logsumexp",
+     "role": "primary",
+     "notes": "Solution = C + log(sum(exp(matrix - C[:,None]))) with C=max(dim=-1). Direct logsumexp-cross-entropy atom; rearrange used to add the broadcast axis; sum-and-broadcast-duality is the reduce-then-broadca"
+    },
+    {
+     "ref": "part0.batched_softmax",
+     "role": "primary",
+     "notes": "Solution = exp / exp.sum(dim=-1, keepdim=True). Same keepdim-divide pattern as L2-row-normalize; reduce-then-broadcast duality."
+    },
+    {
+     "ref": "part0.batched_logsoftmax",
+     "role": "primary",
+     "notes": "Solution = matrix - C - (matrix - C).exp().sum(dim=1, keepdim=True).log() with C=max(dim=1, keepdim=True). Numerically-stable logsumexp identity expressed as subtract-then-divide style."
+    },
+    {
+     "ref": "part4.unbroadcast",
+     "role": "primary",
+     "notes": "Reverse-broadcast helper \u2014 sum prepended dims then size-1 dims with keepdims."
+    }
+   ]
+  },
+  {
+   "id": "sum-back-expand-broadcast",
+   "title": "sum_back \u2014 unsqueeze + expand back to x.shape",
+   "topic": "Backward Fns",
+   "subtopic": "Backprop: sum_back via expand_broadcast",
+   "description": "sum-back-expand-broadcast \u2014 ex1: sum_back \u2014 unsqueeze + expand back to x.shape",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.sum",
+     "role": "primary",
+     "notes": "sum_back: expand_dims if not keepdim, then broadcast to x.shape \u2014 dual of forward sum."
+    }
+   ]
+  },
+  {
+   "id": "sweep-config-dict",
+   "title": "build a wandb sweep config: bayes + metric + parameters",
+   "topic": "Hparam Config",
+   "subtopic": "Config: wandb sweep config dict",
+   "description": "sweep-config-dict \u2014 ex1: build a wandb sweep config: bayes + metric + parameters",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.args",
+     "role": "primary",
+     "notes": "Build the wandb sweep_config (method/metric/parameters with log_uniform_values + categorical) and an update_args fn that overrides dataclass fields, including a conditional weight_decay_bool branch."
+    }
+   ]
+  },
+  {
+   "id": "sweep-hparam-distribution",
+   "title": "pick the right wandb sweep distribution for each hparam type",
+   "topic": "Hparam Config",
+   "subtopic": "Config: sweep hparam distribution",
+   "description": "sweep-hparam-distribution \u2014 ex1: pick the right wandb sweep distribution for each hparam type",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    },
+    {
+     "ref": "part3.args",
+     "role": "primary",
+     "notes": "Build the wandb sweep_config (method/metric/parameters with log_uniform_values + categorical) and an update_args fn that overrides dataclass fields, including a conditional weight_decay_bool branch."
+    }
+   ]
+  },
+  {
+   "id": "t-stack-trajectory",
+   "title": "stack per-step latents into a (B, T, D) trajectory",
+   "topic": "Generative",
+   "subtopic": "Generative: torch.stack trajectory",
+   "description": "t-stack-trajectory \u2014 ex1: stack per-step latents into a (B, T, D) trajectory",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    },
+    {
+     "ref": "part3.ex_43",
+     "role": "primary",
+     "notes": "Generic opt_fn dispatches optimizer_class with hparam dict and reuses the SGD-style trajectory loop; outer code sweeps over (class, hparams) tuples."
+    }
+   ]
+  },
+  {
+   "id": "tensor-item-scalar",
+   "title": "Tensor.item() to Python scalar",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Calling `.item()` on a 0-dim tensor converts it to a plain Python scalar (int/float) for use in pure Python control flow.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.total_price_indexing",
+     "role": "primary",
+     "notes": "Solution = prices[items].sum().item(). Integer-array indexing + scalar extract."
+    },
+    {
+     "ref": "part0.total_price_gather",
+     "role": "primary",
+     "notes": "Solution = prices.gather(0, items).sum().item(). torch.gather along dim=0 then scalar extract."
+    },
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    }
+   ]
+  },
+  {
+   "id": "tensor-to-device",
+   "title": "move tensor to chosen device with the CPU/CUDA guard",
+   "topic": "Tensor Mechanics",
+   "subtopic": "PyTorch: tensor.to(device)",
+   "description": "tensor-to-device \u2014 ex1: move tensor to chosen device with the CPU/CUDA guard",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.ex_76",
+     "role": "primary",
+     "notes": "GPU port of raytrace_mesh: same batched-solve + singular-mask + inf-mask + reduce-min pipeline, with the added requirement of moving tensors to a CUDA device."
+    },
+    {
+     "ref": "part1.ex_79",
+     "role": "primary",
+     "notes": "Extends raytrace_mesh with Lambertian shading: computes triangle normals via cross product of edge vectors, normalizes, dots with the light vector, clips negative dot to zero, and adds ambient intensi"
+    }
+   ]
+  },
+  {
+   "id": "tensor-unbind",
+   "title": "Tensor unbind along a dim",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "`tensor.unbind(dim)` removes a dimension and returns a tuple of the slices along that axis, enabling unpacking along non-leading dims.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    },
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    },
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    }
+   ]
+  },
+  {
+   "id": "tensor-wraps-ndarray",
+   "title": "compare from_numpy aliasing vs tensor copy",
+   "topic": "Tensor Mechanics",
+   "subtopic": "PyTorch: tensor from ndarray",
+   "description": "tensor-wraps-ndarray \u2014 ex1: compare from_numpy aliasing vs tensor copy",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_15",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr, 'b c h w -> c (b h) w'). Exercises rearrange-pattern parsing and batch-merge via parenthesized axes."
+    },
+    {
+     "ref": "part0.ex_19",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0], 'c h w -> c (2 h) w'). Repeat introduces new axis-2 multiplier inside a flattened group."
+    },
+    {
+     "ref": "part0.ex_23",
+     "role": "primary",
+     "notes": "Solution = einops.repeat(arr[0:2], 'b c h w -> c (b h) (2 w)'). Slicing first two batch elements, batch-flatten + width-repeat."
+    },
+    {
+     "ref": "part0.ex_39",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr[1], 'c h w -> c w h'). Single-element batch slice + pure axis swap."
+    }
+   ]
+  },
+  {
+   "id": "tensor-zeros-init",
+   "title": "Tensor zeros initialization",
+   "topic": "Ray Tracing",
+   "subtopic": "Ray Tracing",
+   "description": "Creating a tensor pre-filled with zeros of a specified shape and dtype using `t.zeros((...), dtype=...)`, used as a scaffold to which values are subsequently written.",
+   "tags": [
+    "part1",
+    "arena-conf-high"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.rearrange_1",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(t.arange(3,9), '(h w) -> h w', h=3, w=2). arange + reshape via einops; tensor-zeros-init covers the simple-constructor family (arange peer)."
+    },
+    {
+     "ref": "part1.make_rays_1d",
+     "role": "primary",
+     "notes": "Allocates a (num_pixels,2,3) zero tensor, writes linspace into a slice via out=, and sets direction x=1 by broadcast-scalar slice mutation; pure ray-parametric origin/direction setup."
+    },
+    {
+     "ref": "part1.make_rays_2d",
+     "role": "primary",
+     "notes": "Builds y and z linspaces, allocates a flat (n_pixels,2,3) ray tensor, and uses einops.repeat to outer-product the grids into the direction slice."
+    },
+    {
+     "ref": "part2.ex_149",
+     "role": "primary",
+     "notes": "Allocate new_full(B,C,L+W+R, pad_value), assign x into the central slice [..., left:left+W]."
+    }
+   ]
+  },
+  {
+   "id": "time-stage-instrumentation",
+   "title": "accumulate per-stage seconds with time.perf_counter",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: time-stage instrumentation",
+   "description": "time-stage-instrumentation \u2014 ex1: accumulate per-stage seconds with time.perf_counter",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    }
+   ]
+  },
+  {
+   "id": "topk-predictions",
+   "title": "top-5 accuracy on a batch of logits",
+   "topic": "Tensor Utils",
+   "subtopic": "Eval: topk predictions",
+   "description": "topk-predictions \u2014 ex1: top-5 accuracy on a batch of logits",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_96",
+     "role": "primary",
+     "notes": "Decorated @t.inference_mode predict: model.eval(), softmax logits, return max-prob and predicted class via .max(dim=-1)."
+    }
+   ]
+  },
+  {
+   "id": "tqdm-postfix-metrics",
+   "title": "set live loss + examples_seen on a tqdm progress bar",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: tqdm postfix metrics",
+   "description": "tqdm-postfix-metrics \u2014 ex1: set live loss + examples_seen on a tqdm progress bar",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "train-eval-mode-branch",
+   "title": "flip train and eval mode around dropout",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: train/eval mode",
+   "description": "train-eval-mode-branch \u2014 ex1: flip train and eval mode around dropout",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.BatchNorm2d",
+     "role": "primary",
+     "notes": "Affine + running-stat BN: weight/bias Params, running_mean/var/num_batches buffers, train-branch EMA update, eval-branch fixed stats, eps-stabilized normalize, rearrange for broadcast."
+    },
+    {
+     "ref": "part2.ex_96",
+     "role": "primary",
+     "notes": "Decorated @t.inference_mode predict: model.eval(), softmax logits, return max-prob and predicted class via .max(dim=-1)."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    }
+   ]
+  },
+  {
+   "id": "trainer-class-skeleton",
+   "title": "minimal Trainer class: fit, validate, _step",
+   "topic": "Adam Trainer",
+   "subtopic": "Trainer: Trainer class skeleton",
+   "description": "trainer-class-skeleton \u2014 ex1: minimal Trainer class: fit, validate, _step",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "trainer-subclass-extend",
+   "title": "subclass a trainer and extend _step via super() delegation",
+   "topic": "Misc Cleanup",
+   "subtopic": "Trainer: subclass extend pattern",
+   "description": "trainer-subclass-extend \u2014 ex1: subclass a trainer and extend _step via super() delegation",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "training-step-cycle",
+   "title": "order the five calls of the canonical training step",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: Training step cycle",
+   "description": "training-step-cycle \u2014 ex1: order the five calls of the canonical training step",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    }
+   ]
+  },
+  {
+   "id": "triangle-barycentric",
+   "title": "point-in-triangle test from (u, v)",
+   "topic": "Geometry Cnn",
+   "subtopic": "Geometry: Barycentric coords",
+   "description": "triangle-barycentric \u2014 ex1: point-in-triangle test from (u, v)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    },
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    },
+    {
+     "ref": "part1.ex_76",
+     "role": "primary",
+     "notes": "GPU port of raytrace_mesh: same batched-solve + singular-mask + inf-mask + reduce-min pipeline, with the added requirement of moving tensors to a CUDA device."
+    }
+   ]
+  },
+  {
+   "id": "try-except-solve",
+   "title": "graceful single-call solve with try/except",
+   "topic": "Geometry Cnn",
+   "subtopic": "LinAlg: try/except solve",
+   "description": "try-except-solve \u2014 ex1: graceful single-call solve with try/except",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.intersect_ray_1d",
+     "role": "primary",
+     "notes": "Drops the z column, unbinds O/D and L1/L2, stacks a 2x2 mat, calls t.linalg.solve in try/except, extracts u,v via .item(), and checks the ray-segment parametric range."
+    }
+   ]
+  },
+  {
+   "id": "two-optimizers-alternating-step",
+   "title": "alternating D-step then G-step with two optimizers on toy modules",
+   "topic": "Generative",
+   "subtopic": "GAN: Two-optimizers alternating step",
+   "description": "two-optimizers-alternating-step \u2014 ex1: alternating D-step then G-step with two optimizers on toy modules",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part5.ex_81",
+     "role": "primary",
+     "notes": "Alternating D / G steps with separate optimizers, BCE-style -(log D(x)+log(1-D(G(z)))) and -log D(G(z)) losses, img_fake.detach() on the D step, optional clip_grad_norm_ before each optimizer step."
+    }
+   ]
+  },
+  {
+   "id": "unbind-tuple-unpack",
+   "title": "ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)",
+   "topic": "Einops Advanced",
+   "subtopic": "PyTorch: Unbind tuple-unpack",
+   "description": "unbind-tuple-unpack \u2014 ex1: ARENA-style two-level destructure of rays into (ox, oy, oz, dx, dy, dz)",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_35",
+     "role": "primary",
+     "notes": "Solution = einops.rearrange(arr, '(b1 b2) c h w -> c (b1 h) (b2 w)', b1=2). Splits batch into a 2-D grid (parenthesized input axis) then flattens with H and W. unbind-tuple-unpack covers parenthesized"
+    },
+    {
+     "ref": "part1.triangle_ray_intersects",
+     "role": "primary",
+     "notes": "Stacks [-D, B-A, C-A] into a 3x3 mat, solves for (s,u,v), and checks barycentric conditions s>=0, u,v>=0, u+v<=1 via .item()."
+    },
+    {
+     "ref": "part1.raytrace_triangle",
+     "role": "primary",
+     "notes": "Broadcasts one triangle across NR rays via einops.repeat, unbinds O/D, stacks a per-ray 3x3 system, patches singular dets with eye(3), batched-solves, and unbinds (s,u,v) for the barycentric intersect"
+    },
+    {
+     "ref": "part1.raytrace_mesh",
+     "role": "primary",
+     "notes": "Full (NR,NT) pair-broadcast of rays/triangles, batched 3x3 solve with singular-mask trick, masks non-intersections to inf, then einops.reduce min over the triangle axis."
+    }
+   ]
+  },
+  {
+   "id": "unbox-args-tensor-to-array",
+   "title": "unbox MiniTensor positional args to raw arrays, pass-through non-Tensors",
+   "topic": "Autograd Pt3",
+   "subtopic": "Backprop: Unbox Tensor args to array",
+   "description": "unbox-args-tensor-to-array \u2014 ex1: unbox MiniTensor positional args to raw arrays, pass-through non-Tensors",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.log_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for log \u2014 unbox, compute, box with Recipe + parents when grad-tracked."
+    },
+    {
+     "ref": "part4.multiply_forward",
+     "role": "primary",
+     "notes": "Manual forward wrapper for multiply \u2014 handles mixed Tensor/scalar args via parents-by-argidx."
+    },
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    }
+   ]
+  },
+  {
+   "id": "unbroadcast-pattern",
+   "title": "unbroadcast: sum out leading and size-1 broadcast axes",
+   "topic": "Autograd Internals",
+   "subtopic": "Backprop: Unbroadcast pattern",
+   "description": "unbroadcast-pattern \u2014 ex1: unbroadcast: sum out leading and size-1 broadcast axes",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.unbroadcast",
+     "role": "primary",
+     "notes": "Reverse-broadcast helper \u2014 sum prepended dims then size-1 dims with keepdims."
+    },
+    {
+     "ref": "part4.multiply_back",
+     "role": "primary",
+     "notes": "Per-arg multiply back fns \u2014 chain rule * y or * x, then unbroadcast, with float coercion."
+    },
+    {
+     "ref": "part4.max",
+     "role": "primary",
+     "notes": "maximum_back0/1 with 50/50 tie-splitting via boolean masks, then unbroadcast onto x/y."
+    }
+   ]
+  },
+  {
+   "id": "validation-no-grad",
+   "title": "validation pass wrapped in torch.no_grad",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: no_grad validation",
+   "description": "validation-no-grad \u2014 ex1: validation pass wrapped in torch.no_grad",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    }
+   ]
+  },
+  {
+   "id": "vector-normalize-keepdim",
+   "title": "row-wise L2 normalize a batch of embeddings",
+   "topic": "Tensor Utils",
+   "subtopic": "PyTorch: vector normalize keepdim",
+   "description": "vector-normalize-keepdim \u2014 ex1: row-wise L2 normalize a batch of embeddings",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part0.ex_66",
+     "role": "primary",
+     "notes": "Solution = matrix / matrix.norm(dim=1, keepdim=True). Direct vector-normalize-keepdim drill; broadcast (m,n)/(m,1)."
+    },
+    {
+     "ref": "part0.ex_69",
+     "role": "primary",
+     "notes": "Solution = normalize_rows(matrix) @ matrix_normalized.T. Composes row-normalize with 2-D matmul."
+    },
+    {
+     "ref": "part0.batched_softmax",
+     "role": "primary",
+     "notes": "Solution = exp / exp.sum(dim=-1, keepdim=True). Same keepdim-divide pattern as L2-row-normalize; reduce-then-broadcast duality."
+    },
+    {
+     "ref": "part0.batched_logsoftmax",
+     "role": "primary",
+     "notes": "Solution = matrix - C - (matrix - C).exp().sum(dim=1, keepdim=True).log() with C=max(dim=1, keepdim=True). Numerically-stable logsumexp identity expressed as subtract-then-divide style."
+    }
+   ]
+  },
+  {
+   "id": "wandb-config-into-args",
+   "title": "overwrite dataclass args from a wandb sweep config",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: wandb.config into args",
+   "description": "wandb-config-into-args \u2014 ex1: overwrite dataclass args from a wandb sweep config",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    }
+   ]
+  },
+  {
+   "id": "wandb-finish",
+   "title": "close a wandb run at the end of train",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: wandb.finish",
+   "description": "wandb-finish \u2014 ex1: close a wandb run at the end of train",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    }
+   ]
+  },
+  {
+   "id": "wandb-init-run",
+   "title": "open a wandb run with project, name, and config",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: wandb.init run",
+   "description": "wandb-init-run \u2014 ex1: open a wandb run with project, name, and config",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "wandb-log-step",
+   "title": "log loss + examples_seen step over a fake epoch",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: wandb.log step",
+   "description": "wandb-log-step \u2014 ex1: log loss + examples_seen step over a fake epoch",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    },
+    {
+     "ref": "part3.DistResNetTrainer",
+     "role": "primary",
+     "notes": "Full DDP-from-scratch trainer: nccl init, mp.spawn, per-rank device, broadcast initial params, all_reduce grads with op=mean, DistributedSampler, rank-0-only wandb, and fwd/bwd/dist timing."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    },
+    {
+     "ref": "part5.ex_46",
+     "role": "primary",
+     "notes": "VAE trainer: reconstruction MSE + closed-form Gaussian KL scaled by beta_kl summed into ELBO, plus the usual backward/step/zero_grad and wandb logging of each loss component."
+    }
+   ]
+  },
+  {
+   "id": "wandb-watch-model",
+   "title": "watch the trainable head with parameter+gradient logging",
+   "topic": "Logging Instr",
+   "subtopic": "Logging: wandb.watch model",
+   "description": "wandb-watch-model \u2014 ex1: watch the trainable head with parameter+gradient logging",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.ex_72",
+     "role": "primary",
+     "notes": "WandbResNetFinetuner subclasses the base trainer to add wandb.init/watch/log/finish, uses examples_seen as the wandb step axis, and logs loss + accuracy alongside tqdm postfix."
+    },
+    {
+     "ref": "part5.ex_28",
+     "role": "primary",
+     "notes": "Trainer skeleton for AE: MSE reconstruction loss, backward/step/zero_grad, per-batch step counter, wandb init/watch/log/finish, and periodic log_samples on HOLDOUT_DATA."
+    }
+   ]
+  },
+  {
+   "id": "weight-decay-decoupled",
+   "title": "implement one AdamW step with decoupled weight decay",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: decoupled weight decay (AdamW)",
+   "description": "weight-decay-decoupled \u2014 ex1: implement one AdamW step with decoupled weight decay",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.AdamW",
+     "role": "primary",
+     "notes": "AdamW differs from Adam by replacing L2-add weight decay with the decoupled `theta *= 1 - lr*lmda` rescale before the moment update."
+    }
+   ]
+  },
+  {
+   "id": "weight-decay-l2-add",
+   "title": "fold weight decay lambda*theta into the gradient",
+   "topic": "Optimizer Internals",
+   "subtopic": "Optimizer: Weight decay L2",
+   "description": "weight-decay-l2-add \u2014 ex1: fold weight decay lambda*theta into the gradient",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    },
+    {
+     "ref": "part3.RMSprop",
+     "role": "primary",
+     "notes": "RMSprop adds the EMA second-moment buffer v and the sqrt(v)+eps normalisation on top of the SGD-with-momentum skeleton."
+    },
+    {
+     "ref": "part3.Adam",
+     "role": "primary",
+     "notes": "Adam: first and second moment EMAs with bias-correction divide, sqrt(v_hat)+eps, L2 weight decay, internal step counter t for the correction."
+    },
+    {
+     "ref": "part3.ex_53",
+     "role": "primary",
+     "notes": "Refactor SGD to accept either an iterable or list-of-dicts param groups, with per-group hparam precedence (defaults < kwargs < group dict) and nested loop over groups then params."
+    }
+   ]
+  },
+  {
+   "id": "where-clip-negative",
+   "title": "relu via torch.where",
+   "topic": "Tensor Utils",
+   "subtopic": "PyTorch: where to clip negative",
+   "description": "where-clip-negative \u2014 ex1: relu via torch.where",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part1.ex_79",
+     "role": "primary",
+     "notes": "Extends raytrace_mesh with Lambertian shading: computes triangle normals via cross product of edge vectors, normalizes, dots with the light vector, clips negative dot to zero, and adds ambient intensi"
+    },
+    {
+     "ref": "part5.ex_60",
+     "role": "primary",
+     "notes": "Tanh / LeakyReLU / Sigmoid as nn.Module forward wrappers around elementwise activations (exp-based, where for the leaky negative-slope branch), with extra_repr on LeakyReLU."
+    }
+   ]
+  },
+  {
+   "id": "wrap-forward-fn-generic",
+   "title": "write the wrap_forward_fn shell \u2014 unbox, call, box",
+   "topic": "Backprop",
+   "subtopic": "Backprop: wrap forward fn",
+   "description": "wrap-forward-fn-generic \u2014 ex1: write the wrap_forward_fn shell \u2014 unbox, call, box",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part4.wrap_forward_fn",
+     "role": "primary",
+     "notes": "Generic forward-fn wrapper \u2014 unbox args, call numpy_func, box with Recipe; three-gate requires_grad."
+    },
+    {
+     "ref": "part4.negative",
+     "role": "primary",
+     "notes": "negative_back returns -grad_out; wired into BACK_FUNCS after wrapping np.negative."
+    },
+    {
+     "ref": "part4.exp",
+     "role": "primary",
+     "notes": "exp_back reuses cached out (out * grad_out) \u2014 no second exp call; registered post-wrap."
+    },
+    {
+     "ref": "part4.reshape",
+     "role": "primary",
+     "notes": "reshape_back restores x's original shape; new_shape passed through recipe kwargs."
+    }
+   ]
+  },
+  {
+   "id": "zero-grad-set-none",
+   "title": "implement zero_grad with set_to_none semantics",
+   "topic": "Training Loop",
+   "subtopic": "PyTorch: zero_grad",
+   "description": "zero-grad-set-none \u2014 ex1: implement zero_grad with set_to_none semantics",
+   "tags": [
+    "drill-atom"
+   ],
+   "drilled_by": [
+    {
+     "ref": "part2.ex_46",
+     "role": "primary",
+     "notes": "Full epoch loop: Adam forward/backward/step/zero_grad on train; inference_mode + argmax accuracy on val."
+    },
+    {
+     "ref": "part2.ex_112",
+     "role": "primary",
+     "notes": "Feature-extraction train loop on CIFAR Subset: Adam over only out_layers[-1].parameters(), model.train()/.eval() toggle, inference_mode val with argmax accuracy."
+    },
+    {
+     "ref": "part3.opt_fn_with_sgd",
+     "role": "primary",
+     "notes": "Drive torch.optim.SGD on a 2-tensor via forward.backward / step / zero_grad loop, snapshotting via detach().clone() and stacking the trajectory."
+    },
+    {
+     "ref": "part3.SGD",
+     "role": "primary",
+     "notes": "From-scratch SGD: store params as list, allocate momentum buffer with zeros_like, L2 weight-decay add, copy_ momentum update, in-place param step under inference_mode, with __repr__."
+    }
+   ]
+  }
+ ]
+}

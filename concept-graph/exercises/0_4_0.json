@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_4_0",
+  "title": "implement log_back",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_0_exercise-implement-log-back.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 0,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "log-back", "role": "core", "evidence": "return grad_out / x — solution is exactly the log-back identity dL/dx = grad_out / x"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def log_back(grad_out: Arr, out: Arr, x: Arr) -> Arr — canonical (grad_out, out, x) -> grad_in signature, introduced here for the first time"},
+    {"id": "chain-rule-elementwise", "role": "core", "evidence": "Markdown shows dL/dx = dL/d(out) * d(out)/dx = grad_out * (1/x); explicitly notes that elementwise application of chain rule reduces to per-element multiplication"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "3 atoms — matches seed prediction of 4 closely (1 cut: grad-expressed-in-out, since log's derivative is expressed in x, not out — the markdown contrasts with exp here). The canonical first backward rule; introduces the (grad_out, out, x) signature convention for the whole part."
+}

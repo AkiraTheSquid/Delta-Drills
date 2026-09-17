@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_2_13",
+  "title": "fill in the correct size and stride",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_13_exercise-fill-in-the-correct-size-and-stride.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 13,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "contiguous-layout", "role": "core", "evidence": "all 6 test cases work with a contiguous (5, ...) row-major test_input; the (5, 1) and (10, 1) strides ARE the row/col strides of the original tensor"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "test_input.as_strided(size=test_case.size, stride=test_case.stride) — the whole exercise is filling in size/stride args for as_strided"},
+    {"id": "stride-zero-broadcast", "role": "core", "evidence": "TestCase output=[[0,0,0],[11,11,11]] solved with size=(2,3), stride=(11,0) — explicit teaching moment: 'effectively our way of doing an einops.repeat operation'"},
+    {"id": "diagonal-via-strides", "role": "core", "evidence": "TestCase output=[0,6,12,18] solved with size=(4,), stride=(6,) — explanation: 'diagonal elements... stride equal to (row_stride + col_stride) = 5+1 = 6'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Pure strided-memory drilling: 4 atoms, all from the strided-memory domain. This is the foundational exercise for the whole strided-conv bonus track — every later as_strided trick (windowing for conv1d/2d, mv/mm stride-zero broadcast, trace) is set up here through worked examples. Zero new atoms surfaced — the seed nailed this cluster."
+}

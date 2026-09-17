@@ -1,0 +1,369 @@
+{"id": 1, "hint": "Reductions that report a position (not a value) also take an axis argument \u2014 pick the axis that runs across each row."}
+{"id": 4, "hint": "The function that builds a matrix from a diagonal vector takes an offset argument that shifts which diagonal the vector lands on."}
+{"id": 5, "hint": "PyTorch's linear-algebra module has a one-call norm, or build it yourself from squaring, summing, and a square root."}
+{"id": 6, "hint": "Divide the vector by its own Euclidean length \u2014 and return a new tensor rather than scaling in place."}
+{"id": 12, "hint": "Combine two comparisons with the elementwise AND operator to build a boolean mask, then assign through it on a copy."}
+{"id": 14, "hint": "The deduplication function has an optional flag that makes it also report how often each distinct value appeared."}
+{"id": 15, "hint": "A no-axis mean collapses the whole tensor to one number, and subtracting a scalar broadcasts to every entry."}
+{"id": 16, "hint": "PyTorch's lower-triangle helper takes an offset that can exclude the main diagonal itself."}
+{"id": 18, "hint": "Either use PyTorch's NaN-replacement helper, or build a boolean NaN mask and select between 0.0 and the original values."}
+{"id": 19, "hint": "Complex tensors expose their two components either as tensor attributes or through a matching pair of PyTorch functions."}
+{"id": 22, "hint": "PyTorch has a discrete-difference function that takes an axis argument \u2014 or subtract two shifted column slices."}
+{"id": 23, "hint": "Flattening accepts an order argument \u2014 the Fortran convention walks down columns first. Transposing before a default flatten works too."}
+{"id": 24, "hint": "Find the POSITION of the maximum rather than its value, then assign into a copy at that single index."}
+{"id": 25, "hint": "Indexing a PyTorch tensor with a list of row positions selects (or assigns) several whole rows at once, and negative positions count from the end."}
+{"id": 26, "hint": "PyTorch tensors have reduction methods that, when called with no axis argument, collapse the entire tensor down to one scalar."}
+{"id": 27, "hint": "Start from a uniform matrix and overwrite its interior block with one 2-D slice assignment \u2014 remember that negative slice bounds count from the end of an axis."}
+{"id": 28, "hint": "PyTorch tensors have a built-in reduction that collapses the whole vector to one number \u2014 the average of its entries."}
+{"id": 29, "hint": "PyTorch has one function that turns a pair of coordinate vectors into exactly this pair of grids \u2014 the same one plotting code calls right before evaluating f(X, Y) over a surface."}
+{"id": 30, "hint": "Indexing with a list of column positions lets you read or write several columns at once \u2014 just do it on a copy so the caller's tensor survives."}
+{"id": 31, "hint": "Start from a matrix of all ones, then use PyTorch's upper-triangle helper to zero out everything strictly below the main diagonal."}
+{"id": 32, "hint": "NaN never compares equal to anything \u2014 even itself \u2014 so use PyTorch's elementwise NaN test and then collapse the resulting boolean tensor to a single yes/no answer."}
+{"id": 34, "hint": "PyTorch has a built-in that lays whole copies of a tensor end-to-end a given number of times \u2014 a different function from the one that repeats each element in place."}
+{"id": 35, "hint": "PyTorch has a built-in that duplicates each individual element a given number of times consecutively \u2014 it is not the one that stacks whole copies of the tensor end to end."}
+{"id": 36, "hint": "PyTorch can reinterpret a tensor's existing data under a new set of dimensions in a single call, as long as the total element count stays the same."}
+{"id": 37, "hint": "Think of the dot product as an elementwise product followed by a sum \u2014 PyTorch offers a single built-in reduction that does both at once for a pair of vectors."}
+{"id": 38, "hint": "PyTorch has a reduction that reports the position of an extreme value rather than the value itself."}
+{"id": 41, "hint": "PyTorch has a one-call constructor that builds a zero-filled tensor by borrowing another tensor's shape and dtype \u2014 you never have to read .shape or .dtype yourself."}
+{"id": 46, "hint": "First build the full run of consecutive integers as a flat tensor, then change its shape into the square grid you need."}
+{"id": 47, "hint": "PyTorch has a single function that, given a 1-D vector, builds the square matrix with that vector on the main diagonal."}
+{"id": 48, "hint": "A strided slice can appear on the left-hand side of an assignment, and a scalar broadcasts into every position that slice selects."}
+{"id": 49, "hint": "PyTorch has an elementwise rounding family \u2014 pick the member that always rounds toward negative infinity, not toward zero."}
+{"id": 50, "hint": "Scale the identity matrix, or hand a constant diagonal vector to the diagonal-matrix builder."}
+{"id": 52, "hint": "True counts as nonzero (and as 1 in a sum) \u2014 just remember to convert the PyTorch result to a plain int."}
+{"id": 53, "hint": "PyTorch has a constructor that takes both endpoints and a COUNT of points \u2014 unlike the one that takes a step size."}
+{"id": 58, "hint": "PyTorch has two sorts: the top-level FUNCTION returns a sorted copy, while the tensor METHOD sorts in place."}
+{"id": 60, "hint": "One row is just the 0..cols-1 range \u2014 then either tile it down the rows or let broadcasting add it to a zero matrix."}
+{"id": 61, "hint": "Turn 'closest' into 'smallest absolute difference', then ask PyTorch for the POSITION of that smallest value."}
+{"id": 62, "hint": "Any of PyTorch's summing routes works \u2014 the catch is converting the PyTorch scalar into Python's own integer type."}
+{"id": 63, "hint": "For positive numbers, flooring, truncating, integer-dividing by 1, and subtracting the remainder mod 1 all agree."}
+{"id": 64, "hint": "PyTorch has one comparison that forgives tiny float error and another that demands bit-for-bit agreement \u2014 this drill wants both."}
+{"id": 66, "hint": "Slice the two coordinate columns apart, then use the two-argument arctangent \u2014 it gets the quadrant right where a plain arctan of y/x cannot."}
+{"id": 68, "hint": "Consecutive differences tell the whole story: the sequence is non-decreasing exactly when none of them is negative."}
+{"id": 69, "hint": "The element-repeating function accepts not just one count but a whole tensor of per-element counts."}
+{"id": 70, "hint": "Indexing a 2-D tensor with an integer tensor along the first axis selects whole rows in exactly the order you list them."}
+{"id": 71, "hint": "Index the TABLE with the label tensor \u2014 fancy indexing gathers one table entry per label in a single operation."}
+{"id": 74, "hint": "A strided slice can be the TARGET of an assignment \u2014 do it on a copy so the caller's tensor survives."}
+{"id": 75, "hint": "PyTorch has a quarter-turn rotation helper \u2014 or compose a transpose with a flip and check the direction on a non-square tensor."}
+{"id": 77, "hint": "The same PyTorch function that BUILDS a matrix from a diagonal also EXTRACTS diagonals when handed a matrix \u2014 and it takes an offset."}
+{"id": 78, "hint": "Take the upper triangle of an all-True tensor \u2014 or compare the row and column index grids directly."}
+{"id": 79, "hint": "The deduplication function takes an axis argument \u2014 along axis 0 it treats whole rows as the things to compare."}
+{"id": 80, "hint": "Shift so the minimum sits at zero, then divide by the full spread between the extremes."}
+{"id": 81, "hint": "Tile the vector with a (reps, 1) repetition pattern, then average down the rows (axis 0)."}
+{"id": 82, "hint": "The cumulative-sum function takes an axis \u2014 choose the one that walks across each row."}
+{"id": 84, "hint": "Stacking along a NEW leading axis turns the pair into one tensor whose first axis you can average away."}
+{"id": 85, "hint": "Build a boolean per-row test \u2014 'is this whole row zero?' \u2014 then invert it and use it as a row mask."}
+{"id": 89, "hint": "Pair the tensors up as columns of one matrix, then read that matrix in row-major order."}
+{"id": 92, "hint": "Get the ORDER that would sort just the key column, then apply that order to the whole tensor's rows with fancy indexing."}
+{"id": 93, "hint": "The rows of the k x k identity matrix ARE the k one-hot vectors \u2014 gather the right ones by fancy indexing with the label tensor."}
+{"id": 94, "hint": "A boolean mask built from ONE tensor can index a DIFFERENT tensor of the same shape."}
+{"id": 95, "hint": "A dot product between the trailing channel axis and a length-3 weight vector collapses (h, w, 3) to (h, w) in one operation."}
+{"id": 97, "hint": "Dividing by the current norm gives a unit vector \u2014 then scale that up to whatever length you were asked for."}
+{"id": 98, "hint": "Distance-to-target is a tensor too \u2014 you want the position of its minimum, converted to a plain int."}
+{"id": 103, "hint": "Softmax is unchanged by subtracting any constant from all logits \u2014 subtract the maximum so the largest exponent is exp(0)."}
+{"id": 105, "hint": "meshgrid over two linspaces gives every grid point's coordinates at once; the rest is elementwise arithmetic on those grids."}
+{"id": 107, "hint": "PyTorch's linear-algebra module has a direct system solver \u2014 faster and more accurate than inverting and multiplying."}
+{"id": 109, "hint": "Averaging along axis 0 collapses the rows, leaving one mean per column \u2014 and that vector broadcasts back over the rows without any reshaping."}
+{"id": 112, "hint": "An entry [i, j] is near the diagonal exactly when |i - j| is small \u2014 build that condition as a broadcast boolean mask."}
+{"id": 114, "hint": "argsort answers 'which element goes in each sorted slot' \u2014 apply it twice and it flips into 'which slot does each element go to', which is the rank."}
+{"id": 115, "hint": "Turn the tensor into a NaN mask first, then ask along the column axis whether EVERY entry is flagged."}
+{"id": 121, "hint": "Multiply elementwise and sum across each row \u2014 or say exactly that with an einsum whose output keeps only the row index."}
+{"id": 122, "hint": "PyTorch's correlation function assumes VARIABLES ARE ROWS by default \u2014 one flag flips it to columns."}
+{"id": 123, "hint": "view() re-types the SAME 4 bytes per element; assigning the float values through the int view is what performs the conversion without allocating."}
+{"id": 124, "hint": "Pair a row-index range with the per-row argmax as a coordinate pair \u2014 indexing with two tensors writes one cell per row."}
+{"id": 126, "hint": "Reshape each axis into (blocks, within-block) pairs \u2014 then one sum over both within-block axes collapses every block at once."}
+{"id": 127, "hint": "Insert one new axis on each operand so the points broadcast against each other \u2014 the difference tensor then has shape (n, n, 2)."}
+{"id": 129, "hint": "Build the squared-distance matrix by broadcasting, then argsort each row \u2014 position 0 is always the point itself, so the neighbors sit at positions 1 and 2."}
+{"id": 130, "hint": "On a boolean row, argmax stops at the first True \u2014 but an all-False row ALSO returns 0, so you need a second reduction to tell those apart."}
+{"id": 131, "hint": "Naive fancy-index += collapses repeats (each position updates once) \u2014 count the occurrences first, or use the ufunc method built for unbuffered updates."}
+{"id": 132, "hint": "bincount doesn't just count \u2014 hand it weights and each occurrence contributes its value instead of 1."}
+{"id": 134, "hint": "Build a tensor of occurrence counts indexed by value, then find the position of the largest count \u2014 first-match behavior on ties is exactly what you need."}
+{"id": 135, "hint": "PyTorch reductions accept a tuple of axes, so you can collapse several dimensions in one call."}
+{"id": 136, "hint": "Fancy indexing with a LIST of row numbers works on both sides of an assignment \u2014 and the right side is gathered before the left side is written."}
+{"id": 137, "hint": "There is a PyTorch function that tallies how many times each integer label occurs \u2014 and it can also take per-element weights, letting you get per-label sums the same way."}
+{"id": 138, "hint": "z[p] builds the reordered copy; assigning it through z[:] pours those values back into the ORIGINAL buffer instead of rebinding the name."}
+{"id": 139, "hint": "An integer tensor used as an index picks out whole rows at once, in exactly the order the integers are listed."}
+{"id": 140, "hint": "Extract the offset diagonal and sum it \u2014 or use the trace function, which takes the very same offset directly."}
+{"id": 141, "hint": "Diagonal entry i multiplies row i of the first matrix with COLUMN i of the second \u2014 an einsum can say that with a transposed index, summing over j only."}
+{"id": 142, "hint": "An elementwise finiteness test gives a boolean tensor the same shape as z \u2014 reduce it along the right axis, then turn the surviving booleans into index positions."}
+{"id": 143, "hint": "Compare the tensor to itself shifted by one \u2014 an entry starts a new run exactly when it differs from its left neighbor (and the first entry always counts)."}
+{"id": 144, "hint": "Matrix-vector multiplication IS the per-row dot product \u2014 one operator does the whole job."}
+{"id": 145, "hint": "Three shifted slices line every interior element up with its two neighbors \u2014 compare, AND the masks, and remember the slice offset."}
+{"id": 149, "hint": "The difference function has an order argument \u2014 n applications in one call, shrinking the tensor by one each time."}
+{"id": 151, "hint": "Broadcasting aligns TRAILING axes \u2014 (h, w) against (h, w, c) fails, but (h, w, 1) stretches over the channels."}
+{"id": 155, "hint": "Element-wise repetition with a per-element count tensor IS run-length decoding."}
+{"id": 156, "hint": "Accumulate down the rows, then accumulate that result across the columns \u2014 two cumulative sums compose into the 2-D prefix sum."}
+{"id": 159, "hint": "Allocate the zero-filled result at its final size, then drop z's values in with ONE strided assignment \u2014 the stride is nz + 1."}
+{"id": 160, "hint": "Stack n copies of v as rows, then let the lower-triangle helper zero out everything past each row's prefix."}
+{"id": 163, "hint": "Row-wise differences must ALL be positive for a strictly increasing row \u2014 reduce the comparison along the row axis into a row mask."}
+{"id": 164, "hint": "Build the |i - j| index grid by broadcasting a column of indices against a row \u2014 then use that whole grid to index c at once."}
+{"id": 168, "hint": "argmax always reports the FIRST maximum \u2014 run it on the reversed rows and convert the index back."}
+{"id": 171, "hint": "meshgrid with indexing='ij' expands every combination into aligned grids \u2014 ravel each grid and stack them as columns."}
+{"id": 173, "hint": "The linear solver accepts a MATRIX right-hand side directly \u2014 one factorization covers every column."}
+{"id": 177, "hint": "Turn the dict into a dense lookup TABLE indexed by old value \u2014 then one fancy-index gathers every replacement at once."}
+{"id": 181, "hint": "Give x a new middle axis and y a new leading axis \u2014 the difference then broadcasts to (n, m, d) and one reduction finishes it."}
+{"id": 183, "hint": "The double-argsort rank trick works along an axis too \u2014 apply both passes with axis=1."}
+{"id": 184, "hint": "Symmetry is an invariant YOU maintain \u2014 write the mirrored cell in the same operation."}
+{"id": 186, "hint": "Fill the output with the pad value first, then compute the CLIPPED source rectangle and the matching destination rectangle \u2014 one slice assignment does the copy."}
+{"id": 189, "hint": "The quarter-turn function takes a COUNT argument and handles the modulo-4 cycle itself."}
+{"id": 190, "hint": "Rank equals the number of singular values above a tolerance \u2014 PyTorch wraps the whole SVD recipe in one linalg call."}
+{"id": 192, "hint": "Elementwise exponentiation is a single ufunc \u2014 or just multiply the tensor by itself twice."}
+{"id": 193, "hint": "Row-sorted squared distances put each point's own index first (distance zero) \u2014 the k neighbors follow immediately after."}
+{"id": 197, "hint": "Total the heights and widths for the canvas, then walk the blocks, dropping each into its slice and advancing both offsets by its shape."}
+{"id": 198, "hint": "Broadcast the row sets against each other \u2014 bitwise AND counts the intersection, bitwise OR the union, and the distance is one minus their ratio."}
+{"id": 199, "hint": "Broadcast a's rows against b's rows into an (ra, rb, c) product cube, then collapse the two row axes into one."}
+{"id": 201, "hint": "The 2-D cross product of the line direction with the point-to-line-start vector measures twice the triangle area \u2014 divide by the direction's length to recover the height."}
+{"id": 202, "hint": "A row is constant exactly when every entry equals its FIRST entry \u2014 compare against the first column and reduce."}
+{"id": 207, "hint": "Each triangle contributes the vertex pairs (0,1), (1,2), (2,0) \u2014 list them all, canonicalize each pair by sorting its two ids, then deduplicate rows."}
+{"id": 208, "hint": "Write the contraction as index notation: the batch index p and the inner index j both disappear, leaving ik."}
+{"id": 210, "hint": "Three independent row conditions \u2014 integer-valued (check the remainder mod 1), non-negative, and the right total \u2014 AND them into one mask."}
+{"id": 211, "hint": "Broadcast a 4-D equality cube (a-row, a-col, b-row, b-col), then reduce: ANY match within a b-row, but ALL b-rows must be hit."}
+{"id": 213, "hint": "Start from zeros and set one position \u2014 two lines."}
+{"id": 214, "hint": "Count how many points there are (stop/step plus one) and scale an integer range \u2014 safer than nudging a float endpoint."}
+{"id": 216, "hint": "The values are just 0..len(c)-1 \u2014 repeat each one by its own count."}
+{"id": 217, "hint": "t.tile's repetition argument is a tuple \u2014 one count per axis."}
+{"id": 219, "hint": "PyTorch has a reduction that gives you the position (index) of the largest value rather than the value itself \u2014 use that index to assign into a copy."}
+{"id": 220, "hint": "PyTorch reductions take an axis argument \u2014 pick the axis that runs down the rows so it collapses, leaving one value per column."}
+{"id": 224, "hint": "PyTorch has one constructor that accepts nested Python sequences directly and infers a row for each inner list."}
+{"id": 225, "hint": "PyTorch ships ready-made constructors that build a fresh tensor of a given shape prefilled with a fixed value \u2014 pick the one whose fill value is one."}
+{"id": 227, "hint": "PyTorch has a one-call constructor that allocates an all-zero tensor of a given size, and its default dtype is already floating point."}
+{"id": 228, "hint": "PyTorch's tensor-creation functions include a one-call constructor for a square matrix with ones on the main diagonal and zeros everywhere else."}
+{"id": 229, "hint": "PyTorch's range-building function treats its stop argument as exclusive, so pick a stop that pushes one past the last value you want."}
+{"id": 230, "hint": "PyTorch tensors have a method that returns a copy of the tensor converted to whatever dtype you ask for."}
+{"id": 231, "hint": "PyTorch lets you assign a single scalar to a whole contiguous run of a tensor in one statement \u2014 no loop needed."}
+{"id": 232, "hint": "Elementwise arithmetic on a PyTorch tensor gives each element's remainder at once, and comparing that whole result to a scalar yields a boolean tensor."}
+{"id": 235, "hint": "A tensor has a method that reorders its own contents, unlike the top-level PyTorch function that hands back a sorted copy."}
+{"id": 236, "hint": "Comparing a PyTorch tensor to a scalar with a comparison operator broadcasts elementwise and yields a boolean mask of the same shape."}
+{"id": 237, "hint": "The entries z[i, i] form the main diagonal \u2014 PyTorch can extract that diagonal (or sum it directly) in one vectorized step."}
+{"id": 238, "hint": "PyTorch has a pair of stacking helpers that join a sequence of tensors along the row axis or along the column axis."}
+{"id": 239, "hint": "Elementwise multiplication is not what you want here \u2014 look for the operation that combines each row of the first tensor with each column of the second."}
+{"id": 240, "hint": "Think of each value as a magnitude and a sign: the magnitude always rounds in the same direction, and the sign can be reattached elementwise afterwards."}
+{"id": 242, "hint": "If you generate the evenly spaced points including both endpoints, you need two extra points \u2014 then drop the first and last."}
+{"id": 243, "hint": "Keep the batch index on both sides of the arrow, keep i and j separate in the output, and contract over nothing."}
+{"id": 244, "hint": "In einsum, writing the output indices in a different order IS the permutation \u2014 nothing is summed."}
+{"id": 245, "hint": "A repeated index that vanishes from the output means multiply-and-sum over it \u2014 with nothing after the arrow, the result is a scalar."}
+{"id": 246, "hint": "Give b's indices in transposed order so its column pairs with a's row, contract over the shared k, and keep i."}
+{"id": 247, "hint": "Dropping an index from einsum's output side sums over it \u2014 drop i to collapse the rows."}
+{"id": 248, "hint": "Share the feature index d between the operands and keep both row indices \u2014 the contraction over d does the dots."}
+{"id": 249, "hint": "Feed x in twice with identical indices and keep only the batch index \u2014 every other axis multiplies with itself and sums away."}
+{"id": 250, "hint": "Feed the batch in twice with DIFFERENT vector indices (i and j) but the same feature index d \u2014 contracting d gives every within-batch dot product."}
+{"id": 251, "hint": "The vector shares only the feature index with the batch \u2014 contract d, keep b and t."}
+{"id": 252, "hint": "Three operands in one einsum: x's index pairs with W's rows, x's second copy with W's columns, and everything contracts to a scalar."}
+{"id": 253, "hint": "Repeat all three indices on both operands but keep only h and w in the output \u2014 c is the one that multiplies-and-sums."}
+{"id": 254, "hint": "Only the key index k is shared and absent from the output \u2014 batch, head, query, and depth all ride along."}
+{"id": 255, "hint": "Contract the row index between the weights and the matrix, then normalize by the weights' total."}
+{"id": 256, "hint": "Two DIFFERENT indices with nothing contracted \u2014 every pairing survives into the output."}
+{"id": 257, "hint": "Using the SAME letter for both axes walks the diagonal; keeping it in the output returns the entries instead of summing them."}
+{"id": 258, "hint": "Share the ROW index between the two copies of x and keep two different column indices \u2014 the rows contract away."}
+{"id": 259, "hint": "Center first, then it's the column Gram matrix scaled by 1/(n-1)."}
+{"id": 260, "hint": "The inner index appears in both operands and not in the output \u2014 that repetition-then-omission IS matrix multiplication."}
+{"id": 261, "hint": "Sum over EVERY index by leaving the output side empty \u2014 einsum's interleaved form handles any rank generically."}
+{"id": 262, "hint": "The vector's single index matches the matrix's column index and contracts away, leaving one value per row."}
+{"id": 263, "hint": "Contract only the shared feature depth d, keeping the separate query and key position indices \u2014 that cross pairing is the score table."}
+{"id": 264, "hint": "Chain the letters so each inner index appears in exactly two neighboring operands \u2014 k and m both contract, i and p survive."}
+{"id": 265, "hint": "The batch index rides along on both operands and the output; only the inner j contracts."}
+{"id": 266, "hint": "Repeat the matrix index within one operand to walk each diagonal, and drop it from the output to sum \u2014 the batch index stays."}
+{"id": 267, "hint": "Repeat BOTH indices across the operands and output nothing \u2014 a full elementwise-multiply-then-total."}
+{"id": 268, "hint": "Pair each matrix with ITS OWN vector by sharing the batch index; contract j as usual."}
+{"id": 269, "hint": "Contract the channel index between the image and the weight vector \u2014 the spatial axes pass through untouched."}
+{"id": 270, "hint": "All three indices repeat across the operands and none survives \u2014 multiply everywhere, then total."}
+{"id": 271, "hint": "List the same letters on both sides in the new order \u2014 einsum permutes without summing when nothing repeats within an operand."}
+{"id": 272, "hint": "Only the channel index is shared with the matrix \u2014 batch and time pass straight through while c contracts into f."}
+{"id": 273, "hint": "Repeat the matrix index to follow each diagonal, but KEEP it in the output so the entries survive per position."}
+{"id": 274, "hint": "Keep the row index after the arrow and drop the column index \u2014 the dropped one is the one summed."}
+{"id": 275, "hint": "Four distinct letters, none contracted \u2014 the output order after the arrow chooses the interleaving."}
+{"id": 276, "hint": "Same as plain matrix multiplication with a batch letter carried through on everything."}
+{"id": 277, "hint": "Repeat the index to select the diagonal, and output nothing to sum it."}
+{"id": 278, "hint": "Feed the SAME vector in twice under two different letters \u2014 nothing contracts, every pairing survives."}
+{"id": 279, "hint": "Contract the shared feature axis d; the batch axis b and output axis e both survive."}
+{"id": 280, "hint": "Drop exactly one letter from the output \u2014 the h axis is the one summed away."}
+{"id": 282, "hint": "einsum can only sum \u2014 the divide-by-count that turns a sum into a mean happens outside."}
+{"id": 283, "hint": "Chain the indices b-i-h-o with i and h each shared by two operands \u2014 both contract in one call."}
+{"id": 284, "hint": "Pair the batch with itself: matching d entries multiply (squares) and d contracts, keeping b."}
+{"id": 285, "hint": "Same letters both sides, two of them exchanged after the arrow \u2014 no contraction, just reordering."}
+{"id": 286, "hint": "Contract the shared feature index d; only the memory-row index survives."}
+{"id": 287, "hint": "Feed the batch in twice with two different feature letters \u2014 the shared b keeps each vector paired with itself."}
+{"id": 288, "hint": "The projection-stack index n never contracts \u2014 it labels which output slice used which matrix, while d contracts as usual."}
+{"id": 289, "hint": "Drop the leading letter \u2014 the batch is the axis that vanishes."}
+{"id": 290, "hint": "Sum all axes with a rank-generic contraction (the interleaved einsum form), then one division makes it a mean."}
+{"id": 291, "hint": "Keep the channel index in the OUTPUT \u2014 a repeated index that survives multiplies without summing."}
+{"id": 292, "hint": "The outer product is the einsum part; the scalar rides in afterwards by ordinary broadcasting."}
+{"id": 293, "hint": "Fix the last two indices at 0 and let the batch axis run free \u2014 plain integer indexing, no contraction needed."}
+{"id": 294, "hint": "Every axis of x is shared with w and contracts; only the output-filter axis o survives."}
+{"id": 295, "hint": "Keep only the batch letter \u2014 the other three all vanish and sum together."}
+{"id": 296, "hint": "Two row letters, one shared feature letter kept in the output \u2014 pairs multiply feature-by-feature without any summing."}
+{"id": 297, "hint": "m carries no batch letter, so the same matrix hits every item \u2014 only j contracts."}
+{"id": 298, "hint": "Transpose one operand's letters and contract BOTH indices \u2014 the double contraction is the trace of the product."}
+{"id": 299, "hint": "Contract d, keep both position indices, share the batch \u2014 the multi-head version just carries one more letter."}
+{"id": 300, "hint": "A reshape with -1 merges the trailing axes in row-major order \u2014 h varies slower than w, exactly the '(h w)' grouping."}
+{"id": 301, "hint": "Two leading letters ride along; the two position letters stay separate; only the shared depth contracts."}
+{"id": 302, "hint": "Sum out three letters at once, then divide by the product of those axes' lengths for the mean."}
+{"id": 303, "hint": "Subtract the transposed matrix \u2014 index notation writes it as the same letters read in both orders."}
+{"id": 304, "hint": "Match the weight vector's single letter to the TIME axis, not the feature axis \u2014 t contracts, d survives."}
+{"id": 305, "hint": "Contract the hidden index between the states and the matrix \u2014 batch and time flow through."}
+{"id": 306, "hint": "Both copies of v share the batch letter so each row pairs with itself; i and j contract through the matrix."}
+{"id": 308, "hint": "Slice the sequence against its shifted self first \u2014 the einsum then pairs row i with row i+1 automatically."}
+{"id": 309, "hint": "The weight vector matches the HEAD letter; batch, time, and depth all pass through."}
+{"id": 310, "hint": "Share the batch letter and drop it from the output \u2014 the outer products form AND sum in one contraction."}
+{"id": 311, "hint": "A diagonal matrix in a product just scales along the shared index \u2014 write the vector with that single letter between the two matrices."}
+{"id": 312, "hint": "It's just a matrix-vector product \u2014 the permutation structure of p does the reordering by itself."}
+{"id": 313, "hint": "Split h and w each into (blocks, within-block), then move BOTH within-block axes over to the channel side."}
+{"id": 314, "hint": "The batch index must vary SLOWER than width inside the merged axis \u2014 '(b w)' puts each whole image before the next."}
+{"id": 315, "hint": "Factor the time axis into (segments, within-segment) \u2014 since the split is contiguous, it's a pure reshape."}
+{"id": 316, "hint": "Factor the channel axis with the group index OUTERMOST, then transpose that new axis to the front."}
+{"id": 317, "hint": "`einops.repeat(img, 'c h w -> c (h 3) w')` \u2014 the (h 3) group repeats each row."}
+{"id": 318, "hint": "'(g1 g2) c h w -> c (g1 h) (g2 w)' with g1=4 \u2014 batch splits into grid rows \u00d7 cols."}
+{"id": 319, "hint": "A pure axis permutation \u2014 every letter appears on both sides, just reordered."}
+{"id": 320, "hint": "'b (two h) w c -> (two b) h w c', two=2 \u2014 height splits; the halves join the batch."}
+{"id": 321, "hint": "Factor the channel axis into (h1, w1, c) with the sub-position indices outermost, then merge h1 into height and w1 into width."}
+{"id": 322, "hint": "'b c (h hs) (w ws) -> (hs ws b) c h w' \u2014 subgrid indices move out to the batch."}
+{"id": 323, "hint": "Split the tile index back into its (row, col) grid coordinates, then interleave rows-of-tiles with rows-within-tiles."}
+{"id": 324, "hint": "einops.reduce with 'mean' and '(h h2) (w w2)' window factors, h2=w2=2."}
+{"id": 325, "hint": "reduce with a pattern that keeps only b and the reduction name 'mean' \u2014 the dropped axes are what gets averaged."}
+{"id": 326, "hint": "Drop only the channel letter and pick 'max' as the reduction."}
+{"id": 327, "hint": "Swap the last two letters \u2014 a transpose of trailing axes."}
+{"id": 328, "hint": "Only the h letter disappears \u2014 the reduction acts down the columns."}
+{"id": 329, "hint": "Factor the batch into (rows, cols) of the grid, then merge rows-of-images into height and columns into width."}
+{"id": 330, "hint": "Move the first letter to the end of the output list \u2014 one axis relocation."}
+{"id": 331, "hint": "Slice first (every second image), THEN grid \u2014 rearrange only reorganizes whatever you hand it."}
+{"id": 332, "hint": "Row max: einops.reduce(img, 'h w c -> h () c', 'max'), then subtract (broadcast)."}
+{"id": 333, "hint": "einops accepts a LIST of tensors: the list index becomes the pattern's first axis, so stacking and permuting happen in one call."}
+{"id": 334, "hint": "'b h w c -> (h b) w c' with the images as a list \u2014 (h b) interleaves rows."}
+{"id": 335, "hint": "Move the trailing letter to the front \u2014 the inverse of the channels-last conversion."}
+{"id": 336, "hint": "One reduce pattern can pool AND lay out a grid: the pooling factors vanish (reduced), the grid factors migrate into height and width."}
+{"id": 337, "hint": "Factoring '(b w)' on the INPUT side is the undo of merging it on the output side \u2014 you must tell einops b (or w) since the strip alone is ambiguous."}
+{"id": 338, "hint": "repeat introduces a brand-new letter on the output side, sized by the keyword you pass."}
+{"id": 339, "hint": "A new trailing letter in repeat's output copies each scalar down the new axis."}
+{"id": 340, "hint": "Reduce to literal '1 1' instead of dropping the letters \u2014 keepdims in pattern form, so the subtraction broadcasts."}
+{"id": 341, "hint": "'(k h)' with k OUTER means complete copies follow each other \u2014 tiling, not stretching."}
+{"id": 342, "hint": "Adjacent axes merging in their existing order is a plain reshape \u2014 no transpose needed."}
+{"id": 343, "hint": "Factor the channels into (c, p1, p2) and merge the two block factors into height and width \u2014 the exact inverse of space-to-depth."}
+{"id": 344, "hint": "Swap the two spatial letters; the channel axis rides along."}
+{"id": 345, "hint": "Move the trailing channel letter to slot two \u2014 the inverse of the bchw-to-bhwc conversion."}
+{"id": 346, "hint": "Batch merges into width with b outermost \u2014 but first the axes must be brought adjacent, which the pattern does implicitly."}
+{"id": 347, "hint": "Merging '(c w)' with c outermost puts whole channel images next to each other \u2014 height stays shared."}
+{"id": 348, "hint": "einops.repeat 'b h w c -> b (h r) w c' with r=3 \u2014 r after h repeats rows in place."}
+{"id": 349, "hint": "Every letter vanishes \u2014 the empty right side is the grand total."}
+{"id": 350, "hint": "'(h p1) (w p2) c -> (h p2) (w p1) c' \u2014 swap the within-patch axes."}
+{"id": 351, "hint": "einops.repeat 'h w c -> (h 2) (w 2) c' \u2014 each pixel becomes a 2\u00d72 block."}
+{"id": 352, "hint": "'(h k)' with k INNER repeats each row before moving to the next \u2014 stretching, not tiling."}
+{"id": 353, "hint": "Adjacent axes merged in order \u2014 a pure reshape, the inverse of segmenting."}
+{"id": 354, "hint": "'()' in the output keeps a singleton axis \u2014 the einops spelling of keepdims \u2014 so the minima broadcast straight back."}
+{"id": 355, "hint": "Slice, then one repeat pattern that BOTH merges batch into height and introduces a new horizontal copy index."}
+{"id": 356, "hint": "Merging already-adjacent trailing axes is a reshape \u2014 batch stays, everything else concatenates in order."}
+{"id": 357, "hint": "'c h w -> (c h) w' \u2014 channels become stacked bands of rows."}
+{"id": 358, "hint": "An empty '()' group on the output side mints a length-1 axis at that position."}
+{"id": 359, "hint": "Factor the channels with the split index OUTERMOST and name it first in the output \u2014 tuple unpacking does the rest."}
+{"id": 360, "hint": "A leading '()' output group adds the channel axis a grayscale image needs to enter image pipelines."}
+{"id": 361, "hint": "Handing einops a list makes the list index the first pattern axis \u2014 an identity pattern is t.stack."}
+{"id": 362, "hint": "'(c split)' puts the group index INNERMOST \u2014 every other channel belongs to the other group."}
+{"id": 363, "hint": "einops.reduce 'c (h h2) (w w2) -> c h w', 'mean', h2=3, w2=3."}
+{"id": 364, "hint": "Factor the batch into grid rows and columns, then merge each with its matching spatial axis \u2014 channels ride along at the end."}
+{"id": 365, "hint": "List-as-batch plus a permutation that sends the new axis to the back \u2014 one call."}
+{"id": 367, "hint": "Drop only the spatial letters; batch and channel both survive."}
+{"id": 368, "hint": "Factor each spatial axis into (kept, 2) and reduce the three pooled factors away with max."}
+{"id": 369, "hint": "Factor the channel axis three ways, swap the two outer factors in the output group, merge back."}
+{"id": 370, "hint": "Reduce b, h, AND w to singletons, keeping only c at full size \u2014 the statistic is shared across the batch."}
+{"id": 371, "hint": "Factor the batch into (hs, ws, b) and interleave hs into height and ws into width."}
+{"id": 372, "hint": "Factor as (g, c), emit as (c, g) \u2014 a transpose hidden inside one axis."}
+{"id": 373, "hint": "'h w c -> (c h) w ()' \u2014 channel-major row stack plus a trailing singleton."}
+{"id": 374, "hint": "List-as-batch feeding straight into a width merge \u2014 stack and concatenate in one pattern."}
+{"id": 375, "hint": "Factor time into (kept, 2) and average the pair factor away."}
+{"id": 376, "hint": "'b h w c -> h (b w) c' \u2014 the (b w) group lays the images side by side."}
+{"id": 377, "hint": "Pooling factors reduce away while the surviving axes merge into the flat feature vector \u2014 one pattern, two jobs."}
+{"id": 378, "hint": "Same pair-pooling pattern with the window length as a parameter."}
+{"id": 379, "hint": "'b c h w -> b c w h' \u2014 pure axis permutation, no groups needed."}
+{"id": 380, "hint": "Permute to channels-last first (conceptually), then the (b h) merge is contiguous \u2014 einops fuses both."}
+{"id": 381, "hint": "'(r nc) h w ch -> (r h) (nc w) ch' with r=2 \u2014 4 images, 2\u00d72 grid, row-major."}
+{"id": 382, "hint": "'(r nc) h w ch -> (r h) (nc w) ch' with r=3 \u2014 6 images to a 3\u00d72 montage."}
+{"id": 383, "hint": "'(r c)' with the new index OUTER copies the whole channel block, keeping original channel order within each copy."}
+{"id": 384, "hint": "Bring heads next to depth first, then merge them \u2014 head index outer so each head's features stay contiguous."}
+{"id": 385, "hint": "einops.repeat 'c h w -> c h (w 4)' \u2014 each column appears four times in a row."}
+{"id": 388, "hint": "Swap the first two letters \u2014 the classic batch-first/time-first conversion."}
+{"id": 389, "hint": "'(g1 g2) h w c -> (g1 h) (g2 w) c' with g1=3 \u2014 three rows, two columns."}
+{"id": 390, "hint": "Merging loses the factorization \u2014 the inverse pattern must be told one factor and infers the other."}
+{"id": 391, "hint": "Adjacent trailing axes merge row-major \u2014 one reshape."}
+{"id": 392, "hint": "Batch merges into height with b outermost \u2014 channels move in front first so the merge is contiguous."}
+{"id": 393, "hint": "'(p two) h w -> two p h w', two=2 \u2014 pair-member axis splits out to the front."}
+{"id": 394, "hint": "One pattern can mint the batch axis AND merge everything else \u2014 '()' plus a merged group."}
+{"id": 395, "hint": "'b c (h h1) (w w1) -> b (h1 w1 c) h w' \u2014 block positions fold INTO channels."}
+{"id": 396, "hint": "Factor the feature axis into (heads, per-head depth) and move heads ahead of time \u2014 the inverse of concat-heads."}
+{"id": 397, "hint": "Permute spatial to the front, then merge the two remaining axes in their stated order."}
+{"id": 398, "hint": "Same stitch as the channels-last version \u2014 only the channel letter's position in the pattern moves."}
+{"id": 399, "hint": "einops.reduce 'b h w c -> b h w ()', 'mean' \u2014 average channels, keep the axis."}
+{"id": 400, "hint": "'(w b)' with b INNER interleaves the batches column by column \u2014 the merge order is the semantics."}
+{"id": 401, "hint": "'(h p1) (w p2) c -> (h w) p1 p2 c', p1=p2=3 \u2014 patch grid flattens to one axis."}
+{"id": 402, "hint": "Column max: einops.reduce(img, 'h w c -> () w c', 'max'), then subtract."}
+{"id": 403, "hint": "Factor width, then merge the inner factor into height with it OUTERMOST in '(w4 h)' \u2014 the folded strips stack above one another."}
+{"id": 404, "hint": "Factor both spatial axes into (tile, within-tile) and merge the two tile indices into the leading patch-list axis."}
+{"id": 405, "hint": "floor((H + 2P \u2212 K)/S) + 1, with `//` for the floor."}
+{"id": 406, "hint": "Padded extent minus kernel gives the sliding room; divide by stride (floor) and add the starting position."}
+{"id": 407, "hint": "Run it: `tuple(conv(x).shape)` \u2014 trust the empirical shape over your arithmetic."}
+{"id": 408, "hint": "One output value is a dot product across every input channel of every kernel cell."}
+{"id": 409, "hint": "The kernel loses k-1 pixels of extent; splitting that evenly between the two sides restores them."}
+{"id": 410, "hint": "`x.new_full((n + 2*pad,), 0)` allocates; `out[pad:-pad] = x` fills the middle."}
+{"id": 411, "hint": "(out_channels, in_channels, kH, kW)."}
+{"id": 412, "hint": "`conv.bias is None` \u2014 with bias=False the attribute is literally None."}
+{"id": 413, "hint": "Sum `p.numel()` over `.parameters()`; BN(16) adds 32 learnables (weight+bias)."}
+{"id": 414, "hint": "`F.conv2d(x, k)` \u2014 the functional API takes input and kernel directly."}
+{"id": 416, "hint": "Weights are one c_in x k x k block per output channel; bias adds one scalar per output channel."}
+{"id": 417, "hint": "`tuple(pool(x).shape)` \u2014 batch and channels pass through, spatial dims halve."}
+{"id": 418, "hint": "`x.mean(dim=(2, 3))` \u2014 average away exactly the two spatial dims."}
+{"id": 419, "hint": "`nn.Flatten()(x)` \u2014 default start_dim=1 keeps the batch dim."}
+{"id": 420, "hint": "2 \u00d7 num_features \u2014 \u03b3 and \u03b2; the running stats are buffers."}
+{"id": 421, "hint": "`module.named_buffers()` yields (name, tensor) pairs."}
+{"id": 422, "hint": "`.train()` / `.eval()` flip the boolean `.training` attribute."}
+{"id": 423, "hint": "Register `self.fc = nn.Linear(i, o)` after `super().__init__()`; forward applies it."}
+{"id": 424, "hint": "`nn.Parameter(torch.randn(*shape))` \u2014 the wrapper IS the registration."}
+{"id": 425, "hint": "Chain rule on (wx - y)^2: derivative 2(wx - y) times the inner derivative x; then step downhill."}
+{"id": 426, "hint": "`with torch.inference_mode():` \u2014 outputs inside don't track grad."}
+{"id": 427, "hint": "Loop `p.requires_grad_(False)` over `.parameters()`; then count survivors."}
+{"id": 428, "hint": "`.eval()` recurses \u2014 check `model.training` AND each child's flag."}
+{"id": 429, "hint": "`.amax(dim=...)` reduces the given dim away; rows survive when you reduce dim 1."}
+{"id": 430, "hint": "Reduce dim 0 for column maxes; compare `isinstance(..., torch.Tensor)` on both results."}
+{"id": 431, "hint": "`.unfold(2, 2, 2).unfold(3, 2, 2)` carves 2\u00d72 windows; then one `.amax(dim=(4, 5))`."}
+{"id": 432, "hint": "`torch.nn.init.constant_(w, value)` \u2014 the trailing underscore = in place."}
+{"id": 433, "hint": "`torch.nn.init.normal_(w, mean=mean, std=0.0)` \u2014 std 0 makes every draw the mean."}
+{"id": 434, "hint": "Seed first (`torch.manual_seed(0)`), then `normal_(w, 0.0, 1.0)`, then `constant_(b, c)`."}
+{"id": 435, "hint": "out = `x * x * x`; pass grad_out into `out.backward(grad_out)`; x.grad = 3x\u00b2\u00b7grad_out."}
+{"id": 436, "hint": "Sigmoid's derivative is expressible from its OUTPUT alone \u2014 y(1-y) \u2014 then multiply by whatever gradient arrived from above."}
+{"id": 437, "hint": "ReLU's gradient gates grad_out by which pre-activations were positive; then the linear layer's two gradients are an outer product (for W) and a transposed matvec (for x)."}
+{"id": 438, "hint": "`F.cross_entropy(logits, targets)` \u2014 it applies log-softmax internally."}
+{"id": 439, "hint": "`-F.log_softmax(logits, dim=0)[target]` vs `F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))`."}
+{"id": 441, "hint": "theta_new = `theta - lr * grad` \u2014 move AGAINST the gradient."}
+{"id": 442, "hint": "Each step: fresh loss, `backward()`, `x -= lr * x.grad` under no_grad, then `x.grad.zero_()`."}
+{"id": 443, "hint": "Residual first (X theta - y), then push it back through X.T with the 2/n factor from differentiating the squared mean."}
+{"id": 444, "hint": "Sum numel over the iterator twice \u2014 the second pass sees nothing. Lists don't exhaust."}
+{"id": 445, "hint": "`params = list(model.parameters())` once; each step `p -= lr * p.grad` under no_grad."}
+{"id": 446, "hint": "`list(gen)` materializes; a list can be summed twice and both sums agree."}
+{"id": 447, "hint": "Branch on isinstance(int): scalars duplicate, sequences convert element-wise \u2014 and always emit a plain tuple of ints."}
+{"id": 448, "hint": "Normalize every hyperparameter to a pair FIRST, then run the size formula independently per axis."}
+{"id": 449, "hint": "Write to_pair once and map it over the three arguments \u2014 mixed int/list/tuple inputs all canonicalize the same way."}
+{"id": 450, "hint": "`M.backward(dLdM)`; X.grad has X's shape (dLdM @ Y\u1d40), Y.grad has Y's (X\u1d40 @ dLdM)."}
+{"id": 451, "hint": "Straight translation: `dLdM @ Y.t()` and `X.t() @ dLdM`."}
+{"id": 452, "hint": "L = \u00bd\u03a3M\u00b2 makes dL/dM = M; manual gX = M @ Y\u1d40, gY = X\u1d40 @ M (detached)."}
+{"id": 453, "hint": "`x.var(unbiased=False)` divides by N; `unbiased=True` (the default) by N\u22121."}
+{"id": 454, "hint": "Reduce over dims (0, 2, 3) \u2014 everything except the channel dim; var with `unbiased=False`."}
+{"id": 455, "hint": "BN with `affine=False`, `.train()`; manual: mean/var over (0,2,3) keepdim, biased, then (x\u2212\u03bc)/\u221a(\u03c3\u00b2+\u03b5)."}
+{"id": 456, "hint": "Each step keeps a (1-mu) share of the old value and adds a mu share of the new one \u2014 a loop with one line of state."}
+{"id": 458, "hint": "Fold in order: `m = beta * m + (1 - beta) * g` per gradient."}
+{"id": 459, "hint": "Reshape all four vectors to (1, C, 1, 1); then (x\u2212m)/\u221av \u00b7 w + b broadcasts cleanly."}
+{"id": 460, "hint": "`weight.reshape(1, weight.shape[0], 1, 1)` \u2014 C on dim 1, singletons elsewhere."}
+{"id": 461, "hint": "Try the raw add; on RuntimeError, `bias.reshape(1, C, 1, 1)` fixes alignment."}
+{"id": 462, "hint": "`F.pad(x, (1, 1), value=...)` then `.unfold(1, 3, 1).max(dim=2).values`."}
+{"id": 463, "hint": "`nn.MaxPool1d(2, 2, padding=1)`; edge outputs are real values, never 0."}
+{"id": 465, "hint": "Sum dim 0 while too many dims; then `sum(i, keepdim=True)` per size-1 axis."}
+{"id": 466, "hint": "Same reduction; with non-uniform grads each output position contributes its own value."}
+{"id": 467, "hint": "`(x + y).sum().backward()`; each grad = number of broadcast copies."}
+{"id": 468, "hint": "Store the args in `__init__` (after `super().__init__()`); `extra_repr` returns one f-string."}
+{"id": 469, "hint": "repr(m) becomes `Scale(dim=16, factor=2.5)` \u2014 your extra_repr fills the parens."}
+{"id": 470, "hint": "Create `self.lin` in `__init__`; repr shows your extra_repr line ABOVE the `(lin): ...` child line."}
+{"id": 471, "hint": "`set_grad_enabled(False)` beats per-tensor flags; restore `prev` before returning."}
+{"id": 472, "hint": "Record `is_grad_enabled()` first; a computed with the flag off never tracks."}
+{"id": 473, "hint": "The in-place update needs `torch.no_grad()`; afterwards w still requires grad."}
+{"id": 474, "hint": "loss = `(w * x).sum()`, then `loss.backward()`; d(loss)/dw is just x."}
+{"id": 475, "hint": "loss = `(W @ x).pow(2).sum()`; a gradient always has its parameter's shape."}
+{"id": 476, "hint": "MSE with `.mean()` divides the gradient by numel; update inside `torch.no_grad()`."}
+{"id": 477, "hint": "One call: `model.requires_grad_(False)` \u2014 it recurses; count elements with `numel()`."}
+{"id": 478, "hint": "Freeze, forward, `.sum()`; check `y.requires_grad` and `y.grad_fn is None`."}
+{"id": 479, "hint": "Freeze all, then `model[idx].requires_grad_(True)` re-enables just that layer."}

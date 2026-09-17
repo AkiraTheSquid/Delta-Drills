@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_4_3",
+  "title": "implement forward_and_back",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_3_exercise-implement-forward-and-back.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 3,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "manual-chain-forward-and-back", "role": "core", "evidence": "Solution hand-writes the forward graph (d=a*b, e=log(c), f=d*e, g=log(f)) then manually plumbs grad_out through log_back/multiply_back0/back1 calls without autograd — the warm-up scaffold this exercise is named after"},
+    {"id": "log-back", "role": "core", "evidence": "dg_df = log_back(grad_out=final_grad_out, out=g, x=f); dg_dc = log_back(dg_de, e, c) — log-back called twice in the chain"},
+    {"id": "multiply-back", "role": "core", "evidence": "dg_dd = multiply_back0(dg_df, f, d, e); dg_de = multiply_back1(dg_df, f, d, e); dg_da = multiply_back0(dg_dd, d, a, b); dg_db = multiply_back1(dg_dd, d, a, b) — 4 multiply_back calls"},
+    {"id": "arg-position-back-functions", "role": "core", "evidence": "Solution dispatches to multiply_back0 for arg-0 (x) and multiply_back1 for arg-1 (y) per each multiply node"},
+    {"id": "end-grad-default-ones-like", "role": "core", "evidence": "final_grad_out = np.ones_like(g) — markdown explicitly explains 'we'll just be using the default behaviour where v is a tensor of 1s — equivalent to L = g.sum()' (directional derivative)"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "Every _back call uses the (grad_out, out, x[, y]) signature; the exercise drills the convention by repetition across 6 calls"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — matches seed prediction of 7 (1 less). The 'see backprop by hand' exercise — pure plumbing of the per-op _back functions without any autograd framework. Predecessor of the §6 backprop traversal."
+}

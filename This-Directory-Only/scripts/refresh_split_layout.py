@@ -2,13 +2,90 @@
 from __future__ import annotations
 
 import argparse
+from fnmatch import fnmatch
 from pathlib import Path
 
 
 SHARED_DIRNAME = "Local_Deployed_Shared"
 THIS_DIRNAME = "This-Directory-Only"
-ALLOWED_ROOT_NAMES = {".git", ".gitignore", ".dockerignore", ".vercel", SHARED_DIRNAME, THIS_DIRNAME}
+ALLOWED_ROOT_NAMES = {
+    ".git",
+    ".gitignore",
+    ".dockerignore",
+    ".vercel",
+    "index.html",
+    "vercel.json",           # deploy-branch git config (disables Vercel git auto-deploy). Added 2026-06-02.
+    SHARED_DIRNAME,
+    THIS_DIRNAME,
+    # Dev-only top-level resources (not deployed to Vercel; live at root for
+    # build tooling and reference). Added 2026-05-23.
+    "arena-book",            # Jupyter Book source — built by build_arena_book.sh
+    "arena-book-colab",      # Colab-rendered ARENA chapters (archival)
+    "arena-procedural-drills",  # iter-5 atom-level procedural drill drafts
+    "concept-graph",         # top-level concept-graph workspace (separate from Local_Deployed_Shared/concept-graph)
+    "papers",                # research notes (mastery estimation refs, verification logs)
+    "docs",                  # architecture / model-evidence docs (dev-only). Added 2026-05-31.
+    "scripts",               # dev-only build tooling (solution-Colab authoring/validation). Added 2026-05-31.
+    ".claude",               # Claude Code per-project session state
+    ".directory",            # KDE Dolphin folder-icon metadata (dev-only). Added 2026-07-18.
+    "CLAUDE.md",             # Claude Code project instructions (graphify). Added 2026-07-11.
+    "README.md",             # repo README — prose only, same dev-only category as
+                             # CLAUDE.md above and never served by Vercel (the
+                             # deploy publishes Local_Deployed_Shared/, not root).
+                             # Added 2026-08-22.
+    "graphify-out",          # graphify knowledge graph output (dev-only)
+    "extension",             # Chrome MV3 side panel — loaded unpacked from disk,
+                             # never served by Vercel. Added 2026-07-31.
+    "instructions",          # written specs awaiting sign-off (dev-only, prose
+                             # only, nothing importable). Added 2026-07-31.
+    "storage",               # the local backend's STORAGE_DIR (backend/.env points
+                             # it here; delta_drills_local.sh creates it). Gitignored,
+                             # never deployed — but it appears after every local run
+                             # and used to abort the deploy. Added 2026-09-05.
+    "tools",                 # design/measurement harnesses run from THIS machine
+                             # (tools/visual-diff drives Chrome over CDP to diff
+                             # our ARENA notebook against LessWrong's). Dev-only,
+                             # never served — the deploy publishes
+                             # Local_Deployed_Shared/, not root. Added 2026-09-02.
+    "content-mcp",           # stdio MCP server + dd-content CLI for editing
+                             # lesson/graph/drill content from outside the app.
+                             # Runs on this machine against the repo; the backend
+                             # never imports it. Added 2026-09-02.
+    ".mcp.json",             # project-scoped MCP server registration read by the
+                             # `claude` CLI, not by anything we ship.
+                             # Added 2026-09-02.
+    ".content-mcp",          # content-mcp's machine-local state: its rolling
+                             # content snapshot and its session token. Gitignored
+                             # by nature — a snapshot is a rollback for THIS
+                             # checkout and a token is a credential. Added
+                             # 2026-09-02, after it aborted a deploy: this guard
+                             # walks the working tree, so .gitignore does not
+                             # hide a path from it.
+    ".openclaude",           # OpenClaude agent session state / worktrees
+    "ops",                   # operator tooling run from THIS machine, never by
+                             # the app: the question-repair runner that drives
+                             # the local `claude` CLI. Deliberately outside
+                             # This-Directory-Only — the backend must not be
+                             # able to import it, and ops/watch.py asserts that.
+                             # Added 2026-08-18.
+}
+ALLOWED_ROOT_GLOBS = ("*.md",)
 ALLOWED_SPLIT_METADATA_NAMES = {".gitignore", ".vercelignore", ".vercel"}
+
+# The Vercel CLI writes `.env.local` beside the `.vercel/` directory already
+# allowed above — same tool, same directory, and `Local_Deployed_Shared/
+# .gitignore` line 2 (`.env*.local`) already excludes the whole family, so it
+# can never be committed or rsynced into a build. Without this the guard aborts
+# the deploy on an artifact the deploy itself produces: step 5b runs `vercel`
+# inside the Deployed shared dir, and step 4 of the NEXT deploy then re-checks
+# that same dir and fails. Added 2026-08-22 after exactly that.
+ALLOWED_SPLIT_METADATA_GLOBS = (".env*.local",)
+
+
+def _is_allowed_split_metadata(name: str) -> bool:
+    if name in ALLOWED_SPLIT_METADATA_NAMES:
+        return True
+    return any(fnmatch(name, pattern) for pattern in ALLOWED_SPLIT_METADATA_GLOBS)
 
 
 def main() -> None:
@@ -32,16 +109,19 @@ def main() -> None:
         for child in sorted(directory.iterdir(), key=lambda item: item.name):
             if child.name == ".git":
                 raise RuntimeError(f"Hidden repo metadata must stay at root, not under split dirs: {child}")
-            if child.name.startswith(".") and child.name not in ALLOWED_SPLIT_METADATA_NAMES:
+            if child.name.startswith(".") and not _is_allowed_split_metadata(child.name):
                 raise RuntimeError(f"Unexpected hidden metadata inside split dir: {child}")
 
     for child in root.iterdir():
         if child.name in ALLOWED_ROOT_NAMES:
             continue
+        if any(fnmatch(child.name, pat) for pat in ALLOWED_ROOT_GLOBS):
+            continue
         if child.is_symlink():
             child.unlink()
             continue
         raise RuntimeError(f"Unexpected root-level path outside split layout: {child}")
+
 
 
 if __name__ == "__main__":

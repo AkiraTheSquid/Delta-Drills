@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_4_17",
+  "title": "2D matmul",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_17_exercise-2d-matmul.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 17,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "matmul-back-transpose-pair", "role": "core", "evidence": "def matmul2d_back0: return grad_out @ y.T; def matmul2d_back1: return x.T @ grad_out — the defining matmul-backprop identity"},
+    {"id": "arg-position-back-functions", "role": "core", "evidence": "Separate matmul2d_back0 and matmul2d_back1 with asymmetric formulas (grad_out @ y.T vs x.T @ grad_out)"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def matmul2d_back0(grad_out: Arr, out: Arr, x: Arr, y: Arr) -> Arr"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "matmul = wrap_forward_fn(_matmul2d); BACK_FUNCS.add_back_func(_matmul2d, 0, matmul2d_back0); add_back_func(_matmul2d, 1, matmul2d_back1)"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "matmul = wrap_forward_fn(_matmul2d) — wraps the user-defined _matmul2d (since np.matmul on multi-D would need unbroadcast)"},
+    {"id": "matmul-2d", "role": "core", "evidence": "_matmul2d(x, y) returns x @ y — restricts to the 2D matmul case; markdown: 'restricting it to the simpler case where both inputs are 2D (this means we don't need to worry about unbroadcasting or anything)'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — under seed prediction of 8. Cleanly contained: the math derivation (the @ y.T / x.T @ identity) is the load-bearing concept; everything else is standard wrap+register. Cross-part reuse: matmul-2d (R9 candidate from part 1 vocab)."
+}

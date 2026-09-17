@@ -1,0 +1,806 @@
+{
+ "label": "einops-00",
+ "reviewers": [
+  "fable",
+  "astra"
+ ],
+ "groups": [
+  {
+   "kc": "einops.einsum",
+   "ids": [
+    847,
+    848,
+    849,
+    850,
+    851,
+    852,
+    853,
+    854,
+    855,
+    856,
+    857,
+    858,
+    859,
+    860,
+    861,
+    862,
+    863,
+    864,
+    865,
+    866,
+    867,
+    868,
+    869,
+    870,
+    871,
+    872,
+    873,
+    874,
+    875,
+    876,
+    877,
+    878,
+    879,
+    880,
+    881,
+    882,
+    883,
+    884,
+    885,
+    886,
+    887,
+    888
+   ],
+   "rules": {},
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"c777636d-2f69-4096-9215-5fab917ab9f3\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":112,\"uuid\":\"d830d7ea-f07b-417a-879d-eb89bdcb0c34\",\"queued_turn_count\":0}\n",
+     "seconds": 0.638556
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "{\n    \"setup_code\": \"import torch as t\\nimport einops\\n\",\n    \"call\": \"solve([1, 1], [1, 1], [[0, 1], [1, 0]])\",\n    \"expected_expr\": \"[[0, 1], [1, 0]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"16\",\n    \"why\": \"Keeping nothing sums the masked products into one number.\"\n   }\n  ],\n  \"expected_artifact_type\": \"stdout\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 3.251397
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.merge-axes",
+   "ids": [
+    889,
+    890,
+    891,
+    892,
+    905,
+    906,
+    907,
+    908
+   ],
+   "rules": {
+    "889": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "890": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "891": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "892": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "905": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (5)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "906": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (5)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "907": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (5)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "908": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (5)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"5352bd51-d287-447a-9582-24cbdf73127d\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":109,\"uuid\":\"8141e2bf-9e6c-4833-a8f8-59f89e00fd0e\",\"queued_turn_count\":0}\n",
+     "seconds": 0.635156
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "s\\n\",\n    \"call\": \"solve([[[1, 2, 3]], [[4, 5, 6]]])\",\n    \"expected_expr\": \"[[1, 4], [2, 5], [3, 6]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[[0, 4, 2, 6], [1, 5, 3, 7]]\",\n    \"why\": \"`(h c)` interleaves the channels' rows; the task wants each channel's block whole.\"\n   }\n  ],\n  \"expected_artifact_type\": \"image\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 4.842858
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.repeat-model",
+   "ids": [
+    893,
+    894,
+    895,
+    896,
+    897,
+    898,
+    899,
+    900,
+    901,
+    902,
+    903,
+    904,
+    933,
+    934,
+    935,
+    936,
+    937,
+    938,
+    939,
+    940
+   ],
+   "rules": {
+    "893": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "894": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "895": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "896": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "897": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "898": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "899": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "900": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "901": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (4)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "902": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (4)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "903": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (4)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "904": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (4)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "933": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "934": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "935": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "936": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "937": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "938": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.std, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "939": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.std, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "940": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B3)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.std, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"6d0dbf3b-7480-4a7b-81a2-87cb652f9259\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":154,\"uuid\":\"f13731f0-564b-473a-8988-31436ff1ff43\",\"queued_turn_count\":0}\n",
+     "seconds": 1.15713
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "05, 1.6003]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[[-0.7071, -0.7071, -0.7071, -0.7071, -0.7071, -0.7071, -0.7071], [0.7071, 0.7071, 0.7071, 0.7071, 0.7071, 0.7071, 0.7071]]\",\n    \"why\": \"Reduced over WEEKS (per day-of-week) instead of over the days of each week.\"\n   }\n  ],\n  \"expected_artifact_type\": \"stdout\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 4.713468
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.grids-montage",
+   "ids": [
+    909,
+    910,
+    911,
+    912
+   ],
+   "rules": {
+    "909": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (6)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "910": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (6)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "911": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (6)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "912": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (6)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"07571348-07a0-4558-8110-64b8de1bcae3\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":100,\"uuid\":\"df52c5ac-02df-4785-bc33-ec4a7ef80c82\",\"queued_turn_count\":0}\n",
+     "seconds": 0.648814
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": " [2, 3], [4, 5], [6, 7], [8, 9], [10, 11], [12, 13], [14, 15]]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[[[0, 1, 4, 5], [2, 3, 6, 7], [8, 9, 12, 13], [10, 11, 14, 15]]]\",\n    \"why\": \"That is the row-major fill from the notebook: image 1 lands to the RIGHT of image 0.\"\n   }\n  ],\n  \"expected_artifact_type\": \"image\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 3.58197
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.pattern-language",
+   "ids": [
+    913,
+    914,
+    915,
+    916
+   ],
+   "rules": {
+    "913": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (7)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "914": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (7)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "915": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (7)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "916": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (7)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"6fc691d0-7e86-4a74-85fa-ad2537dc0904\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":95,\"uuid\":\"61f3528f-0961-468b-9455-347d511fc9f4\",\"queued_turn_count\":0}\n",
+     "seconds": 0.630515
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "e([[[[0, 1], [2, 3]]], [[[4, 5], [6, 7]]]])\",\n    \"expected_expr\": \"[[[[0, 1], [2, 3]], [[4, 5], [6, 7]]]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[[[[0, 2], [1, 3]], [[0, 2], [1, 3]]], [[[4, 6], [5, 7]], [[4, 6], [5, 7]]]]\",\n    \"why\": \"h and w were swapped as well.\"\n   }\n  ],\n  \"expected_artifact_type\": \"image\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 4.130306
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.pooling",
+   "ids": [
+    917,
+    918,
+    919,
+    920
+   ],
+   "rules": {
+    "917": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (8)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "918": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (8)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "919": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (8)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "920": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of exercise (8)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"6a480536-d5a7-4fb8-8bb3-30adfa6c9b6a\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":88,\"uuid\":\"ee08a444-06d9-4733-80ae-92bfda43591d\",\"queued_turn_count\":0}\n",
+     "seconds": 0.627586
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "rch as t\\nimport einops\\n\",\n    \"call\": \"solve([[[[1, 2], [3, 4]]], [[[8, 8], [8, 8]]]])\",\n    \"expected_expr\": \"[[[4, 8]]]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[[[3], [7]]]\",\n    \"why\": \"That stacked the pooled images vertically; side by side merges b into WIDTH.\"\n   }\n  ],\n  \"expected_artifact_type\": \"image\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 4.389534
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.split-axes",
+   "ids": [
+    921,
+    922,
+    923,
+    924,
+    925,
+    926,
+    927,
+    928
+   ],
+   "rules": {
+    "921": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.arange, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "922": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.arange, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "923": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.arange, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "924": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.arange, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "925": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     },
+     {
+      "code": "GIVE_PROMPT",
+      "severity": "major",
+      "quote": "torch.tensor, which is what the learner is supposed to choose. Describe the goal instead.",
+      "fix": "Describe the goal, not the call."
+     }
+    ],
+    "926": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "927": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "928": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (A2)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"af6bd23f-a035-44ba-bb64-c15994074c16\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":107,\"uuid\":\"0919c23a-11d6-4088-8408-16b9887fa1cf\",\"queued_turn_count\":0}\n",
+     "seconds": 0.648535
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "6]])\",\n    \"expected_expr\": \"[1, 2, 3, 4, 5, 6]\"\n   },\n   {\n    \"setup_code\": \"import torch as t\\nimport einops\\n\",\n    \"call\": \"solve([[9]])\",\n    \"expected_expr\": \"[9]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[1, 3, 2, 4]\",\n    \"why\": \"`(w h)` reads DOWN the columns.\"\n   }\n  ],\n  \"expected_artifact_type\": \"stdout\",\n  \"difficulty_label\": \"easy\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 4.63687
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  },
+  {
+   "kc": "einops.reduce-model",
+   "ids": [
+    929,
+    930,
+    931,
+    932
+   ],
+   "rules": {
+    "929": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "930": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "931": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ],
+    "932": [
+     {
+      "code": "STMT_SELF_CONTAINED",
+      "severity": "major",
+      "quote": "Variant of (B1)",
+      "fix": "The drill is served alone, in any order. Say what the exercise did instead of pointing at it."
+     }
+    ]
+   },
+   "reviews": {
+    "fable": {
+     "reviewer": "fable",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "",
+     "stdout_tail": "{\"duration_api_ms\":0,\"stop_reason\":\"stop_sequence\",\"session_id\":\"f59fd2bb-e3db-4e3b-9bcb-df30fef8f972\",\"total_cost_usd\":0,\"usage\":{\"output_tokens_details\":{\"thinking_tokens\":0},\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"\",\"iterations\":[],\"speed\":\"standard\"},\"modelUsage\":{},\"permission_denials\":[],\"terminal_reason\":\"api_error\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subagent_stats\":{\"spawned\":0,\"requested\":{\"background\":0,\"foreground\":0,\"unset\":0},\"started_in_background\":0,\"max_depth\":0,\"spawned_by_subagents\":0,\"completed\":0,\"failed\":0,\"killed\":{\"parent\":0,\"user\":0,\"system\":0},\"refused\":{\"depth_limit\":0,\"concurrency_limit\":0,\"budget\":0},\"by_type\":{}},\"is_error\":true,\"num_turns\":1,\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Not logged in \u00b7 Please run /login\",\"type\":\"result\",\"duration_ms\":97,\"uuid\":\"31831e8d-872d-41d9-87af-1f23662adc44\",\"queued_turn_count\":0}\n",
+     "seconds": 0.639827
+    },
+    "astra": {
+     "reviewer": "astra",
+     "error": "unparseable reply (exit 1)",
+     "stderr_tail": "ort einops\\n\",\n    \"call\": \"solve([[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]])\",\n    \"expected_expr\": \"[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]\"\n   }\n  ],\n  \"wrong_examples\": [\n   {\n    \"output\": \"[4.0, 6.0]\",\n    \"why\": \"Keeping `w` gives one mean per WEEK; the day-of-week mean keeps `d`.\"\n   }\n  ],\n  \"expected_artifact_type\": \"stdout\",\n  \"difficulty_label\": \"medium\"\n }\n]\n\nReply with JSON matching the schema you were given: one entry per drill id in `items`, and the page's findings under `lesson` (verdict `not-reviewed` only if no page was given).\nhook: SessionStart\nhook: SessionStart\nhook: SessionStart Completed\nhook: SessionStart Completed\nhook: UserPromptSubmit\nhook: UserPromptSubmit Completed\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\nERROR: {\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'items', 'items'), 'required' is required to be supplied and to be an array including every key in properties. Missing 'rewrite'.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}\n",
+     "stdout_tail": "",
+     "seconds": 3.219239
+    }
+   },
+   "reconciled": {
+    "verdicts": {
+     "items": {},
+     "lesson": {}
+    },
+    "findings": []
+   }
+  }
+ ]
+}

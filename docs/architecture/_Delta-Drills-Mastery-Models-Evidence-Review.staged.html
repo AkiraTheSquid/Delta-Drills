@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Delta Drills — Current Model (EWMA)</title>
+<link rel="stylesheet" href="_katex/katex.min.css">
+<script defer src="_katex/katex.min.js"></script>
+<script defer src="_katex/contrib/auto-render.min.js"></script>
+<style>
+  @page { size: Letter; margin: 0.7in 0.8in; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 11.5pt;
+    line-height: 1.45;
+    color: #111;
+    max-width: 6.8in;
+    margin: 0 auto;
+  }
+  h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 4px; margin-bottom: 12px; }
+  h2 { font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #ccc; padding-bottom: 2px; }
+  h3 { font-size: 12pt; margin-top: 14px; color: #333; }
+  p { margin: 8px 0; }
+  blockquote {
+    border-left: 3px solid #888;
+    background: #f5f5f5;
+    padding: 6px 12px;
+    font-style: italic;
+    color: #444;
+    font-size: 10.5pt;
+  }
+  table {
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 10.5pt;
+    width: 100%;
+  }
+  th, td { border: 1px solid #999; padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 10pt; font-family: "DejaVu Sans Mono", monospace; }
+  hr { border: none; border-top: 1px dashed #aaa; margin: 18px 0; }
+  .katex-display { margin: 10px 0; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<div id="content">
+<!-- content injected below by render.py -->
+<h1>Delta Drills — Mastery Models Evidence Review</h1>
+<blockquote>
+<p><strong>Purpose.</strong> Lay out the four mastery-estimation models under consideration for the prerequisite-gated bootcamp app, present the underlying mathematics, summarise the two AI-generated reports already in hand, cross-check their claims against the audited primary sources in <code>papers/mastery-estimation/</code>, and surface the open decision points. <strong>No recommendation is made here</strong> — this is an evidence dossier for personal evaluation.</p>
+<p>Companion document: <code>Delta-Drills-Current-Model-EWMA.md</code> (full specification of the engine as deployed today).</p>
+</blockquote>
+<hr />
+<h2>0. The four candidate models</h2>
+<p>In each subsection: per-skill state, update rule, time decay (if any), the form of uncertainty (if any). Notation: $s$ is a skill; $n$ is the attempt index for that skill; $y_n\in\{0,1\}$ is the correctness of attempt $n$; $\Delta t$ is days elapsed since the previous attempt.</p>
+<h3>0.1 Exponentially Weighted Moving Average (current Delta Drills stack)</h3>
+<p><strong>Per-skill state.</strong> Two numbers plus a counter: a baseline $b_s$ (EWMA of <code>grade × difficulty / 100</code>), a correctness rate $p_s$ (EWMA of <code>1[grade &gt; 85]</code>), an attempt count $n_s$, and a last-update timestamp.</p>
+<p><strong>Update.</strong> On attempt $n$ with feedback-derived weight $\alpha(n)\in\{0.30,0.60,0.85\}$ and difficulty $d_n$:</p>
+<p>$$
+b_n = \alpha(n)\cdot\frac{\mathrm{grade}_n\cdot d_n}{100} + (1-\alpha(n))\,b_{n-1}, \qquad
+p_n = \alpha(n)\cdot\mathbf{1}[\mathrm{grade}_n>85] + (1-\alpha(n))\,p_{n-1}.
+$$</p>
+<p>Target next difficulty: $b_n\cdot\mu(p_n)$ where $\mu$ is the piecewise multiplier capped at $2.5$.</p>
+<p><strong>Time decay.</strong> Yes — multiplicative shrinkage of both $b$ and $p$ toward priors $B_0=0$, $P_0=0.5$ at half-life $\tau_{1/2}=14$ days:
+$$
+b \leftarrow B_0 + (b-B_0)\cdot 2^{-\Delta t/\tau_{1/2}}, \quad p \leftarrow P_0 + (p-P_0)\cdot 2^{-\Delta t/\tau_{1/2}}.
+$$</p>
+<p><strong>Uncertainty.</strong> None explicit. The values are always defined; there's no signal for "I don't have enough data on this skill."</p>
+<p><strong>Multi-tag credit.</strong> When a composite drill is rated, each tagged subtopic gets an independent EWMA update (equal-credit averaging).</p>
+<h3>0.2 Elo rating system</h3>
+<p><strong>Per-skill state.</strong> One number per skill ($R^{\mathrm{skill}}_s$) and one number per student ($R^{\mathrm{user}}$).</p>
+<p><strong>Predicted success on an attempt:</strong>
+$$
+\hat{y} \;=\; \frac{1}{1 + 10^{(R^{\mathrm{skill}}_s - R^{\mathrm{user}})/400}}.
+$$</p>
+<p><strong>Update on observed $y\in\{0,1\}$:</strong>
+$$
+R^{\mathrm{user}} \leftarrow R^{\mathrm{user}} + K\cdot(y - \hat{y}), \qquad
+R^{\mathrm{skill}}_s \leftarrow R^{\mathrm{skill}}_s - K\cdot(y - \hat{y}).
+$$</p>
+<p>The constant $K$ caps how much one attempt can move either rating. Educational Elo typically uses different $K$ values for student and skill, and often a decaying $K$ (large for cold start, smaller as evidence accumulates).</p>
+<p><strong>Time decay.</strong> Not in standard Elo. Glicko/Glicko-2 extensions add a "rating deviation" (RD) that grows over time, mimicking forgetting; vanilla Elo has none.</p>
+<p><strong>Uncertainty.</strong> Standard Elo: none. Glicko-2: RD plays this role.</p>
+<p><strong>Multi-tag credit.</strong> Standard approach: average the per-skill ratings of all tags on the item; update each tag's rating independently from the observed outcome. <strong>This is a known weakness</strong> — a student strong on tag A and weak on tag B gets an averaged prediction that's wrong in both directions. The published fix is <strong>M-ERS (Multidimensional Elo Rating System)</strong> from Park et al. 2019, which maintains a vector of ability estimates rather than a scalar.</p>
+<h3>0.3 Streak / mastery counter</h3>
+<p><strong>Per-skill state.</strong> One integer: the count of consecutive correct answers, plus optionally a "mastered" flag.</p>
+<p><strong>Update.</strong>
+$$
+\text{streak}_s \leftarrow \begin{cases} \text{streak}_s + 1 & y_n = 1 \\ 0 & y_n = 0 \end{cases}
+$$
+Declare "mastered" when $\text{streak}_s \ge N$ for some threshold $N$ (Khan Academy historically used $N=3$ or $5$).</p>
+<p><strong>Time decay.</strong> None native. Some implementations add: "reset to zero if no attempt for $T$ days."</p>
+<p><strong>Uncertainty.</strong> None.</p>
+<p><strong>Multi-tag credit.</strong> Each tag carries its own independent streak.</p>
+<h3>0.4 Bayesian Beta-Bernoulli with time decay</h3>
+<p><strong>Per-skill state.</strong> A Beta posterior parametrized by two counters $(\alpha_s, \beta_s)$.</p>
+<p><strong>Update on observed $y\in\{0,1\}$:</strong>
+$$
+\alpha_s \leftarrow \alpha_s + y, \qquad \beta_s \leftarrow \beta_s + (1-y).
+$$</p>
+<p><strong>Time decay between attempts</strong> (engineering choice, not part of vanilla Beta-Bernoulli): multiplicative shrinkage toward the prior $(\alpha_0,\beta_0)$ at half-life $\tau$:
+$$
+\alpha_s \leftarrow \alpha_0 + (\alpha_s-\alpha_0)\cdot 2^{-\Delta t/\tau}, \qquad
+\beta_s \leftarrow \beta_0 + (\beta_s-\beta_0)\cdot 2^{-\Delta t/\tau}.
+$$</p>
+<p><strong>Uncertainty.</strong> Yes, native:
+- Posterior mean: $\mu_s = \dfrac{\alpha_s}{\alpha_s + \beta_s}$
+- Posterior precision: $\nu_s = \alpha_s + \beta_s$ (a direct measure of evidence count)
+- Posterior variance: $\dfrac{\alpha_s \beta_s}{(\alpha_s+\beta_s)^2(\alpha_s+\beta_s+1)}$</p>
+<p>Gating typically requires BOTH the mean and the precision to clear thresholds:
+$$
+\text{Ready}(s) \;\equiv\; \mu_s \ge \theta_{\mu} \;\wedge\; \nu_s \ge \nu_{\min}.
+$$</p>
+<p><strong>Multi-tag credit.</strong> Each tag updated independently (equal credit), same as the current Delta Drills approach.</p>
+<hr />
+<h2>1. Comparison axes</h2>
+<h3>1.1 Per-skill state size</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Numbers stored per skill</th>
+<th>Numbers stored per student</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>3: $b_s$, $p_s$, $n_s$ + timestamp</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>1: $R^{\mathrm{skill}}_s$</td>
+<td>1: $R^{\mathrm{user}}$</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>1: streak count</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>2: $\alpha_s$, $\beta_s$ + timestamp</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h3>1.2 Cold-start behavior</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Behavior with 0 attempts</th>
+<th>Behavior with 1 attempt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>Cold-start ladder serves difficulty 25/50/75 for first 3 questions</td>
+<td>After 1 attempt, $b$ and $p$ exist but variance is implicit</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>Initialized to default rating (typically 1500); first attempt produces useful update</td>
+<td>Yes, usable</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>0/0; mastery flag off</td>
+<td>$\text{streak} = 1$, mastery flag off</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>Prior $(\alpha_0=1, \beta_0=1)$ gives mean $0.5$, precision $2$</td>
+<td>Updated immediately; precision $= 3$, mean tracks the observed outcome</td>
+</tr>
+</tbody>
+</table>
+<h3>1.3 Built-in uncertainty signal</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Has uncertainty?</th>
+<th>What plays that role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>No</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>No (standard); yes in Glicko/Glicko-2</td>
+<td>Rating deviation (RD) in Glicko</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>No</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>Yes, native</td>
+<td>Posterior precision $\nu = \alpha + \beta$</td>
+</tr>
+</tbody>
+</table>
+<h3>1.4 Time decay / forgetting</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Native decay?</th>
+<th>Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>Yes (14-day half-life)</td>
+<td>Multiplicative shrinkage of $b$, $p$ toward priors</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>No in standard form</td>
+<td>Glicko adds RD that grows over time</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>No native; some impls add reset-on-stale</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>No native</td>
+<td>Engineering: multiplicative shrinkage of $\alpha$, $\beta$ toward $(\alpha_0,\beta_0)$</td>
+</tr>
+</tbody>
+</table>
+<h3>1.5 Multi-tag credit assignment</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Default approach</th>
+<th>Known weakness</th>
+<th>Fix in literature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>Equal credit: each tag gets its own independent update</td>
+<td>Same as PFA-compensatory but Maier 2021 found equal-credit beat compensatory empirically</td>
+<td>None needed per Maier</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>Average ratings of tags; update each independently</td>
+<td>"Strong-on-A, weak-on-B" wrong-in-both-directions</td>
+<td>M-ERS (Park 2019) — multidimensional ability vector</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>Independent streak per tag</td>
+<td>A student short on one tag never unlocks even if strong on others</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>Independent $(\alpha,\beta)$ per tag</td>
+<td>Same as EWMA equal-credit</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3>1.6 ARENA-difficulty / ceiling problem</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Has the problem?</th>
+<th>Why / why not</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>Yes — <code>target_difficulty</code> clamped to [0,100]</td>
+<td>Global scalar with hard ceiling</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>No</td>
+<td>Ratings are relative; no fixed ceiling</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>No, but for a worse reason</td>
+<td>No scale at all — over-promotion failure mode</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>No</td>
+<td>Per-skill probability, no global scale</td>
+</tr>
+</tbody>
+</table>
+<h3>1.7 Interpretability to students</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>What you can show the student</th>
+<th>Honest interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>"72% mastery"</td>
+<td>Intuitive but conflates difficulty and accuracy</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>"Your rating: 1340, skill rating: 1280"</td>
+<td>Opaque without context</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>"3 in a row → mastered"</td>
+<td>Intuitive but loses partial state</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>"78% likely correct (based on 14 attempts)"</td>
+<td>Most honest — explicit confidence</td>
+</tr>
+</tbody>
+</table>
+<h3>1.8 Implementation cost from current state</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Required changes</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>None — already deployed</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>Replace <code>apply_feedback</code> math; add per-user rating storage; redefine ALL gate thresholds for the new relative scale</td>
+<td>Moderate. Migration of existing user state is non-trivial.</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>Trivial — counter per skill. But would mean abandoning a lot of nuance.</td>
+<td>Low engineering risk, high pedagogical risk</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>Replace <code>apply_feedback</code> math with $(\alpha,\beta)$ update; add decay; gates need both mean + precision conditions</td>
+<td>Moderate. State migration is straightforward (transform existing $p$ and $n$ into compatible $(\alpha,\beta)$).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Failure modes per model</h2>
+<h3>2.1 Current EWMA</h3>
+<ol>
+<li><strong>Ceiling effect on <code>target_difficulty</code>.</strong> Once a student plateaus on flashcards, target_difficulty clamps at 100 and the engine has no way to represent "ready for harder-than-flashcard content." Real, affects ARENA gating.</li>
+<li><strong>No native confidence signal.</strong> A student with 3 attempts is treated like a student with 30; the only way to know how thin the evidence is is to read $n_s$ separately.</li>
+<li><strong>Two-EWMA aggregation.</strong> Engine stores both $b_s$ and $p_s$. Gating code uses $p_s\cdot 100$; difficulty selection uses $b_s\cdot\mu(p_s)$. These can disagree (high $p$ with low $b$ = lucky on easy questions; passes gate, shouldn't).</li>
+</ol>
+<h3>2.2 Elo</h3>
+<ol>
+<li><strong>No forgetting in standard form.</strong> A skill mastered a year ago is treated identically to one mastered yesterday unless you bolt on Glicko-style RD growth.</li>
+<li><strong>Multi-tag averaging is a known weakness</strong> (cf. Park 2019).</li>
+<li><strong>K-factor calibration is non-trivial.</strong> Pelánek 2016 specifically tunes separate $K$ values for student vs. skill ratings, and often a decay schedule for $K$ as evidence accumulates. One global $K$ misbehaves at both cold-start and steady-state regimes.</li>
+<li><strong>Gate semantics shift entirely.</strong> Current gates like "p × 100 ≥ 70" become "$R^{\mathrm{user}} \ge R^{\mathrm{skill}}_s + \delta$" — a completely different threshold semantics that needs re-tuning skill-by-skill.</li>
+</ol>
+<h3>2.3 Streak / mastery counter</h3>
+<ol>
+<li><strong>Over-promotion failure mode.</strong> A student who gets 3 difficulty-25 cold-start questions right has the same streak as a student who got 3 difficulty-90 questions right. <strong>No difficulty awareness.</strong> This is a <em>worse</em> failure than the EWMA's ceiling problem — the model gates students as "ready for ARENA" on the basis of having gotten 3 easy questions correct.</li>
+<li><strong>No partial credit / no graduated mastery state.</strong></li>
+<li><strong>No regression handling.</strong> Hard reset on a wrong answer destroys all built-up evidence in one bad attempt.</li>
+</ol>
+<h3>2.4 Bayesian Beta-Bernoulli</h3>
+<ol>
+<li><strong>No difficulty awareness in the base form.</strong> Like the streak counter, the $(\alpha,\beta)$ update treats all correct/wrong answers identically regardless of question difficulty. Mitigation: weight the updates ($\alpha \leftarrow \alpha + w\cdot y$) where $w$ scales with difficulty — but this is engineering choice not in the audited literature.</li>
+<li><strong>Decay rate has to be set by hand.</strong> Same as the EWMA's 14-day choice — no published study tells you the right number for a bootcamp context.</li>
+<li><strong>Specific architecture (Beta + decay + prereq graph) has thin literature.</strong> One audited paper (Bijl 2025). The underlying Bayesian math is textbook; the deployment in this exact configuration is largely engineering.</li>
+</ol>
+<hr />
+<h2>3. Summary of the two AI reports</h2>
+<h3>3.1 Report 1 — "Gap Analysis"</h3>
+<p><strong>Format.</strong> Goes through each model and lists what was missing or under-developed in the prior conversation. Critique-focused, no citations.</p>
+<p><strong>Material new contributions over our prior conversation:</strong></p>
+<ol>
+<li>Reframes streak's failure mode: it's <em>over-promotion via easy questions</em>, not ceiling effects. This is correct and important.</li>
+<li>Catches that the switching cost for Elo is higher than I'd characterized: gate threshold semantics change fundamentally, not just the storage layer.</li>
+<li>Identifies that NO model addresses prerequisite-graph errors (a cross-cutting blind spot).</li>
+<li>Raises post-mastery regression UX: what does a student SEE when their mastery slides back down? Each model handles this differently and none was compared.</li>
+<li>Raises student-facing explainability as a UX dimension never compared across models.</li>
+<li>Calls out that multi-tag Elo averaging is a published weakness with a published fix (M-ERS / Park 2019).</li>
+<li>Notes that K-factor calibration depth was hand-waved in the prior comparison.</li>
+<li>Notes Pelánek 2016 (focused study on Elo for adaptive learning) is a different paper from Pelánek 2017 (broader survey of BKT/PFA/Elo), and they should be cited distinctly.</li>
+</ol>
+<p><strong>Factual issues in Report 1:</strong></p>
+<ul>
+<li>Claims a Beta-Bernoulli formula typo of the form <code>alpha → alpha + beta + (1 if wrong else 0)</code>. <strong>This formula was never written.</strong> The prior conversation showed the standard <code>alpha → alpha + 1 (on success), beta → beta + 1 (on failure)</code>. Report 1's typo allegation is unfounded.</li>
+<li>Attributes a "5+ attempts before estimates settle" claim to EWMA. The number is from Maier 2021's empirical study of Performance Factors Analysis (a different model entirely). The current EWMA settles much faster — with $\alpha=0.85$ on "A lot" feedback, the EWMA's effective memory length is ~1.2 attempts.</li>
+<li>Says "EWMA formula never shared." False as of today — the formulas are fully spelled out in <code>Delta-Drills-Current-Model-EWMA.md</code>.</li>
+</ul>
+<h3>3.2 Report 2 — "Comparative Review"</h3>
+<p><strong>Format.</strong> Survey-style with pros/cons per model, inline citation markers (<code>【1†L121-L124】</code> etc.), and a recommendation at the end. Cleaner narrative but less critical.</p>
+<p><strong>Material claims in Report 2:</strong></p>
+<ol>
+<li>Names Pelánek 2016 and 2017 as the Elo sources for educational use.</li>
+<li>Cites a specific empirical figure: <em>"Elo's task-difficulty estimates had r ≈ 0.70 correlation with ground truth after just 5 responses"</em> — attributed to citation 【16†L47-L52】.</li>
+<li>Recommends Elo as the migration target.</li>
+<li>Identifies Beta-Bernoulli as "principled" but "less field-tested" — accurate.</li>
+<li>Frames streak as a baseline that more sophisticated models outperform (consistent with Maier 2021's framing).</li>
+</ol>
+<p><strong>Issues with Report 2:</strong></p>
+<ul>
+<li>The citation markers (<code>【1†...】</code>, <code>【16†...】</code>, etc.) are opaque — without the source list it's impossible to tell which paper the "r ≈ 0.70 after 5 responses" claim originates from. <strong>This number is not directly verifiable from the report alone.</strong> Highly recommend reading Pelánek 2016 §results to confirm whether this claim exists in the original paper at the granularity stated.</li>
+<li>Does not catch the gaps Report 1 catches (streak failure mode reframing, gating-semantics-change, prereq-graph-error blind spot, post-mastery regression, explainability, M-ERS for multi-tag Elo).</li>
+<li>Hand-waves multi-tag aggregation similarly to the prior conversation (no mention of M-ERS / Park 2019, which IS in the audited corpus).</li>
+<li>Claims "moderate work" for Elo migration without addressing the gate-semantics shift.</li>
+</ul>
+<h3>3.3 Where the two reports agree</h3>
+<ul>
+<li>Elo is the strongest single recommendation if a switch is to be made.</li>
+<li>Beta-Bernoulli is principled but under-published in this exact architecture (one paper, Bijl 2025).</li>
+<li>Streak alone is too weak.</li>
+<li>EWMA is functional but has overconfidence/ceiling problems.</li>
+</ul>
+<h3>3.4 Where the two reports differ</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Report 1</th>
+<th>Report 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Streak's failure mode</td>
+<td>Over-promotion via easy questions</td>
+<td>Coarse, no partial credit</td>
+</tr>
+<tr>
+<td>Switching cost for Elo</td>
+<td>"Migration would require redefining every gate threshold"</td>
+<td>"Moderate work… retune thresholds for new scale"</td>
+</tr>
+<tr>
+<td>Multi-tag Elo</td>
+<td>Known weakness, points at M-ERS / Park 2019</td>
+<td>Default averaging is fine, no concern raised</td>
+</tr>
+<tr>
+<td>Prereq-graph errors</td>
+<td>Cross-cutting blind spot, all four models</td>
+<td>Not raised</td>
+</tr>
+<tr>
+<td>Explainability</td>
+<td>Real UX gap</td>
+<td>Not raised</td>
+</tr>
+<tr>
+<td>Strength of recommendation</td>
+<td>None — only lists open questions</td>
+<td>Elo, with migration steps</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. Cross-check of specific claims against your audited corpus</h2>
+<p>The audited papers in <code>papers/mastery-estimation/</code> are the primary sources. Below: which report's claims can be checked against which paper, and the current state of verification.</p>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Source claimed</th>
+<th>Audited paper</th>
+<th>Verification status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"PFA's compensatory model AUC 0.78; even-skill averaging AUC 0.78; conjunctive AUC 0.67"</td>
+<td>Maier 2021</td>
+<td><code>2021_maier-baker-stalzer_pfa-challenges.pdf</code> §4.3</td>
+<td><strong>Verified</strong> — read end-to-end. Numbers are: compensatory 0.7818, conjunctive 0.6725, even-skill 0.7849.</td>
+</tr>
+<tr>
+<td>"PFA needs 5+ practices per (student, skill) for reliable estimates"</td>
+<td>Maier 2021</td>
+<td>Same</td>
+<td><strong>Verified</strong> §4.1 — AUC went 0.725 → 0.755 from 2→5 practices, plateaued at ~12 practices.</td>
+</tr>
+<tr>
+<td>"Math Academy FIRe formula: <code>repNum → max(0, repNum + speed · decay^failed · rawDelta)</code> and memory decay $(0.5)^{\mathrm{days/interval}}$"</td>
+<td>Skycak 2023</td>
+<td><code>2023_skycak_fire-spaced-repetition.html</code></td>
+<td><strong>Verified</strong> — read end-to-end. Formulas reproduced verbatim from the paper.</td>
+</tr>
+<tr>
+<td>"Skycak abandoned Bayesian Knowledge Tracing for Math Academy because complexity exploded"</td>
+<td>Skycak 2023</td>
+<td>Same</td>
+<td><strong>Verified verbatim</strong> — direct quote: <em>"complexity explodes when you have to make tons of different kinds of decisions… I ended up moving towards less of a probabilistic approach and more of a 'physical' approach."</em></td>
+</tr>
+<tr>
+<td>"Elo's task-difficulty estimates had r ≈ 0.70 correlation with ground truth after just 5 responses" (Report 2)</td>
+<td>Citation 【16†L47-L52】</td>
+<td>Likely <code>2016_pelanek_elo-adaptive-educational.pdf</code></td>
+<td><strong>Not yet verified.</strong> Recommend reading Pelánek 2016 §results to confirm the exact figure and the conditions under which it was observed.</td>
+</tr>
+<tr>
+<td>"Pelánek 2017 Hypothesis 1: logistic models better for fluency/memory, BKT better for understanding/sense-making"</td>
+<td>Pelánek 2017</td>
+<td><code>2017_pelanek_bkt-logistic-and-beyond.pdf</code> p. 33</td>
+<td><strong>Verified via prior audit</strong> (the v2 mastery doc cross-checked this and noted the v1 doc misframed it).</td>
+</tr>
+<tr>
+<td>"Elo is simple, robust, and effective for adaptive education"</td>
+<td>Pelánek 2016</td>
+<td><code>2016_pelanek_elo-adaptive-educational.pdf</code> abstract</td>
+<td><strong>Likely verified</strong> (the v2 audit doc confirms abstract quote). Re-reading the §results details is the missing step.</td>
+</tr>
+<tr>
+<td>"M-ERS (Multidimensional Elo Rating System) extends Rasch-Elo to multidimensional ability vectors, fixing the multi-tag averaging weakness"</td>
+<td>Report 1</td>
+<td><code>2019_park-cornillie_multidim-irt-monitoring-ability.pdf</code></td>
+<td><strong>Not yet verified end-to-end.</strong> The v2 audit doc confirms the paper exists and introduces M-ERS; the specific claim about multi-tag handling is consistent with the paper's framing but the implementation details warrant a primary-source read.</td>
+</tr>
+<tr>
+<td>"Beta-Bernoulli + decay over a prereq graph is published only in Bijl 2025"</td>
+<td>Both reports</td>
+<td><code>2025_bijl_probabilistic-decay-trees.pdf</code></td>
+<td><strong>Partially verified.</strong> Audit doc confirms Bijl 2025 uses Beta-distribution basis functions, continuous-variable Dynamic Bayesian Network, explicit decay over a graph of skills. <strong>Not yet read end-to-end.</strong> Recommended if Beta-Bernoulli is seriously considered.</td>
+</tr>
+<tr>
+<td>"Streak / three-in-a-row is a baseline more sophisticated models outperform"</td>
+<td>Report 2</td>
+<td>Maier 2021 mentions this framing in §1</td>
+<td><strong>Verified</strong> — Maier 2021 explicitly says: <em>"most commercial adaptive learning systems still continue to either use BKT… or simpler heuristics such as three-in-a-row correct."</em></td>
+</tr>
+<tr>
+<td>"Khan Academy used streak-based mastery and moved away from it"</td>
+<td>Both</td>
+<td>Not in audited corpus</td>
+<td><strong>Unverified.</strong> Common knowledge in the ed-tech world but no primary-source citation in the corpus.</td>
+</tr>
+<tr>
+<td>"Standard Elo K-factor needs separate calibration for student vs skill ratings"</td>
+<td>Report 1</td>
+<td>Pelánek 2016 / Yudelson 2019</td>
+<td><strong>Likely verified</strong> (the v2 audit doc notes Yudelson 2019: <em>"Elo, I Love You Won't You Tell Me Your K"</em> is the dedicated K-tuning paper). Yudelson 2019 is in the corpus references but not in the downloaded set — would need to retrieve.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. Open decision points neither report fully resolves</h2>
+<p>These are the questions that need answers before code changes are made. Each is followed by where the answer would come from.</p>
+<ol>
+<li>
+<p><strong>Gate threshold values for any chosen model.</strong> For Beta-Bernoulli: what $\theta_\mu$ and $\nu_{\min}$? For Elo: what rating differential between student and skill counts as "ready"? Neither report quantifies these. <strong>Resolvable only with simulation or first-cohort data.</strong></p>
+</li>
+<li>
+<p><strong>K-factor schedule for Elo.</strong> Single value, two values (student vs skill), or decaying with experience? <strong>Pelánek 2016 + Yudelson 2019 cover this directly. Worth reading both before committing.</strong></p>
+</li>
+<li>
+<p><strong>Decay half-life for Beta-Bernoulli.</strong> Current EWMA uses 14 days. Same value for Beta? Different? <strong>No published guidance — engineering choice, tunable from data.</strong></p>
+</li>
+<li>
+<p><strong>Multi-tag credit for any chosen model.</strong> Equal-credit averaging (current) per Maier 2021 is empirically reasonable. M-ERS upgrade for Elo is published (Park 2019) but adds significant complexity. <strong>Resolution: read Park 2019 to assess whether the M-ERS upgrade is worth the complexity.</strong></p>
+</li>
+<li>
+<p><strong>Prerequisite-graph error resilience.</strong> None of the four models addresses this. The graph itself is an instructor-authored artifact subject to error. <strong>Resolution: graph-level (instructor review, sample-edge validation), not model-level. Currently deferred.</strong></p>
+</li>
+<li>
+<p><strong>Post-mastery regression UX.</strong> What does the student see when mastery slides back down? Each model produces different behavior; no comparison done. <strong>Resolution: product-design decision, not model-selection decision.</strong></p>
+</li>
+<li>
+<p><strong>Migration cost from current EWMA state.</strong> For Elo: how do you initialize $(R^{\mathrm{user}}, R^{\mathrm{skill}}_s)$ from existing $(b_s, p_s, n_s)$? For Beta: can you transform $p_s, n_s$ into $(\alpha_s, \beta_s)$ such that the migration preserves user mastery estimates? <strong>Resolution: needs a 1-page migration spec per chosen target model.</strong></p>
+</li>
+<li>
+<p><strong>Explainability target.</strong> Do you want students to see a mastery percentage? Does the chosen model support that natively? <strong>Affects choice among Elo (no native percentage) vs. Beta (native posterior probability) vs. EWMA (current 0-100).</strong></p>
+</li>
+</ol>
+<hr />
+<h2>6. Evidence tier per claim</h2>
+<p>A rough rubric for how much weight to put on each claim.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Definition</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Textbook</strong></td>
+<td>Foundational math, not in dispute</td>
+<td>Beta-Bernoulli conjugacy; Elo logistic prediction; EWMA convergence properties</td>
+</tr>
+<tr>
+<td><strong>Peer-reviewed empirical</strong></td>
+<td>Published in a venue with peer review, reproduced or replicated</td>
+<td>Maier 2021 PFA AUC numbers; Pelánek 2016/2017 surveys of BKT/Elo</td>
+</tr>
+<tr>
+<td><strong>Peer-reviewed novel proposal</strong></td>
+<td>Published but as a single-paper architecture, not replicated</td>
+<td>Park 2019 M-ERS; Bijl 2025 PDT</td>
+</tr>
+<tr>
+<td><strong>Production-validated, proprietary</strong></td>
+<td>Deployed in real systems but specific implementation not published</td>
+<td>Math Academy FIRe (formulas public, implementation proprietary)</td>
+</tr>
+<tr>
+<td><strong>Engineering construct</strong></td>
+<td>Defensible but not from a primary source</td>
+<td>Current Delta Drills 14-day half-life; the 0.30/0.60/0.85 alpha choices; the cold-start ladder 25/50/75</td>
+</tr>
+<tr>
+<td><strong>Anecdotal</strong></td>
+<td>Stated without primary-source backing</td>
+<td>"Khan Academy moved away from streak-based mastery"</td>
+</tr>
+</tbody>
+</table>
+<p>Mapping each model's components to this tier:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Mathematical core</th>
+<th>Educational application</th>
+<th>Specific parameter values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current EWMA</td>
+<td>Textbook</td>
+<td>Engineering</td>
+<td>Engineering (chosen, not derived)</td>
+</tr>
+<tr>
+<td>Elo</td>
+<td>Textbook</td>
+<td>Peer-reviewed empirical (Pelánek 2016, 2017)</td>
+<td>Engineering (K, decay schedule)</td>
+</tr>
+<tr>
+<td>Streak</td>
+<td>Trivial</td>
+<td>Anecdotal / baseline</td>
+<td>Engineering (threshold N)</td>
+</tr>
+<tr>
+<td>Beta-Bernoulli</td>
+<td>Textbook</td>
+<td>Peer-reviewed novel proposal (Bijl 2025 only)</td>
+<td>Engineering (decay half-life, gate thresholds)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>7. Reading list for personal evaluation</h2>
+<p>In the audited corpus at <code>papers/mastery-estimation/</code>. Listed in priority order if you want to verify the most load-bearing claims:</p>
+<ol>
+<li>
+<p><strong><code>2016_pelanek_elo-adaptive-educational.pdf</code></strong> — Pelánek's focused study of Elo in adaptive education. If you're considering Elo, this is the primary source. <strong>Read this to verify the "r ≈ 0.70 after 5 responses" claim from Report 2</strong> and to understand K-factor calibration choices.</p>
+</li>
+<li>
+<p><strong><code>2017_pelanek_bkt-logistic-and-beyond.pdf</code></strong> — Pelánek's broader survey. Less focused on Elo specifically but contextualizes it against BKT and logistic models. Hypothesis 1 (p. 33) is the load-bearing claim about when to prefer logistic vs BKT.</p>
+</li>
+<li>
+<p><strong><code>2019_park-cornillie_multidim-irt-monitoring-ability.pdf</code></strong> — Park 2019 / M-ERS. <strong>Read this if multi-tag Elo aggregation is a concern.</strong> Determines whether the upgrade is worth the complexity vs. just doing equal-credit averaging.</p>
+</li>
+<li>
+<p><strong><code>2021_maier-baker-stalzer_pfa-challenges.pdf</code></strong> — Maier 2021. <strong>Already read in full.</strong> Headline finding: even-skill averaging (what your current engine does for composites) AUC 0.7849 beat compensatory Performance Factors Analysis AUC 0.7818. Section 4.3 is the relevant comparison.</p>
+</li>
+<li>
+<p><strong><code>2023_skycak_fire-spaced-repetition.html</code></strong> — Math Academy's published architecture. <strong>Already read in full.</strong> Verbatim formulas for FIRe. Math Academy's deliberate rejection of Bayesian Knowledge Tracing is on the record here.</p>
+</li>
+<li>
+<p><strong><code>2025_bijl_probabilistic-decay-trees.pdf</code></strong> — Bijl 2025. <strong>Recommended if Beta-Bernoulli is seriously considered.</strong> The only published instance of a Beta-with-decay-over-graph mastery system. Single author, arXiv preprint, untested at scale — read critically.</p>
+</li>
+<li>
+<p><strong><code>2017_pelanek_bkt-logistic-and-beyond.pdf</code></strong> (same as 2 above) — also relevant for "why not BKT" rebuttals.</p>
+</li>
+</ol>
+<p>Not in the downloaded corpus but referenced and potentially worth retrieving:
+- <strong>Yudelson 2019, "Elo, I Love You Won't You Tell Me Your K"</strong> — the focused paper on K-factor calibration.
+- <strong>Glickman, "Glicko-2"</strong> — the standard extension adding rating deviation (forgetting) to Elo.</p>
+<hr />
+<p><em>Documents in this series:</em>
+- <code>Delta-Drills-Current-Model-EWMA.md</code> — complete specification of the engine deployed today
+- <code>Delta-Drills-Mastery-Models-Evidence-Review.md</code> — this document
+- <code>papers/MASTERY_ESTIMATION_REFERENCE_v2.md</code> — audited reference (v2 after the 2026-05-24 source audit that flagged ~1/3 of v1 claims as wrong or fabricated)</p>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$",  right: "$",  display: false},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "\\[", right: "\\]", display: true}
+      ],
+      throwOnError: false
+    });
+    // Signal ready for headless print.
+    setTimeout(function(){ document.title += " :: ready"; }, 600);
+  });
+</script>
+</body>
+</html>

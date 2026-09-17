@@ -1,0 +1,1694 @@
+{
+  "schema_version": "0.1",
+  "_generated_by": "scripts/derive_prereqs.py \u2014 do not edit by hand. Edit concept_edges.json or prereq_manual.json and re-run.",
+  "edges": [
+    {
+      "from": "all-reduce-grad-sync",
+      "to": "all-reduce-compose",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(all-reduce-compose\u2192all-reduce-grad-sync)"
+      ]
+    },
+    {
+      "from": "all-reduce-grad-sync",
+      "to": "all-reduce-eval-metrics",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(all-reduce-eval-metrics\u2192all-reduce-grad-sync)"
+      ]
+    },
+    {
+      "from": "any-reduce-axis",
+      "to": "boolean-mask-combine",
+      "status": "accepted",
+      "provenance": [
+        "manual:mesh test exercise pairs them: combine bool masks then call .any() to reduce \u2014 b"
+      ]
+    },
+    {
+      "from": "as-strided-windowing",
+      "to": "conv-windowing-1d",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(conv-windowing-1d\u2192as-strided-windowing)"
+      ]
+    },
+    {
+      "from": "backprop-pop-outgrad-loop",
+      "to": "end-grad-default-ones-like",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(end-grad-default-ones-like\u2192backprop-pop-outgrad-loop)"
+      ]
+    },
+    {
+      "from": "backprop-pop-outgrad-loop",
+      "to": "grads-dict-accumulate-parents",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(grads-dict-accumulate-parents\u2192backprop-pop-outgrad-loop)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "add-sub-div-back-lambdas",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(add-sub-div-back-lambdas\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "arg-position-back-functions",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(arg-position-back-functions\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "exp-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(exp-back\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "getitem-back-add-at",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(getitem-back-add-at\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "log-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(log-back\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "matmul-back-transpose-pair",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(matmul-back-transpose-pair\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "max-back-tied-half",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(max-back-tied-half\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "multiply-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(multiply-back\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "negative-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(negative-back\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "permute-back-argsort",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(permute-back-argsort\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "reshape-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(reshape-back\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-fn-signature",
+      "to": "sum-back-expand-broadcast",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(sum-back-expand-broadcast\u2192backward-fn-signature)"
+      ]
+    },
+    {
+      "from": "backward-func-lookup",
+      "to": "dispatch-back-fn-from-recipe",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dispatch-back-fn-from-recipe\u2192backward-func-lookup)"
+      ]
+    },
+    {
+      "from": "backward-on-scalar-loss",
+      "to": "bce-log-loss-real-fake",
+      "status": "accepted",
+      "provenance": [
+        "manual:GAN losses are BCE; loss.backward() pattern first"
+      ]
+    },
+    {
+      "from": "backward-on-scalar-loss",
+      "to": "cross-entropy-classification-loss",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(cross-entropy-classification-loss\u2192backward-on-scalar-loss)"
+      ]
+    },
+    {
+      "from": "backward-on-scalar-loss",
+      "to": "mse-reconstruction-loss",
+      "status": "accepted",
+      "provenance": [
+        "manual:VAE recon loss is MSE; loss.backward() pattern first"
+      ]
+    },
+    {
+      "from": "batchnorm-affine-params",
+      "to": "batchnorm-running-stats",
+      "status": "accepted",
+      "provenance": [
+        "manual:affine params taught first as the trainable bit of BN, then running stats as eva"
+      ]
+    },
+    {
+      "from": "batchnorm-affine-params",
+      "to": "bn-weight-bias-init-pattern",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(bn-weight-bias-init-pattern\u2192batchnorm-affine-params)"
+      ]
+    },
+    {
+      "from": "batchnorm-running-stats",
+      "to": "train-eval-mode-branch",
+      "status": "accepted",
+      "provenance": [
+        "manual:running stats are used in eval mode, batch stats in train mode"
+      ]
+    },
+    {
+      "from": "block-group-stack",
+      "to": "residual-skip-add",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(residual-skip-add\u2192block-group-stack)"
+      ]
+    },
+    {
+      "from": "boolean-mask-combine",
+      "to": "index-by-tensor",
+      "status": "proposed",
+      "provenance": [
+        "manual:alternative-to siblings; teach bool-mask combination first then introduce int-te"
+      ]
+    },
+    {
+      "from": "boolean-mask-combine",
+      "to": "inf-masking",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(inf-masking\u2192boolean-mask-combine)"
+      ]
+    },
+    {
+      "from": "bottleneck-latent-projection",
+      "to": "module-composition",
+      "status": "accepted",
+      "provenance": [
+        "manual:VAE bottleneck is a Linear projection between encoder and decoder \u2014 composes ins"
+      ]
+    },
+    {
+      "from": "bottleneck-latent-projection",
+      "to": "mu-logsigma-encoder-head",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(mu-logsigma-encoder-head\u2192bottleneck-latent-projection)"
+      ]
+    },
+    {
+      "from": "bottleneck-latent-projection",
+      "to": "reparameterization-trick",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(reparameterization-trick\u2192bottleneck-latent-projection)"
+      ]
+    },
+    {
+      "from": "broadcast-source-fanout",
+      "to": "broadcast-initial-weights",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(broadcast-initial-weights\u2192broadcast-source-fanout)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "any-reduce-axis",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(any-reduce-axis\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "einops-reduce-min",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(einops-reduce-min\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "einops-repeat-broadcast",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(einops-repeat-broadcast\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "einsum-contraction",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(einsum-contraction\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "matmul-2d",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(matmul-2d\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "stride-zero-broadcast",
+      "status": "accepted",
+      "provenance": [
+        "manual:broadcasting is taught as a concept first; stride=0 trick is revealed as the imp"
+      ]
+    },
+    {
+      "from": "broadcasting-rules",
+      "to": "unbroadcast-pattern",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(unbroadcast-pattern\u2192broadcasting-rules)"
+      ]
+    },
+    {
+      "from": "chain-rule-elementwise",
+      "to": "grad-expressed-in-out",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(grad-expressed-in-out\u2192chain-rule-elementwise)"
+      ]
+    },
+    {
+      "from": "contiguous-layout",
+      "to": "as-strided-windowing",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(as-strided-windowing\u2192contiguous-layout)"
+      ]
+    },
+    {
+      "from": "conv-channel-sum",
+      "to": "conv-output-shape",
+      "status": "accepted",
+      "provenance": [
+        "manual:output channel comes from the in-channel sum"
+      ]
+    },
+    {
+      "from": "conv-kernel-shape",
+      "to": "conv-output-shape",
+      "status": "accepted",
+      "provenance": [
+        "manual:output shape formula uses kernel size \u2014 taught after kernel-shape"
+      ]
+    },
+    {
+      "from": "conv-leakyrelu-block-discriminator",
+      "to": "discriminator-classifier-head",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(discriminator-classifier-head\u2192conv-leakyrelu-block-discriminator)"
+      ]
+    },
+    {
+      "from": "conv-output-shape",
+      "to": "conv-padding-zero",
+      "status": "accepted",
+      "provenance": [
+        "manual:padding modifies the output shape formula"
+      ]
+    },
+    {
+      "from": "conv-output-shape",
+      "to": "conv-stride-downsample",
+      "status": "accepted",
+      "provenance": [
+        "manual:stride divides spatial dims in the output shape formula"
+      ]
+    },
+    {
+      "from": "conv-padding-zero",
+      "to": "convtranspose-bn-activation-block",
+      "status": "accepted",
+      "provenance": [
+        "manual:generator block stacks convT-bn-activation; conv basics first"
+      ]
+    },
+    {
+      "from": "conv-stride-downsample",
+      "to": "1x1-conv-channel-reshape",
+      "status": "proposed",
+      "provenance": [
+        "concept:refines(1x1-conv-channel-reshape\u2192conv-stride-downsample)"
+      ]
+    },
+    {
+      "from": "conv-stride-downsample",
+      "to": "conv-leakyrelu-block-discriminator",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(conv-leakyrelu-block-discriminator\u2192conv-stride-downsample)"
+      ]
+    },
+    {
+      "from": "conv-windowing-1d",
+      "to": "conv-windowing-2d",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(conv-windowing-2d\u2192conv-windowing-1d)"
+      ]
+    },
+    {
+      "from": "conv-windowing-2d",
+      "to": "conv-channel-sum",
+      "status": "accepted",
+      "provenance": [
+        "manual:channel sum follows windowing in the conv2d exercise"
+      ]
+    },
+    {
+      "from": "conv-windowing-2d",
+      "to": "conv-kernel-shape",
+      "status": "accepted",
+      "provenance": [
+        "manual:kernel shape is introduced after windowing in the conv2d exercise"
+      ]
+    },
+    {
+      "from": "conv-windowing-2d",
+      "to": "convT-as-flipped-padded-conv",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(convT-as-flipped-padded-conv\u2192conv-windowing-2d)"
+      ]
+    },
+    {
+      "from": "conv-windowing-2d",
+      "to": "maxpool-reduce",
+      "status": "accepted",
+      "provenance": [
+        "manual:maxpool reuses the 2d windowing scaffold, replacing einsum with reduce-max"
+      ]
+    },
+    {
+      "from": "convT-as-flipped-padded-conv",
+      "to": "convT-init-uniform-by-kernel",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(convT-init-uniform-by-kernel\u2192convT-as-flipped-padded-conv)"
+      ]
+    },
+    {
+      "from": "convT-as-flipped-padded-conv",
+      "to": "convT-kernel-axis-swap",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(convT-kernel-axis-swap\u2192convT-as-flipped-padded-conv)"
+      ]
+    },
+    {
+      "from": "convT-as-flipped-padded-conv",
+      "to": "convtranspose-bn-activation-block",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(convtranspose-bn-activation-block\u2192convT-as-flipped-padded-conv)"
+      ]
+    },
+    {
+      "from": "convT-as-flipped-padded-conv",
+      "to": "fractional-stride-zero-insertion",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(fractional-stride-zero-insertion\u2192convT-as-flipped-padded-conv)"
+      ]
+    },
+    {
+      "from": "convT-as-flipped-padded-conv",
+      "to": "padding-amount-formula-convT",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(padding-amount-formula-convT\u2192convT-as-flipped-padded-conv)"
+      ]
+    },
+    {
+      "from": "convtranspose-bn-activation-block",
+      "to": "channel-list-reverse-build",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(channel-list-reverse-build\u2192convtranspose-bn-activation-block)"
+      ]
+    },
+    {
+      "from": "convtranspose-bn-activation-block",
+      "to": "generator-project-and-reshape",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(generator-project-and-reshape\u2192convtranspose-bn-activation-block)"
+      ]
+    },
+    {
+      "from": "cross-entropy-classification-loss",
+      "to": "arange-fancy-index-cross-entropy",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(arange-fancy-index-cross-entropy\u2192cross-entropy-classification-loss)"
+      ]
+    },
+    {
+      "from": "cross-entropy-classification-loss",
+      "to": "argmax-accuracy-eval",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(argmax-accuracy-eval\u2192cross-entropy-classification-loss)"
+      ]
+    },
+    {
+      "from": "cross-entropy-classification-loss",
+      "to": "logsumexp-cross-entropy",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(logsumexp-cross-entropy\u2192cross-entropy-classification-loss)"
+      ]
+    },
+    {
+      "from": "cross-product-normal",
+      "to": "rotation-matrix-3d",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(rotation-matrix-3d\u2192cross-product-normal)"
+      ]
+    },
+    {
+      "from": "dataclass-training-args",
+      "to": "dataclasses-replace-args",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dataclasses-replace-args\u2192dataclass-training-args)"
+      ]
+    },
+    {
+      "from": "dataclass-training-args",
+      "to": "hparam-precedence-merge",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(hparam-precedence-merge\u2192dataclass-training-args)"
+      ]
+    },
+    {
+      "from": "dataloader-batching",
+      "to": "dataloader-pin-memory-workers",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(dataloader-pin-memory-workers\u2192dataloader-batching)"
+      ]
+    },
+    {
+      "from": "dataloader-batching",
+      "to": "training-step-cycle",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(training-step-cycle\u2192dataloader-batching)"
+      ]
+    },
+    {
+      "from": "dfs-three-set-toposort",
+      "to": "cycle-detection-temp-set",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(cycle-detection-temp-set\u2192dfs-three-set-toposort)"
+      ]
+    },
+    {
+      "from": "diagonal-via-strides",
+      "to": "as-strided-windowing",
+      "status": "accepted",
+      "provenance": [
+        "manual:diagonal is the warmup trick; windowing is the generalisation taught next"
+      ]
+    },
+    {
+      "from": "diagonal-via-strides",
+      "to": "conv-windowing-1d",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(conv-windowing-1d\u2192diagonal-via-strides)"
+      ]
+    },
+    {
+      "from": "dispatch-back-fn-from-recipe",
+      "to": "back-fn-call-with-recipe-args",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(back-fn-call-with-recipe-args\u2192dispatch-back-fn-from-recipe)"
+      ]
+    },
+    {
+      "from": "dist-send-recv-pair",
+      "to": "broadcast-source-fanout",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(broadcast-source-fanout\u2192dist-send-recv-pair)"
+      ]
+    },
+    {
+      "from": "dist-send-recv-pair",
+      "to": "reduce-gather-sum",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(reduce-gather-sum\u2192dist-send-recv-pair)"
+      ]
+    },
+    {
+      "from": "einops-repeat-broadcast",
+      "to": "stack-vs-cat",
+      "status": "proposed",
+      "provenance": [
+        "manual:stack/cat appear once repeat is understood \u2014 all build batch axes"
+      ]
+    },
+    {
+      "from": "einsum-contraction",
+      "to": "matmul-2d",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(matmul-2d\u2192einsum-contraction)"
+      ]
+    },
+    {
+      "from": "elbo-loss-sum-with-beta",
+      "to": "kl-divergence-gaussian-closed-form",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(kl-divergence-gaussian-closed-form\u2192elbo-loss-sum-with-beta)"
+      ]
+    },
+    {
+      "from": "elbo-loss-sum-with-beta",
+      "to": "mse-reconstruction-loss",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(mse-reconstruction-loss\u2192elbo-loss-sum-with-beta)"
+      ]
+    },
+    {
+      "from": "ema-first-moment",
+      "to": "ema-second-moment",
+      "status": "accepted",
+      "provenance": [
+        "manual:Adam adds v_t on squared grads after m_t \u2014 m before v in curriculum"
+      ]
+    },
+    {
+      "from": "ema-second-moment",
+      "to": "sqrt-eps-stabilize",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sqrt-eps-stabilize\u2192ema-second-moment)"
+      ]
+    },
+    {
+      "from": "freeze-requires-grad",
+      "to": "replace-final-head",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(replace-final-head\u2192freeze-requires-grad)"
+      ]
+    },
+    {
+      "from": "generator-loss-fool-discriminator",
+      "to": "bce-log-loss-real-fake",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(bce-log-loss-real-fake\u2192generator-loss-fool-discriminator)"
+      ]
+    },
+    {
+      "from": "generator-loss-fool-discriminator",
+      "to": "detach-stop-gradient-trick",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(detach-stop-gradient-trick\u2192generator-loss-fool-discriminator)"
+      ]
+    },
+    {
+      "from": "grad-expressed-in-out",
+      "to": "backward-fn-signature",
+      "status": "accepted",
+      "provenance": [
+        "manual:signature encodes the rule"
+      ]
+    },
+    {
+      "from": "grad-tracking-global-toggle",
+      "to": "no-grad-context-mgr-update",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(no-grad-context-mgr-update\u2192grad-tracking-global-toggle)"
+      ]
+    },
+    {
+      "from": "hparam-precedence-merge",
+      "to": "conditional-hparam-branch",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(conditional-hparam-branch\u2192hparam-precedence-merge)"
+      ]
+    },
+    {
+      "from": "inf-masking",
+      "to": "where-clip-negative",
+      "status": "proposed",
+      "provenance": [
+        "manual:torch.where is the branching twin of mask-assignment; taught after inf-mask tric"
+      ]
+    },
+    {
+      "from": "init-process-group-nccl",
+      "to": "rank-world-size-args",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(rank-world-size-args\u2192init-process-group-nccl)"
+      ]
+    },
+    {
+      "from": "inplace-op-unsafe-warning",
+      "to": "wrap-forward-fn-generic",
+      "status": "proposed",
+      "provenance": [
+        "manual:wrapper warns when wrapped op mutates in-place \u2014 taught alongside the wrapper"
+      ]
+    },
+    {
+      "from": "inplace-param-update",
+      "to": "weight-decay-l2-add",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(weight-decay-l2-add\u2192inplace-param-update)"
+      ]
+    },
+    {
+      "from": "kaiming-uniform-init",
+      "to": "kaiming-uniform-sf-init",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(kaiming-uniform-sf-init\u2192kaiming-uniform-init)"
+      ]
+    },
+    {
+      "from": "leaf-tensor-condition",
+      "to": "grad-accumulate-on-leaf",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(grad-accumulate-on-leaf\u2192leaf-tensor-condition)"
+      ]
+    },
+    {
+      "from": "linalg-solve-batched",
+      "to": "singular-matrix-mask-trick",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(singular-matrix-mask-trick\u2192linalg-solve-batched)"
+      ]
+    },
+    {
+      "from": "linalg-solve-batched",
+      "to": "triangle-barycentric",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(triangle-barycentric\u2192linalg-solve-batched)"
+      ]
+    },
+    {
+      "from": "linalg-solve-batched",
+      "to": "try-except-solve",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(try-except-solve\u2192linalg-solve-batched)"
+      ]
+    },
+    {
+      "from": "linspace-out-param",
+      "to": "ray-parametric-form",
+      "status": "accepted",
+      "provenance": [
+        "manual:linspace-out is the mechanical tool used to build R(u)=O+uD in make_rays_1d; mec"
+      ]
+    },
+    {
+      "from": "matmul-2d",
+      "to": "matmul-back-transpose-pair",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(matmul-back-transpose-pair\u2192matmul-2d)"
+      ]
+    },
+    {
+      "from": "matmul-2d",
+      "to": "matvec",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(matvec\u2192matmul-2d)"
+      ]
+    },
+    {
+      "from": "matmul-2d",
+      "to": "topk-predictions",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(topk-predictions\u2192matmul-2d)"
+      ]
+    },
+    {
+      "from": "maxpool-reduce",
+      "to": "avgpool-reduce",
+      "status": "accepted",
+      "provenance": [
+        "manual:alternative-to siblings share the same windowing scaffold; teach max first then "
+      ]
+    },
+    {
+      "from": "module-base-class-custom",
+      "to": "get-children-callable-param",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(get-children-callable-param\u2192module-base-class-custom)"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "batchnorm-affine-params",
+      "status": "accepted",
+      "provenance": [
+        "manual:BN is a composed Module"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "block-group-stack",
+      "status": "accepted",
+      "provenance": [
+        "manual:ResNet stacks blocks via Sequential"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "encoder-decoder-symmetric",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(encoder-decoder-symmetric\u2192module-composition)"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "module-extra-repr",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(module-extra-repr\u2192module-composition)"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "module-modules-iter-isinstance-dispatch",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(module-modules-iter-isinstance-dispatch\u2192module-composition)"
+      ]
+    },
+    {
+      "from": "module-composition",
+      "to": "state-dict-load",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(state-dict-load\u2192module-composition)"
+      ]
+    },
+    {
+      "from": "momentum-buffer-update",
+      "to": "ema-first-moment",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(ema-first-moment\u2192momentum-buffer-update)"
+      ]
+    },
+    {
+      "from": "multiply-back",
+      "to": "coerce-float-arg-to-array",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(coerce-float-arg-to-array\u2192multiply-back)"
+      ]
+    },
+    {
+      "from": "multiply-back",
+      "to": "rmul-scalar-tensor-mix",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(rmul-scalar-tensor-mix\u2192multiply-back)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "dcgan-normal-init-002",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dcgan-normal-init-002\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "dcgan-wrapper-netG-netD",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dcgan-wrapper-netG-netD\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "freeze-requires-grad",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(freeze-requires-grad\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "functional-module-wrap",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(functional-module-wrap\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "kaiming-uniform-init",
+      "status": "accepted",
+      "provenance": [
+        "manual:init runs inside Module __init__"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "module-base-class-custom",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(module-base-class-custom\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "module-composition",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(module-composition\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "nn-parameter-wrap",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(nn-parameter-wrap\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "no-relu-on-final-layer",
+      "status": "proposed",
+      "provenance": [
+        "manual:design rule taught alongside Module subclassing"
+      ]
+    },
+    {
+      "from": "nn-module-subclass",
+      "to": "rearrange-as-sequential-layer",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(rearrange-as-sequential-layer\u2192nn-module-subclass)"
+      ]
+    },
+    {
+      "from": "nn-parameter-wrap",
+      "to": "optimizer-init-params-list",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(optimizer-init-params-list\u2192nn-parameter-wrap)"
+      ]
+    },
+    {
+      "from": "nn-parameter-wrap",
+      "to": "params-iterable-vs-groups",
+      "status": "accepted",
+      "provenance": [
+        "manual:constructor accepts list or groups \u2014 taught after Parameter"
+      ]
+    },
+    {
+      "from": "nn-parameter-wrap",
+      "to": "register-buffer",
+      "status": "accepted",
+      "provenance": [
+        "manual:register_buffer is the non-trainable sibling of nn.Parameter; taught alongside P"
+      ]
+    },
+    {
+      "from": "optimizer-class-dispatch",
+      "to": "optimizer-repr-string",
+      "status": "proposed",
+      "provenance": [
+        "manual:repr polish after class hierarchy exists"
+      ]
+    },
+    {
+      "from": "optimizer-class-dispatch",
+      "to": "pseudocode-to-code-translate",
+      "status": "proposed",
+      "provenance": [
+        "manual:translating optimizer pseudocode is the meta-skill the exercises drill"
+      ]
+    },
+    {
+      "from": "optimizer-init-params-list",
+      "to": "optimizer-loop-on-tensor",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(optimizer-loop-on-tensor\u2192optimizer-init-params-list)"
+      ]
+    },
+    {
+      "from": "optimizer-init-params-list",
+      "to": "param-grad-access",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(param-grad-access\u2192optimizer-init-params-list)"
+      ]
+    },
+    {
+      "from": "optimizer-init-params-list",
+      "to": "param-group-dict-list",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(param-group-dict-list\u2192optimizer-init-params-list)"
+      ]
+    },
+    {
+      "from": "optimizer-loop-on-tensor",
+      "to": "inplace-param-update",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(inplace-param-update\u2192optimizer-loop-on-tensor)"
+      ]
+    },
+    {
+      "from": "optimizer-loop-on-tensor",
+      "to": "optimizer-class-dispatch",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(optimizer-class-dispatch\u2192optimizer-loop-on-tensor)"
+      ]
+    },
+    {
+      "from": "optimizer-loop-on-tensor",
+      "to": "sgd-vanilla-from-scratch",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(sgd-vanilla-from-scratch\u2192optimizer-loop-on-tensor)"
+      ]
+    },
+    {
+      "from": "optimizer-state-tensor-buffers",
+      "to": "ema-second-moment",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(ema-second-moment\u2192optimizer-state-tensor-buffers)"
+      ]
+    },
+    {
+      "from": "optimizer-state-tensor-buffers",
+      "to": "momentum-buffer-update",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(momentum-buffer-update\u2192optimizer-state-tensor-buffers)"
+      ]
+    },
+    {
+      "from": "optimizer-state-tensor-buffers",
+      "to": "step-counter-increment",
+      "status": "proposed",
+      "provenance": [
+        "concept:part-of(step-counter-increment\u2192optimizer-state-tensor-buffers)"
+      ]
+    },
+    {
+      "from": "param-grad-access",
+      "to": "requires-grad-leaf-assert",
+      "status": "proposed",
+      "provenance": [
+        "manual:leaf assert guards .grad access"
+      ]
+    },
+    {
+      "from": "param-grad-access",
+      "to": "zero-grad-set-none",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(zero-grad-set-none\u2192param-grad-access)"
+      ]
+    },
+    {
+      "from": "param-group-dict-list",
+      "to": "nested-param-group-loop",
+      "status": "accepted",
+      "provenance": [
+        "manual:step iterates groups then params within each group"
+      ]
+    },
+    {
+      "from": "parameter-subclass-of-tensor",
+      "to": "parameter-wrap-around-tensor",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(parameter-wrap-around-tensor\u2192parameter-subclass-of-tensor)"
+      ]
+    },
+    {
+      "from": "parameter-wrap-around-tensor",
+      "to": "linear-affine-on-custom-tensor",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(linear-affine-on-custom-tensor\u2192parameter-wrap-around-tensor)"
+      ]
+    },
+    {
+      "from": "per-rank-cuda-device",
+      "to": "dist-send-recv-pair",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dist-send-recv-pair\u2192per-rank-cuda-device)"
+      ]
+    },
+    {
+      "from": "per-rank-cuda-device",
+      "to": "distributed-sampler-shard",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(distributed-sampler-shard\u2192per-rank-cuda-device)"
+      ]
+    },
+    {
+      "from": "per-rank-cuda-device",
+      "to": "mp-spawn-workers",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(mp-spawn-workers\u2192per-rank-cuda-device)"
+      ]
+    },
+    {
+      "from": "per-rank-cuda-device",
+      "to": "rank0-only-side-effects",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(rank0-only-side-effects\u2192per-rank-cuda-device)"
+      ]
+    },
+    {
+      "from": "randn-like-noise-source",
+      "to": "noise-batch-from-latent",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(noise-batch-from-latent\u2192randn-like-noise-source)"
+      ]
+    },
+    {
+      "from": "randn-like-noise-source",
+      "to": "reparameterization-trick",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(reparameterization-trick\u2192randn-like-noise-source)"
+      ]
+    },
+    {
+      "from": "rank-world-size-args",
+      "to": "per-rank-cuda-device",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(per-rank-cuda-device\u2192rank-world-size-args)"
+      ]
+    },
+    {
+      "from": "ray-parametric-form",
+      "to": "segment-line-intersect-2d",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(segment-line-intersect-2d\u2192ray-parametric-form)"
+      ]
+    },
+    {
+      "from": "ray-parametric-form",
+      "to": "triangle-barycentric",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(triangle-barycentric\u2192ray-parametric-form)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "backward-func-lookup",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(backward-func-lookup\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "kwargs-pass-through-recipe",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(kwargs-pass-through-recipe\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "parents-dict-by-argidx",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(parents-dict-by-argidx\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "register-back-fn-after-wrap",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(register-back-fn-after-wrap\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "sorted-computational-graph",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sorted-computational-graph\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "recipe-dataclass",
+      "to": "wrap-forward-fn-generic",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(wrap-forward-fn-generic\u2192recipe-dataclass)"
+      ]
+    },
+    {
+      "from": "reduce-gather-sum",
+      "to": "all-reduce-grad-sync",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(all-reduce-grad-sync\u2192reduce-gather-sum)"
+      ]
+    },
+    {
+      "from": "reduce-gather-sum",
+      "to": "reduce-op-mean-divide",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(reduce-op-mean-divide\u2192reduce-gather-sum)"
+      ]
+    },
+    {
+      "from": "relu-elementwise-max",
+      "to": "kaiming-uniform-init",
+      "status": "accepted",
+      "provenance": [
+        "manual:kaiming variance is derived assuming ReLU non-linearity"
+      ]
+    },
+    {
+      "from": "requires-grad-propagation",
+      "to": "leaf-tensor-condition",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(leaf-tensor-condition\u2192requires-grad-propagation)"
+      ]
+    },
+    {
+      "from": "requires-grad-propagation",
+      "to": "manual-chain-forward-and-back",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(manual-chain-forward-and-back\u2192requires-grad-propagation)"
+      ]
+    },
+    {
+      "from": "resnet-stem",
+      "to": "block-group-stack",
+      "status": "accepted",
+      "provenance": [
+        "manual:stem precedes block groups in ResNet construction"
+      ]
+    },
+    {
+      "from": "segment-line-intersect-2d",
+      "to": "linalg-solve-batched",
+      "status": "accepted",
+      "provenance": [
+        "manual:curriculum teaches the scalar 2x2 case first, then generalises to batched solve"
+      ]
+    },
+    {
+      "from": "slice-view-mutation",
+      "to": "linspace-out-param",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(linspace-out-param\u2192slice-view-mutation)"
+      ]
+    },
+    {
+      "from": "sorted-computational-graph",
+      "to": "backprop-pop-outgrad-loop",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(backprop-pop-outgrad-loop\u2192sorted-computational-graph)"
+      ]
+    },
+    {
+      "from": "sorted-computational-graph",
+      "to": "dfs-three-set-toposort",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(dfs-three-set-toposort\u2192sorted-computational-graph)"
+      ]
+    },
+    {
+      "from": "step-counter-increment",
+      "to": "bias-correction-divide",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(bias-correction-divide\u2192step-counter-increment)"
+      ]
+    },
+    {
+      "from": "stride-zero-broadcast",
+      "to": "as-strided-windowing",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(as-strided-windowing\u2192stride-zero-broadcast)"
+      ]
+    },
+    {
+      "from": "sweep-config-dict",
+      "to": "sweep-hparam-distribution",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sweep-hparam-distribution\u2192sweep-config-dict)"
+      ]
+    },
+    {
+      "from": "sweep-hparam-distribution",
+      "to": "sweep-agent-launch",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sweep-agent-launch\u2192sweep-hparam-distribution)"
+      ]
+    },
+    {
+      "from": "tensor-reshape-view",
+      "to": "einops-rearrange-flatten",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(einops-rearrange-flatten\u2192tensor-reshape-view)"
+      ]
+    },
+    {
+      "from": "tensor-reshape-view",
+      "to": "unbind-tuple-unpack",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(unbind-tuple-unpack\u2192tensor-reshape-view)"
+      ]
+    },
+    {
+      "from": "tensor-to-device",
+      "to": "cuda-empty-cache",
+      "status": "proposed",
+      "provenance": [
+        "manual:cache hygiene is paired with device transfer in the GPU notebook"
+      ]
+    },
+    {
+      "from": "tensor-to-device",
+      "to": "device-consistent-construct",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(device-consistent-construct\u2192tensor-to-device)"
+      ]
+    },
+    {
+      "from": "tensor-to-device",
+      "to": "init-process-group-nccl",
+      "status": "accepted",
+      "provenance": [
+        "manual:process group is set up before any device-side comm"
+      ]
+    },
+    {
+      "from": "tensor-wraps-ndarray",
+      "to": "grad-tracking-global-toggle",
+      "status": "accepted",
+      "provenance": [
+        "manual:global flag is checked when wrapping ops on the custom Tensor"
+      ]
+    },
+    {
+      "from": "tensor-wraps-ndarray",
+      "to": "is-differentiable-flag",
+      "status": "accepted",
+      "provenance": [
+        "manual:is-differentiable flag is set on the wrapped Tensor"
+      ]
+    },
+    {
+      "from": "tensor-wraps-ndarray",
+      "to": "parameter-subclass-of-tensor",
+      "status": "accepted",
+      "provenance": [
+        "concept:is-a(parameter-subclass-of-tensor\u2192tensor-wraps-ndarray)"
+      ]
+    },
+    {
+      "from": "tensor-wraps-ndarray",
+      "to": "recipe-dataclass",
+      "status": "accepted",
+      "provenance": [
+        "manual:Recipe is stored on the wrapped Tensor"
+      ]
+    },
+    {
+      "from": "tensor-wraps-ndarray",
+      "to": "requires-grad-propagation",
+      "status": "accepted",
+      "provenance": [
+        "manual:requires_grad propagates through the wrapped Tensor"
+      ]
+    },
+    {
+      "from": "tensor-zeros-init",
+      "to": "slice-view-mutation",
+      "status": "accepted",
+      "provenance": [
+        "manual:preallocate-then-fill sequencing: zeros gives the storage, then slice-view write"
+      ]
+    },
+    {
+      "from": "tensor-zeros-init",
+      "to": "tensor-wraps-ndarray",
+      "status": "proposed",
+      "provenance": [
+        "manual:custom Tensor wraps an ndarray; basic ndarray fluency first"
+      ]
+    },
+    {
+      "from": "train-eval-mode-branch",
+      "to": "training-step-cycle",
+      "status": "accepted",
+      "provenance": [
+        "manual:training loop toggles model.train()/eval() at boundaries"
+      ]
+    },
+    {
+      "from": "trainer-class-skeleton",
+      "to": "dataclass-training-args",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(dataclass-training-args\u2192trainer-class-skeleton)"
+      ]
+    },
+    {
+      "from": "trainer-class-skeleton",
+      "to": "model-save-state-dict",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(model-save-state-dict\u2192trainer-class-skeleton)"
+      ]
+    },
+    {
+      "from": "trainer-class-skeleton",
+      "to": "trainer-subclass-extend",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(trainer-subclass-extend\u2192trainer-class-skeleton)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "backward-on-scalar-loss",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(backward-on-scalar-loss\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "buffer-copy_-inplace",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(buffer-copy_-inplace\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "detach-clone-snapshot",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(detach-clone-snapshot\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "examples-seen-step-axis",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(examples-seen-step-axis\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "holdout-data-one-per-class",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(holdout-data-one-per-class\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "log-samples-eval-callback",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(log-samples-eval-callback\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "loss-item-scalar-extract",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(loss-item-scalar-extract\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "t-stack-trajectory",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(t-stack-trajectory\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "time-stage-instrumentation",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(time-stage-instrumentation\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "tqdm-postfix-metrics",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(tqdm-postfix-metrics\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "trainer-class-skeleton",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(trainer-class-skeleton\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "training-step-cycle",
+      "to": "validation-no-grad",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(validation-no-grad\u2192training-step-cycle)"
+      ]
+    },
+    {
+      "from": "two-optimizers-alternating-step",
+      "to": "clip-grad-norm-pre-step",
+      "status": "proposed",
+      "provenance": [
+        "concept:uses(clip-grad-norm-pre-step\u2192two-optimizers-alternating-step)"
+      ]
+    },
+    {
+      "from": "two-optimizers-alternating-step",
+      "to": "generator-loss-fool-discriminator",
+      "status": "accepted",
+      "provenance": [
+        "concept:part-of(generator-loss-fool-discriminator\u2192two-optimizers-alternating-step)"
+      ]
+    },
+    {
+      "from": "unbroadcast-pattern",
+      "to": "sum-and-broadcast-duality",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sum-and-broadcast-duality\u2192unbroadcast-pattern)"
+      ]
+    },
+    {
+      "from": "validation-no-grad",
+      "to": "inference-mode-step",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(inference-mode-step\u2192validation-no-grad)"
+      ]
+    },
+    {
+      "from": "vector-normalize-keepdim",
+      "to": "rotation-matrix-3d",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(rotation-matrix-3d\u2192vector-normalize-keepdim)"
+      ]
+    },
+    {
+      "from": "wandb-config-into-args",
+      "to": "wandb-log-step",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(wandb-log-step\u2192wandb-config-into-args)"
+      ]
+    },
+    {
+      "from": "wandb-init-run",
+      "to": "sweep-config-dict",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(sweep-config-dict\u2192wandb-init-run)"
+      ]
+    },
+    {
+      "from": "wandb-init-run",
+      "to": "wandb-config-into-args",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(wandb-config-into-args\u2192wandb-init-run)"
+      ]
+    },
+    {
+      "from": "wandb-log-step",
+      "to": "wandb-finish",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(wandb-finish\u2192wandb-log-step)"
+      ]
+    },
+    {
+      "from": "wandb-log-step",
+      "to": "wandb-watch-model",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(wandb-watch-model\u2192wandb-log-step)"
+      ]
+    },
+    {
+      "from": "weight-decay-l2-add",
+      "to": "weight-decay-decoupled",
+      "status": "accepted",
+      "provenance": [
+        "concept:refines(weight-decay-decoupled\u2192weight-decay-l2-add)"
+      ]
+    },
+    {
+      "from": "wrap-forward-fn-generic",
+      "to": "box-array-to-tensor-with-recipe",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(box-array-to-tensor-with-recipe\u2192wrap-forward-fn-generic)"
+      ]
+    },
+    {
+      "from": "wrap-forward-fn-generic",
+      "to": "non-diff-fn-wrap",
+      "status": "accepted",
+      "provenance": [
+        "manual:non-diff wrap is the simpler sibling of the generic wrapper; introduced together"
+      ]
+    },
+    {
+      "from": "wrap-forward-fn-generic",
+      "to": "unbox-args-tensor-to-array",
+      "status": "accepted",
+      "provenance": [
+        "concept:uses(unbox-args-tensor-to-array\u2192wrap-forward-fn-generic)"
+      ]
+    }
+  ]
+}

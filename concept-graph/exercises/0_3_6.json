@@ -1,0 +1,35 @@
+{
+  "exercise_id": "0_3_6",
+  "title": "rewrite SGD to use parameter groups",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_6_exercise-rewrite-sgd-to-use-parameter-groups.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 6,
+  "difficulty": 4,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "for p in params: p['params'] = list(p['params']) — same generator-exhaustion-prevention idiom, applied per-group"},
+    {"id": "optimizer-state-tensor-buffers", "role": "core", "evidence": "param_group['b'] = [t.zeros_like(p) for p in param_group['params']] — per-param momentum buffer allocation, now per-group"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for param_group in self.param_groups: for p in param_group['params']: p.grad = None"},
+    {"id": "param-grad-access", "role": "core", "evidence": "g = theta.grad inside the nested loop"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "theta -= lr * g  # inplace operation, to modify params"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "b.copy_(mu * b + g)  # needs to be inplace, since we're changing `self.b` value"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on step"},
+    {"id": "weight-decay-l2-add", "role": "core", "evidence": "if lmda != 0: g = g + lmda * theta — same L2 weight decay as 0_3_1"},
+    {"id": "momentum-buffer-update", "role": "core", "evidence": "if mu != 0: b.copy_(mu * b + g); g = b"},
+    {"id": "conditional-hparam-branch", "role": "core", "evidence": "if lmda != 0 / if mu != 0 — same shortcuts as 0_3_1"},
+    {"id": "param-group-dict-list", "role": "core", "evidence": "params is a list of dicts like [{'params': ..., 'lr': ...}]; markdown: 'self.param_groups, which is a list of dictionaries with each one containing \"params\" as well as all the hyperparameters for that group'"},
+    {"id": "hparam-precedence-merge", "role": "core", "evidence": "param_group = {'momentum': 0.0, 'weight_decay': 0.0, **kwargs, **param_group} — markdown: 'the hierarchy for hparams: \"specified for group\" > \"specified as a keyword argument\" > \"default value\"'"},
+    {"id": "params-iterable-vs-groups", "role": "core", "evidence": "if not isinstance(params, (list, tuple)): params = [{'params': params}] — branch on input shape and wrap flat case"},
+    {"id": "nested-param-group-loop", "role": "core", "evidence": "for param_group in self.param_groups: for b, theta in zip(...) — double loop in both step and zero_grad with group-specific hparams (lmda, mu, lr) read out per iteration"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "optimizer-repr-string", "reason": "Seed predicted optimizer-repr-string for 0_3_6 but the template/solution does NOT define __repr__ — the param-group SGD rewrite focuses on init/zero_grad/step only"},
+    {"id": "pseudocode-to-code-translate", "reason": "Seed predicted this but exercise is not pseudocode translation — it's reorganization of an existing optimizer to support groups. The math is unchanged from 0_3_1; the work is structural plumbing."}
+  ],
+  "atoms_in_seed_but_not_actually_present_notes": "Two seed false positives both reflect that 0_3_6 is structurally different: it's a refactor of 0_3_1's SGD, not a from-scratch impl, so meta-translation and repr aren't load-bearing.",
+  "notes": "14 atoms — above seed prediction of ~12. All 4 parameter-group atoms fire as predicted plus the 8 SGD-impl atoms (now applied per-group). The two FPs are both 'structurally inapplicable' rather than 'wrong topic'. Conditional-hparam-branch survives because the same if-lmda/if-mu shortcuts are preserved in the per-group step body."
+}

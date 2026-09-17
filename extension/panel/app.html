@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Delta Drills</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #14161a;
+        overflow: hidden;
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- This page is the whole side panel, and it is deliberately nothing but a
+         frame. The panel shows the real site — its own tab bar, its own Google
+         sign-in, its own everything. There is no panel UI to maintain, and
+         nothing here to drift out of sync with the site.
+
+         It frames the COLAB EDITION (delta-drills-colab.vercel.app), not the
+         normal app: this extension exists to put the tutor beside a notebook,
+         and on that deploy a drill routes to its lesson notebook instead of the
+         in-page editor. Same bank, same backend, same mastery record — see
+         Local_Deployed_Shared/practice/colab_mode.js.
+
+         Which SIDE this panel opens on is a Chrome setting (Settings →
+         Appearance → "Side panel position"), and its width is a drag on its
+         inner edge. No extension API reaches either — do not try to fake it
+         with windows; that was tried and reverted (see ../README.md).
+
+         Why a frame at all: MV3 only accepts an extension-relative path for
+         `side_panel.default_path`, so a local page holding the site is the only
+         way to put a live website in a Chrome side panel.
+
+         `identity-credentials-get` is load-bearing. Sign in with Google now
+         negotiates over FedCM, and FedCM inside a cross-origin frame is denied
+         unless the embedder grants it through Permissions Policy — without this
+         attribute the button renders and then fails. `publickey-credentials-get`
+         covers the passkey path Google falls back to.
+
+         Do not add a toolbar, a settings sheet or any other chrome to this file.
+         The site has navigation; a second set competes with it.
+
+         The one script this page loads (app.js) is not a front end and must not
+         become one: it renders nothing and exists only because a cross-origin
+         frame cannot open a tab. The site says which notebook the next problem
+         is in; app.js is what actually puts it on screen. -->
+    <iframe
+      src="https://delta-drills-colab.vercel.app/"
+      title="Delta Drills"
+      allow="identity-credentials-get; publickey-credentials-get; clipboard-read; clipboard-write; fullscreen"
+    ></iframe>
+    <script src="app.js"></script>
+  </body>
+</html>

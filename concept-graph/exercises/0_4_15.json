@@ -1,0 +1,25 @@
+{
+  "exercise_id": "0_4_15",
+  "title": "max",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_15_exercise-max.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 15,
+  "difficulty": 3,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "max-back-tied-half", "role": "core", "evidence": "bool_sum = (x > y) + 0.5 * (x == y); return unbroadcast(grad_out * bool_sum, x) — 1 on strict win, 0.5 on tie (PyTorch convention) then unbroadcast"},
+    {"id": "arg-position-back-functions", "role": "core", "evidence": "Two functions maximum_back0 and maximum_back1; back0 uses (x > y), back1 uses (x < y) — explicit per-arg-position split"},
+    {"id": "unbroadcast-pattern", "role": "core", "evidence": "return unbroadcast(grad_out * bool_sum, x) — explicit unbroadcast to handle the test_maximum_broadcasted case (help dropdown calls this out)"},
+    {"id": "broadcasting-rules", "role": "core", "evidence": "Help dropdown: 'I'm passing the first test but not the second. This probably means that you haven't implemented unbroadcast' — broadcasted maximum requires shape-fix"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "maximum = wrap_forward_fn(np.maximum); BACK_FUNCS.add_back_func(np.maximum, 0, maximum_back0); add_back_func(np.maximum, 1, maximum_back1)"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "maximum = wrap_forward_fn(np.maximum)"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def maximum_back0(grad_out: Arr, out: Arr, x: Arr, y: Arr)"},
+    {"id": "chain-rule-elementwise", "role": "core", "evidence": "Markdown explicitly: 'Since this is an elementwise function, we can think about the scalar case. For scalar x, y, the derivative for max(x, y) wrt x is 1 when x > y and 0 when x < y'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "8 atoms — exactly matches seed prediction. Tied-derivative convention (0.5 split) is the load-bearing detail; everything else is the standard arg-position + unbroadcast + register pattern."
+}

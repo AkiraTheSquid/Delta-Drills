@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "_doc": "Hand-authored prereq edges that don't fall out of concept_edges.json. Pure curriculum sequencing decisions. Direction: A → B means A must be understood before B. Combined with derived edges from concept_edges.json by scripts/derive_prereqs.py.",
+  "edges": [
+    {"from": "tensor-zeros-init", "to": "slice-view-mutation", "status": "accepted", "rationale": "preallocate-then-fill sequencing: zeros gives the storage, then slice-view writes into it"},
+    {"from": "broadcasting-rules", "to": "stride-zero-broadcast", "status": "accepted", "rationale": "broadcasting is taught as a concept first; stride=0 trick is revealed as the impl detail later"},
+    {"from": "linspace-out-param", "to": "ray-parametric-form", "status": "accepted", "rationale": "linspace-out is the mechanical tool used to build R(u)=O+uD in make_rays_1d; mechanical → conceptual sequencing"},
+
+    {"from": "segment-line-intersect-2d", "to": "linalg-solve-batched", "status": "accepted", "rationale": "curriculum teaches the scalar 2x2 case first, then generalises to batched solve"},
+    {"from": "any-reduce-axis", "to": "boolean-mask-combine", "status": "accepted", "rationale": "mesh test exercise pairs them: combine bool masks then call .any() to reduce — but pedagogically introduced together"},
+
+    {"from": "tensor-to-device", "to": "cuda-empty-cache", "status": "proposed", "rationale": "cache hygiene is paired with device transfer in the GPU notebook"},
+    {"from": "einops-repeat-broadcast", "to": "stack-vs-cat", "status": "proposed", "rationale": "stack/cat appear once repeat is understood — all build batch axes"},
+
+    {"from": "diagonal-via-strides", "to": "as-strided-windowing", "status": "accepted", "rationale": "diagonal is the warmup trick; windowing is the generalisation taught next"},
+
+    {"from": "conv-windowing-2d", "to": "conv-kernel-shape", "status": "accepted", "rationale": "kernel shape is introduced after windowing in the conv2d exercise"},
+    {"from": "conv-windowing-2d", "to": "conv-channel-sum", "status": "accepted", "rationale": "channel sum follows windowing in the conv2d exercise"},
+    {"from": "conv-kernel-shape", "to": "conv-output-shape", "status": "accepted", "rationale": "output shape formula uses kernel size — taught after kernel-shape"},
+    {"from": "conv-channel-sum", "to": "conv-output-shape", "status": "accepted", "rationale": "output channel comes from the in-channel sum"},
+    {"from": "conv-output-shape", "to": "conv-padding-zero", "status": "accepted", "rationale": "padding modifies the output shape formula"},
+    {"from": "conv-output-shape", "to": "conv-stride-downsample", "status": "accepted", "rationale": "stride divides spatial dims in the output shape formula"},
+    {"from": "conv-windowing-2d", "to": "maxpool-reduce", "status": "accepted", "rationale": "maxpool reuses the 2d windowing scaffold, replacing einsum with reduce-max"},
+
+    {"from": "relu-elementwise-max", "to": "kaiming-uniform-init", "status": "accepted", "rationale": "kaiming variance is derived assuming ReLU non-linearity"},
+    {"from": "nn-module-subclass", "to": "kaiming-uniform-init", "status": "accepted", "rationale": "init runs inside Module __init__"},
+    {"from": "module-composition", "to": "batchnorm-affine-params", "status": "accepted", "rationale": "BN is a composed Module"},
+    {"from": "batchnorm-affine-params", "to": "batchnorm-running-stats", "status": "accepted", "rationale": "affine params taught first as the trainable bit of BN, then running stats as eval-time book-keeping"},
+    {"from": "batchnorm-running-stats", "to": "train-eval-mode-branch", "status": "accepted", "rationale": "running stats are used in eval mode, batch stats in train mode"},
+    {"from": "resnet-stem", "to": "block-group-stack", "status": "accepted", "rationale": "stem precedes block groups in ResNet construction"},
+    {"from": "train-eval-mode-branch", "to": "training-step-cycle", "status": "accepted", "rationale": "training loop toggles model.train()/eval() at boundaries"},
+    {"from": "module-composition", "to": "block-group-stack", "status": "accepted", "rationale": "ResNet stacks blocks via Sequential"},
+
+    {"from": "tensor-zeros-init", "to": "tensor-wraps-ndarray", "status": "proposed", "rationale": "custom Tensor wraps an ndarray; basic ndarray fluency first"},
+    {"from": "tensor-wraps-ndarray", "to": "grad-tracking-global-toggle", "status": "accepted", "rationale": "global flag is checked when wrapping ops on the custom Tensor"},
+    {"from": "tensor-wraps-ndarray", "to": "requires-grad-propagation", "status": "accepted", "rationale": "requires_grad propagates through the wrapped Tensor"},
+    {"from": "tensor-wraps-ndarray", "to": "is-differentiable-flag", "status": "accepted", "rationale": "is-differentiable flag is set on the wrapped Tensor"},
+    {"from": "tensor-wraps-ndarray", "to": "recipe-dataclass", "status": "accepted", "rationale": "Recipe is stored on the wrapped Tensor"},
+
+    {"from": "grad-expressed-in-out", "to": "backward-fn-signature", "status": "accepted", "rationale": "signature encodes the rule"},
+
+    {"from": "inplace-op-unsafe-warning", "to": "wrap-forward-fn-generic", "status": "proposed", "rationale": "wrapper warns when wrapped op mutates in-place — taught alongside the wrapper"},
+
+    {"from": "conv-padding-zero", "to": "convtranspose-bn-activation-block", "status": "accepted", "rationale": "generator block stacks convT-bn-activation; conv basics first"},
+
+    {"from": "nn-module-subclass", "to": "no-relu-on-final-layer", "status": "proposed", "rationale": "design rule taught alongside Module subclassing"},
+    {"from": "bottleneck-latent-projection", "to": "module-composition", "status": "accepted", "rationale": "VAE bottleneck is a Linear projection between encoder and decoder — composes inside a Module"},
+
+    {"from": "backward-on-scalar-loss", "to": "mse-reconstruction-loss", "status": "accepted", "rationale": "VAE recon loss is MSE; loss.backward() pattern first"},
+    {"from": "backward-on-scalar-loss", "to": "bce-log-loss-real-fake", "status": "accepted", "rationale": "GAN losses are BCE; loss.backward() pattern first"},
+
+    {"from": "tensor-to-device", "to": "init-process-group-nccl", "status": "accepted", "rationale": "process group is set up before any device-side comm"},
+
+    {"from": "param-grad-access", "to": "requires-grad-leaf-assert", "status": "proposed", "rationale": "leaf assert guards .grad access"},
+    {"from": "optimizer-class-dispatch", "to": "optimizer-repr-string", "status": "proposed", "rationale": "repr polish after class hierarchy exists"},
+    {"from": "optimizer-class-dispatch", "to": "pseudocode-to-code-translate", "status": "proposed", "rationale": "translating optimizer pseudocode is the meta-skill the exercises drill"},
+
+    {"from": "nn-parameter-wrap", "to": "params-iterable-vs-groups", "status": "accepted", "rationale": "constructor accepts list or groups — taught after Parameter"},
+    {"from": "param-group-dict-list", "to": "nested-param-group-loop", "status": "accepted", "rationale": "step iterates groups then params within each group"},
+
+    {"from": "ema-first-moment", "to": "ema-second-moment", "status": "accepted", "rationale": "Adam adds v_t on squared grads after m_t — m before v in curriculum"},
+
+    {"from": "maxpool-reduce", "to": "avgpool-reduce", "status": "accepted", "rationale": "alternative-to siblings share the same windowing scaffold; teach max first then introduce avg"},
+    {"from": "boolean-mask-combine", "to": "index-by-tensor", "status": "proposed", "rationale": "alternative-to siblings; teach bool-mask combination first then introduce int-tensor indexing"},
+    {"from": "wrap-forward-fn-generic", "to": "non-diff-fn-wrap", "status": "accepted", "rationale": "non-diff wrap is the simpler sibling of the generic wrapper; introduced together"},
+    {"from": "nn-parameter-wrap", "to": "register-buffer", "status": "accepted", "rationale": "register_buffer is the non-trainable sibling of nn.Parameter; taught alongside Parameter"},
+    {"from": "inf-masking", "to": "where-clip-negative", "status": "proposed", "rationale": "torch.where is the branching twin of mask-assignment; taught after inf-mask trick"}
+  ]
+}

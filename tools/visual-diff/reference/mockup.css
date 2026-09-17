@@ -1,0 +1,211 @@
+/* ================================================================
+   THE MEASURED DESIGN — every number here came out of out/lw.json.
+
+   This is not LessWrong's stylesheet and contains none of it. probe.js read
+   the COMPUTED styles off a live post — the values the browser had already
+   decided — and each one is written down below next to the role it belongs to.
+   Their stylesheet is JSS compiled at runtime from TypeScript objects; there
+   is nothing here that could have been copied even if we wanted to.
+
+   Reference capture: 1440x900, light theme, out/lw.json.
+     reading column   682px wide, starting at x=342 (NOT centred: the rail owns
+                      the left, so the column sits 74px left of centre)
+     body text        18.2px / 26px line box (ratio 1.43), serif, #000
+     h1 / h2 / h3     36.4 / 26 / 20.8px, #424242 #424242 #616161
+     inline code      12.7px mono on #f5f5f5
+     link             #327e09
+     rail             x=17, 253px wide, 1px #bdbdbd progress line
+     rail rows        16px apart, labels 15.1px #757575, current #000
+     rail title       16.9px #757575
+   ================================================================ */
+
+:root {
+  --lw-text: #000000;
+  --lw-heading: #424242;
+  --lw-heading-3: #616161;
+  --lw-muted: #757575;
+  --lw-rule: #bdbdbd;
+  --lw-link: #327e09;
+  --lw-code-bg: #f5f5f5;
+  --lw-serif: "warnock-pro", "ETBookRoman", Georgia, "Times New Roman", serif;
+  --lw-mono: "Liberation Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #ffffff;
+  color: var(--lw-text);
+  font-family: var(--lw-serif);
+  font-size: 18.2px;
+  line-height: 26px;
+  margin: 0;
+  padding: 0 0 240px;
+}
+
+/* The column is placed, not centred — reproducing the measurement rather than
+   the intent, because the measurement is what the diff compares. */
+.mock-column {
+  margin: 114px 0 0 342px;
+  width: 682px;
+}
+
+/* ---- prose --------------------------------------------------------------- */
+
+.nbv-md p {
+  font-size: 18.2px;
+  line-height: 26px;
+  margin: 0 0 18.2px;
+}
+
+.nbv-md h1 {
+  color: var(--lw-heading);
+  font-family: "ETBookRoman", var(--lw-serif);
+  font-size: 36.4px;
+  font-weight: 400;
+  line-height: 41.3px;
+  margin: 36.4px 0 24.4px;
+}
+
+.nbv-md h2 {
+  color: var(--lw-heading);
+  font-family: "ETBookRoman", var(--lw-serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 31.4px;
+  margin: 26px 0 21.6px;
+}
+
+.nbv-md h3 {
+  color: var(--lw-heading-3);
+  font-family: "ETBookRoman", var(--lw-serif);
+  font-size: 20.8px;
+  font-weight: 400;
+  line-height: 25.1px;
+  margin: 20.8px 0;
+}
+
+.nbv-md h4 {
+  color: var(--lw-heading-3);
+  font-size: 18.2px;
+  font-weight: 600;
+  line-height: 23px;
+  margin: 18.2px 0 12px;
+}
+
+.nbv-md a {
+  color: var(--lw-link);
+  text-decoration: none;
+}
+
+.nbv-md code {
+  background: var(--lw-code-bg);
+  font-family: var(--lw-mono);
+  font-size: 12.7px;
+  line-height: 18.1px;
+  padding: 1px 3px;
+}
+
+.nbv-md img {
+  max-width: 100%;
+}
+
+.nbv-md blockquote {
+  border-left: 2px solid var(--lw-rule);
+  margin: 0 0 18.2px;
+  padding-left: 18px;
+}
+
+.nbv-md ul,
+.nbv-md ol {
+  margin: 0 0 18.2px;
+  padding-left: 24px;
+}
+
+/* ---- the parts a post does not have -------------------------------------- */
+
+/* A LessWrong post has no runnable cell, so there is no measurement to copy
+   for one. These take the post's CODE colours and the column's rhythm, which
+   is the closest honest answer, and the diff report calls the difference out
+   as expected rather than as drift. */
+.nbv-cell {
+  margin: 0 0 18.2px;
+}
+
+.nbv-code {
+  display: flex;
+  gap: 8px;
+}
+
+.nbv-gutter {
+  flex: none;
+  width: 28px;
+}
+
+.nbv-run {
+  background: none;
+  border: 1px solid var(--lw-rule);
+  border-radius: 3px;
+  color: var(--lw-muted);
+  cursor: pointer;
+  font-size: 11px;
+  height: 22px;
+  width: 24px;
+}
+
+.nbv-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.nbv-src {
+  background: var(--lw-code-bg);
+  font-family: var(--lw-mono);
+  font-size: 12.7px;
+  line-height: 18.1px;
+  margin: 0;
+  overflow-x: auto;
+  padding: 10px 12px;
+  white-space: pre;
+}
+
+.arena-nb-details {
+  margin: 0 0 18.2px;
+}
+
+.arena-nb-details > summary {
+  color: var(--lw-muted);
+  cursor: pointer;
+  font-size: 15.1px;
+}
+/* ---- the rail -------------------------------------------------------------
+
+   🔴 THERE IS NO RAIL IN THIS FILE ANY MORE, AND THAT IS THE POINT. It used to
+   carry a second copy of the app's rail — its own .anb-toc rules, its own
+   row-building JS — so that this page could be styled independently of the app.
+   What that actually bought was DRIFT: the rail was restructured in the app on
+   2026-09-02 and this copy went on rendering the old shape, which made every
+   comparison run through here a comparison with a stale design.
+
+   So the page now links the app's own stylesheet and mounts the app's own
+   ArenaNotebookNav (see mockup.html). One implementation, one owner. What is
+   left here is the CONTROL half: our notebook content laid out at their
+   measure, on their light palette, with none of the app's chrome — which is
+   what this page existed for.
+
+   The rail's tokens are the app's names on their values, so the same stylesheet
+   paints itself onto this page's palette. `--dd-topbar-h` is 0 because there is
+   no topbar here to hang under. */
+:root {
+  --bg: #ffffff;
+  --text: var(--lw-text);
+  --muted: var(--lw-muted);
+  --muted-dim: var(--lw-muted);
+  --border: var(--lw-rule);
+  --border-strong: var(--lw-rule);
+  --surface: #ffffff;
+  --accent-text: var(--lw-text);
+  --dd-topbar-h: 0px;
+}

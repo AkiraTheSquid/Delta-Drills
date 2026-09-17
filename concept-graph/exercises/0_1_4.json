@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_1_4",
+  "title": "implement triangle_ray_intersects",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_4_exercise-implement-triangle-ray-intersects.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 4,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "ray is still (O, D); the parametric form underpins the s in the solve but isn't the focus"},
+    {"id": "triangle-barycentric", "role": "core", "evidence": "s, u, v = t.linalg.solve(t.stack([-D, B - A, C - A], dim=1), O - A); return ((s>=0) & (u>=0) & (v>=0) & (u+v<=1)) — full Moller-Trumbore in one line, this atom IS the exercise"},
+    {"id": "stack-vs-cat", "role": "core", "evidence": "t.stack([-D, B - A, C - A], dim=1) assembles the 3x3 matrix"},
+    {"id": "unbind-tuple-unpack", "role": "core", "evidence": "s, u, v = t.linalg.solve(...) — first-axis Python unpacking of the (3,) solution; markdown tip explicitly teaches s,u,v = tensor and t.unbind(dim)"},
+    {"id": "linalg-solve-batched", "role": "core", "evidence": "t.linalg.solve on a single (3,3) matrix; unbatched scalar instance same as 0_1_1"},
+    {"id": "boolean-mask-combine", "role": "core", "evidence": "(s >= 0) & (u >= 0) & (v >= 0) & (u + v <= 1) — four predicate ANDed; .item() to scalar"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "First triangle exercise — introduces triangle-barycentric as a load-bearing unit. Scalar (unbatched) version; 0_1_5 makes it batched and 0_1_6 adds the NT batch dim. Notably does NOT use try-except-solve (the exercise body shows no error handling) — the test cases presumably avoid singular configurations. The seed-suggested singular-matrix-mask-trick correctly fires only from 0_1_5 onward."
+}

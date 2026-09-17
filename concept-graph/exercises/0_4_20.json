@@ -1,0 +1,28 @@
+{
+  "exercise_id": "0_4_20",
+  "title": "implement SGD",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_20_exercise-implement-sgd.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 20,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "sgd-vanilla-from-scratch", "role": "core", "evidence": "Solution: zero_grad sets p.grad = None for all params; step does 'with NoGrad(): for p in self.params: p -= p.grad * self.lr' — minimal SGD with no momentum/decay"},
+    {"id": "no-grad-context-mgr-update", "role": "core", "evidence": "with NoGrad(): for p in self.params: p -= p.grad * self.lr — wraps the parameter update in NoGrad to skip autograd tracking; markdown explains why this is safe in this context"},
+    {"id": "grad-tracking-global-toggle", "role": "core", "evidence": "NoGrad() context manager flips the grad_tracking_enabled module-level bool from 0_4_5/0_4_7; required so p -= p.grad*lr doesn't build a new Recipe"},
+    {"id": "parameter-subclass-of-tensor", "role": "core", "evidence": "def __init__(self, params: Iterable[Parameter], lr: float) — operates on Parameter instances (the Tensor subclass with requires_grad=True from 0_4_18)"},
+    {"id": "grad-accumulate-on-leaf", "role": "core", "evidence": "p.grad is the leaf-accumulated gradient (from 0_4_9's backprop loop); SGD reads it via p.grad (multiple backprop passes between zero_grads accumulate, per the 'accumulate not overwrite' rule)"},
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "self.params = list(params) — turn iterable into list so the for-loop in step() doesn't exhaust a generator (provided in scaffold)"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for p in self.params: p.grad = None — set-grad-to-None idiom (saves memory vs an explicit zero tensor; markdown explains this elsewhere in the chapter)"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "p -= p.grad * self.lr — markdown explicitly: 'the inplace operation += is supported, since under the hood this calls __iadd__... this is also the case here. Important note - in yesterday's exercises it was important to use inplace operations'"},
+    {"id": "inplace-op-unsafe-warning", "role": "core", "evidence": "Markdown explicitly contextualizes: 'Note that we did discuss earlier how inplace operations are very risky for backprop, this is generally true however here we're using it for parameter updates which aren't meant to be differentiated and which are performed just before zeroing all gradients - this makes it safe in this particular context.'"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "leaf-tensor-condition", "reason": "Seed flagged this as expected; but the SGD exercise just reads p.grad (set by backprop in 0_4_9). The is_leaf logic itself lives in the Tensor class definition / backprop loop, not in the SGD code."}
+  ],
+  "notes": "9 atoms — exactly matches seed prediction. Composes the SGD math (atoms 7.8, 7.9) with the optimizer-plumbing atoms from part3 (init-params-list, zero-grad-set-none, inplace-param-update) and the in-place safety atom from 0_4_14. The capstone of §7 (trainable layers on custom autograd)."
+}

@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_4_8",
+  "title": "implement topological_sort",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_8_exercise-implement-topological-sort.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 8,
+  "difficulty": 4,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "dfs-three-set-toposort", "role": "core", "evidence": "Solution uses result: list[Node] = [], perm: set[Node] = set(), temp: set[Node] = set(); visit() recurses children before appending — classic perm/temp/result DFS post-order"},
+    {"id": "cycle-detection-temp-set", "role": "core", "evidence": "if cur in temp: raise ValueError('Not a DAG!') — temp set used as in-stack cycle detector, distinct from perm (already-done) check above it"},
+    {"id": "get-children-callable-param", "role": "core", "evidence": "def topological_sort(node: Node, get_children: Callable) -> list[Node] — markdown explicitly: 'In subsequent exercises, we'll replace the Node class with the Tensor class (and using a different get_children function)'"},
+    {"id": "sorted-computational-graph", "role": "core", "evidence": "Given function sorted_computational_graph(tensor) → topological_sort(tensor, get_parents)[::-1] where get_parents(t) = list(t.recipe.parents.values()) — the [::-1] reverse to get root-first order, fed by Recipe.parents.values()"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "4 atoms — matches seed prediction of 5 (1 less). Self-contained DFS exercise with the get_children plumbing that lets the same function work for the test Node class and the real Tensor class. importance=1 since markdown says 'completely fine to skip this problem if you're not very interested in it'."
+}

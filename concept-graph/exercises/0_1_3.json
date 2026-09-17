@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_1_3",
+  "title": "implement make_rays_2d",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part1_ray_tracing/0_1_3_exercise-implement-make-rays-2d.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 1,
+  "arena_index": 3,
+  "difficulty": 3,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part1-pilot",
+  "atoms": [
+    {"id": "tensor-zeros-init", "role": "core", "evidence": "rays = t.zeros((n_pixels, 2, 3), dtype=t.float32) — same preallocate-and-fill pattern as 0_1_0, now 2D-grid sized"},
+    {"id": "slice-view-mutation", "role": "core", "evidence": "rays[:, 1, 0] = 1; rays[:, 1, 1] = einops.repeat(...); rays[:, 1, 2] = einops.repeat(...) — three slice-assignments into the preallocated buffer"},
+    {"id": "einops-repeat-broadcast", "role": "core", "evidence": "einops.repeat(ygrid, 'y -> (y z)', z=num_pixels_z) and the matching z one — outer product of y and z grids"},
+    {"id": "einops-rearrange-flatten", "role": "core", "evidence": "the einops.repeat string 'y -> (y z)' uses the (y z) flatten/fold pattern; learner must understand the parenthesized-axis grammar to write it"},
+    {"id": "ray-parametric-form", "role": "incidental", "evidence": "rays are still O=(0,0,0) + uD; same as 0_1_0, geometry not the focus"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Direct generalization of 0_1_0 to 2D. The new content is the outer-product pattern via einops.repeat with the (y z) flatten grammar. Help dropdown explicitly suggests two einops.repeat calls — confirming both atoms in the einops cluster fire. No linalg here. stack-vs-cat NOT used (seed predicted it for exercise 5 — confirmed absent here)."
+}

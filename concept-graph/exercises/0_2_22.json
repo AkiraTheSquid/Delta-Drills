@@ -1,0 +1,26 @@
+{
+  "exercise_id": "0_2_22",
+  "title": "implement 2D convolutions",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_22_exercise-implement-2d-convolutions.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 22,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "oh = 1 + (h - kh) // stride_h; ow = 1 + (w - kw) // stride_w — 2D version of full formula"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "s_b, s_ic, s_h, s_w = x_padded.stride()"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x_strided = x_padded.as_strided(size=(b, ic, oh, ow, kh, kw), stride=(s_b, s_ic, s_h * stride_h, s_w * stride_w, s_h, s_w))"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x_strided, weights, 'b ic oh ow kh kw, oc ic kh kw -> b oc oh ow')"},
+    {"id": "conv-windowing-2d", "role": "core", "evidence": "full 2D version of strided-window conv with stride + padding"},
+    {"id": "conv-channel-sum", "role": "core", "evidence": "ic contracted in einsum"},
+    {"id": "conv-padding-zero", "role": "core", "evidence": "x_padded = pad2d(x, left=padding_w, right=padding_w, top=padding_h, bottom=padding_h, pad_value=0)"},
+    {"id": "conv-stride-downsample", "role": "core", "evidence": "stride_h, stride_w handled via force_pair; new strides scale by stride_h/stride_w for the output-position dims"},
+    {"id": "conv-kernel-shape", "role": "core", "evidence": "weights: Float[Tensor, 'out_channels in_channels kernel_height kernel_width'] — the (oc, ic, kH, kW) layout"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "9-atom exercise (tied with BatchNorm2d for densest) — the full from-scratch 2D conv. force_pair (int-or-tuple normalization) is a small utility helper but not its own atom — it could become one (`int-or-pair-helper`) if it recurs in 0_2_23 maxpool2d. All 4 conv-mechanics + stride + windowing + channel-sum + output-shape all fire together — this exercise is the convergence point of the strided-conv track."
+}

@@ -1,0 +1,472 @@
+#!/usr/bin/env python3
+"""Validate first-encounter lesson content (spec: docs/spec-first-encounter-course-content.md).
+
+Checks, per KP markdown file:
+  1. frontmatter kc exists in kc_registry.json; supporting KCs exist; sections known
+  2. every segment has one non-empty Concept, one Python Worked example,
+     and one Faded exercise
+  3. every plain ```python fence in Concept/Worked example EXECUTES, with a fresh
+     namespace PER SEGMENT (```python no-run fences are skipped)
+  4. every Faded-practice ### q<id> has starter + solution fences, qid exists in the
+     bank, and the solution PASSES the bank question's test_cases
+  5. guided/independent qids exist in the bank
+
+Corpus-level checks (full runs only, not single-file runs):
+  5b. every `previews:` entry is shown by that page, not declared by it, and
+      declared by a LATER lesson
+
+Registry-level checks:
+  6. KC prereq graph is acyclic; prereqs/lessons resolve
+  7. --coverage: every registry KC has exactly one KP file; every easy-topic bank
+     question appears in qmatrix_tags.json; every tagged target KC has a KP
+
+Usage: python3 scripts/validate_lessons.py [--coverage] [file.md ...]
+Exit 0 = all pass.
+"""
+import contextlib
+import io
+import json
+import sys
+import traceback
+from pathlib import Path
+
+import content_safety
+from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_question, load_bank,
+                        load_registry, parse_kp, split_items)
+import lesson_quality as quality
+sys.path.insert(0, str(LESSONS_DIR))
+from checks import run_checked
+
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays)
+
+
+def run_code(code, ns):
+    with contextlib.redirect_stdout(io.StringIO()):
+        exec(code, ns)
+
+
+def values_equal(got, expected):
+    """Robust equality: numpy arrays (exact then float-tolerant), tuples/lists recursively."""
+    import numpy as np
+    if isinstance(expected, (list, tuple)) and isinstance(got, (list, tuple)):
+        return len(got) == len(expected) and all(
+            values_equal(g, e) for g, e in zip(got, expected))
+    try:
+        if bool(np.array_equal(got, expected)):
+            return True
+    except Exception:
+        pass
+    try:
+        return bool(np.allclose(got, expected, equal_nan=True))
+    except Exception:
+        pass
+    try:
+        return bool(got == expected)
+    except Exception:
+        return False
+
+
+NUMBERS_NPY = str(REPO / "Local_Deployed_Shared" / "delta_numbers.npy")
+# Leak findings on pages that are not strict yet — printed, never fatal.
+LEAK_WARNINGS = []
+
+
+def grade_against_bank(solution_code, question):
+    """Run solution against the bank question's test_cases. Returns list of failures."""
+    if not question.get("exercise", {}).get("test_cases"):
+        return ["no test cases — an untested solution cannot pass validation"]
+    failures = []
+    for i, tc in enumerate(question["exercise"]["test_cases"]):
+        # The runtime grader always injects numpy (code_runner.CODE_PREAMBLE),
+        # so fixtures may use it even in a torch drill — np.load is the only
+        # way to reach the ARENA image. Mirror that, or torch lessons fail here
+        # for a reason that cannot happen in the sandbox.
+        ns = {}
+        try:
+            run_code("import numpy as np", ns)
+            run_code(solution_code, ns)
+            # Bank fixtures use the Docker-image path; point at the local copy.
+            setup = tc.get("setup_code", "").replace("/delta_numbers.npy", NUMBERS_NPY)
+            run_code(setup, ns)
+            got = eval(tc["call"], ns)
+            if tc.get("assert_code"):
+                run_code(tc["assert_code"], dict(ns, result=got))
+            # Mirror the JS/backend graders: expected_setup falls back to
+            # re-running setup_code, so expected_expr never sees fixtures the
+            # solution mutated in place (e.g. out=-style drills).
+            run_code((tc.get("expected_setup_code") or setup), ns)
+            expected = eval(tc["expected_expr"], ns)
+            if not values_equal(got, expected):
+                failures.append(f"case {i}: got {got!r} expected {expected!r}")
+        except Exception as e:
+            failures.append(f"case {i}: {type(e).__name__}: {e}")
+    return failures
+
+
+def check_kp(path, registry, bank, errors):
+    kc_ids = {kc["id"] for kc in registry["kcs"]}
+    try:
+        kp = parse_kp(path)
+    except Exception as e:
+        errors.append(f"{path.name}: parse error: {e}")
+        return
+    name = path.name
+    if kp["kc"] not in kc_ids:
+        errors.append(f"{name}: kc '{kp['kc']}' not in registry")
+    for s in kp["supporting"]:
+        if s not in kc_ids:
+            errors.append(f"{name}: supporting kc '{s}' not in registry")
+    if kp["concepts"]:
+        if len(kp["concepts"]) != len(kp["segments"]):
+            errors.append(
+                f"{name}: frontmatter concepts declares {len(kp['concepts'])} "
+                f"atomic concepts but file has {len(kp['segments'])} segments")
+        if len(set(kp["concepts"])) != len(kp["concepts"]):
+            errors.append(f"{name}: frontmatter concepts must be unique")
+        for si, seg in enumerate(kp["segments"]):
+            if not seg["title"]:
+                errors.append(
+                    f"{name}: declared concept {kp['concepts'][si] if si < len(kp['concepts']) else si + 1} "
+                    "needs a titled '## Concept: ...' segment")
+    for sec in ("Concept", "Worked example"):
+        if not kp["sections"].get(sec):
+            errors.append(f"{name}: empty/missing '## {sec}'")
+
+    # 3. executable prose/worked-example code — run fences in DOCUMENT order
+    # within each segment, against a namespace that is FRESH PER SEGMENT.
+    #
+    # This mirrors what the learner gets. practice/notebook.js turns every one
+    # of these fences into a runnable notebook cell, and the lesson screen shows
+    # ONE SEGMENT PER PAGE — so the only cells in scope when someone presses Run
+    # are that segment's. A fence that quietly depended on a name defined in an
+    # earlier segment would pass a KP-wide namespace here and hand the learner a
+    # NameError, which is the failure this check exists to make impossible.
+    #
+    # Practically it costs nothing: every segment already opens with its own
+    # import (122 of 122 passed the day this was tightened).
+    for si, seg in enumerate(kp["segments"]):
+        ns = {}
+        for label, text in (("Concept", seg["concept"]), ("Worked example", seg["worked"])):
+            for code in code_fences(text, "python"):
+                try:
+                    run_checked(code, ns)
+                except Exception:
+                    tb = traceback.format_exc().strip().splitlines()[-1]
+                    errors.append(f"{name}: segment {si + 1} [{label}] fence failed: {tb}")
+
+    # Scheduled examples are runnable pages too, with their own namespace.
+    for code in code_fences(path.read_text(), "python worked"):
+        try:
+            run_checked(code)
+        except Exception as exc:
+            errors.append(f"{name}: scheduled example failed: {exc}")
+
+    # 4. faded solutions pass bank tests; every segment teaches ONE concept
+    # then pairs one worked example with a fading SERIES of one or two items.
+    #
+    # Two, not one, because of what audit_ladder_pairing.py measures: a first
+    # completion item sitting adjacent to the example is correct fading, but a
+    # series that never grows past it is transcription, and the ladder promotes
+    # on that. The second item is where the distance lives.
+    #
+    # 🔴 THE CEILING OF TWO IS GONE (2026-08-28). It read "a third completion of
+    # the same concept is drill, which is what the independent rung is for", and
+    # that reasoning was wrong in the one way that matters: the rung a learner
+    # is ON is decided by their attempt record, not by how much content the rung
+    # holds, so a two-deep faded rung does not send anyone to the independent
+    # one — it sends the QUEUE round again over the same two drills. Seth,
+    # testing on numpy.ndarray-model: "I basically memorized all the problems
+    # for the first part ... they're currently repeating." A segment may now
+    # carry as many faded drills as its author is willing to write, and running
+    # out of them is reported to the learner rather than papered over with a
+    # repeat (see prioritization.narrow_to_next_kc).
+    faded_ids = set()
+    for si, seg in enumerate(kp["segments"]):
+        seg_label = f"segment {si + 1}" + (f" ({seg['title']})" if seg["title"] else "")
+        if not seg["concept"]:
+            errors.append(f"{name}: {seg_label} has an empty '## Concept'")
+        if not seg["worked"]:
+            errors.append(f"{name}: {seg_label} has no worked example")
+        elif not code_fences(seg["worked"], "python"):
+            # At least one, no longer exactly one. A worked example reads better
+            # as prose explaining what is about to be shown, then a short block,
+            # then prose about what it printed, then the next block — one wall of
+            # uncommented code is the thing learners skip. `worked_example_code`
+            # still takes the first fence, which only prefills the in-app scratch
+            # editor; the notebook and the lesson player render every block.
+            errors.append(f"{name}: {seg_label} must have a Python worked example")
+        items = split_items(seg["faded"])
+        if not items:
+            errors.append(f"{name}: {seg_label} must have at least one faded exercise")
+        for qid, content in items.items():
+            if qid in faded_ids:
+                errors.append(f"{name}: faded q{qid} appears in more than one segment")
+            faded_ids.add(qid)
+            if qid not in bank:
+                errors.append(f"{name}: faded q{qid} not in bank")
+                continue
+            starters = code_fences(content, "python starter")
+            solutions = code_fences(content, "python solution")
+            if not starters or not solutions:
+                errors.append(f"{name}: faded q{qid} missing starter/solution fence")
+                continue
+            for fail in grade_against_bank(solutions[0], bank[qid]):
+                errors.append(f"{name}: faded q{qid} solution FAILED {fail}")
+
+    # 4b. Quality rules (scripts/lesson_quality.py). Errors only for KPs that
+    # have been through the pass — see `strict_for`. `audit_ladder_pairing.py`
+    # reports them for every page, so the legacy backlog stays visible instead
+    # of being silently exempt.
+    # The rules read the flat bank shape (`question_text`, `answer_code`,
+    # `test_cases` at the top level); `bank` is the structured export. Every
+    # rule below was handed a raw row for months and saw only empty strings.
+    strict = quality.strict_for(kp)
+    if strict:
+        errors.extend(quality.check_syntax_load(kp, name))
+        for si, seg in enumerate(kp["segments"]):
+            label = f"{name}: segment {si + 1}"
+            errors.extend(quality.check_example_shape(seg["worked"], label))
+            for qid, content in split_items(seg["faded"]).items():
+                if qid in bank:
+                    errors.extend(quality.check_pairing(seg["worked"], flat_question(bank[qid]), f"{name}: q{qid}"))
+                    errors.extend(quality.fade_findings(kp, qid, content, bank, f"{name}: q{qid}"))
+        for item_qid in kp["independent"]:
+            if item_qid in bank:
+                errors.extend(
+                    quality.check_prompt_leak(flat_question(bank[item_qid]), "solo", f"{name}: q{item_qid}")
+                )
+
+    # 4b'. Answer leaks on the unaided rungs (scripts/content_safety.py). Both
+    # surfaces the learner sees — the prompt on the left and the starter on the
+    # right, comments and docstrings included — are held against the reference
+    # solution, and the starter must be a bare stub. The integrated rung is also
+    # held against the lesson's own fences (lesson_giveaway). Errors on pages
+    # that are strict, warnings elsewhere so the legacy backlog stays visible.
+    lesson_code = "\n".join(
+        code for seg in kp["segments"]
+        for text in (seg["concept"], seg["worked"])
+        for code in code_fences(text, "python")
+    )
+    leak_sink = errors if strict else LEAK_WARNINGS
+    for rung, ids in (("solo", kp["independent"]), ("integrated", kp.get("integrated") or [])):
+        for qid in ids:
+            if qid not in bank:
+                continue
+            q = flat_question(bank[qid])
+            leak_sink.extend(content_safety.leak_findings(q, rung, f"{name}: q{qid}"))
+            if rung == "integrated":
+                leak_sink.extend(content_safety.lesson_giveaway(q, lesson_code, f"{name}: q{qid}"))
+
+    # 4c. Applied practice is the ladder's third rung. Its ids must be drills the
+    # backend already treats as independent, or the rung the learner is served
+    # would not match the support the notebook shows them.
+    applied_items = split_items(kp["sections"].get("Applied practice", ""))
+    for qid, content in applied_items.items():
+        if qid not in set(kp["independent"]):
+            errors.append(
+                f"{name}: applied q{qid} is not in the frontmatter `independent` list — "
+                f"applied practice re-serves an independent drill WITH an example, "
+                f"it does not create a new rung"
+            )
+        if not code_fences(content, "python worked"):
+            errors.append(
+                f"{name}: applied q{qid} has no ```python worked fence — without one "
+                f"it is indistinguishable from a solo drill and will be served as one"
+            )
+        elif quality.strict_for(kp):
+            label = f"{name}: applied q{qid}"
+            errors.extend(quality.check_example_shape(content, label, info="python worked"))
+            if qid in bank:
+                errors.extend(
+                    quality.check_pairing(content, bank[qid], label, info="python worked")
+                )
+
+    # 4d. Solo and Integrated are the third and fourth rungs, and each of them
+    # is declared TWICE — once in frontmatter (which is what `build_qmatrix.py`
+    # tags and what the backend rung selector reads) and once as a section
+    # (which is what `compile_lessons.py` compiles and serves). Nothing tied
+    # the two together, so a drill listed in only one place either got tagged
+    # and never served or got served carrying no target concept at all. Both
+    # halves are silent. (codex, 2026-08-28.)
+    solo_ids = set(split_items(kp["sections"].get("Solo practice", "")).keys())
+    for qid in sorted(solo_ids - set(kp["independent"])):
+        errors.append(
+            f"{name}: solo q{qid} is not in the frontmatter `independent` list — "
+            f"it would be served from the section and tagged by nothing"
+        )
+    integrated_ids = set(split_items(kp["sections"].get("Integrated practice", "")).keys())
+    if set(kp.get("integrated") or []) != integrated_ids:
+        errors.append(
+            f"{name}: frontmatter integrated {sorted(kp.get('integrated') or [])} "
+            f"!= sections {sorted(integrated_ids)}"
+        )
+    for qid in sorted(integrated_ids & set(kp["independent"])):
+        errors.append(
+            f"{name}: q{qid} is listed as BOTH integrated and independent — "
+            f"one drill cannot be two rungs, and the selector prefers integrated"
+        )
+    for qid in sorted(set(kp.get("integrated") or [])):
+        if qid not in bank:
+            errors.append(f"{name}: integrated q{qid} not in bank")
+
+    # 5. refs exist and are consistent
+    if set(kp["faded"]) != faded_ids:
+        errors.append(f"{name}: frontmatter faded {sorted(kp['faded'])} != sections {sorted(faded_ids)}")
+    guided_ids = set(split_items(kp["sections"].get("Guided practice", "")).keys())
+    if set(kp["guided"]) != guided_ids:
+        errors.append(f"{name}: frontmatter guided {sorted(kp['guided'])} != sections {sorted(guided_ids)}")
+    for qid in list(kp["guided"]) + list(kp["independent"]):
+        if qid not in bank:
+            errors.append(f"{name}: referenced q{qid} not in bank")
+    return kp
+
+
+def check_registry(registry, errors):
+    kc_ids = {kc["id"] for kc in registry["kcs"]}
+    lesson_ids = {l["id"] for l in registry["lessons"]}
+    graph = {}
+    for kc in registry["kcs"]:
+        if kc["lesson"] not in lesson_ids:
+            errors.append(f"registry: kc {kc['id']} has unknown lesson {kc['lesson']}")
+        for p in kc["prereqs"]:
+            if p not in kc_ids:
+                errors.append(f"registry: kc {kc['id']} has unknown prereq {p}")
+        graph[kc["id"]] = list(kc["prereqs"])
+    # cycle check (iterative DFS)
+    WHITE, GRAY, BLACK = 0, 1, 2
+    color = dict.fromkeys(graph, WHITE)
+    for start in graph:
+        if color[start] != WHITE:
+            continue
+        stack = [(start, iter(graph[start]))]
+        color[start] = GRAY
+        while stack:
+            node, it = stack[-1]
+            for nxt in it:
+                if color.get(nxt, BLACK) == GRAY:
+                    errors.append(f"registry: prereq cycle through {nxt}")
+                elif color.get(nxt) == WHITE:
+                    color[nxt] = GRAY
+                    stack.append((nxt, iter(graph[nxt])))
+                    break
+            else:
+                color[node] = BLACK
+                stack.pop()
+
+
+def check_previews(paths, errors):
+    """A `previews:` entry is a claim, so hold it to the claim's terms.
+
+    Declaring a preview exempts a use from the audit's "shown before it is
+    taught" list, which is only honest while all three parts hold: the page
+    really shows the symbol, it does NOT declare it (that would be a lesson,
+    not a preview), and some LATER page does. Without this, `previews:` would
+    be a mute button, and a stale entry left behind by an edit would keep a
+    real regression quiet.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from audit_lesson_syntax import ASSUMED, lesson_order, page_symbols
+
+    kc_of_page, fms, shown = {}, {}, {}
+    for p in paths:
+        fm, used, _ = page_symbols(p)
+        kc_of_page[p.name] = str(fm.get("kc") or "")
+        fms[p.name] = fm
+        shown[p.name] = used
+    rank = lesson_order(kc_of_page)
+
+    declared_by = {}
+    for name, fm in fms.items():
+        for sym in fm.get("new_syntax") or []:
+            declared_by.setdefault(sym, []).append(name)
+
+    for name, fm in fms.items():
+        here = rank.get(kc_of_page[name], 99)
+        for sym in fm.get("previews") or []:
+            if sym in ASSUMED:
+                errors.append(f"{name}: previews {sym}, which is in ASSUMED — no lesson owns it")
+                continue
+            if sym not in shown[name]:
+                errors.append(f"{name}: previews {sym} but never shows it — stale entry")
+                continue
+            if name in declared_by.get(sym, []):
+                errors.append(f"{name}: previews {sym} and also declares it — pick one")
+                continue
+            homes = declared_by.get(sym) or []
+            if not homes:
+                errors.append(f"{name}: previews {sym}, but no lesson declares it")
+            elif not all(rank.get(kc_of_page[h], 99) > here for h in homes):
+                errors.append(
+                    f"{name}: previews {sym}, but {homes[0]} teaches it no later — "
+                    "that is not a forward reference"
+                )
+
+
+def check_coverage(registry, bank, kps, errors):
+    kp_kcs = [kp["kc"] for kp in kps if kp]
+    dupes = {k for k in kp_kcs if kp_kcs.count(k) > 1}
+    for d in dupes:
+        errors.append(f"coverage: kc {d} has multiple KP files")
+    missing = {kc["id"] for kc in registry["kcs"]} - set(kp_kcs)
+    for m in sorted(missing):
+        errors.append(f"coverage: kc {m} has no KP file")
+    tags_path = LESSONS_DIR / "qmatrix_tags.json"
+    if not tags_path.exists():
+        errors.append("coverage: qmatrix_tags.json missing")
+        return
+    tags = json.loads(tags_path.read_text())
+    kc_ids = {kc["id"] for kc in registry["kcs"]}
+    easy_ids = {qid for qid, q in bank.items() if q["curriculum"]["topic"] in EASY_TOPICS}
+    untagged = easy_ids - {int(k) for k in tags}
+    if untagged:
+        errors.append(f"coverage: {len(untagged)} easy questions untagged (e.g. {sorted(untagged)[:8]})")
+    for qid, t in tags.items():
+        for kc in t.get("target_kcs", []) + t.get("supporting_kcs", []):
+            if kc not in kc_ids:
+                errors.append(f"coverage: q{qid} tagged with unknown kc {kc}")
+        if not t.get("target_kcs"):
+            errors.append(f"coverage: q{qid} has no target_kcs")
+
+
+def main(argv):
+    coverage = "--coverage" in argv
+    # Resolve so a path given relative to the cwd (the usual way to type it)
+    # still satisfies lesson_lib's `path.relative_to(REPO)`.
+    files = [Path(a).resolve() for a in argv if a.endswith(".md")]
+    registry = load_registry()
+    bank = load_bank()
+    errors = []
+    check_registry(registry, errors)
+    paths = files or all_kp_paths()
+    kps = [check_kp(p, registry, bank, errors) for p in paths]
+    if not files:
+        check_previews(paths, errors)
+    if coverage:
+        check_coverage(registry, bank, kps, errors)
+    if LEAK_WARNINGS:
+        # One line per legacy page: the backlog stays visible without burying
+        # the errors under it. `--leaks` prints every finding.
+        by_page = {}
+        for w in LEAK_WARNINGS:
+            page, _, rest = w.partition(": ")
+            code = rest.split(" — ")[0].split(": ")[-1].split(" (")[0]
+            by_page.setdefault(page, {}).setdefault(code, 0)
+            by_page[page][code] += 1
+        print(f"WARN — {len(LEAK_WARNINGS)} leak finding(s) on {len(by_page)} non-strict page(s):")
+        for page, codes in sorted(by_page.items()):
+            print(f"  - {page}: " + ", ".join(f"{c}×{n}" for c, n in sorted(codes.items())))
+        if "--leaks" in sys.argv:
+            for w in LEAK_WARNINGS:
+                print(f"    {w}")
+    if errors:
+        print(f"FAIL — {len(errors)} error(s):")
+        for e in errors:
+            print(f"  - {e}")
+        return 1
+    n = len(paths)
+    print(f"PASS — {n} KP file(s) validated" + (" + coverage" if coverage else ""))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

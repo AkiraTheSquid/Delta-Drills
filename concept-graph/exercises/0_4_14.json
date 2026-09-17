@@ -1,0 +1,31 @@
+{
+  "exercise_id": "0_4_14",
+  "title": "sum",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_14_exercise-sum.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 14,
+  "difficulty": 3,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "sum-back-expand-broadcast", "role": "core", "evidence": "if (not keepdim) and (dim is not None): grad_out = np.expand_dims(grad_out, dim); return np.broadcast_to(grad_out, x.shape) — the canonical 2-step expand_dims + broadcast_to inverse-of-sum"},
+    {"id": "sum-and-broadcast-duality", "role": "core", "evidence": "Markdown: 'broadcast operation effectively copies our tensor, giving it more gradient paths that we need to sum over. Similarly, the backwards operation for summing is broadcasting' — explicit duality statement"},
+    {"id": "add-sub-div-back-lambdas", "role": "core", "evidence": "6 lambda registrations in one cell: BACK_FUNCS.add_back_func(np.add, 0, lambda...: unbroadcast(grad_out, x)); ... add_back_func(np.true_divide, 1, lambda...: unbroadcast(grad_out * (-x / y**2), y)) — the bulk-register-lambdas idiom"},
+    {"id": "getitem-back-add-at", "role": "core", "evidence": "new_grad_out = np.full_like(x, 0); np.add.at(new_grad_out, coerce_index(index), grad_out) — scatter via np.add.at to handle repeated indices"},
+    {"id": "non-diff-fn-wrap", "role": "core", "evidence": "argmax = wrap_forward_fn(_argmax, is_differentiable=False); test cell asserts not b.requires_grad and b.recipe is None"},
+    {"id": "is-differentiable-flag", "role": "core", "evidence": "wrap_forward_fn(_argmax, is_differentiable=False) — explicit use of the flag"},
+    {"id": "inplace-op-unsafe-warning", "role": "core", "evidence": "Whole markdown section 'In-Place Operations' demonstrates safe_example()/unsafe_example() with add_/sub_; explains 'RuntimeError: a leaf Variable that requires grad is being used in an in-place operation'"},
+    {"id": "rmul-scalar-tensor-mix", "role": "core", "evidence": "Markdown section 'Mixed Scalar-Tensor Operations' explains why Tensor needs both __mul__ and __rmul__: 'Without __rmul__ defined, executing 2 * a when a is a Tensor would try to call 2.__mul__(a)'; test asserts 2 * b backprops correctly"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "sum/add/subtract/true_divide/getitem/argmax all wrapped + registered in this notebook"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "sum = wrap_forward_fn(_sum); add = wrap_forward_fn(np.add); ... getitem = wrap_forward_fn(_getitem); argmax = wrap_forward_fn(_argmax, ...)"},
+    {"id": "kwargs-pass-through-recipe", "role": "core", "evidence": "_sum(x, dim=None, keepdim=False) — dim and keepdim must flow through Recipe.kwargs to sum_back; tests.test_sum_keepdim_false specifically tests this plumbing"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "All registered backwards (sum_back, add/sub/div lambdas, getitem_back) use the (grad_out, out, x, ...) shape"},
+    {"id": "broadcasting-rules", "role": "core", "evidence": "All 6 lambdas for add/sub/div use unbroadcast(grad_out, x_or_y) — the broadcasting concern from R9.1 fired throughout"},
+    {"id": "unbroadcast-pattern", "role": "core", "evidence": "Every add/sub/div lambda wraps with unbroadcast(...) — the 3.1 pattern applied 6 times in this single cell"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "14 atoms — exactly matches seed prediction. The 'kitchen sink' exercise of part 4 — bundles sum_back, the 6 add/sub/div lambdas, getitem with np.add.at scatter, non-diff argmax, in-place warning, and rmul dispatch. Densest single non-capstone exercise."
+}

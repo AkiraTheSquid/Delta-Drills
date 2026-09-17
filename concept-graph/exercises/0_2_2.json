@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_2_2",
+  "title": "implement the simple MLP",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_2_exercise-implement-the-simple-mlp.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 2,
+  "difficulty": 3,
+  "importance": 4,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class SimpleMLP(nn.Module): with __init__ + super + forward"},
+    {"id": "module-composition", "role": "core", "evidence": "self.flatten = Flatten(); self.linear1 = Linear(...); self.relu = ReLU(); self.linear2 = Linear(...) — child Modules assigned as attributes auto-register as sub-modules"},
+    {"id": "relu-elementwise-max", "role": "incidental", "evidence": "self.relu = ReLU() used in pipeline self.linear2(self.relu(self.linear1(...))); the ReLU itself is just composed, not implemented here"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "nn-parameter-wrap", "reason": "no nn.Parameter calls — all learnable weights live inside the imported Linear submodules; learner only composes Modules"},
+    {"id": "tensor-reshape-view", "reason": "the Flatten Module handles the (batch, 28, 28) -> (batch, 784) reshape; learner doesn't call .view/.reshape directly"}
+  ],
+  "notes": "Pure composition exercise — 3 atoms, low for a Module exercise but appropriate because all the heavy lifting (parameters, init, the actual linear op) is delegated to imported sub-Modules. Validates module-composition as a distinct atom from nn-module-subclass + nn-parameter-wrap: you can subclass nn.Module without ever defining a Parameter if you delegate to children."
+}

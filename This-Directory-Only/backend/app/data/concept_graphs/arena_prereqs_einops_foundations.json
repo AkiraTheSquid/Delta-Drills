@@ -1,0 +1,229 @@
+{
+  "curriculum_id": "arena-prereqs-einops-foundations",
+  "title": "ARENA Prerequisites: Einops Foundations",
+  "version": "0.1.0",
+  "description": "A hand-seeded first curriculum slice for explicit concept-graph tutoring. This slice focuses on the earliest einops rearrange skills that support later Delta Drills and ARENA tensor-manipulation work.",
+  "concepts": [
+    {
+      "id": "einops.axis-semantics",
+      "title": "Axis semantics and shape vocabulary",
+      "topic": "Einops",
+      "subtopic": "Foundations",
+      "node_type": "concept",
+      "kind": "knowledge",
+      "tier": "core",
+      "description": "Understand what each axis symbol refers to and preserve the same elements while changing layout.",
+      "tags": ["axis naming", "shape reasoning", "rearrange"]
+    },
+    {
+      "id": "einops.axis-permutation",
+      "title": "Axis permutation",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "node_type": "concept",
+      "kind": "skill",
+      "tier": "core",
+      "description": "Reorder existing axes without composing or splitting them.",
+      "tags": ["transpose", "layout swap", "rearrange"]
+    },
+    {
+      "id": "einops.axis-composition",
+      "title": "Axis composition and decomposition",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "node_type": "concept",
+      "kind": "skill",
+      "tier": "core",
+      "description": "Merge axes into grouped dimensions or split grouped dimensions back into factors.",
+      "tags": ["factorization", "grouping", "reshaping"]
+    },
+    {
+      "id": "einops.layout-conversion",
+      "title": "Image layout conversion",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "node_type": "concept",
+      "kind": "skill",
+      "tier": "core",
+      "description": "Convert among BCHW, BHWC, HWC, and CHW style layouts while preserving image content.",
+      "tags": ["BCHW", "BHWC", "CHW", "HWC"]
+    },
+    {
+      "id": "einops.grid-patching",
+      "title": "Grid and patch rearrangements",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "node_type": "concept",
+      "kind": "strategy",
+      "tier": "supplemental",
+      "description": "Use composition plus permutation to build image grids, patches, and space-to-depth style transformations.",
+      "tags": ["patches", "space-to-depth", "image grids"]
+    }
+  ],
+  "prerequisite_edges": [
+    {
+      "prerequisite_id": "einops.axis-semantics",
+      "dependent_id": "einops.axis-permutation",
+      "weight": 0.95,
+      "confidence": 1.0,
+      "is_hard_gate": true,
+      "rationale": "Students need to know what each axis means before reordering them."
+    },
+    {
+      "prerequisite_id": "einops.axis-semantics",
+      "dependent_id": "einops.axis-composition",
+      "weight": 0.95,
+      "confidence": 1.0,
+      "is_hard_gate": true,
+      "rationale": "Axis grouping and splitting depend on reliable shape vocabulary."
+    },
+    {
+      "prerequisite_id": "einops.axis-permutation",
+      "dependent_id": "einops.layout-conversion",
+      "weight": 0.9,
+      "confidence": 0.95,
+      "is_hard_gate": true,
+      "rationale": "Layout conversion is a concrete application of axis reordering."
+    },
+    {
+      "prerequisite_id": "einops.axis-composition",
+      "dependent_id": "einops.grid-patching",
+      "weight": 0.9,
+      "confidence": 0.9,
+      "is_hard_gate": true,
+      "rationale": "Patch and grid problems require splitting and regrouping spatial axes."
+    },
+    {
+      "prerequisite_id": "einops.axis-permutation",
+      "dependent_id": "einops.grid-patching",
+      "weight": 0.7,
+      "confidence": 0.85,
+      "is_hard_gate": false,
+      "rationale": "Many grid tasks also involve moving the new axes into a usable order."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "lesson.einops.visual-intuition",
+      "title": "Visual intuition warm-up",
+      "summary": "The first image-based ARENA prerequisites build shape vocabulary by visually manipulating rows, columns, channels, and stretching patterns.",
+      "topic": "Einops",
+      "subtopic": "Foundations",
+      "tier": "core",
+      "source_kind": "arena_prereqs_structured",
+      "source_ref": "records:1-8",
+      "concept_ids": [
+        "einops.axis-semantics",
+        "einops.axis-permutation",
+        "einops.axis-composition"
+      ],
+      "lesson_role": "introduce"
+    },
+    {
+      "id": "lesson.einops.rearrange-basics",
+      "title": "Function-based rearrange basics",
+      "summary": "The first function-implementation rearrange exercises convert visual intuition into explicit tensor expressions.",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "tier": "core",
+      "source_kind": "arena_prereqs_structured",
+      "source_ref": "records:9-10",
+      "concept_ids": [
+        "einops.axis-semantics",
+        "einops.axis-permutation",
+        "einops.axis-composition",
+        "einops.layout-conversion"
+      ],
+      "lesson_role": "practice"
+    },
+    {
+      "id": "lesson.einops.layout-round-trips",
+      "title": "Layout round-trips and grid assembly",
+      "summary": "Delta Drills rearrange items test whether the learner can compose, permute, and then invert the same transformation without losing track of spatial structure.",
+      "topic": "Einops",
+      "subtopic": "Rearrange",
+      "tier": "supplemental",
+      "source_kind": "delta_drills_question_bank",
+      "source_ref": "subtopic:Einops: Rearrange",
+      "concept_ids": [
+        "einops.axis-permutation",
+        "einops.axis-composition",
+        "einops.layout-conversion",
+        "einops.grid-patching"
+      ],
+      "lesson_role": "review"
+    }
+  ],
+  "problem_links": [
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "319",
+      "concept_id": "einops.layout-conversion",
+      "role": "primary",
+      "weight": 1.0,
+      "notes": "BCHW to NHWC conversion."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "335",
+      "concept_id": "einops.layout-conversion",
+      "role": "supporting",
+      "weight": 0.8,
+      "notes": "HWC to CHW promotion."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "344",
+      "concept_id": "einops.axis-permutation",
+      "role": "primary",
+      "weight": 0.9,
+      "notes": "Pure transpose: swap height and width."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "314",
+      "concept_id": "einops.axis-composition",
+      "role": "primary",
+      "weight": 0.9,
+      "notes": "Move batch into width and then recover the original arrangement."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "315",
+      "concept_id": "einops.axis-composition",
+      "role": "supporting",
+      "weight": 0.8,
+      "notes": "Split a sequence into fixed-size chunks."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "313",
+      "concept_id": "einops.grid-patching",
+      "role": "primary",
+      "weight": 1.0,
+      "notes": "Space-to-depth with 2x2 blocks."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "323",
+      "concept_id": "einops.grid-patching",
+      "role": "transfer",
+      "weight": 0.8,
+      "notes": "Reassemble an image from 3x3 patches."
+    },
+    {
+      "source_bank": "delta_drills_question_bank",
+      "problem_ref": "329",
+      "concept_id": "einops.grid-patching",
+      "role": "review",
+      "weight": 0.7,
+      "notes": "Make a 2x3 grid from the first 6 images."
+    }
+  ],
+  "mastery_gate": {
+    "mastery_threshold": 0.8,
+    "require_all_hard_prereqs": true,
+    "supplemental_concepts_block_progress": false,
+    "notes": "Core concepts unlock only after every hard-gate prerequisite reaches 0.8 mastery. Supplemental concepts can be served once the hard-gate chain is satisfied, but they should not block frontier progress."
+  }
+}

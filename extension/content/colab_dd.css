@@ -1,0 +1,244 @@
+/* ================================================================
+   COLAB_DD.CSS — Delta Drills' two changes to a Colab page.
+
+   Declared in the manifest, so it is present on every Colab page from the first
+   paint — but EVERY rule is scoped under a class on <html> that only
+   `colab_focus.js` adds:
+
+     html.dd-theme   the dark Delta-Drills-ish skin, and Colab's chrome hidden
+     html.dd-focus   everything except the current problem hidden
+
+   Both off = a completely stock Colab page. That is what makes the toggle
+   instant and total: nothing to inject, nothing to unwind, no flash of a
+   half-styled notebook while a script decides.
+
+   Adapted from Seth's hand-written Colab CSS
+   (kolb-learning-notes/0-primary-sources/00.0-prompts/CCS-for-google-collab-page.md).
+   One rule from it is deliberately NOT here: `a { display: none }`. It hides
+   every anchor on the page, including links inside the problem prose and the
+   lesson's own references — invisible content rather than tidier chrome.
+   ================================================================ */
+
+/* ── Focus: one problem at a time ────────────────────────────────────
+   The class work is in colab_focus.js; this is the whole visual half.
+
+   `.dd-out-of-focus` is only ever applied when a target problem actually
+   RESOLVED — no target means no class means nothing hidden. A notebook that
+   hides everything looks broken in exactly the way a blank page does, and the
+   student cannot tell it from a failed load. */
+html.dd-focus .cell.dd-out-of-focus {
+  display: none !important;
+}
+
+/* The setup and checker cells survive focus mode, always. They hold the
+   imports, `DD_LESSON_ID` and `dd_check`, so hiding them leaves the student a
+   problem they cannot run or check — the cells whose absence is silent until
+   something below raises NameError. */
+html.dd-focus .cell.dd-always-visible {
+  display: block !important;
+}
+
+/* ── The setup cell is for a program to read, not a person ───────────
+   It assigns `DD_LESSON_ID` and nothing else. `colab.js`'s `identify` reads
+   that off the rendered text — which a `display: none` cell still has — so the
+   panel keeps knowing which notebook is open, and nothing needs the cell RUN.
+   What the learner got out of it was a "run me first" that is not, above a
+   backend URL and a token line neither of which does anything here.
+
+   AFTER the always-visible rule on purpose: both are `!important` at the same
+   specificity, so source order is what decides, and this has to win. The two
+   rules are not in conflict — one keeps focus from hiding the cell, this one
+   hides it for a different reason, and un-theming brings it back. */
+html.dd-theme .cell.dd-setup-cell {
+  display: none !important;
+}
+
+/* ── Solutions: not until you have answered ──────────────────────────
+   The answer cell for each problem, gone until the panel says the learner has
+   said how it went (`dd:reveal-solution` → colab_focus.js `reveal`). Before
+   this the cell was merely collapsed, which still put "💡 Solution — Problem
+   480" on screen under the code you were trying to write.
+
+   Scoped to `html.dd-hide-solutions` so the toggle's "Show every solution" is a
+   real off switch — for reading a notebook you have already worked through. */
+html.dd-hide-solutions .cell.dd-solution:not(.dd-solution-shown) {
+  display: none !important;
+}
+
+/* ── The worked half of a stage-2 pair ───────────────────────────────
+   A stage-2 problem arrives as two problems in a row: one already solved, for
+   reading, then the learner's own. In focus mode they are the only two things
+   on screen, one directly above the other, and until this rule they were
+   styled identically — a prompt, a code cell, a prompt, a code cell. The
+   heading says which is which and a learner scanning for the editor does not
+   read headings.
+
+   So the example is marked as REFERENCE rather than as work: a rule down its
+   left edge and a dimmer surface, the same vocabulary `styles/practice/
+   ladder.css` uses in the app for the same distinction. Deliberately NOT
+   collapsed or hidden — the whole request is that the learner can scroll up
+   and see the solved problem, so it has to be legible without a click.
+
+   Scoped under `html.dd-theme` because it is skin, not mechanism: with the
+   theme off the notebook is Colab's again, and the example is still perfectly
+   readable, just unmarked. */
+html.dd-theme .cell.dd-example {
+  border-left: 3px solid #3d6ea8;
+  margin-left: -3px;
+  opacity: 0.86;
+}
+
+html.dd-theme .cell.dd-example:hover {
+  opacity: 1;
+}
+
+/* ── Gemini's shadow text ────────────────────────────────────────────
+   The BACKSTOP, not the fix. Colab ships "Show AI-powered inline completions"
+   on, and on one of our notebooks the thing it completes is the answer — grey
+   text appearing ahead of the caret on a problem the learner has just been told
+   they cannot do yet.
+
+   CSS cannot be the whole answer, and on its own it is worse than nothing:
+   Monaco's Tab handler accepts the suggestion held in the MODEL, so hiding the
+   pixels leaves Tab pasting in an answer the learner never saw. The suppression
+   proper is `content/colab_no_ai.js`, which switches `inlineSuggest` off on the
+   editor itself. These rules cover the frames before Monaco has loaded and the
+   day Google renames an option we set.
+
+   Both halves are driven by the same class, which is the point — `dd-no-ai` is
+   added and removed in one place (`colab_focus.js`'s `apply`, which dispatches
+   the MAIN-world event on the same pass), so there is no state in which the
+   text is hidden but still live.
+
+   Scoped like everything else here: `dd-no-ai` only goes on for a notebook
+   carrying `dd-` anchors, so someone else's Colab page keeps its completions. */
+html.dd-no-ai .monaco-editor .ghost-text-decoration,
+html.dd-no-ai .monaco-editor .ghost-text-decoration-preview,
+html.dd-no-ai .monaco-editor .suggest-preview-text .ghost-text,
+html.dd-no-ai .monaco-editor .inline-edit-decoration,
+html.dd-no-ai .monaco-editor .inline-edit-decoration-preview,
+html.dd-no-ai .monaco-editor .inlineSuggestionsHints,
+html.dd-no-ai .monaco-editor div.inline-edits-widget {
+  display: none !important;
+}
+
+/* ── The skin ────────────────────────────────────────────────────── */
+
+html.dd-theme colab-composer-floating-spark,          /* the Gemini spark */
+html.dd-theme colab-status-bar,
+html.dd-theme colab-cell-toolbar,
+html.dd-theme div#header,
+html.dd-theme div#header-content,
+html.dd-theme div#header-right,
+html.dd-theme div#header-doc-toolbar,
+html.dd-theme colab-notebook-toolbar#top-toolbar,
+/* The whole element, not `.colab-left-pane-open`. That class is only on it
+   while the drawer is EXPANDED — closed, the element keeps rendering its 48px
+   icon rail (`.colab-left-pane-nib`: contents, find, snippets, secrets, files,
+   variables), which is the state a notebook opens in. So the rule hid the pane
+   in the one case a learner had opened it deliberately and left the strip on
+   screen the rest of the time, which is backwards. */
+html.dd-theme colab-left-pane {
+  display: none !important;
+}
+
+/* Monaco's vertical column ruler. */
+html.dd-theme .monaco-editor .view-rulers,
+html.dd-theme .monaco-editor .view-ruler {
+  display: none !important;
+}
+
+html.dd-theme .monaco-editor,
+html.dd-theme .monaco-editor-background,
+html.dd-theme .monaco-editor .margin,
+html.dd-theme .monaco-editor .overflow-guard,
+html.dd-theme .margin-view-overlays,
+html.dd-theme .inputarea.horizontal.layout.code {
+  background-color: #0d0d18 !important;
+}
+
+html.dd-theme .notebook-vertical.large-notebook,
+html.dd-theme .layout.vertical.grow.tab-pane-container {
+  background: #1a1a2e;
+}
+
+html.dd-theme .notebook-cell-list {
+  background: transparent;
+}
+
+/* Selection: coral at ~35%, matching the app. */
+html.dd-theme .monaco-editor .selected-text,
+html.dd-theme .monaco-editor .view-overlays .selected-text,
+html.dd-theme .monaco-editor .view-overlays .selected-text.inactive {
+  background-color: #ff7f5059 !important;
+}
+
+/* Native selection outside Monaco. `color: inherit` is the load-bearing half:
+   without it the browser picks its own foreground for selected text, and at 35%
+   opacity that lands as grey-on-grey. */
+html.dd-theme ::selection {
+  background-color: #ff7f5059 !important;
+  color: inherit !important;
+}
+
+html.dd-theme .code .codecell-input-output,
+html.dd-theme .notebook-cell.focused .main-content {
+  outline: none !important;
+}
+
+/* ── The toggle ──────────────────────────────────────────────────────
+   Unscoped on purpose: it is the way back out. Scoped under `.dd-theme` it
+   would vanish with the theme it turns off, and the only remedy left would be
+   reloading the tab. */
+#dd-colab-toggle {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2147483646;      /* over Colab's own overlays, under nothing of ours */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 22, 26, 0.92);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  font: 12px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e6e6ef;
+  user-select: none;
+}
+
+#dd-colab-toggle .dd-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#dd-colab-toggle input {
+  accent-color: #ff7f50;
+  margin: 0;
+  cursor: pointer;
+}
+
+#dd-colab-toggle .dd-note {
+  color: #9aa0b4;
+  max-width: 190px;
+  white-space: normal;
+}
+
+#dd-colab-toggle.dd-collapsed .dd-row,
+#dd-colab-toggle.dd-collapsed .dd-note {
+  display: none;
+}
+
+#dd-colab-toggle .dd-handle {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: #9aa0b4;
+  cursor: pointer;
+  font: inherit;
+  padding: 0 2px;
+}

@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_2_0",
+  "title": "implement ReLU",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_0_exercise-implement-relu.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 0,
+  "difficulty": 2,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class ReLU(nn.Module): with only forward defined (no __init__/super needed for trivial Module)"},
+    {"id": "relu-elementwise-max", "role": "core", "evidence": "solution: return t.maximum(x, t.tensor(0.0)) — the canonical elementwise max-with-zero"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "broadcasting-rules", "reason": "seed predicted this for exercise 0 but the maximum-with-scalar-tensor here doesn't exercise broadcasting in any meaningful sense; t.tensor(0.0) is a 0-D scalar"}
+  ],
+  "notes": "Trivial 2-atom exercise — the minimal possible Module (no __init__, no parameters, no extra_repr). Confirms that the Module-spine atoms (nn-parameter-wrap, module-extra-repr) are NOT universal — they only apply when there's state to declare. Below the 4-7 band but that's appropriate for a deliberately trivial first exercise."
+}

@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_4_1",
+  "title": "implement unbroadcast",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_1_exercise-implement-unbroadcast.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 1,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "unbroadcast-pattern", "role": "core", "evidence": "Solution implements the canonical 2-step inverse: (1) n_dims_to_sum = len(broadcasted.shape) - len(original.shape); broadcasted.sum(axis=tuple(range(n_dims_to_sum))) — sum prepended dims; (2) sum over size-1 dims with keepdims=True"},
+    {"id": "sum-and-broadcast-duality", "role": "core", "evidence": "Markdown explicitly frames: 'the unbroadcasting process is the same process in reverse: 1. Sum over prepended dimensions... 2. Sum over dimensions where original had size 1' — broadcasting ↔ summing duality stated directly"},
+    {"id": "broadcasting-rules", "role": "core", "evidence": "Exercise prose explicitly walks through broadcast rules: 'broadcasting original to the shape of broadcasted can be described as a 2-step process: 1. Extend dummy dimensions (size 1)... 2. Prepend dimensions' — the right-align/size-1-stretch rules being inverted"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "3 atoms — matches seed prediction of 4 (1 atom less). Fundamental building block that every binary backward (multiply, max, add/sub/div) depends on. The 2-step inverse-broadcast pattern is taught in one self-contained exercise."
+}

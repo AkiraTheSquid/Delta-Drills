@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_4_10",
+  "title": "negative",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_10_exercise-negative.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 10,
+  "difficulty": 1,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "negative-back", "role": "core", "evidence": "return -grad_out — the trivial sign-flip dL/dx = -grad_out identity"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def negative_back(grad_out: Arr, out: Arr, x: Arr) -> Arr — same (grad_out, out, x) convention"},
+    {"id": "chain-rule-elementwise", "role": "core", "evidence": "Markdown: 'torch.negative just performs -x elementwise. ... you don't need to worry about unbroadcasting here because np.negative won't change the input shape' — elementwise local derivative is -1, multiply by grad_out"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "negative = wrap_forward_fn(np.negative); BACK_FUNCS.add_back_func(np.negative, 0, negative_back) — the 2-step (wrap + register) framework-extension idiom"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "negative = wrap_forward_fn(np.negative) — the factory from 0_4_7 reused here"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5 atoms — under seed prediction of 6. The simplest possible per-op exercise; trivial gradient identity (-grad_out), no unbroadcast since shape-preserving. First exercise where the wrap+register idiom (atoms register-back-fn-after-wrap + wrap-forward-fn-generic) is the actual coding task."
+}

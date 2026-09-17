@@ -1,0 +1,21 @@
+{
+  "exercise_id": "0_3_9",
+  "title": "implement broadcast",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_9_exercise-implement-broadcast.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 9,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "rank-world-size-args", "role": "core", "evidence": "def broadcast(tensor: Tensor, rank: int, world_size: int, src: int = 0): — canonical per-rank function signature"},
+    {"id": "dist-send-recv-pair", "role": "core", "evidence": "dist.send(tensor, dst=other_rank) on source; dist.recv(received_tensor, src=src) on non-source — the matched send/recv primitive used to implement broadcast"},
+    {"id": "broadcast-source-fanout", "role": "core", "evidence": "if rank == src: for other_rank in range(world_size): if other_rank != src: dist.send(...) else: ... dist.recv(received_tensor, src=src); tensor.copy_(received_tensor) — the one-rank-sends-to-all pattern"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "tensor.copy_(received_tensor) — must use copy_ to mutate the caller's tensor in-place rather than rebinding"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "4 atoms — slightly below seed prediction of 5. Tight, focused exercise: just the broadcast protocol over send/recv. buffer-copy_-inplace recurs from the optimizer cluster (semantically the same: copy_ mutates shared storage). The driver block testing the broadcast (mp.spawn) is in test code (not shown in the exercise cells); compose-style atoms (init-process-group / mp-spawn-workers / per-rank-cuda-device) all live in 0_3_10's run_simple_model driver."
+}

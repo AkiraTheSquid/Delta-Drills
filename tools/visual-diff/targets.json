@@ -1,0 +1,299 @@
+{
+  "_comment": [
+    "One entry per page under comparison. `roles` maps THIS page's markup onto the",
+    "shared role vocabulary the diff speaks: a paragraph is `prose_p` on every",
+    "target, whatever it is called in that page's own stylesheet. First selector",
+    "that matches something laid out wins, so the list is a fallback chain.",
+    "LessWrong's class names here were read off the LIVE PAGE with capture.py",
+    "--discover; no LessWrong source was consulted (see README.md)."
+  ],
+  "lw": {
+    "url": "https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators",
+    "ready": "!!document.querySelector('[class*=\"FixedPositionToC-root\"]') && document.querySelectorAll('p').length > 20",
+    "settle": 2.5,
+    "pre": [
+      "window.scrollTo(0, 2400)"
+    ],
+    "unmeasurable": [
+      "toc_current"
+    ],
+    "hover": [
+      24,
+      420
+    ],
+    "hoverSettle": 0.9,
+    "railWidth": 340,
+    "roles": {
+      "page": [
+        "body"
+      ],
+      "column": [
+        "[class*=\"MultiToCLayout-content\"]"
+      ],
+      "prose_p": [
+        "[class*=\"PostsPage-postContent\"] p"
+      ],
+      "h1": [
+        "[class*=\"PostsPage-postContent\"] h1",
+        "[class*=\"PostsPageTitle\"] h1"
+      ],
+      "h2": [
+        "[class*=\"PostsPage-postContent\"] h2"
+      ],
+      "h3": [
+        "[class*=\"PostsPage-postContent\"] h3"
+      ],
+      "code_block": [
+        "[class*=\"PostsPage-postContent\"] pre"
+      ],
+      "code_inline": [
+        "[class*=\"PostsPage-postContent\"] code"
+      ],
+      "link": [
+        "[class*=\"PostsPage-postContent\"] p a",
+        "[class*=\"PostsPage-postContent\"] a"
+      ],
+      "toc": [
+        "[class*=\"FixedPositionToC-root\"]"
+      ],
+      "toc_title": [
+        "[class*=\"FixedPositionToC-tocTitle\"]"
+      ],
+      "toc_row": [
+        "[class*=\"FixedPositionToC-rowWrapper\"]:has([class~=\"FixedPositionToC-rowDot\"])"
+      ],
+      "toc_label": [
+        "[class*=\"TableOfContentsRow-level2\"] [class*=\"TableOfContentsRow-link\"]"
+      ],
+      "toc_current": [
+        "[class*=\"TableOfContentsRow-highlighted\"] [class*=\"TableOfContentsRow-link\"]",
+        "[class*=\"TableOfContentsRow-highlighted\"]"
+      ],
+      "toc_dot": [
+        "[class~=\"FixedPositionToC-rowDot\"]"
+      ],
+      "toc_progress": [
+        "[class*=\"FixedPositionToC-progressBarContainer\"]"
+      ],
+      "toc_line": [
+        "[class*=\"FixedPositionToC-rowDotContainer\"]"
+      ],
+      "toc_fade": [
+        "[class*=\"FixedPositionToC-rowOpacity\"]"
+      ],
+      "toc_fill": [
+        "[class~=\"FixedPositionToC-progressBar\"]"
+      ],
+      "toc_rows": [
+        "[class*=\"FixedPositionToC-rows\"]"
+      ],
+      "toc_level": [
+        "[class*=\"TableOfContentsRow-level2\"]"
+      ]
+    },
+    "series": {
+      "toc_rows": [
+        "[class*=\"TableOfContentsRow-root\"]"
+      ],
+      "paras": [
+        "[class*=\"PostsPage-postContent\"] p"
+      ],
+      "h2s": [
+        "[class*=\"PostsPage-postContent\"] h2"
+      ]
+    }
+  },
+  "mockup": {
+    "url": "http://localhost:5175/tools/visual-diff/reference/mockup.html?nb=arena-0-1",
+    "ready": "document.querySelectorAll('.nbv-cell').length > 5 && document.querySelectorAll('.anb-toc-row').length > 3",
+    "settle": 1.6,
+    "pre": [
+      "window.scrollTo(0, 2400)"
+    ],
+    "hover": [
+      200,
+      450
+    ],
+    "hoverSettle": 0.7,
+    "railWidth": 340,
+    "roles": {
+      "page": [
+        "body"
+      ],
+      "column": [
+        ".nbv-cells"
+      ],
+      "prose_p": [
+        ".nbv-md p"
+      ],
+      "h1": [
+        ".nbv-md h1"
+      ],
+      "h2": [
+        ".nbv-md h2"
+      ],
+      "h3": [
+        ".nbv-md h3"
+      ],
+      "code_block": [
+        ".nbv-src",
+        ".nbv-md pre"
+      ],
+      "code_inline": [
+        ".nbv-md code"
+      ],
+      "link": [
+        ".nbv-md p a",
+        ".nbv-md a"
+      ],
+      "toc": [
+        ".anb-toc"
+      ],
+      "toc_title": [
+        ".anb-toc-title"
+      ],
+      "toc_row": [
+        ".anb-toc-row:has(.anb-toc-dot)"
+      ],
+      "toc_label": [
+        ".anb-toc-row[data-level=\"2\"] .anb-toc-label"
+      ],
+      "toc_current": [
+        ".anb-toc-row.is-current .anb-toc-label"
+      ],
+      "toc_dot": [
+        ".anb-toc-dot"
+      ],
+      "toc_progress": [
+        ".anb-toc-progress"
+      ],
+      "toc_line": [
+        ".anb-toc-line"
+      ],
+      "toc_fade": [
+        ".anb-toc-fade"
+      ],
+      "toc_fill": [
+        ".anb-toc-progress-fill"
+      ],
+      "toc_rows": [
+        ".anb-toc-rows"
+      ],
+      "toc_level": [
+        ".anb-toc-row[data-level=\"2\"] .anb-toc-level"
+      ]
+    },
+    "series": {
+      "toc_rows": [
+        ".anb-toc-row"
+      ],
+      "paras": [
+        ".nbv-md p"
+      ],
+      "h2s": [
+        ".nbv-md h2"
+      ]
+    }
+  },
+  "ours": {
+    "url": "http://localhost:5175/Local_Deployed_Shared/?arena=0-1",
+    "ready": "document.querySelectorAll('#arena-notebook-host .nbv-cell').length > 5 && document.querySelectorAll('.anb-toc-row').length > 5",
+    "settle": 1.8,
+    "pre": [
+      "window.scrollTo(0, 2400)"
+    ],
+    "hover": [
+      200,
+      450
+    ],
+    "hoverSettle": 0.9,
+    "railWidth": 340,
+    "roles": {
+      "page": [
+        "body"
+      ],
+      "column": [
+        "#arena-notebook-host .nbv-cells",
+        ".nbv-cells"
+      ],
+      "prose_p": [
+        "#arena-notebook-host .nbv-md p",
+        ".nbv-md p"
+      ],
+      "h1": [
+        "#arena-notebook-host .nbv-md h1",
+        ".nbv-md h1"
+      ],
+      "h2": [
+        "#arena-notebook-host .nbv-md h2",
+        ".nbv-md h2"
+      ],
+      "h3": [
+        "#arena-notebook-host .nbv-md h3",
+        ".nbv-md h3"
+      ],
+      "code_block": [
+        "#arena-notebook-host .nbv-src",
+        ".nbv-src"
+      ],
+      "code_inline": [
+        "#arena-notebook-host .nbv-md code",
+        ".nbv-md code"
+      ],
+      "link": [
+        "#arena-notebook-host .nbv-md p a",
+        ".nbv-md p a",
+        ".nbv-md a"
+      ],
+      "toc": [
+        ".anb-toc"
+      ],
+      "toc_title": [
+        ".anb-toc-title"
+      ],
+      "toc_row": [
+        ".anb-toc-row:has(.anb-toc-dot)"
+      ],
+      "toc_label": [
+        ".anb-toc-row[data-level=\"2\"] .anb-toc-label"
+      ],
+      "toc_current": [
+        ".anb-toc-row.is-current .anb-toc-label"
+      ],
+      "toc_dot": [
+        ".anb-toc-dot"
+      ],
+      "toc_progress": [
+        ".anb-toc-progress"
+      ],
+      "toc_line": [
+        ".anb-toc-line"
+      ],
+      "toc_fade": [
+        ".anb-toc-fade"
+      ],
+      "toc_fill": [
+        ".anb-toc-progress-fill"
+      ],
+      "toc_rows": [
+        ".anb-toc-rows"
+      ],
+      "toc_level": [
+        ".anb-toc-row[data-level=\"2\"] .anb-toc-level"
+      ]
+    },
+    "series": {
+      "toc_rows": [
+        ".anb-toc-row"
+      ],
+      "paras": [
+        "#arena-notebook-host .nbv-md p",
+        ".nbv-md p"
+      ],
+      "h2s": [
+        "#arena-notebook-host .nbv-md h2",
+        ".nbv-md h2"
+      ]
+    }
+  }
+}

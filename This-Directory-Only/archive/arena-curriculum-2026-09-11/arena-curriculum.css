@@ -1,0 +1,25 @@
+.arena-graph-modes, .arena-curriculum-controls, .arena-exercise-sequence {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 12px 0;
+}
+.arena-graph-modes button, .arena-curriculum button, .arena-curriculum select,
+.arena-exercise-sequence button, .arena-exercise-sequence select {
+  font: inherit; color: inherit; background: var(--panel, transparent);
+  border: 1px solid var(--border, #8393a4); border-radius: 6px; padding: 6px 10px;
+}
+.arena-graph-modes [aria-pressed="true"] { border-color: var(--info, #2463a1); font-weight: 700; }
+.arena-curriculum[hidden], .kg2-wrap[hidden], .arena-exercise-sequence[hidden] { display: none !important; }
+.arena-curriculum-caption { max-width: 70ch; }
+.arena-curriculum-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 36%); gap: 20px; }
+.arena-curriculum-canvas { min-width: 0; overflow: hidden; height: 68vh; min-height: 360px; border: 1px solid var(--border, #8393a4); border-radius: 8px; }
+.arena-curriculum-detail { min-width: 0; overflow-wrap: anywhere; max-height: 68vh; overflow-y: auto; padding: 0 12px; }
+.arena-curriculum-detail button { display: block; text-align: left; margin: 8px 0; cursor: pointer; }
+.arena-curriculum-detail h2 { font-size: 1.3rem; }
+.arena-curriculum-detail li { margin-bottom: 8px; }
+.arena-exercise-sequence label { flex: 1; min-width: 180px; }
+.arena-exercise-sequence select { width: 100%; max-width: 100%; text-overflow: ellipsis; }
+.arena-exercise-sequence button:disabled { opacity: .45; }
+@media (max-width: 760px) {
+  .arena-curriculum-layout { grid-template-columns: minmax(0, 1fr); }
+  .arena-curriculum-canvas { min-width: 0; overflow: hidden; height: 45vh; }
+  .arena-curriculum-detail { min-width: 0; overflow-wrap: anywhere; max-height: none; }
+}

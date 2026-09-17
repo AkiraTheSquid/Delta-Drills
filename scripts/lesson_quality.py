@@ -1,0 +1,460 @@
+#!/usr/bin/env python3
+"""Quality rules for worked examples and the problems they scaffold.
+
+Every rule here came from a learner reading a real page and saying what was
+wrong with it. That is why they are worth encoding: each one is a defect that
+passed the structural validator, produced a page that looked finished, and was
+only caught by someone working through it.
+
+The rules
+---------
+
+INTRO       A worked example opens with prose, before any code. An example that
+            starts with a fence never says what it is about to demonstrate, so
+            the learner has to reverse-engineer the point from the code — which
+            is the thing they do not know yet.
+
+INTERLEAVE  Code arrives in short blocks with prose between them. One long
+            uncommented block is the shape learners skip, and it is what the
+            "one fence per segment" rule used to force.
+
+PRINTS      A block that asserts must also print. `assert` is silent on success:
+            the learner is shown a claim about a value they never see. Keep the
+            assert — it is what makes the example self-checking — and print
+            alongside it.
+
+CASES       When a problem's answer changes with its input, one demonstrated
+            case is misinformation. The learner reads a single expected output
+            and takes it for THE answer, when the honest statement is "run these
+            two checks". Detected from the bank: a question whose own test cases
+            disagree on their expected output needs an example showing more than
+            one case.
+
+GIVEAWAY    The example must not hand over the problem's answer. Two ways it
+            does: reproducing the expected output verbatim, or building from the
+            same input literals so the solution transcribes. Passing a drill you
+            copied is evidence of nothing, and the ladder promotes on it.
+
+FADE_LEAK   A faded starter must not show the concept it is testing. The
+            scaffold's job is to hand over the structure the learner has
+            already seen — `z.__(__)` is a method call with one argument, which
+            says a great deal without saying which call. Blanking the argument
+            and leaving the method (`z.clamp(_____=0.0)`, on the KP that
+            teaches `clamp`) is a drill anyone can pass by reading, and the
+            ladder promotes on it.
+
+PROMPT_LEAK A problem must not name the answer in its own prompt. A prompt that
+            says which dtype to compare against, or spells the call the learner
+            is supposed to choose, is a reading exercise wearing a drill's
+            clothes — and it is worst on the `solo` rung, which exists precisely
+            to be unaided.
+
+Scope
+-----
+
+`strict_for` decides which KPs these are ERRORS for. A KP that has written an
+`## Applied practice` section has been through this pass; everything else is
+legacy and is reported as a to-do (see audit_ladder_pairing.py) rather than
+failing the build. That is deliberate: turning 63 pages red at once would mean
+turning the rules off, and rules that are off catch nothing.
+"""
+from __future__ import annotations
+
+import re
+
+# A block longer than this stops being an example and becomes a program. The
+# number is a judgement call, set from the pages that read well after the
+# ndarray-model rewrite: those blocks run 6-12 lines.
+MAX_FENCE_LINES = 16
+
+# Below this there is nothing to interleave — a two-line block does not need
+# prose in the middle of it.
+MIN_LINES_TO_SPLIT = 8
+
+_FENCE = re.compile(r"```([^\n]*)\n(.*?)```", re.S)
+_NUM = re.compile(r"-?\d+\.?\d*")
+
+
+def fences(text: str, info: str = "python"):
+    """(code, start, end) for each fence with exactly this info string."""
+    out = []
+    for m in _FENCE.finditer(text or ""):
+        if m.group(1).strip() == info:
+            out.append((m.group(2), m.start(), m.end()))
+    return out
+
+
+def _prose_between(text: str, start: int, end: int) -> str:
+    """Non-blank, non-fence text in a span. Comments inside code do not count —
+    the whole point of INTERLEAVE is prose the learner reads OUTSIDE the block."""
+    return (text or "")[start:end].strip()
+
+
+def check_example_shape(example_md: str, label: str, info: str = "python") -> list[str]:
+    """INTRO, INTERLEAVE and PRINTS for one worked example's markdown.
+
+    `info` is the fence tag to read: segment examples use plain ```python,
+    while guided and applied items carry theirs as ```python worked so the
+    compiler can tell an example from a starter.
+    """
+    problems = []
+    blocks = fences(example_md, info)
+    if not blocks:
+        return [f"{label}: no Python worked example"]
+
+    if not _prose_between(example_md, 0, blocks[0][1]):
+        problems.append(
+            f"{label}: INTRO — the example opens with code. Say what it is "
+            f"about to demonstrate, in prose, before the first block."
+        )
+
+    for i, (code, start, end) in enumerate(blocks):
+        visible = code.partition("\n# Hidden checks\n")[0]
+        lines = [l for l in visible.strip().splitlines() if l.strip()]
+        n = len(lines)
+        if n > MAX_FENCE_LINES:
+            problems.append(
+                f"{label}: INTERLEAVE — block {i + 1} is {n} lines "
+                f"(max {MAX_FENCE_LINES}). Split it and explain between the pieces."
+            )
+        if i > 0:
+            prev_end = blocks[i - 1][2]
+            if not _prose_between(example_md, prev_end, start):
+                problems.append(
+                    f"{label}: INTERLEAVE — blocks {i} and {i + 1} are adjacent "
+                    f"with no prose between them."
+                )
+        if "assert" in code and "print(" not in code:
+            problems.append(
+                f"{label}: PRINTS — block {i + 1} asserts but never prints. "
+                f"assert is silent on success; show the value too."
+            )
+
+    if len(blocks) == 1 and len(
+        [l for l in blocks[0][0].partition("\n# Hidden checks\n")[0].strip().splitlines() if l.strip()]
+    ) >= MIN_LINES_TO_SPLIT:
+        problems.append(
+            f"{label}: INTERLEAVE — one block carries the whole example. "
+            f"Alternate prose and short blocks."
+        )
+    return problems
+
+
+def _expected_outputs(question: dict) -> list[str]:
+    """Every expected output the bank records for a question."""
+    out = []
+    for case in question.get("test_cases") or []:
+        if isinstance(case, dict):
+            # `expected_expr` is the bank's actual field name; the others are
+            # older shapes still present on a few rows.
+            for key in ("expected_expr", "expected_output", "expected", "output"):
+                if case.get(key) is not None:
+                    out.append(str(case[key]).strip())
+                    break
+    if question.get("expected_output"):
+        out.append(str(question["expected_output"]).strip())
+    return [o for o in out if o]
+
+
+def answer_varies(question: dict) -> bool:
+    """Does this question's answer depend on which input it is given?
+
+    Read off the bank's own test cases rather than guessed: if two cases expect
+    different outputs, then no single expected output describes the question,
+    and an example that demonstrates one case is teaching a wrong invariant.
+    """
+    return len(set(_expected_outputs(question))) > 1
+
+
+def check_pairing(example_md: str, question: dict, label: str,
+                  info: str = "python") -> list[str]:
+    """CASES and GIVEAWAY for one example/problem pair."""
+    problems = []
+    code = "\n".join(c for c, _, _ in fences(example_md, info))
+    if not code:
+        return problems
+
+    if answer_varies(question):
+        # Count demonstrated cases by how many times the example checks or shows
+        # a result. One assert/print pair is one case.
+        shown = len(re.findall(r"^\s*(?:assert|print)\b", code, re.M))
+        if shown < 2:
+            problems.append(
+                f"{label}: CASES — this problem's answer changes with its input, "
+                f"but the example demonstrates {shown} case(s). Show at least two, "
+                f"with their different results."
+            )
+
+    flat_code = " ".join(code.split())
+
+    # Reusing the graded input is transcription however many cases are shown:
+    # the learner can read the answer off the example and type it back.
+    starter = str(question.get("starter_code") or "")
+    for literal in _input_literals(question, starter):
+        if len(literal) >= 8 and " ".join(literal.split()) in flat_code:
+            problems.append(
+                f"{label}: GIVEAWAY — the example is run on {literal[:40]!r}, which "
+                f"is one of the inputs this problem is graded on. Use different data."
+            )
+            break
+
+    # Showing an expected output is only a giveaway when the example demonstrates
+    # ONE case. An example that shows two inputs producing two different results
+    # is teaching the variation — which is what CASES asks for — and the numbers
+    # it prints are not "the answer" to anything.
+    if not _demonstrates_variation(code):
+        for expected in set(_expected_outputs(question)):
+            flat = " ".join(expected.split())
+            if len(flat) >= 4 and flat in flat_code:
+                problems.append(
+                    f"{label}: GIVEAWAY — the example shows one case and it is the "
+                    f"problem's expected output ({flat[:40]!r}). Either change the "
+                    f"data or demonstrate more than one case."
+                )
+                break
+    return problems
+
+
+def _demonstrates_variation(code: str) -> bool:
+    """Does the example show at least two DIFFERENT results?
+
+    Two asserts against the same value is one case repeated. Comparing the
+    right-hand sides is what distinguishes "here are two inputs and their two
+    answers" from "here is the answer, twice".
+    """
+    shown = re.findall(r"^\s*assert\s+.*?==\s*(.+?)\s*$", code, re.M)
+    return len({" ".join(s.split()) for s in shown}) >= 2
+
+
+def _input_literals(question: dict, starter: str) -> list[str]:
+    """The literal input expressions this question is actually run on."""
+    out = []
+    for source in (starter, str(question.get("answer_code") or "")):
+        for m in re.finditer(r"^\s*example\s*=\s*(.+)$", source, re.M):
+            out.append(m.group(1).strip())
+    for case in question.get("test_cases") or []:
+        if isinstance(case, dict) and case.get("setup_code"):
+            for m in re.finditer(r"^\s*\w+\s*=\s*(\[.+?\])\s*$", str(case["setup_code"]), re.M):
+                out.append(m.group(1).strip())
+    return out
+
+
+def _example_input(question: dict, starter: str) -> str:
+    """The literal inputs the problem is actually run on.
+
+    Both the `example = ...` line the starter prints and the graded test cases'
+    setup, because either one appearing in the example makes the drill a copy.
+    """
+    parts = []
+    for source in (starter, str(question.get("answer_code") or "")):
+        m = re.search(r"^\s*example\s*=\s*(.+)$", source, re.M)
+        if m:
+            parts.append(m.group(1))
+    for case in question.get("test_cases") or []:
+        if isinstance(case, dict) and case.get("setup_code"):
+            parts.append(str(case["setup_code"]))
+            break  # the first case is the one a learner would eyeball
+    return "\n".join(parts)
+
+
+def check_prompt_leak(question: dict, rung: str, label: str) -> list[str]:
+    """PROMPT_LEAK — the prompt must not name what the learner has to choose.
+
+    Only the symbols the ANSWER needs and the starter does not already show
+    count: a prompt is allowed to name what it hands you. Reported for the
+    unaided rungs, where the leak is the whole difference between a drill and a
+    reading comprehension question.
+    """
+    if rung not in ("independent", "solo", "applied"):
+        return []
+    text = str(question.get("question_text") or "")
+    answer = str(question.get("answer_code") or "")
+    starter = str(question.get("starter_code") or "")
+    leaked = []
+    for sym in sorted(set(re.findall(r"\b(?:t|torch)\.([A-Za-z_][A-Za-z0-9_]*)", answer))):
+        # Exempt only when the starter actually CALLS it. A substring test
+        # exempts a starter whose docstring merely names the thing — which is
+        # itself a leak, and was why this rule silently passed the worst
+        # offender it exists to catch.
+        if re.search(rf"\b(?:t|torch)\.{re.escape(sym)}\b", starter):
+            continue
+        if re.search(rf"\b(?:t|torch)\.{re.escape(sym)}\b", text):
+            leaked.append(f"torch.{sym}")
+    if leaked:
+        return [
+            f"{label}: PROMPT_LEAK — the prompt names {', '.join(leaked)}, which "
+            f"is what the learner is supposed to choose. Describe the goal instead."
+        ]
+    return []
+
+
+_DOCSTRING = re.compile(r'("""|\'\'\')[\s\S]*?\1')
+
+
+def _code_only(src: str) -> str:
+    """`src` with docstrings and comments removed.
+
+    Used for the operator rules, where prose describing the task legitimately
+    contains the symbol the learner has to type.
+    """
+    stripped = _DOCSTRING.sub("", src or "")
+    return "\n".join(line.split("#", 1)[0] for line in stripped.splitlines())
+
+
+def check_fade_leak(starter: str, new_syntax: list, fn_name: str, label: str) -> list[str]:
+    """FADE_LEAK — a faded starter must not print the concept it is testing.
+
+    The rule, from the learner: "the fading should not give away any part of
+    the solution that's being learned that's new, but it's okay if it specifies
+    the parts that the learner has seen before."
+
+    A faded drill is a completion problem, and what makes it one is that the
+    surrounding structure is given: `z.__(__)` says a method call on the tensor
+    with one argument, which is the shape the learner already knows, and asks
+    for the two things they are here to recall. The failure mode is the
+    opposite — blanking the ARGUMENT and leaving the call, which was q67's
+    `z.clamp(_____=0.0)` on a KP whose entire subject is `clamp`. That drill
+    could be passed by anyone who can read, and the ladder promotes on it.
+
+    So: every symbol the KP declares NEW must be blanked; every symbol it does
+    not is supporting structure and may stay. `syntax.*` entries are operators
+    with no identifier to hide (`@`, `[]`), and they are reported rather than
+    rewritten — an operator replaced by a blank leaves a line that cannot be
+    read as code at all, so the fix there is an authoring decision.
+
+    Checked on the COMPILED starter, which is where `blank_new_syntax` has
+    already run. Anything reported here is something the rewriter could not
+    reach, not an authoring oversight the pipeline was supposed to absorb.
+    """
+    from lesson_lib import body_span, new_syntax_patterns
+
+    if not starter or not new_syntax:
+        return []
+    span = body_span(starter, fn_name)
+    if not span:
+        return []
+    body = "\n".join(starter.splitlines()[span[0]:span[1]])
+    leaked = []
+    for symbol in new_syntax:
+        patterns = new_syntax_patterns(symbol)
+        if not patterns:
+            # An operator, and only a leak when it is in CODE. q107's docstring
+            # is "Return x such that a @ x = b" — the equation being solved,
+            # which is the problem statement and cannot be written without it.
+            # Its solution is `t.linalg.solve(a, b)` and contains no `@` at all.
+            # Reading the docstring as code would report the one page that
+            # states its problem properly.
+            _, _, name = symbol.rpartition(".")
+            if name == "matmul" and "@" in _code_only(body):
+                leaked.append(f"{symbol} (the `@` is written out)")
+            continue
+        if any(pattern.search(body) for pattern, _ in patterns):
+            leaked.append(symbol)
+    if leaked:
+        return [
+            f"{label}: FADE_LEAK — the faded starter still shows "
+            f"{', '.join(leaked)}, which this KP is teaching. Blank it: the "
+            f"scaffold may give away everything the learner has already seen, "
+            f"and nothing they have not."
+        ]
+    return []
+
+
+def fade_findings(kp: dict, qid: int, item_md: str, bank: dict, label: str) -> list[str]:
+    """FADE_LEAK for one `### q<id>` faded item, as the learner will see it.
+
+    Checks the COMPILED starter, not the authored one: `compile_lessons.py`
+    runs `blank_new_syntax` over every faded starter, so the authored text is
+    an input to the pipeline rather than the thing served. Re-running the same
+    rewrite here is what makes this a check on the OUTPUT — anything it reports
+    is a leak the rewriter could not reach.
+    """
+    from lesson_lib import blank_new_syntax, code_fences
+
+    starters = code_fences(item_md, "python starter")
+    if not starters:
+        return []
+    exercise = (bank.get(qid) or {}).get("exercise") or {}
+    fn = exercise.get("function_name") or "solve"
+    new_syntax = kp.get("new_syntax") or []
+    return check_fade_leak(
+        blank_new_syntax(starters[0], new_syntax, fn), new_syntax, fn, label
+    )
+
+
+def strict_for(kp: dict) -> bool:
+    """Is this KP held to these rules as errors?
+
+    Opting in by having written `## Applied practice` — the section that only
+    exists on pages taken through this pass — is what lets the rules be strict
+    without failing every legacy page on the day they land. Pages authored
+    under the ARENA-style rule (every faded id >= NEW_PAGE_FLOOR) are strict
+    by construction.
+    """
+    from content_safety import NEW_PAGE_FLOOR
+
+    faded = kp.get("faded") or []
+    if faded and min(faded) >= NEW_PAGE_FLOOR:
+        return True
+    return bool((kp.get("sections") or {}).get("Applied practice", "").strip())
+
+
+MAX_NEW_FAMILIES_PER_SEGMENT = 2
+
+
+def _family(symbol: str) -> str:
+    """`Tensor.norm#keepdim` is a parameter of `Tensor.norm`, not a new thing."""
+    return symbol.split("#", 1)[0]
+
+
+def check_syntax_load(kp: dict, label: str) -> list[str]:
+    """SYNTAX_LOAD and SYNTAX_UNSHOWN — one new syntax per concept.
+
+    A segment is one concept, one worked example, then practice; the syntax
+    it introduces is what the learner has to absorb alongside the idea. Two
+    new call families in one segment is the ceiling (a call and the construct
+    it sits in — `for` and `+=` — is the common honest pair). Every family the
+    page declares in `new_syntax:` must be SHOWN in some segment's fences:
+    a declaration with no demonstration is a claim nobody stood behind.
+    """
+    import ast
+    from audit_lesson_syntax import ASSUMED, Collector
+    from lesson_lib import code_fences
+
+    declared = {_family(s) for s in (kp.get("new_syntax") or [])}
+    # `for` and comprehensions are in the course's ASSUMED floor: a page may
+    # still declare them (the prereq ratchet keys on declarations), but they
+    # are not new load for a learner who already writes plain Python.
+    load = declared - ASSUMED
+    if not declared:
+        return []
+    problems = []
+    seen: set[str] = set()
+    for si, seg in enumerate(kp["segments"]):
+        shown: set[str] = set()
+        for text in (seg["concept"], seg["worked"]):
+            for code in code_fences(text, "python"):
+                try:
+                    tree = ast.parse(code)
+                except SyntaxError:
+                    continue
+                c = Collector()
+                c.visit(tree)
+                shown |= {_family(s) for s in c.symbols}
+        introduced = sorted((shown & declared) - seen)
+        seen |= set(introduced)
+        new_load = sorted(set(introduced) & load)
+        if len(new_load) > MAX_NEW_FAMILIES_PER_SEGMENT:
+            problems.append(
+                f"{label}: segment {si + 1}: SYNTAX_LOAD — introduces "
+                f"{len(new_load)} new syntax families {new_load} (max "
+                f"{MAX_NEW_FAMILIES_PER_SEGMENT}). Split the segment, or move a "
+                f"variation to a later lesson."
+            )
+    unshown = sorted(declared - seen)
+    if unshown:
+        problems.append(
+            f"{label}: SYNTAX_UNSHOWN — new_syntax declares {unshown} but no "
+            f"concept or worked-example fence shows them."
+        )
+    return problems

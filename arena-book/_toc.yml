@@ -1,0 +1,81 @@
+format: jb-book
+root: intro
+parts:
+  - caption: Chapter 0 — Fundamentals
+    chapters:
+      - file: chapter0_fundamentals/exercises/part0_prereqs/0.0_Prerequisites_exercises
+        title: "0.0 Prerequisites"
+      - file: chapter0_fundamentals/exercises/part1_ray_tracing/0.1_Ray_Tracing_exercises
+        title: "0.1 Ray Tracing"
+      - file: chapter0_fundamentals/exercises/part2_cnns/0.2_CNNs_&_ResNets_exercises
+        title: "0.2 CNNs & ResNets"
+      - file: chapter0_fundamentals/exercises/part3_optimization/0.3_Optimization_exercises
+        title: "0.3 Optimization"
+      - file: chapter0_fundamentals/exercises/part4_backprop/0.4_Backprop_exercises
+        title: "0.4 Backprop"
+      - file: chapter0_fundamentals/exercises/part5_vaes_and_gans/0.5_VAEs_&_GANs_exercises
+        title: "0.5 VAEs & GANs"
+
+  - caption: Chapter 1 — Transformer Interpretability
+    chapters:
+      - file: chapter1_transformer_interp/exercises/part1_transformer_from_scratch/1.1_Transformer_from_Scratch_exercises
+        title: "1.1 Transformers from Scratch"
+      - file: chapter1_transformer_interp/exercises/part2_intro_to_mech_interp/1.2_Intro_to_Mech_Interp_exercises
+        title: "1.2 Intro to Mech Interp"
+      - file: chapter1_transformer_interp/exercises/part31_linear_probes/1.3.1_Linear_Probes_exercises
+        title: "1.3.1 Linear Probes"
+      - file: chapter1_transformer_interp/exercises/part32_function_vectors_and_model_steering/1.3.2_Function_Vectors_&_Model_Steering_exercises
+        title: "1.3.2 Function Vectors & Model Steering"
+      - file: chapter1_transformer_interp/exercises/part33_interp_with_saes/1.3.3_Interpretability_with_SAEs_exercises
+        title: "1.3.3 Interpretability with SAEs"
+      - file: chapter1_transformer_interp/exercises/part34_activation_oracles/1.3.4_Activation_Oracles_exercises
+        title: "1.3.4 Activation Oracles"
+      - file: chapter1_transformer_interp/exercises/part41_indirect_object_identification/1.4.1_Indirect_Object_Identification_exercises
+        title: "1.4.1 Indirect Object Identification"
+      - file: chapter1_transformer_interp/exercises/part42_sae_circuits/1.4.2_SAE_Circuits_exercises
+        title: "1.4.2 SAE Circuits"
+      - file: chapter1_transformer_interp/exercises/part51_balanced_bracket_classifier/1.5.1_Balanced_Bracket_Classifier_exercises
+        title: "1.5.1 Balanced Bracket Classifier"
+      - file: chapter1_transformer_interp/exercises/part52_grokking_and_modular_arithmetic/1.5.2_Grokking_&_Modular_Arithmetic_exercises
+        title: "1.5.2 Grokking & Modular Arithmetic"
+      - file: chapter1_transformer_interp/exercises/part53_othellogpt/1.5.3_OthelloGPT_exercises
+        title: "1.5.3 OthelloGPT"
+      - file: chapter1_transformer_interp/exercises/part54_toy_models_of_superposition_and_saes/1.5.4_Toy_Models_of_Superposition_&_SAEs_exercises
+        title: "1.5.4 Superposition & SAEs"
+
+  - caption: Chapter 2 — Reinforcement Learning
+    chapters:
+      - file: chapter2_rl/exercises/part1_intro_to_rl/2.1_Intro_to_RL_exercises
+        title: "2.1 Intro to RL"
+      - file: chapter2_rl/exercises/part21_dqn/2.2.1_DQN_exercises
+        title: "2.2.1 DQN"
+      - file: chapter2_rl/exercises/part22_vpg/2.2.2_VPG_exercises
+        title: "2.2.2 VPG"
+      - file: chapter2_rl/exercises/part3_ppo/2.3_PPO_exercises
+        title: "2.3 PPO"
+      - file: chapter2_rl/exercises/part4_rlhf/2.4_RLHF_exercises
+        title: "2.4 RLHF"
+
+  - caption: Chapter 3 — LLM Evaluations
+    chapters:
+      - file: chapter3_llm_evals/exercises/part1_intro_to_evals/3.1_Intro_to_Evals_exercises
+        title: "3.1 Intro to Evals"
+      - file: chapter3_llm_evals/exercises/part2_dataset_generation/3.2_Dataset_Generation_exercises
+        title: "3.2 Dataset Generation"
+      - file: chapter3_llm_evals/exercises/part3_running_evals_with_inspect/3.3_Running_Evals_with_Inspect_exercises
+        title: "3.3 Running Evals with Inspect"
+      - file: chapter3_llm_evals/exercises/part4_llm_agents/3.4_LLM_Agents_exercises
+        title: "3.4 LLM Agents"
+
+  - caption: Chapter 4 — Alignment Science
+    chapters:
+      - file: chapter4_alignment_science/exercises/part1_emergent_misalignment/4.1_Emergent_Misalignment_exercises
+        title: "4.1 Emergent Misalignment"
+      - file: chapter4_alignment_science/exercises/part2_science_of_misalignment/4.2_Science_of_Misalignment_exercises
+        title: "4.2 Science of Misalignment"
+      - file: chapter4_alignment_science/exercises/part3_interpreting_reasoning_models/4.3_Interpreting_Reasoning_Models_exercises
+        title: "4.3 Interpreting Reasoning Models"
+      - file: chapter4_alignment_science/exercises/part4_persona_vectors/4.4_LLM_Psychology_&_Persona_Vectors_exercises
+        title: "4.4 LLM Psychology & Persona Vectors"
+      - file: chapter4_alignment_science/exercises/part5_investigator_agents/4.5_Investigator_Agents_exercises
+        title: "4.5 Investigator Agents"

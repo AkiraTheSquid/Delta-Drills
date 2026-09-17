@@ -1,0 +1,23 @@
+{
+  "exercise_id": "0_4_5",
+  "title": "implement log_forward",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_5_exercise-implement-log-forward.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 5,
+  "difficulty": 3,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "tensor-wraps-ndarray", "role": "core", "evidence": "out = Tensor(array, requires_grad) — wraps the np.log output array into the custom Tensor class with requires_grad flag"},
+    {"id": "recipe-dataclass", "role": "core", "evidence": "out.recipe = Recipe(func=np.log, args=(x.array,), kwargs={}, parents={0: x}) — constructs the (func, args, kwargs, parents) dataclass"},
+    {"id": "requires-grad-propagation", "role": "core", "evidence": "requires_grad = grad_tracking_enabled and x.requires_grad — the AND-over-flags pattern (here for a single-arg fn)"},
+    {"id": "grad-tracking-global-toggle", "role": "core", "evidence": "Test cell explicitly toggles: grad_tracking_enabled = False; b = log_forward(a); assert not b.requires_grad — the module-level bool gate"},
+    {"id": "parents-dict-by-argidx", "role": "core", "evidence": "parents={0: x} — single-entry dict keyed by arg-index 0 (since log takes one Tensor input)"},
+    {"id": "box-array-to-tensor-with-recipe", "role": "core", "evidence": "Solution structure: compute array → build Tensor(array, requires_grad) → if requires_grad, attach Recipe — the canonical box-and-attach pattern"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "6 atoms — under seed prediction of 7 (1 less: unbox-args-tensor-to-array isn't really exercised here since np.log only takes one Tensor, accessed via x.array directly). First exercise to construct a Recipe; the foundation that wrap_forward_fn (0_4_7) generalizes."
+}

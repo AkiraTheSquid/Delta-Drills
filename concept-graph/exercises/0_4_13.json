@@ -1,0 +1,22 @@
+{
+  "exercise_id": "0_4_13",
+  "title": "permute",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part4_backprop/0_4_13_exercise-permute.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 4,
+  "arena_index": 13,
+  "difficulty": 3,
+  "importance": 1,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part4-pilot",
+  "atoms": [
+    {"id": "permute-back-argsort", "role": "core", "evidence": "return np.transpose(grad_out, np.argsort(axes)) — invert the permutation via argsort then re-transpose"},
+    {"id": "backward-fn-signature", "role": "core", "evidence": "def permute_back(grad_out: Arr, out: Arr, x: Arr, axes: tuple) -> Arr"},
+    {"id": "kwargs-pass-through-recipe", "role": "core", "evidence": "axes param threaded via Recipe (np.transpose takes axes as second positional, replayed during backward) — same plumbing concern as reshape's new_shape"},
+    {"id": "register-back-fn-after-wrap", "role": "core", "evidence": "BACK_FUNCS.add_back_func(np.transpose, 0, permute_back); permute = wrap_forward_fn(np.transpose)"},
+    {"id": "wrap-forward-fn-generic", "role": "core", "evidence": "permute = wrap_forward_fn(np.transpose)"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "5 atoms — under seed prediction of 6. argsort-the-permutation is the non-obvious math; the rest is the standard wrap/register idiom plus kwargs."
+}

@@ -1,0 +1,33 @@
+{
+  "exercise_id": "0_3_3",
+  "title": "implement Adam",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part3_optimization/0_3_3_exercise-implement-adam.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 3,
+  "arena_index": 3,
+  "difficulty": 4,
+  "importance": 3,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part3-pilot",
+  "atoms": [
+    {"id": "optimizer-init-params-list", "role": "core", "evidence": "self.params = list(params)"},
+    {"id": "optimizer-state-tensor-buffers", "role": "core", "evidence": "self.m = [t.zeros_like(p) for p in self.params]; self.v = [t.zeros_like(p) for p in self.params]"},
+    {"id": "zero-grad-set-none", "role": "core", "evidence": "for p in self.params: p.grad = None"},
+    {"id": "param-grad-access", "role": "core", "evidence": "g = theta.grad inside step"},
+    {"id": "inplace-param-update", "role": "core", "evidence": "theta -= self.lr * m_hat / (v_hat.sqrt() + self.eps) — inplace update"},
+    {"id": "buffer-copy_-inplace", "role": "core", "evidence": "m.copy_(self.beta1 * m + (1 - self.beta1) * g); v.copy_(self.beta2 * v + (1 - self.beta2) * g.pow(2))"},
+    {"id": "inference-mode-step", "role": "core", "evidence": "@t.inference_mode() decorator on step"},
+    {"id": "step-counter-increment", "role": "core", "evidence": "self.t = 1 in init; self.t += 1 after the per-param loop; markdown: 'make sure to remember to increment it after each use of the step function'"},
+    {"id": "weight-decay-l2-add", "role": "core", "evidence": "if self.lmda != 0: g = g + self.lmda * theta — same L2 fold as SGD/RMSprop (Adam-not-AdamW behavior)"},
+    {"id": "ema-first-moment", "role": "core", "evidence": "m.copy_(self.beta1 * m + (1 - self.beta1) * g) — pseudocode 'm_t <- beta1*m_{t-1} + (1-beta1)*g_t'"},
+    {"id": "ema-second-moment", "role": "core", "evidence": "v.copy_(self.beta2 * v + (1 - self.beta2) * g.pow(2)) — pseudocode 'v_t <- beta2*v_{t-1} + (1-beta2)*g_t^2'"},
+    {"id": "bias-correction-divide", "role": "core", "evidence": "m_hat = m / (1 - self.beta1**self.t); v_hat = v / (1 - self.beta2**self.t) — pseudocode m_hat / v_hat lines"},
+    {"id": "sqrt-eps-stabilize", "role": "core", "evidence": "theta -= self.lr * m_hat / (v_hat.sqrt() + self.eps) — adaptive scaling with eps floor under sqrt"},
+    {"id": "conditional-hparam-branch", "role": "core", "evidence": "if self.lmda != 0: — conditional weight decay shortcut (no momentum branch since Adam always uses EMA)"},
+    {"id": "pseudocode-to-code-translate", "role": "core", "evidence": "Markdown gives 7-line LaTeX pseudocode for Adam; exercise is direct translation"},
+    {"id": "optimizer-repr-string", "role": "core", "evidence": "f'Adam(lr={self.lr}, beta1={self.beta1}, beta2={self.beta2}, eps={self.eps}, weight_decay={self.lmda})' — provided in template"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "16 atoms — above seed prediction of 12. Adds step-counter-increment + ema-first-moment + bias-correction-divide on top of the RMSprop atom set. The two seed-prediction misses (optimizer-repr-string and conditional-hparam-branch were predicted only for SGD/RMSprop) actually do fire here too — repr is in the template and the lambda conditional is in the solution."
+}

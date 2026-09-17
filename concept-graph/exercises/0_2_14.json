@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_2_14",
+  "title": "trace",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_14_exercise-trace.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 14,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "contiguous-layout", "role": "core", "evidence": "stride = mat.stride() — queries the matrix's per-dim strides as the basis for the diagonal walk"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "diag = mat.as_strided((mat.size(0),), (stride[0] + stride[1],)) — zero-copy 1D view"},
+    {"id": "diagonal-via-strides", "role": "core", "evidence": "stride[0] + stride[1] = row + col stride; produces the diagonal — this IS the diagonal-via-strides atom in its canonical 3-line form"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "Minimal 3-atom strided-memory exercise — the worked example for diagonal-via-strides. Tight scope. Validates that diagonal-via-strides is genuinely distinct from contiguous-layout + as-strided-windowing (you need to KNOW that summed strides walk the diagonal — pure geometric insight)."
+}

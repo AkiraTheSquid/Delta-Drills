@@ -1,0 +1,26 @@
+{
+  "exercise_id": "0_2_18",
+  "title": "implement minimal 1D conv (part 2)",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part2_cnns/0_2_18_exercise-implement-minimal-1d-conv-part-2.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 2,
+  "arena_index": 18,
+  "difficulty": 4,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "seed-pilot-batch-2",
+  "atoms": [
+    {"id": "conv-output-shape", "role": "core", "evidence": "ow = w - kw + 1 (minimal form, no stride/padding)"},
+    {"id": "contiguous-layout", "role": "core", "evidence": "s_b, s_ic, s_w = x.stride() — explicit code comment warning 'Common error: xsWi is always 1, so if you put 1 here you won't spot your mistake until you try this with conv2d!'"},
+    {"id": "as-strided-windowing", "role": "core", "evidence": "x_strided = x.as_strided(size=(b, ic, ow, kw), stride=(s_b, s_ic, s_w, s_w)) — sliding kernel window across width"},
+    {"id": "einsum-contraction", "role": "core", "evidence": "einops.einsum(x_strided, weights, 'b ic ow kw, oc ic kw -> b oc ow')"},
+    {"id": "conv-windowing-1d", "role": "core", "evidence": "the whole exercise is windowing-then-einsum for 1D conv with batch + channels"},
+    {"id": "conv-channel-sum", "role": "core", "evidence": "the 'ic' label appears on both sides of the einsum spec ('b ic ow kw, oc ic kw -> b oc ow') so it is contracted — explicit teaching point in dropdown: 'in_channels - this is an extra dimension for weights AND for x, it IS summed over'"},
+    {"id": "conv-kernel-shape", "role": "core", "evidence": "weights: Float[Tensor, 'out_channels in_channels kernel_width'] — the conv-kernel-shape atom for 1D (oc, ic, kw); proposed atom now confirmed at 1D too"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [
+    {"id": "nn-module-subclass", "reason": "still a plain function (not nn.Module) — matches 0_2_17 pattern"}
+  ],
+  "notes": "7-atom exercise — adds batch + channels onto 0_2_17. First firing of conv-channel-sum (correctly absent in 0_2_17 which was channels-stripped). Also re-confirms conv-kernel-shape (already proposed in 0_2_4) — the (out_ch, in_ch, kW) layout is the same atom whether 1D or 2D. Strong signal that conv-kernel-shape belongs in the vocab."
+}

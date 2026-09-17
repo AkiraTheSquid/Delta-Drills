@@ -1,0 +1,20 @@
+{
+  "exercise_id": "0_5_4",
+  "title": "some more modules",
+  "source_notebook": "arena-book-colab/ARENA_5.0/chapter0_fundamentals/part5_vaes_and_gans/0_5_4_exercise-some-more-modules.ipynb",
+  "arena_chapter": 0,
+  "arena_part": 5,
+  "arena_index": 4,
+  "difficulty": 2,
+  "importance": 2,
+  "tagged_by": "claude-opus-4-7",
+  "tagged_at": "2026-05-18",
+  "tagging_pass": "part5-pilot",
+  "atoms": [
+    {"id": "nn-module-subclass", "role": "core", "evidence": "class Tanh(nn.Module): ... class LeakyReLU(nn.Module): super().__init__() ... class Sigmoid(nn.Module): ... — three small Module subclasses"},
+    {"id": "module-extra-repr", "role": "core", "evidence": "LeakyReLU defines extra_repr(self) -> str: return f'negative_slope={self.negative_slope}'"},
+    {"id": "relu-elementwise-max", "role": "incidental", "evidence": "LeakyReLU.forward returns t.where(x > 0, x, self.negative_slope * x) — the elementwise activation pattern from part2; not literally max() but the same one-line elementwise activation idiom"}
+  ],
+  "atoms_in_seed_but_not_actually_present": [],
+  "notes": "3 atoms — exactly matches seed prediction of 3. Refresher exercise of three trivial activation modules. The Tanh impl uses (t.exp(x) - t.exp(-x)) / (t.exp(x) + t.exp(-x)); Sigmoid uses 1 / (1 + t.exp(-x)); neither is a learnable atom (just function composition). LeakyReLU's t.where dispatch is the only mildly novel idiom but covered by relu-elementwise-max as the activation pattern."
+}
