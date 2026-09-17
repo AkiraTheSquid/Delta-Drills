@@ -2630,15 +2630,16 @@
       "builtin.getattr",
       "torch.arange#dtype",
       "torch.float64",
-      "torch.int16"
+      "torch.int16",
+      "torch.uint8"
      ],
-     "concept_markdown": "Every tensor has exactly one **dtype** \u2014 the type shared by all of its\nelements. It determines what the values can be: `int64` can't hold 0.5;\n`float32` holds it with less precision than `float64`; `bool` holds only\n`True`/`False`. Mixed inputs get promoted to the common type (ints + one\nfloat \u2192 all float), silently.\n\nTo convert an existing tensor: **`x.to(new_dtype)`** (this is PyTorch's\n`astype`). It returns a *new* tensor when the dtype actually changes \u2014 the\noriginal is untouched; there is no in-place dtype change. Converting\nfloat\u2192int **truncates toward zero** rather than rounding: `1.9 \u2192 1`,\n`-1.9 \u2192 -1`.\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\ny = x.to(t.float32)\nprint(x, x.dtype)\nprint(y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64          # the original never changed\n```\n\nTruncation is the part that surprises people \u2014 it is not rounding:\n\n```python\nprint(t.tensor([1.9, -1.9, 0.5]).to(t.int64))\n# Hidden checks\nassert t.tensor([1.9]).to(t.int64).item() == 1\nassert t.tensor([-1.9]).to(t.int64).item() == -1\n```\n\nOne wrinkle worth knowing: if the dtype you ask for is the one it already\nhas, `.to()` hands back the *same* tensor rather than a copy. It promises a\ntensor of that dtype, not a fresh buffer.\n\n```python\nsame = x.to(t.int64)\nprint(\"same object?\", same is x)\n# Hidden checks\nassert same is x\n```\n\nRather than build-then-convert, request the dtype at creation: every\nconstructor accepts `dtype=`, e.g. `t.arange(n, dtype=t.int32)` \u2014 one\nstep, no copy.\n\n```python\nimport torch as t\n\nbuilt = t.arange(4, dtype=t.int32)\nprint(built, built.dtype)\n# Hidden checks\nassert _delta_output == 'tensor([0, 1, 2, 3], dtype=torch.int32) torch.int32\\n'\n```\n\nHere PyTorch is stricter than NumPy. NumPy accepts the *string* `'float32'`\nanywhere a dtype is wanted; PyTorch does not \u2014 `t.arange(3, dtype='float32')`\nraises a `TypeError`. Watch it happen:\n\n```python\ntry:\n    t.arange(3, dtype='float32')\nexcept TypeError as err:\n    print(\"TypeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"TypeError:\")\nassert \"dtype=str\" in _delta_output\n```\n\nWhen the dtype arrives as **data** (from a config, a file header, a function\nargument), you have to turn the name into the dtype object first, and\n`getattr(t, name)` does exactly that.\n\n```python\nfor name in ('int32', 'float32', 'float64'):\n    z = t.arange(3, dtype=getattr(t, name))\n    print(f\"{name:8} -> {z} {z.dtype}\")\n# Hidden checks\nassert t.arange(3, dtype=getattr(t, 'float32')).dtype == t.float32\n```\n\nThe number in a dtype's name is bits: `int32` = 4 bytes per element,\n`float64` = 8. Total buffer size is `elements \u00d7 bytes-per-element` \u2014\n**`x.numel()`** elements at **`x.element_size()`** bytes each. Dtype choices\nare memory choices: halving precision halves the buffer, which is the whole\nreason models train in float32 (or bfloat16) rather than float64.\n\n```python\nimport torch as t\n\ngrid = t.zeros((10, 10))\nfor dtype in (t.float64, t.float32, t.int16, t.bool):\n    z = grid.to(dtype)\n    print(f\"{str(dtype):15} {z.numel()} x {z.element_size()} = \"\n          f\"{z.numel() * z.element_size()} bytes\")\n# Hidden checks\nassert _delta_output == 'torch.float64   100 x 8 = 800 bytes\\ntorch.float32   100 x 4 = 400 bytes\\ntorch.int16     100 x 2 = 200 bytes\\ntorch.bool      100 x 1 = 100 bytes\\n'\n```\n\nSame 100 numbers, an 8\u00d7 spread in what they cost:\n\n```python\nprint(\"float64 is exactly\", grid.to(t.float64).element_size(), \"bytes/element,\",\n      \"float32\", grid.to(t.float32).element_size())\nprint(\"100 float32 elements =\",\n      grid.to(t.float32).numel() * grid.to(t.float32).element_size(), \"bytes\")\n# Hidden checks\nassert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()\nassert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400\n```",
+     "concept_markdown": "Every tensor has exactly one **dtype** \u2014 the type shared by all of its\nelements. It determines what the values can be: `int64` can't hold 0.5;\n`float32` holds it with less precision than `float64`; `bool` holds only\n`True`/`False`. Mixed inputs get promoted to the common type (ints + one\nfloat \u2192 all float), silently.\n\nTo convert an existing tensor: **`x.to(new_dtype)`** (this is PyTorch's\n`astype`). It returns a *new* tensor when the dtype actually changes \u2014 the\noriginal is untouched; there is no in-place dtype change. Converting\nfloat\u2192int **truncates toward zero** rather than rounding: `1.9 \u2192 1`,\n`-1.9 \u2192 -1`.\nNarrowing an *integer* tensor into an integer dtype that can't hold the\nvalue **wraps around** rather than erroring: `uint8` holds only 0..255, so\n`256 \u2192 0` and `-1 \u2192 255`. (A float that is out of range for the target\ninteger dtype has no defined result \u2014 don't rely on it.)\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\ny = x.to(t.float32)\nprint(x, x.dtype)\nprint(y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64          # the original never changed\n```\n\nTruncation is the part that surprises people \u2014 it is not rounding:\n\n```python\nprint(t.tensor([1.9, -1.9, 0.5]).to(t.int64))\n# Hidden checks\nassert t.tensor([1.9]).to(t.int64).item() == 1\nassert t.tensor([-1.9]).to(t.int64).item() == -1\n```\n\nOne wrinkle worth knowing: if the dtype you ask for is the one it already\nhas, `.to()` hands back the *same* tensor rather than a copy. It promises a\ntensor of that dtype, not a fresh buffer.\n\n```python\nsame = x.to(t.int64)\nprint(\"same object?\", same is x)\n# Hidden checks\nassert same is x\n```\n\nRather than build-then-convert, request the dtype at creation: every\nconstructor accepts `dtype=`, e.g. `t.arange(n, dtype=t.int32)` \u2014 one\nstep, no copy.\n\n```python\nimport torch as t\n\nbuilt = t.arange(4, dtype=t.int32)\nprint(built, built.dtype)\n# Hidden checks\nassert _delta_output == 'tensor([0, 1, 2, 3], dtype=torch.int32) torch.int32\\n'\n```\n\nHere PyTorch is stricter than NumPy. NumPy accepts the *string* `'float32'`\nanywhere a dtype is wanted; PyTorch does not \u2014 `t.arange(3, dtype='float32')`\nraises a `TypeError`. Watch it happen:\n\n```python\ntry:\n    t.arange(3, dtype='float32')\nexcept TypeError as err:\n    print(\"TypeError:\", err)\n# Hidden checks\nassert _delta_output.startswith(\"TypeError:\")\nassert \"dtype=str\" in _delta_output\n```\n\nWhen the dtype arrives as **data** (from a config, a file header, a function\nargument), you have to turn the name into the dtype object first, and\n`getattr(t, name)` does exactly that.\n\n```python\nfor name in ('int32', 'float32', 'float64'):\n    z = t.arange(3, dtype=getattr(t, name))\n    print(f\"{name:8} -> {z} {z.dtype}\")\n# Hidden checks\nassert t.arange(3, dtype=getattr(t, 'float32')).dtype == t.float32\n```\n\nThe number in a dtype's name is bits: `int32` = 4 bytes per element,\n`float64` = 8. Total buffer size is `elements \u00d7 bytes-per-element` \u2014\n**`x.numel()`** elements at **`x.element_size()`** bytes each. Dtype choices\nare memory choices: halving precision halves the buffer, which is the whole\nreason models train in float32 (or bfloat16) rather than float64.\n\n```python\nimport torch as t\n\ngrid = t.zeros((10, 10))\nfor dtype in (t.float64, t.float32, t.int16, t.bool):\n    z = grid.to(dtype)\n    print(f\"{str(dtype):15} {z.numel()} x {z.element_size()} = \"\n          f\"{z.numel() * z.element_size()} bytes\")\n# Hidden checks\nassert _delta_output == 'torch.float64   100 x 8 = 800 bytes\\ntorch.float32   100 x 4 = 400 bytes\\ntorch.int16     100 x 2 = 200 bytes\\ntorch.bool      100 x 1 = 100 bytes\\n'\n```\n\nSame 100 numbers, an 8\u00d7 spread in what they cost:\n\n```python\nprint(\"float64 is exactly\", grid.to(t.float64).element_size(), \"bytes/element,\",\n      \"float32\", grid.to(t.float32).element_size())\nprint(\"100 float32 elements =\",\n      grid.to(t.float32).numel() * grid.to(t.float32).element_size(), \"bytes\")\n# Hidden checks\nassert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()\nassert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400\n```",
      "worked_example_markdown": "Make a float32 copy of an integer tensor:\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\n\n# .to() returns a NEW tensor with converted values; x is untouched.\ny = x.to(t.float32)\nprint(\"x\", x, x.dtype)\nprint(\"y\", y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64           # default integer dtype\nassert y.dtype == t.float32\nassert x.dtype == t.int64           # original unchanged \u2014 .to() copies\n```\n\nWhy: checking `x.dtype` first tells you what conversion is actually needed \u2014\ndon't convert blind. And dtype is a property of the whole memory block, so\nchanging it means building a new block.\n\nBuild 0..2 already in float32 \u2014 dtype named by a string:\n\n```python\nimport torch as t\n\nname = 'float32'\n\n# PyTorch wants the dtype OBJECT, so look it up from the name.\nz = t.arange(3, dtype=getattr(t, name))\nprint(repr(name), \"->\", getattr(t, name), \"->\", z)\n# Hidden checks\nassert z.dtype == t.float32\n```\n\nWhy: when a function receives `dtype_str` as an argument, one `getattr` turns\nit into the real dtype \u2014 no lookup table from strings to torch objects, and no\n`if/elif` chain over dtype names.\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])             # int64: 8 bytes each\n\n# float32 elements are 4 bytes, so the converted copy is half the size.\ny = x.to(t.float32)\nprint(x.dtype, x.numel() * x.element_size(), \"bytes\")\nprint(y.dtype, y.numel() * y.element_size(), \"bytes\")\n# Hidden checks\nassert x.numel() * x.element_size() == 3 * 8\nassert y.element_size() == 4\nassert y.numel() * y.element_size() == 3 * 4\n```\n\nWhy: `numel \u00d7 element_size` makes the cost concrete \u2014 a 10\u00d710 float32\ntensor is exactly 400 bytes, where the float64 NumPy equivalent is 800.",
      "segments": [
       {
        "concept_id": "s0-to-converting-an-existing-tensor",
        "title": ".to() \u2014 converting an existing tensor",
-       "concept_markdown": "Every tensor has exactly one **dtype** \u2014 the type shared by all of its\nelements. It determines what the values can be: `int64` can't hold 0.5;\n`float32` holds it with less precision than `float64`; `bool` holds only\n`True`/`False`. Mixed inputs get promoted to the common type (ints + one\nfloat \u2192 all float), silently.\n\nTo convert an existing tensor: **`x.to(new_dtype)`** (this is PyTorch's\n`astype`). It returns a *new* tensor when the dtype actually changes \u2014 the\noriginal is untouched; there is no in-place dtype change. Converting\nfloat\u2192int **truncates toward zero** rather than rounding: `1.9 \u2192 1`,\n`-1.9 \u2192 -1`.\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\ny = x.to(t.float32)\nprint(x, x.dtype)\nprint(y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64          # the original never changed\n```\n\nTruncation is the part that surprises people \u2014 it is not rounding:\n\n```python\nprint(t.tensor([1.9, -1.9, 0.5]).to(t.int64))\n# Hidden checks\nassert t.tensor([1.9]).to(t.int64).item() == 1\nassert t.tensor([-1.9]).to(t.int64).item() == -1\n```\n\nOne wrinkle worth knowing: if the dtype you ask for is the one it already\nhas, `.to()` hands back the *same* tensor rather than a copy. It promises a\ntensor of that dtype, not a fresh buffer.\n\n```python\nsame = x.to(t.int64)\nprint(\"same object?\", same is x)\n# Hidden checks\nassert same is x\n```",
+       "concept_markdown": "Every tensor has exactly one **dtype** \u2014 the type shared by all of its\nelements. It determines what the values can be: `int64` can't hold 0.5;\n`float32` holds it with less precision than `float64`; `bool` holds only\n`True`/`False`. Mixed inputs get promoted to the common type (ints + one\nfloat \u2192 all float), silently.\n\nTo convert an existing tensor: **`x.to(new_dtype)`** (this is PyTorch's\n`astype`). It returns a *new* tensor when the dtype actually changes \u2014 the\noriginal is untouched; there is no in-place dtype change. Converting\nfloat\u2192int **truncates toward zero** rather than rounding: `1.9 \u2192 1`,\n`-1.9 \u2192 -1`.\nNarrowing an *integer* tensor into an integer dtype that can't hold the\nvalue **wraps around** rather than erroring: `uint8` holds only 0..255, so\n`256 \u2192 0` and `-1 \u2192 255`. (A float that is out of range for the target\ninteger dtype has no defined result \u2014 don't rely on it.)\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\ny = x.to(t.float32)\nprint(x, x.dtype)\nprint(y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64          # the original never changed\n```\n\nTruncation is the part that surprises people \u2014 it is not rounding:\n\n```python\nprint(t.tensor([1.9, -1.9, 0.5]).to(t.int64))\n# Hidden checks\nassert t.tensor([1.9]).to(t.int64).item() == 1\nassert t.tensor([-1.9]).to(t.int64).item() == -1\n```\n\nOne wrinkle worth knowing: if the dtype you ask for is the one it already\nhas, `.to()` hands back the *same* tensor rather than a copy. It promises a\ntensor of that dtype, not a fresh buffer.\n\n```python\nsame = x.to(t.int64)\nprint(\"same object?\", same is x)\n# Hidden checks\nassert same is x\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "Make a float32 copy of an integer tensor:\n\n```python\nimport torch as t\n\nx = t.tensor([1, 2, 3])\n\n# .to() returns a NEW tensor with converted values; x is untouched.\ny = x.to(t.float32)\nprint(\"x\", x, x.dtype)\nprint(\"y\", y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64           # default integer dtype\nassert y.dtype == t.float32\nassert x.dtype == t.int64           # original unchanged \u2014 .to() copies\n```\n\nWhy: checking `x.dtype` first tells you what conversion is actually needed \u2014\ndon't convert blind. And dtype is a property of the whole memory block, so\nchanging it means building a new block.",
        "worked_example_code": "import torch as t\n\nx = t.tensor([1, 2, 3])\n\n# .to() returns a NEW tensor with converted values; x is untouched.\ny = x.to(t.float32)\nprint(\"x\", x, x.dtype)\nprint(\"y\", y, y.dtype)\n# Hidden checks\nassert x.dtype == t.int64           # default integer dtype\nassert y.dtype == t.float32\nassert x.dtype == t.int64           # original unchanged \u2014 .to() copies\n",
@@ -2777,7 +2778,47 @@
       },
       {
        "question_id": 656,
-       "prompt": "Convert to a dtype you only know by name.\n\nThe two halves of this page meet here: `.to()` wants a dtype object, and\n`getattr` turns a name into one:",
+       "prompt": "Convert to a dtype you only know by name.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1487,
+       "prompt": "Check that conversion returns a new tensor when the dtype changes.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1488,
+       "prompt": "Preserve shape while converting a multidimensional tensor.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1489,
+       "prompt": "Convert to bool and report the resulting values and dtype.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1490,
+       "prompt": "Convert through int16 and measure the resulting buffer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1491,
+       "prompt": "Build a tensor in a named dtype and report its memory cost.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1492,
+       "prompt": "Convert negative and positive fractions with truncation toward zero.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1493,
+       "prompt": "Compare two dtype conversions made from the same source.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1494,
+       "prompt": "Use a runtime dtype name to convert and describe a tensor.\n\nThe two halves of this page meet here: `.to()` wants a dtype object, and\n`getattr` turns a name into one:",
        "worked_example_code": "import torch as t\n\nx = t.tensor([1.5, -2.5])\nname = 'int16'\ny = x.to(getattr(t, name))\nprint(y, y.dtype)\n# Hidden checks\nassert y.dtype == t.int16\n"
       }
      ],
@@ -2793,6 +2834,30 @@
       {
        "question_id": 659,
        "prompt": "Two conversions from one tensor, and the original untouched."
+      },
+      {
+       "question_id": 1495,
+       "prompt": "Combine runtime dtype lookup with conversion and memory accounting."
+      },
+      {
+       "question_id": 1496,
+       "prompt": "Describe a converted tensor's values, shape, dtype, and byte count."
+      },
+      {
+       "question_id": 1497,
+       "prompt": "Convert two tensors to a requested dtype and compare their memory costs."
+      },
+      {
+       "question_id": 1498,
+       "prompt": "Use truncation and dtype lookup together on a batch of values."
+      },
+      {
+       "question_id": 1499,
+       "prompt": "Return a complete report for a named dtype created with `arange`."
+      },
+      {
+       "question_id": 1500,
+       "prompt": "Convert a tensor and verify both the converted copy and untouched source."
       }
      ],
      "independent_items": [
@@ -2801,7 +2866,19 @@
       653,
       654,
       655,
-      656
+      656,
+      1483,
+      1484,
+      1485,
+      1486,
+      1487,
+      1488,
+      1489,
+      1490,
+      1491,
+      1492,
+      1493,
+      1494
      ],
      "misconceptions_markdown": "- **\"`.to()` changes the tensor in place.\"** \u2014 It returns a converted copy;\n  the original keeps its dtype and values. If you meant to keep it, assign it:\n  `x = x.to(...)`.\n- **\"Float\u2192int conversion rounds.\"** \u2014 It truncates toward zero: `1.9 \u2192 1`,\n  `-1.9 \u2192 -1`. If you want rounding, round first: `x.round().to(t.int64)`.\n- **\"`dtype='float32'` works, like in NumPy.\"** \u2014 PyTorch rejects the string\n  with a `TypeError`. Pass `t.float32`, or `getattr(t, name)` when the name\n  arrives as data.\n- **\"dtype names are just labels.\"** \u2014 The number is the bit width, which sets\n  both the representable range/precision and the memory per element.\n  `numel \u00d7 element_size` \u2014 a 10\u00d710 float32 tensor is exactly 400 bytes.",
      "notes_markdown": ""
