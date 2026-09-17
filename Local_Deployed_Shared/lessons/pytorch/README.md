@@ -70,5 +70,6 @@
   - Status: `ACTIVE`
 
 ## Recent Changes
+- 2026-09-17: 13 parked orphans folded as Solo drills onto the ar-02 pages — q405/406/408/409/416 → `kp-convolution-2d`, q418 → `kp-pooling`, q423 → `kp-sequential`, q425 → `kp-training-loop`, q459/460 → `kp-batch-normalization`, q103 (numpy softmax, rewritten in torch) → `kp-stable-probabilities`. Starters stubbed and prompts de-recipe'd via `curated_overrides.jsonl` so the strict pages pass `validate_lessons`. `build_qmatrix.py` now lets a KP claim any bank id (only unknown ids are refused), so the CNN/PyTorch-Fundamentals topic no longer blocks a fold. q414/438/473/474/476 stay parked (no_grad in prompt, or the training-loop Solo mean would drop >5 under faded). The other ~60 of q405–479 remain parked for the unwritten ar-03/ar-04 pages; `kc_only_serving` already never serves them.
 - 2026-09-14: ar-02 gap filled — 7 KPs (`kp-sequential`, `kp-residual-block`, `kp-block-group`, `kp-resnet34`, `kp-feature-extraction`, `kp-training-loop`, `kp-forward-hooks`), 97 drills (q1374–q1470), registry `encompassing` edges, 7 atoms in `arena_drillable_v1.json`, `arena_exercise_kcs.json` "0-2" +10 ARENA defs. BatchNorm2d/MaxPool2d grounding debt accepted (ARENA calls its own same-named classes).
 - 2026-09-06: Lesson created — 4 KPs, 44 drills (q798–q841), atoms and glossary wired.

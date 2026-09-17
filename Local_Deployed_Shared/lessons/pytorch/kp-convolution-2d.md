@@ -7,7 +7,7 @@ supporting: ['cnn.convolution-1d', 'cnn.module-state', 'numpy.stack-concat-inter
 previews: []
 faded: [1251, 1249, 1252, 1250]
 guided: []
-independent: [1253, 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261]
+independent: [1253, 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 405, 406, 408, 409, 416]
 integrated: [1262, 1263, 1264]
 ---
 
@@ -219,6 +219,21 @@ Return per-example total energy in each output channel, divided by total energy 
 
 ### q1261
 Return the response of locally mean-centred image patches to the filters. Patch means include padding and all input channels. x: float (batch,in_channels,height,width); w: float (out_channels,in_channels,kh,kw); s: stride ≥ 1; p: zero padding on every side. The kernel fits the padded input.
+
+### q405
+The output side length from input side, kernel, stride and padding, by integer arithmetic.
+
+### q406
+Same formula, returned as a plain int — read the four names in the right order.
+
+### q408
+How many multiplications feed ONE output value: channels times kernel area.
+
+### q409
+The padding that keeps the size unchanged at stride 1, for an odd kernel.
+
+### q416
+Learnable parameter count of a 2-D filter layer, with and without a per-filter offset.
 
 ## Integrated practice
 

@@ -7,7 +7,7 @@ supporting: ['cnn.module-state', 'cnn.batch-normalization', 'python.control-flow
 previews: []
 faded: [1374, 1375, 1376, 1377, 1378, 1379]
 guided: []
-independent: [1380, 1381, 1382, 1383, 1384, 1385]
+independent: [1380, 1381, 1382, 1383, 1384, 1385, 423]
 integrated: [1386, 1387, 1388]
 ---
 
@@ -325,6 +325,9 @@ Given a Sequential chain `m`, an index `i` (possibly negative), a module `mod` a
 
 ### q1385
 Given a Sequential chain `m` and a tensor `x`, return the list of intermediate results: element `i` is the tensor after the first `i+1` children have been applied, so the list has one entry per child and its last entry equals the full chain's output. Return an empty list for an empty chain.
+
+### q423
+Subclass the base class, register one affine layer as an attribute, apply it in forward — return an instance.
 
 ## Integrated practice
 

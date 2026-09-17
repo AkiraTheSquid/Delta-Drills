@@ -7,7 +7,7 @@ supporting: ['cnn.mlp', 'tensor.classifier-evaluation', 'python.control-flow', '
 previews: []
 faded: [1441, 1442, 1443, 1444, 1445, 1446, 1447, 1448]
 guided: []
-independent: [1449, 1450, 1451, 1452, 1453, 1454]
+independent: [1449, 1450, 1451, 1452, 1453, 1454, 425]
 integrated: [1455, 1456, 1457]
 ---
 
@@ -436,6 +436,9 @@ Given a module `m` containing a batch norm and a batch `x`, return a tuple of tw
 
 ### q1454
 Given a classifier `m` in evaluation mode, a batch `x` and integer labels `y`, return the cross-entropy loss of the logits against the labels as a Python float, computed without recording gradients.
+
+### q425
+One update of a scalar model by hand: the squared-error slope, then the descent step, as arithmetic.
 
 ## Integrated practice
 

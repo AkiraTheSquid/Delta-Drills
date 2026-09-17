@@ -1770,7 +1770,7 @@
     "subtopic": "Indexing and selection",
     "subtopic_key": "Numpy: Indexing and selection",
     "question_text": "Write a function solve(z) that takes a 1-D PyTorch float tensor of logits and returns its softmax: a same-shape tensor of non-negative entries summing to 1, where entry i is exp(z[i]) divided by the sum of exponentials. Your implementation must be numerically stable — it will be tested with large logits like 1000 where naive exponentiation overflows to inf.",
-    "answer_code": "import torch as t\n\ndef solve(z):\n    e = t.exp(z - z.max())\n    return e / e.sum()\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0])))\n",
+    "answer_code": "import torch as t\n\ndef solve(z):\n    e = (z - z.max()).exp()\n    return e / e.sum()\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0])))\n",
     "difficulty_score": 42,
     "difficulty_label": "medium",
     "expected_output": "tensor([0.0900, 0.2447, 0.6652])",
@@ -1778,7 +1778,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(z):\n    \"\"\"Return the softmax of the logit vector z (numerically stable).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several logit vectors.\nprint(solve(t.tensor([1.0, 2.0, 3.0])))\n",
+    "starter_code": "import torch as t\n\ndef solve(z):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nz = t.tensor([1.0, 2.0, 3.0])",
@@ -1802,7 +1802,12 @@
       }
     ],
     "submission_mode": "function",
-    "wrong_examples": [],
+    "wrong_examples": [
+      {
+        "output": "(True, [nan, nan, nan])",
+        "why": "Exponentiating the raw logits overflows to inf, and inf divided by inf is nan; subtract the largest entry first."
+      }
+    ],
     "provenance": null,
     "expected_artifact_type": "stdout",
     "supports_visual_output": false,
@@ -7414,7 +7419,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(H, K, S, P):\n    # Write your solution here\n    return None\n\nprint(solve(32, 5, 1, 0))\n",
+    "starter_code": "import torch as t\n\ndef solve(H, K, S, P):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nH, K, S, P = 32, 5, 1, 0",
@@ -7459,7 +7464,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(h, k, s, p):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(224, 7, 2, 3))\n",
+    "starter_code": "import torch as t\n\ndef solve(h, k, s, p):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nh, k, s, p = 224, 7, 2, 3",
@@ -7544,7 +7549,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(c, k):\n    \"\"\"Implement the described contraction and return the result.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(64, 3))\n",
+    "starter_code": "import torch as t\n\ndef solve(c, k):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nc, k = 64, 3",
@@ -7589,7 +7594,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(k):\n    \"\"\"Return the 'same' padding as a plain int — the padding that keeps output size equal to input size at stride 1.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(5))\n",
+    "starter_code": "import torch as t\n\ndef solve(k):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nk = 5",
@@ -7794,7 +7799,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(x, k):\n    # Write your solution here\n    return None\n\nx = torch.ones(1, 1, 4, 4)\nk = torch.ones(1, 1, 3, 3) / 9\nprint(solve(x, k))\n",
+    "starter_code": "import torch\nimport torch.nn.functional as F\n\ndef solve(x, k):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch\nimport torch.nn.functional as F\nx = torch.ones(1, 1, 4, 4)\nk = torch.ones(1, 1, 3, 3) / 9",
@@ -7879,7 +7884,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(c_in, c_out, k, bias):\n    \"\"\"Return the LEARNABLE PARAMETER COUNT of a 2-D conv layer as a plain int.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(64, 128, 3, True))\n",
+    "starter_code": "import torch as t\n\ndef solve(c_in, c_out, k, bias):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nc_in, c_out, k, bias = 64, 128, 3, True",
@@ -7964,7 +7969,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch\n\ndef solve(x):\n    # Write your solution here\n    return None\n\nx = torch.zeros(1, 64, 7, 7)\nprint(solve(x))\n",
+    "starter_code": "import torch\n\ndef solve(x):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)",
@@ -8155,7 +8160,7 @@
     "topic": "CNN",
     "subtopic": "nn.Module & training loop",
     "subtopic_key": "CNN: nn.Module & training loop",
-    "question_text": "Subclass `nn.Module`. Write solve(in_features, out_features): define a class whose `__init__` calls `super().__init__()` and registers a single `nn.Linear(in_features, out_features)` as an attribute, with a `forward` that applies it. Return an INSTANCE. Predict how many learnable scalars the linear contributes (weight AND bias) — the grader counts them.",
+    "question_text": "Write solve(in_features, out_features): define a Module subclass whose constructor first runs the parent constructor, then registers one fully-connected affine layer (in_features -> out_features) as an attribute, and whose forward applies that layer. Return an INSTANCE. Predict how many learnable scalars the layer contributes (weight AND bias) — the grader counts them.",
     "answer_code": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features):\n    class M(nn.Module):\n        def __init__(self, i, o):\n            super().__init__()\n            self.fc = nn.Linear(i, o)\n        def forward(self, x):\n            return self.fc(x)\n    return M(in_features, out_features)\n\nmodel = solve(4, 2)\nprint(model)\n",
     "difficulty_score": 35,
     "difficulty_label": "easy",
@@ -8164,7 +8169,7 @@
     "primary_library": "torch",
     "task_type": "function_impl",
     "function_name": "solve",
-    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features):\n    # Write your solution here\n    return None\n\nmodel = solve(4, 2)\nprint(model)\n",
+    "starter_code": "import torch\nimport torch.nn as nn\n\ndef solve(in_features, out_features):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch\nimport torch.nn as nn\nargs = (4, 2)",
@@ -8244,7 +8249,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch as t\n\ndef solve(w, x, y, lr):\n    \"\"\"Return the updated w as a float.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(0.0, 2.0, 4.0, 0.1))\n",
+    "starter_code": "import torch as t\n\ndef solve(w, x, y, lr):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch as t\nw, x, y, lr = 0.0, 2.0, 4.0, 0.1",
@@ -9670,7 +9675,7 @@
     "topic": "CNNs",
     "subtopic": "BatchNorm per-channel broadcasting",
     "subtopic_key": "CNNs: BatchNorm per-channel broadcasting",
-    "question_text": "BatchNorm's per-channel vectors (weight, bias, running mean, running var — each length C) cannot broadcast against a (B, C, H, W) tensor as-is, because broadcasting aligns TRAILING dims. Write solve(x, weight, bias, mean, var): reshape each vector so the channel axis lands on dim 1 with singleton batch/spatial dims, then compute normalize-scale-shift: (x − mean)/sqrt(var) * weight + bias. Return the result tensor.",
+    "question_text": "BatchNorm's per-channel vectors (weight, bias, running mean, running var — each length C) cannot broadcast against a (B, C, H, W) tensor as-is, because broadcasting aligns TRAILING dims. Write solve(x, weight, bias, mean, var): line each vector up with the channel axis of x, and compute normalize-scale-shift: (x − mean)/sqrt(var) * weight + bias. Return the result tensor.",
     "answer_code": "import torch\n\ndef solve(x, weight, bias, mean, var):\n    C = x.shape[1]\n    w = weight.reshape(1, C, 1, 1)\n    b = bias.reshape(1, C, 1, 1)\n    m = mean.reshape(1, C, 1, 1)\n    v = var.reshape(1, C, 1, 1)\n    return (x - m) / torch.sqrt(v) * w + b\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\nprint(solve(x, weight, bias, mean, var))\n",
     "difficulty_score": 45,
     "difficulty_label": "medium",
@@ -9679,7 +9684,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch\n\ndef solve(x, weight, bias, mean, var):\n    # Write your solution here\n    return None\n\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])\nprint(solve(x, weight, bias, mean, var))\n",
+    "starter_code": "import torch\n\ndef solve(x, weight, bias, mean, var):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch\nx = torch.arange(24, dtype=torch.float32).reshape(2, 3, 2, 2)\nweight = torch.tensor([1.0, 2.0, 0.5])\nbias = torch.tensor([0.0, 1.0, -1.0])\nmean = torch.tensor([0.0, 4.0, 8.0])\nvar = torch.tensor([1.0, 4.0, 16.0])",
@@ -9719,7 +9724,7 @@
     "primary_library": "torch",
     "task_type": "stdout_prediction",
     "function_name": "solve",
-    "starter_code": "import torch\n\ndef solve(weight):\n    # Write your solution here\n    return None\n\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])\nprint(solve(weight))\n",
+    "starter_code": "import torch\n\ndef solve(weight):\n    pass\n",
     "test_cases": [
       {
         "setup_code": "import torch\nweight = torch.tensor([1.0, 2.0, 3.0, 4.0])",

@@ -175,12 +175,6 @@
     "detail": "prompt names solution call(s) in code form: ['train']"
    }
   ],
-  "423": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['Linear']"
-   }
-  ],
   "424": [
    {
     "check": "answer_symbol_in_prompt",
@@ -845,7 +839,7 @@
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 130,
+  "answer_symbol_in_prompt": 129,
   "precompute_leak": 8,
   "starter_passes_some_cases": 1
  }
