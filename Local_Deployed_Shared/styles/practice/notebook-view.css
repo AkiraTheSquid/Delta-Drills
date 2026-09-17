@@ -487,13 +487,17 @@
   display: none;
 }
 
-.nbv-src code:focus {
-  outline: none;
-}
-
+/* No outline on the source itself, EVER — not only for the mouse. `--accent`
+   is the brand red, and a contenteditable counts as a text field, so Chrome
+   fires `:focus-visible` on a plain click: every cell you clicked into wore
+   a 2px red box, which reads as "this cell is broken" (Seth, 2026-09-17,
+   on the ARENA setup cell). The active cell is already marked the way Colab
+   marks it — the `.nbv-code:focus-within` border below — and the caret is
+   in it. Keyboard users get the same border; a second, inner rectangle
+   said nothing the outer one did not. */
+.nbv-src code:focus,
 .nbv-src code:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
+  outline: none;
 }
 
 .nbv-out {
