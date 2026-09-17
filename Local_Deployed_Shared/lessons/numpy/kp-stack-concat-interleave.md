@@ -6,7 +6,7 @@ new_syntax: [Tensor.ravel, torch.cat, torch.cat#dim, torch.column_stack, torch.e
 concepts: [grow-existing-dimension, create-new-axis, interleave-streams]
 faded: [974, 975, 84, 976]
 guided: [146, 977]
-independent: [89, 238, 159, 978, 979, 980]
+independent: [89, 238, 159, 978, 980]
 integrated: [981, 982, 983]
 ---
 

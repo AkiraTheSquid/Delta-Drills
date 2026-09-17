@@ -12840,35 +12840,6 @@
     "syntax.assign"
    ]
   },
-  "1353": {
-   "numpy.ndarray-model": [
-    "Tensor.shape",
-    "Tensor.tolist"
-   ],
-   "numpy.slicing-views": [
-    "syntax.slice",
-    "syntax.slice-step"
-   ],
-   "python.calling-functions": [
-    "syntax.call"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.indexing": [
-    "syntax.index"
-   ],
-   "python.values-and-names": [
-    "syntax.arith",
-    "syntax.assign"
-   ]
-  },
   "1354": {
    "numpy.ndarray-model": [
     "Tensor.shape",
@@ -16813,34 +16784,6 @@
     "builtin.print"
    ]
   },
-  "1474": {
-   "numpy.aggregations": [
-    "Tensor.mean"
-   ],
-   "numpy.ndarray-model": [
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call",
-    "syntax.keyword-argument"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
-   ],
-   "python.values-and-names": [
-    "builtin.print"
-   ]
-  },
   "1475": {
    "numpy.aggregations": [
     "Tensor.sum"
@@ -16866,36 +16809,6 @@
     "syntax.list-literal"
    ],
    "python.values-and-names": [
-    "syntax.tuple",
-    "builtin.print"
-   ]
-  },
-  "1476": {
-   "numpy.aggregations": [
-    "Tensor.mean"
-   ],
-   "numpy.ndarray-model": [
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call",
-    "syntax.keyword-argument"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
-   ],
-   "python.values-and-names": [
-    "syntax.arith",
     "syntax.tuple",
     "builtin.print"
    ]
@@ -16926,35 +16839,6 @@
     "syntax.list-literal"
    ],
    "python.values-and-names": [
-    "builtin.print"
-   ]
-  },
-  "1478": {
-   "numpy.aggregations": [
-    "Tensor.mean"
-   ],
-   "numpy.ndarray-model": [
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call",
-    "syntax.keyword-argument"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
-   ],
-   "python.values-and-names": [
-    "syntax.tuple",
     "builtin.print"
    ]
   },
@@ -17012,36 +16896,6 @@
    ],
    "python.values-and-names": [
     "syntax.tuple",
-    "builtin.print"
-   ]
-  },
-  "1481": {
-   "numpy.aggregations": [
-    "Tensor.mean"
-   ],
-   "numpy.ndarray-model": [
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
-   ],
-   "python.types-and-conversion": [
-    "builtin.float"
-   ],
-   "python.values-and-names": [
     "builtin.print"
    ]
   },
@@ -17431,35 +17285,6 @@
    ],
    "python.types-and-conversion": [
     "syntax.equality"
-   ],
-   "python.values-and-names": [
-    "syntax.assign",
-    "syntax.tuple",
-    "builtin.print",
-    "syntax.arith"
-   ]
-  },
-  "1495": {
-   "numpy.ndarray-model": [
-    "Tensor.tolist",
-    "torch.int64",
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.return",
-    "syntax.docstring"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
    ],
    "python.values-and-names": [
     "syntax.assign",
@@ -38898,31 +38723,6 @@
     "syntax.arith"
    ]
   },
-  "971": {
-   "python.calling-functions": [
-    "syntax.call"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.docstring",
-    "syntax.return"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.types-and-conversion": [
-    "builtin.int",
-    "builtin.round"
-   ],
-   "python.values-and-names": [
-    "builtin.print",
-    "syntax.arith",
-    "syntax.assign",
-    "syntax.tuple"
-   ]
-  },
   "972": {
    "numpy.slicing-views": [
     "syntax.slice"
@@ -39106,31 +38906,6 @@
     "builtin.print"
    ]
   },
-  "979": {
-   "numpy.ndarray-model": [
-    "torch.tensor"
-   ],
-   "python.calling-functions": [
-    "syntax.call"
-   ],
-   "python.defining-functions": [
-    "syntax.def",
-    "syntax.docstring",
-    "syntax.return"
-   ],
-   "python.dots-and-imports": [
-    "syntax.attribute",
-    "syntax.import",
-    "syntax.import-as"
-   ],
-   "python.lists-and-tuples": [
-    "syntax.list-literal"
-   ],
-   "python.values-and-names": [
-    "builtin.print",
-    "syntax.tuple"
-   ]
-  },
   "98": {
    "numpy.broadcasting-rules": [
     "syntax.none"
@@ -39228,18 +39003,15 @@
    ]
   },
   "982": {
-   "numpy.constructors": [
-    "torch.zeros",
-    "torch.zeros#dtype"
-   ],
    "numpy.ndarray-model": [
-    "Tensor.dtype",
     "Tensor.shape",
     "torch.tensor"
    ],
+   "numpy.reshape-flatten": [
+    "Tensor.flatten"
+   ],
    "numpy.slicing-views": [
-    "syntax.slice",
-    "syntax.slice-step"
+    "syntax.slice"
    ],
    "python.calling-functions": [
     "syntax.call",
