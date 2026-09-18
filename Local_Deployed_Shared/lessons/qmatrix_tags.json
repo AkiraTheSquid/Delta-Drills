@@ -19225,5 +19225,492 @@
    "syntax.import-as"
   ],
   "source": "kp-integrated"
+ },
+ "1530": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-independent"
+ },
+ "1531": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-independent"
+ },
+ "1532": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-independent"
+ },
+ "1533": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-independent"
+ },
+ "1534": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-independent"
+ },
+ "1535": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-integrated"
+ },
+ "1536": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-integrated"
+ },
+ "1537": {
+  "target_kcs": [
+   "torch.broadcasting-rules"
+  ],
+  "supporting_kcs": [
+   "torch.elementwise-ops",
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "none-newaxis-indexing",
+   "torch.broadcast_shapes",
+   "syntax.none"
+  ],
+  "source": "kp-integrated"
+ },
+ "1538": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "1539": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "1540": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "1541": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "1542": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-independent"
+ },
+ "1543": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-integrated"
+ },
+ "1544": {
+  "target_kcs": [
+   "torch.constructors"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.all",
+   "torch.bool",
+   "torch.eye",
+   "torch.full",
+   "torch.full_like",
+   "torch.int32",
+   "torch.ones",
+   "torch.ones#dtype",
+   "torch.ones_like",
+   "torch.zeros",
+   "torch.zeros#dtype",
+   "torch.zeros_like"
+  ],
+  "source": "kp-integrated"
+ },
+ "1545": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "1546": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "1547": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "1548": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-independent"
+ },
+ "1549": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-integrated"
+ },
+ "1550": {
+  "target_kcs": [
+   "torch.elementwise-ops"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clamp",
+   "Tensor.clamp#max",
+   "Tensor.clamp#min",
+   "torch.ceil",
+   "torch.floor",
+   "torch.maximum",
+   "torch.minimum",
+   "torch.round",
+   "torch.sqrt",
+   "torch.trunc"
+  ],
+  "source": "kp-integrated"
+ },
+ "1551": {
+  "target_kcs": [
+   "torch.tensor-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.dtype",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "1552": {
+  "target_kcs": [
+   "torch.tensor-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.dtype",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "1553": {
+  "target_kcs": [
+   "torch.tensor-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.dtype",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
+ },
+ "1554": {
+  "target_kcs": [
+   "torch.tensor-model"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [
+   "Tensor.dtype",
+   "Tensor.item",
+   "Tensor.ndim",
+   "Tensor.numel",
+   "Tensor.shape",
+   "Tensor.tolist",
+   "torch.equal",
+   "torch.float32",
+   "torch.int64",
+   "torch.tensor",
+   "torch.tensor#dtype"
+  ],
+  "source": "kp-integrated"
  }
 }

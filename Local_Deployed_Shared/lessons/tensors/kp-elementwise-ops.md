@@ -6,8 +6,8 @@ new_syntax: [Tensor.clamp, Tensor.clamp#max, Tensor.clamp#min, torch.ceil, torch
 previews: [Tensor.max, syntax.matmul]
 faded: [192, 49, 67, 630, 631, 632]
 guided: [487, 488]
-independent: [43, 489, 63, 633, 634, 635]
-integrated: [636, 637, 638]
+independent: [43, 489, 63, 633, 634, 635, 1545, 1546, 1547, 1548]
+integrated: [636, 637, 638, 1549, 1550]
 ---
 
 ## Concept: write the formula once — operators are elementwise
@@ -377,6 +377,18 @@ print("relu  ", t.maximum(x, zeros))
 assert t.equal(t.maximum(x, zeros), x.clamp(min=0.0))
 ```
 
+### q1545
+Drop the fraction on entries of both signs — one member of the rounding family does exactly this.
+
+### q1546
+Snap to a grid: rounding to the nearest integer is only the middle of the job.
+
+### q1547
+A ceiling only — one bound, the other side left open.
+
+### q1548
+Boxes per count: a division whose result must go UP to the next whole number.
+
 ## Integrated practice
 
 ### q636
@@ -387,6 +399,12 @@ Larger, smaller, and the gap — three elementwise results from one pair.
 
 ### q638
 One conversion formula, then two different elementwise clean-ups.
+
+### q1549
+Root, but only after the negatives are made safe — then a rounding pass on top.
+
+### q1550
+Clamp, then split each value into a whole part and a signed remainder.
 
 ## Misconceptions
 
