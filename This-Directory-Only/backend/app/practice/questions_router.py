@@ -71,7 +71,8 @@ def claim_question(
     already_served = question.id in sub_state.served_question_ids
     if not already_served:
         sub_state.served_question_ids.append(question.id)
-        save_user_state(user_id)
+    get_user_state(user_id).last_served_question_id = question.id
+    save_user_state(user_id)
     return {"already_served": already_served}
 
 
@@ -95,6 +96,7 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
     sub_state = user_state.get_subtopic_state(question.subtopic)
     if question.id not in sub_state.served_question_ids:
         sub_state.served_question_ids.append(question.id)
+    user_state.last_served_question_id = question.id
     save_user_state(user_id)
 
     expected_output = (
@@ -202,6 +204,7 @@ def next_question(
     # jumping on submit and jumping back on the next load.
     target_diff = question_target_difficulty(user_state, subtopic, question.id)
     sub_state.served_question_ids.append(question.id)
+    user_state.last_served_question_id = question.id
     save_user_state(user_id)
 
     expected_output = (

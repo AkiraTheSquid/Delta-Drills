@@ -6,8 +6,8 @@ new_syntax: [Tensor.all, torch.bool, torch.eye, torch.full, torch.full_like, tor
 previews: [syntax.matmul]
 faded: [227, 212, 41, 228, 639, 640, 641, 642]
 guided: [48]
-independent: [225, 50, 213, 643, 644, 645]
-integrated: [646, 647, 648]
+independent: [225, 50, 213, 643, 644, 645, 1538, 1539, 1540, 1541, 1542]
+integrated: [646, 647, 648, 1543, 1544]
 ---
 
 ## Concept: constructors and the shape argument
@@ -429,6 +429,21 @@ print(flags.dtype)
 assert flags.dtype == t.bool
 ```
 
+### q1538
+A grid of one constant, in a narrower integer type than the fill value would pick.
+
+### q1539
+An all-True mask in x's shape — the shape is copied, the dtype is not.
+
+### q1540
+A grid of one value with one row zeroed — build the majority first, then overwrite the exception.
+
+### q1541
+Fill in x's shape AND x's dtype — the dtype is what decides what happens to 2.7.
+
+### q1542
+The same n ones as a row and as a column — the shape argument decides.
+
 ## Integrated practice
 
 ### q646
@@ -439,6 +454,12 @@ The whole _like family on one tensor.
 
 ### q648
 Three constructors, three dtypes, one call.
+
+### q1543
+Three constructors that all borrow x's shape — and each takes its dtype from somewhere different.
+
+### q1544
+A scaled identity, then a whole-tensor check against the unscaled one.
 
 ## Misconceptions
 

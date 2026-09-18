@@ -1737,6 +1737,22 @@
       {
        "question_id": 567,
        "prompt": "Does the tensor give the input back unchanged? It depends on the type you asked for."
+      },
+      {
+       "question_id": 1551,
+       "prompt": "Shape and count, then one number derived from the two \u2014 not read off the wrong attribute."
+      },
+      {
+       "question_id": 1552,
+       "prompt": "Axes, count and equality are three separate verdicts \u2014 two of them can agree while the third does not."
+      },
+      {
+       "question_id": 1553,
+       "prompt": "One appended number can re-type the whole block; then count it, and pull the value out only when there is exactly one."
+      },
+      {
+       "question_id": 1554,
+       "prompt": "Axes and shape from the nesting, and a value only when there is exactly one to give."
       }
      ],
      "independent_items": [
@@ -2264,6 +2280,31 @@
        "question_id": 645,
        "prompt": "An integer identity \u2014 eye takes dtype= like the others.\n\nEvery constructor on this page takes the same `dtype=` keyword, and `eye`\nis no exception:",
        "worked_example_code": "import torch as t\n\nflags = t.eye(3, dtype=t.bool)\nprint(flags)\nprint(flags.dtype)\n# Hidden checks\nassert flags.dtype == t.bool\n"
+      },
+      {
+       "question_id": 1538,
+       "prompt": "A grid of one constant, in a narrower integer type than the fill value would pick.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1539,
+       "prompt": "An all-True mask in x's shape \u2014 the shape is copied, the dtype is not.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1540,
+       "prompt": "A grid of one value with one row zeroed \u2014 build the majority first, then overwrite the exception.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1541,
+       "prompt": "Fill in x's shape AND x's dtype \u2014 the dtype is what decides what happens to 2.7.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1542,
+       "prompt": "The same n ones as a row and as a column \u2014 the shape argument decides.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -2278,6 +2319,14 @@
       {
        "question_id": 648,
        "prompt": "Three constructors, three dtypes, one call."
+      },
+      {
+       "question_id": 1543,
+       "prompt": "Three constructors that all borrow x's shape \u2014 and each takes its dtype from somewhere different."
+      },
+      {
+       "question_id": 1544,
+       "prompt": "A scaled identity, then a whole-tensor check against the unscaled one."
       }
      ],
      "independent_items": [
@@ -2286,7 +2335,12 @@
       213,
       643,
       644,
-      645
+      645,
+      1538,
+      1539,
+      1540,
+      1541,
+      1542
      ],
      "misconceptions_markdown": "- **\"Constructors give me integers if I write `t.ones(5)`.\"** \u2014 The default\n  dtype is `torch.float32` regardless of how the values look. If the grader (or\n  your model) needs ints or bools, say so with `dtype=`.\n- **\"float is float \u2014 precision doesn't change when I port NumPy code.\"** \u2014\n  `np.ones(4)` is float64 and `t.ones(4)` is float32. Exact equality checks\n  written against NumPy output can fail here for no reason other than the\n  narrower dtype.\n- **\"`dtype=bool` works, like in NumPy.\"** \u2014 PyTorch wants its own dtype\n  objects: `t.bool`, `t.int64`, `t.float32`. Python's builtin `bool` and `int`\n  are accepted in some places but `t.*` is the spelling to learn.\n- **\"`t.empty` means a tensor with no elements.\"** \u2014 It means *uninitialized\n  memory* of the full requested shape: garbage values, not zeros, not empty.\n  Use `t.zeros` unless you will overwrite everything.",
      "notes_markdown": ""
@@ -3557,6 +3611,26 @@
        "question_id": 635,
        "prompt": "A floor under every entry, written as a maximum against a constant.\n\nmaximum compares two tensors position by position. Pair x with a tensor of\nzeros shaped like it and you have ReLU without clamp:",
        "worked_example_code": "import torch as t\n\nx = t.tensor([-2.0, 0.5, 3.0])\nzeros = t.zeros_like(x)\nprint(\"x     \", x)\nprint(\"zeros \", zeros)\nprint(\"relu  \", t.maximum(x, zeros))\n# Hidden checks\nassert t.equal(t.maximum(x, zeros), x.clamp(min=0.0))\n"
+      },
+      {
+       "question_id": 1545,
+       "prompt": "Drop the fraction on entries of both signs \u2014 one member of the rounding family does exactly this.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1546,
+       "prompt": "Snap to a grid: rounding to the nearest integer is only the middle of the job.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1547,
+       "prompt": "A ceiling only \u2014 one bound, the other side left open.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1548,
+       "prompt": "Boxes per count: a division whose result must go UP to the next whole number.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -3571,6 +3645,14 @@
       {
        "question_id": 638,
        "prompt": "One conversion formula, then two different elementwise clean-ups."
+      },
+      {
+       "question_id": 1549,
+       "prompt": "Root, but only after the negatives are made safe \u2014 then a rounding pass on top."
+      },
+      {
+       "question_id": 1550,
+       "prompt": "Clamp, then split each value into a whole part and a signed remainder."
       }
      ],
      "independent_items": [
@@ -3579,7 +3661,11 @@
       63,
       633,
       634,
-      635
+      635,
+      1545,
+      1546,
+      1547,
+      1548
      ],
      "misconceptions_markdown": "- **\"`a * b` on two matrices is matrix multiplication.\"** \u2014 It is elementwise.\n  Matrix product is `a @ b`. This distinction matters enough that it gets its\n  own KP later.\n- **\"`t.maximum` and `t.max` are the same.\"** \u2014 `t.maximum(a, b)` compares\n  two tensors position-by-position (returns a tensor); `t.max(a)` reduces one\n  tensor to its single largest value.\n- **\"floor and truncate are the same.\"** \u2014 Only for positives. For negatives,\n  floor moves AWAY from zero (\u22120.3 \u2192 \u22121.0) while trunc moves toward it\n  (\u22120.3 \u2192 \u22120.0). Read the task's example values to see which is being asked.\n- **\"An in-place version is just a style choice.\"** \u2014 Methods ending in an\n  underscore (`z.clamp_(min=0)`) modify the tensor you were handed. That is a\n  different contract from `z.clamp(min=0)`, and it is how you accidentally\n  mutate a caller's data.",
      "notes_markdown": ""
@@ -4906,7 +4992,53 @@
       }
      ],
      "applied_items": [],
-     "solo_items": [],
+     "solo_items": [
+      {
+       "question_id": 501,
+       "prompt": "Scale each ROW by its own factor \u2014 right-alignment is not what you want.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 502,
+       "prompt": "A multiplication table from two ranges and no loop.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 954,
+       "prompt": "Scale each matrix row, then add one bias per column.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 955,
+       "prompt": "One three-axis product table from three vectors.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1530,
+       "prompt": "A table of squared differences between two vectors \u2014 decide which one runs down the rows.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1531,
+       "prompt": "Two shapes in, one shape out \u2014 or a refusal. No tensor is ever built.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1532,
+       "prompt": "One weight per image ROW, applied to every image \u2014 the vector has to hit the middle axis.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1533,
+       "prompt": "A product table for every batch row, with the batch axis kept in front.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1534,
+       "prompt": "One value per row, handed over as a column \u2014 decide what, if anything, still needs placing.",
+       "worked_example_code": ""
+      }
+     ],
      "integrated_items": [
       {
        "question_id": 956,
@@ -4919,13 +5051,30 @@
       {
        "question_id": 958,
        "prompt": "Given batched origins, directions, and distances, return every resulting 3-D\npoint with shape `(b, k, 3)`."
+      },
+      {
+       "question_id": 1535,
+       "prompt": "Per-column centre and scale, then a per-row weight \u2014 one of the three vectors needs placing by hand."
+      },
+      {
+       "question_id": 1536,
+       "prompt": "A function on a grid \u2014 which vector goes down the rows is part of the question, and so is the shape."
+      },
+      {
+       "question_id": 1537,
+       "prompt": "Channels-first images: one vector aims at the second axis, the other at the first."
       }
      ],
      "independent_items": [
       501,
       502,
       954,
-      955
+      955,
+      1530,
+      1531,
+      1532,
+      1533,
+      1534
      ],
      "misconceptions_markdown": "- **\"Broadcasting matches shapes from the left.\"** \u2014 From the RIGHT. `(3,)`\n  against `(3, 4)` aligns 3-with-4 and fails; `(4,)` against `(3, 4)` aligns\n  4-with-4 and works. Most surprise errors are left-alignment intuition.\n- **\"Stretching copies the data.\"** \u2014 The stretch is virtual; memory is\n  reused, not duplicated. Broadcasting a (10000, 1) against (1, 10000) does\n  NOT allocate 10\u2078 intermediate elements for the inputs.\n- **\"When shapes don't broadcast, reshape until the error goes away.\"** \u2014\n  Random reshaping produces silently WRONG results more often than errors.\n  Work the right-alignment on paper, decide where the 1 belongs, and place it\n  with `None` deliberately.",
      "notes_markdown": ""

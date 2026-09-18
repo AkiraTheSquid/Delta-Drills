@@ -96,7 +96,7 @@ def pick_for_subtopic(
     answered = answered_question_ids(user_state)
     narrowed, next_kc, gap = narrow_to_next_kc(
         user_state, candidates, served, answered, exclude_kcs=exclude_kcs,
-        last_served=sub_state.served_question_ids[-1] if sub_state.served_question_ids else None,
+        last_served=user_state.last_served_question_id,
     )
     # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
     # the whole subtopic pool on purpose, so `narrowed` being empty says nothing
@@ -162,7 +162,15 @@ def pick_for_subtopic(
     #
     # `answered` and not `served`: a learner who answered it and asked for
     # another may legitimately get it back on review.
-    last_served = sub_state.served_question_ids[-1] if sub_state.served_question_ids else None
+    #
+    # 🔴 "On screen" is the last drill served ANYWHERE, not this subtopic's
+    # served tail. The tail never expires: a drill skipped weeks ago is still
+    # the tail today, and when it is the concept's only unlocked drill — the
+    # segment-0 carrier of a KP the learner has not read, q239 on
+    # `torch.linalg-basics` — this guard called the concept dry on every
+    # request, the walk excluded it, and every rung above stayed locked.
+    # Seth, 2026-09-18: four of the six chapter-0.1 concepts sat behind it.
+    last_served = user_state.last_served_question_id
     if question.id == last_served and question.id not in answered:
         stuck = gap or rung_gap(user_state, next_kc, question)
         if record:

@@ -203,6 +203,13 @@ class UserPracticeState:
     # posterior is always recomputed from the probe log, never persisted.
     diagnostic: Dict = field(default_factory=dict)
     practice_target: str = "all"
+    # The drill on screen right now: the LAST question served, across every
+    # subtopic. The on-screen guard in question_pick reads this. It used to
+    # read each subtopic's own served tail, which is not "on screen" at all —
+    # a drill skipped weeks ago stayed that subtopic's tail forever, and a
+    # concept whose only unlocked drill it was (a segment-0 carrier) came back
+    # dry on every request: Seth on `torch.linalg-basics` / q239, 2026-09-18.
+    last_served_question_id: Optional[int] = None
     practice_placements: Dict = field(default_factory=dict)
     # First-encounter exposure: kc_id -> ISO-8601 UTC of when the learner
     # completed the introducing KP. Drives the lesson gate (lessons.py) —
@@ -272,6 +279,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "self_reported_level": state.self_reported_level,
         "diagnostic": state.diagnostic,
         "practice_target": state.practice_target,
+        "last_served_question_id": state.last_served_question_id,
         "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
         "kc_ladder": state.kc_ladder,
@@ -317,6 +325,7 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.self_reported_level = data.get("self_reported_level")
         state.diagnostic = data.get("diagnostic") or {}
         state.practice_target = data.get("practice_target") or "all"
+        state.last_served_question_id = data.get("last_served_question_id")
         state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}
         # Additive, back-compat: saves predating the ladder simply start it

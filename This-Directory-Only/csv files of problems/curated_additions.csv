@@ -9700,3 +9700,176 @@ def solve(items, text):
     grown = list(items)
     grown.append(text.upper())
     return (grown, math.floor(len(grown) / 2))",44,
+Numpy,Vectorization and broadcasting,"`a` is a 1-D float tensor of length m and `b` is a 1-D float tensor of length n. Return the `(m, n)` tensor whose entry at `[i, j]` is `(a[i] - b[j]) ** 2`, as a nested list. No loops.","import torch as t
+
+
+def solve(a, b):
+    """"""Squared difference of every a[i] against every b[j], shape (m, n).""""""
+    return ((a[:, None] - b[None, :]) ** 2).tolist()",52,
+Numpy,Vectorization and broadcasting,"`shape_a` and `shape_b` are two shape tuples of ints. Return the shape an elementwise operation on tensors of those two shapes would produce, as a plain tuple of ints — or `None` when the two shapes cannot be combined. Decide from the shapes alone; do not build the tensors.","import torch as t
+
+
+def solve(shape_a, shape_b):
+    """"""The combined shape of two shapes, or None if they do not fit.""""""
+    try:
+        return tuple(t.broadcast_shapes(shape_a, shape_b))
+    except RuntimeError:
+        return None",50,
+Numpy,Vectorization and broadcasting,"`imgs` is a float tensor of shape `(b, h, w)` — b grayscale images — and `row_w` is a float tensor of shape `(h,)`, one weight per image row. Return the `(b, h, w)` tensor in which row i of every image is multiplied by `row_w[i]`, as a nested list. No loops.","import torch as t
+
+
+def solve(imgs, row_w):
+    """"""Every image's row i scaled by row_w[i].""""""
+    return (imgs * row_w[:, None]).tolist()",54,
+Numpy,Vectorization and broadcasting,"`x` and `y` are float tensors, both of shape `(b, n)`. For each of the b rows, form the `(n, n)` table whose entry at `[i, j]` is `x[k, i] * y[k, j]`, and return all b tables as one nested list of shape `(b, n, n)`. No loops.","import torch as t
+
+
+def solve(x, y):
+    """"""For each row k, the n-by-n table of x[k, i] * y[k, j].""""""
+    return (x[:, :, None] * y[:, None, :]).tolist()",56,
+Numpy,Vectorization and broadcasting,"`x` is a float tensor of shape `(b, n)` and `m` is a float tensor of shape `(b, 1)` — one value per row, already stored as a column. Return `x` with `m[k, 0]` subtracted from every entry of row k, as a nested list. No loops.","import torch as t
+
+
+def solve(x, m):
+    """"""Row k of x with m[k, 0] subtracted from each entry.""""""
+    return (x - m).tolist()",48,
+Numpy,Vectorization and broadcasting,"`x` has shape `(b, n)`, `mu` and `sigma` have shape `(n,)` (one value per column, sigma nonzero) and `w` has shape `(b,)` (one value per row). Return `((x - mu) / sigma)` with row k then multiplied by `w[k]`, as a nested list. No loops.","import torch as t
+
+
+def solve(x, mu, sigma, w):
+    """"""Columns standardised by mu and sigma, then each row scaled by its own w.""""""
+    return ((x - mu) / sigma * w[:, None]).tolist()",66,
+Numpy,Vectorization and broadcasting,"`xs` is a 1-D float tensor of length n and `ys` is a 1-D float tensor of length m. Evaluate `xs[j] ** 2 + ys[i] ** 2` on the full grid and return a tuple `(shape, grid)`: the grid's shape as a plain tuple of ints, and the grid itself as a nested list of shape `(m, n)` — `ys` indexes the rows. No loops.","import torch as t
+
+
+def solve(xs, ys):
+    """"""Shape and values of xs[j]**2 + ys[i]**2 over the (m, n) grid.""""""
+    grid = xs[None, :] ** 2 + ys[:, None] ** 2
+    return (tuple(grid.shape), grid.tolist())",68,
+Numpy,Vectorization and broadcasting,"`imgs` has shape `(b, c, h, w)` — channels FIRST — `scale` has shape `(c,)` (one gain per channel) and `shift` has shape `(b,)` (one offset per image). Return `imgs` with every channel k multiplied by `scale[k]` and then every image k' offset by `shift[k']`, as a nested list. No loops.","import torch as t
+
+
+def solve(imgs, scale, shift):
+    """"""Each channel scaled by its gain, then each image shifted by its offset.""""""
+    return (imgs * scale[:, None, None] + shift[:, None, None, None]).tolist()",70,
+Numpy,Core array literacy,"`shape` is a tuple of ints. Return a tuple `(values, dtype_name)`: a tensor of that shape with `-1` at every position, stored as 32-bit integers, as a nested list; and `str()` of its dtype.","import torch as t
+
+
+def solve(shape):
+    """"""A grid of -1s of the given shape in 32-bit integers, and its dtype name.""""""
+    f = t.full(shape, -1, dtype=t.int32)
+    return (f.tolist(), str(f.dtype))",14,
+Numpy,Core array literacy,"`x` is a tensor of any shape. Return a tuple `(mask, dtype_name, every)`: a tensor of the same shape as `x` holding `True` at every position, as a nested list; `str()` of its dtype; and a plain Python bool that is `True` only if every entry of the mask is `True`.","import torch as t
+
+
+def solve(x):
+    """"""A True mask shaped like x, its dtype name, and whether every entry is True.""""""
+    mask = t.ones_like(x, dtype=t.bool)
+    return (mask.tolist(), str(mask.dtype), bool(mask.all()))",14,
+Numpy,Core array literacy,"`rows >= 1` and `cols` are ints and `v` is a float. Return a `(rows, cols)` tensor holding `v` everywhere except its first row, which is all zeros, as a nested list.","import torch as t
+
+
+def solve(rows, cols, v):
+    """"""A rows-by-cols grid of v whose first row is zeros.""""""
+    f = t.full((rows, cols), v)
+    f[0] = 0.0
+    return f.tolist()",16,
+Numpy,Core array literacy,"`x` is a tensor and `v` is a number. Return a tuple `(values, dtype_name)`: a tensor with `x`'s shape and `x`'s dtype in which every entry is `v`, as a nested list; and `str()` of its dtype. When `x` holds integers, `v` is stored as an integer.","import torch as t
+
+
+def solve(x, v):
+    """"""Every entry v, in x's shape and dtype, plus the dtype name.""""""
+    f = t.full_like(x, v)
+    return (f.tolist(), str(f.dtype))",16,
+Numpy,Core array literacy,"`n` is a positive int. Return a tuple of two nested lists: a tensor of ones with shape `(1, n)` — one row — and a tensor of ones with shape `(n, 1)` — one column.","import torch as t
+
+
+def solve(n):
+    """"""Ones as a (1, n) row and as an (n, 1) column.""""""
+    return (t.ones(1, n).tolist(), t.ones(n, 1).tolist())",12,
+Numpy,Core array literacy,"`x` is a tensor and `v` is a number. Return a tuple `(falses, falses_dtype, filled, ones_dtype)`: a boolean tensor of `x`'s shape that is `False` everywhere, as a nested list; `str()` of its dtype; a tensor of `x`'s shape and dtype holding `v` at every position, as a nested list; and `str()` of the dtype of a 32-bit integer tensor of ones with `x`'s shape.","import torch as t
+
+
+def solve(x, v):
+    """"""A False mask and its dtype, a v-filled twin, and the dtype of an int32 ones grid, all in x's shape.""""""
+    falses = t.zeros_like(x, dtype=t.bool)
+    filled = t.full_like(x, v)
+    ones = t.ones(x.shape, dtype=t.int32)
+    return (falses.tolist(), str(falses.dtype), filled.tolist(), str(ones.dtype))",22,
+Numpy,Core array literacy,"`n` is a positive int and `v` is a float. Return a tuple `(diag, is_identity)`: the `(n, n)` float tensor with `v` on the main diagonal and `0.0` elsewhere, as a nested list; and a plain bool saying whether that tensor is exactly the `n`-by-`n` identity matrix.","import torch as t
+
+
+def solve(n, v):
+    """"""v on the diagonal, zeros elsewhere, and whether that equals the identity.""""""
+    diag = t.eye(n) * v
+    return (diag.tolist(), t.equal(diag, t.eye(n)))",20,
+Numpy,Vectorization and broadcasting,"`x` is a float tensor with entries of either sign. Return a plain list holding the integer part of each entry — the fraction dropped, moving toward zero — as floats.","import torch as t
+
+
+def solve(x):
+    """"""Each entry with its fraction dropped, toward zero.""""""
+    return t.trunc(x).tolist()",20,
+Numpy,Vectorization and broadcasting,`x` is a float tensor and `step` is a positive float. Return a plain list in which every entry of `x` is replaced by the nearest multiple of `step` (halfway cases go to the even multiple).,"import torch as t
+
+
+def solve(x, step):
+    """"""Each entry moved to the nearest multiple of step.""""""
+    return (t.round(x / step) * step).tolist()",24,
+Numpy,Vectorization and broadcasting,`x` is a float tensor and `cap` is a float. Return a plain list in which every entry above `cap` has been lowered to `cap` and every other entry is unchanged.,"import torch as t
+
+
+def solve(x, cap):
+    """"""Entries above cap lowered to cap; the rest untouched.""""""
+    return x.clamp(max=cap).tolist()",22,
+Numpy,Vectorization and broadcasting,"`counts` is a float tensor of non-negative item counts and `k` is a positive int, the number of items one box holds. Return a plain list holding, for each count, how many boxes it needs — a partial box still counts as a box.","import torch as t
+
+
+def solve(counts, k):
+    """"""Boxes of size k needed for each count.""""""
+    return t.ceil(counts / k).tolist()",22,
+Numpy,Vectorization and broadcasting,"`x` is a float tensor that may contain negatives. Return a tuple `(roots, rounded)`: the square root of each entry after every negative has been raised to `0.0`, as a plain list; and those roots rounded to the nearest whole number (halves to even), as a plain list.","import torch as t
+
+
+def solve(x):
+    """"""Square roots of the non-negative version of x, and those roots rounded.""""""
+    roots = t.sqrt(x.clamp(min=0.0))
+    return (roots.tolist(), t.round(roots).tolist())",26,
+Numpy,Vectorization and broadcasting,"`x` is a float tensor and `lo < hi` are floats. Pull every entry into `[lo, hi]`, then split each clamped value into its integer part (toward zero) and the remainder. Return a tuple of three plain lists `(clamped, whole, frac)` with `clamped == whole + frac` at every position.","import torch as t
+
+
+def solve(x, lo, hi):
+    """"""Clamped values, their integer parts toward zero, and the remainders.""""""
+    c = x.clamp(min=lo, max=hi)
+    w = t.trunc(c)
+    return (c.tolist(), w.tolist(), (c - w).tolist())",28,
+Numpy,Core array literacy,"`rows` is a doubly nested list of numbers. Build the tensor and return a tuple `(shape, numel, per_row)`: its shape as a plain tuple, its element count, and how many elements each row holds — computed from the count and the number of rows, as an int.","import torch as t
+
+
+def solve(rows):
+    """"""Shape, element count, and elements per row of the tensor built from rows.""""""
+    a = t.tensor(rows)
+    return (tuple(a.shape), a.numel(), a.numel() // a.shape[0])",40,
+Numpy,Core array literacy,"`rows_a` and `rows_b` are nested lists of numbers, possibly nested to different depths. Build a tensor from each and return a tuple of three plain bools `(same_ndim, same_numel, equal)`: do they have the same number of axes, do they hold the same number of elements, and does the whole-tensor comparison say they are the same tensor.","import torch as t
+
+
+def solve(rows_a, rows_b):
+    """"""Whether a and b agree on axis count, element count, and as whole tensors.""""""
+    a = t.tensor(rows_a)
+    b = t.tensor(rows_b)
+    return (a.ndim == b.ndim, a.numel() == b.numel(), t.equal(a, b))",44,
+Numpy,Core array literacy,"`values` is a flat list of ints (possibly empty) and `extra` is one number, int or float. Build ONE tensor from `values` with `extra` appended at the end, and return a tuple `(dtype_name, numel, single)`: `str()` of its dtype, its element count, and — only when it holds exactly one element — that element as a plain Python number, else `None`.","import torch as t
+
+
+def solve(values, extra):
+    """"""dtype name, element count, and the lone value (or None) of values + [extra].""""""
+    a = t.tensor(values + [extra])
+    single = a.item() if a.numel() == 1 else None
+    return (str(a.dtype), a.numel(), single)",42,
+Numpy,Core array literacy,"`nested` is a list of numbers nested to any depth (1, 2 or 3 levels). Build the tensor and return a tuple `(ndim, shape, single)`: the number of axes, the shape as a plain tuple, and — only when the tensor holds exactly one element — that element as a plain Python number, else `None`.","import torch as t
+
+
+def solve(nested):
+    """"""Axis count, shape, and the lone element (or None) of the tensor built from nested.""""""
+    a = t.tensor(nested)
+    single = a.item() if a.numel() == 1 else None
+    return (a.ndim, tuple(a.shape), single)",46,

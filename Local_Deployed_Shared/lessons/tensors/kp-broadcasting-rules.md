@@ -5,8 +5,8 @@ supporting: [torch.elementwise-ops, torch.reshape-flatten]
 new_syntax: [none-newaxis-indexing, torch.broadcast_shapes, syntax.none]
 faded: [111, 949, 151, 948, 950, 951]
 guided: [499, 500, 952, 953]
-independent: [501, 502, 954, 955]
-integrated: [956, 957, 958]
+independent: [501, 502, 954, 955, 1530, 1531, 1532, 1533, 1534]
+integrated: [956, 957, 958, 1535, 1536, 1537]
 ---
 
 ## Concept: the right-alignment rule
@@ -253,17 +253,34 @@ def solve(rows, cols):
     return t.arange(rows)[:, None] * cols + t.arange(cols)[None, :]
 ```
 
-## Independent practice
+## Solo practice
 
-From the drill bank: q60 (matrix whose every row is 0..cols-1 — one arange
-plus broadcasting against a zeros column... or think about what `+` does),
-q81 (a matrix whose rows are all copies of v — broadcasting or tile, then
-consider which is cheaper).
+### q501
+Scale each ROW by its own factor — right-alignment is not what you want.
 
-From the drill bank: q501 (scale each ROW by its own factor — right-alignment is not what you want).
-From the drill bank: q502 (a multiplication table from two ranges and no loop).
-From the drill bank: q954 (scale each matrix row, then add one bias per column).
-From the drill bank: q955 (one three-axis product table from three vectors).
+### q502
+A multiplication table from two ranges and no loop.
+
+### q954
+Scale each matrix row, then add one bias per column.
+
+### q955
+One three-axis product table from three vectors.
+
+### q1530
+A table of squared differences between two vectors — decide which one runs down the rows.
+
+### q1531
+Two shapes in, one shape out — or a refusal. No tensor is ever built.
+
+### q1532
+One weight per image ROW, applied to every image — the vector has to hit the middle axis.
+
+### q1533
+A product table for every batch row, with the batch axis kept in front.
+
+### q1534
+One value per row, handed over as a column — decide what, if anything, still needs placing.
 
 ## Guided practice
 
@@ -300,6 +317,15 @@ Return both the broadcast shape and the elementwise sum.
 ### q958
 Given batched origins, directions, and distances, return every resulting 3-D
 point with shape `(b, k, 3)`.
+
+### q1535
+Per-column centre and scale, then a per-row weight — one of the three vectors needs placing by hand.
+
+### q1536
+A function on a grid — which vector goes down the rows is part of the question, and so is the shape.
+
+### q1537
+Channels-first images: one vector aims at the second axis, the other at the first.
 
 ## Misconceptions
 

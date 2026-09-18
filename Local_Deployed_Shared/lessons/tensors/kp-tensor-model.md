@@ -6,7 +6,7 @@ new_syntax: [Tensor.dtype, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape,
 faded: [224, 482, 484, 532, 533, 534, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546]
 guided: []
 independent: [480, 481, 483, 485, 486, 547, 548, 549, 550, 551, 554, 555, 556, 557, 559]
-integrated: [560, 562, 563, 564, 566, 567]
+integrated: [560, 562, 563, 564, 566, 567, 1551, 1552, 1553, 1554]
 ---
 
 ## Concept: a tensor is one block of one type
@@ -776,6 +776,18 @@ Count, value and element type — where the value only exists for a one-element 
 
 ### q567
 Does the tensor give the input back unchanged? It depends on the type you asked for.
+
+### q1551
+Shape and count, then one number derived from the two — not read off the wrong attribute.
+
+### q1552
+Axes, count and equality are three separate verdicts — two of them can agree while the third does not.
+
+### q1553
+One appended number can re-type the whole block; then count it, and pull the value out only when there is exactly one.
+
+### q1554
+Axes and shape from the nesting, and a value only when there is exactly one to give.
 
 ## Misconceptions
 
