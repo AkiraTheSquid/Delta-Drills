@@ -313,11 +313,24 @@ def kc_evidence_exhausted(user_state, kc: str) -> bool:
     The second clause is the performance bar, measured on the concept's own
     attempts. A small pool therefore buys a faster unlock but never a free one:
     missing once drops the rung, and the credit goes with it.
+
+    🔴 Coverage is over the drills a live rung can SERVE — the ranks in
+    `_STAGE_TO_RANKS` — not the whole pool. The faded ranks (0, 1) were
+    retired on 2026-09-11 and a `partial`/`solo` learner is never handed
+    one, so a pool holding any (every tensor KC does: `torch.boolean-masking`
+    is 3 faded + 1 guided + 8 servable) could never be "all served", this
+    rescue never fired, and the only way out was the BKT bar. Replayed on
+    Seth's state, 2026-09-18: the ray-tracing prerequisites plateaued at
+    0.5–0.82 mastery on eight drills apiece and the course reported itself
+    EXHAUSTED before chapter 0.1 could finish, in 0 of 48 runs.
     """
     pool = set(questions_for_kc(kc))
     if not pool:
         return False
-    if not pool <= _served_question_ids(user_state):
+    # Every registry KC owns a servable drill (checked 2026-09-11); a pool
+    # that is all faded is the floor fallback's to serve, so it counts whole.
+    servable = {q for q in pool if ladder_rank(q) in _SERVABLE_RANKS} or pool
+    if not servable <= _served_question_ids(user_state):
         return False
     if kc_stage(user_state, kc) != "solo":
         return False
@@ -802,6 +815,12 @@ _STAGE_TO_RANKS = {
     "partial": (2, _LADDER_UNRANKED),
     "solo": (3, 2, _LADDER_UNRANKED),
 }
+
+
+# Every rank some live rung serves. `kc_evidence_exhausted` measures its
+# coverage clause against this, since a rank no rung serves can never be
+# "all served".
+_SERVABLE_RANKS = frozenset(r for ranks in _STAGE_TO_RANKS.values() for r in ranks)
 
 
 # The rungs that put support in front of the learner: an authored faded drill
