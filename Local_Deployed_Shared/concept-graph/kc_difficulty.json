@@ -5,71 +5,71 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 39.7,
+ "mean": 38.4,
  "kcs": {
   "cnn.batch-normalization": {
-   "d": 55.9,
-   "n": 16
+   "d": 50.2,
+   "n": 18
   },
   "cnn.block-group": {
-   "d": 50.5,
+   "d": 53.5,
    "n": 11
   },
   "cnn.convolution-1d": {
-   "d": 55.9,
+   "d": 56.2,
    "n": 16
   },
   "cnn.convolution-2d": {
-   "d": 55.9,
-   "n": 16
+   "d": 44.8,
+   "n": 21
   },
   "cnn.feature-extraction": {
-   "d": 48.7,
+   "d": 50.5,
    "n": 15
   },
   "cnn.forward-hooks": {
-   "d": 47.7,
+   "d": 48.8,
    "n": 13
   },
   "cnn.linear-layer": {
-   "d": 55.9,
+   "d": 40.9,
    "n": 16
   },
   "cnn.mlp": {
-   "d": 55.9,
+   "d": 45.3,
    "n": 16
   },
   "cnn.module-state": {
-   "d": 55.9,
+   "d": 44.1,
    "n": 16
   },
   "cnn.pooling": {
-   "d": 55.9,
-   "n": 16
+   "d": 48.5,
+   "n": 17
   },
   "cnn.residual-block": {
-   "d": 49.6,
+   "d": 51.5,
    "n": 13
   },
   "cnn.resnet34": {
-   "d": 48.1,
-   "n": 15
+   "d": 50.8,
+   "n": 13
   },
   "cnn.sequential": {
-   "d": 46.7,
-   "n": 15
+   "d": 42.4,
+   "n": 16
   },
   "cnn.stride-views": {
-   "d": 55.9,
+   "d": 57.9,
    "n": 16
   },
   "cnn.training-loop": {
    "d": 46.8,
-   "n": 20
+   "n": 18
   },
   "einops.channel-groups-temporal": {
-   "d": 45.4,
-   "n": 11
+   "d": 45.9,
+   "n": 8
   },
   "einops.dl-flatten-heads": {
    "d": 36.8,
@@ -80,24 +80,24 @@
    "n": 42
   },
   "einops.grids-montage": {
-   "d": 50.7,
-   "n": 16
+   "d": 55.3,
+   "n": 13
   },
   "einops.merge-axes": {
    "d": 38.1,
    "n": 19
   },
   "einops.patches-space-depth": {
-   "d": 53.2,
-   "n": 13
+   "d": 59.5,
+   "n": 10
   },
   "einops.pattern-language": {
-   "d": 29.6,
-   "n": 20
+   "d": 28.8,
+   "n": 19
   },
   "einops.pooling": {
-   "d": 44.5,
-   "n": 16
+   "d": 48.0,
+   "n": 13
   },
   "einops.reduce-model": {
    "d": 33.5,
@@ -115,105 +115,21 @@
    "d": 39.5,
    "n": 13
   },
-  "numpy.aggregations": {
-   "d": 46.5,
-   "n": 37
-  },
-  "numpy.argmin-argmax": {
-   "d": 28.9,
-   "n": 7
-  },
-  "numpy.axis-reductions": {
-   "d": 32.2,
-   "n": 31
-  },
-  "numpy.boolean-masking": {
-   "d": 29.9,
-   "n": 7
-  },
-  "numpy.broadcasting-rules": {
-   "d": 41.5,
-   "n": 19
-  },
-  "numpy.constructors": {
-   "d": 17.5,
-   "n": 21
-  },
-  "numpy.dot-matmul-patterns": {
-   "d": 31.7,
-   "n": 7
-  },
-  "numpy.dtype-astype": {
-   "d": 19.9,
-   "n": 18
-  },
-  "numpy.elementwise-ufuncs": {
-   "d": 18.7,
-   "n": 17
-  },
-  "numpy.linalg-basics": {
-   "d": 27.8,
-   "n": 8
-  },
-  "numpy.ndarray-model": {
-   "d": 23.7,
-   "n": 37
-  },
-  "numpy.random-samplers": {
-   "d": 20.9,
-   "n": 14
-  },
-  "numpy.random-seeding": {
-   "d": 23.5,
-   "n": 12
-  },
-  "numpy.random-threading": {
-   "d": 22.0,
-   "n": 11
-  },
-  "numpy.ranges": {
-   "d": 37.8,
-   "n": 20
-  },
-  "numpy.reshape-flatten": {
-   "d": 31.6,
-   "n": 53
-  },
-  "numpy.slicing-views": {
-   "d": 21.2,
-   "n": 8
-  },
-  "numpy.sorting": {
-   "d": 23.6,
-   "n": 17
-  },
-  "numpy.stack-concat-interleave": {
-   "d": 44.3,
-   "n": 15
-  },
-  "numpy.transpose-axes": {
-   "d": 19.6,
-   "n": 15
-  },
-  "numpy.views-and-copies": {
-   "d": 27.2,
-   "n": 10
-  },
   "python.calling-functions": {
    "d": 20.4,
    "n": 24
   },
   "python.control-flow": {
-   "d": 55.9,
+   "d": 24.2,
    "n": 16
   },
   "python.defining-functions": {
-   "d": 24.3,
-   "n": 6
+   "d": 26.5,
+   "n": 8
   },
   "python.dots-and-imports": {
-   "d": 24.7,
-   "n": 6
+   "d": 27.5,
+   "n": 8
   },
   "python.indexing": {
    "d": 20.5,
@@ -232,7 +148,7 @@
    "n": 24
   },
   "raytracing.batched-segments": {
-   "d": 55.9,
+   "d": 70.4,
    "n": 16
   },
   "raytracing.make-rays-1d": {
@@ -240,11 +156,11 @@
    "n": 16
   },
   "raytracing.make-rays-2d": {
-   "d": 55.9,
+   "d": 57.5,
    "n": 16
   },
   "raytracing.mesh-visibility": {
-   "d": 55.9,
+   "d": 75.1,
    "n": 16
   },
   "raytracing.ray-parametrisation": {
@@ -252,43 +168,127 @@
    "n": 11
   },
   "raytracing.segment-intersection": {
-   "d": 55.9,
+   "d": 47.1,
    "n": 16
   },
   "raytracing.triangle-intersection": {
-   "d": 55.9,
+   "d": 54.1,
    "n": 16
   },
   "tensor.classifier-evaluation": {
-   "d": 55.9,
+   "d": 53.1,
    "n": 16
   },
   "tensor.cosine-similarity": {
-   "d": 55.9,
+   "d": 45.9,
    "n": 16
   },
   "tensor.indexed-selection": {
-   "d": 55.9,
+   "d": 47.5,
    "n": 16
   },
   "tensor.inverse-cdf": {
-   "d": 55.9,
+   "d": 58.8,
    "n": 16
   },
   "tensor.row-normalization": {
-   "d": 55.9,
+   "d": 40.1,
    "n": 16
   },
   "tensor.stable-probabilities": {
-   "d": 55.9,
-   "n": 16
+   "d": 51.0,
+   "n": 17
+  },
+  "torch.aggregations": {
+   "d": 46.5,
+   "n": 37
+  },
+  "torch.argmin-argmax": {
+   "d": 34.4,
+   "n": 11
+  },
+  "torch.axis-reductions": {
+   "d": 32.2,
+   "n": 26
+  },
+  "torch.boolean-masking": {
+   "d": 33.9,
+   "n": 12
+  },
+  "torch.broadcasting-rules": {
+   "d": 41.2,
+   "n": 17
+  },
+  "torch.constructors": {
+   "d": 13.6,
+   "n": 18
+  },
+  "torch.dot-matmul-patterns": {
+   "d": 36.2,
+   "n": 11
+  },
+  "torch.dtype-astype": {
+   "d": 25.0,
+   "n": 33
+  },
+  "torch.elementwise-ops": {
+   "d": 18.7,
+   "n": 17
+  },
+  "torch.linalg-basics": {
+   "d": 35.5,
+   "n": 11
   },
   "torch.out-argument": {
    "d": 39.4,
    "n": 11
   },
+  "torch.random-samplers": {
+   "d": 17.7,
+   "n": 12
+  },
+  "torch.random-seeding": {
+   "d": 23.5,
+   "n": 12
+  },
+  "torch.random-threading": {
+   "d": 22.0,
+   "n": 11
+  },
+  "torch.ranges": {
+   "d": 36.5,
+   "n": 19
+  },
+  "torch.reshape-flatten": {
+   "d": 31.9,
+   "n": 48
+  },
   "torch.slice-assignment": {
    "d": 38.6,
+   "n": 11
+  },
+  "torch.slicing-views": {
+   "d": 29.7,
+   "n": 15
+  },
+  "torch.sorting": {
+   "d": 23.6,
+   "n": 17
+  },
+  "torch.stack-concat-interleave": {
+   "d": 43.7,
+   "n": 14
+  },
+  "torch.tensor-model": {
+   "d": 23.7,
+   "n": 37
+  },
+  "torch.transpose-axes": {
+   "d": 19.6,
+   "n": 15
+  },
+  "torch.views-and-copies": {
+   "d": 28.2,
    "n": 11
   }
  }

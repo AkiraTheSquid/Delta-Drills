@@ -3,7 +3,7 @@ kc: cnn.stride-views
 title: Strides and as_strided views
 new_syntax: ['Tensor.stride', 'Tensor.as_strided']
 concepts: [strides, build-then-compute]
-supporting: ['numpy.views-and-copies', 'numpy.slicing-views', 'numpy.broadcasting-rules', 'numpy.axis-reductions', 'numpy.dot-matmul-patterns', 'python.defining-functions']
+supporting: ['torch.views-and-copies', 'torch.slicing-views', 'torch.broadcasting-rules', 'torch.axis-reductions', 'torch.dot-matmul-patterns', 'python.defining-functions']
 previews: []
 faded: [1217, 1218, 1219, 1220]
 guided: []

@@ -54,7 +54,7 @@ def next_band(questions, attempts, difficulties, target=None):
     already cleared: the learner has asked for harder work than that band
     holds, and walking them up from the bottom regardless is what made the
     rating a dead button on this rung (Seth, 2026-09-11: three "Significantly
-    harder" clicks on numpy.aggregations moved the aim from 60 to 79 and the
+    harder" clicks on torch.aggregations moved the aim from 60 to 79 and the
     next drill was 54 after 52 — the bank's next band up, not the aim's). When
     the aim clears every band the walk runs DOWN from the hardest instead:
     "harder than anything here" is answered by the hardest thing here, and the

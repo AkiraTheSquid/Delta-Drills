@@ -286,8 +286,8 @@ def kc_mastery(
 def kc_evidence_exhausted(user_state, kc: str) -> bool:
     """The learner has given every piece of evidence this concept can ask for.
 
-    A KC's question pool is finite, and some are tiny — `numpy.sorting` owns one
-    drill and the lattice root `numpy.ndarray-model` owns two. The atom-BKT bar
+    A KC's question pool is finite, and some are tiny — `torch.sorting` owns one
+    drill and the lattice root `torch.tensor-model` owns two. The atom-BKT bar
     (LEARNED_THRESHOLD, from a self-reported beginner's prior) wants roughly
     seven mastery-moving correct answers before it clears. A two-question
     concept therefore cannot reach it without re-serving the same two drills six
@@ -306,7 +306,7 @@ def kc_evidence_exhausted(user_state, kc: str) -> bool:
     The first clause has to be distinct-question coverage and not an attempt
     COUNT. Counting attempts reads as a coverage test and is not one: reaching
     `solo` already costs four attempts, so on the small pools this exists to
-    rescue — `numpy.sorting` owns one drill, `numpy.linalg-basics` two — a
+    rescue — `torch.sorting` owns one drill, `torch.linalg-basics` two — a
     count-based clause is satisfied before it is ever consulted and constrains
     nothing at all.
 
@@ -854,7 +854,7 @@ def with_example_first(qids: Iterable[int]) -> List[int]:
 
     THE FADE FROM `partial` TO `solo`, and it needs no schedule and no counter.
     A solo drill carries an example only when its KP authored one for it (six of
-    nineteen on `numpy.ndarray-model`), and the queue never repeats a served
+    nineteen on `torch.tensor-model`), and the queue never repeats a served
     question — so serving the example-bearing ones first means a learner meets
     an example, then a few unaided problems, then another example introducing
     the next move, and then none at all once they are spent. "It shows examples

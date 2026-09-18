@@ -42,7 +42,7 @@
  "split_kcs": {
   "why": "Concepts whose PAGE is archived because the concept was SPLIT into narrower ones, not because it left the course. The id is gone from kc_registry.json and its page is filed in the archive beside the retired ones, so the archive watcher must know about it — but none of its drills were retired and nothing it taught was dropped.",
   "kcs": {
-   "numpy.random-generator": "2026-08-31 -> numpy.random-samplers + numpy.random-threading + numpy.random-seeding. It declared ten symbols behind one mastery number and drilled five of them across three questions; see This-Directory-Only/SPEC_NODE_SPLITTING.md."
+   "numpy.random-generator": "2026-08-31 -> torch.random-samplers + torch.random-threading + torch.random-seeding. It declared ten symbols behind one mastery number and drilled five of them across three questions; see This-Directory-Only/SPEC_NODE_SPLITTING.md."
   }
  },
  "ids": [
@@ -286,7 +286,7 @@
  "kept_back_to_keep_an_atom_trainable": {
   "why": "Drills that were the ONLY question training a BKT atom gating other questions; retiring them would lock their dependents for every learner (pipeline/audit_question_bank.py --gate, atom_prereq_untrainable). Re-homed onto a concept that survives and honestly owns them.\n2026-09-10: 198 LEFT this list and was retired. Its atom boolean-mask-combine now has two honest trainers tagged in backend/app/data/question_atom_tags.jsonl -- q145 ((a[1:-1] > a[:-2]) & (a[1:-1] > a[2:])), which combines two masks and assigns nothing, and q12 ((out > 3) & (out < 8)). q145 matters more than q12 here: q12 is ALSO tagged boolean-mask-broadcast-assignment, the atom boolean-mask-combine gates, so q12 alone would leave the prerequisite practisable only inside its own dependent.\n103 STAYS. Nothing else in the bank trains softmax-from-logits -- retiring it locks cross-entropy-loss (q438/439/440). Its drill is also good (e = t.exp(z - z.max()); e / e.sum() -- correct and numerically stable), so retiring it would mean authoring a near clone. Retire it only AFTER a genuine softmax-from-logits drill exists and is tagged.",
   "ids": {
-   "103": "softmax-from-logits -> numpy.axis-reductions (exp, max, sum over an axis)"
+   "103": "softmax-from-logits -> torch.axis-reductions (exp, max, sum over an axis)"
   }
  },
  "retired_2026_09_10": {

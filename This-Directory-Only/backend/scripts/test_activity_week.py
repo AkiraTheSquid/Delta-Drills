@@ -50,7 +50,7 @@ def write_state_raw(uid, text):
 def put(uid, ts, kind=attempt_log.KIND_ATTEMPT, correct=True, features=None):
     attempt_log.append(
         attempt_log.AttemptRow(
-            ts=ts, kind=kind, user_id=uid, kc="numpy.ndarray-model",
+            ts=ts, kind=kind, user_id=uid, kc="torch.tensor-model",
             question_id=1, stage="solo",
             features={"ability": 0.0} if features is None else features,
             predicted_p=0.5, correct=correct,

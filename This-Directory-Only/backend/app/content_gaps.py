@@ -28,6 +28,7 @@ import re
 from datetime import datetime, timezone
 from typing import Optional
 
+from app import kc_renames
 from app.adaptive import DATA_DIR
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ def _read() -> dict:
         return {}
     try:
         data = json.loads(GAPS_PATH.read_text(encoding="utf-8"))
-        return data if isinstance(data, dict) else {}
+        return kc_renames.migrate(data) if isinstance(data, dict) else {}
     except Exception as e:
         logger.warning("content-gaps.json unreadable (%s) — starting a new one", e)
         return {}

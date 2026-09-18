@@ -3,7 +3,7 @@ kc: tensor.classifier-evaluation
 title: Accuracy and cross-entropy
 new_syntax: []
 concepts: [accuracy, cross-entropy]
-supporting: ['tensor.stable-probabilities', 'tensor.indexed-selection', 'numpy.argmin-argmax', 'numpy.boolean-masking', 'numpy.dtype-astype']
+supporting: ['tensor.stable-probabilities', 'tensor.indexed-selection', 'torch.argmin-argmax', 'torch.boolean-masking', 'torch.dtype-astype']
 previews: []
 faded: [1045, 1046, 1047, 1048]
 guided: []

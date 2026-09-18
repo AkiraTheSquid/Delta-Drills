@@ -1,7 +1,7 @@
 ---
 kc: einops.einsum
 title: einops.einsum: name the axes, drop the ones to sum
-supporting: [einops.pattern-language, numpy.axis-reductions]
+supporting: [einops.pattern-language, torch.axis-reductions]
 new_syntax: [einops.einsum]
 previews: []
 concepts: [one-operand, two-operands, repeated-names, batch-axes]

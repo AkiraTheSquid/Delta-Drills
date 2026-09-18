@@ -108,7 +108,7 @@
 
   // The cell that opens ONE CONCEPT of a KP — `dd-seg-<kc>-<n>`.
   //
-  // A KP is not one idea: `numpy.ndarray-model` teaches three, and the tutor
+  // A KP is not one idea: `torch.tensor-model` teaches three, and the tutor
   // teaches them one at a time (`app/lessons.py::_segment_step`). Before this
   // anchor existed the panel could say "Concept 2 of 3" and then send the
   // learner to the whole KP — all three concepts and every drill on screen at

@@ -221,7 +221,7 @@ the reason is worth keeping.
   🔴 **`lesson_gate` is a SNAPSHOT the server attaches to a served question.**
   In backend mode `_pendingSteps` reads it and never consults exposure, so a
   question rehydrated at resume still listed a page the learner had already
-  read. The exposure map held `numpy.ndarray-model#s0-…` and the question's own
+  read. The exposure map held `torch.tensor-model#s0-…` and the question's own
   gate still listed it. `_pendingSteps` now drops an entry whose own
   `exposure_key` is in this browser's map — a suppression on top of the
   server's decision, never a replacement (`_stepFromGate` still builds every

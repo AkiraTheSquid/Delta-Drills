@@ -245,6 +245,7 @@ class UserPracticeState:
 # ---------------------------------------------------------------------------
 _user_states: Dict[str, UserPracticeState] = {}
 
+from app import kc_renames
 from app.config import settings as _settings
 DATA_DIR = (
     Path(_settings.user_data_dir)
@@ -303,6 +304,11 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         return None
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
+        # Old saves carry KC ids that have since been renamed (`numpy.*` →
+        # `torch.*`, 2026-09-18). Rewrite them here, once, at the only place a
+        # save is read, so every consumer below sees current ids and the next
+        # save persists them.
+        data = kc_renames.migrate(data)
         state = UserPracticeState(user_id=data["user_id"])
         state.custom_weights = data.get("custom_weights") or {}
         # Additive, back-compat: older saves predate per-atom BKT state.

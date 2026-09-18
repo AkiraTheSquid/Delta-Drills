@@ -28,27 +28,27 @@
     "python.calling-functions",
     "python.defining-functions",
     "python.dots-and-imports",
-    "numpy.ndarray-model",
-    "numpy.transpose-axes",
-    "numpy.views-and-copies",
-    "numpy.constructors",
-    "numpy.slicing-views",
-    "numpy.ranges",
-    "numpy.dtype-astype",
-    "numpy.reshape-flatten",
-    "numpy.elementwise-ufuncs",
-    "numpy.aggregations",
-    "numpy.sorting",
-    "numpy.random-samplers",
-    "numpy.random-seeding",
-    "numpy.random-threading",
-    "numpy.linalg-basics",
-    "numpy.boolean-masking",
-    "numpy.argmin-argmax",
-    "numpy.broadcasting-rules",
-    "numpy.axis-reductions",
-    "numpy.dot-matmul-patterns",
-    "numpy.stack-concat-interleave",
+    "torch.tensor-model",
+    "torch.transpose-axes",
+    "torch.views-and-copies",
+    "torch.constructors",
+    "torch.slicing-views",
+    "torch.ranges",
+    "torch.dtype-astype",
+    "torch.reshape-flatten",
+    "torch.elementwise-ops",
+    "torch.aggregations",
+    "torch.sorting",
+    "torch.random-samplers",
+    "torch.random-seeding",
+    "torch.random-threading",
+    "torch.linalg-basics",
+    "torch.boolean-masking",
+    "torch.argmin-argmax",
+    "torch.broadcasting-rules",
+    "torch.axis-reductions",
+    "torch.dot-matmul-patterns",
+    "torch.stack-concat-interleave",
     "einops.pattern-language",
     "einops.merge-axes",
     "einops.split-axes",
@@ -329,7 +329,7 @@
         "cnn.training-loop",
         "cnn.module-state",
         "python.control-flow",
-        "numpy.stack-concat-interleave"
+        "torch.stack-concat-interleave"
       ],
       "encompassing": {
         "cnn.training-loop": 0.3
@@ -378,7 +378,7 @@
       "title": "RMSprop scales each step by a running RMS of the gradient",
       "prereqs": [
         "opt.sgd-momentum",
-        "numpy.elementwise-ufuncs"
+        "torch.elementwise-ops"
       ],
       "encompassing": {
         "opt.sgd-momentum": 0.5
@@ -494,8 +494,8 @@
       "lesson": "ar-04",
       "title": "A backward function turns grad_out into grad_in",
       "prereqs": [
-        "numpy.elementwise-ufuncs",
-        "numpy.broadcasting-rules",
+        "torch.elementwise-ops",
+        "torch.broadcasting-rules",
         "python.defining-functions"
       ],
       "encompassing": {},
@@ -515,13 +515,13 @@
       "lesson": "ar-04",
       "title": "Sum a gradient back to the shape it was broadcast from",
       "prereqs": [
-        "numpy.broadcasting-rules",
-        "numpy.axis-reductions",
+        "torch.broadcasting-rules",
+        "torch.axis-reductions",
         "python.control-flow"
       ],
       "encompassing": {
-        "numpy.broadcasting-rules": 0.3,
-        "numpy.axis-reductions": 0.3
+        "torch.broadcasting-rules": 0.3,
+        "torch.axis-reductions": 0.3
       },
       "arena_defs": [
         "unbroadcast"
@@ -539,7 +539,7 @@
       "prereqs": [
         "bp.elementwise-backward",
         "bp.unbroadcast",
-        "numpy.boolean-masking"
+        "torch.boolean-masking"
       ],
       "encompassing": {
         "bp.unbroadcast": 0.6,
@@ -712,9 +712,9 @@
       "title": "Backward for ops that move data: reshape, permute, expand, sum",
       "prereqs": [
         "bp.unbroadcast",
-        "numpy.reshape-flatten",
-        "numpy.transpose-axes",
-        "numpy.sorting"
+        "torch.reshape-flatten",
+        "torch.transpose-axes",
+        "torch.sorting"
       ],
       "encompassing": {
         "bp.unbroadcast": 0.3
@@ -741,7 +741,7 @@
       "prereqs": [
         "bp.elementwise-backward",
         "tensor.indexed-selection",
-        "numpy.constructors"
+        "torch.constructors"
       ],
       "encompassing": {
         "tensor.indexed-selection": 0.3
@@ -766,8 +766,8 @@
       "title": "Backward for matmul: transpose the other operand",
       "prereqs": [
         "bp.binary-backward",
-        "numpy.dot-matmul-patterns",
-        "numpy.transpose-axes"
+        "torch.dot-matmul-patterns",
+        "torch.transpose-axes"
       ],
       "encompassing": {
         "bp.binary-backward": 0.3
@@ -906,7 +906,7 @@
         "cnn.sequential",
         "cnn.convolution-2d",
         "cnn.linear-layer",
-        "numpy.reshape-flatten"
+        "torch.reshape-flatten"
       ],
       "encompassing": {
         "cnn.sequential": 0.4,
@@ -957,7 +957,7 @@
       "prereqs": [
         "gen.autoencoder",
         "tensor.stable-probabilities",
-        "numpy.random-samplers"
+        "torch.random-samplers"
       ],
       "encompassing": {
         "gen.autoencoder": 0.5
@@ -981,7 +981,7 @@
       "prereqs": [
         "gen.vae-reparameterization",
         "gen.reconstruction-loop",
-        "numpy.axis-reductions"
+        "torch.axis-reductions"
       ],
       "encompassing": {
         "gen.reconstruction-loop": 0.5,
@@ -1002,8 +1002,8 @@
       "title": "Tanh, LeakyReLU and Sigmoid as modules",
       "prereqs": [
         "cnn.module-state",
-        "numpy.elementwise-ufuncs",
-        "numpy.boolean-masking"
+        "torch.elementwise-ops",
+        "torch.boolean-masking"
       ],
       "encompassing": {
         "cnn.module-state": 0.2
@@ -1136,8 +1136,8 @@
       "prereqs": [
         "cnn.convolution-1d",
         "torch.slice-assignment",
-        "numpy.constructors",
-        "numpy.transpose-axes"
+        "torch.constructors",
+        "torch.transpose-axes"
       ],
       "encompassing": {
         "cnn.convolution-1d": 0.6,
@@ -1232,8 +1232,8 @@
     "einops.merge-axes": {
       "einops.pattern-language": 0.7
     },
-    "numpy.dot-matmul-patterns": {
-      "numpy.linalg-basics": 0.6
+    "torch.dot-matmul-patterns": {
+      "torch.linalg-basics": 0.6
     },
     "cnn.forward-hooks": {
       "cnn.sequential": 0.6,
@@ -1263,15 +1263,15 @@
       "cnn.residual-block": 0.7
     },
     "cnn.module-state": {
-      "numpy.dtype-astype": 0.4,
-      "numpy.ndarray-model": 0.4
+      "torch.dtype-astype": 0.4,
+      "torch.tensor-model": 0.4
     },
-    "numpy.axis-reductions": {
-      "numpy.aggregations": 0.4,
-      "numpy.broadcasting-rules": 0.4
+    "torch.axis-reductions": {
+      "torch.aggregations": 0.4,
+      "torch.broadcasting-rules": 0.4
     },
     "tensor.stable-probabilities": {
-      "numpy.broadcasting-rules": 0.4
+      "torch.broadcasting-rules": 0.4
     },
     "tensor.classifier-evaluation": {
       "tensor.stable-probabilities": 0.4
@@ -1280,13 +1280,13 @@
       "cnn.module-state": 0.4
     },
     "cnn.linear-layer": {
-      "numpy.dot-matmul-patterns": 0.4
+      "torch.dot-matmul-patterns": 0.4
     },
     "cnn.stride-views": {
-      "numpy.dot-matmul-patterns": 0.4
+      "torch.dot-matmul-patterns": 0.4
     },
     "torch.out-argument": {
-      "numpy.ranges": 0.4
+      "torch.ranges": 0.4
     }
   }
 }

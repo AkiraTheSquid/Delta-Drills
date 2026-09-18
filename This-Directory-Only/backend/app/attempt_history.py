@@ -62,7 +62,7 @@ def missed_question_ids(user_state) -> set:
     owed: promotion off it needs six DISTINCT correct answers
     (solo_progress.progress), counted on the latest attempt per question, so a
     bank of exactly six drills with one miss in it could reach five at most and
-    the Integrated rung never (Seth's numpy.aggregations, 2026-09-11: q497
+    the Integrated rung never (Seth's torch.aggregations, 2026-09-11: q497
     missed, five left, `required` 6). These are the drills that come back once
     the rung has nothing unseen left — the learner has seen the reference
     answer for each, and the retry is the evidence the gate is waiting on.

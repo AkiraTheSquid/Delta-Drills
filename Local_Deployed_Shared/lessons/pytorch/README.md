@@ -31,7 +31,7 @@
 - Every fence runs under torch (`scripts/validate_lessons.py`, backend venv).
 - `new_syntax` here is deliberately small: `torch.arange#out`, `torch.linspace#out`,
   `Tensor.copy_`. The raytracing pages declare none — they are discipline/geometry
-  nodes like `einops.*` and `numpy.random-threading`.
+  nodes like `einops.*` and `torch.random-threading`.
 
 ## How It Works (Flow)
 1. Learner reaches `make_rays_1d` in the in-app ARENA 0.1 notebook and presses

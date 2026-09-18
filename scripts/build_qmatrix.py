@@ -16,7 +16,7 @@ import sys
 from lesson_lib import LESSONS_DIR, all_kp_paths, load_bank, load_registry, parse_kp
 
 # "Python" joined these on 2026-08-28 with lesson py-0: the first-encounter
-# course now starts BELOW numpy.ndarray-model, and its drills have to be
+# course now starts BELOW torch.tensor-model, and its drills have to be
 # tagged like any other course question or the crosswalk cannot measure the
 # seven concepts under it.
 EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")
@@ -29,19 +29,19 @@ LEFTOVER_TARGETS = {
     # Local_Deployed_Shared/pipeline/retired_question_ids.json.
     # 103 was kept back from the 2026-08-30 retirement because it is the only
     # trainer of a gating BKT atom (softmax-from-logits, which gates
-    # cross-entropy-loss) and sat here under numpy.axis-reductions until
+    # cross-entropy-loss) and sat here under torch.axis-reductions until
     # 2026-09-17, when its solution was rewritten in torch and kp-stable-
     # probabilities claimed it as a Solo drill. 198 sat beside it until
     # 2026-09-10, when its atom boolean-mask-combine got two honest trainers
     # (q145, q12) and the drill was retired. Nothing falls through to this
     # map any more -- every entry below is claimed by a KP and reached by the
     # kp-* routes instead; the map stays as the audit trail of who owned what.
-    1: "numpy.argmin-argmax", 48: "numpy.constructors",
-    63: "numpy.elementwise-ufuncs", 74: "numpy.slicing-views",
-    85: "numpy.boolean-masking", 87: "numpy.dtype-astype",
-    95: "numpy.dot-matmul-patterns", 145: "numpy.boolean-masking",
-    168: "numpy.argmin-argmax", 174: "numpy.axis-reductions",
-    189: "numpy.slicing-views", 202: "numpy.boolean-masking",
+    1: "torch.argmin-argmax", 48: "torch.constructors",
+    63: "torch.elementwise-ops", 74: "torch.slicing-views",
+    85: "torch.boolean-masking", 87: "torch.dtype-astype",
+    95: "torch.dot-matmul-patterns", 145: "torch.boolean-masking",
+    168: "torch.argmin-argmax", 174: "torch.axis-reductions",
+    189: "torch.slicing-views", 202: "torch.boolean-masking",
     316: "einops.channel-groups-temporal", 319: "einops.pattern-language",
     321: "einops.patches-space-depth", 322: "einops.grids-montage",
     327: "einops.pattern-language", 331: "einops.split-axes",

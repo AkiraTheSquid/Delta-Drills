@@ -3,7 +3,7 @@ kc: tensor.cosine-similarity
 title: Cosine similarity
 new_syntax: []
 concepts: [alignment, all-pairs]
-supporting: ['tensor.row-normalization', 'numpy.dot-matmul-patterns', 'numpy.transpose-axes', 'numpy.argmin-argmax']
+supporting: ['tensor.row-normalization', 'torch.dot-matmul-patterns', 'torch.transpose-axes', 'torch.argmin-argmax']
 previews: []
 faded: [1006, 1007, 1008, 1009]
 guided: []

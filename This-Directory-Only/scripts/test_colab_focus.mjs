@@ -158,7 +158,7 @@ check("only dd-q12's own cells", twelve.inFocus,
   ["dd-q12", "dd-q12-code", "dd-q12-check", "dd-q12-solution"]);
 
 // ── one concept of a KP that teaches three ───────────────────────────────
-// `numpy.ndarray-model` is three ideas, and the tutor hands them out one at a
+// `torch.tensor-model` is three ideas, and the tutor hands them out one at a
 // time. Laid out the way the generator emits it: the KP header, then per
 // concept a `dd-seg-` header, its prose, the worked example anchored into its
 // drill and the drill itself — and then the KP's own guided problem and its

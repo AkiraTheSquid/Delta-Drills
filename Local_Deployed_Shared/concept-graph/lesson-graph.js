@@ -249,7 +249,7 @@
   //   "extrapolated" — no evidence on this concept at all: projected from the
   //                    learner's overall demonstrated level, adjusted for how
   //                    hard this concept is (see `_extrapolated`).
-  // The subtopic fallback exists because the graph's KC ids (`numpy.dtype-astype`,
+  // The subtopic fallback exists because the graph's KC ids (`torch.dtype-astype`,
   // from kc_registry.json) and the backend's BKT atom ids (`argmax-prediction`,
   // from question_atom_tags.jsonl) are disjoint id spaces — zero overlap — so a
   // signed-in learner with real practice history had every bubble read

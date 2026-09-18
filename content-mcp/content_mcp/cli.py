@@ -6,7 +6,7 @@ can drive either one; a human or a shell script wants this one.
 
     dd-content status
     dd-content login --password ...
-    dd-content lesson_read --kc numpy.random-seeding
+    dd-content lesson_read --kc torch.random-seeding
     dd-content drill_search --kc einops.merge-axes --limit 5
     dd-content pipeline_check
 

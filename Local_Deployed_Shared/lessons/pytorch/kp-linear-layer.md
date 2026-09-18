@@ -3,7 +3,7 @@ kc: cnn.linear-layer
 title: The linear layer
 new_syntax: []
 concepts: [weight-rows, leading-axes]
-supporting: ['cnn.module-state', 'numpy.dot-matmul-patterns', 'numpy.transpose-axes', 'numpy.broadcasting-rules', 'numpy.axis-reductions', 'numpy.argmin-argmax', 'numpy.reshape-flatten']
+supporting: ['cnn.module-state', 'torch.dot-matmul-patterns', 'torch.transpose-axes', 'torch.broadcasting-rules', 'torch.axis-reductions', 'torch.argmin-argmax', 'torch.reshape-flatten']
 previews: []
 faded: [1185, 1186, 1187, 1188]
 guided: []

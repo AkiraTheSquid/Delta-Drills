@@ -153,7 +153,7 @@ against a live notebook:
 ## Recent Changes
 - 2026-08-06 (**one CONCEPT of a lesson is a focus target too**): `colab_focus.js`,
   `watch.py`. The previous entry made `dd-kp-<slug>` focus a lesson; a lesson is
-  often three lessons. `numpy.ndarray-model` teaches three ideas and the tutor
+  often three lessons. `torch.tensor-model` teaches three ideas and the tutor
   hands them out one at a time, so the panel would say "Concept 2 of 3" and the
   notebook would open all three, every drill included — not a crash, not even
   visibly wrong, just the behaviour from before segments existed. The generator

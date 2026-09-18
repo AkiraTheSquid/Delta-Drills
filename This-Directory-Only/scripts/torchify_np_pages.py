@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from torchify_np_drills import translate  # noqa: E402
 
 REPO = Path("/home/stellar-thread/Applications/Delta-Drills-Local")
-LESSON_DIR = REPO / "Local_Deployed_Shared/lessons/numpy"
+LESSON_DIR = REPO / "Local_Deployed_Shared/lessons/tensors"
 REGISTRY = REPO / "Local_Deployed_Shared/lessons/kc_registry.json"
 
 FENCE = re.compile(r"(```python[^\n]*\n)(.*?)(```)", re.S)

@@ -3,7 +3,7 @@ kc: tensor.row-normalization
 title: Row lengths and unit rows
 new_syntax: ['Tensor.norm', 'Tensor.norm#dim', 'Tensor.norm#keepdim', 'torch.where']
 concepts: [row-length, unit-rows]
-supporting: ['numpy.axis-reductions', 'numpy.broadcasting-rules', 'numpy.boolean-masking', 'numpy.argmin-argmax', 'numpy.constructors']
+supporting: ['torch.axis-reductions', 'torch.broadcasting-rules', 'torch.boolean-masking', 'torch.argmin-argmax', 'torch.constructors']
 previews: []
 faded: [993, 994, 995, 996]
 guided: []

@@ -1,7 +1,7 @@
 ---
 kc: raytracing.make-rays-1d
 title: make_rays_1d: a fan of rays as one (n, 2, 3) tensor
-supporting: [torch.out-argument, torch.slice-assignment, raytracing.ray-parametrisation, numpy.ranges, numpy.constructors]
+supporting: [torch.out-argument, torch.slice-assignment, raytracing.ray-parametrisation, torch.ranges, torch.constructors]
 new_syntax: []
 previews: []
 faded: [831, 832]

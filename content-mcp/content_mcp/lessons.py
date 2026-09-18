@@ -2,7 +2,7 @@
 
 A "KP" is one knowledge point: one markdown file under
 `Local_Deployed_Shared/lessons/<course>/kp-<slug>.md`, addressed everywhere by
-its KC id (`numpy.random-seeding`), never by path. Parsing goes through the
+its KC id (`torch.random-seeding`), never by path. Parsing goes through the
 repo's own `scripts/lesson_lib.py` so this package and the validator can never
 disagree about what a page says.
 """

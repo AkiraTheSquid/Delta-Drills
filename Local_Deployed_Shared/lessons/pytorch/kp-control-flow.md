@@ -3,7 +3,7 @@ kc: python.control-flow
 title: Decisions and repeated work
 new_syntax: ['syntax.if', 'syntax.else', 'syntax.ternary', 'syntax.is', 'syntax.for', 'syntax.aug-assign', 'syntax.comprehension', 'syntax.comprehension-filter']
 concepts: [branch, inline-choice, accumulator, comprehension]
-supporting: ['python.defining-functions', 'python.lists-and-tuples', 'python.indexing', 'numpy.boolean-masking']
+supporting: ['python.defining-functions', 'python.lists-and-tuples', 'python.indexing', 'torch.boolean-masking']
 previews: []
 faded: [1281, 1282, 1283, 1284]
 guided: []

@@ -121,7 +121,7 @@ class AggregationDrillsTests(unittest.TestCase):
     def test_runtime_rung_registration(self):
         tags = json.loads((ROOT / 'Local_Deployed_Shared/lessons/qmatrix_tags.json').read_text())
         for qid in NEAR_MISSES:
-            self.assertEqual(tags[str(qid)]['target_kcs'], ['numpy.aggregations'])
+            self.assertEqual(tags[str(qid)]['target_kcs'], ['torch.aggregations'])
             self.assertEqual(tags[str(qid)]['source'], 'kp-independent' if qid < 1325 else 'kp-integrated')
 
 

@@ -56,12 +56,12 @@ check("qmatrix loaded the tagged bank", len(lessons._question_target_kcs) > 0,
       f"got {len(lessons._question_target_kcs)}")
 
 gate = lessons.unexposed_target_kcs(1, {})
-check("unexposed target KC gates", bool(gate) and gate[0]["kc"] == "numpy.argmin-argmax")
+check("unexposed target KC gates", bool(gate) and gate[0]["kc"] == "torch.argmin-argmax")
 check("gate entry carries lesson pointers",
       bool(gate) and all(k in gate[0] for k in ("kc_title", "kp_title", "lesson_id", "lesson_title", "topic")))
 _exposed_argmin = {
-    "numpy.argmin-argmax": "ts",
-    **{f"numpy.argmin-argmax#{seg['concept_id']}": "ts" for seg in lessons._kc_segments.get("numpy.argmin-argmax", [])},
+    "torch.argmin-argmax": "ts",
+    **{f"torch.argmin-argmax#{seg['concept_id']}": "ts" for seg in lessons._kc_segments.get("torch.argmin-argmax", [])},
 }
 check("exposed KC does not gate",
       lessons.unexposed_target_kcs(1, _exposed_argmin) == [])
@@ -69,7 +69,7 @@ check("untagged question does not gate", lessons.unexposed_target_kcs(999999, {}
 
 _duplicate_qid = -1
 lessons._question_target_kcs[_duplicate_qid] = [
-    "numpy.argmin-argmax", "numpy.argmin-argmax"
+    "torch.argmin-argmax", "torch.argmin-argmax"
 ]
 try:
     check("duplicate target KC gates once",
@@ -86,14 +86,14 @@ resp = client.get("/api/practice/exposure").json()
 check("fresh user has empty exposure", resp["exposed"] == {})
 
 resp = client.post("/api/practice/exposure",
-                   json={"kcs": ["numpy.argmin-argmax", "not.a.real.kc"]}).json()
-check("exposure POST records known KC", "numpy.argmin-argmax" in resp["exposed"])
+                   json={"kcs": ["torch.argmin-argmax", "not.a.real.kc"]}).json()
+check("exposure POST records known KC", "torch.argmin-argmax" in resp["exposed"])
 check("exposure POST drops unknown KC", "not.a.real.kc" not in resp["exposed"])
-first_exposure = resp["exposed"]["numpy.argmin-argmax"]
+first_exposure = resp["exposed"]["torch.argmin-argmax"]
 resp = client.post("/api/practice/exposure",
-                   json={"kcs": ["numpy.argmin-argmax"]}).json()
+                   json={"kcs": ["torch.argmin-argmax"]}).json()
 check("repeat exposure preserves first timestamp",
-      resp["exposed"]["numpy.argmin-argmax"] == first_exposure)
+      resp["exposed"]["torch.argmin-argmax"] == first_exposure)
 resp = client.post("/api/practice/exposure", json={"kcs": ["x"] * 65})
 check("exposure payload has batch cap", resp.status_code == 422,
       f"got HTTP {resp.status_code}")
@@ -102,7 +102,7 @@ check("exposure payload has batch cap", resp.status_code == 422,
 from app import adaptive  # noqa: E402
 adaptive._user_states.clear()
 resp = client.get("/api/practice/exposure").json()
-check("exposure survives state reload", "numpy.argmin-argmax" in resp["exposed"])
+check("exposure survives state reload", "torch.argmin-argmax" in resp["exposed"])
 
 # Force the normal queue onto a numpy subtopic with the diagnostic disabled.
 # (Already imported via app.main — a plain `import app.practice...` here would
@@ -150,7 +150,7 @@ app.dependency_overrides.clear()
 context_user = User(id=uuid.uuid4(), email="question-context-test@x.com", password_hash="x")
 app.dependency_overrides[auth.get_current_user] = lambda: context_user
 context_state = get_user_state(str(context_user.id))
-kc_graph.note_worked_seen(context_state, "numpy.ndarray-model")
+kc_graph.note_worked_seen(context_state, "torch.tensor-model")
 before_context_read = copy.deepcopy(vars(context_state))
 resp = client.get("/api/practice/question-context?question_id=482")
 context = resp.json()
@@ -160,7 +160,7 @@ check("question context endpoint answers", resp.status_code == 200,
 # a learner resuming it lands on the floor rung and gets the question's own
 # starter, not the blanked one — the blanks were that rung's support.
 check("question context restores concept on the floor rung",
-      context.get("ladder_kc") == "numpy.ndarray-model"
+      context.get("ladder_kc") == "torch.tensor-model"
       and context.get("ladder_stage") == "partial", context.get("ladder_stage"))
 check("question context does not hand out the retired faded scaffold",
       "_____" not in (context.get("starter_code") or ""), context.get("starter_code"))

@@ -202,7 +202,7 @@ def check_a_rung_reports_the_support_it_promises():
 
     `partial` is deliberately NOT a supported rung (2026-08-28). It used to
     promise an example above the problem, but examples are authored per ITEM:
-    thirteen of the nineteen solo drills on `numpy.ndarray-model` have none, and
+    thirteen of the nineteen solo drills on `torch.tensor-model` have none, and
     the rung reported itself unsupported on every one of them. Examples now
     ORDER that rung (`kc_graph.with_example_first`) instead of defining it.
     """

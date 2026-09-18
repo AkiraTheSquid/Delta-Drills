@@ -32,6 +32,7 @@ from app import lessons
 from app.adaptive import UserPracticeState
 from app.questions import (
     get_atoms_for_subtopic,
+    get_question_by_id,
     get_subtopics,
     get_questions_by_subtopic,
     get_topic_for_subtopic,
@@ -65,7 +66,7 @@ def question_is_unlocked(user_state: UserPracticeState, question) -> bool:
     prerequisite index is better than no gate at all.
 
     Intersecting the two was tried and is wrong. They disagreed: the KC registry
-    made `numpy.ndarray-model` a root with no prerequisites, while the atom
+    made `torch.tensor-model` a root with no prerequisites, while the atom
     graph gave its atom `tensor-wraps-ndarray` unmet prerequisites. Requiring
     both left a fresh learner exactly ONE servable question in a 373-question
     bank. (That KC is no longer a root — the python course now sits in front of
@@ -233,7 +234,7 @@ def narrow_to_next_kc(
                        #        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                        #        every drill on the rung, served or not
 
-    With three faded drills authored for `numpy.ndarray-model`, that `or`
+    With three faded drills authored for `torch.tensor-model`, that `or`
     branch was the steady state within about ten minutes of practice, and the
     learner then went round the same three problems indefinitely. Seth,
     2026-08-28: "I basically memorized all the problems for the first part ...
@@ -302,7 +303,7 @@ def narrow_to_next_kc(
         # wholesale. Narrow by membership instead, so the rungs still get
         # compared. (Caught by scripts/test_kc_ladder_report.py, whose fixture
         # had been failing on exactly this since the python course put three
-        # prerequisites in front of numpy.ndarray-model.)
+        # prerequisites in front of torch.tensor-model.)
         next_kc = _resident_kc(user_state, candidates, skip=skip)
     if not next_kc:
         # No question here carries a KC at all, so there is no rung to honour
@@ -318,12 +319,30 @@ def narrow_to_next_kc(
     stage = kc_graph.kc_stage(user_state, next_kc)
     at_stage = set(kc_graph.questions_at_stage([q.id for q in narrowed], stage))
     rung = [q for q in narrowed if q.id in at_stage]
-    if not rung:
-        # This concept authored nothing at this rung at all. Not a content gap
-        # the learner can do anything about — fall back to the least-scaffolded
+    if not rung and not any(
+        (q := get_question_by_id(qid)) is not None and question_is_unlocked(user_state, q)
+        for qid in kc_graph.questions_at_stage(kc_graph.questions_for_kc(next_kc), stage)
+    ):
+        # This concept has nothing at this rung the learner could be served —
+        # not in this subtopic, not in any other. Not a content gap the
+        # learner can do anything about — fall back to the least-scaffolded
         # drill available, which is what they would have been served anyway.
+        # (When the rung IS unlocked in another subtopic, this slice is just
+        # the wrong one: leave `rung` empty and let the spent-rung path below
+        # report it, rather than serve a rank-0 drill under the Solo label.)
         floor = set(kc_graph.lowest_rung([q.id for q in narrowed]))
         rung = [q for q in narrowed if q.id in floor]
+        # When the floor is the segments' fill-in-the-blank drills — the only
+        # thing unlocked on a KP the learner has not finished reading — serve
+        # the drill that CARRIES the next unread concept, so each easy item
+        # comes with the page it exists to follow. Left to difficulty alone
+        # the picker kept handing Seth the drills of a concept he had already
+        # read (torch.dtype-astype, 2026-09-18: 649 and 230, both segment 0,
+        # nothing new on either), which is what "trivially easy" was.
+        owed = set(lessons.next_segment_drills(next_kc, practice_targets.effective_exposure(user_state)))
+        carriers = [q for q in rung if q.id in owed and q.id not in answered]
+        if carriers:
+            rung = carriers
 
     fresh = [q for q in rung if q.id not in answered]
     if not fresh and stage == kc_graph.DRILL_FLOOR:
@@ -797,16 +816,28 @@ def select_next_subtopic(
         wanted = set(kc_graph.questions_for_kc(kc))
         if not wanted:
             continue
-        for st_name in subtopics:
-            if st_name in excluded:
-                continue
-            if _get_weight(user_state, st_name, uniform_weight) <= 0:
-                continue
-            if any(
-                q.id in wanted and q.id not in answered and question_is_unlocked(user_state, q)
-                for q in get_questions_by_subtopic(st_name)
-            ):
-                return st_name
+        # The subtopic that holds the concept's drills AT ITS RUNG, before any
+        # subtopic that merely holds one of its drills. A concept's pool is
+        # spread over several subtopics and the first in list order can own
+        # nothing of it but the segments' fill-in-the-blank items: Seth on
+        # `torch.slicing-views`, 2026-09-18 — Solo rung, its four unaided
+        # independent drills all in "Indexing and selection", and this walk
+        # returned "Core array literacy" because it holds q233 (rank 0). The
+        # narrowing downstream then had no rung to honour and fell to the
+        # floor. Rung-first only reorders the walk; the plain membership pass
+        # still runs when nothing at the rung is unlocked anywhere.
+        at_rung = set(kc_graph.questions_at_stage(sorted(wanted), kc_graph.kc_stage(user_state, kc)))
+        for pool in (at_rung, wanted):
+            for st_name in subtopics:
+                if st_name in excluded:
+                    continue
+                if _get_weight(user_state, st_name, uniform_weight) <= 0:
+                    continue
+                if any(
+                    q.id in pool and q.id not in answered and question_is_unlocked(user_state, q)
+                    for q in get_questions_by_subtopic(st_name)
+                ):
+                    return st_name
 
     cands = _candidates(skip_served=True)
     if not cands:

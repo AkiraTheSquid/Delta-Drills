@@ -4,7 +4,7 @@
 The runtime half of the syntax rule (2026-09-17). `audit_solution_prereqs.py`
 asks, at build time, whether every symbol a drill uses is taught by the
 drill's own concept or one of its lattice ancestors. It reports; it cannot
-stop a learner meeting `torch.arange` on a `numpy.boolean-masking` drill when
+stop a learner meeting `torch.arange` on a `torch.boolean-masking` drill when
 the page that teaches `arange` is on a branch they have not walked. This file
 gives the backend what it needs to stop that at serve time:
 

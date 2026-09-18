@@ -111,7 +111,7 @@ const LessonGate = (() => {
 
   /* ONE CONCEPT PER VISIT.
 
-     A KP is not one idea — `kp-ndarray-model` teaches three, and the markdown
+     A KP is not one idea — `kp-tensor-model` teaches three, and the markdown
      has always been written that way, each concept with its own worked example
      and its own faded drill. The gate used to render all of them back to back
      and then hand over one question, which produces a learner who has read
@@ -167,7 +167,7 @@ const LessonGate = (() => {
          Continue re-taught, from page one, the concept the learner had just
          read on the way to that drill — the snapshot still said it was
          pending. Reproduced on prod: the local exposure map held
-         `numpy.ndarray-model#s0-…` while the question's gate still listed it.
+         `torch.tensor-model#s0-…` while the question's gate still listed it.
 
          So a page whose `exposure_key` is already in this browser's map is
          dropped. That is a SUPPRESSION on top of the server's decision, never

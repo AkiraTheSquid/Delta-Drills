@@ -11,7 +11,7 @@ the prerequisite lattice. A symbol no page declares, or one first declared
 after the drill, means the drill asks for something the graph has not taught.
 
 `a.T` is the case that motivated this. It appeared in eight faded drills on
-`numpy.ndarray-model` — the first concept of the course — while the only page
+`torch.tensor-model` — the first concept of the course — while the only page
 that mentioned transposition sat four lessons later. Nothing failed. A learner
 hit it on their second day and had to go ask a different model what the
 question meant.

@@ -38,7 +38,7 @@ lessons), against the worked example of the SEGMENT that owns it:
 Usage:
     python3 scripts/audit_ladder_pairing.py            # full report
     python3 scripts/audit_ladder_pairing.py --summary  # counts only
-    python3 scripts/audit_ladder_pairing.py --kc numpy.ndarray-model
+    python3 scripts/audit_ladder_pairing.py --kc torch.tensor-model
     python3 scripts/audit_ladder_pairing.py --strict   # distance fails too
 
 Exit code is 1 on any COVERAGE or BLANK failure, so this can gate a build

@@ -1386,11 +1386,11 @@
   {
    "id": "np-1",
    "topic": "Numpy",
-   "title": "Arrays from the ground up",
+   "title": "Tensors from the ground up",
    "subtopic_key": "Numpy: Core array literacy",
    "kps": [
     {
-     "kc": "numpy.ndarray-model",
+     "kc": "torch.tensor-model",
      "title": "What a tensor is \u2014 data + shape + dtype",
      "supporting_kcs": [],
      "new_syntax": [
@@ -1757,10 +1757,10 @@
       559
      ],
      "misconceptions_markdown": "- **\"A tensor is just a faster list.\"** \u2014 A list stores anything, a tensor\n  stores exactly one dtype in one memory block. That's why `t.tensor([1, 2.5])`\n  changes your integer to a float: PyTorch must pick ONE type for the block.\n- **\"I need to tell PyTorch the shape when converting data.\"** \u2014 `t.tensor`\n  infers shape from the nesting. You only specify shapes with from-scratch\n  constructors (`t.zeros((2, 3))`), covered next.\n- **\"shape is (columns, rows).\"** \u2014 It is (axis 0, axis 1) = (rows, columns)\n  for a matrix. Axis 0 is always the outermost nesting level.\n- **\"`ndim` and `numel()` are two names for the size.\"** \u2014 `ndim` counts axes,\n  `numel()` counts elements. A 2\u00d73 tensor has `ndim == 2` and `numel() == 6`.",
-     "notes_markdown": "First concept of the numpy course, and the one the attempt log indicts.\n\n## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only):\n  solved q559 3/3 on the real harness, no missing-information claim. The\n  PAGE is sufficient \u2014 the 2026-08 stalls above were the DRILL POOL\n  (untaught `a.T`), not the lesson prose; consistent with both findings.\n- 2026-09-01: the log (2026-08-19\u219227) shows a 63-attempt `faded` rung stall at\n  16% accuracy, mean predicted_p 0.207 \u2014 the model predicted failure ~60\n  serves in a row and the selector complied. Dated a WEEK before the `a.T`\n  prerequisite bug (transpose needed here, taught four lessons later) was\n  found by hand. `/api/practice/kc-stats` now flags both patterns\n  (`rung_stall`, `served_while_predicting_failure`).\n\n## Edges\n- [[numpy.reshape-flatten]]: same stall pattern in the same logs (43 attempts,\n  14%) \u2014 the two failures share the untaught-transpose cause.\n\n## Checks\n- `app/kc_stats.py` flags \u2014 born from this concept's log.\n- `scripts/audit_solution_prereqs.py` \u2014 born from this concept's `a.T`."
+     "notes_markdown": "First concept of the numpy course, and the one the attempt log indicts.\n\n## Findings\n- 2026-09-01 teachability (codex gpt-5.6-luna as learner, lesson text only):\n  solved q559 3/3 on the real harness, no missing-information claim. The\n  PAGE is sufficient \u2014 the 2026-08 stalls above were the DRILL POOL\n  (untaught `a.T`), not the lesson prose; consistent with both findings.\n- 2026-09-01: the log (2026-08-19\u219227) shows a 63-attempt `faded` rung stall at\n  16% accuracy, mean predicted_p 0.207 \u2014 the model predicted failure ~60\n  serves in a row and the selector complied. Dated a WEEK before the `a.T`\n  prerequisite bug (transpose needed here, taught four lessons later) was\n  found by hand. `/api/practice/kc-stats` now flags both patterns\n  (`rung_stall`, `served_while_predicting_failure`).\n\n## Edges\n- [[torch.reshape-flatten]]: same stall pattern in the same logs (43 attempts,\n  14%) \u2014 the two failures share the untaught-transpose cause.\n\n## Checks\n- `app/kc_stats.py` flags \u2014 born from this concept's log.\n- `scripts/audit_solution_prereqs.py` \u2014 born from this concept's `a.T`."
     },
     {
-     "kc": "numpy.transpose-axes",
+     "kc": "torch.transpose-axes",
      "title": "Transpose \u2014 swapping which axis is which",
      "supporting_kcs": [],
      "new_syntax": [
@@ -1924,7 +1924,7 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.views-and-copies",
+     "kc": "torch.views-and-copies",
      "title": "Views and copies \u2014 the same numbers, read a different way",
      "supporting_kcs": [],
      "new_syntax": [
@@ -2064,10 +2064,10 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.constructors",
+     "kc": "torch.constructors",
      "title": "Tensor constructors \u2014 zeros, ones, full, eye, *_like",
      "supporting_kcs": [
-      "numpy.ndarray-model"
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "Tensor.all",
@@ -2292,10 +2292,10 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.slicing-views",
+     "kc": "torch.slicing-views",
      "title": "Selecting and changing parts of a tensor",
      "supporting_kcs": [
-      "numpy.ndarray-model"
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "Tensor.clone",
@@ -2504,11 +2504,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.ranges",
+     "kc": "torch.ranges",
      "title": "Numeric ranges \u2014 arange and linspace",
      "supporting_kcs": [
-      "numpy.constructors",
-      "numpy.slicing-views"
+      "torch.constructors",
+      "torch.slicing-views"
      ],
      "new_syntax": [
       "torch.arange",
@@ -2690,10 +2690,10 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.dtype-astype",
+     "kc": "torch.dtype-astype",
      "title": "Dtypes, .to(), and memory size",
      "supporting_kcs": [
-      "numpy.ndarray-model"
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "Tensor.element_size",
@@ -2951,11 +2951,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.reshape-flatten",
+     "kc": "torch.reshape-flatten",
      "title": "Reshape, flatten, and element order",
      "supporting_kcs": [
-      "numpy.ndarray-model",
-      "numpy.ranges"
+      "torch.tensor-model",
+      "torch.ranges"
      ],
      "new_syntax": [
       "Tensor.flatten",
@@ -3384,13 +3384,13 @@
       1356
      ],
      "misconceptions_markdown": "- **\"Reshape can rearrange values.\"** \u2014 Reshape never *reorders* values: the\n  flat row-major sequence of elements is identical before and after, and only\n  the shape metadata changes. (It may still copy that sequence into fresh\n  memory when the input is a non-contiguous view \u2014 same order, new buffer.)\n  If the values need to move (transpose, sort, flip), reshape is the wrong\n  tool.\n- **\"reshape(3, 4) on 11 elements will pad or truncate.\"** \u2014 It raises a\n  `RuntimeError`. Counts must match exactly; `-1` only *derives* a dimension,\n  it can't invent elements.\n- **\"Flattening reads down the columns.\"** \u2014 The order is row-major: across\n  row 0 first. Column-major means transposing first.\n- **\"`order='F'` works, like in NumPy.\"** \u2014 PyTorch's `flatten` takes no order\n  argument at all. `z.T.flatten()` is the column-major read.",
-     "notes_markdown": "## Findings\n- 2026-09-01: 43-attempt `faded` stall at 14% accuracy in the 08-19\u219227 logs;\n  the low-p run inside it scored 1/26 (mean predicted_p 0.237). Same root\n  cause as [[numpy.ndarray-model]] (`a.T` untaught); kept as a separate note\n  because the stall metric reports per concept and both fired independently.\n\n## Checks\n- `app/kc_stats.py` flags."
+     "notes_markdown": "## Findings\n- 2026-09-01: 43-attempt `faded` stall at 14% accuracy in the 08-19\u219227 logs;\n  the low-p run inside it scored 1/26 (mean predicted_p 0.237). Same root\n  cause as [[torch.tensor-model]] (`a.T` untaught); kept as a separate note\n  because the stall metric reports per concept and both fired independently.\n\n## Checks\n- `app/kc_stats.py` flags."
     },
     {
-     "kc": "numpy.elementwise-ufuncs",
+     "kc": "torch.elementwise-ops",
      "title": "Elementwise math",
      "supporting_kcs": [
-      "numpy.ndarray-model"
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "Tensor.clamp",
@@ -3585,10 +3585,10 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.aggregations",
+     "kc": "torch.aggregations",
      "title": "Whole-tensor aggregations and Python scalars",
      "supporting_kcs": [
-      "numpy.elementwise-ufuncs"
+      "torch.elementwise-ops"
      ],
      "new_syntax": [
       "Tensor.any",
@@ -3794,11 +3794,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.sorting",
+     "kc": "torch.sorting",
      "title": "Sorting tensors",
      "supporting_kcs": [
-      "numpy.ndarray-model",
-      "numpy.slicing-views"
+      "torch.tensor-model",
+      "torch.slicing-views"
      ],
      "new_syntax": [
       "torch.sort",
@@ -3992,11 +3992,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.random-samplers",
+     "kc": "torch.random-samplers",
      "title": "Drawing random numbers",
      "supporting_kcs": [
-      "numpy.constructors",
-      "numpy.ndarray-model"
+      "torch.constructors",
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "torch.rand",
@@ -4116,12 +4116,12 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.random-seeding",
+     "kc": "torch.random-seeding",
      "title": "Seeding your own reproducible stream",
      "supporting_kcs": [
-      "numpy.random-samplers",
-      "numpy.constructors",
-      "numpy.ndarray-model"
+      "torch.random-samplers",
+      "torch.constructors",
+      "torch.tensor-model"
      ],
      "new_syntax": [
       "torch.Generator",
@@ -4237,12 +4237,12 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.random-threading",
+     "kc": "torch.random-threading",
      "title": "Using a stream you were handed",
      "supporting_kcs": [
-      "numpy.random-seeding",
-      "numpy.random-samplers",
-      "numpy.ndarray-model"
+      "torch.random-seeding",
+      "torch.random-samplers",
+      "torch.tensor-model"
      ],
      "new_syntax": [],
      "concept_markdown": "You can now build a stream and thread it into any sampler. This concept is the\nother half, and it is the half that appears in real code far more often: a\nfunction is **handed** an `rng` and has to use *that one*.\n\nNothing new to spell here \u2014 every symbol below came from the previous two\nconcepts. What is new is a rule:\n\n> Use the generator you were given. Do not make one. Do not reseed it.\n\n```python\nimport torch as t\n\ndef good(rng, n):\n    return t.rand(n, generator=rng)      # threads the caller's stream\n\ndef ignores(rng, n):\n    return t.rand(n)                     # silently uses the GLOBAL stream\n\ndef rewinds(rng, n):\n    rng.manual_seed(0)                   # silently rewinds the CALLER's stream\n    return t.rand(n, generator=rng)\n\nshared = t.Generator().manual_seed(7)\nprint(\"threaded:\", good(shared, 3))\nprint(\"the caller's stream has now advanced by three draws\")\n# Hidden checks\nreference = t.Generator().manual_seed(7)\nt.rand(3, generator=reference)\nassert t.equal(shared.get_state(), reference.get_state())\nprobe = t.Generator().manual_seed(12)\nexpected = t.Generator().manual_seed(12)\nassert t.equal(good(probe, 4), t.rand(4, generator=expected))\nassert t.equal(good(probe, 2), t.rand(2, generator=expected))\n```\n\nBoth wrong versions **run fine and return plausible numbers**. Nothing raises.\nThat is what makes this worth its own concept: the failure has no symptom at\nthe call site, only wrong values somewhere downstream.\n\nWhy it matters is ownership. A generator is a deterministic stream, and each\ndraw consumes the next piece of it, so whoever holds the generator controls\nwhat every function that receives it will see:\n\n```python\nimport torch as t\n\ndef draw(rng, n):\n    return t.rand(n, generator=rng)\n\n# The caller seeds once and calls twice. The two results differ because the\n# stream MOVED \u2014 not because anything is random about `draw` itself.\nrng = t.Generator().manual_seed(0)\nfirst = draw(rng, 3)\nsecond = draw(rng, 3)\nprint(\"first :\", first)\nprint(\"second:\", second)\n\n# And because `draw` threaded the stream instead of making its own, the caller\n# can reproduce the whole run from the seed alone.\nreplay = draw(t.Generator().manual_seed(0), 3)\nprint(\"replay:\", replay)\n# Hidden checks\nassert first.tolist() != second.tolist()\nassert replay.tolist() == first.tolist()\n```\n\nThat last assert is the contract a grader checks. A drill that hands you `rng`\nhas already computed what your draw must be; reseeding or building your own\nproduces different numbers and fails, with nothing in the error message about\ngenerators.\n\nThe generator only reaches the sampler. Everything you build from the draw is\nordinary tensor work:\n\n```python\nimport torch as t\n\nrng = t.Generator().manual_seed(1)\norder = t.randperm(4, generator=rng)   # random part: needs the stream\nperm = t.eye(4)[order]                 # ordinary part: does not\nprint(\"order:\", order)\nprint(perm)\n# Hidden checks\nassert sorted(order.tolist()) == [0, 1, 2, 3]\nassert tuple(perm.shape) == (4, 4)\nassert perm.sum(0).tolist() == [1, 1, 1, 1]\nassert perm.sum(1).tolist() == [1, 1, 1, 1]\nassert perm.argmax(1).tolist() == order.tolist()\n```",
@@ -4345,11 +4345,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.linalg-basics",
+     "kc": "torch.linalg-basics",
      "title": "Matrix multiply and t.linalg basics",
      "supporting_kcs": [
-      "numpy.aggregations",
-      "numpy.elementwise-ufuncs"
+      "torch.aggregations",
+      "torch.elementwise-ops"
      ],
      "new_syntax": [
       "syntax.matmul",
@@ -4475,12 +4475,12 @@
    "subtopic_key": "Numpy: Indexing and selection",
    "kps": [
     {
-     "kc": "numpy.boolean-masking",
+     "kc": "torch.boolean-masking",
      "title": "Boolean masks \u2014 compare, count, filter",
      "supporting_kcs": [
-      "numpy.slicing-views",
-      "numpy.elementwise-ufuncs",
-      "numpy.aggregations"
+      "torch.slicing-views",
+      "torch.elementwise-ops",
+      "torch.aggregations"
      ],
      "new_syntax": [
       "torch.count_nonzero",
@@ -4621,11 +4621,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.argmin-argmax",
+     "kc": "torch.argmin-argmax",
      "title": "Locating extremes \u2014 argmin and argmax",
      "supporting_kcs": [
-      "numpy.aggregations",
-      "numpy.slicing-views"
+      "torch.aggregations",
+      "torch.slicing-views"
      ],
      "new_syntax": [
       "Tensor.argmax",
@@ -4770,11 +4770,11 @@
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "kps": [
     {
-     "kc": "numpy.broadcasting-rules",
+     "kc": "torch.broadcasting-rules",
      "title": "Broadcasting rules",
      "supporting_kcs": [
-      "numpy.elementwise-ufuncs",
-      "numpy.reshape-flatten"
+      "torch.elementwise-ops",
+      "torch.reshape-flatten"
      ],
      "new_syntax": [
       "none-newaxis-indexing",
@@ -4931,11 +4931,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.axis-reductions",
+     "kc": "torch.axis-reductions",
      "title": "Reductions along an axis \u2014 and keepdims",
      "supporting_kcs": [
-      "numpy.aggregations",
-      "numpy.broadcasting-rules"
+      "torch.aggregations",
+      "torch.broadcasting-rules"
      ],
      "new_syntax": [
       "Tensor.mean#dim",
@@ -5168,12 +5168,12 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.dot-matmul-patterns",
+     "kc": "torch.dot-matmul-patterns",
      "title": "Dot products and matrix-multiply patterns",
      "supporting_kcs": [
-      "numpy.linalg-basics",
-      "numpy.axis-reductions",
-      "numpy.broadcasting-rules"
+      "torch.linalg-basics",
+      "torch.axis-reductions",
+      "torch.broadcasting-rules"
      ],
      "new_syntax": [
       "torch.dot"
@@ -5307,11 +5307,11 @@
      "notes_markdown": ""
     },
     {
-     "kc": "numpy.stack-concat-interleave",
+     "kc": "torch.stack-concat-interleave",
      "title": "Stacking, concatenating, interleaving",
      "supporting_kcs": [
-      "numpy.reshape-flatten",
-      "numpy.slicing-views"
+      "torch.reshape-flatten",
+      "torch.slicing-views"
      ],
      "new_syntax": [
       "Tensor.ravel",
@@ -5461,7 +5461,7 @@
      "kc": "einops.pattern-language",
      "title": "The einops pattern language \u2014 naming and permuting axes",
      "supporting_kcs": [
-      "numpy.reshape-flatten"
+      "torch.reshape-flatten"
      ],
      "new_syntax": [
       "einops.rearrange"
@@ -5586,7 +5586,7 @@
      "title": "Merging axes with (parentheses)",
      "supporting_kcs": [
       "einops.pattern-language",
-      "numpy.reshape-flatten"
+      "torch.reshape-flatten"
      ],
      "new_syntax": [
       "einops-axis-composition"
@@ -5960,7 +5960,7 @@
      "title": "einops.reduce \u2014 dropping axes with an aggregation",
      "supporting_kcs": [
       "einops.pattern-language",
-      "numpy.axis-reductions"
+      "torch.axis-reductions"
      ],
      "new_syntax": [
       "einops.reduce"
@@ -6119,7 +6119,7 @@
      "title": "einops.repeat \u2014 new axes and stretched axes",
      "supporting_kcs": [
       "einops.split-axes",
-      "numpy.broadcasting-rules"
+      "torch.broadcasting-rules"
      ],
      "new_syntax": [
       "einops.repeat"
@@ -6367,9 +6367,9 @@
      "kc": "torch.out-argument",
      "title": "Filling a tensor in place with out=",
      "supporting_kcs": [
-      "numpy.ranges",
-      "numpy.slicing-views",
-      "numpy.constructors"
+      "torch.ranges",
+      "torch.slicing-views",
+      "torch.constructors"
      ],
      "new_syntax": [
       "torch.arange#out",
@@ -6478,10 +6478,10 @@
      "kc": "torch.slice-assignment",
      "title": "Writing tensors into slices: broadcasting on the left",
      "supporting_kcs": [
-      "numpy.slicing-views",
-      "numpy.broadcasting-rules",
-      "numpy.constructors",
-      "numpy.ranges"
+      "torch.slicing-views",
+      "torch.broadcasting-rules",
+      "torch.constructors",
+      "torch.ranges"
      ],
      "new_syntax": [
       "Tensor.copy_"
@@ -6589,10 +6589,10 @@
      "kc": "raytracing.ray-parametrisation",
      "title": "A ray is an origin and a direction",
      "supporting_kcs": [
-      "numpy.constructors",
-      "numpy.broadcasting-rules",
-      "numpy.slicing-views",
-      "numpy.ranges"
+      "torch.constructors",
+      "torch.broadcasting-rules",
+      "torch.slicing-views",
+      "torch.ranges"
      ],
      "new_syntax": [
       "syntax.unpack"
@@ -6703,8 +6703,8 @@
       "torch.out-argument",
       "torch.slice-assignment",
       "raytracing.ray-parametrisation",
-      "numpy.ranges",
-      "numpy.constructors"
+      "torch.ranges",
+      "torch.constructors"
      ],
      "new_syntax": [],
      "concept_markdown": "ARENA's first exercise, `make_rays_1d(num_pixels, y_limit)`, asks for a\n**fan** of rays: all from the origin, all with direction x = 1, and direction\ny spread evenly from `-y_limit` to `+y_limit`. The result is one tensor of\nshape **`(num_pixels, 2, 3)`** \u2014 one `(2, 3)` ray slab per pixel.\n\nEverything you need is the three pages before this one, in order:\n\n1. **Canvas.** `t.zeros((num_pixels, 2, 3))` \u2014 every origin is already\n   `(0, 0, 0)` and every direction z is already `0`. Two columns remain.\n2. **Direction x.** Every ray's `[1, 0]` slot is `1`: a scalar broadcast\n   through a slice, `rays[:, 1, 0] = 1`.\n3. **Direction y.** `num_pixels` values from `-y_limit` to `y_limit`, written\n   into the `[:, 1, 1]` column \u2014 `t.linspace(..., out=rays[:, 1, 1])`, or the\n   same with assignment.\n\n```python\nimport torch as t\n\ndef make_rays_1d(num_pixels, y_limit):\n    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)\n    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])\n    rays[:, 1, 0] = 1\n    return rays\n\nprint(make_rays_1d(3, 1.0))\n# Hidden checks\nassert _delta_output == 'tensor([[[ 0.,  0.,  0.],\\n         [ 1., -1.,  0.]],\\n\\n        [[ 0.,  0.,  0.],\\n         [ 1.,  0.,  0.]],\\n\\n        [[ 0.,  0.,  0.],\\n         [ 1.,  1.,  0.]]])\\n'\n```\n\nRead the output as three slabs. Row 0 of each is the origin; row 1 is\n`(1, y, 0)` with `y` walking `-1, 0, 1`. Nothing else was touched.\n\nThe habit to take from this: **allocate the final shape once, then write the\nparts that vary**. Building rows in a loop and stacking them gives the same\nnumbers and is the thing you will unlearn in the next chapter.",
@@ -6839,7 +6839,7 @@
      "title": "einops.einsum: name the axes, drop the ones to sum",
      "supporting_kcs": [
       "einops.pattern-language",
-      "numpy.axis-reductions"
+      "torch.axis-reductions"
      ],
      "new_syntax": [
       "einops.einsum"
@@ -7169,11 +7169,11 @@
      "kc": "tensor.row-normalization",
      "title": "Row lengths and unit rows",
      "supporting_kcs": [
-      "numpy.axis-reductions",
-      "numpy.broadcasting-rules",
-      "numpy.boolean-masking",
-      "numpy.argmin-argmax",
-      "numpy.constructors"
+      "torch.axis-reductions",
+      "torch.broadcasting-rules",
+      "torch.boolean-masking",
+      "torch.argmin-argmax",
+      "torch.constructors"
      ],
      "new_syntax": [
       "Tensor.norm",
@@ -7337,9 +7337,9 @@
      "title": "Cosine similarity",
      "supporting_kcs": [
       "tensor.row-normalization",
-      "numpy.dot-matmul-patterns",
-      "numpy.transpose-axes",
-      "numpy.argmin-argmax"
+      "torch.dot-matmul-patterns",
+      "torch.transpose-axes",
+      "torch.argmin-argmax"
      ],
      "new_syntax": [],
      "concept_markdown": "The dot product of two vectors adds up the products of matching coordinates. For unit vectors it is the cosine of the angle between them: `1` when they point the same way, `0` when they are perpendicular, `-1` when they oppose. So the procedure for comparing directions is: divide each vector by its length, then take the dot product. The result is the cosine similarity, and it lives in `[-1, 1]` whatever the original lengths were.\n\nThe reason to normalize first is that a raw dot product mixes two things \u2014 how aligned the vectors are and how long they are. Double one vector and the raw dot product doubles, though the direction did not change at all. In embeddings, search and attention, the question is \"do these point the same way\", and a long vector should not win merely for being long. Normalizing removes the length so only the angle remains.\n\n```python\nimport torch as t\na=t.tensor([1.,0.])\nb=t.tensor([0.,1.])\nprint(a@b, a@(-a))\n# Hidden checks\nassert float(a@b)==0 and float(a@(-a))==-1\n```\n\nTo compare `m` queries against `n` candidates you want an `(m, n)` table with the similarity of query `i` and candidate `j` at `[i, j]`. Give each collection its own axis: with unit rows `a` of shape `(m, d)` and `b` of shape `(n, d)`, the table is `a @ b.T`. The matrix product sums over the coordinate axis `d`, which is why that axis disappears, and it pairs every row of `a` with every column of `b.T` \u2014 that is, every row of `b`.\n\nThe reason for transposing `b` rather than `a` is a shape rule and a reading rule at once. `(m, d) @ (d, n)` is the only way the inner axes match, and the result then has queries down the rows and candidates across the columns, so `s[i]` is \"everything about query `i`\" and a `max(dim=1)` gives each query its best candidate. Swapping the inputs transposes the table, which is a quick sanity check when `m` and `n` differ.\n\n```python\nimport torch as t\na=t.tensor([[1.,0.],[0.,1.]])\nb=t.tensor([[1.,0.],[-1.,0.],[0.,1.]])\ns=a@b.T\nprint(s)\n# Hidden checks\nassert s.tolist()==[[1.,-1.,0.],[0.,0.,1.]]\n```",
@@ -7497,10 +7497,10 @@
      "kc": "tensor.indexed-selection",
      "title": "Selecting one entry per row",
      "supporting_kcs": [
-      "numpy.slicing-views",
-      "numpy.ranges",
-      "numpy.axis-reductions",
-      "numpy.broadcasting-rules"
+      "torch.slicing-views",
+      "torch.ranges",
+      "torch.axis-reductions",
+      "torch.broadcasting-rules"
      ],
      "new_syntax": [
       "Tensor.gather",
@@ -7661,10 +7661,10 @@
      "kc": "tensor.stable-probabilities",
      "title": "Stable softmax and log-softmax",
      "supporting_kcs": [
-      "numpy.axis-reductions",
-      "numpy.elementwise-ufuncs",
-      "numpy.broadcasting-rules",
-      "numpy.ranges"
+      "torch.axis-reductions",
+      "torch.elementwise-ops",
+      "torch.broadcasting-rules",
+      "torch.ranges"
      ],
      "new_syntax": [
       "Tensor.exp",
@@ -7833,9 +7833,9 @@
      "supporting_kcs": [
       "tensor.stable-probabilities",
       "tensor.indexed-selection",
-      "numpy.argmin-argmax",
-      "numpy.boolean-masking",
-      "numpy.dtype-astype"
+      "torch.argmin-argmax",
+      "torch.boolean-masking",
+      "torch.dtype-astype"
      ],
      "new_syntax": [],
      "concept_markdown": "A classifier emits one row of scores per example, one score per class, shape `(b, c)`. Its prediction for an example is the class with the largest score in that row, `x.argmax(dim=1)`, which reduces the class axis and returns one index per example, shape `(b,)`. The labels `y` are also `(b,)` integers, so `pred == y` compares each example with its own label and gives a Boolean per example. Accuracy is the fraction of `True`: convert to float and take the mean.\n\nThe reason everything is done per example first is that accuracy counts examples, not scores. Averaging the scores, or comparing the whole score matrix with the labels, answers a different question. The reason to convert Booleans to float before `mean` is that a Boolean tensor has no mean; `to(t.float32)` turns `True` into `1.` and `False` into `0.`, so the mean is the fraction correct. When two classes tie for the largest score, `argmax` returns the first, which is a convention to know about rather than a fact about the model.\n\n```python\nimport torch as t\nx=t.tensor([[2.,5.],[4.,1.]])\ny=t.tensor([1,1])\npred=x.argmax(dim=1)\nprint(pred, pred==y)\n# Hidden checks\nassert pred.tolist()==[1,0] and (pred==y).tolist()==[True,False]\n```\n\nAccuracy is blind to confidence: a prediction that was barely right and one that was certain count the same. Cross-entropy measures the probability the model assigned to the *true* class, on a log scale, negated: `-log p[true]`. A confident correct prediction has `p[true]` near one and loss near zero; a confident wrong one has `p[true]` near zero and a large loss. The computation is log-softmax of each row (score minus the row's log-sum-exp, with the maximum subtracted first for stability), then pick the entry at the true class with paired indexing `l[t.arange(b), y]`, then negate.\n\nThe reason to stay in log space is the one from the stable-probabilities lesson: a tiny probability underflows to zero and its log becomes infinite, while the log-probability itself is a finite, ordinary number. The reason to keep one loss per example until the end is that the reduction is a separate decision \u2014 the mean over a batch for training, or a sum divided by the total example count when combining batches of unequal size, because averaging per-batch averages would let a small batch count as much as a large one.\n\n```python\nimport torch as t\nx=t.tensor([[0.,0.],[0.,-9.]])\ny=t.tensor([0,1])\nz=x-x.max(dim=1,keepdim=True)[0]\nl=z-z.exp().sum(dim=1,keepdim=True).log()\nloss=-l[t.arange(2),y]\nprint(loss)\n# Hidden checks\nassert t.allclose(loss,t.nn.functional.cross_entropy(x,y,reduction=\"none\"))\n```",
@@ -7993,12 +7993,12 @@
      "kc": "tensor.inverse-cdf",
      "title": "Sampling by inverse CDF",
      "supporting_kcs": [
-      "numpy.axis-reductions",
-      "numpy.broadcasting-rules",
-      "numpy.random-threading",
+      "torch.axis-reductions",
+      "torch.broadcasting-rules",
+      "torch.random-threading",
       "tensor.indexed-selection",
-      "numpy.argmin-argmax",
-      "numpy.dtype-astype",
+      "torch.argmin-argmax",
+      "torch.dtype-astype",
       "tensor.stable-probabilities"
      ],
      "new_syntax": [
@@ -8162,7 +8162,7 @@
       "python.defining-functions",
       "python.lists-and-tuples",
       "python.indexing",
-      "numpy.boolean-masking"
+      "torch.boolean-masking"
      ],
      "new_syntax": [
       "syntax.if",
@@ -8358,10 +8358,10 @@
      "title": "Ray\u2013segment intersection",
      "supporting_kcs": [
       "raytracing.ray-parametrisation",
-      "numpy.linalg-basics",
-      "numpy.stack-concat-interleave",
-      "numpy.constructors",
-      "numpy.boolean-masking",
+      "torch.linalg-basics",
+      "torch.stack-concat-interleave",
+      "torch.constructors",
+      "torch.boolean-masking",
       "tensor.row-normalization",
       "tensor.indexed-selection"
      ],
@@ -8524,8 +8524,8 @@
      "title": "Every ray against every segment",
      "supporting_kcs": [
       "raytracing.segment-intersection",
-      "numpy.broadcasting-rules",
-      "numpy.axis-reductions"
+      "torch.broadcasting-rules",
+      "torch.axis-reductions"
      ],
      "new_syntax": [],
      "concept_markdown": "With `nr` rays and `ns` segments there are `nr \u00d7 ns` candidate intersections, and the batched computation must keep both axes until each pair has its own verdict. The tool is broadcasting with inserted axes: give rays their own axis and segments their own, `o[:, None, :]` against `a[None, :, :]`, and every arithmetic step produces an `(nr, ns, \u2026)` result in which position `[i, j]` is \"ray `i` against segment `j`\". The last axis still means coordinates.\n\nThe reason to insert axes explicitly, rather than relying on equal lengths, is that when `nr == ns` a plain `a \u2212 o` would silently pair ray `i` with segment `i` only \u2014 a zip, not a product \u2014 and produce a plausible-looking answer of the wrong shape. The reason the per-pair matrices are built by stacking on the *last* axis is that `torch.linalg` functions treat leading axes as a batch: an `(nr, ns, 2, 2)` tensor is `nr \u00d7 ns` small matrices, and `det` or `solve` runs independently on each. Broadcasting a `(nr, 1, 2)` direction against a `(1, ns, 2)` edge needs one of them expanded to the full pair shape before stacking, because `stack` requires identical shapes; adding `t.zeros_like` of the other does that without a copy of meaning.\n\n```python\nimport torch as t\no=t.tensor([[0.,0.],[1.,0.]])\na=t.tensor([[2.,1.],[3.,2.],[4.,3.]])\ndisplacement=a[None,:,:]-o[:,None,:]\nprint(displacement)\n# Hidden checks\nassert displacement.shape==(2,3,2) and displacement[1,2].tolist()==[3.,3.]\n```\n\nOnce every pair has a Boolean verdict, the hit table is `(nr, ns)`, and each question about the scene is a reduction along one axis. \"Does ray `i` hit anything?\" removes the segment axis: `hits.any(dim=1)`, shape `(nr,)`. \"Was segment `j` seen by any ray?\" removes the ray axis: `hits.any(dim=0)`, shape `(ns,)`. \"How many segments does each ray hit?\" is `hits.sum(dim=1)`. The axis you name is the one that disappears, and it must be the one you are asking *across*.\n\nThe reason to reduce last is that every ingredient of the verdict \u2014 the validity mask, `u \u2265 0`, `v` in `[0, 1]` \u2014 lives at the pair level; reducing any of them early, or reducing the wrong axis, produces a plausible image with wrong pixels. A placeholder solve for a singular pair must be masked out at the pair level before `any` ever sees it, and `u \u2265 0` must be applied per pair, or a segment behind the camera lights up a pixel.\n\n```python\nimport torch as t\nhits=t.tensor([[False,True,False],[False,False,False]])\nprint(hits.any(dim=1),hits.any(dim=0))\n# Hidden checks\nassert hits.any(1).tolist()==[True,False] and hits.any(0).tolist()==[False,True,False]\n```",
@@ -8684,10 +8684,10 @@
      "title": "A 2-D fan of camera rays",
      "supporting_kcs": [
       "raytracing.make-rays-1d",
-      "numpy.broadcasting-rules",
-      "numpy.reshape-flatten",
+      "torch.broadcasting-rules",
+      "torch.reshape-flatten",
       "torch.slice-assignment",
-      "numpy.stack-concat-interleave",
+      "torch.stack-concat-interleave",
       "tensor.row-normalization"
      ],
      "new_syntax": [],
@@ -8847,8 +8847,8 @@
      "title": "Ray\u2013triangle intersection",
      "supporting_kcs": [
       "raytracing.segment-intersection",
-      "numpy.linalg-basics",
-      "numpy.broadcasting-rules"
+      "torch.linalg-basics",
+      "torch.broadcasting-rules"
      ],
      "new_syntax": [],
      "concept_markdown": "Starting at vertex `A`, the vectors `B \u2212 A` and `C \u2212 A` span the triangle's plane, and every point of the plane is `A + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A)` for some pair `(u, v)`. The point is inside the triangle exactly when `u \u2265 0`, `v \u2265 0` and `u + v \u2264 1`. The weight left over, `1 \u2212 u \u2212 v`, belongs to `A`; the three weights are the point's barycentric coordinates, each in `[0, 1]` for an interior point.\n\nThe reason the sum constraint is needed is that `u \u2264 1` and `v \u2264 1` on their own describe the *parallelogram* with corners `A`, `B`, `C` and `B + C \u2212 A` \u2014 twice the triangle, including the far corner past the edge `BC`. The line `u + v = 1` is that edge; requiring `u + v \u2264 1` keeps the half on `A`'s side. Endpoints are included, so a point exactly on an edge or at a vertex counts as inside. Stacking the two edge vectors as columns, `t.stack((b \u2212 a, c \u2212 a), dim=1)`, gives the `(3, 2)` matrix that maps `(u, v)` to a displacement from `A` \u2014 the same column-per-unknown rule as for segments.\n\n```python\nimport torch as t\na=t.tensor([2.,0.,0.]); b=t.tensor([2.,4.,0.]); c=t.tensor([2.,0.,4.])\np=a+.25*(b-a)+.5*(c-a)\nprint(p)\n# Hidden checks\nassert p.tolist()==[2.,1.,2.]\n```\n\nA ray point is `O + s\u00b7D`; a triangle point is `A + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A)`. Setting them equal and moving unknowns left gives `\u2212s\u00b7D + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A) = O \u2212 A`: three equations in three unknowns, with matrix columns `\u2212D`, `B \u2212 A`, `C \u2212 A` and right-hand side `O \u2212 A`. The solution `(s, u, v)` reads as: travel `s` along the ray, then triangle coordinates `(u, v)`. A hit needs all of `s \u2265 0` (in front of the origin), `u \u2265 0`, `v \u2265 0` and `u + v \u2264 1`.\n\nThe reason the first column is `\u2212D` rather than `D` is the side of the equation it was moved from; use `D` and `s` comes out negated, so every forward hit looks like it is behind the camera. The reason for a validity mask, as with segments, is that a ray parallel to the triangle's plane, or a degenerate triangle, makes the matrix singular: test `det(m).abs() >= 1e-8`, substitute the `3 \u00d7 3` identity where it fails so a batched solve cannot raise, and mask those pairs out afterwards. Under this contract they are misses.\n\n```python\nimport torch as t\nm=t.tensor([[-1.,0.,0.],[0.,4.,0.],[0.,0.,4.]])\nsuv=t.linalg.solve(m,t.tensor([-2.,1.,2.]))\nprint(suv)\n# Hidden checks\nassert suv.tolist()==[2.,.25,.5]\n```",
@@ -9010,7 +9010,7 @@
       "raytracing.batched-segments",
       "raytracing.make-rays-2d",
       "tensor.indexed-selection",
-      "numpy.dtype-astype"
+      "torch.dtype-astype"
      ],
      "new_syntax": [],
      "concept_markdown": "A ray through a mesh can intersect several triangles, and the one you *see* is the nearest: the valid, forward hit with the smallest travel `s`. So the batched pipeline keeps one `s` per ray\u2013triangle pair, shape `(nr, nt)`, alongside the pair's hit verdict, and then reduces over the triangle axis with a minimum. To stop misses from winning, replace their `s` with infinity first \u2014 `t.where(hit, s, inf)` \u2014 so the minimum over a row is either the nearest real depth or `inf`, which means the ray saw only background.\n\nThe reason infinity is the right filler is that it is neutral for `min`, as `-inf` was for `max` in pooling: no finite depth loses to it, and a row with no hits reports `inf` rather than a spurious `0` or a stale value from a singular solve. The reason to be careful with `argmin` is that it always returns an index, even when every entry is `inf`; asking *which* triangle is visible therefore needs an explicit background check on the minimum value before trusting the index.\n\n```python\nimport torch as t\ns=t.tensor([[5.,2.,1.],[3.,4.,2.]])\nhit=t.tensor([[True,True,False],[False,False,False]])\ndepth=t.where(hit,s,t.tensor(float(\"inf\")))\nprint(depth.min(dim=1)[0])\n# Hidden checks\nassert depth.min(dim=1)[0].tolist()==[2.,float(\"inf\")]\n```\n\nThe travel parameter `s` in `O + s\u00b7D` counts *direction-lengths*, not metres: the Euclidean distance from the origin to the hit point is `s` times the length of `D`. The two coincide only when `D` is a unit vector. Under the camera convention where every direction has `Dx = 1`, `s` equals the travel along `x` \u2014 a useful depth for an image, but not a distance. Comparing `s` across rays with different `|D|` compares different units.\n\nThe reason to keep the distinction is what each quantity is for. Within one ray, `s` orders hits correctly whatever `|D|` is, so the nearest-hit reduction is safe. Across rays, or for lighting, shadows and fog, physical distance is needed, and that is `s * D.norm()`. Once the visible triangle is chosen, the hit point itself is `O + s\u00b7D`, and any attribute stored at the vertices can be interpolated with the barycentric weights from the same solve. Keep the ray and triangle axes distinct until the visibility decision is made; only then is there one `s` per ray to turn into a point.\n\n```python\nimport torch as t\nd=t.tensor([1.,2.,2.]); s=t.tensor(4.)\nprint(s*d.norm())\n# Hidden checks\nassert float(s*d.norm())==12.\n```",
@@ -9176,11 +9176,11 @@
      "kc": "cnn.stride-views",
      "title": "Strides and as_strided views",
      "supporting_kcs": [
-      "numpy.views-and-copies",
-      "numpy.slicing-views",
-      "numpy.broadcasting-rules",
-      "numpy.axis-reductions",
-      "numpy.dot-matmul-patterns",
+      "torch.views-and-copies",
+      "torch.slicing-views",
+      "torch.broadcasting-rules",
+      "torch.axis-reductions",
+      "torch.dot-matmul-patterns",
       "python.defining-functions"
      ],
      "new_syntax": [
@@ -9344,11 +9344,11 @@
      "supporting_kcs": [
       "python.defining-functions",
       "python.dots-and-imports",
-      "numpy.elementwise-ufuncs",
-      "numpy.ndarray-model",
+      "torch.elementwise-ops",
+      "torch.tensor-model",
       "tensor.row-normalization",
       "torch.slice-assignment",
-      "numpy.dtype-astype",
+      "torch.dtype-astype",
       "python.control-flow"
      ],
      "new_syntax": [
@@ -9524,12 +9524,12 @@
      "title": "The linear layer",
      "supporting_kcs": [
       "cnn.module-state",
-      "numpy.dot-matmul-patterns",
-      "numpy.transpose-axes",
-      "numpy.broadcasting-rules",
-      "numpy.axis-reductions",
-      "numpy.argmin-argmax",
-      "numpy.reshape-flatten"
+      "torch.dot-matmul-patterns",
+      "torch.transpose-axes",
+      "torch.broadcasting-rules",
+      "torch.axis-reductions",
+      "torch.argmin-argmax",
+      "torch.reshape-flatten"
      ],
      "new_syntax": [],
      "concept_markdown": "A linear layer turns `in_features` numbers into `out_features` numbers. It stores one weight row per output, so the weight has shape `(out_features, in_features)`, and output `j` is the dot product of row `j` with the input, plus a bias `b[j]`. For a batch `x` of shape `(batch, in_features)` the whole thing is `x @ w.T + b`: transposing makes the shapes `(batch, in) @ (in, out)`, so the feature axes meet and the result is `(batch, out)`.\n\nThe reason the weight is stored as `(out, in)` rather than `(in, out)` is convention \u2014 PyTorch's `nn.Linear` does it, and every checkpoint you load will \u2014 and the transpose in the forward is the price. The reason the bias is `(out_features,)` and simply added is broadcasting: it lines up with the last axis of the product, so each output column gets its own offset on every example. Test shapes with a non-square weight; a square one lets an accidental missing transpose run silently with the wrong numbers.\n\n```python\nimport torch as t\nx=t.tensor([[1.,2.]])\nw=t.tensor([[2.,0.],[0.,3.],[1.,-1.]])\nb=t.tensor([1.,-1.,0.])\ny=x@w.T+b\nprint(y)\n# Hidden checks\nassert y.tolist()==[[3.,5.,-1.]]\n```\n\nThe layer treats the last axis as features and every axis before it as \"which example\". A `(batch, seq, in_features)` input \u2014 a batch of token sequences, say \u2014 goes through the same `x @ w.T + b` and comes out `(batch, seq, out_features)`: the matrix product only touches the last axis of `x`, and the bias broadcasts along it. The general rule is that a linear layer never needs to know how many leading axes there are.\n\nThe reason this matters is that it is the same weights for every example and every position. Batching does not make a weight per example; every row of every leading axis is evidence about one shared map, which is what makes the parameters learnable from many examples at once. The weight is the layer's state, created once and reused on every call; `nn.Linear` registers it as a parameter and, when `bias=False`, stores no bias at all rather than a zero one \u2014 absent state, not a broadcast constant.\n\n```python\nimport torch as t\nx=t.ones(2,3,4); w=t.ones(5,4)\nprint((x@w.T).shape)\n# Hidden checks\nassert (x@w.T).shape==(2,3,5)\n```",
@@ -9688,7 +9688,7 @@
      "title": "A two-layer MLP for images",
      "supporting_kcs": [
       "cnn.linear-layer",
-      "numpy.reshape-flatten",
+      "torch.reshape-flatten",
       "tensor.classifier-evaluation"
      ],
      "new_syntax": [],
@@ -9850,11 +9850,11 @@
       "cnn.stride-views",
       "einops.einsum",
       "torch.slice-assignment",
-      "numpy.constructors",
-      "numpy.sorting",
-      "numpy.transpose-axes",
+      "torch.constructors",
+      "torch.sorting",
+      "torch.transpose-axes",
       "tensor.row-normalization",
-      "numpy.stack-concat-interleave",
+      "torch.stack-concat-interleave",
       "python.control-flow"
      ],
      "new_syntax": [],
@@ -10015,8 +10015,8 @@
      "supporting_kcs": [
       "cnn.convolution-1d",
       "cnn.module-state",
-      "numpy.stack-concat-interleave",
-      "numpy.sorting",
+      "torch.stack-concat-interleave",
+      "torch.sorting",
       "tensor.row-normalization"
      ],
      "new_syntax": [
@@ -10208,8 +10208,8 @@
      "title": "Pooling",
      "supporting_kcs": [
       "cnn.convolution-2d",
-      "numpy.axis-reductions",
-      "numpy.argmin-argmax",
+      "torch.axis-reductions",
+      "torch.argmin-argmax",
       "tensor.row-normalization"
      ],
      "new_syntax": [],
@@ -10375,10 +10375,10 @@
      "title": "Batch normalization",
      "supporting_kcs": [
       "cnn.module-state",
-      "numpy.axis-reductions",
-      "numpy.elementwise-ufuncs",
+      "torch.axis-reductions",
+      "torch.elementwise-ops",
       "python.control-flow",
-      "numpy.stack-concat-interleave"
+      "torch.stack-concat-interleave"
      ],
      "new_syntax": [
       "syntax.with",

@@ -67,7 +67,7 @@ check("strong learner gets elevated baseline",
 
 print("\nB. TARGET DIFFICULTY ELEVATION ON UNPRACTICED KC")
 subtopic = "Numpy: Indexing and selection"
-kc = "numpy.slicing-views"
+kc = "torch.slicing-views"
 
 aim_fresh = target_difficulty(fresh_user, subtopic, kc=kc)
 check("fresh beginner aim lands near difficulty floor (~20-25)",

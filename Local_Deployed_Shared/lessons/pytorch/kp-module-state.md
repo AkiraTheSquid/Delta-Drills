@@ -3,7 +3,7 @@ kc: cnn.module-state
 title: Modules, parameters and buffers
 new_syntax: ['syntax.class', 'torch.nn.Module', 'builtin.super', 'torch.nn.Parameter', 'Tensor.register_buffer']
 concepts: [module, parameter, buffer]
-supporting: ['python.defining-functions', 'python.dots-and-imports', 'numpy.elementwise-ufuncs', 'numpy.ndarray-model', 'tensor.row-normalization', 'torch.slice-assignment', 'numpy.dtype-astype', 'python.control-flow']
+supporting: ['python.defining-functions', 'python.dots-and-imports', 'torch.elementwise-ops', 'torch.tensor-model', 'tensor.row-normalization', 'torch.slice-assignment', 'torch.dtype-astype', 'python.control-flow']
 previews: []
 faded: [1169, 1170, 1172, 1171]
 guided: []

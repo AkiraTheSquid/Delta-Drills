@@ -233,7 +233,7 @@ def check_solution_prereq_ratchet():
     rank = A.lesson_order(kc_of_page)
     owner = A.owner_of('Tensor.T', declared, rank)
     assert owner is not None, 'no lesson declares Tensor.T — the audit is blind to it'
-    first = 'numpy.ndarray-model'
+    first = 'torch.tensor-model'
     assert rank.get(owner, -1) > rank.get(first, 0), (
         f'Tensor.T is owned by {owner}, which no longer sits after {first}; '
         'if that is deliberate, this assertion is the thing to update')
@@ -400,7 +400,7 @@ def check_prose_prereq_ratchet():
         + '  — reword, define earlier, or argue the baseline.')
 
     # Detector health: the audit exists because kp-dots-and-imports (py-0)
-    # says "tensor" one lesson before numpy.ndarray-model defines it. That is
+    # says "tensor" one lesson before torch.tensor-model defines it. That is
     # baselined debt; assert the detector still SEES it while it exists, and
     # allow a clean corpus once the page is reworded and the baseline shrunk.
     if known:

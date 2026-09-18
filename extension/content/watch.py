@@ -272,7 +272,7 @@ def check_a_lesson_is_a_focus_target():
 def check_one_concept_of_a_lesson_is_a_focus_target():
     """A segmented KP must focus ONE concept, not all of them.
 
-    A KP is not one idea — `numpy.ndarray-model` teaches three — and the tutor
+    A KP is not one idea — `torch.tensor-model` teaches three — and the tutor
     hands them out one at a time. The panel says "Concept 2 of 3"; the notebook
     has to agree, or the learner is told they are on the second of three things
     and shown all three at once. That is not a crash and not even visibly
