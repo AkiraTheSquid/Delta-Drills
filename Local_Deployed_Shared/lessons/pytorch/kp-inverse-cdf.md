@@ -3,7 +3,7 @@ kc: tensor.inverse-cdf
 title: Sampling by inverse CDF
 new_syntax: ['Tensor.cumsum']
 concepts: [interval-partition, boundary-count]
-supporting: ['numpy.axis-reductions', 'numpy.broadcasting-rules', 'numpy.random-threading', 'tensor.indexed-selection', 'numpy.argmin-argmax', 'numpy.dtype-astype', 'tensor.stable-probabilities']
+supporting: ['torch.axis-reductions', 'torch.broadcasting-rules', 'torch.random-threading', 'tensor.indexed-selection', 'torch.argmin-argmax', 'torch.dtype-astype', 'tensor.stable-probabilities']
 previews: []
 faded: [1058, 1059, 1060, 1061]
 guided: []

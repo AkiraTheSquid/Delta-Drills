@@ -8,6 +8,16 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
 
+## Concept ids: `torch.*`, never `numpy.*` (2026-09-18)
+
+The 21 tensor-literacy KCs are `torch.<name>` and their pages live in
+`Local_Deployed_Shared/lessons/tensors/`. Old `numpy.*` ids only survive in
+`lessons/kc_renames.json` (append-only old→new map) and in stored user state,
+which `This-Directory-Only/backend/app/kc_renames.py` migrates on load. Rename a
+KC again by ADDING a row there, never by editing an old one. Lesson ids
+`np-1..3`, the "Numpy" topic and its subtopic keys stay as they are (the
+frontend relabels them); do not "fix" those.
+
 ## Content work: ONE concept at a time (Seth's rule, 2026-08-28)
 
 Seth learns on this app himself, one knowledge point at a time, and he sends
@@ -49,11 +59,11 @@ skill report the same thing from the other side.
 
 **Where the content work has actually reached (keep this current).**
 
-- `numpy.ndarray-model` — "What an ndarray is: data + shape + dtype".
+- `torch.tensor-model` — "What an ndarray is: data + shape + dtype".
   DONE 2026-08-28: four-stage ladder, 36 new drills (ids 532–567), input→output
   and "not this" examples under every prompt. This is the only concept that has
   had the full treatment.
-- The six dependents of `numpy.ndarray-model` — `reshape-flatten`, `elementwise-ufuncs`,
+- The six dependents of `torch.tensor-model` — `reshape-flatten`, `elementwise-ufuncs`,
   `constructors`, `dtype-astype`, `sorting`, `transpose-axes` — DONE 2026-08-30: 57 new
   drills (ids 619–675) so every rung has enough unseen drills for Seth's local topology
   (Faded ≥ 2 per segment, Solo ≥ 6, Integrated ≥ 3). `reshape-flatten` was re-cut into
@@ -78,8 +88,8 @@ skill report the same thing from the other side.
   ratchet in every lesson watcher. Read that spec before proposing a node boundary —
   the test is "can a learner fail this while succeeding at the rest of the node?",
   and one-function-per-node is explicitly wrong here.
-- **First split landed** (2026-08-31): `numpy.random-generator` → `numpy.random-samplers`
-  → `numpy.random-seeding` → `numpy.random-threading`, 32 new drills (ids 676–707),
+- **First split landed** (2026-08-31): `numpy.random-generator` → `torch.random-samplers`
+  → `torch.random-seeding` → `torch.random-threading`, 32 new drills (ids 676–707),
   every rung floor met and zero symbols under the coverage floor on all three nodes.
   Teaching order was forced by the symbols, not the pedagogy: seeding owns
   `torch.Generator`/`manual_seed`/all four `generator=` kwargs, which left threading
@@ -153,7 +163,7 @@ skill report the same thing from the other side.
   rejects them; the lesson uses `copy_` and broadcast + reshape instead. Both baselines
   (`solution_prereq_baseline.json`, `graph_structure_baseline.json`) re-recorded for the
   same function-scaffold debt and the audit's `integrated>independent` rung-order quirk
-  that `numpy.constructors` already carries. Next 0.1 exercises (`intersect_ray_1d`, …)
+  that `torch.constructors` already carries. Next 0.1 exercises (`intersect_ray_1d`, …)
   go under `tr-1` with `raytracing.make-rays-1d` as prerequisite.
 
 - **Chapter 0.0 einops/einsum coverage landed** (2026-09-06): the `einops.einsum` node
@@ -231,7 +241,7 @@ skill report the same thing from the other side.
   `This-Directory-Only/backend/.venv/bin/python3` — system python has no torch and every
   fence looks broken.
 
-- **`numpy.axis-reductions` to the floors** (2026-09-13): the first gap the
+- **`torch.axis-reductions` to the floors** (2026-09-13): the first gap the
   `ops/gap-watch/` session watcher ever fired — Seth had answered q174 and the unranked
   q103 and the Solo rung was dry. 11 new drills (ids 1363–1373): Faded 2→6 (three per
   segment), Solo 3→7, Integrated 0→3; `## Independent practice` prose became

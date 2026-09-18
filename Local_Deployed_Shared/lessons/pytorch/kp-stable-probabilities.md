@@ -3,7 +3,7 @@ kc: tensor.stable-probabilities
 title: Stable softmax and log-softmax
 new_syntax: ['Tensor.exp', 'Tensor.log']
 concepts: [shift-invariance, log-space]
-supporting: ['numpy.axis-reductions', 'numpy.elementwise-ufuncs', 'numpy.broadcasting-rules', 'numpy.ranges']
+supporting: ['torch.axis-reductions', 'torch.elementwise-ops', 'torch.broadcasting-rules', 'torch.ranges']
 previews: []
 faded: [1032, 1033, 1034, 1035]
 guided: []

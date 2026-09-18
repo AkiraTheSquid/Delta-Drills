@@ -1,7 +1,7 @@
 ---
-kc: numpy.stack-concat-interleave
+kc: torch.stack-concat-interleave
 title: Stacking, concatenating, interleaving
-supporting: [numpy.reshape-flatten, numpy.slicing-views]
+supporting: [torch.reshape-flatten, torch.slicing-views]
 new_syntax: [Tensor.ravel, torch.cat, torch.cat#dim, torch.column_stack, torch.empty, torch.empty#dtype, torch.hstack, torch.stack, torch.stack#dim, torch.vstack]
 concepts: [grow-existing-dimension, create-new-axis, interleave-streams]
 faded: [974, 975, 84, 976]

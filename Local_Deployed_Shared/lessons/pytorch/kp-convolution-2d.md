@@ -3,7 +3,7 @@ kc: cnn.convolution-2d
 title: 2-D convolution
 new_syntax: ['torch.nn.functional.conv2d']
 concepts: [six-axes, functional-api]
-supporting: ['cnn.convolution-1d', 'cnn.module-state', 'numpy.stack-concat-interleave', 'numpy.sorting', 'tensor.row-normalization']
+supporting: ['cnn.convolution-1d', 'cnn.module-state', 'torch.stack-concat-interleave', 'torch.sorting', 'tensor.row-normalization']
 previews: []
 faded: [1251, 1249, 1252, 1250]
 guided: []

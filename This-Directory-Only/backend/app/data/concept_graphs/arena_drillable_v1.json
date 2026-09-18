@@ -3465,7 +3465,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-values-and-names \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-values-and-names \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3478,7 +3478,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-types-and-conversion \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-types-and-conversion \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3491,7 +3491,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-lists-and-tuples \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-lists-and-tuples \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3504,7 +3504,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-indexing \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-indexing \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3517,7 +3517,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-calling-functions \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-calling-functions \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3530,7 +3530,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-defining-functions \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-defining-functions \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]
@@ -3543,7 +3543,7 @@
    "node_type": "concept",
    "kind": "skill",
    "tier": "core",
-   "description": "python-dots-and-imports \u2014 the py-0 prerequisite floor under numpy.ndarray-model",
+   "description": "python-dots-and-imports \u2014 the py-0 prerequisite floor under torch.tensor-model",
    "tags": [
     "drill-atom"
    ]

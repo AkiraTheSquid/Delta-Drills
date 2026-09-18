@@ -1,7 +1,7 @@
 ---
-kc: numpy.random-samplers
+kc: torch.random-samplers
 title: Drawing random numbers
-supporting: [numpy.constructors, numpy.ndarray-model]
+supporting: [torch.constructors, torch.tensor-model]
 new_syntax: [torch.rand, torch.randn, torch.randint, torch.randperm]
 previews: []
 faded: [42, 676, 677]

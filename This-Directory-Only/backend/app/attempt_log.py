@@ -59,6 +59,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterator, List, Mapping, Optional, Sequence, Tuple
 
+from app import kc_renames
 from app import logistic_engine as E
 
 logger = logging.getLogger(__name__)
@@ -190,6 +191,10 @@ class AttemptRow:
             return None
         known = {f for f in cls.__dataclass_fields__}  # type: ignore[attr-defined]
         kwargs = {k: v for k, v in raw.items() if k in known}
+        # Rows written before a KC rename keep their old id on disk; readers
+        # see the current one (see app.kc_renames).
+        if "kc" in kwargs:
+            kwargs["kc"] = kc_renames.canon(kwargs["kc"])
         try:
             return cls(**kwargs)  # type: ignore[arg-type]
         except TypeError:

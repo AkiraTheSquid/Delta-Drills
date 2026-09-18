@@ -13,10 +13,10 @@ window.DD_NOTEBOOKS = {
     },
     {
       "id": "np-1",
-      "title": "Arrays from the ground up",
+      "title": "Tensors from the ground up",
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
-      "file": "np-1-arrays-from-the-ground-up.ipynb",
+      "file": "np-1-tensors-from-the-ground-up.ipynb",
       "problems": 247
     },
     {

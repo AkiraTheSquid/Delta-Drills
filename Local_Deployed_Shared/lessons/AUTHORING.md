@@ -9,9 +9,9 @@ and grades every faded solution against the drill bank's test cases.
 
 ```markdown
 ---
-kc: numpy.broadcasting-rules        # must exist in kc_registry.json
+kc: torch.broadcasting-rules        # must exist in kc_registry.json
 title: Broadcasting rules
-supporting: [numpy.ndarray-model]   # KCs used but not taught here
+supporting: [torch.tensor-model]   # KCs used but not taught here
 new_syntax: []                      # symbols this page is the lesson for
 previews: []                        # symbols shown here but taught LATER, on purpose
 concepts: [repeat-elements]         # stable id per atomic segment, in order
@@ -161,7 +161,7 @@ Read his position rather than guessing it — his account is
 and the recipe for reading the `kc` he is on is in the repo's `CLAUDE.md` under
 "Content work: ONE concept at a time". That file also tracks which concepts have
 had the four-stage treatment and which have not — as of 2026-08-28 only
-`numpy.ndarray-model` has; PyTorch, `einsum` and `einops` have not, and are next.
+`torch.tensor-model` has; PyTorch, `einsum` and `einops` have not, and are next.
 
 ## Segments — ONE concept at a time (required)
 
@@ -279,7 +279,7 @@ Concretely:
 - Calibrate: different enough to trip slightly, close enough to be solvable
   from the lesson alone. Near-transfer, not a new concept.
 
-Example (numpy.ranges): the worked example shows `np.arange(0, 10, 2)`
+Example (torch.ranges): the worked example shows `np.arange(0, 10, 2)`
 (exclusive stop); the faded asks for an *inclusive* integer range, blanking
 `end + 1` — the learner must apply "stop is exclusive" themselves rather than
 copy the demo. See `numpy/kp-ranges.md` for the pattern to copy.

@@ -237,7 +237,7 @@ check("evidence in one KC does not leak into another",
           if kc != SOME_KC))
 
 print("\n--- a run of correct answers earns a rung, whatever the window says ---")
-# Seth's real record on numpy.ndarray-model, 2026-08-04: eleven misses from the
+# Seth's real record on torch.tensor-model, 2026-08-04: eleven misses from the
 # days when the drills themselves were wrong, then seven right out of nine and
 # five in a row. Over a 20-attempt window that is 7/20, a Wilson lower bound of
 # 0.18, and a `faded` bar of 0.34 — so the rung had not moved in twenty
@@ -301,7 +301,7 @@ print("\n--- an exhausted supported rung repeats; it never falls through to solo
 # ordinary state of a concept revisited, not an edge case.
 from app import prioritization  # noqa: E402
 
-LADDER_KC = "numpy.ndarray-model"
+LADDER_KC = "torch.tensor-model"
 POOL = list(kc_graph.questions_for_kc(LADDER_KC))
 
 
@@ -318,7 +318,7 @@ class _Q:
 def _learn_prereqs(state, kc):
     """Put the learner where this fixture claims they are: on `kc`.
 
-    Without this the fixture was a learner sitting on numpy.ndarray-model's
+    Without this the fixture was a learner sitting on torch.tensor-model's
     faded rung who had never done any python — impossible since the python
     course went in front of it. `frontier` drops a locked KC, so BOTH of
     `narrow_to_next_kc`'s frontier lookups returned None and every case here
@@ -459,7 +459,7 @@ check("...and with nothing on screen that band is served as usual",
 # correct answers (solo_progress), counted on the latest attempt per drill, and
 # a miss spends the drill for the unseen-first order — so a six-drill bank with
 # one miss topped out at five and Integrated was unreachable (Seth,
-# numpy.aggregations, q497). Once nothing unseen is left, the missed drills come
+# torch.aggregations, q497). Once nothing unseen is left, the missed drills come
 # back, with no gap: the drill exists and the learner has seen its answer.
 _missed = _rung_floor[:1]
 _stage, _ids, _gap = narrowed_for("FFFF", POOL, missed=_missed)

@@ -132,7 +132,7 @@ def _lesson_list(course: str | None = None):
 
 
 @op("lesson_read", "Read one KP page: parsed metadata plus the full markdown.",
-    {"kc": {**STR, "description": "KC id, e.g. numpy.random-seeding."},
+    {"kc": {**STR, "description": "KC id, e.g. torch.random-seeding."},
      "include_body": {**BOOL, "description": "Set false for metadata only."}},
     ["kc"])
 def _lesson_read(kc: str, include_body: bool = True):

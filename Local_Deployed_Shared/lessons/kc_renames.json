@@ -1,0 +1,26 @@
+{
+ "description": "Historical KC ids -> current ids. The first tensor lessons (np-1..np-3) were authored as NumPy and converted to the PyTorch dialect in 2026-08; their KC ids kept the `numpy.` prefix until 2026-09-18, which made a learner drilling torch.arange read reports about 'NumPy problems'. The backend applies this map when it loads a learner's saved state or attempt log, so old saves keep their ladder, posteriors and exposure. Append-only: never remove an entry while any user file on Fly could still carry the old id.",
+ "renames": {
+  "numpy.ndarray-model": "torch.tensor-model",
+  "numpy.transpose-axes": "torch.transpose-axes",
+  "numpy.views-and-copies": "torch.views-and-copies",
+  "numpy.constructors": "torch.constructors",
+  "numpy.slicing-views": "torch.slicing-views",
+  "numpy.ranges": "torch.ranges",
+  "numpy.dtype-astype": "torch.dtype-astype",
+  "numpy.reshape-flatten": "torch.reshape-flatten",
+  "numpy.elementwise-ufuncs": "torch.elementwise-ops",
+  "numpy.aggregations": "torch.aggregations",
+  "numpy.sorting": "torch.sorting",
+  "numpy.random-samplers": "torch.random-samplers",
+  "numpy.random-seeding": "torch.random-seeding",
+  "numpy.random-threading": "torch.random-threading",
+  "numpy.linalg-basics": "torch.linalg-basics",
+  "numpy.boolean-masking": "torch.boolean-masking",
+  "numpy.argmin-argmax": "torch.argmin-argmax",
+  "numpy.broadcasting-rules": "torch.broadcasting-rules",
+  "numpy.axis-reductions": "torch.axis-reductions",
+  "numpy.dot-matmul-patterns": "torch.dot-matmul-patterns",
+  "numpy.stack-concat-interleave": "torch.stack-concat-interleave"
+ }
+}

@@ -46,7 +46,7 @@ _applied_with_example: set[int] = set()
 # kc -> the KP's concept segments in teaching order:
 # [{"concept_id", "title", "drills": [question_id, ...]}, ...]
 #
-# A KP is not one idea. `kp-ndarray-model` teaches three — a tensor is one
+# A KP is not one idea. `kp-tensor-model` teaches three — a tensor is one
 # block of one type, nesting becomes axes, dtype belongs to the whole block —
 # and the markdown has always been authored that way (`## Concept: <title>`,
 # each followed by its own worked example and its own faded drill). The gate
@@ -238,7 +238,7 @@ def authored_faded_starter(question_id: int) -> Optional[str]:
 def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
     """Is this problem one that needs the WHOLE KP, every concept of it taught?
 
-    The fifth rung, and the only reason the other four exist. `kp-ndarray-model`
+    The fifth rung, and the only reason the other four exist. `kp-tensor-model`
     teaches three separate ideas — a tensor is one block of one type, nesting
     becomes axes, dtype belongs to the whole block — and the loop above teaches
     and drills them one at a time, which is the only way the third one survives
@@ -278,12 +278,26 @@ def is_integrated(question_id: int, kc_exposure: Dict[str, str]) -> bool:
 
 
 def _kc_is_fully_exposed(kc: str, kc_exposure: Dict[str, str]) -> bool:
-    """True if this KC is exposed as a whole (single-concept KP) or if all of its segments are exposed."""
+    """True if this KC is exposed as a whole, or if all of its segments are.
+
+    The KC's own key means "the whole KP is done" — `_segment_step` reserves it
+    for exactly that — and it is the key a learner holds for every KP they read
+    BEFORE it was split into concepts. Until 2026-09-18 a segmented KP ignored
+    it and demanded every `<kc>#<concept>` key instead, so splitting a KP (or
+    re-titling a concept, which mints a new id) locked every whole-KP drill the
+    learner had already earned: Seth held `torch.slicing-views` and
+    `torch.reshape-flatten` outright, 4/4 and 5/6 at the Solo rung, and the
+    only drills left unlocked on each were the fill-in-the-blank items tagged
+    to the segments. Re-reading a concept is a cost this app accepts for a
+    re-title; re-locking the drills is not.
+    """
     _load()
+    if kc in kc_exposure:
+        return True
     segments = _kc_segments.get(kc)
     if segments and len(segments) > 1:
         return all(f"{kc}#{seg['concept_id']}" in kc_exposure for seg in segments)
-    return kc in kc_exposure
+    return False
 
 
 def question_is_segment_unlocked(question_id: int, kc_exposure: Dict[str, str]) -> bool:
@@ -354,6 +368,16 @@ def _segment_step(kc: str, kc_exposure: Dict[str, str]) -> dict:
     }
 
 
+def next_segment_drills(kc: str, kc_exposure: Dict[str, str]) -> List[int]:
+    """The drills authored under the first concept of this KP the learner has
+    not read yet; empty once every concept is exposed (or the KP is held
+    whole). The queue prefers these when a KP's real rungs are still locked
+    behind its reading, so the drill on screen is the one its gate teaches."""
+    if _kc_is_fully_exposed(kc, kc_exposure):
+        return []
+    return list(_segment_step(kc, kc_exposure)["drills"])
+
+
 def exposure_key_exists(key: str) -> bool:
     """Is this a key `/exposure` may store — a KC, or one of its concepts?
 
@@ -370,44 +394,6 @@ def exposure_key_exists(key: str) -> bool:
     if not concept_id:
         return False
     return any(seg["concept_id"] == concept_id for seg in _kc_segments.get(kc) or [])
-
-
-def segment_drill(question, kc_exposure: Dict[str, str], served_ids) -> Optional[object]:
-    """The drill belonging to the concept the gate is about to teach, if the
-    adaptive pick is not already it.
-
-    The queue chooses a question, and the gate that fires in front of it is
-    whatever that question's target KC needs taught. Before segmentation those
-    two agreed by accident often enough to look intentional. They cannot agree
-    now: the gate teaches concept 2 of 3, and the queue is aiming at the KP's
-    difficulty as a whole. Serving the concept's OWN faded item is what closes
-    the loop — read one idea, practise that idea, then the next.
-
-    Returns None (keep the adaptive pick) whenever the drill is already served,
-    missing, or from another subtopic. A cross-subtopic swap would file the
-    attempt under the wrong subtopic's evidence, and no amount of pedagogical
-    tidiness is worth corrupting the mastery record to get it.
-    """
-    _load()
-    from app.questions import get_question_by_id  # app.questions imports us
-
-    for kc in _question_target_kcs.get(int(question.id), []):
-        if _kc_is_fully_exposed(kc, kc_exposure) or kc not in _kc_gate_info:
-            continue
-        # Only the FIRST unexposed concept matters — it is the one being taught.
-        # A concept may declare two faded drills (a fading series: the second
-        # asks for the same idea one step out), so an unusable first one is a
-        # reason to look at the second, not to give up on the concept.
-        for qid in _segment_step(kc, kc_exposure)["drills"]:
-            if qid == int(question.id):
-                return None  # the queue already picked it — nothing to swap
-            if qid in served_ids:
-                continue
-            drill = get_question_by_id(qid)
-            if drill is not None and drill.subtopic == question.subtopic:
-                return drill
-        return None
-    return None
 
 
 def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[dict]:
@@ -473,7 +459,7 @@ def is_prelibrary(question_id: int) -> bool:
     numpy drill after a torch lesson teaches the wrong muscle memory. The py-0
     lesson is not that: it teaches names, types, lists, indexing and `def`
     BEFORE any library exists for the learner, so its drills import nothing on
-    purpose. Parked, they leave `numpy.ndarray-model` locked behind concepts
+    purpose. Parked, they leave `torch.tensor-model` locked behind concepts
     with nothing to serve — and a concept with no questions can never become
     learned, so a brand-new account gets no question at all, forever. Measured
     on a fresh signup: frontier `['python.values-and-names']`, 0 servable, and

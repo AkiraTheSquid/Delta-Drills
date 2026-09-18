@@ -153,7 +153,7 @@ check("every concept has a clock and none exceeds the ceiling",
       sorted(set(D.kc_cap_secs(k) for k in D.kc_graph._registry())))
 check("a one-call python drill gets five minutes, einops gets ARENA's ten",
       (D.kc_cap_secs("python.indexing"), D.kc_cap_secs("einops.merge-axes"),
-       D.kc_cap_secs("numpy.broadcasting-rules"), D.kc_cap_secs("raytracing.make-rays-1d"))
+       D.kc_cap_secs("torch.broadcasting-rules"), D.kc_cap_secs("raytracing.make-rays-1d"))
       == (300, 600, 600, 900))
 check("an unknown concept falls back to the default, never to nothing",
       D.kc_cap_secs("no.such-kc") == D.PER_PROBLEM_SECS and D.kc_cap_secs(None) == D.PER_PROBLEM_SECS)

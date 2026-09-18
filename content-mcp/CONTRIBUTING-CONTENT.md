@@ -48,7 +48,7 @@ against the real files:
 
 > Read the lesson on einops.merge-axes and tell me what it covers.
 >
-> The worked example on numpy.dtype-astype never prints anything. Fix it so it
+> The worked example on torch.dtype-astype never prints anything. Fix it so it
 > shows the contrast it is teaching.
 >
 > Add three Solo drills to python.indexing — negative indices, and one that
@@ -116,7 +116,7 @@ To roll back one file rather than everything:
 
 ```bash
 ./content-mcp/bin/dd-content backup_restore --confirm \
-  --paths 'Local_Deployed_Shared/lessons/numpy/kp-ndarray-model.md'
+  --paths 'Local_Deployed_Shared/lessons/tensors/kp-tensor-model.md'
 ```
 
 Git is still the real history. The snapshot is for the case where you have made

@@ -1,7 +1,7 @@
 ---
-kc: numpy.random-seeding
+kc: torch.random-seeding
 title: Seeding your own reproducible stream
-supporting: [numpy.random-samplers, numpy.constructors, numpy.ndarray-model]
+supporting: [torch.random-samplers, torch.constructors, torch.tensor-model]
 new_syntax: [torch.Generator, Tensor.manual_seed, torch.rand#generator, torch.randn#generator, torch.randint#generator, torch.randperm#generator]
 previews: []
 faded: [696, 697]

@@ -3,7 +3,7 @@ kc: cnn.pooling
 title: Pooling
 new_syntax: []
 concepts: [global-pool, local-max]
-supporting: ['cnn.convolution-2d', 'numpy.axis-reductions', 'numpy.argmin-argmax', 'tensor.row-normalization']
+supporting: ['cnn.convolution-2d', 'torch.axis-reductions', 'torch.argmin-argmax', 'tensor.row-normalization']
 previews: []
 faded: [1265, 1268, 1266, 1267]
 guided: []

@@ -1,7 +1,7 @@
 ---
 kc: torch.out-argument
 title: Filling a tensor in place with out=
-supporting: [numpy.ranges, numpy.slicing-views, numpy.constructors]
+supporting: [torch.ranges, torch.slicing-views, torch.constructors]
 new_syntax: [torch.arange#out, torch.linspace#out]
 previews: []
 faded: [798, 799]

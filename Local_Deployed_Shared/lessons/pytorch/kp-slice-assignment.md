@@ -1,7 +1,7 @@
 ---
 kc: torch.slice-assignment
 title: Writing tensors into slices: broadcasting on the left
-supporting: [numpy.slicing-views, numpy.broadcasting-rules, numpy.constructors, numpy.ranges]
+supporting: [torch.slicing-views, torch.broadcasting-rules, torch.constructors, torch.ranges]
 new_syntax: [Tensor.copy_]
 previews: []
 faded: [809, 810]

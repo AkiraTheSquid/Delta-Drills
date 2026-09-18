@@ -1,5 +1,5 @@
 ---
-kc: numpy.ndarray-model
+kc: torch.tensor-model
 ---
 First concept of the numpy course, and the one the attempt log indicts.
 
@@ -16,7 +16,7 @@ First concept of the numpy course, and the one the attempt log indicts.
   (`rung_stall`, `served_while_predicting_failure`).
 
 ## Edges
-- [[numpy.reshape-flatten]]: same stall pattern in the same logs (43 attempts,
+- [[torch.reshape-flatten]]: same stall pattern in the same logs (43 attempts,
   14%) — the two failures share the untaught-transpose cause.
 
 ## Checks

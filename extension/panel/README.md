@@ -171,7 +171,7 @@ and `panel.css` (dark, sized for a ~360px Chrome side panel).
 ## Recent Changes
 - 2026-08-06 (**the panel teaches one concept, and posts one concept**):
   `panel.js`, `api.js`, `panel.html`, `watch.py`, plus the generated index now
-  arriving in three parts. A KP is not one idea — `numpy.ndarray-model` teaches
+  arriving in three parts. A KP is not one idea — `torch.tensor-model` teaches
   three — and the backend gate hands them out one at a time with its own
   `exposure_key` (`"<kc>#<concept_id>"`). This panel ignored that twice over.
   It opened `dd-kp-<slug>`, so the notebook showed all three concepts and every

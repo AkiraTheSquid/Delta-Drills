@@ -11,7 +11,7 @@
   {
    "id": "np-1",
    "topic": "Numpy",
-   "title": "Arrays from the ground up",
+   "title": "Tensors from the ground up",
    "subtopic_key": "Numpy: Core array literacy"
   },
   {
@@ -138,9 +138,9 @@
    ]
   },
   {
-   "id": "numpy.ndarray-model",
+   "id": "torch.tensor-model",
    "lesson": "np-1",
-   "title": "What an ndarray is: data + shape + dtype",
+   "title": "What a tensor is: data + shape + dtype",
    "syntax": true,
    "prereqs": [
     "python.indexing",
@@ -149,195 +149,195 @@
    ]
   },
   {
-   "id": "numpy.transpose-axes",
+   "id": "torch.transpose-axes",
    "lesson": "np-1",
    "title": "Transpose: swapping which axis is which",
    "syntax": true,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.views-and-copies",
+   "id": "torch.views-and-copies",
    "lesson": "np-1",
    "title": "Views and copies: the same numbers, read a different way",
    "syntax": true,
    "prereqs": [
-    "numpy.transpose-axes"
+    "torch.transpose-axes"
    ]
   },
   {
-   "id": "numpy.constructors",
+   "id": "torch.constructors",
    "lesson": "np-1",
-   "title": "Array constructors: zeros, ones, full, empty, eye",
+   "title": "Tensor constructors: zeros, ones, full, eye, *_like",
    "syntax": false,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.slicing-views",
+   "id": "torch.slicing-views",
    "lesson": "np-1",
-   "title": "Slicing, views, and slice assignment",
+   "title": "Selecting and changing parts of a tensor",
    "syntax": true,
    "prereqs": [
-    "numpy.views-and-copies"
+    "torch.views-and-copies"
    ]
   },
   {
-   "id": "numpy.ranges",
+   "id": "torch.ranges",
    "lesson": "np-1",
    "title": "Numeric ranges: arange and linspace",
    "syntax": false,
    "prereqs": [
-    "numpy.constructors"
+    "torch.constructors"
    ]
   },
   {
-   "id": "numpy.dtype-astype",
+   "id": "torch.dtype-astype",
    "lesson": "np-1",
-   "title": "Dtypes, astype, and memory size",
+   "title": "Dtypes, .to(), and memory size",
    "syntax": false,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.reshape-flatten",
+   "id": "torch.reshape-flatten",
    "lesson": "np-1",
-   "title": "Reshape, ravel, and element order",
+   "title": "Reshape, flatten, and element order",
    "syntax": false,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.elementwise-ufuncs",
+   "id": "torch.elementwise-ops",
    "lesson": "np-1",
-   "title": "Elementwise math (ufuncs)",
+   "title": "Elementwise math",
    "syntax": false,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.aggregations",
+   "id": "torch.aggregations",
    "lesson": "np-1",
-   "title": "Whole-array aggregations and Python scalars",
+   "title": "Whole-tensor aggregations and Python scalars",
    "syntax": false,
    "prereqs": [
-    "numpy.elementwise-ufuncs"
+    "torch.elementwise-ops"
    ]
   },
   {
-   "id": "numpy.sorting",
+   "id": "torch.sorting",
    "lesson": "np-1",
-   "title": "Sorting arrays",
+   "title": "Sorting tensors",
    "syntax": false,
    "prereqs": [
-    "numpy.ndarray-model"
+    "torch.tensor-model"
    ]
   },
   {
-   "id": "numpy.random-samplers",
+   "id": "torch.random-samplers",
    "lesson": "np-1",
    "title": "Drawing random numbers",
    "syntax": false,
    "prereqs": [
-    "numpy.constructors"
+    "torch.constructors"
    ]
   },
   {
-   "id": "numpy.random-seeding",
+   "id": "torch.random-seeding",
    "lesson": "np-1",
    "title": "Seeding your own reproducible stream",
    "syntax": false,
    "prereqs": [
-    "numpy.random-samplers"
+    "torch.random-samplers"
    ]
   },
   {
-   "id": "numpy.random-threading",
+   "id": "torch.random-threading",
    "lesson": "np-1",
    "title": "Using a stream you were handed",
    "syntax": false,
    "prereqs": [
-    "numpy.random-seeding"
+    "torch.random-seeding"
    ]
   },
   {
-   "id": "numpy.linalg-basics",
+   "id": "torch.linalg-basics",
    "lesson": "np-1",
-   "title": "Matrix multiply and np.linalg basics",
+   "title": "Matrix multiply and t.linalg basics",
    "syntax": true,
    "prereqs": [
-    "numpy.aggregations"
+    "torch.aggregations"
    ]
   },
   {
-   "id": "numpy.boolean-masking",
+   "id": "torch.boolean-masking",
    "lesson": "np-2",
    "title": "Boolean masks: compare, count, filter",
    "syntax": false,
    "prereqs": [
-    "numpy.slicing-views",
-    "numpy.elementwise-ufuncs"
+    "torch.slicing-views",
+    "torch.elementwise-ops"
    ]
   },
   {
-   "id": "numpy.argmin-argmax",
+   "id": "torch.argmin-argmax",
    "lesson": "np-2",
    "title": "Locating extremes: argmin and argmax",
    "syntax": false,
    "prereqs": [
-    "numpy.aggregations"
+    "torch.aggregations"
    ]
   },
   {
-   "id": "numpy.broadcasting-rules",
+   "id": "torch.broadcasting-rules",
    "lesson": "np-3",
    "title": "Broadcasting rules",
    "syntax": true,
    "prereqs": [
-    "numpy.elementwise-ufuncs",
-    "numpy.reshape-flatten"
+    "torch.elementwise-ops",
+    "torch.reshape-flatten"
    ]
   },
   {
-   "id": "numpy.axis-reductions",
+   "id": "torch.axis-reductions",
    "lesson": "np-3",
    "title": "Reductions along an axis and keepdims",
    "syntax": false,
    "prereqs": [
-    "numpy.aggregations",
-    "numpy.broadcasting-rules"
+    "torch.aggregations",
+    "torch.broadcasting-rules"
    ],
    "encompassing": {
-    "numpy.aggregations": 0.4,
-    "numpy.broadcasting-rules": 0.4
+    "torch.aggregations": 0.4,
+    "torch.broadcasting-rules": 0.4
    }
   },
   {
-   "id": "numpy.dot-matmul-patterns",
+   "id": "torch.dot-matmul-patterns",
    "lesson": "np-3",
    "title": "Dot products and matrix-multiply patterns",
    "syntax": false,
    "prereqs": [
-    "numpy.linalg-basics",
-    "numpy.axis-reductions",
-    "numpy.transpose-axes"
+    "torch.linalg-basics",
+    "torch.axis-reductions",
+    "torch.transpose-axes"
    ],
    "encompassing": {
-    "numpy.linalg-basics": 0.6
+    "torch.linalg-basics": 0.6
    }
   },
   {
-   "id": "numpy.stack-concat-interleave",
+   "id": "torch.stack-concat-interleave",
    "lesson": "np-3",
    "title": "Stacking, concatenating, interleaving",
    "syntax": false,
    "prereqs": [
-    "numpy.reshape-flatten"
+    "torch.reshape-flatten"
    ]
   },
   {
@@ -346,7 +346,7 @@
    "title": "The einops pattern language: naming and permuting axes",
    "syntax": true,
    "prereqs": [
-    "numpy.reshape-flatten"
+    "torch.reshape-flatten"
    ]
   },
   {
@@ -410,7 +410,7 @@
    "syntax": false,
    "prereqs": [
     "einops.pattern-language",
-    "numpy.axis-reductions"
+    "torch.axis-reductions"
    ],
    "encompassing": {
     "einops.pattern-language": 0.7
@@ -476,11 +476,11 @@
    "title": "Filling a tensor in place with out=",
    "syntax": true,
    "prereqs": [
-    "numpy.ranges",
-    "numpy.slicing-views"
+    "torch.ranges",
+    "torch.slicing-views"
    ],
    "encompassing": {
-    "numpy.ranges": 0.4
+    "torch.ranges": 0.4
    }
   },
   {
@@ -489,10 +489,10 @@
    "title": "Writing tensors into slices: broadcasting on the left",
    "syntax": true,
    "prereqs": [
-    "numpy.slicing-views",
-    "numpy.broadcasting-rules",
-    "numpy.constructors",
-    "numpy.ranges"
+    "torch.slicing-views",
+    "torch.broadcasting-rules",
+    "torch.constructors",
+    "torch.ranges"
    ]
   },
   {
@@ -501,9 +501,9 @@
    "title": "A ray is an origin and a direction",
    "syntax": false,
    "prereqs": [
-    "numpy.constructors",
-    "numpy.broadcasting-rules",
-    "numpy.ranges"
+    "torch.constructors",
+    "torch.broadcasting-rules",
+    "torch.ranges"
    ]
   },
   {
@@ -515,7 +515,7 @@
     "torch.out-argument",
     "torch.slice-assignment",
     "raytracing.ray-parametrisation",
-    "numpy.ranges"
+    "torch.ranges"
    ]
   },
   {
@@ -533,11 +533,11 @@
    "title": "Row lengths and unit directions",
    "syntax": true,
    "prereqs": [
-    "numpy.axis-reductions",
-    "numpy.broadcasting-rules",
-    "numpy.boolean-masking",
-    "numpy.argmin-argmax",
-    "numpy.constructors"
+    "torch.axis-reductions",
+    "torch.broadcasting-rules",
+    "torch.boolean-masking",
+    "torch.argmin-argmax",
+    "torch.constructors"
    ],
    "arena_section": "0.0",
    "assessment": "composite"
@@ -549,9 +549,9 @@
    "syntax": false,
    "prereqs": [
     "tensor.row-normalization",
-    "numpy.dot-matmul-patterns",
-    "numpy.transpose-axes",
-    "numpy.argmin-argmax"
+    "torch.dot-matmul-patterns",
+    "torch.transpose-axes",
+    "torch.argmin-argmax"
    ],
    "arena_section": "0.0",
    "assessment": "composite"
@@ -562,10 +562,10 @@
    "title": "Select values with tensor indices",
    "syntax": true,
    "prereqs": [
-    "numpy.slicing-views",
-    "numpy.ranges",
-    "numpy.axis-reductions",
-    "numpy.broadcasting-rules"
+    "torch.slicing-views",
+    "torch.ranges",
+    "torch.axis-reductions",
+    "torch.broadcasting-rules"
    ],
    "arena_section": "0.0",
    "assessment": "composite"
@@ -576,13 +576,13 @@
    "title": "Stable probabilities from logits",
    "syntax": false,
    "prereqs": [
-    "numpy.axis-reductions",
-    "numpy.elementwise-ufuncs",
-    "numpy.broadcasting-rules",
-    "numpy.ranges"
+    "torch.axis-reductions",
+    "torch.elementwise-ops",
+    "torch.broadcasting-rules",
+    "torch.ranges"
    ],
    "encompassing": {
-    "numpy.broadcasting-rules": 0.4
+    "torch.broadcasting-rules": 0.4
    },
    "arena_section": "0.0",
    "assessment": "composite"
@@ -595,9 +595,9 @@
    "prereqs": [
     "tensor.stable-probabilities",
     "tensor.indexed-selection",
-    "numpy.argmin-argmax",
-    "numpy.boolean-masking",
-    "numpy.dtype-astype"
+    "torch.argmin-argmax",
+    "torch.boolean-masking",
+    "torch.dtype-astype"
    ],
    "encompassing": {
     "tensor.stable-probabilities": 0.4
@@ -611,12 +611,12 @@
    "title": "Turn random draws into categorical samples",
    "syntax": true,
    "prereqs": [
-    "numpy.axis-reductions",
-    "numpy.broadcasting-rules",
-    "numpy.random-threading",
+    "torch.axis-reductions",
+    "torch.broadcasting-rules",
+    "torch.random-threading",
     "tensor.indexed-selection",
-    "numpy.argmin-argmax",
-    "numpy.dtype-astype",
+    "torch.argmin-argmax",
+    "torch.dtype-astype",
     "tensor.stable-probabilities"
    ],
    "arena_section": "0.0",
@@ -629,10 +629,10 @@
    "syntax": true,
    "prereqs": [
     "raytracing.ray-parametrisation",
-    "numpy.linalg-basics",
-    "numpy.stack-concat-interleave",
-    "numpy.constructors",
-    "numpy.boolean-masking",
+    "torch.linalg-basics",
+    "torch.stack-concat-interleave",
+    "torch.constructors",
+    "torch.boolean-masking",
     "tensor.row-normalization",
     "tensor.indexed-selection"
    ],
@@ -646,8 +646,8 @@
    "syntax": false,
    "prereqs": [
     "raytracing.segment-intersection",
-    "numpy.broadcasting-rules",
-    "numpy.axis-reductions"
+    "torch.broadcasting-rules",
+    "torch.axis-reductions"
    ],
    "arena_section": "0.1",
    "assessment": "composite"
@@ -659,10 +659,10 @@
    "syntax": false,
    "prereqs": [
     "raytracing.make-rays-1d",
-    "numpy.broadcasting-rules",
-    "numpy.reshape-flatten",
+    "torch.broadcasting-rules",
+    "torch.reshape-flatten",
     "torch.slice-assignment",
-    "numpy.stack-concat-interleave",
+    "torch.stack-concat-interleave",
     "tensor.row-normalization"
    ],
    "arena_section": "0.1",
@@ -675,8 +675,8 @@
    "syntax": false,
    "prereqs": [
     "raytracing.segment-intersection",
-    "numpy.linalg-basics",
-    "numpy.broadcasting-rules"
+    "torch.linalg-basics",
+    "torch.broadcasting-rules"
    ],
    "arena_section": "0.1",
    "assessment": "composite"
@@ -691,7 +691,7 @@
     "raytracing.batched-segments",
     "raytracing.make-rays-2d",
     "tensor.indexed-selection",
-    "numpy.dtype-astype"
+    "torch.dtype-astype"
    ],
    "arena_section": "0.1",
    "assessment": "composite"
@@ -702,15 +702,15 @@
    "title": "Tensor strides describe addresses, not shapes",
    "syntax": true,
    "prereqs": [
-    "numpy.views-and-copies",
-    "numpy.slicing-views",
-    "numpy.broadcasting-rules",
-    "numpy.axis-reductions",
-    "numpy.dot-matmul-patterns",
+    "torch.views-and-copies",
+    "torch.slicing-views",
+    "torch.broadcasting-rules",
+    "torch.axis-reductions",
+    "torch.dot-matmul-patterns",
     "python.defining-functions"
    ],
    "encompassing": {
-    "numpy.dot-matmul-patterns": 0.4
+    "torch.dot-matmul-patterns": 0.4
    },
    "arena_section": "0.2",
    "assessment": "composite"
@@ -724,7 +724,7 @@
     "python.defining-functions",
     "python.lists-and-tuples",
     "python.indexing",
-    "numpy.boolean-masking"
+    "torch.boolean-masking"
    ],
    "arena_section": "0.0",
    "assessment": "composite"
@@ -737,16 +737,16 @@
    "prereqs": [
     "python.defining-functions",
     "python.dots-and-imports",
-    "numpy.elementwise-ufuncs",
-    "numpy.ndarray-model",
+    "torch.elementwise-ops",
+    "torch.tensor-model",
     "tensor.row-normalization",
     "torch.slice-assignment",
-    "numpy.dtype-astype",
+    "torch.dtype-astype",
     "python.control-flow"
    ],
    "encompassing": {
-    "numpy.dtype-astype": 0.4,
-    "numpy.ndarray-model": 0.4
+    "torch.dtype-astype": 0.4,
+    "torch.tensor-model": 0.4
    },
    "arena_section": "0.2",
    "assessment": "composite"
@@ -758,15 +758,15 @@
    "syntax": false,
    "prereqs": [
     "cnn.module-state",
-    "numpy.dot-matmul-patterns",
-    "numpy.transpose-axes",
-    "numpy.broadcasting-rules",
-    "numpy.axis-reductions",
-    "numpy.argmin-argmax",
-    "numpy.reshape-flatten"
+    "torch.dot-matmul-patterns",
+    "torch.transpose-axes",
+    "torch.broadcasting-rules",
+    "torch.axis-reductions",
+    "torch.argmin-argmax",
+    "torch.reshape-flatten"
    ],
    "encompassing": {
-    "numpy.dot-matmul-patterns": 0.4
+    "torch.dot-matmul-patterns": 0.4
    },
    "arena_section": "0.2",
    "assessment": "composite"
@@ -778,7 +778,7 @@
    "syntax": false,
    "prereqs": [
     "cnn.linear-layer",
-    "numpy.reshape-flatten",
+    "torch.reshape-flatten",
     "tensor.classifier-evaluation"
    ],
    "arena_section": "0.2",
@@ -793,11 +793,11 @@
     "cnn.stride-views",
     "einops.einsum",
     "torch.slice-assignment",
-    "numpy.constructors",
-    "numpy.sorting",
-    "numpy.transpose-axes",
+    "torch.constructors",
+    "torch.sorting",
+    "torch.transpose-axes",
     "tensor.row-normalization",
-    "numpy.stack-concat-interleave",
+    "torch.stack-concat-interleave",
     "python.control-flow"
    ],
    "arena_section": "0.2",
@@ -811,8 +811,8 @@
    "prereqs": [
     "cnn.convolution-1d",
     "cnn.module-state",
-    "numpy.stack-concat-interleave",
-    "numpy.sorting",
+    "torch.stack-concat-interleave",
+    "torch.sorting",
     "tensor.row-normalization"
    ],
    "encompassing": {
@@ -828,8 +828,8 @@
    "syntax": false,
    "prereqs": [
     "cnn.convolution-2d",
-    "numpy.axis-reductions",
-    "numpy.argmin-argmax",
+    "torch.axis-reductions",
+    "torch.argmin-argmax",
     "tensor.row-normalization"
    ],
    "arena_section": "0.2",
@@ -842,10 +842,10 @@
    "syntax": true,
    "prereqs": [
     "cnn.module-state",
-    "numpy.axis-reductions",
-    "numpy.elementwise-ufuncs",
+    "torch.axis-reductions",
+    "torch.elementwise-ops",
     "python.control-flow",
-    "numpy.stack-concat-interleave"
+    "torch.stack-concat-interleave"
    ],
    "arena_section": "0.2",
    "assessment": "composite"

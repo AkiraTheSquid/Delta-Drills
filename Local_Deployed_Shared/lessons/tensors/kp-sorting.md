@@ -1,7 +1,7 @@
 ---
-kc: numpy.sorting
+kc: torch.sorting
 title: Sorting tensors
-supporting: [numpy.ndarray-model, numpy.slicing-views]
+supporting: [torch.tensor-model, torch.slicing-views]
 new_syntax: [torch.sort, torch.sort#descending, torch.sort#dim, torch.argsort, torch.argsort#descending, torch.argsort#dim, torch.topk, Tensor.values, Tensor.indices]
 faded: [58, 520, 521, 660, 661, 662]
 guided: [516, 517]

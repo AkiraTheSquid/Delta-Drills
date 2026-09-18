@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, diagnostic, kc_graph, lessons, practice_targets
+from app import content_gaps, diagnostic, kc_graph
 from app.practice.grading import select_question_for_difficulty
 from app.prioritization import (
     answered_question_ids,
@@ -123,8 +123,15 @@ def pick_for_subtopic(
     if question is None:
         raise SubtopicDry(gap)
 
-    # Teach one concept, then drill THAT concept — see lessons.segment_drill.
-    question = lessons.segment_drill(question, practice_targets.effective_exposure(user_state), served) or question
+    # The gate in front of this question teaches whichever concept of the KP
+    # the learner has not read yet; the drill stays the ladder's pick. Until
+    # 2026-09-18 `lessons.segment_drill` swapped in the concept's FADED item
+    # here — the one rung retired on 2026-09-11 — so a segment whose id changed
+    # under recompile (a re-titled heading) put a Solo-rung learner back on
+    # fill-in-the-blank drills: Seth on `torch.ranges`, five faded items in a
+    # row, "trivially easy. a bit ridiculous". A re-teach of the prose is the
+    # accepted cost of a re-titled concept; a demotion beneath DRILL_FLOOR is
+    # not.
 
     # 🔴 "NEXT" MAY NOT HAND BACK THE PROBLEM THE LEARNER IS LOOKING AT.
     #
@@ -251,7 +258,7 @@ def queue_next_kc(user_state) -> str | None:
     an unserved drill, and the queue does not always serve it. A head whose
     current RUNG is spent is a content gap the router steps past (`tried_kcs`
     above), so practice hands over the next concept along while the graph kept
-    ringing the head — Seth, 2026-09-13, on `numpy.ndarray-model`: "it
+    ringing the head — Seth, 2026-09-13, on `torch.tensor-model`: "it
     highlights the lower concept that is not currently being tested". Asking
     the real selection, dry, is the only answer that cannot drift from it.
     None when the queue would find nothing (a 409/404 request).

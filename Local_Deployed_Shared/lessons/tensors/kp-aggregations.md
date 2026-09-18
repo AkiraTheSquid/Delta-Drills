@@ -1,7 +1,7 @@
 ---
-kc: numpy.aggregations
+kc: torch.aggregations
 title: Whole-tensor aggregations and Python scalars
-supporting: [numpy.elementwise-ufuncs]
+supporting: [torch.elementwise-ops]
 new_syntax: [Tensor.any, Tensor.max, Tensor.mean, Tensor.min, Tensor.sum, torch.Tensor, torch.allclose, syntax.compare]
 faded: [26, 28, 64, 984, 985, 986]
 guided: [495, 496]

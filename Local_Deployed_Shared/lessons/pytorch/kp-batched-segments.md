@@ -3,7 +3,7 @@ kc: raytracing.batched-segments
 title: Every ray against every segment
 new_syntax: []
 concepts: [pair-axes, judge-then-reduce]
-supporting: ['raytracing.segment-intersection', 'numpy.broadcasting-rules', 'numpy.axis-reductions']
+supporting: ['raytracing.segment-intersection', 'torch.broadcasting-rules', 'torch.axis-reductions']
 previews: []
 faded: [1105, 1106, 1107, 1108]
 guided: []

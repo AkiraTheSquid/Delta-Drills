@@ -1,7 +1,7 @@
 ---
-kc: numpy.constructors
+kc: torch.constructors
 title: Tensor constructors — zeros, ones, full, eye, *_like
-supporting: [numpy.ndarray-model]
+supporting: [torch.tensor-model]
 new_syntax: [Tensor.all, torch.bool, torch.eye, torch.full, torch.full_like, torch.int32, torch.ones, torch.ones#dtype, torch.ones_like, torch.zeros, torch.zeros#dtype, torch.zeros_like]
 previews: [syntax.matmul]
 faded: [227, 212, 41, 228, 639, 640, 641, 642]

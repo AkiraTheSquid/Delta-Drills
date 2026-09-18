@@ -26,14 +26,14 @@ own concept, and 19 are drilled zero times.** The debt is concentrated:
 
 | KC | symbols | segments | drills | drills/symbol | under floor | at zero |
 |---|---:|---:|---:|---:|---:|---:|
-| `numpy.stack-concat-interleave` | 10 | 1 | 5 | 0.5 | **10** | 3 |
+| `torch.stack-concat-interleave` | 10 | 1 | 5 | 0.5 | **10** | 3 |
 | `numpy.random-generator` | 10 | 1 | 3 | 0.3 | **7** | 4 |
 | `python.dots-and-imports` | 9 | 1 | 6 | 0.7 | 5 | 1 |
 | `python.types-and-conversion` | 6 | 1 | 6 | 1.0 | 4 | 2 |
-| `numpy.slicing-views` | 6 | 1 | 8 | 1.3 | 3 | 0 |
+| `torch.slicing-views` | 6 | 1 | 8 | 1.3 | 3 | 0 |
 | `python.calling-functions` | 6 | 1 | 6 | 1.0 | 0 | 0 |
 
-Compare the nodes that have had the full treatment: `numpy.ndarray-model` —
+Compare the nodes that have had the full treatment: `torch.tensor-model` —
 11 symbols, 3 segments, 37 drills, **zero** under the floor.
 
 Two different problems live in that table and they need to be named separately:
@@ -93,13 +93,13 @@ Eight new nodes, three symbol evictions, one merge.
 numpy.random-generator          -> 3   the four samplers (rand/randn/randint/randperm)
                                        seeding your own stream (DONE 2026-08-31)
                                        using a stream you were handed
-numpy.stack-concat-interleave   -> 2   stack vs cat (does it add an axis?)
+torch.stack-concat-interleave   -> 2   stack vs cat (does it add an axis?)
                                        hstack/vstack/column_stack conventions
-                                  evict torch.empty + torch.empty#dtype -> numpy.constructors
-                                  evict Tensor.ravel                    -> numpy.reshape-flatten
-numpy.slicing-views             -> 2   slice syntax + multi-axis indexing
+                                  evict torch.empty + torch.empty#dtype -> torch.constructors
+                                  evict Tensor.ravel                    -> torch.reshape-flatten
+torch.slicing-views             -> 2   slice syntax + multi-axis indexing
                                        reversal / flip / rot90
-                                  merge its views half INTO numpy.views-and-copies
+                                  merge its views half INTO torch.views-and-copies
 python.dots-and-imports         -> 2   attribute and method access (the dot)
                                        import namespaces (import, import-as, module members)
 python.calling-functions        -> 2   calling + positional arguments
@@ -118,7 +118,7 @@ first, on the reasoning that it is the largest unbacked mastery claim and gates
 nothing downstream (it has **zero dependents** in the registry, verified
 2026-08-31), so a bad split there cannot cascade. The gating argument still
 holds and it is the right first cut. But on the fresh measurement
-`numpy.stack-concat-interleave` is the worse node — all ten of its symbols are
+`torch.stack-concat-interleave` is the worse node — all ten of its symbols are
 under the floor against random-generator's seven, and it is the one carrying
 the stack/cat confusion. It should be second, not later.
 
@@ -206,15 +206,15 @@ Not a registry edit. Every one of these, or the split is worse than the blob:
 - [x] Measured, and the measurement is now standing: `audit_symbol_coverage.py`,
       wired into all five watchers via `scripts/guard_checks.py`.
 - [x] Plan written down (this file).
-- [x] `numpy.random-generator` → 3, **done 2026-08-31**. `numpy.random-samplers`
-      → `numpy.random-seeding` → `numpy.random-threading`, 32 new drills
+- [x] `numpy.random-generator` → 3, **done 2026-08-31**. `torch.random-samplers`
+      → `torch.random-seeding` → `torch.random-threading`, 32 new drills
       (676–707), every rung floor met (Faded ≥ 2, Solo ≥ 6, Integrated ≥ 3) and
       **zero symbols under the coverage floor on all three nodes**. The old page
       is archived and recorded under a new `split_kcs` key in the retirement
       manifest — a split is not a retirement, and filing it as one would tell
       the next reader that random numbers left the course.
-- [ ] `numpy.stack-concat-interleave` → 2, plus the three evictions.
-- [ ] `numpy.slicing-views` → 2, plus the merge into `views-and-copies`.
+- [ ] `torch.stack-concat-interleave` → 2, plus the three evictions.
+- [ ] `torch.slicing-views` → 2, plus the merge into `views-and-copies`.
 - [ ] `python.dots-and-imports` → 2.
 - [ ] `python.calling-functions` → 2.
 - [ ] **Nothing in the course teaches `*args` or `None`.** Found while recording

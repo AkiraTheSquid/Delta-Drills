@@ -222,7 +222,7 @@ const notebooks = {
    * The cell a teaching step should open — one CONCEPT when the KP has
    * several, the whole KP when it does not.
    *
-   * A KP is not one idea: `numpy.ndarray-model` teaches three, and the gate
+   * A KP is not one idea: `torch.tensor-model` teaches three, and the gate
    * hands them out one at a time under its own `exposure_key`
    * (`"<kc>#<concept_id>"`, from app/lessons.py::_segment_step). The anchor for
    * that key is SHIPPED in the generated index rather than rebuilt here — same

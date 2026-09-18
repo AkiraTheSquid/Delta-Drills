@@ -1,5 +1,5 @@
 ---
-kc: numpy.views-and-copies
+kc: torch.views-and-copies
 title: Views and copies — the same numbers, read a different way
 supporting: []
 new_syntax: [Tensor.contiguous, Tensor.data_ptr, Tensor.is_contiguous]

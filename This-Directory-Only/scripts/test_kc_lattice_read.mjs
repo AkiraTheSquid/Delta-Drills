@@ -94,7 +94,7 @@ console.log("kc_lattice_read");
 check("the server's measured reading wins", () => {
   const { win } = load();
   withCrosswalk(win, { r: 0.11, atoms: ["x"], ts: null, coveredW: 0.9 });
-  const out = win.kcLatticeReadiness("numpy.ndarray-model", { kcs: { "numpy.ndarray-model": MEASURED } }, STATE, (v) => v);
+  const out = win.kcLatticeReadiness("torch.tensor-model", { kcs: { "torch.tensor-model": MEASURED } }, STATE, (v) => v);
   assert(out.r === 0.894, `expected the lattice's 0.894, got ${out && out.r}`);
   assert(out.source === "atom", "a measured server reading is an atom-level source");
   assert(out.server === true, "the read must be marked as the server's");
@@ -111,14 +111,14 @@ check("an unevidenced concept falls through", () => {
   const { win } = load();
   withCrosswalk(win, null);
   const row = { ...MEASURED, evidenced: false };
-  const out = win.kcLatticeReadiness("numpy.ndarray-model", { kcs: { "numpy.ndarray-model": row } }, STATE, (v) => v);
+  const out = win.kcLatticeReadiness("torch.tensor-model", { kcs: { "torch.tensor-model": row } }, STATE, (v) => v);
   assert(out === null, "covered weight below the server's cut is not a measurement");
 });
 
 check("a guest with no lattice still reads their own crosswalk", () => {
   const { win } = load();
   withCrosswalk(win, { r: 0.55, atoms: ["ndarray-shape"], ts: "2026-08-06T17:00:00Z", coveredW: 0.8 });
-  const out = win.kcLatticeReadiness("numpy.ndarray-model", null, STATE, (v) => v);
+  const out = win.kcLatticeReadiness("torch.tensor-model", null, STATE, (v) => v);
   assert(out.r === 0.55, `offline read expected 0.55, got ${out && out.r}`);
   assert(out.server === undefined, "an offline read is not the server's");
   assert(out.via[0] === "ndarray-shape", "the offline read reports which atoms it used");
@@ -127,7 +127,7 @@ check("a guest with no lattice still reads their own crosswalk", () => {
 check("no evidence anywhere returns null, never a number", () => {
   const { win } = load();
   withCrosswalk(win, null);
-  assert(win.kcLatticeReadiness("numpy.sorting", null, null, (v) => v) === null,
+  assert(win.kcLatticeReadiness("torch.sorting", null, null, (v) => v) === null,
     "with nothing to read the caller must reach its labelled fallback");
 });
 

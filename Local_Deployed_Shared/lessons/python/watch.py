@@ -1,17 +1,17 @@
 """watch.py — health checks for lessons/python (the py-0 prerequisite floor).
 
-py-0 is the seven concepts that sit BELOW numpy.ndarray-model: values and
+py-0 is the seven concepts that sit BELOW torch.tensor-model: values and
 names, types, lists and tuples, indexing, calling functions, defining
 functions, and dots/imports. It exists so the first thing a learner reads has
 something prior to it — before 2026-08-28 the course had exactly one root,
-numpy.ndarray-model, and every piece of jargon on that page pointed FORWARD
+torch.tensor-model, and every piece of jargon on that page pointed FORWARD
 into lessons the learner had not reached.
 
 Every way this floor breaks is quiet, which is what the checks below are for:
 
   - a page here reaching for torch/numpy/einops teaches above its own level,
     and nothing else in the pipeline would notice;
-  - the floor drifting out from under np-1 (numpy.ndarray-model losing its
+  - the floor drifting out from under np-1 (torch.tensor-model losing its
     python prereqs) puts the root back where it was, silently;
   - 🔴 wiring a python ATOM as a prerequisite of tensor-wraps-ndarray locks
     every existing account out of the whole numpy course. bkt_mastery's
@@ -84,11 +84,11 @@ def check_the_floor_stays_under_the_numpy_course():
         "the course's root concept(s) are %s. There must be exactly one, and it "
         "must be %s — a second root is a lesson with nothing prior to it, which "
         "is the state this whole folder exists to end" % (roots, ROOT_KC))
-    first_numpy = kcs.get("numpy.ndarray-model")
-    assert first_numpy, "numpy.ndarray-model is gone from the registry"
+    first_numpy = kcs.get("torch.tensor-model")
+    assert first_numpy, "torch.tensor-model is gone from the registry"
     prereqs = first_numpy["prereqs"]
     assert prereqs and all(p.startswith("python.") for p in prereqs), (
-        "numpy.ndarray-model's prereqs are %s — the floor has drifted out from "
+        "torch.tensor-model's prereqs are %s — the floor has drifted out from "
         "under it and the first numpy page is a root again" % prereqs)
 
 

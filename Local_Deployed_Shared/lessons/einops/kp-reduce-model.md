@@ -1,7 +1,7 @@
 ---
 kc: einops.reduce-model
 title: einops.reduce — dropping axes with an aggregation
-supporting: [einops.pattern-language, numpy.axis-reductions]
+supporting: [einops.pattern-language, torch.axis-reductions]
 new_syntax: [einops.reduce]
 faded: [325]
 guided: [328]

@@ -1,7 +1,7 @@
 ---
-kc: numpy.axis-reductions
+kc: torch.axis-reductions
 title: Reductions along an axis — and keepdims
-supporting: [numpy.aggregations, numpy.broadcasting-rules]
+supporting: [torch.aggregations, torch.broadcasting-rules]
 new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-literal]
 faded: [220, 1363, 1364, 135, 1365, 1366]
 guided: [503, 504]

@@ -105,5 +105,5 @@ copy of the questions written for this course.
 
 - **2026-07-28** — Added `curated_additions.csv` as a fifth, deliberately-last
   CSV source, and registered it in both readers. It holds q480, the independent
-  drill for `numpy.ndarray-model`, which gave the course's first KC a real
+  drill for `torch.tensor-model`, which gave the course's first KC a real
   faded→independent ladder instead of one faded item and nothing after it.

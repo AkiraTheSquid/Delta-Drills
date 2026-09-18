@@ -1,6 +1,6 @@
 # Spec — the worked-example schedule on the drill rungs (experiment, 2026-08-30)
 
-Seth, 2026-08-30, on `numpy.ndarray-model`: the ladder should be lesson first;
+Seth, 2026-08-30, on `torch.tensor-model`: the ladder should be lesson first;
 then Faded drills with ONLY the problem and its input→output rows on the left
 and the mostly-complete code on the right — no example beside it, but an
 example that POPS UP now and then if the learner is struggling; then Solo
@@ -133,7 +133,7 @@ drills is gone; the popup is the only example on the drill rungs.
 
 ## Content floors for the local topology
 
-Seth is on `numpy.ndarray-model` (16 faded / 15 solo / 6 integrated). Its six
+Seth is on `torch.tensor-model` (16 faded / 15 solo / 6 integrated). Its six
 dependents are the concepts he reaches next and they were thin: Faded 1–4,
 no Solo/Integrated split, no drill-level examples. Target per dependent:
 Faded ≥ 6 (≥ 2 per segment), Solo ≥ 6 (a minority with a `python worked`
@@ -157,7 +157,7 @@ row), then `elementwise-ufuncs`, `constructors`, `dtype-astype`, `sorting`,
 - **Splitting the blob nodes.** No longer deferred and no longer vague:
   measured, planned and written down in `SPEC_NODE_SPLITTING.md` (2026-08-31).
   37 concepts → ~45. The six nodes it names are NOT the six dependents listed
-  above — those have had their drills written and `numpy.ndarray-model` now has
+  above — those have had their drills written and `torch.tensor-model` now has
   zero symbols under the coverage floor. The blobs are the never-segmented
   nodes: `stack-concat-interleave`, `random-generator`, `dots-and-imports`,
   `types-and-conversion`, `slicing-views`, `calling-functions`. The test is

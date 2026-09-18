@@ -1,7 +1,7 @@
 ---
-kc: numpy.linalg-basics
+kc: torch.linalg-basics
 title: Matrix multiply and t.linalg basics
-supporting: [numpy.aggregations, numpy.elementwise-ufuncs]
+supporting: [torch.aggregations, torch.elementwise-ops]
 new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107]
 guided: [508, 509]

@@ -100,92 +100,92 @@ family('python.dots-and-imports', 'x, word', 'x is a nonnegative finite Python f
     T('a two-item list containing word and the square root of x', '[word, math.sqrt(x)]', '[word, x * x]', 'A square root undoes a square; multiplying a value by itself does the opposite.')], imports='import math\n')
 
 matrix = grids()
-family('numpy.ndarray-model', 'x', 'x is a nonempty 2-D PyTorch tensor. Return only Python values, not tensors.', matrix, [
+family('torch.tensor-model', 'x', 'x is a nonempty 2-D PyTorch tensor. Return only Python values, not tensors.', matrix, [
     T('the number of entries in two copies of x, as an integer', '2 * x.numel()', '2 * x.ndim', 'Two copies double the entry count, not the number of axes.'),
     T('a tuple containing the column count followed by the row count', '(x.shape[1], x.shape[0])', 'tuple(x.shape)', 'The requested order is columns before rows.'),
     T('a tuple containing x as a nested list and its dtype name as text', '(x.tolist(), str(x.dtype))', '(x.tolist(), str(type(x)))', 'The tensor object type does not describe the type of its stored numbers.'),
     T('a tuple of x as a nested list and its total entry count', '(x.tolist(), x.numel())', '(x.tolist(), x.shape[0])', 'Counting only the outer rows misses every additional column.')])
 
-family('numpy.transpose-axes', 'x', 'x is a nonempty 2-D float tensor. Return Python lists or tuples.', matrix, [
+family('torch.transpose-axes', 'x', 'x is a nonempty 2-D float tensor. Return Python lists or tuples.', matrix, [
     T('the transposed grid with every entry doubled, as a nested list', '(2 * x.T).tolist()', '(2 * x).tolist()', 'Scaling does not exchange rows and columns.'),
     T('a tuple of the transposed grid and its shape as a tuple', '(x.T.tolist(), tuple(x.T.shape))', '(x.T.tolist(), tuple(x.shape))', 'Shape metadata must describe the output layout, not the original layout.'),
     T('the first row of the transposed grid as a flat list', 'x.T[0].tolist()', 'x[0].tolist()', 'A transposed row comes from an original column.'),
     T('the final column of the transposed grid as a flat list', 'x.T[:, -1].tolist()', 'x[:, -1].tolist()', 'A transposed column comes from an original row.')])
 
-family('numpy.views-and-copies', 'x', 'x is a nonempty contiguous 2-D float tensor. Return Python values; do not mutate x.', matrix, [
+family('torch.views-and-copies', 'x', 'x is a nonempty contiguous 2-D float tensor. Return Python values; do not mutate x.', matrix, [
     T('a tuple of transposed values and whether that transposed layout is contiguous', '(x.T.tolist(), x.T.is_contiguous())', '(x.T.tolist(), x.is_contiguous())', 'The layout property belongs to the transposed view, not its source.'),
     T('a tuple of transposed values and whether making that view contiguous preserves its starting address', '(x.T.tolist(), x.T.contiguous().data_ptr() == x.data_ptr())', '(x.T.tolist(), True)', 'A noncontiguous transpose needs a new buffer; singleton layouts may already be contiguous.'),
     T('a tuple of original values and whether asking x itself for contiguous storage preserves its address', '(x.tolist(), x.contiguous().data_ptr() == x.data_ptr())', '(x.tolist(), False)', 'An already contiguous tensor can be returned without allocating another buffer.'),
     T('a tuple of transposed values and whether its contiguous version shares the transpose starting address', '(x.T.tolist(), x.T.contiguous().data_ptr() == x.T.data_ptr())', '(x.T.tolist(), False)', 'A transpose with a size-one axis may already have contiguous reading order.')])
 
-family('numpy.constructors', 'rows, cols, value', 'rows and cols are positive integers; value is an integer. All grids must store 64-bit integers. Return nested lists.',
+family('torch.constructors', 'rows, cols, value', 'rows and cols are positive integers; value is an integer. All grids must store 64-bit integers. Return nested lists.',
        fixtures('rows,cols,value', [(2, 3, -4), (3, 1, 7), (1, 1, 0), (1, 4, 2)]), [
     T('a rows-by-cols grid filled with value', 't.full((rows, cols), value, dtype=t.int64).tolist()', 't.full((cols, rows), value, dtype=t.int64).tolist()', 'Row count and column count occupy different positions in the shape.'),
     T('a rectangular identity grid of rows rows and cols columns', 't.eye(rows, cols, dtype=t.int64).tolist()', 't.ones((rows, cols), dtype=t.int64).tolist()', 'Only diagonal positions are one; off-diagonal positions remain zero.'),
     T('a rows-by-cols grid with value on the main diagonal and zero elsewhere', '(t.eye(rows, cols, dtype=t.int64) * value).tolist()', 't.full((rows, cols), value, dtype=t.int64).tolist()', 'The supplied value belongs only on the diagonal.'),
     T('a rows-by-cols grid with value off the main diagonal and value+1 on it', '(t.full((rows, cols), value, dtype=t.int64) + t.eye(rows, cols, dtype=t.int64)).tolist()', '(t.eye(rows, cols, dtype=t.int64) * (value + 1)).tolist()', 'Off-diagonal positions keep the background value rather than becoming zero.')])
 
-family('numpy.slicing-views', 'x', 'x is a nonempty 2-D integer tensor. Return nested lists; do not modify x.', matrix, [
+family('torch.slicing-views', 'x', 'x is a nonempty 2-D integer tensor. Return nested lists; do not modify x.', matrix, [
     T('the grid with both its first row and first column omitted', 'x[1:, 1:].tolist()', 'x[:-1, :-1].tolist()', 'Removing the leading boundaries keeps the lower-right remainder.'),
     T('every second column beginning at column one, retaining every row', 'x[:, 1::2].tolist()', 'x[:, ::2].tolist()', 'The starting offset selects odd column positions rather than even ones.'),
     T('the last row while retaining a size-one row axis', 'x[-1:, :].tolist()', 'x[-1, :].tolist()', 'A slice preserves the row axis; an integer row index removes it.'),
     T('the grid reflected across both its row and column directions', 't.flip(x, (0, 1)).tolist()', 't.flip(x, (0,)).tolist()', 'Reversing rows alone leaves the order within every row unchanged.')])
 
-family('numpy.ranges', 'start, count, step', 'start is an integer, count is a positive integer, and step is a nonzero integer. Return flat Python lists.',
+family('torch.ranges', 'start, count, step', 'start is an integer, count is a positive integer, and step is a nonzero integer. Return flat Python lists.',
        fixtures('start,count,step', [(3, 4, 2), (8, 3, -3), (-2, 1, 5), (0, 5, 1)]), [
     T('count evenly stepped integers, starting one step after start', 't.arange(start + step, start + (count + 1) * step, step).tolist()', 't.arange(start, start + count * step, step).tolist()', 'The first requested point is after the start, not the start itself.'),
     T('count+1 stepped integers including both start and start+count*step', 't.arange(start, start + (count + 1) * step, step).tolist()', 't.arange(start, start + count * step, step).tolist()', 'An inclusive final point requires moving the exclusive boundary one step farther.'),
     T('count equally spaced floating points from start to start+step, inclusive; for count=1 return start', 't.linspace(start, start + step, count).tolist()', 't.linspace(start, start + step * count, count).tolist()', 'Here step determines the whole interval, not the gap between samples.'),
     T('count stepped integers ending at start, in increasing index order with spacing step', 't.arange(start - (count - 1) * step, start + step, step).tolist()', 't.arange(start - count * step, start, step).tolist()', 'The final included value must be start; the incorrect run ends one step early.')])
 
-family('numpy.dtype-astype', 'x', 'x is a nonempty 2-D floating tensor with finite small values. Return Python values.',
+family('torch.dtype-astype', 'x', 'x is a nonempty 2-D floating tensor with finite small values. Return Python values.',
        [s + '\nx = x / 2' for s in matrix], [
     T('the grid converted to 64-bit integers, as a nested list', 'x.to(t.int64).tolist()', 't.round(x).to(t.int64).tolist()', 'Integer conversion discards the fractional part toward zero rather than rounding to nearest.'),
     T('the storage bytes needed for the same number of entries in 16-bit integers', 'x.numel() * t.tensor(0, dtype=t.int16).element_size()', 'x.numel() * x.element_size()', 'The target element width, not the source width, determines the new storage size.'),
     T('a tuple of integer-converted values and their dtype name', '(x.to(t.int64).tolist(), str(x.to(t.int64).dtype))', '(x.to(t.int64).tolist(), str(x.dtype))', 'The dtype report must describe the converted tensor.'),
     T('the grid truncated to integer values and then stored as 64-bit floats, as a nested list', 'x.to(t.int64).to(t.float64).tolist()', 'x.to(t.float64).tolist()', 'Converting back to floats does not restore discarded fractions.')])
 
-family('numpy.reshape-flatten', 'x', 'x is a nonempty contiguous 2-D integer tensor with shape (rows, cols). Return Python lists; preserve row-by-row reading order.', matrix, [
+family('torch.reshape-flatten', 'x', 'x is a nonempty contiguous 2-D integer tensor with shape (rows, cols). Return Python lists; preserve row-by-row reading order.', matrix, [
     T('a two-dimensional column containing every entry', 'x.reshape(-1, 1).tolist()', 'x.reshape(1, -1).tolist()', 'A column has one entry per row; a single row has every entry side by side.'),
     T('a flat list of all entries except the final one', 'x.flatten()[:-1].tolist()', 'x[:-1].flatten().tolist()', 'Dropping a final flat entry is not the same as dropping a whole final row.'),
     T('a rows-by-1-by-cols nested list, keeping one middle singleton axis', 'x.reshape(x.shape[0], 1, x.shape[1]).tolist()', 'x.reshape(1, x.shape[0], x.shape[1]).tolist()', 'The singleton belongs between the original axes, not before them.'),
     T('a flat list of positions 1, 3, 5 and so on in reading order', 'x.flatten()[1::2].tolist()', 'x.flatten()[::2].tolist()', 'The requested positions start at one, not zero.')])
 
-family('numpy.elementwise-ufuncs', 'x', 'x is a nonempty 2-D float tensor. Return nested Python lists.',
+family('torch.elementwise-ops', 'x', 'x is a nonempty 2-D float tensor. Return nested Python lists.',
        [s + '\nx = x / 2' for s in matrix], [
     T('each entry restricted to the interval from -1 to 2, inclusive', 'x.clamp(min=-1, max=2).tolist()', 'x.clamp(min=0, max=2).tolist()', 'Negative values down to minus one are allowed and must not all become zero.'),
     T('each entry rounded away from negative infinity to the next integer boundary', 't.ceil(x).tolist()', 't.floor(x).tolist()', 'The upper boundary is selected on both sides of zero.'),
     T('the nonnegative magnitude of every entry, computed as the square root of its square', 't.sqrt(x * x).tolist()', '(x * x).tolist()', 'Squaring removes signs but changes magnitudes; the square root restores their sizes.'),
     T('the fractional remainder after truncating each entry toward zero', '(x - t.trunc(x)).tolist()', '(x - t.floor(x)).tolist()', 'Negative inputs retain negative fractional remainders when truncating toward zero.')])
 
-family('numpy.aggregations', 'x', 'x is a nonempty 2-D float tensor. Return Python scalars.', matrix, [
+family('torch.aggregations', 'x', 'x is a nonempty 2-D float tensor. Return Python scalars.', matrix, [
     T('the sum of all entries minus the largest entry', '(x.sum() - x.max()).item()', '(x.sum() - x.min()).item()', 'Remove one occurrence of the largest value, not the smallest.'),
     T('the midpoint between the minimum and maximum', '((x.min() + x.max()) / 2).item()', 'x.mean().item()', 'The midpoint of the extremes ignores how many interior values there are.'),
     T('whether any entry is strictly below the overall mean', '(x < x.mean()).any().item()', '(x < x.mean()).all().item()', 'One qualifying entry is enough; requiring every entry changes the question.'),
     T('the sum of squared deviations from the overall mean', '((x - x.mean()) ** 2).sum().item()', '(x ** 2).sum().item()', 'Deviations are measured relative to the mean, not relative to zero.')])
 
-family('numpy.sorting', 'x', 'x is a nonempty 2-D float tensor. Return nested Python lists.', matrix, [
+family('torch.sorting', 'x', 'x is a nonempty 2-D float tensor. Return nested Python lists.', matrix, [
     T('each column sorted descending from top to bottom', 't.sort(x, dim=0, descending=True).values.tolist()', 't.sort(x, dim=1, descending=True).values.tolist()', 'Sorting a column compares different rows while retaining its column position.'),
     T('each row sorted descending from left to right', 't.sort(x, dim=1, descending=True).values.tolist()', 't.sort(x, dim=1).values.tolist()', 'Descending order places the largest row entry first.'),
     T('the original column positions needed to read each row in ascending value order', 't.argsort(x, dim=1).tolist()', 't.sort(x, dim=1).values.tolist()', 'Positions identify where values came from; they are not the sorted values themselves.'),
     T('the largest entry of each row as a size-one inner list', 't.topk(x, 1, dim=1).values.tolist()', 't.topk(x, 1, dim=0).values.tolist()', 'One winner per row requires comparing columns, not comparing rows.')])
 
 random_setups = [s + '\nt.manual_seed(17)' for s in fixtures('rows,cols', [(2, 3), (3, 2), (1, 1), (1, 4)])]
-family('numpy.random-samplers', 'rows, cols', 'rows and cols are positive integers. Use the already-initialized global random stream without resetting it. Return nested Python lists.', random_setups, [
+family('torch.random-samplers', 'rows, cols', 'rows and cols are positive integers. Use the already-initialized global random stream without resetting it. Return nested Python lists.', random_setups, [
     T('a rows-by-cols grid of uniform samples in [0,1)', 't.rand(rows, cols).tolist()', 't.randn(rows, cols).tolist()', 'Uniform samples stay between zero and one; normal samples have a different distribution.'),
     T('a rows-by-cols grid of standard-normal samples', 't.randn(rows, cols).tolist()', 't.rand(rows, cols).tolist()', 'Standard-normal values may be negative and are not bounded by one.'),
     T('a rows-by-cols grid of random integers from -3 through 2 inclusive', 't.randint(-3, 3, (rows, cols)).tolist()', 't.randint(-3, 2, (rows, cols)).tolist()', 'The upper sampler boundary is excluded, so it must be beyond the greatest allowed integer.'),
     T('a rows-by-cols grid of uniform samples in [-2,2)', '(4 * t.rand(rows, cols) - 2).tolist()', '(2 * t.rand(rows, cols) - 2).tolist()', 'The interval has width four, not two.')])
 
 seed_setups = fixtures('seed,n', [(3, 4), (18, 2), (0, 1), (91, 5)])
-family('numpy.random-seeding', 'seed, n', 'seed is a nonnegative integer and n is positive. Each requested sequence starts from a fresh private stream initialized with seed; leave the global stream unchanged. Return flat lists.', seed_setups, [
+family('torch.random-seeding', 'seed, n', 'seed is a nonnegative integer and n is positive. Each requested sequence starts from a fresh private stream initialized with seed; leave the global stream unchanged. Return flat lists.', seed_setups, [
     T('n uniform values in [1,3)', '(1 + 2 * t.rand(n, generator=t.Generator().manual_seed(seed))).tolist()', 't.rand(n, generator=t.Generator().manual_seed(seed)).tolist()', 'Scaling and shifting must change both boundaries of the interval.'),
     T('n random integers from 2 through 8 inclusive', 't.randint(2, 9, (n,), generator=t.Generator().manual_seed(seed)).tolist()', 't.randint(0, 9, (n,), generator=t.Generator().manual_seed(seed)).tolist()', 'The lower boundary is two; zero and one are not valid outcomes.'),
     T('n normal values with mean -2 and standard deviation 3', '(3 * t.randn(n, generator=t.Generator().manual_seed(seed)) - 2).tolist()', '(t.randn(n, generator=t.Generator().manual_seed(seed)) - 2).tolist()', 'Moving the mean does not also increase the standard deviation.'),
     T('a random ordering of the integers from 1 through n', '(t.randperm(n, generator=t.Generator().manual_seed(seed)) + 1).tolist()', 't.randperm(n, generator=t.Generator().manual_seed(seed)).tolist()', 'The permutation positions begin at zero, but the requested labels begin at one.')])
 
 thread_setups = [s + '\nrng = t.Generator().manual_seed(seed)\nt.rand(3, generator=rng)' for s in seed_setups]
-family('numpy.random-threading', 'rng, n', 'rng is a caller-owned CPU random generator whose stream may already be advanced; n is positive. Continue that stream without reseeding it or using the global stream. Return flat lists.', thread_setups, [
+family('torch.random-threading', 'rng, n', 'rng is a caller-owned CPU random generator whose stream may already be advanced; n is positive. Continue that stream without reseeding it or using the global stream. Return flat lists.', thread_setups, [
     T('n uniform values shifted to [-1,0)', '(t.rand(n, generator=rng) - 1).tolist()', '(t.rand(n, generator=t.Generator().manual_seed(0)) - 1).tolist()', 'A newly initialized stream ignores the caller’s seed and previous draws.'),
     T('n random integers from -4 through 4 inclusive', 't.randint(-4, 5, (n,), generator=rng).tolist()', 't.randint(-4, 4, (n,), generator=rng).tolist()', 'An excluded upper boundary of four prevents the valid outcome four.'),
     T('n standard-normal values scaled by two', '(2 * t.randn(n, generator=rng)).tolist()', 't.randn(n, generator=rng).tolist()', 'The stream is correct, but each sampled value still needs the requested scaling.'),
@@ -193,46 +193,46 @@ family('numpy.random-threading', 'rng, n', 'rng is a caller-owned CPU random gen
 
 linear_setups = [f'a = t.tensor({a!r}, dtype=t.float64)\nb = t.tensor({b!r}, dtype=t.float64)' for a,b in [
     ([[2, 1], [0, 3]], [4, 6]), ([[3, 0], [1, 2]], [-3, 5]), ([[4]], [8]), ([[1, 2, 0], [0, 2, 1], [0, 0, 3]], [3, -1, 6])]]
-family('numpy.linalg-basics', 'a, b', 'a is an invertible square float tensor (n,n); b is a float vector (n,). Return Python lists.', linear_setups, [
+family('torch.linalg-basics', 'a, b', 'a is an invertible square float tensor (n,n); b is a float vector (n,). Return Python lists.', linear_setups, [
     T('the solution of a times x equals twice b', 't.linalg.solve(a, 2 * b).tolist()', '(a @ (2 * b)).tolist()', 'Applying the matrix is not the same as undoing its effect.'),
     T('the result of applying a twice to b', '(a @ (a @ b)).tolist()', '((a * a) @ b).tolist()', 'Two matrix applications combine through matrix multiplication, not elementwise squaring.'),
     T('the inverse matrix of twice a, as a nested list', 't.linalg.inv(2 * a).tolist()', '(2 * t.linalg.inv(a)).tolist()', 'Scaling a matrix up scales its inverse down.'),
     T('the solution of the transposed system, a-transpose times x equals b', 't.linalg.solve(a.T, b).tolist()', 't.linalg.solve(a, b).tolist()', 'Transposing coefficients changes the system unless the matrix happens to be symmetric.')])
 
 mask_setups = grids(extras=['low = -2\nhigh = 6','low = 0\nhigh = 5','low = -7\nhigh = -5','low = 2\nhigh = 8'])
-family('numpy.boolean-masking', 'x, low, high', 'x is a nonempty 2-D numeric tensor; low and high are numbers with low < high. Selection results use row-by-row reading order.', mask_setups, [
+family('torch.boolean-masking', 'x, low, high', 'x is a nonempty 2-D numeric tensor; low and high are numbers with low < high. Selection results use row-by-row reading order.', mask_setups, [
     T('a flat list of values strictly between low and high', 'x[(x > low) & (x < high)].tolist()', 'x[(x > low) | (x < high)].tolist()', 'Both bounds must hold simultaneously; accepting either bound admits almost everything.'),
     T('the integer count of entries equal to either boundary', 't.count_nonzero((x == low) | (x == high)).item()', 't.count_nonzero((x == low) & (x == high)).item()', 'One entry cannot equal two distinct boundaries simultaneously.'),
     T('a flat list of entries outside the closed interval from low to high', 'x[(x < low) | (x > high)].tolist()', 'x[(x >= low) & (x <= high)].tolist()', 'The requested selection is the outside, not the inside, of the interval.'),
     T('a nested Boolean list marking values at least low but strictly below high', '((x >= low) & (x < high)).tolist()', '((x > low) & (x <= high)).tolist()', 'The lower endpoint is included and the upper endpoint is excluded.')])
 
-family('numpy.argmin-argmax', 'x', 'x is a nonempty 2-D numeric tensor. Positions are zero-based; ties choose the first position. Return Python lists or integers.', matrix, [
+family('torch.argmin-argmax', 'x', 'x is a nonempty 2-D numeric tensor. Positions are zero-based; ties choose the first position. Return Python lists or integers.', matrix, [
     T('the column position of the smallest magnitude in every row', 't.argmin(t.abs(x), dim=1).tolist()', 't.argmin(x, dim=1).tolist()', 'The value closest to zero need not be the most negative one.'),
     T('the row position of the largest magnitude in every column', 't.argmax(t.abs(x), dim=0).tolist()', 't.argmax(t.abs(x), dim=1).tolist()', 'One index per column means comparing rows.'),
     T('the flat reading-order position of the value farthest from zero', 't.argmax(t.abs(x)).item()', 't.argmin(t.abs(x)).item()', 'The farthest magnitude is the largest, not the smallest.'),
     T('the column position of the maximum in each row after reversing that row’s column order', 't.argmax(t.flip(x, (1,)), dim=1).tolist()', 't.argmax(x, dim=1).tolist()', 'The returned positions refer to the reversed row, not the original one.')])
 
 broadcast_setups = [s + '\na = t.arange(x.shape[0], dtype=t.float64) + 2\nb = t.arange(x.shape[1], dtype=t.float64) - 1' for s in matrix]
-family('numpy.broadcasting-rules', 'x, a, b', 'x is a float tensor (rows,cols); a has shape (rows,) and b has shape (cols,). Return nested Python lists.', broadcast_setups, [
+family('torch.broadcasting-rules', 'x, a, b', 'x is a float tensor (rows,cols); a has shape (rows,) and b has shape (cols,). Return nested Python lists.', broadcast_setups, [
     T('x with a added down rows and b subtracted across columns', '(x + a[:, None] - b[None, :]).tolist()', '(x - a[:, None] + b[None, :]).tolist()', 'The row adjustment is added while the column adjustment is subtracted.'),
     T('the outer table whose entry i,j is a[i] minus b[j]', '(a[:, None] - b[None, :]).tolist()', '(b[:, None] - a[None, :]).tolist()', 'Swapping the operands reverses the sign and exchanges which axis names the rows.'),
     T('x scaled by a once per row, then shifted by b once per column', '(x * a[:, None] + b[None, :]).tolist()', '((x + b[None, :]) * a[:, None]).tolist()', 'The column shift comes after scaling and must not itself be scaled.'),
     T('the outer table of products of a and b, minus x', '(a[:, None] * b[None, :] - x).tolist()', '(x - a[:, None] * b[None, :]).tolist()', 'The residual is the predicted outer table minus the observed grid.')])
 
-family('numpy.axis-reductions', 'x', 'x is a nonempty 2-D float tensor. Return Python lists.', matrix, [
+family('torch.axis-reductions', 'x', 'x is a nonempty 2-D float tensor. Return Python lists.', matrix, [
     T('each row’s sum retained as a size-one inner list', 'x.sum(dim=1, keepdim=True).tolist()', 'x.sum(dim=0, keepdim=True).tolist()', 'A row total collapses columns and keeps one result for each row.'),
     T('the mean of each column retained inside one outer row', 'x.mean(dim=0, keepdim=True).tolist()', 'x.mean(dim=1, keepdim=True).tolist()', 'Column means compare rows and keep the original column count.'),
     T('x after subtracting its column means', '(x - x.mean(dim=0, keepdim=True)).tolist()', '(x - x.mean(dim=1, keepdim=True)).tolist()', 'Each column needs its own shared baseline; row means center different groups.'),
     T('a flat list of each row’s mean squared value', '(x * x).mean(dim=1).tolist()', '(x.mean(dim=1) ** 2).tolist()', 'Average the squares; squaring the average loses variation within the row.')])
 
 dot_setups = [s + '\nv = t.arange(x.shape[1], dtype=t.float64) + 1' for s in matrix]
-family('numpy.dot-matmul-patterns', 'x, v', 'x is a float tensor (rows,cols); v is a float vector (cols,). Return Python lists or scalars.', dot_setups, [
+family('torch.dot-matmul-patterns', 'x, v', 'x is a float tensor (rows,cols); v is a float vector (cols,). Return Python lists or scalars.', dot_setups, [
     T('the squared length of v as a Python float', 't.dot(v, v).item()', 'v.sum().item()', 'Length squared adds self-products rather than raw coordinates.'),
     T('the dot product of every row of x with v', '(x @ v).tolist()', '(x * v).tolist()', 'A dot product also combines the multiplied coordinates into one value per row.'),
     T('the table of dot products between columns of x', '(x.T @ x).tolist()', '(x @ x.T).tolist()', 'Column comparisons yield a columns-by-columns table; row comparisons yield a different table.'),
     T('v transformed by x and then by the transpose of x', '(x.T @ (x @ v)).tolist()', '(x.T @ x + 1).tolist()', 'The intermediate vector has one value per row before being mapped back to columns.')])
 
-family('numpy.stack-concat-interleave', 'x', 'x is a nonempty 2-D numeric tensor (rows,cols). Return nested Python lists.', matrix, [
+family('torch.stack-concat-interleave', 'x', 'x is a nonempty 2-D numeric tensor (rows,cols). Return nested Python lists.', matrix, [
     T('x followed by its negation along the row direction, shape (2*rows,cols)', 't.cat((x, -x), dim=0).tolist()', 't.cat((x, -x), dim=1).tolist()', 'Row concatenation increases the row count, not the width.'),
     T('each entry paired with its negation in a new final axis, shape (rows,cols,2)', 't.stack((x, -x), dim=2).tolist()', 't.stack((x, -x), dim=0).tolist()', 'The new pair axis belongs inside every entry, not around the whole grid.'),
     T('x, a zero-valued copy, and x again placed side by side', 't.cat((x, t.zeros_like(x), x), dim=1).tolist()', 't.cat((x, t.zeros_like(x), x), dim=0).tolist()', 'Side-by-side panels extend columns while preserving rows.'),

@@ -1,7 +1,7 @@
 ---
 kc: einops.merge-axes
 title: Merging axes with (parentheses)
-supporting: [einops.pattern-language, numpy.reshape-flatten]
+supporting: [einops.pattern-language, torch.reshape-flatten]
 new_syntax: [einops-axis-composition]
 faded: [391, 347]
 guided: [357]

@@ -1,7 +1,7 @@
 ---
-kc: numpy.slicing-views
+kc: torch.slicing-views
 title: Selecting and changing parts of a tensor
-supporting: [numpy.ndarray-model]
+supporting: [torch.tensor-model]
 new_syntax: [Tensor.clone, syntax.multi-axis-index, syntax.slice, syntax.slice-step, torch.flip, torch.rot90]
 concepts: [slice-bounds, rows-and-columns, reversing, quarter-turns, writing-through-views, copying-before-writing]
 faded: [506, 507, 233, 75, 231, 74]

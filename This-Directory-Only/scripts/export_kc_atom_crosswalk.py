@@ -2,7 +2,7 @@
 """Join the lesson graph's KC ids to the backend's concept-graph atom ids.
 
 The lesson knowledge graph draws 64 KC ids (`lessons/kc_registry.json`, e.g.
-`numpy.dtype-astype`). The practice backend tracks BKT belief per *atom*
+`torch.dtype-astype`). The practice backend tracks BKT belief per *atom*
 (`arena_drillable_v1.json`, e.g. `argmax-prediction`) and ships it as
 `atom_mastery`. The two id spaces are disjoint — measured overlap is zero — so
 the graph currently cannot read the mastery it already has, and every node

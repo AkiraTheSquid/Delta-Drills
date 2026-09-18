@@ -1,4 +1,4 @@
-"""watch.py — health checks for the numpy-lesson KP sources
+"""watch.py — health checks for the tensor-lesson KP sources (np-1..np-3, KC prefix torch.)
 
 These 44 markdown files are the taught side of the np-1..np-4 lessons; the
 drills they fade into live in the question bank. The defect worth catching
@@ -162,14 +162,14 @@ def check_invariants():
 # EDITED, not only from scripts/, so that adding a drill or a KP page here is
 # what trips them. The implementations live in scripts/guard_checks.py — one
 # copy, because a guard duplicated six times becomes six different guards
-# inside a month. Scoped to numpy. so this watcher reports its own concepts.
+# inside a month. Scoped to torch. so this watcher reports its own concepts.
 import importlib.util as _ilu
 _GUARD = os.path.join(os.path.join(_DIR, '..', '..', '..'), 'scripts', 'guard_checks.py')
 _spec = _ilu.spec_from_file_location('guard_checks', _GUARD)
 _guard = _ilu.module_from_spec(_spec)
 _spec.loader.exec_module(_guard)
 
-_CONTENT_GUARDS = _guard.run('numpy.')
+_CONTENT_GUARDS = _guard.run('torch.')
 
 if __name__ == '__main__':
     checks = [check_imports, check_public_api,

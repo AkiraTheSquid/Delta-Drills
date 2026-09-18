@@ -29,7 +29,7 @@ What it actually finds
 Under-drilled symbols cluster on the nodes that were never split — the
 "blob" concepts that declare eight or ten symbols and carry three drills.
 `numpy.random-generator` declares ten and drills five across three questions;
-`numpy.stack-concat-interleave` declares ten and covers none of them twice.
+`torch.stack-concat-interleave` declares ten and covers none of them twice.
 That is the measurement behind `SPEC_NODE_SPLITTING.md`: the fix is both more
 drills and fewer claims per node.
 

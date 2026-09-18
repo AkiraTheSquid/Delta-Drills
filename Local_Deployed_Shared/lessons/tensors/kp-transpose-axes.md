@@ -1,5 +1,5 @@
 ---
-kc: numpy.transpose-axes
+kc: torch.transpose-axes
 title: Transpose — swapping which axis is which
 supporting: []
 new_syntax: [Tensor.T]

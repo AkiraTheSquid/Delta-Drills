@@ -34,7 +34,7 @@ class RayPlacementTest(unittest.TestCase):
         a, b = self.start(), UserPracticeState(user_id="friend")
         scope = set(D.assessed_kcs(a))
         self.assertTrue(set(T.ray_kcs()) <= scope)
-        self.assertIn("numpy.linalg-basics", scope)
+        self.assertIn("torch.linalg-basics", scope)
         self.assertNotIn("nn.modules", scope)
         self.assertEqual(b.practice_target, "all")
         self.assertFalse(b.diagnostic)
@@ -56,7 +56,7 @@ class RayPlacementTest(unittest.TestCase):
         self.assertFalse(s.atom_mastery)
         self.assertFalse(s.kc_ladder)
         self.assertFalse(s.kc_exposure)
-        self.assertIn("numpy.constructors", T.readiness(s))
+        self.assertIn("torch.constructors", T.readiness(s))
         self.assertNotIn(failed, T.readiness(s))
         self.assertEqual(G.kc_stage(s, "raytracing.segment-intersection"), "partial")
         self.assertTrue(set(G.frontier(s)) <= T.scope_kcs(T.RAY))
@@ -81,7 +81,7 @@ class RayPlacementTest(unittest.TestCase):
         loaded = _load_user_state(s.user_id)
         self.assertEqual(loaded.practice_target, T.RAY)
         self.assertEqual(T.readiness(loaded), T.readiness(s))
-        kc = "numpy.constructors"
+        kc = "torch.constructors"
         loaded.kc_ladder[kc] = {"attempts": [{"correct": False, "stage": "partial",
             "ts": (datetime.now(timezone.utc) + timedelta(seconds=1)).isoformat()}]}
         self.assertNotIn(kc, T.readiness(loaded))

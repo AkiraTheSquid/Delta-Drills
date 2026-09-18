@@ -1,5 +1,5 @@
 ---
-kc: numpy.ndarray-model
+kc: torch.tensor-model
 title: What a tensor is — data + shape + dtype
 supporting: []
 new_syntax: [Tensor.dtype, Tensor.item, Tensor.ndim, Tensor.numel, Tensor.shape, Tensor.tolist, torch.equal, torch.float32, torch.int64, torch.tensor, torch.tensor#dtype]

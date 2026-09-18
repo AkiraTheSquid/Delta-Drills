@@ -1,7 +1,7 @@
 ---
-kc: numpy.reshape-flatten
+kc: torch.reshape-flatten
 title: Reshape, flatten, and element order
-supporting: [numpy.ndarray-model, numpy.ranges]
+supporting: [torch.tensor-model, torch.ranges]
 new_syntax: [Tensor.flatten, Tensor.reshape]
 faded: [46, 36, 491, 619, 490, 620, 621, 622, 623, 1333, 1334, 1335, 1336, 1337, 1338, 1339, 1340, 1341]
 guided: []

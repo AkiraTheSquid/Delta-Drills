@@ -3,7 +3,7 @@ kc: raytracing.make-rays-2d
 title: A 2-D fan of camera rays
 new_syntax: []
 concepts: [pixel-grid, pixel-direction]
-supporting: ['raytracing.make-rays-1d', 'numpy.broadcasting-rules', 'numpy.reshape-flatten', 'torch.slice-assignment', 'numpy.stack-concat-interleave', 'tensor.row-normalization']
+supporting: ['raytracing.make-rays-1d', 'torch.broadcasting-rules', 'torch.reshape-flatten', 'torch.slice-assignment', 'torch.stack-concat-interleave', 'tensor.row-normalization']
 previews: []
 faded: [1121, 1122, 1123, 1124]
 guided: []

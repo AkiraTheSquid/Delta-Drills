@@ -3,7 +3,7 @@ kc: cnn.batch-normalization
 title: Batch normalization
 new_syntax: ['syntax.with', 'torch.no_grad', 'Tensor.training']
 concepts: [channel-statistics, running-statistics, train-eval]
-supporting: ['cnn.module-state', 'numpy.axis-reductions', 'numpy.elementwise-ufuncs', 'python.control-flow', 'numpy.stack-concat-interleave']
+supporting: ['cnn.module-state', 'torch.axis-reductions', 'torch.elementwise-ops', 'python.control-flow', 'torch.stack-concat-interleave']
 previews: []
 faded: [1297, 1298, 1299, 1300]
 guided: []

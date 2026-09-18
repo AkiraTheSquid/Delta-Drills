@@ -3,7 +3,7 @@ kc: raytracing.mesh-visibility
 title: Nearest hit in a mesh
 new_syntax: []
 concepts: [nearest-hit, depth-vs-distance]
-supporting: ['raytracing.triangle-intersection', 'raytracing.batched-segments', 'raytracing.make-rays-2d', 'tensor.indexed-selection', 'numpy.dtype-astype']
+supporting: ['raytracing.triangle-intersection', 'raytracing.batched-segments', 'raytracing.make-rays-2d', 'tensor.indexed-selection', 'torch.dtype-astype']
 previews: []
 faded: [1153, 1154, 1155, 1156]
 guided: []

@@ -3,7 +3,7 @@ kc: raytracing.segment-intersection
 title: Ray–segment intersection
 new_syntax: ['torch.linalg.det']
 concepts: [two-descriptions, membership]
-supporting: ['raytracing.ray-parametrisation', 'numpy.linalg-basics', 'numpy.stack-concat-interleave', 'numpy.constructors', 'numpy.boolean-masking', 'tensor.row-normalization', 'tensor.indexed-selection']
+supporting: ['raytracing.ray-parametrisation', 'torch.linalg-basics', 'torch.stack-concat-interleave', 'torch.constructors', 'torch.boolean-masking', 'tensor.row-normalization', 'tensor.indexed-selection']
 previews: []
 faded: [1089, 1090, 1091, 1092]
 guided: []

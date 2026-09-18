@@ -3,7 +3,7 @@ kc: cnn.convolution-1d
 title: 1-D convolution from strided windows
 new_syntax: []
 concepts: [windows, stride-padding]
-supporting: ['cnn.stride-views', 'einops.einsum', 'torch.slice-assignment', 'numpy.constructors', 'numpy.sorting', 'numpy.transpose-axes', 'tensor.row-normalization', 'numpy.stack-concat-interleave', 'python.control-flow']
+supporting: ['cnn.stride-views', 'einops.einsum', 'torch.slice-assignment', 'torch.constructors', 'torch.sorting', 'torch.transpose-axes', 'tensor.row-normalization', 'torch.stack-concat-interleave', 'python.control-flow']
 previews: []
 faded: [1233, 1234, 1235, 1236]
 guided: []

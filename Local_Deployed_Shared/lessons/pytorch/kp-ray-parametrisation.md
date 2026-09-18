@@ -1,7 +1,7 @@
 ---
 kc: raytracing.ray-parametrisation
 title: A ray is an origin and a direction
-supporting: [numpy.constructors, numpy.broadcasting-rules, numpy.slicing-views, numpy.ranges]
+supporting: [torch.constructors, torch.broadcasting-rules, torch.slicing-views, torch.ranges]
 new_syntax: [syntax.unpack]
 previews: []
 faded: [820, 821]

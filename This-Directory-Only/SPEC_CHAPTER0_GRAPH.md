@@ -72,9 +72,9 @@ Ordering: the seven `ar-02` additions are spliced after `cnn.batch-normalization
 ### 4.2 ar-03 — ARENA 0.3 Optimization
 | # | id | title | kind | seg | prereqs | encompassing (weight) | ARENA defs | integ |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `opt.training-step` | One optimizer step: zero, backward, step | concept | 2 | cnn.training-loop, cnn.module-state, python.control-flow, numpy.stack-concat-interleave | cnn.training-loop (0.3) | opt_fn_with_sgd | 3 |
+| 1 | `opt.training-step` | One optimizer step: zero, backward, step | concept | 2 | cnn.training-loop, cnn.module-state, python.control-flow, torch.stack-concat-interleave | cnn.training-loop (0.3) | opt_fn_with_sgd | 3 |
 | 2 | `opt.sgd-momentum` | SGD with momentum and weight decay, in place | concept | 2 | opt.training-step, cnn.batch-normalization | opt.training-step (0.3), cnn.batch-normalization (0.2) | SGD | 5 |
-| 3 | `opt.rmsprop` | RMSprop scales each step by a running RMS of the gradient | concept | 1 | opt.sgd-momentum, numpy.elementwise-ufuncs | opt.sgd-momentum (0.5) | RMSprop | 6 |
+| 3 | `opt.rmsprop` | RMSprop scales each step by a running RMS of the gradient | concept | 1 | opt.sgd-momentum, torch.elementwise-ops | opt.sgd-momentum (0.5) | RMSprop | 6 |
 | 4 | `opt.adam` | Adam: two moments and bias correction | concept | 2 | opt.rmsprop, opt.sgd-momentum | opt.rmsprop (0.5), opt.sgd-momentum (0.3) | Adam | 7 |
 | 5 | `opt.adamw` | AdamW decouples weight decay from the gradient | concept | 1 | opt.adam | opt.adam (0.7) | AdamW | 8 |
 | 6 | `opt.parameter-groups` | Per-group hyperparameters | concept | 2 | opt.sgd-momentum, python.lists-and-tuples, python.control-flow | opt.sgd-momentum (0.5) | SGD (param groups) | 6 |
@@ -83,18 +83,18 @@ Ordering: the seven `ar-02` additions are spliced after `cnn.batch-normalization
 ### 4.3 ar-04 — ARENA 0.4 Backpropagation
 | # | id | title | kind | seg | prereqs | encompassing (weight) | ARENA defs | integ |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `bp.elementwise-backward` | A backward function turns grad_out into grad_in | concept | 2 | numpy.elementwise-ufuncs, numpy.broadcasting-rules, python.defining-functions | — | log_back, negative_back, exp_back | 0 |
-| 2 | `bp.unbroadcast` | Sum a gradient back to the shape it was broadcast from | concept | 2 | numpy.broadcasting-rules, numpy.axis-reductions, python.control-flow | numpy.broadcasting-rules (0.3), numpy.axis-reductions (0.3) | unbroadcast | 2 |
-| 3 | `bp.binary-backward` | Backward for two-argument ops: pick the argument, then unbroadcast | integrated | 2 | bp.elementwise-backward, bp.unbroadcast, numpy.boolean-masking | bp.unbroadcast (0.6), bp.elementwise-backward (0.4) | multiply_back0, multiply_back1, maximum_back0, maximum_back1 | 4 |
+| 1 | `bp.elementwise-backward` | A backward function turns grad_out into grad_in | concept | 2 | torch.elementwise-ops, torch.broadcasting-rules, python.defining-functions | — | log_back, negative_back, exp_back | 0 |
+| 2 | `bp.unbroadcast` | Sum a gradient back to the shape it was broadcast from | concept | 2 | torch.broadcasting-rules, torch.axis-reductions, python.control-flow | torch.broadcasting-rules (0.3), torch.axis-reductions (0.3) | unbroadcast | 2 |
+| 3 | `bp.binary-backward` | Backward for two-argument ops: pick the argument, then unbroadcast | integrated | 2 | bp.elementwise-backward, bp.unbroadcast, torch.boolean-masking | bp.unbroadcast (0.6), bp.elementwise-backward (0.4) | multiply_back0, multiply_back1, maximum_back0, maximum_back1 | 4 |
 | 4 | `bp.manual-chain` | Chain backward functions by hand | integrated | 1 | bp.binary-backward, bp.elementwise-backward | bp.binary-backward (0.6), bp.elementwise-backward (0.4) | forward_and_back | 5 |
 | 5 | `bp.backward-registry` | A lookup from (forward fn, argnum) to its backward | concept | 1 | python.lists-and-tuples, python.defining-functions, python.dots-and-imports | — | BackwardFuncLookup | 0 |
 | 6 | `bp.recipe-and-tensor` | A Tensor remembers how it was made | concept | 2 | cnn.module-state, python.control-flow, python.lists-and-tuples | cnn.module-state (0.2) | Recipe, Tensor, log_forward, multiply_forward | 1 |
 | 7 | `bp.wrap-forward` | Wrap any array function into a differentiable one | concept | 2 | bp.recipe-and-tensor, python.defining-functions | bp.recipe-and-tensor (0.6) | wrap_forward_fn, _sum, _argmax, add_, sub_ | 2 |
 | 8 | `bp.topological-sort` | Order the graph so parents come first | concept | 2 | bp.recipe-and-tensor, python.control-flow, python.lists-and-tuples | bp.recipe-and-tensor (0.2) | topological_sort, get_children, sorted_computational_graph | 2 |
 | 9 | `bp.backprop` | Walk the sorted graph and push gradients back | integrated | 2 | bp.topological-sort, bp.backward-registry, bp.wrap-forward, bp.binary-backward, bp.recipe-and-tensor | bp.topological-sort (0.5), bp.backward-registry (0.4), bp.binary-backward (0.3), bp.recipe-and-tensor (0.3) | backprop | 9 |
-| 10 | `bp.shape-backward` | Backward for ops that move data: reshape, permute, expand, sum | concept | 2 | bp.unbroadcast, numpy.reshape-flatten, numpy.transpose-axes, numpy.sorting | bp.unbroadcast (0.3) | reshape_back, permute_back, expand_back, sum_back | 3 |
-| 11 | `bp.indexing-backward` | Backward through indexing scatters the gradient | concept | 1 | bp.elementwise-backward, tensor.indexed-selection, numpy.constructors | tensor.indexed-selection (0.3) | coerce_index, _getitem, getitem_back | 1 |
-| 12 | `bp.matmul-backward` | Backward for matmul: transpose the other operand | concept | 2 | bp.binary-backward, numpy.dot-matmul-patterns, numpy.transpose-axes | bp.binary-backward (0.3) | _matmul2d, matmul2d_back0, matmul2d_back1, relu | 5 |
+| 10 | `bp.shape-backward` | Backward for ops that move data: reshape, permute, expand, sum | concept | 2 | bp.unbroadcast, torch.reshape-flatten, torch.transpose-axes, torch.sorting | bp.unbroadcast (0.3) | reshape_back, permute_back, expand_back, sum_back | 3 |
+| 11 | `bp.indexing-backward` | Backward through indexing scatters the gradient | concept | 1 | bp.elementwise-backward, tensor.indexed-selection, torch.constructors | tensor.indexed-selection (0.3) | coerce_index, _getitem, getitem_back | 1 |
+| 12 | `bp.matmul-backward` | Backward for matmul: transpose the other operand | concept | 2 | bp.binary-backward, torch.dot-matmul-patterns, torch.transpose-axes | bp.binary-backward (0.3) | _matmul2d, matmul2d_back0, matmul2d_back1, relu | 5 |
 | 13 | `bp.autograd-module` | Parameter and Module on your own Tensor | integrated | 3 | cnn.mlp, cnn.linear-layer, cnn.module-state, bp.recipe-and-tensor, bp.matmul-backward | cnn.module-state (0.4), cnn.linear-layer (0.3), cnn.mlp (0.2), bp.recipe-and-tensor (0.2) | Parameter, Module, Linear, ReLU, MLP | 4 |
 | 14 | `bp.cross-entropy` | cross_entropy from a log-softmax you can differentiate | integrated | 1 | tensor.stable-probabilities, tensor.classifier-evaluation, bp.indexing-backward, bp.shape-backward | tensor.classifier-evaluation (0.3), tensor.stable-probabilities (0.3), bp.indexing-backward (0.2) | cross_entropy | 4 |
 | 15 | `bp.autograd-sgd` | An SGD that updates your own Tensors, with tracking off | integrated | 2 | opt.sgd-momentum, bp.autograd-module, bp.wrap-forward | opt.sgd-momentum (0.4), bp.autograd-module (0.2), bp.wrap-forward (0.2) | NoGrad, SGD | 11 |
@@ -103,16 +103,16 @@ Ordering: the seven `ar-02` additions are spliced after `cnn.batch-normalization
 ### 4.4 ar-05 — ARENA 0.5 VAEs and GANs
 | # | id | title | kind | seg | prereqs | encompassing (weight) | ARENA defs | integ |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `gen.autoencoder` | Encoder to a bottleneck, decoder back | integrated | 2 | cnn.sequential, cnn.convolution-2d, cnn.linear-layer, numpy.reshape-flatten | cnn.sequential (0.4), cnn.convolution-2d (0.3), cnn.linear-layer (0.2) | Autoencoder | 4 |
+| 1 | `gen.autoencoder` | Encoder to a bottleneck, decoder back | integrated | 2 | cnn.sequential, cnn.convolution-2d, cnn.linear-layer, torch.reshape-flatten | cnn.sequential (0.4), cnn.convolution-2d (0.3), cnn.linear-layer (0.2) | Autoencoder | 4 |
 | 2 | `gen.reconstruction-loop` | Train to reconstruct: MSE between output and input | integrated | 1 | gen.autoencoder, opt.finetune-loop, cnn.training-loop | cnn.training-loop (0.5), opt.finetune-loop (0.3), gen.autoencoder (0.3) | AutoencoderTrainer | 19 |
-| 3 | `gen.vae-reparameterization` | Sample the latent with the reparameterisation trick | concept | 2 | gen.autoencoder, tensor.stable-probabilities, numpy.random-samplers | gen.autoencoder (0.5) | VAE | 5 |
-| 4 | `gen.elbo-loss` | Reconstruction plus a KL penalty, weighted by beta | integrated | 1 | gen.vae-reparameterization, gen.reconstruction-loop, numpy.axis-reductions | gen.reconstruction-loop (0.5), gen.vae-reparameterization (0.3) | VAETrainer | 21 |
-| 5 | `gen.activation-modules` | Tanh, LeakyReLU and Sigmoid as modules | concept | 1 | cnn.module-state, numpy.elementwise-ufuncs, numpy.boolean-masking | cnn.module-state (0.2) | Tanh, LeakyReLU, Sigmoid | 1 |
+| 3 | `gen.vae-reparameterization` | Sample the latent with the reparameterisation trick | concept | 2 | gen.autoencoder, tensor.stable-probabilities, torch.random-samplers | gen.autoencoder (0.5) | VAE | 5 |
+| 4 | `gen.elbo-loss` | Reconstruction plus a KL penalty, weighted by beta | integrated | 1 | gen.vae-reparameterization, gen.reconstruction-loop, torch.axis-reductions | gen.reconstruction-loop (0.5), gen.vae-reparameterization (0.3) | VAETrainer | 21 |
+| 5 | `gen.activation-modules` | Tanh, LeakyReLU and Sigmoid as modules | concept | 1 | cnn.module-state, torch.elementwise-ops, torch.boolean-masking | cnn.module-state (0.2) | Tanh, LeakyReLU, Sigmoid | 1 |
 | 6 | `gen.dcgan-generator` | Generator: a latent vector up to an image | integrated | 2 | gen.autoencoder, cnn.sequential, cnn.batch-normalization, gen.activation-modules, cnn.block-group | gen.autoencoder (0.3), cnn.sequential (0.3), cnn.batch-normalization (0.2), cnn.block-group (0.2) | Generator | 8 |
 | 7 | `gen.dcgan-discriminator` | Discriminator: an image down to one probability | integrated | 2 | gen.dcgan-generator, cnn.convolution-2d, cnn.sequential, gen.activation-modules | gen.dcgan-generator (0.3), cnn.convolution-2d (0.2), cnn.sequential (0.2) | Discriminator, DCGAN | 9 |
 | 8 | `gen.weight-init` | Initialise weights the DCGAN way | concept | 1 | gen.dcgan-discriminator, cnn.module-state | cnn.module-state (0.3) | initialize_weights | 1 |
 | 9 | `gen.gan-training-step` | Two optimisers, two losses, detach between them | integrated | 2 | gen.dcgan-discriminator, gen.dcgan-generator, gen.weight-init, opt.adam, cnn.training-loop, gen.reconstruction-loop, tensor.stable-probabilities | gen.reconstruction-loop (0.4), gen.dcgan-discriminator (0.3), gen.dcgan-generator (0.3), cnn.training-loop (0.3), opt.adam (0.2) | DCGANTrainer | 22 |
-| 10 | `gen.conv-transpose-1d` | Transposed convolution is convolution of a padded input with the flipped kernel | concept | 3 | cnn.convolution-1d, torch.slice-assignment, numpy.constructors, numpy.transpose-axes | cnn.convolution-1d (0.6), torch.slice-assignment (0.3) | conv_transpose1d_minimal, fractional_stride_1d, conv_transpose1d | 2 |
+| 10 | `gen.conv-transpose-1d` | Transposed convolution is convolution of a padded input with the flipped kernel | concept | 3 | cnn.convolution-1d, torch.slice-assignment, torch.constructors, torch.transpose-axes | cnn.convolution-1d (0.6), torch.slice-assignment (0.3) | conv_transpose1d_minimal, fractional_stride_1d, conv_transpose1d | 2 |
 | 11 | `gen.conv-transpose-2d` | The 2-D transposed convolution and its module | concept | 2 | gen.conv-transpose-1d, cnn.convolution-2d, cnn.module-state | gen.conv-transpose-1d (0.6), cnn.convolution-2d (0.3) | fractional_stride_2d, conv_transpose2d, ConvTranspose2d | 4 |
 | 12 | `gen.own-layers-generator` | Rebuild the generator from your own ConvTranspose2d, Tanh and BatchNorm | integrated | 1 | gen.conv-transpose-2d, gen.dcgan-generator, gen.activation-modules, cnn.batch-normalization, cnn.feature-extraction | gen.conv-transpose-2d (0.4), gen.dcgan-generator (0.4), gen.activation-modules (0.3), cnn.batch-normalization (0.2), cnn.feature-extraction (0.2) | Generator (own layers, section bonus) | 17 |
 
@@ -193,16 +193,16 @@ tracking off; `gen.gan-training-step` needs both nets, the init, Adam and the de
 | `einops.repeat-model` | einops.split-axes (0.7) |
 | `einops.grids-montage` | einops.split-axes (0.7) |
 | `einops.pooling` | einops.split-axes (0.7), einops.reduce-model (0.7) |
-| `numpy.dot-matmul-patterns` | numpy.linalg-basics (0.6) |
+| `torch.dot-matmul-patterns` | torch.linalg-basics (0.6) |
 | `einops.channel-groups-temporal` | einops.dl-flatten-heads (0.7), einops.pooling (0.7) |
-| `cnn.module-state` | numpy.dtype-astype (0.4), numpy.ndarray-model (0.4) |
-| `numpy.axis-reductions` | numpy.aggregations (0.4), numpy.broadcasting-rules (0.4) |
-| `tensor.stable-probabilities` | numpy.broadcasting-rules (0.4) |
+| `cnn.module-state` | torch.dtype-astype (0.4), torch.tensor-model (0.4) |
+| `torch.axis-reductions` | torch.aggregations (0.4), torch.broadcasting-rules (0.4) |
+| `tensor.stable-probabilities` | torch.broadcasting-rules (0.4) |
 | `tensor.classifier-evaluation` | tensor.stable-probabilities (0.4) |
 | `cnn.convolution-2d` | cnn.module-state (0.4) |
-| `cnn.linear-layer` | numpy.dot-matmul-patterns (0.4) |
-| `cnn.stride-views` | numpy.dot-matmul-patterns (0.4) |
-| `torch.out-argument` | numpy.ranges (0.4) |
+| `cnn.linear-layer` | torch.dot-matmul-patterns (0.4) |
+| `cnn.stride-views` | torch.dot-matmul-patterns (0.4) |
+| `torch.out-argument` | torch.ranges (0.4) |
 
 ## 7. Blind-authoring diff against the atom graph (post-hoc)
 

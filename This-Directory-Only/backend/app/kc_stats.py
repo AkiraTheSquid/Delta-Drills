@@ -6,7 +6,7 @@ numbers that motivated it (docs/spec-graph-metadata-audit-layer.md §5):
 
   * **Rung stall** — the trailing run of attempts one learner made on one
     concept at one rung. Seth's own log held a 63-attempt `faded` run at 16%
-    accuracy on `numpy.ndarray-model`, dated the week BEFORE the `a.T`
+    accuracy on `torch.tensor-model`, dated the week BEFORE the `a.T`
     prerequisite bug was found by hand. This number, computed nightly, names a
     broken concept with a single learner's data.
   * **Served-while-predicting-failure** — a run of serves where the model's own

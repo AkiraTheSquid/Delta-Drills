@@ -179,7 +179,7 @@ def check_kp(path, registry, bank, errors):
     # is ON is decided by their attempt record, not by how much content the rung
     # holds, so a two-deep faded rung does not send anyone to the independent
     # one — it sends the QUEUE round again over the same two drills. Seth,
-    # testing on numpy.ndarray-model: "I basically memorized all the problems
+    # testing on torch.tensor-model: "I basically memorized all the problems
     # for the first part ... they're currently repeating." A segment may now
     # carry as many faded drills as its author is willing to write, and running
     # out of them is reported to the learner rather than papered over with a

@@ -3,7 +3,7 @@ kc: raytracing.triangle-intersection
 title: Ray–triangle intersection
 new_syntax: []
 concepts: [barycentric, three-unknowns]
-supporting: ['raytracing.segment-intersection', 'numpy.linalg-basics', 'numpy.broadcasting-rules']
+supporting: ['raytracing.segment-intersection', 'torch.linalg-basics', 'torch.broadcasting-rules']
 previews: []
 faded: [1137, 1138, 1139, 1140]
 guided: []

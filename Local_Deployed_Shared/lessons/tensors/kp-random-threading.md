@@ -1,7 +1,7 @@
 ---
-kc: numpy.random-threading
+kc: torch.random-threading
 title: Using a stream you were handed
-supporting: [numpy.random-seeding, numpy.random-samplers, numpy.ndarray-model]
+supporting: [torch.random-seeding, torch.random-samplers, torch.tensor-model]
 new_syntax: []
 previews: []
 faded: [8, 687]

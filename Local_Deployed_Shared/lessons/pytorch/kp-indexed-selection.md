@@ -3,7 +3,7 @@ kc: tensor.indexed-selection
 title: Selecting one entry per row
 new_syntax: ['Tensor.gather', 'Tensor.abs']
 concepts: [paired-indices, gather]
-supporting: ['numpy.slicing-views', 'numpy.ranges', 'numpy.axis-reductions', 'numpy.broadcasting-rules']
+supporting: ['torch.slicing-views', 'torch.ranges', 'torch.axis-reductions', 'torch.broadcasting-rules']
 previews: []
 faded: [1020, 1022, 1019, 1021]
 guided: []

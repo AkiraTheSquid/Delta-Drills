@@ -301,7 +301,7 @@ print("\nG. ATTEMPT LOG — round-trip, replay equivalence, calibration")
 
 tmp = Path(tempfile.mkdtemp(prefix="dd-attempt-log-"))
 try:
-    USER, KC = "test-user", "numpy.ndarray-model"
+    USER, KC = "test-user", "torch.tensor-model"
 
     live = fresh()
     outcomes = [True, False, True, True, True, False, True, True]
@@ -469,7 +469,7 @@ from app import adaptive, engine_features as F  # noqa: E402
 
 state = adaptive.UserPracticeState(user_id="engine-test")
 # 🔴 The root is DERIVED from kc_registry.json, not named. It used to be
-# hard-coded to "numpy.ndarray-model", which stopped being a root the moment
+# hard-coded to "torch.tensor-model", which stopped being a root the moment
 # the python course went in front of it (it now declares python.indexing,
 # python.defining-functions and python.dots-and-imports), so both root checks
 # had been failing while testing nothing: a KC with parents obviously has a
@@ -482,7 +482,7 @@ _reg = json.loads(
 _roots = [k["id"] for k in _reg.get("kcs", []) if not (k.get("prereqs") or [])]
 check("the concept graph has a root to start a learner on", bool(_roots), str(_roots))
 KC_ROOT = _roots[0]
-KC_CHILD = "numpy.broadcasting-rules"
+KC_CHILD = "torch.broadcasting-rules"
 
 vec = F.build(state, KC_CHILD, "worked", difficulty_score=55)
 check("build returns every configured feature", set(vec) == {f.name for f in CFG.features}, str(sorted(vec)))
@@ -520,7 +520,7 @@ check(
 )
 check("build tolerates a null KC", F.build(state, None, "solo")["prereq"] == 0.0)
 
-enc = F.encompassed_mastery(state, "numpy.reshape-flatten")
+enc = F.encompassed_mastery(state, "torch.reshape-flatten")
 check("encompassing edges resolve to atoms", isinstance(enc, dict) and len(enc) > 0, f"{len(enc)} atoms")
 
 check("pooling weight falls as own evidence accumulates",

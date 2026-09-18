@@ -1,7 +1,7 @@
 ---
-kc: numpy.boolean-masking
+kc: torch.boolean-masking
 title: Boolean masks — compare, count, filter
-supporting: [numpy.slicing-views, numpy.elementwise-ufuncs, numpy.aggregations]
+supporting: [torch.slicing-views, torch.elementwise-ops, torch.aggregations]
 new_syntax: [torch.count_nonzero, syntax.bitwise]
 faded: [236, 52, 12]
 guided: [85]

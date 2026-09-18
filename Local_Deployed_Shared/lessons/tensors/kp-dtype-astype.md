@@ -1,7 +1,7 @@
 ---
-kc: numpy.dtype-astype
+kc: torch.dtype-astype
 title: Dtypes, .to(), and memory size
-supporting: [numpy.ndarray-model]
+supporting: [torch.tensor-model]
 new_syntax: [Tensor.element_size, Tensor.to, builtin.getattr, torch.arange#dtype, torch.float64, torch.int16, torch.uint8]
 faded: [230, 215, 51, 649, 650, 651]
 guided: [87]
