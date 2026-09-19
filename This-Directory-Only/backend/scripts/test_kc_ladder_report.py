@@ -98,12 +98,15 @@ check("last_ts is the most recent attempt's",
       est["last_ts"] == "2026-07-30T00:02:00+00:00", repr(est["last_ts"]))
 
 # Last attempt missed, at `partial` -> the floor is `partial` (faded retired
-# 2026-09-11), so the rung stays; the two old faded rows lift onto it.
-check("a miss steps the rung down from where it happened, floored at partial",
+# 2026-09-11); the two old faded rows lift onto it.
+check("a miss at partial leaves the learner on partial",
       kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
+# 2026-09-19: NO DEMOTION. A rung the learner has been served at is held; a
+# miss there is answered by the prerequisites (app/remediation.py), never by
+# stepping them back down the same concept.
 st.kc_ladder[SOME_KC]["attempts"][-1]["stage"] = "solo"
-check("a miss at solo steps down to partial",
-      kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
+check("a miss at solo HOLDS solo — the rung is a promotion order, never a fallback",
+      kc_graph.kc_stage(st, SOME_KC) == "solo", kc_graph.kc_stage(st, SOME_KC))
 
 print("\n--- a row missing its keys does not crash the read ---")
 
@@ -114,13 +117,12 @@ check("an empty row reads as no evidence", est["n"] == 0 and est["worked_seen"] 
 check("no attempts means no last_ts", est["last_ts"] is None, repr(est["last_ts"]))
 check("an empty row still yields a stage", kc_graph.kc_stage(st, SOME_KC) == "worked")
 
-print("\n--- demotion never lands back on the lesson rung ---")
+print("\n--- a taught concept never lands back on the lesson rung ---")
 
 # `worked` is the teaching page, not a drill. Once a concept has been taught,
-# no amount of failing may put that page back in front of the learner: the
-# demotion re-derives from `attempts[-1]` on every question, so a single miss
-# used to replay the whole lesson before every subsequent question on that KC
-# until they happened to answer one correctly.
+# no amount of failing may put that page back in front of the learner.
+# (`_step_down` survives in kc_ladder_math for its callers; the ladder itself
+# no longer steps down — 2026-09-19.)
 
 check("the drill floor is partial — faded is retired",
       kc_graph.DRILL_FLOOR == "partial" and kc_graph.LIVE_STAGES == ("worked", "partial", "solo"))
@@ -141,9 +143,9 @@ for lowest in ("partial", "faded"):
     check(f"a miss on the lowest drill rung stays on the floor (filed at {lowest})",
           kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
 
-# The other demotion path: not one miss but a confidently bad record. Wilson
-# upper at 1/8 is 0.42, under DEMOTE_HI. The last attempt is CORRECT so the
-# miss rule above does not fire and this branch is the one under test.
+# A confidently bad record on Integrated (Wilson upper at 1/8 is 0.42, under
+# DEMOTE_HI) used to drop the learner to the floor. It no longer does: the
+# rung is held and the struggle is the remediation's to answer.
 st = fresh_state()
 st.kc_ladder[SOME_KC] = {
     "worked_seen": 1,
@@ -153,10 +155,10 @@ st.kc_ladder[SOME_KC] = {
     ),
 }
 est = kc_graph.kc_estimate(st, SOME_KC)
-check("the confidently-struggling branch is the one being exercised",
+check("the record is confidently bad",
       est["ci"][1] < kc_graph.DEMOTE_HI, f"upper={est['ci'][1]}")
-check("a bad record restores full support without re-teaching",
-      kc_graph.kc_stage(st, SOME_KC) == "partial", kc_graph.kc_stage(st, SOME_KC))
+check("a bad record on Integrated holds Integrated — no demotion, no re-teaching",
+      kc_graph.kc_stage(st, SOME_KC) == "solo", kc_graph.kc_stage(st, SOME_KC))
 
 # The one branch that may still return `worked`: nobody has been taught yet.
 st = fresh_state()
@@ -285,11 +287,19 @@ check("...and the same run made at partial reaches solo",
 # rule is additive and must not have replaced it.
 check("a clean record still reaches solo on the window alone",
       ladder("T" * 12) == "solo", ladder("T" * 12))
-# The immediate demotion is untouched: a streak is worth one rung and one miss
-# gives it straight back, which is what keeps the promotion honest.
-check("one miss still gives the rung straight back",
+# A streak is worth one rung. The rung is HELD from the first drill served
+# there (2026-09-19): a miss made at Solo, before anything was served at
+# Integrated, leaves the learner on Solo; a miss made at Integrated holds it.
+check("a streak, then a miss still filed at partial: nothing served above, so partial",
       ladder(POISONED + "F") == "partial", ladder(POISONED + "F"))
-check("a cold record: three correct clear the streak but not the band gate; six do",
+_held = fresh_state()
+_held.kc_ladder[SOME_KC] = {"worked_seen": 1, "attempts": [
+    {"correct": c == "T", "stage": "partial", "ts": f"2026-07-30T00:{i:02d}:00+00:00"}
+    for i, c in enumerate(POISONED)
+] + [{"correct": False, "stage": "solo", "ts": "2026-07-30T00:59:00+00:00"}]}
+check("a streak, then a miss filed at solo: the rung is held",
+      kc_graph.kc_stage(_held, SOME_KC) == "solo", kc_graph.kc_stage(_held, SOME_KC))
+check("a cold record: three correct clear the streak but not the band gate; six do; misses stay on the floor",
       (ladder("TTT"), ladder("TTTTTT"), ladder("FFFF")) == ("partial", "solo", "partial"),
       repr((ladder("TTT"), ladder("TTTTTT"), ladder("FFFF"))))
 
@@ -501,23 +511,23 @@ def _aided_state(seq_ok, aided_qids, answered):
     )
     return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out), gap
 
-# Twelve of the fifteen behind an example: three unaided successes is a streak,
-# but not the six distinct the gate wants, so the learner is still on Solo.
+# 2026-09-19: an aided answer owes NOTHING on that drill. With every Solo
+# drill answered and none missed, the rung is cleared (solo_rung_cleared —
+# aided answers count as answered) and the learner moves up to Integrated.
 _aided = _rung_floor[:-3]
 _stage, _ids, _gap = _aided_state(True, _aided, _rung_floor)
-check("solo drills answered correctly behind an example come back once nothing unseen is left",
-      _stage == "partial" and _ids == sorted(_aided) and _gap is None,
+check("solo drills answered behind an example are not owed: the rung clears and Integrated is served",
+      _stage == "solo" and _ids and not (set(_ids) & set(_rung_floor)) and _gap is None,
       f"stage={_stage} servable={_ids} gap={_gap}")
 _stage, _ids, _gap = _aided_state(True, _aided, _rung_floor[:3])
-check("...but not while an unseen solo drill remains",
+check("...and while an unseen solo drill remains, it is what gets served",
       _stage == "partial" and _ids and not (set(_ids) & set(_rung_floor[:3])) and _gap is None,
       f"stage={_stage} servable={_ids} gap={_gap}")
 
-# 🔴 DEMOTED ONTO A SPENT RUNG (2026-09-18). A miss on an Integrated drill
-# steps the learner down to Solo; with every Solo drill answered and none owed
-# there was nothing to walk down onto and the queue 409'd on a concept whose
-# Solo rung the learner had finished (torch.constructors after q648 missed).
-# The missed Integrated drill is the one still owed.
+# A miss on an Integrated drill used to step the learner down to Solo
+# (2026-09-18 fixture: with every Solo drill answered there was nothing to
+# walk down onto, and the queue 409'd). Now the rung is held and the other
+# Integrated drills are the fresh work.
 _solo_first = sorted(SOLO)[0]
 _st = _state_on_rung("TTTTTT", True)
 _row = _st.kc_ladder[LADDER_KC]
@@ -530,8 +540,8 @@ _out, _kc2, _gap = prioritization.narrow_to_next_kc(
     _st, [_Q(i, 50) for i in POOL], served=set(_rung_floor + [_solo_first]), last_served=None
 )
 _stage = kc_graph.kc_stage(_st, LADDER_KC)
-check("demoted onto a spent solo rung: the missed integrated drill comes back, no 409",
-      _stage == "partial" and sorted(q.id for q in _out) == [_solo_first] and _gap is None,
+check("a miss on Integrated holds Integrated; with the rest unseen, fresh Integrated drills are served",
+      _stage == "solo" and _solo_first not in [q.id for q in _out] and _out and _gap is None,
       f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
 
 # 🔴 A SPENT SOLO RUNG WITH EVERY ANSWER CORRECT (2026-09-18). Miss, retake,
@@ -558,8 +568,8 @@ check("every solo drill solved unaided clears the rung: stage solo, integrated d
       _stage == "solo" and _out and set(q.id for q in _out) <= SOLO and _gap is None,
       f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
 _row["attempts"][-1] = dict(_row["attempts"][-1], example=True)
-check("...not while the last one was answered behind an example",
-      kc_graph.kc_stage(_st, LADDER_KC) == "partial")
+check("...and one answered behind an example is still answered (2026-09-19: aided owes nothing)",
+      kc_graph.kc_stage(_st, LADDER_KC) == "solo")
 _row["attempts"][-1] = dict(_row["attempts"][-1], example=False, correct=False)
 _seed_answered(_st, _rung_floor, missed=[_rung_floor[-1]])
 check("...and never over an outstanding miss",
@@ -584,11 +594,21 @@ _out, _kc2, _gap = prioritization.narrow_to_next_kc(
     _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None
 )
 _stage = kc_graph.kc_stage(_st, LADDER_KC)
-check("integrated rung spent: the drill answered behind the example comes back, no 409",
-      _stage == "solo" and sorted(q.id for q in _out) == [_solo_ids[-1]] and _gap is None,
+check("integrated rung spent, one answered behind the example: nothing is owed on that drill (2026-09-19), the concept is review",
+      _stage == "solo" and _gap is None and _out,
       f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
-check("...and the concept is not yet learned while it is owed",
+check("...and an aided answer no longer keeps the concept from counting as learned",
+      kc_graph.kc_evidence_exhausted(_st, LADDER_KC))
+# The concept-level debt an aided answer DOES leave (codex, 2026-09-19): at
+# least one unaided success on the concept. All answers aided = not learned,
+# and its Solo rung is not cleared either.
+_row_all_aided = [dict(a, example=True) for a in _row["attempts"]]
+_saved = _row["attempts"]; _row["attempts"] = _row_all_aided
+check("every servable drill answered behind an example: NOT learned — the concept owes one unaided success",
       not kc_graph.kc_evidence_exhausted(_st, LADDER_KC))
+check("...and the Solo rung is not cleared on aided answers alone",
+      not kc_graph.solo_rung_cleared(_st, LADDER_KC))
+_row["attempts"] = _saved
 _row["attempts"][-1] = dict(_row["attempts"][-1], example=False)
 _row["attempts"][-2] = dict(_row["attempts"][-2], stage="partial")
 check("every servable drill answered correctly and unaided: evidence exhausted, whatever the tail",
@@ -649,7 +669,12 @@ _seed_answered(_st, POOL, missed=_rung_floor[:1])
 _touch(_st, _rung_floor[0], "2026-09-01T00:00:00+00:00")
 _out, _kc2, _gap = prioritization.narrow_to_next_kc(
     _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
-check("the only owed drill comes back even inside its cooldown — never a 409",
+check("the only owed drill, inside its cooldown, is NOT handed back in cooldown mode: the rung reports itself spent (2026-09-19)",
+      _out == [] and _gap is not None and _gap.get("kc") == LADDER_KC,
+      f"servable={sorted(q.id for q in _out)} gap={_gap}")
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None, cooldown=False)
+check("...and with the cooldown relaxed (the request's last resort) it comes back — never a 409",
       sorted(q.id for q in _out) == _rung_floor[:1] and _gap is None,
       f"servable={sorted(q.id for q in _out)} gap={_gap}")
 
@@ -685,6 +710,106 @@ _out, _kc2, _gap = prioritization.narrow_to_next_kc(
     _st2, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
 check("...while the same spent rung on an UNLEARNED concept still does",
       _gap is not None and _gap.get("kc") == LADDER_KC, f"gap={_gap}")
+
+# 🔴 STRUGGLE → PREREQUISITES, NOT EASIER DRILLS (2026-09-19). Two misses on
+# a concept with no unaided success between them, and the picker serves the
+# weakest prerequisite that still has fresh drills — for remediation.DOSE
+# drills, then the next prerequisite, then back to the concept.
+from app import remediation, attempt_history  # noqa: E402
+
+
+def _learn_ancestors(state, kc):
+    """A real learner on `kc` has its whole prerequisite chain learned, not
+    just the parents (`_learn_prereqs`): a parent whose own prerequisites are
+    unlearned has no UNLOCKED drills, and the redirect walks past it."""
+    seen = set()
+    layer = list((kc_graph.registry_node(kc) or {}).get("prereqs") or [])
+    while layer:
+        nxt = []
+        for p in layer:
+            if p in seen:
+                continue
+            seen.add(p)
+            for atom in (kc_graph._crosswalk().get(p) or {}).get("atoms") or []:
+                state.atom_mastery[atom["a"]] = 1.0
+                state.atom_last_ts[atom["a"]] = NOW
+            nxt += (kc_graph.registry_node(p) or {}).get("prereqs") or []
+        layer = nxt
+
+
+_st = _state_on_rung("TTTTTT", True)
+_learn_ancestors(_st, LADDER_KC)
+_row = _st.kc_ladder[LADDER_KC]
+_row["attempts"] += [
+    {"correct": False, "stage": "partial", "ts": f"2026-08-05T00:0{i}:00+00:00", "question_id": int(q), "example": False}
+    for i, q in enumerate(_rung_floor[:2])
+]
+_seed_answered(_st, _rung_floor[:2], missed=_rung_floor[:2])
+_prereqs = (kc_graph.registry_node(LADDER_KC) or {}).get("prereqs") or []
+check("fixture: the concept has prerequisites with drills", bool(_prereqs))
+check("two misses without an unaided success = struggling",
+      remediation.struggling(_st, LADDER_KC))
+_target = remediation.redirect(_st, LADDER_KC)
+check("a struggling concept is served through one of its prerequisites",
+      _target in _prereqs, f"target={_target}")
+check("...the weakest one",
+      _target == min(_prereqs, key=lambda p: (kc_graph.kc_mastery(_st, p, decay=False)[0], p)), _target)
+# An aided correct answer does not end the struggle; an unaided one does.
+_row["attempts"].append({"correct": True, "stage": "partial", "ts": "2026-08-05T00:05:00+00:00",
+                         "question_id": int(_rung_floor[2]), "example": True})
+check("an aided correct answer does not end the struggle", remediation.struggling(_st, LADDER_KC))
+_row["attempts"][-1]["example"] = False
+check("an unaided correct answer ends it: the concept itself is served again",
+      not remediation.struggling(_st, LADDER_KC) and remediation.redirect(_st, LADDER_KC) == LADDER_KC)
+_row["attempts"].pop()
+# The dose: DOSE drills on the prerequisite since the miss, and it yields.
+_prow = kc_graph.ladder_row(_st, _target)
+_prow["attempts"] += [
+    {"correct": True, "stage": "partial", "ts": f"2026-08-06T00:0{i}:00+00:00", "question_id": -1, "example": False}
+    for i in range(remediation.DOSE)
+]
+_next = remediation.redirect(_st, LADDER_KC)
+check("after its dose the prerequisite yields to the next one, or to the concept",
+      _next != _target and (_next in _prereqs or _next == LADDER_KC), f"next={_next}")
+# Dose every prerequisite and the concept's own fresh drills are served —
+# struggle never withholds work.
+_ancestors, _layer = set(), list(_prereqs)
+while _layer:
+    _ancestors.update(_layer)
+    _layer = [g for p in _layer for g in (kc_graph.registry_node(p) or {}).get("prereqs") or [] if g not in _ancestors]
+for _p in _ancestors:
+    kc_graph.ladder_row(_st, _p)["attempts"] += [
+        {"correct": True, "stage": "partial", "ts": f"2026-08-06T00:1{i}:00+00:00", "question_id": -1, "example": False}
+        for i in range(remediation.DOSE)
+    ]
+check("every ancestor dosed: back to the concept's own fresh drills",
+      remediation.redirect(_st, LADDER_KC) == LADDER_KC)
+# ...and a prerequisite the learner switched off is never the target.
+_st3 = _state_on_rung("TTTTTT", True)
+_learn_ancestors(_st3, LADDER_KC)
+_st3.kc_ladder[LADDER_KC]["attempts"] += [
+    {"correct": False, "stage": "partial", "ts": f"2026-08-05T00:0{i}:00+00:00", "question_id": int(q), "example": False}
+    for i, q in enumerate(_rung_floor[:2])
+]
+_st3.kc_prefs = {p: {"enabled": False} for p in _prereqs}
+_t3 = remediation.redirect(_st3, LADDER_KC)
+check("a switched-off prerequisite is skipped: the walk goes one level further down",
+      _t3 not in _prereqs and _t3 != LADDER_KC, _t3)
+
+# 🔴 NO MORE THAN CONSECUTIVE_CAP ANSWERS IN A ROW ON ONE CONCEPT (2026-09-19).
+_st4 = _state_on_rung("TTT", True)
+_seed_answered(_st4, _rung_floor[:remediation.CONSECUTIVE_CAP])
+check("fixture: the last answers were all on the concept",
+      len(attempt_history.recent_question_sequence(_st4, remediation.CONSECUTIVE_CAP)) == remediation.CONSECUTIVE_CAP)
+check("the concept is capped", LADDER_KC in remediation.capped(_st4), repr(remediation.capped(_st4)))
+_here = set(POOL)
+_pick_capped = remediation.select_next_kc(_st4, eligible=lambda q: q in _here and q not in set(_rung_floor[:3]), cap=True)
+_pick_free = remediation.select_next_kc(_st4, eligible=lambda q: q in _here and q not in set(_rung_floor[:3]), cap=False)
+check("with the cap on, the concept yields (nothing else eligible here: None); with it off, it is served",
+      _pick_capped is None and _pick_free == LADDER_KC, f"capped={_pick_capped} free={_pick_free}")
+_st5 = _state_on_rung("TTT", True)
+_seed_answered(_st5, _rung_floor[:remediation.CONSECUTIVE_CAP - 1])
+check("one short of the cap: not capped", LADDER_KC not in remediation.capped(_st5))
 
 print()
 if fails:

@@ -51,6 +51,7 @@ def pick_for_subtopic(
     focus_subtopic: str | None,
     exclude_kcs: set | None = None,
     record: bool = True,
+    cooldown: bool = True,
 ):
     """Choose the question to serve from ONE subtopic.
 
@@ -96,7 +97,7 @@ def pick_for_subtopic(
     answered = answered_question_ids(user_state)
     narrowed, next_kc, gap = narrow_to_next_kc(
         user_state, candidates, served, answered, exclude_kcs=exclude_kcs,
-        last_served=user_state.last_served_question_id,
+        last_served=user_state.last_served_question_id, cooldown=cooldown,
     )
     # 🔴 Applied BEFORE the exhaustion check, not after. A focused request keeps
     # the whole subtopic pool on purpose, so `narrowed` being empty says nothing
@@ -230,31 +231,47 @@ def run_queue(
     # (the narrowing's last resort can hand back a concept off the frontier).
     # Every iteration adds a new concept or a new subtopic to a finite set,
     # which is what terminates the loop.
-    tried: set = set()
-    tried_kcs: set = set()
+    # TWO ROUNDS (2026-09-19). The first serves nothing a learner missed
+    # inside its cooldown (attempt_history.RETAKE_COOLDOWN): fresh work,
+    # then fresh drills anywhere, then review repeats fill the gap and the
+    # retake comes back on its own once three other answers have passed.
+    # Only when that round finds NOTHING on the whole course is the cooldown
+    # relaxed — the retake beats a 409, and a learner whose one remaining
+    # drill is a miss would otherwise be bricked (no answer can ever expire
+    # a cooldown nothing is served into). A focused request takes both
+    # rounds too (its pool alone, the selector never asked): a focused
+    # concept whose only work is an in-cooldown retake serves the retake,
+    # not a 409 (codex, 2026-09-19).
     first_gap: dict | None = None
     picked = None
-    while True:
-        if subtopic is None:
-            subtopic = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs)
-        if subtopic is None:
-            break
-        try:
-            picked = pick_for_subtopic(
-                user_id, user_state, subtopic, focus_subtopic, exclude_kcs=tried_kcs, record=record
-            )
-            break
-        except SubtopicDry as dry:
-            if first_gap is None and dry.gap:
-                first_gap = dry.gap
-            if focus_subtopic is not None:
+    for cooldown in (True, False):
+        tried: set = set()
+        tried_kcs: set = set()
+        sub = subtopic
+        while True:
+            if sub is None:
+                sub = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs, cooldown=cooldown)
+            if sub is None:
                 break
-            dry_kc = (dry.gap or {}).get("kc")
-            if dry_kc and dry_kc not in tried_kcs:
-                tried_kcs.add(dry_kc)
-            else:
-                tried.add(subtopic)
-            subtopic = None
+            try:
+                picked = pick_for_subtopic(
+                    user_id, user_state, sub, focus_subtopic, exclude_kcs=tried_kcs,
+                    record=record, cooldown=cooldown,
+                )
+                break
+            except SubtopicDry as dry:
+                if first_gap is None and dry.gap:
+                    first_gap = dry.gap
+                if focus_subtopic is not None:
+                    break
+                dry_kc = (dry.gap or {}).get("kc")
+                if dry_kc and dry_kc not in tried_kcs:
+                    tried_kcs.add(dry_kc)
+                else:
+                    tried.add(sub)
+                sub = None
+        if picked:
+            break
     return picked, first_gap
 
 
