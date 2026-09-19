@@ -8,7 +8,7 @@ previews: []
 faded: [993, 994, 995, 996]
 guided: []
 independent: [997, 998, 999, 1000, 1001, 1002, 1071, 1072, 1073]
-integrated: [1003, 1004, 1005]
+integrated: [1003, 1004, 1005, 1682, 1683, 1684, 1685]
 ---
 
 ## Concept: Length belongs to a vector
@@ -194,6 +194,18 @@ Return the unit direction from the first row to every other row, shape (m-1,n); 
 
 ### q1005
 Return the length of the average of unit row directions, as a scalar tensor. x: float (m,n), every row nonzero.
+
+### q1682
+Return the longest row scaled to unit length, shape (n,). x: float (m,n), every row nonzero.
+
+### q1683
+Return x scaled by ONE number so that its longest row has length L, shape (m,n). x: float (m,n) with a nonzero entry; L > 0.
+
+### q1684
+Return which rows already have unit length (within 1e-6) as a list of bools, and their count. x: float (m,n).
+
+### q1685
+Return unit rows with every all-zero row left as zero, shape (m,n), no division by zero. x: float (m,n).
 
 ## Misconceptions
 

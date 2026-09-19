@@ -8,7 +8,7 @@ previews: []
 faded: [1020, 1022, 1019, 1021]
 guided: []
 independent: [1023, 1024, 1025, 1026, 1027, 1028, 1077, 1078, 1079]
-integrated: [1029, 1030, 1031]
+integrated: [1029, 1030, 1031, 1686, 1687, 1688, 1689]
 ---
 
 ## Concept: Paired index tensors pick one entry per row
@@ -202,6 +202,18 @@ Return the requested value divided by the sum of absolute values in its row, sha
 
 ### q1031
 Return each row’s zero-based rank of its requested value: count entries strictly greater, shape (b,). Ties share a rank. x: float (b,c); ids: one valid column index per row (b,).
+
+### q1686
+Return each row's requested value minus the mean of the row's OTHER entries, shape (b,). x: float (b,c), c ≥ 2; ids: one valid column index per row (b,).
+
+### q1687
+Return the two requested values per row, shape (b,2), and their per-row difference, shape (b,). x: float (b,c); ids: two valid column indices per row (b,2).
+
+### q1688
+Return a copy in which each row's requested entry and its first entry have swapped places, plus the untouched input. x: float (b,c); ids: one valid column index per row (b,).
+
+### q1689
+Return one requested ROW per column minus that column's mean, shape (c,). x: float (b,c); ids: one valid row index per column (c,).
 
 ## Misconceptions
 

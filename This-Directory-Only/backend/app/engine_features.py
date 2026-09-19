@@ -176,8 +176,14 @@ def build(
     difficulty_score: Optional[float] = None,
     config: E.EngineConfig = E.DEFAULT_CONFIG,
     now: Optional[datetime] = None,
+    lesson_days: Optional[float] = None,
 ) -> FeatureVector:
     """Materialise every feature value for one (learner, KC, item, rung).
+
+    `lesson_days`: days since the learner last read the item's lesson page,
+    None for never — the caller's lookup, the same way `engine_bridge` takes
+    it. A probe (`predict_for`) leaves it at None: it is asking what the
+    learner can do cold.
 
     Called at SERVE time, and the result is what gets logged — not recomputed
     after grading. Recomputing later would read post-outcome state and quietly
@@ -200,8 +206,13 @@ def build(
         # rung differ in whether one was shown. See `logistic_engine`'s
         # DEFAULT_EXAMPLE_OFFSET for why it is not folded into `stage`.
         "example": E.example_offset(example, config),
+        # The page in memory, fading. See `logistic_engine.LESSON`.
+        "lesson": E.lesson_value(lesson_days, config),
     }
-    sources: Dict = {"kc": kc, "stage": E.normalize_stage(stage), "example": bool(example)}
+    sources: Dict = {
+        "kc": kc, "stage": E.normalize_stage(stage), "example": bool(example),
+        "days_since_read": lesson_days,
+    }
 
     # Prerequisites are accumulated into ONE dict keyed by concept id, so a
     # concept named by both the graph and the item's own tags is counted once.

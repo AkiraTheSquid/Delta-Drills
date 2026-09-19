@@ -7,7 +7,7 @@ previews: []
 faded: [809, 810]
 guided: []
 independent: [811, 812, 813, 814, 815, 816, 1601, 1602]
-integrated: [817, 818, 819, 1603]
+integrated: [817, 818, 819, 1603, 1678, 1679, 1680, 1681]
 ---
 
 ## Concept: `x[sel] = value` writes in place, broadcasting the value
@@ -160,6 +160,18 @@ copy_ a block, then rewrite it from itself.
 
 ### q1603
 Two writes cross at one cell — the later write wins.
+
+### q1678
+Two blocks, two broadcasts: a scalar into the top-left, a row vector into every row of the bottom-right.
+
+### q1679
+Even slots of one row, odd slots of another: two stepped writes, the second starting at 1.
+
+### q1680
+A block copied into the centre view of a bigger canvas, then four scalar writes at the corners.
+
+### q1681
+A column block filled with a scalar, then one column copied over another in place.
 
 ## Misconceptions
 

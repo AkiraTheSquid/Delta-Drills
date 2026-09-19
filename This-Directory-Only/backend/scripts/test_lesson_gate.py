@@ -105,11 +105,157 @@ check("exposure POST drops unknown KC", "not.a.real.kc" not in resp["exposed"])
 first_exposure = resp["exposed"]["torch.argmin-argmax"]
 resp = client.post("/api/practice/exposure",
                    json={"kcs": ["torch.argmin-argmax"]}).json()
-check("repeat exposure preserves first timestamp",
-      resp["exposed"]["torch.argmin-argmax"] == first_exposure)
+# The map is "when was this LAST read" (the revisit gate reads it that way),
+# so a second reading moves the stamp forward, never back.
+check("repeat exposure refreshes the timestamp",
+      resp["exposed"]["torch.argmin-argmax"] > first_exposure)
 resp = client.post("/api/practice/exposure", json={"kcs": ["x"] * 65})
 check("exposure payload has batch cap", resp.status_code == 422,
       f"got HTTP {resp.status_code}")
+
+# --- readiness: a page comes back when the ENGINE says the drill needs it ----
+# Seth's own case, 2026-09-19: q650 (torch.dtype-astype, concept s1) read on
+# 09-18 00:40, no attempt on the concept until the drill 45.5 h later, missed.
+# His posterior on the KC at serve time, off Fly: ability mean -1.785, var
+# 1.00, n=1 (one miss on a sibling concept's drill four days earlier). The
+# gate is `lesson_readiness`: not ready for the drill as it stands, ready with
+# the page re-read — both by the ladder's own bar (lower credible bound >=
+# PROMOTE_P). No clock is compared to a threshold anywhere; time reaches the
+# decision only through the engine's `lesson` feature fading.
+from datetime import datetime, timedelta, timezone  # noqa: E402
+from app import lesson_readiness as R  # noqa: E402
+from app import logistic_engine as E  # noqa: E402
+from app.adaptive import UserPracticeState  # noqa: E402
+
+_rv_kc, _rv_idx = lessons._question_segment[650]
+_rv_seg = lessons._kc_segments[_rv_kc][_rv_idx]
+_rv_key = f"{_rv_kc}#{_rv_seg['concept_id']}"
+_read = datetime(2026, 9, 18, 0, 40, tzinfo=timezone.utc)
+_serve = _read + timedelta(hours=45, minutes=30)
+_Q650_DIFF = 14
+
+
+def _seed_prereqs(st, kc, mastery=0.79):
+    """Seth's prerequisites on this KC sat near 0.79 (BKT, off Fly). The
+    engine's `prereq` term is worth ~+0.26 logits at that level and about
+    -0.43 at the cold prior, so a fixture without it is a different learner.
+    `kc_mastery` averages the atoms a KC's QUESTIONS exercise, so those are
+    what is seeded; the KC's own crosswalk atoms sit at 0.5 (a neutral
+    `encompassing` term, which is what his state showed)."""
+    from app.questions import get_question_by_id
+    for parent in (kc_graph.registry_node(kc) or {}).get("prereqs") or ():
+        atoms = {a.get("a") for a in (kc_graph.crosswalk_row(parent) or {}).get("atoms") or []}
+        for qid in kc_graph.questions_for_kc(parent):
+            q = get_question_by_id(qid)
+            atoms.update(t["atom_id"] for t in (getattr(q, "atom_tags", None) or []))
+        for atom in atoms:
+            if atom:
+                st.atom_mastery[atom] = mastery
+                st.atom_last_ts[atom] = _serve.isoformat()
+    for atom in (kc_graph.crosswalk_row(kc) or {}).get("atoms") or []:
+        if atom.get("a") and atom["a"] not in st.atom_mastery:
+            st.atom_mastery[atom["a"]] = 0.5
+            st.atom_last_ts[atom["a"]] = _serve.isoformat()
+
+
+def _learner(mean, var, n=1, exposure=None, attempts=None):
+    st = UserPracticeState(user_id=f"readiness-{mean}-{var}")
+    _seed_prereqs(st, _rv_kc)
+    st.kc_exposure = dict(exposure if exposure is not None else {_rv_key: _read.isoformat()})
+    st.kc_ladder = {_rv_kc: {"worked_seen": 2, "attempts": list(attempts or [
+        {"correct": False, "stage": "partial", "question_id": 651,
+         "ts": (_read - timedelta(days=2)).isoformat()},
+    ])}}
+    st.kc_posteriors = {_rv_kc: {"ability": {
+        "mean": mean, "var": var, "n": n, "last_seen": (_read - timedelta(days=2)).isoformat(),
+    }}}
+    return st
+
+
+# 🔴 Not his exact mean. On his real state the bounds were 0.430 / 0.557
+# against 0.55 — a real decision, but a 0.007 margin that the fixture's
+# BKT approximation and any content edit (a new prerequisite, a difficulty
+# change) would flip. The fixture sits a little further inside the region
+# so the test is about the MECHANISM, and the replay of his state is in the
+# session notes for 2026-09-19.
+_SETH_MEAN = -1.6
+_seth = _learner(_SETH_MEAN, 1.0)
+_v = R.readiness(_seth, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
+_lo_now, _ = _v["now"].interval(E.LADDER_Z)
+_lo_after, _ = _v["after_read"].interval(E.LADDER_Z)
+check("Seth's q650: below the bar as it stands, over it with the page re-read",
+      _lo_now < E.PROMOTE_P <= _lo_after,
+      f"lo_now={_lo_now:.3f} lo_after={_lo_after:.3f} bar={E.PROMOTE_P}")
+check("Seth's q650: the page is needed", _v["lesson_needed"] is True)
+_rv = R.revisit_target_kcs(_seth, 650, difficulty_score=_Q650_DIFF, now=_serve)
+check("gate entry is the concept's own page, marked as a revisit",
+      len(_rv) == 1 and _rv[0]["exposure_key"] == _rv_key and _rv[0]["revisit"] is True
+      and _rv[0]["segment_index"] == _rv_idx,
+      f"got {[(e.get('exposure_key'), e.get('revisit')) for e in _rv]}")
+check("gate entry carries the stale read_at and the bounds it was decided on",
+      bool(_rv) and _rv[0]["read_at"] == _read.isoformat()
+      and _rv[0]["ready_lo"] < _rv[0]["ready_bar"] <= _rv[0]["ready_lo_after_read"])
+
+# Time enters only through the model: the same learner an hour after reading.
+check("the same learner an hour after reading is not gated",
+      not R.revisit_target_kcs(_seth, 650, difficulty_score=_Q650_DIFF, now=_read + timedelta(hours=1)))
+# Loop safety: re-reading puts the page at full value, so the gate cannot fire
+# again until it fades — whatever the posterior.
+_just_read = _learner(_SETH_MEAN, 1.0, exposure={_rv_key: _serve.isoformat()})
+check("re-read just now → no gate (the page is at full value)",
+      not R.revisit_target_kcs(_just_read, 650, difficulty_score=_Q650_DIFF, now=_serve))
+check("...nor ten minutes later",
+      not R.revisit_target_kcs(_just_read, 650, difficulty_score=_Q650_DIFF,
+                                now=_serve + timedelta(minutes=10)))
+check("no posterior anywhere gates a page read a moment ago",
+      all(not R.revisit_target_kcs(_learner(m, v, exposure={_rv_key: _serve.isoformat()}),
+                                   650, difficulty_score=_Q650_DIFF, now=_serve)
+          for m in (-4.0, -2.0, -1.0, 0.0, 1.0, 3.0) for v in (0.1, 0.6, 1.2)))
+# Expertise reversal: a learner who has demonstrated the concept is never
+# sent back to the page, however stale the read.
+_strong = _learner(2.0, 0.3, n=12)
+check("a strong posterior is not gated on a stale read",
+      not R.revisit_target_kcs(_strong, 650, difficulty_score=_Q650_DIFF, now=_read + timedelta(days=30)))
+# The page cannot lift a learner who is far below the bar: that is a missing
+# prerequisite (remediation's job), not a stale page, and gating would loop.
+_lost = _learner(-4.0, 0.5, n=6)
+_vl = R.readiness(_lost, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
+check("a learner the page would not lift over the bar is not gated",
+      not _vl["ready_after_read"] and not _vl["lesson_needed"])
+check("nothing read (placement-only exposure) never revisits",
+      not R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure={}), 650,
+                               difficulty_score=_Q650_DIFF, now=_serve))
+_whole = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure={_rv_kc: _read.isoformat()}), 650,
+                              difficulty_score=_Q650_DIFF, now=_serve)
+check("a pre-split learner holding only the KC key gets the whole-KP step",
+      len(_whole) == 1 and _whole[0]["exposure_key"] == _rv_kc)
+# A drill not authored under a concept re-teaches the page read most recently.
+_untagged = next(q for q, kcs in lessons._question_target_kcs.items()
+                 if kcs == [_rv_kc] and q not in lessons._question_segment)
+_two = {f"{_rv_kc}#{lessons._kc_segments[_rv_kc][0]['concept_id']}": (_read - timedelta(days=1)).isoformat(),
+        _rv_key: _read.isoformat()}
+_rv_un = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure=_two), _untagged,
+                              difficulty_score=_Q650_DIFF, now=_serve)
+check("an unsegmented drill re-teaches the most recently read concept",
+      len(_rv_un) == 1 and _rv_un[0]["exposure_key"] == _rv_key,
+      f"q{_untagged} -> {[e.get('exposure_key') for e in _rv_un]}")
+check("page_read_age_days is the feature's input",
+      abs(lessons.page_read_age_days(650, _rv_kc, {_rv_key: _read.isoformat()}, now=_serve)
+          - 45.5 / 24) < 1e-9
+      and lessons.page_read_age_days(650, _rv_kc, {}, now=_serve) is None)
+_seg2_key = f"{_rv_kc}#{lessons._kc_segments[_rv_kc][2]['concept_id']}"
+_gate = R.lesson_gate(_seth, 651, difficulty_score=_Q650_DIFF, now=_serve)
+check("lesson_gate: an unread concept is taught, not revisited",
+      len(_gate) == 1 and _gate[0]["exposure_key"] == _seg2_key and not _gate[0].get("revisit"),
+      f"got {[(e.get('exposure_key'), e.get('revisit')) for e in _gate]}")
+_all_read = _learner(_SETH_MEAN, 1.0, exposure={
+    _rv_key: _read.isoformat(),
+    f"{_rv_kc}#{lessons._kc_segments[_rv_kc][0]['concept_id']}": "2026-09-01T00:00:00+00:00",
+    _seg2_key: "2026-09-01T00:00:00+00:00",
+})
+_gate = R.lesson_gate(_all_read, 650, difficulty_score=_Q650_DIFF, now=_serve)
+check("lesson_gate: all read → the one the engine wants back comes as a revisit",
+      len(_gate) == 1 and _gate[0].get("revisit") is True and _gate[0]["exposure_key"] == _rv_key)
 
 # Persistence: drop the in-memory state and reload from disk.
 from app import adaptive  # noqa: E402

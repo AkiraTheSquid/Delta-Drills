@@ -10593,3 +10593,294 @@ import einops
 def solve(x):
     """"""Sample standard deviation per feature.""""""
     return einops.reduce(t.tensor(x, dtype=t.float32), 'n d -> d', t.std).tolist()",38,
+Numpy,Indexing and selection,"Return a tuple `(swapped, original)`, both as plain lists: a NEW tensor holding the second half of `z` followed by its first half, and `z` itself afterwards. `z` must not change. `z` is a 1-D int tensor of even length.","import torch as t
+
+
+def solve(z):
+    """"""z with its two halves exchanged, plus the untouched original.""""""
+    h = z.shape[0] // 2
+    out = z.clone()
+    out[:h] = z[h:]
+    out[h:] = z[:h]
+    return (out.tolist(), z.tolist())",50,
+Numpy,Indexing and selection,"Return a tuple `(turned, original)`, both as nested lists: a NEW tensor in which the interior (everything except the first and last row and column) is turned through 180° — its rows in reverse order AND each of those rows read backwards — while the border keeps its values, and `z` itself afterwards. `z` must not change. `z` is a 2-D int tensor with at least 3 rows and 3 columns.","import torch as t
+
+
+def solve(z):
+    """"""Turn the interior of a copy through 180°; border and input untouched.""""""
+    out = z.clone()
+    out[1:-1, 1:-1] = t.flip(z[1:-1, 1:-1], [0, 1])
+    return (out.tolist(), z.tolist())",58,
+Numpy,Indexing and selection,"Return a tuple `(striped, original)`, both as nested lists: a NEW tensor in which rows 0, 2, 4, … read right-to-left and the other rows are unchanged, and `z` itself afterwards. `z` must not change. `z` is a 2-D int tensor.","import torch as t
+
+
+def solve(z):
+    """"""Reverse every second row of a copy; the rest and the input untouched.""""""
+    out = z.clone()
+    out[::2] = t.flip(z[::2], [1])
+    return (out.tolist(), z.tolist())",54,
+Numpy,Indexing and selection,"Return a plain list of the values that remain after discarding the first `k` and the last `k`, in reverse order. `x` must not change. `x` is a 1-D int tensor of length `n` and `k` an int with `0 ≤ 2k ≤ n`.","import torch as t
+
+
+def solve(x, k):
+    """"""Drop k values from each end, then read the rest backwards.""""""
+    n = x.shape[0]
+    return t.flip(x[k:n - k], [0]).tolist()",52,
+Numpy,Indexing and selection,"Return the int index of the entry farthest from the mean of `x`, whether above or below it; on a tie, the first such index. `x` is a nonempty 1-D float tensor.","import torch as t
+
+
+def solve(x):
+    """"""Position of the value farthest from the mean.""""""
+    return t.argmax(t.abs(x - x.mean())).item()",50,
+Numpy,Indexing and selection,"Return a tuple `(i, s)`: the int index of the entry with the largest absolute value (first on ties), and `s` = `1` if that entry is positive or `-1` if it is negative. `x` is a 1-D float tensor with at least one nonzero entry.","import torch as t
+
+
+def solve(x):
+    """"""Index of the largest magnitude, and the sign of that entry.""""""
+    i = t.argmax(t.abs(x)).item()
+    return (i, int((x[i] / t.abs(x[i])).item()))",52,
+Numpy,Indexing and selection,"Return a tuple `(near, far)` of ints: the index of the entry of `x` closest to `v` and the index of the entry farthest from `v`, distance measured either side of `v`; on ties, the first index each time. `x` is a nonempty 1-D float tensor and `v` a float.","import torch as t
+
+
+def solve(x, v):
+    """"""Indices of the entries nearest to and farthest from v.""""""
+    gap = t.abs(x - v)
+    return (t.argmin(gap).item(), t.argmax(gap).item())",60,
+Numpy,Indexing and selection,"Return a tuple `(out, original)`, both as plain lists: a NEW tensor in which the entry with the largest absolute value (if several share it, the one with the smallest index) is replaced by the mean of all the OTHER entries, and `x` itself afterwards. `x` must not change. `x` is a 1-D float tensor with at least 2 entries, every entry between -1000 and 1000.","import torch as t
+
+
+def solve(x):
+    """"""Replace the entry of largest magnitude with the mean of the others; input untouched.""""""
+    i = t.argmax(t.abs(x)).item()
+    out = x * 1.0
+    out[i] = (x.sum() - x[i]) / (x.shape[0] - 1)
+    return (out.tolist(), x.tolist())",58,
+Numpy,Vectorization and broadcasting,"Return the Python float equal to the sum, over every pair of positions `i, j`, of the i-th entry of `x` times the entry of `A` in row `i` and column `j` times the j-th entry of `x` — the vector applied to the matrix from both sides. `A` is a square float tensor of shape `(n, n)` and `x` a float tensor of shape `(n,)`.","import torch as t
+
+
+def solve(A, x):
+    """"""The quadratic form x·A·x as a float.""""""
+    return (x @ A @ x).item()",54,
+Numpy,Vectorization and broadcasting,"Return the plain list of `n` floats `y` such that applying `A` to `y`, and then applying `A` again to the result, gives `b`. `A` is an invertible float tensor of shape `(n, n)` and `b` a float tensor of shape `(n,)`.","import torch as t
+
+
+def solve(A, b):
+    """"""Find y with A·(A·y) = b.""""""
+    x = t.linalg.solve(A, b)
+    return t.linalg.solve(A, x).tolist()",54,
+Numpy,Vectorization and broadcasting,"Return the plain list of `n` floats `y` such that applying `B` to `y` and then `A` to the result gives `c`. `A` and `B` are invertible float tensors of shape `(n, n)` and `c` a float tensor of shape `(n,)`.","import torch as t
+
+
+def solve(A, B, c):
+    """"""Find y with A·(B·y) = c.""""""
+    return t.linalg.solve(A @ B, c).tolist()",60,
+Numpy,Vectorization and broadcasting,"Return a tuple `(mat, elem, same_corner)`: the nested list of the matrix product of `A` and `B`, the nested list of their position-by-position product, and the bool `same_corner`, true only when the two results hold EXACTLY the same value in row 0, column 0 — merely close does not count. `A` and `B` are float tensors of the same square shape `(n, n)`, `n ≥ 1`.","import torch as t
+
+
+def solve(A, B):
+    """"""The matrix product, the elementwise product, and whether their top-left entries are equal.""""""
+    mat = A @ B
+    elem = A * B
+    return (mat.tolist(), elem.tolist(), bool((mat[0][0] == elem[0][0]).item()))",56,
+Numpy,Vectorization and broadcasting,"Return a plain list of length `3n` laid out as `a[0], b[0], 0, a[1], b[1], 0, …` — each pair from the two streams followed by one zero. `a` and `b` are 1-D int tensors of the same length `n`.","import torch as t
+
+
+def solve(a, b):
+    """"""Interleave two streams with a zero after each pair.""""""
+    return t.stack([a, b, a * 0], dim=1).flatten().tolist()",54,
+Numpy,Vectorization and broadcasting,"Return a nested list of shape `(n+k+1, m)`: the rows of `a`, then `sep` as a single row, then the rows of `b`. `a` is a 2-D int tensor of shape `(n, m)`, `b` a 2-D int tensor of shape `(k, m)` and `sep` a 1-D int tensor of length `m`.","import torch as t
+
+
+def solve(a, b, sep):
+    """"""a, then sep as one row, then b — joined top to bottom.""""""
+    row = t.stack([sep], dim=0)
+    return t.cat([a, row, b], dim=0).tolist()",56,
+Numpy,Vectorization and broadcasting,"Return a nested list of shape `(2n, 2m)` in which `a` sits top-left and bottom-right and `b` sits top-right and bottom-left. `a` and `b` are 2-D int tensors of the same shape `(n, m)`.","import torch as t
+
+
+def solve(a, b):
+    """"""Two blocks arranged [[a, b], [b, a]].""""""
+    top = t.cat([a, b], dim=1)
+    bottom = t.cat([b, a], dim=1)
+    return t.cat([top, bottom], dim=0).tolist()",58,
+Numpy,Vectorization and broadcasting,"Return a tuple `(line, rows)`: `line` is the plain list of length `2n` holding all of `a` followed by all of `b`, and `rows` is the nested list of shape `(2, n)` with `a` as row 0 and `b` as row 1. `a` and `b` are 1-D int tensors of the same length `n`.","import torch as t
+
+
+def solve(a, b):
+    """"""a then b in one line, and a over b as two rows.""""""
+    return (t.cat([a, b]).tolist(), t.stack([a, b], dim=0).tolist())",52,
+Numpy,Indexing and selection,"Return a tuple `(out, original)`, both as plain lists: a NEW tensor in which every entry equal to `p` has become `q` and every entry equal to `q` has become `p`, other entries unchanged, and `x` itself afterwards. `x` must not change. `x` is a 1-D int tensor and `p ≠ q` are ints.","import torch as t
+
+
+def solve(x, p, q):
+    """"""Every p becomes q and every q becomes p, in a copy; input untouched.""""""
+    is_p = x == p
+    is_q = x == q
+    out = x.clone()
+    out[is_p] = q
+    out[is_q] = p
+    return (out.tolist(), x.tolist())",50,
+Numpy,Indexing and selection,"Return a tuple `(out, kept)`: `out` as a plain list — a NEW tensor equal to `x` except that every entry equal to `v` or to `-v` is set to `0` — and `kept`, the int number of original entries equal to neither `v` nor `-v`. `x` must not change. `x` is a 1-D int tensor and `v` an int.","import torch as t
+
+
+def solve(x, v):
+    """"""Zero every entry equal to v or to -v in a copy; count what survives.""""""
+    hit = (x == v) | (x == -v)
+    out = x.clone()
+    out[hit] = 0
+    return (out.tolist(), len(x[~hit]))",56,
+Numpy,Indexing and selection,"Return a tuple `(out, original)`, both as plain lists: a NEW tensor in which every even entry is doubled and every odd entry has its sign flipped, and `x` itself afterwards. `x` must not change. `x` is a 1-D int tensor.","import torch as t
+
+
+def solve(x):
+    """"""Evens doubled, odds negated, in a copy; input untouched.""""""
+    even = x % 2 == 0
+    out = x.clone()
+    out[even] = out[even] * 2
+    out[~even] = -out[~even]
+    return (out.tolist(), x.tolist())",50,
+Numpy,Indexing and selection,"Return a tuple `(out, original)`, both as plain lists: a NEW tensor in which every entry that equals the entry immediately before it is set to `0` (the first entry is never changed, and each test looks at the ORIGINAL neighbour), and `x` itself afterwards. `x` must not change. `x` is a 1-D int tensor with at least 2 entries.","import torch as t
+
+
+def solve(x):
+    """"""Zero every entry equal to the one before it, in a copy; input untouched.""""""
+    same = x[1:] == x[:-1]
+    out = x.clone()
+    out[1:][same] = 0
+    return (out.tolist(), x.tolist())",54,
+PyTorch,Rays as tensors,"Starting from a zero float tensor of length `n`, fill it so that it rises evenly from `0.0` at index 0 to `1.0` at the middle index and falls evenly back to `0.0` at the last index, writing each ramp directly into its stretch of the canvas. Return the plain list. `n` is an odd int ≥ 3.","import torch as t
+
+
+def solve(n):
+    """"""Two ramps meeting at the middle of a zero canvas.""""""
+    h = n // 2
+    canvas = t.zeros(n)
+    t.linspace(0.0, 1.0, h + 1, out=canvas[:h + 1])
+    t.linspace(1.0, 0.0, h + 1, out=canvas[h:])
+    return canvas.tolist()",58,
+PyTorch,Rays as tensors,"Return a nested list of shape `(2, m)` of floats holding `0.0, 1.0, 2.0, …` counting across row 0 and continuing across row 1 — built by filling a zero float canvas one row at a time with a range written straight into that row. `m` is a positive int.","import torch as t
+
+
+def solve(m):
+    """"""A two-row counting grid.""""""
+    canvas = t.zeros((2, m))
+    t.arange(0, m, out=canvas[0])
+    t.arange(m, 2 * m, out=canvas[1])
+    return canvas.tolist()",54,
+PyTorch,Rays as tensors,"On a zero float canvas of shape `(n, m)`, write an even ramp from `0.0` to `1.0` down column `c` (top to bottom), THEN write `0.0, 1.0, 2.0, …` along row `r` (left to right), each straight into its line of the canvas. Return a tuple `(grid, at_cross)`: the nested list and the float now at `(r, c)`. `n, m` are ints of at least 2, `r` a valid row index and `c` a valid column index.","import torch as t
+
+
+def solve(n, m, r, c):
+    """"""A ramp down one column and a count along one row, crossing at (r, c).""""""
+    canvas = t.zeros((n, m))
+    t.linspace(0.0, 1.0, n, out=canvas[:, c])
+    t.arange(0, m, out=canvas[r])
+    return (canvas.tolist(), canvas[r, c].item())",58,
+PyTorch,Rays as tensors,"Overwrite the LAST `k` entries of `x` in place with an even ramp from `1.0` down to `0.0` (a single entry, when `k` is 1, gets `1.0`), leaving the first `n-k` entries untouched. Return `x` afterwards as a plain list. `x` is a 1-D float tensor of length `n` and `k` an int with `1 ≤ k ≤ n`.","import torch as t
+
+
+def solve(x, k):
+    """"""Overwrite the last k entries with a falling ramp, in place.""""""
+    n = x.shape[0]
+    t.linspace(1.0, 0.0, k, out=x[n - k:])
+    return x.tolist()",56,
+PyTorch,Rays as tensors,"On a zero float canvas of shape `(n, m)`, fill the top-left `h × w` block with `s` and make every row of the bottom-right `h × w` block equal to `v` (a later write overrides an earlier one where they overlap). Return the nested list. `n, m` are ints and `h ≤ n`, `w ≤ m` are block sizes; `s` is a float and `v` a 1-D float tensor of length `w`.","import torch as t
+
+
+def solve(n, m, h, w, s, v):
+    """"""A scalar block top-left, a broadcast vector block bottom-right.""""""
+    canvas = t.zeros((n, m))
+    canvas[:h, :w] = s
+    canvas[n - h:, m - w:] = v
+    return canvas.tolist()",56,
+PyTorch,Rays as tensors,"On a zero float canvas of shape `(n, m)`, put `v` into the even-numbered columns (0, 2, 4, …) of row `r1`, and `v` reversed into the odd-numbered columns (1, 3, 5, …) of row `r2`. Return the nested list. `n` is an int, `m` an even int, `r1 ≠ r2` valid row indices, and `v` a 1-D float tensor of length `m/2`.","import torch as t
+
+
+def solve(n, m, r1, r2, v):
+    """"""A vector on the even columns of one row, its reverse on the odd columns of another.""""""
+    canvas = t.zeros((n, m))
+    canvas[r1, ::2] = v
+    canvas[r2, 1::2] = t.flip(v, [0])
+    return canvas.tolist()",56,
+PyTorch,Rays as tensors,"Return a nested list of shape `(n+2, m+2)`: a zero canvas holding `src` in its centre, one cell of margin on every side, with the four corner cells set to `k`. `src` is a 2-D float tensor of shape `(n, m)` and `k` a float.","import torch as t
+
+
+def solve(src, k):
+    """"""Centre a block in a bigger zero canvas, then mark the four corners.""""""
+    n = src.shape[0]
+    m = src.shape[1]
+    canvas = t.zeros((n + 2, m + 2))
+    canvas[1:-1, 1:-1].copy_(src)
+    canvas[0, 0] = k
+    canvas[0, -1] = k
+    canvas[-1, 0] = k
+    canvas[-1, -1] = k
+    return canvas.tolist()",58,
+PyTorch,Rays as tensors,"In place: set every entry in the last `k` columns of `z` to `s`, then make the last column a copy of the first column. Return `z` afterwards as a nested list. `z` is a 2-D float tensor of shape `(n, m)`, `k` an int with `1 ≤ k ≤ m`, and `s` a float.","import torch as t
+
+
+def solve(z, k, s):
+    """"""Fill the last k columns with s, then copy the first column over the last one.""""""
+    z[:, -k:] = s
+    z[:, -1].copy_(z[:, 0])
+    return z.tolist()",54,
+PyTorch,ar-00,"Return a plain list of `n` floats: the row of `x` with the greatest Euclidean length — the square root of the sum of its squared coordinates; first on ties — scaled so that its length is 1. `x` is a float tensor of shape `(m, n)`, `m, n ≥ 1`, every row containing a nonzero entry.","import torch as t
+
+
+def solve(x):
+    """"""The longest row, scaled to unit length.""""""
+    i = x.norm(dim=1).argmax()
+    return (x[i] / x[i].norm()).tolist()",54,
+PyTorch,ar-00,"Return a nested list of shape `(m, n)`: `x` multiplied by ONE number, chosen so that its longest row ends up with Euclidean length exactly `L` while every other row keeps its proportion to it. A row's length is the square root of the sum of its squared coordinates. `x` is a float tensor of shape `(m, n)`, `m, n ≥ 1`, with at least one nonzero entry, and `L` a positive float.","import torch as t
+
+
+def solve(x, L):
+    """"""The whole matrix scaled so its longest row has length L.""""""
+    return (x * (L / x.norm(dim=1).max())).tolist()",56,
+PyTorch,ar-00,"Return a tuple `(is_unit, count)`: a plain list of `m` bools, one per row, `True` when the absolute difference between the row's Euclidean length (the square root of the sum of its squared coordinates) and `1.0` is strictly less than `1e-6`, and the int number of such rows. `x` is a float tensor of shape `(m, n)`.","import torch as t
+
+
+def solve(x):
+    """"""Which rows already have unit length, and how many.""""""
+    unit = t.abs(x.norm(dim=1) - 1.0) < 1e-6
+    return (unit.tolist(), int(unit.sum().item()))",52,
+PyTorch,ar-00,"Return a nested list of shape `(m, n)`: every row with a nonzero entry rescaled to Euclidean length 1 (rows shorter than 1 grow, longer ones shrink), every all-zero row unchanged — with no division by zero anywhere. `x` is a float tensor of shape `(m, n)` in which some rows may be entirely zero.","import torch as t
+
+
+def solve(x):
+    """"""Unit rows, with all-zero rows left as zero.""""""
+    length = x.norm(dim=1, keepdim=True)
+    safe = t.where(length > 0, length, t.ones_like(length))
+    return (x / safe).tolist()",56,
+PyTorch,ar-00,"Return a plain list of `b` floats: for each row, the value at the requested column minus the mean of that row's OTHER `c-1` entries. `x` is a float tensor of shape `(b, c)` with `c ≥ 2`, every entry between -1000 and 1000, and `ids` an int tensor of shape `(b,)` holding one valid column index per row.","import torch as t
+
+
+def solve(x, ids):
+    """"""Each row's requested value minus the mean of the other entries in that row.""""""
+    picked = x[t.arange(x.shape[0]), ids]
+    others = (x.sum(dim=1) - picked) / (x.shape[1] - 1)
+    return (picked - others).tolist()",54,
+PyTorch,ar-00,"Return a tuple `(picked, diff)`: a nested list of shape `(b, 2)` with the two requested values of each row in the given order, and a plain list of `b` floats, each the first requested value minus the second. `x` is a float tensor of shape `(b, c)` and `ids` an int tensor of shape `(b, 2)` holding two valid column indices per row.","import torch as t
+
+
+def solve(x, ids):
+    """"""Two requested values per row, and their difference.""""""
+    picked = x.gather(1, ids)
+    return (picked.tolist(), (picked[:, 0] - picked[:, 1]).tolist())",58,
+PyTorch,ar-00,"Return a tuple `(out, original)`, both as nested lists: a NEW tensor in which, in every row, the value at the requested column and the value at column 0 have exchanged places (a row whose request is column 0 is unchanged), and `x` itself afterwards. `x` must not change. `x` is a float tensor of shape `(b, c)` and `ids` an int tensor of shape `(b,)` holding one valid column index per row.","import torch as t
+
+
+def solve(x, ids):
+    """"""Swap each row's requested entry with its first entry; input untouched.""""""
+    rows = t.arange(x.shape[0])
+    out = x.clone()
+    out[rows, 0] = x[rows, ids]
+    out[rows, ids] = x[rows, 0]
+    return (out.tolist(), x.tolist())",60,
+PyTorch,ar-00,"Return a plain list of `c` floats: for each column `j`, the value of `x` at row `ids[j]`, column `j`, minus the mean of column `j`. `x` is a float tensor of shape `(b, c)` and `ids` an int tensor of shape `(c,)` holding one valid row index per COLUMN.","import torch as t
+
+
+def solve(x, ids):
+    """"""One requested row per column, each measured against its column's mean.""""""
+    picked = x[ids, t.arange(x.shape[1])]
+    return (picked - x.mean(dim=0)).tolist()",56,

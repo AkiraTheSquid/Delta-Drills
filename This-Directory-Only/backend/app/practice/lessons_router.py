@@ -3,19 +3,23 @@ First-encounter exposure endpoints (lesson gate, Pass 2) and the ladder's
 worked-example acknowledgement.
 
 Endpoints (mounted under /api/practice by the parent router):
-  GET  /exposure     — the learner's kc -> first-exposure timestamp map
+  GET  /exposure     — the learner's kc -> last-read timestamp map
   POST /exposure     — record introducing-KP completion for one or more KCs
   GET  /kc-estimate  — one concept's rung + interval, with no question attached
   POST /worked-seen  — record that a worked example was read for one KC
 
-Exposure only ever accumulates; there is no unexpose (re-reading a lesson
-is always allowed client-side, but the gate never re-arms).
+Exposure only ever accumulates; there is no unexpose. A re-read REFRESHES
+the key's timestamp: since 2026-09-19 the map answers "when was this page
+last read", which is the engine's `lesson` feature's input (the page in
+memory, fading — `logistic_engine.lesson_value`) and so what
+`lesson_readiness` decides a re-read from.
 
 `/worked-seen` lives here rather than in `questions_router` for two reasons:
 that module is already ORANGE on the structural score, and this is the same
 kind of "the learner read the teaching material" signal `/exposure` records.
-The two are deliberately separate counters — exposure fires once, ever, and
-gates a concept's FIRST question; worked_seen counts every time the teaching
+The two are deliberately separate counters — exposure gates a concept's
+FIRST question (and, since 2026-09-19, feeds the readiness gate that brings
+a faded page back — `lesson_readiness`); worked_seen counts every time the teaching
 page was actually read, which the ladder reads as "this concept has been
 taught at least once" (`kc_graph._stage_from`). It can still be incremented
 more than once, because a learner may re-open a lesson from the concept graph
@@ -63,8 +67,11 @@ def mark_exposure(
     changed = False
     for kc in payload.kcs:
         # Unknown KC ids are dropped silently — a stale/renamed KC in an old
-        # client must not pollute the exposure map forever.
-        if kc not in user_state.kc_exposure and lessons.exposure_key_exists(kc):
+        # client must not pollute the exposure map forever. A known key is
+        # stamped whether or not it is already there: the readiness gate reads
+        # the stamp as the LAST reading (the `lesson` feature fades from it),
+        # and a second read that kept the first stamp would count for nothing.
+        if lessons.exposure_key_exists(kc):
             user_state.kc_exposure[kc] = now
             changed = True
     if changed:

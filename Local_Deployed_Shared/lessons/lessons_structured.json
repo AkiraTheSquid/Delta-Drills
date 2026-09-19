@@ -2608,6 +2608,22 @@
       {
        "question_id": 1589,
        "prompt": "Copy first, then two column writes \u2014 and check the original survived."
+      },
+      {
+       "question_id": 1654,
+       "prompt": "Exchange the two halves of a copy; two slice writes that must not alias."
+      },
+      {
+       "question_id": 1655,
+       "prompt": "Turn only the interior of a copy through 180\u00b0: a two-axis slice, a reversal on both axes, a write through the view."
+      },
+      {
+       "question_id": 1656,
+       "prompt": "Reverse every second row of a copy: a stepped row slice, a reversal along the right axis, one write."
+      },
+      {
+       "question_id": 1657,
+       "prompt": "Trim both ends by k, then reverse \u2014 with a stop that survives k = 0."
       }
      ],
      "independent_items": [
@@ -4657,6 +4673,22 @@
       {
        "question_id": 1575,
        "prompt": "A batch of products, then the batch of solves that undoes them \u2014 one call each, no loop."
+      },
+      {
+       "question_id": 1662,
+       "prompt": "A vector on both sides of a matrix: two products chained, and why * cannot do it."
+      },
+      {
+       "question_id": 1663,
+       "prompt": "The inverse applied twice: the matrix acts on y two times, so the solve has to be undone twice."
+      },
+      {
+       "question_id": 1664,
+       "prompt": "Two matrices act in turn: one product to combine them, one system to undo both."
+      },
+      {
+       "question_id": 1665,
+       "prompt": "Both products of the same two matrices, and whether their top-left entries happen to agree."
       }
      ],
      "independent_items": [
@@ -4692,7 +4724,7 @@
       "torch.count_nonzero",
       "syntax.bitwise"
      ],
-     "concept_markdown": "A comparison applied to an array is itself elementwise: `x > 2.5` produces a\n**boolean array** the same shape as `x` \u2014 `True` where the condition holds.\nThat boolean array is called a **mask**.\n\nSaying \"the comparison IS the mask\" kills the urge to loop: there is no\nseparate \"test each element\" step to write. Divisibility, sign, range\nmembership, \"equal to any of\u2026\" \u2014 anything you can phrase as an elementwise\ncondition becomes a mask in one expression.\n\nOnce you have a mask, two of its three uses are read-only:\n\n- **count / reduce**: `t.count_nonzero(mask)` or `mask.sum()` (how many? \u2014\n  True behaves as 1), `mask.any()` / `mask.all()` (yes/no questions). Wrap in\n  `int(...)` when a plain Python int is required.\n- **filter**: `x[mask]` returns a 1-D array of just the selected elements\n  (a *copy*, unlike slices) \u2014 however many there are, shape not preserved.\n\nMasks combine with `&` (and), `|` (or), `~` (not) \u2014 NOT Python's\n`and`/`or`/`not`, which fail on arrays. Because `&`/`|` bind tighter than\ncomparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.\n\nThe third use of a mask is **assignment**: `x[mask] = value` (or\n`x[mask] *= -1`) rewrites only the selected positions, *in place*. That\nmutates the original array, so the usual contract applies: \"do not modify\nthe input\" \u21d2 `.copy()` first, then assign through the mask on the copy.",
+     "concept_markdown": "A comparison applied to an array is itself elementwise: `x > 2.5` produces a\n**boolean array** the same shape as `x` \u2014 `True` where the condition holds.\nThat boolean array is called a **mask**.\n\nSaying \"the comparison IS the mask\" kills the urge to loop: there is no\nseparate \"test each element\" step to write. Divisibility, sign, range\nmembership, \"equal to any of\u2026\" \u2014 anything you can phrase as an elementwise\ncondition becomes a mask in one expression.\n\nOnce you have a mask, two of its three uses are read-only:\n\n- **count / reduce**: `t.count_nonzero(mask)` or `mask.sum()` (how many? \u2014\n  True behaves as 1), `mask.any()` / `mask.all()` (yes/no questions). Wrap in\n  `int(...)` when a plain Python int is required.\n- **filter**: `x[mask]` returns a 1-D array of just the selected elements\n  (a *copy*, unlike slices) \u2014 however many there are, shape not preserved.\n\nMasks combine with `&` (and), `|` (or), `~` (not) \u2014 NOT Python's\n`and`/`or`/`not`, which fail on arrays. Because `&`/`|` bind tighter than\ncomparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.\n\nThe third use of a mask is **assignment**: `x[mask] = value` (or\n`x[mask] *= -1`) rewrites only the selected positions, *in place*. That\nmutates the original array, so the usual contract applies: \"do not modify\nthe input\" \u21d2 `.clone()` first, then assign through the mask on the copy.",
      "worked_example_markdown": "```python\nimport torch as t\n\nx = t.tensor([1, 4, 6, 9, 3, 7])\n\n# The comparison itself is the mask \u2014 same shape as x, dtype bool.\nmask = x > 5\n\n# Any elementwise condition works the same way, e.g. divisibility:\neven = x % 2 == 0\nprint(\"x      \", x)\nprint(\"x > 5  \", mask, mask.dtype)\nprint(\"x even \", even)\n# Hidden checks\nassert mask.tolist() == [False, False, True, True, False, True]\nassert even.tolist() == [False, True, True, False, False, False]\n```\n\nWhy: one expression, no loop \u2014 the condition is written on the whole array\nat once, and the result carries a True/False verdict per element.\n\n```python\nimport torch as t\n\nx = t.tensor([1, 4, 6, 9, 3, 7])\nmask = x > 5\n\n# Count: True behaves as 1, so both spellings work.\n\n# Filter: mask indexing keeps just the True positions (as a copy).\nprint(\"count\", int(mask.sum()), \"| kept\", x[mask])\n# Hidden checks\nassert t.count_nonzero(mask) == 3\nassert mask.sum() == 3\nassert x[mask].tolist() == [6, 9, 7]\n```\n\nWhy: `count_nonzero`/`sum` on a mask is the standard \"how many satisfy\u2026?\";\n`x[mask]` is the standard \"give me those entries\".\n\n```python\nimport torch as t\n\nx = t.tensor([1, 4, 6, 9, 3, 7])\n\n# Combined condition + masked assignment, on a copy to protect x.\n# Parentheses around EACH comparison are mandatory with & and |.\nout = x.clone()\nout[(out > 3) & (out < 8)] *= -1\nprint(\"(x > 3) & (x < 8) ->\", (x > 3) & (x < 8))\nprint(\"out\", out)\nprint(\"x  \", x, \" <- untouched\")\n# Hidden checks\nassert out.tolist() == [1, -4, -6, 9, 3, -7]\nassert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched\n```\n\nWhy: try removing the parentheses mentally: `out > 3 & out < 8` would\nevaluate `3 & out` first (bitwise on ints!) \u2014 the precedence trap is why the\nparenthesized form should become muscle memory.",
      "segments": [
       {
@@ -4730,7 +4762,7 @@
       {
        "concept_id": "s2-combining-masks-and-masked-assignment",
        "title": "combining masks and masked assignment",
-       "concept_markdown": "Masks combine with `&` (and), `|` (or), `~` (not) \u2014 NOT Python's\n`and`/`or`/`not`, which fail on arrays. Because `&`/`|` bind tighter than\ncomparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.\n\nThe third use of a mask is **assignment**: `x[mask] = value` (or\n`x[mask] *= -1`) rewrites only the selected positions, *in place*. That\nmutates the original array, so the usual contract applies: \"do not modify\nthe input\" \u21d2 `.copy()` first, then assign through the mask on the copy.",
+       "concept_markdown": "Masks combine with `&` (and), `|` (or), `~` (not) \u2014 NOT Python's\n`and`/`or`/`not`, which fail on arrays. Because `&`/`|` bind tighter than\ncomparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.\n\nThe third use of a mask is **assignment**: `x[mask] = value` (or\n`x[mask] *= -1`) rewrites only the selected positions, *in place*. That\nmutates the original array, so the usual contract applies: \"do not modify\nthe input\" \u21d2 `.clone()` first, then assign through the mask on the copy.",
        "watch_out_markdown": "",
        "worked_example_markdown": "```python\nimport torch as t\n\nx = t.tensor([1, 4, 6, 9, 3, 7])\n\n# Combined condition + masked assignment, on a copy to protect x.\n# Parentheses around EACH comparison are mandatory with & and |.\nout = x.clone()\nout[(out > 3) & (out < 8)] *= -1\nprint(\"(x > 3) & (x < 8) ->\", (x > 3) & (x < 8))\nprint(\"out\", out)\nprint(\"x  \", x, \" <- untouched\")\n# Hidden checks\nassert out.tolist() == [1, -4, -6, 9, 3, -7]\nassert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched\n```\n\nWhy: try removing the parentheses mentally: `out > 3 & out < 8` would\nevaluate `3 & out` first (bitwise on ints!) \u2014 the precedence trap is why the\nparenthesized form should become muscle memory.",
        "worked_example_code": "import torch as t\n\nx = t.tensor([1, 4, 6, 9, 3, 7])\n\n# Combined condition + masked assignment, on a copy to protect x.\n# Parentheses around EACH comparison are mandatory with & and |.\nout = x.clone()\nout[(out > 3) & (out < 8)] *= -1\nprint(\"(x > 3) & (x < 8) ->\", (x > 3) & (x < 8))\nprint(\"out\", out)\nprint(\"x  \", x, \" <- untouched\")\n# Hidden checks\nassert out.tolist() == [1, -4, -6, 9, 3, -7]\nassert x.tolist() == [1, 4, 6, 9, 3, 7]      # input untouched\n",
@@ -4831,6 +4863,22 @@
       {
        "question_id": 1570,
        "prompt": "Two conditions from two tensors, one mask, then both a filter and a count from it."
+      },
+      {
+       "question_id": 1670,
+       "prompt": "Exchange two values everywhere: two equality masks taken BEFORE either write, two masked writes on a copy."
+      },
+      {
+       "question_id": 1671,
+       "prompt": "Erase a value and its negative: two tests joined with |, a masked write on a copy, a count of the complement."
+      },
+      {
+       "question_id": 1672,
+       "prompt": "One mask and its complement: the evens doubled, the odds negated, in a copy."
+      },
+      {
+       "question_id": 1673,
+       "prompt": "Repeats of the left neighbour: two shifted views compared, then a masked write through one of them."
       }
      ],
      "independent_items": [
@@ -4998,6 +5046,22 @@
       {
        "question_id": 1580,
        "prompt": "Nearest to a target on a grid: a flat winner, then turned back into a row and a column."
+      },
+      {
+       "question_id": 1658,
+       "prompt": "Farthest from the mean: a transform with an absolute value, then the winner's index."
+      },
+      {
+       "question_id": 1659,
+       "prompt": "Largest magnitude: the index from the transformed values, the sign from the originals."
+      },
+      {
+       "question_id": 1660,
+       "prompt": "Nearest and farthest from a target at once: one transformed vector, both extremes located."
+      },
+      {
+       "question_id": 1661,
+       "prompt": "Replace the extreme with the mean of the OTHERS: index as a handle, a fresh tensor, an excluded average."
       }
      ],
      "independent_items": [
@@ -5786,6 +5850,22 @@
       {
        "question_id": 1584,
        "prompt": "Join ragged pieces end to end, then two counts \u2014 one of the whole, one of the biggest piece."
+      },
+      {
+       "question_id": 1666,
+       "prompt": "Two streams and a gap: three streams paired on a new axis, then flattened."
+      },
+      {
+       "question_id": 1667,
+       "prompt": "A separator between two blocks: a vector given a row axis, then three pieces joined along the rows."
+      },
+      {
+       "question_id": 1668,
+       "prompt": "A checkerboard of two blocks: two strips joined along the columns, then joined along the rows."
+      },
+      {
+       "question_id": 1669,
+       "prompt": "The same two streams joined two ways: end to end on the axis they have, and as two rows on a new one."
       }
      ],
      "independent_items": [
@@ -6929,6 +7009,22 @@
       {
        "question_id": 1600,
        "prompt": "Two out= writes into two rows of one canvas, then read one value back."
+      },
+      {
+       "question_id": 1674,
+       "prompt": "Two ramps meeting at the middle: two writes into the canvas whose stretches share one cell."
+      },
+      {
+       "question_id": 1675,
+       "prompt": "A two-row counting grid: one range written into each row, the second starting where the first stopped."
+      },
+      {
+       "question_id": 1676,
+       "prompt": "A column ramp and a row count crossing: two writes into two views, the later one wins."
+      },
+      {
+       "question_id": 1677,
+       "prompt": "A falling ramp into the tail of an existing tensor: the slice starts at n - k, the head survives."
       }
      ],
      "independent_items": [
@@ -7056,6 +7152,22 @@
       {
        "question_id": 1603,
        "prompt": "Two writes cross at one cell \u2014 the later write wins."
+      },
+      {
+       "question_id": 1678,
+       "prompt": "Two blocks, two broadcasts: a scalar into the top-left, a row vector into every row of the bottom-right."
+      },
+      {
+       "question_id": 1679,
+       "prompt": "Even slots of one row, odd slots of another: two stepped writes, the second starting at 1."
+      },
+      {
+       "question_id": 1680,
+       "prompt": "A block copied into the centre view of a bigger canvas, then four scalar writes at the corners."
+      },
+      {
+       "question_id": 1681,
+       "prompt": "A column block filled with a scalar, then one column copied over another in place."
       }
      ],
      "independent_items": [
@@ -7937,6 +8049,22 @@
       {
        "question_id": 1005,
        "prompt": "Return the length of the average of unit row directions, as a scalar tensor. x: float (m,n), every row nonzero."
+      },
+      {
+       "question_id": 1682,
+       "prompt": "Return the longest row scaled to unit length, shape (n,). x: float (m,n), every row nonzero."
+      },
+      {
+       "question_id": 1683,
+       "prompt": "Return x scaled by ONE number so that its longest row has length L, shape (m,n). x: float (m,n) with a nonzero entry; L > 0."
+      },
+      {
+       "question_id": 1684,
+       "prompt": "Return which rows already have unit length (within 1e-6) as a list of bools, and their count. x: float (m,n)."
+      },
+      {
+       "question_id": 1685,
+       "prompt": "Return unit rows with every all-zero row left as zero, shape (m,n), no division by zero. x: float (m,n)."
       }
      ],
      "independent_items": [
@@ -8262,6 +8390,22 @@
       {
        "question_id": 1031,
        "prompt": "Return each row\u2019s zero-based rank of its requested value: count entries strictly greater, shape (b,). Ties share a rank. x: float (b,c); ids: one valid column index per row (b,)."
+      },
+      {
+       "question_id": 1686,
+       "prompt": "Return each row's requested value minus the mean of the row's OTHER entries, shape (b,). x: float (b,c), c \u2265 2; ids: one valid column index per row (b,)."
+      },
+      {
+       "question_id": 1687,
+       "prompt": "Return the two requested values per row, shape (b,2), and their per-row difference, shape (b,). x: float (b,c); ids: two valid column indices per row (b,2)."
+      },
+      {
+       "question_id": 1688,
+       "prompt": "Return a copy in which each row's requested entry and its first entry have swapped places, plus the untouched input. x: float (b,c); ids: one valid column index per row (b,)."
+      },
+      {
+       "question_id": 1689,
+       "prompt": "Return one requested ROW per column minus that column's mean, shape (c,). x: float (b,c); ids: one valid row index per column (c,)."
       }
      ],
      "independent_items": [

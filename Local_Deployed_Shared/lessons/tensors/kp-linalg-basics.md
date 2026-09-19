@@ -6,7 +6,7 @@ new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107]
 guided: [508, 509]
 independent: [510, 511, 512, 513, 1571, 1572, 1573, 1574]
-integrated: [1521, 1522, 1523, 1575]
+integrated: [1521, 1522, 1523, 1575, 1662, 1663, 1664, 1665]
 ---
 
 ## Concept: two multiplications — * vs @
@@ -257,6 +257,18 @@ One solver call for a whole batch of systems sharing a right-hand side.
 
 ### q1575
 A batch of products, then the batch of solves that undoes them — one call each, no loop.
+
+### q1662
+A vector on both sides of a matrix: two products chained, and why * cannot do it.
+
+### q1663
+The inverse applied twice: the matrix acts on y two times, so the solve has to be undone twice.
+
+### q1664
+Two matrices act in turn: one product to combine them, one system to undo both.
+
+### q1665
+Both products of the same two matrices, and whether their top-left entries happen to agree.
 
 ## Misconceptions
 

@@ -1,5 +1,5 @@
 {
- "total": 1396,
+ "total": 1432,
  "questions": {
   "64": [
    {
@@ -909,11 +909,18 @@
     "var": "imgs",
     "detail": "post-setup var 'imgs' already equals the expected value"
    }
+  ],
+  "1686": [
+   {
+    "check": "precompute_leak",
+    "var": "ids",
+    "detail": "post-setup var 'ids' already equals the expected value"
+   }
   ]
  },
  "counts": {
   "answer_symbol_in_prompt": 139,
-  "precompute_leak": 9,
+  "precompute_leak": 10,
   "starter_passes_some_cases": 2
  }
 }

@@ -6,7 +6,7 @@ new_syntax: [torch.count_nonzero, syntax.bitwise]
 faded: [236, 52, 12]
 guided: [85]
 independent: [232, 145, 202, 1512, 1513, 1514, 1567, 1568]
-integrated: [1515, 1516, 1569, 1570]
+integrated: [1515, 1516, 1569, 1570, 1670, 1671, 1672, 1673]
 ---
 
 ## Concept: the comparison IS the mask
@@ -125,7 +125,7 @@ comparisons, each comparison needs parentheses: `(x > 3) & (x < 8)`.
 The third use of a mask is **assignment**: `x[mask] = value` (or
 `x[mask] *= -1`) rewrites only the selected positions, *in place*. That
 mutates the original array, so the usual contract applies: "do not modify
-the input" ⇒ `.copy()` first, then assign through the mask on the copy.
+the input" ⇒ `.clone()` first, then assign through the mask on the copy.
 
 ## Worked example
 
@@ -224,6 +224,18 @@ Count rows, not entries: a test per entry, a verdict per row, then a count.
 
 ### q1570
 Two conditions from two tensors, one mask, then both a filter and a count from it.
+
+### q1670
+Exchange two values everywhere: two equality masks taken BEFORE either write, two masked writes on a copy.
+
+### q1671
+Erase a value and its negative: two tests joined with |, a masked write on a copy, a count of the complement.
+
+### q1672
+One mask and its complement: the evens doubled, the odds negated, in a copy.
+
+### q1673
+Repeats of the left neighbour: two shifted views compared, then a masked write through one of them.
 
 ## Misconceptions
 

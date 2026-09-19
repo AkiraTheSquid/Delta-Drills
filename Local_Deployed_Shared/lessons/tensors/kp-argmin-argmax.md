@@ -6,7 +6,7 @@ new_syntax: [Tensor.argmax, torch.abs, torch.argmax, torch.argmin]
 faded: [38, 219, 98]
 guided: [1]
 independent: [24, 61, 168, 1508, 1509, 1576, 1577, 1578]
-integrated: [1510, 1511, 1579, 1580]
+integrated: [1510, 1511, 1579, 1580, 1658, 1659, 1660, 1661]
 ---
 
 ## Concept: argmin/argmax — the index, not the value
@@ -226,6 +226,18 @@ Find both extremes, then use the two positions to swap — without losing either
 
 ### q1580
 Nearest to a target on a grid: a flat winner, then turned back into a row and a column.
+
+### q1658
+Farthest from the mean: a transform with an absolute value, then the winner's index.
+
+### q1659
+Largest magnitude: the index from the transformed values, the sign from the originals.
+
+### q1660
+Nearest and farthest from a target at once: one transformed vector, both extremes located.
+
+### q1661
+Replace the extreme with the mean of the OTHERS: index as a handle, a fresh tensor, an excluded average.
 
 ## Misconceptions
 
