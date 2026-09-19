@@ -614,6 +614,55 @@ check("a concept off the frontier is still narrowed to the learner's rung",
       _stage == "partial" and _ids and not (set(_ids) & SOLO),
       f"stage={_stage} servable={_ids}")
 
+# 🔴 A RETAKE IS NOT HANDED STRAIGHT BACK (2026-09-18). With the retakes above
+# wired in, replay of Seth's state served the same missed drill up to
+# seventeen times in a row: miss → aided retake → aided-correct is owed →
+# unaided retake → miss. `attempt_history.RETAKE_COOLDOWN` keeps the last few
+# answered drills out of the retry order while anything else is owed, and
+# only while — a cooling drill still comes back when it is the only work left.
+from app import attempt_history  # noqa: E402
+
+
+def _touch(state, qid, ts, correct=False, subtopic="Numpy: Applied patterns and advanced"):
+    state.get_subtopic_state(subtopic).history.append(AttemptRecord(
+        question_id=int(qid), subtopic=subtopic, difficulty_score=50,
+        grade=100.0 if correct else 0.0, correct=correct, timestamp=ts))
+
+
+_st = _state_on_rung("FFFF", True)
+_owed2 = _rung_floor[:2]
+_seed_answered(_st, POOL, missed=_owed2)
+# The second owed drill is the most recent answer, across subtopics.
+_touch(_st, _owed2[1], "2026-09-01T00:00:00+00:00")
+check("recent answers are read across subtopics, newest last",
+      _owed2[1] in attempt_history.recent_question_ids(_st, 1)
+      and _owed2[0] not in attempt_history.recent_question_ids(_st, 1),
+      f"recent={attempt_history.recent_question_ids(_st, 1)}")
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
+check("of two owed drills, the one just answered waits its cooldown",
+      sorted(q.id for q in _out) == [_owed2[0]] and _gap is None,
+      f"servable={sorted(q.id for q in _out)} gap={_gap}")
+
+_st = _state_on_rung("FFFF", True)
+_seed_answered(_st, POOL, missed=_rung_floor[:1])
+_touch(_st, _rung_floor[0], "2026-09-01T00:00:00+00:00")
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
+check("the only owed drill comes back even inside its cooldown — never a 409",
+      sorted(q.id for q in _out) == _rung_floor[:1] and _gap is None,
+      f"servable={sorted(q.id for q in _out)} gap={_gap}")
+
+_st = _state_on_rung("FFFF", True)
+_seed_answered(_st, POOL, missed=_rung_floor[:4])
+for _k, _qid in enumerate(_rung_floor[:4]):
+    _touch(_st, _qid, f"2026-09-01T00:00:0{_k}+00:00")
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
+check(f"the cooldown is {attempt_history.RETAKE_COOLDOWN} answers wide",
+      attempt_history.RETAKE_COOLDOWN == 3 and sorted(q.id for q in _out) == _rung_floor[:1] and _gap is None,
+      f"servable={sorted(q.id for q in _out)} gap={_gap}")
+
 print()
 if fails:
     print(f"FAILED ({len(fails)}): " + ", ".join(fails))

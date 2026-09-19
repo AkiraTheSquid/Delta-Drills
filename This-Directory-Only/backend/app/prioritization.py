@@ -28,6 +28,7 @@ from app import symbol_gate
 # test scripts), and the history readers moved out only for size.
 from app.attempt_history import (  # noqa: F401
     answered_question_ids, missed_question_ids, owed_question_ids,
+    retakeable_question_ids,
 )
 from app import ladder_fade
 from app import lessons
@@ -281,16 +282,27 @@ def narrow_to_next_kc(
     # the six-distinct-unaided gate until it is retaken without one
     # (attempt_history.owed_question_ids, 2026-09-18).
     missed = owed_question_ids(user_state)
+    # ...but not handed straight back: an owed drill inside its cooldown
+    # (attempt_history.RETAKE_COOLDOWN) yields to any other retake on the rung,
+    # and comes back only when it is the only work left — the alternative was
+    # the same drill seventeen times in a row (replay, 2026-09-18).
+    ready = retakeable_question_ids(user_state)
     # Eligibility must match what the caller can actually serve, or the
     # narrowing targets a KC whose questions are all spent and hands back a
     # list the difficulty picker then rejects — a 404 with fresh sibling work
     # sitting right there. `select_next_subtopic` chose this subtopic because
     # SOME frontier KC has unanswered work in it; find that same KC.
-    next_kc = kc_graph.select_next_kc(
-        user_state,
-        eligible=lambda qid: qid in here and (qid not in answered or qid in missed),
-        skip=skip,
-    )
+    # Same two passes as `select_next_subtopic`: a concept whose only work is
+    # a retake in its cooldown yields to a sibling with fresh or ready work.
+    next_kc = None
+    for owed in (ready, missed):
+        next_kc = kc_graph.select_next_kc(
+            user_state,
+            eligible=lambda qid: qid in here and (qid not in answered or qid in owed),
+            skip=skip,
+        )
+        if next_kc:
+            break
     if not next_kc:
         # Nothing here is unanswered. Re-ask on membership alone so the concept
         # the learner is actually on can still report its own exhaustion —
@@ -359,7 +371,7 @@ def narrow_to_next_kc(
         # back — and never on a walk-down, which is review, not a retake. The
         # picker sees every one of these as already served and recycles the
         # stalest (grading.select_question_for_difficulty).
-        retry = [q for q in rung if q.id in missed]
+        retry = [q for q in rung if q.id in ready] or [q for q in rung if q.id in missed]
         if retry:
             return retry, next_kc, None
         # The rung is spent and nothing on it is owed, yet the learner is
@@ -371,8 +383,9 @@ def narrow_to_next_kc(
         # torch.elementwise-ops after q638). The drill whose miss sent them
         # here is the one still owed — hand it back, and the schedule attaches
         # the after-miss example to it.
-        owed_above = [q for q in narrowed if q.id in missed
-                      and kc_graph.ladder_rank(q.id) in kc_graph._SERVABLE_RANKS]
+        above = [q for q in narrowed if q.id in missed
+                 and kc_graph.ladder_rank(q.id) in kc_graph._SERVABLE_RANKS]
+        owed_above = [q for q in above if q.id in ready] or above
         if owed_above:
             return owed_above, next_kc, None
     if not fresh and stage == "solo":
@@ -381,7 +394,7 @@ def narrow_to_next_kc(
         # found nothing unanswered and 409'd a concept whose only remaining
         # work was that retake (replay, 2026-09-18: torch.boolean-masking with
         # q1515 answered aided, q1516 missed).
-        retry = [q for q in rung if q.id in missed]
+        retry = [q for q in rung if q.id in ready] or [q for q in rung if q.id in missed]
         if retry:
             return retry, next_kc, None
     if not fresh:
@@ -837,7 +850,12 @@ def select_next_subtopic(
     # behind an example — is work too (attempt_history.owed_question_ids):
     # without this the lattice walked past a concept whose only remaining work
     # was retakes, and the retakes `narrow_to_next_kc` serves were unreachable.
-    answered = answered_question_ids(user_state) - owed_question_ids(user_state)
+    # An owed drill in its cooldown (attempt_history.RETAKE_COOLDOWN) counts
+    # as done on the first pass, so a concept whose only work is the drill
+    # just missed yields to the rest of the frontier; the second pass counts
+    # it as work again, so it is never withheld when nothing else is left.
+    done = answered_question_ids(user_state)
+    passes = (done - retakeable_question_ids(user_state), done - owed_question_ids(user_state))
 
     # KC LATTICE FIRST. The knowledge graph decides what comes next; the
     # weakest-first machinery below is the fallback for when the lattice has
@@ -845,34 +863,35 @@ def select_next_subtopic(
     # left). Ordering the frontier is `kc_graph`'s job — coreness then depth,
     # per The Math Academy Way ch. 32 — so this only has to translate the KC it
     # picks into a subtopic that actually has an unserved question for it.
-    for kc in kc_graph.frontier(user_state):
-        if kc in excluded_kcs:
-            continue
-        wanted = set(kc_graph.questions_for_kc(kc))
-        if not wanted:
-            continue
-        # The subtopic that holds the concept's drills AT ITS RUNG, before any
-        # subtopic that merely holds one of its drills. A concept's pool is
-        # spread over several subtopics and the first in list order can own
-        # nothing of it but the segments' fill-in-the-blank items: Seth on
-        # `torch.slicing-views`, 2026-09-18 — Solo rung, its four unaided
-        # independent drills all in "Indexing and selection", and this walk
-        # returned "Core array literacy" because it holds q233 (rank 0). The
-        # narrowing downstream then had no rung to honour and fell to the
-        # floor. Rung-first only reorders the walk; the plain membership pass
-        # still runs when nothing at the rung is unlocked anywhere.
-        at_rung = set(kc_graph.questions_at_stage(sorted(wanted), kc_graph.kc_stage(user_state, kc)))
-        for pool in (at_rung, wanted):
-            for st_name in subtopics:
-                if st_name in excluded:
-                    continue
-                if _get_weight(user_state, st_name, uniform_weight) <= 0:
-                    continue
-                if any(
-                    q.id in pool and q.id not in answered and question_is_unlocked(user_state, q)
-                    for q in get_questions_by_subtopic(st_name)
-                ):
-                    return st_name
+    for answered in passes:
+        for kc in kc_graph.frontier(user_state):
+            if kc in excluded_kcs:
+                continue
+            wanted = set(kc_graph.questions_for_kc(kc))
+            if not wanted:
+                continue
+            # The subtopic that holds the concept's drills AT ITS RUNG, before any
+            # subtopic that merely holds one of its drills. A concept's pool is
+            # spread over several subtopics and the first in list order can own
+            # nothing of it but the segments' fill-in-the-blank items: Seth on
+            # `torch.slicing-views`, 2026-09-18 — Solo rung, its four unaided
+            # independent drills all in "Indexing and selection", and this walk
+            # returned "Core array literacy" because it holds q233 (rank 0). The
+            # narrowing downstream then had no rung to honour and fell to the
+            # floor. Rung-first only reorders the walk; the plain membership pass
+            # still runs when nothing at the rung is unlocked anywhere.
+            at_rung = set(kc_graph.questions_at_stage(sorted(wanted), kc_graph.kc_stage(user_state, kc)))
+            for pool in (at_rung, wanted):
+                for st_name in subtopics:
+                    if st_name in excluded:
+                        continue
+                    if _get_weight(user_state, st_name, uniform_weight) <= 0:
+                        continue
+                    if any(
+                        q.id in pool and q.id not in answered and question_is_unlocked(user_state, q)
+                        for q in get_questions_by_subtopic(st_name)
+                    ):
+                        return st_name
 
     cands = _candidates(skip_served=True)
     if not cands:
