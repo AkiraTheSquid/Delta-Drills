@@ -5,8 +5,8 @@ supporting: []
 new_syntax: [Tensor.T]
 faded: [610, 552, 611, 558, 669, 670]
 guided: []
-independent: [612, 613, 671, 672, 673, 674]
-integrated: [614, 615, 675]
+independent: [612, 613, 671, 672, 673, 674, 1590, 1591]
+integrated: [614, 615, 675, 1592]
 ---
 
 ## Concept: transpose turns the rows into the columns
@@ -294,6 +294,12 @@ assert a.tolist()[0][2] == a.T.tolist()[2][0]
 ### q674
 Once, then twice.
 
+### q1590
+A column of a is a row of a.T — one integer index after the transpose.
+
+### q1591
+Transposing swaps the two sizes — say which is which.
+
 ## Integrated practice
 
 ### q614
@@ -304,6 +310,9 @@ The element type, the transposed contents, and whether the count survived.
 
 ### q675
 Everything this page knows about one transpose.
+
+### q1592
+Read two rows off the transpose, then compare the two shapes.
 
 ## Misconceptions
 

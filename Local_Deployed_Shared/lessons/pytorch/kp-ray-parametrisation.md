@@ -6,8 +6,8 @@ new_syntax: [syntax.unpack]
 previews: []
 faded: [820, 821]
 guided: []
-independent: [822, 823, 824, 825, 826, 827]
-integrated: [828, 829, 830]
+independent: [822, 823, 824, 825, 826, 827, 1604, 1605]
+integrated: [828, 829, 830, 1606]
 ---
 
 ## Concept: origin + u · direction, and the (2, 3) layout
@@ -150,6 +150,12 @@ n integer steps along one ray.
 ### q827
 One u, many rays.
 
+### q1604
+One u, one point: unpack the two rows and apply the formula.
+
+### q1605
+Read u back off a known point — one coordinate is enough.
+
 ## Integrated practice
 
 ### q828
@@ -160,6 +166,9 @@ Many x's → many u's → many points, one broadcast.
 
 ### q830
 Which rays hit p ahead of the camera?
+
+### q1606
+Every ray at the same u, then a test per row.
 
 ## Misconceptions
 

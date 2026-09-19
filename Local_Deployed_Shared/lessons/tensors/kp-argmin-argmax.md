@@ -5,8 +5,8 @@ supporting: [torch.aggregations, torch.slicing-views]
 new_syntax: [Tensor.argmax, torch.abs, torch.argmax, torch.argmin]
 faded: [38, 219, 98]
 guided: [1]
-independent: [24, 61, 168, 1508, 1509]
-integrated: [1510, 1511]
+independent: [24, 61, 168, 1508, 1509, 1576, 1577, 1578]
+integrated: [1510, 1511, 1579, 1580]
 ---
 
 ## Concept: argmin/argmax — the index, not the value
@@ -204,6 +204,15 @@ Per column, where the smallest value sits.
 ### q1509
 Locate the overall maximum as a row-and-column pair.
 
+### q1576
+Where the extremes sit — positions, not values.
+
+### q1577
+One winner per row — pick the axis that runs along the row.
+
+### q1578
+Nearest to a target: transform first, then ask where the minimum is.
+
 ## Integrated practice
 
 ### q1510
@@ -211,6 +220,12 @@ Closest-to-target, but one answer per row.
 
 ### q1511
 The runner-up's position, without disturbing the input.
+
+### q1579
+Find both extremes, then use the two positions to swap — without losing either value.
+
+### q1580
+Nearest to a target on a grid: a flat winner, then turned back into a row and a column.
 
 ## Misconceptions
 

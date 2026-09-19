@@ -13665,7 +13665,7 @@
       "submission_mode": "function",
       "wrong_examples": [],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Solve a @ x = b, and confirm the solution satisfies it.\"\"\"\n    x = t.linalg.solve(a, b)\n    return ([round(v, 4) for v in x.tolist()], bool(t.allclose(a @ x, b, atol=1e-4)))\n\n\nexample = (t.tensor([[2.0, 0.0], [0.0, 4.0]]), t.tensor([6.0, 8.0]))\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Solve a @ x = b, and confirm the solution satisfies it.\"\"\"\n    x = t.linalg.solve(a, b)\n    return (x.tolist(), bool(t.allclose(a @ x, b, atol=1e-4)))\n\n\nexample = (t.tensor([[2.0, 0.0], [0.0, 4.0]]), t.tensor([6.0, 8.0]))\nprint(solve(*example))\n",
       "expected_output": "([3.0, 2.0], True)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -65437,7 +65437,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an invertible square float matrix `a` and a vector `b`, return the vector `x` that satisfies `a.T @ x = b` as a plain list rounded to 4 decimals. Solve the system directly rather than forming an inverse.",
+      "question_text": "Given an invertible square float matrix `a` and a vector `b`, return the vector `x` that satisfies `a.T @ x = b` as a plain list. Solve the system directly rather than forming an inverse.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -65468,7 +65468,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    x = t.linalg.solve(a.T, b)\n    return [round(v, 4) for v in x.tolist()]\n\n\na = t.tensor([[2.0, 1.0], [0.0, 4.0]])\nb = t.tensor([2.0, 6.0])\nprint(solve(a, b))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    x = t.linalg.solve(a.T, b)\n    return x.tolist()\n\n\na = t.tensor([[2.0, 1.0], [0.0, 4.0]])\nb = t.tensor([2.0, 6.0])\nprint(solve(a, b))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -65488,7 +65488,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given an invertible square float matrix `a` of shape `(n, n)` and a matrix `b` of shape `(n, k)`, return a tuple `(x_rounded, checks_out)`: the `(n, k)` solution of `a @ x = b` as a nested list rounded to 4 decimals, and a bool saying whether `a @ x` reproduces `b` to within 1e-4.",
+      "question_text": "Given an invertible square float matrix `a` of shape `(n, n)` and a matrix `b` of shape `(n, k)`, return a tuple `(x, checks_out)`: the `(n, k)` solution of `a @ x = b` as a nested list, and a bool saying whether `a @ x` reproduces `b` to within 1e-4.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -65519,7 +65519,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    x = t.linalg.solve(a, b)\n    rounded = [[round(v, 4) for v in row] for row in x.tolist()]\n    return (rounded, bool(t.allclose(a @ x, b, atol=1e-4)))\n\n\na = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nb = t.tensor([[2.0, 4.0], [4.0, 8.0]])\nprint(solve(a, b))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    x = t.linalg.solve(a, b)\n    return (x.tolist(), bool(t.allclose(a @ x, b, atol=1e-4)))\n\n\na = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nb = t.tensor([[2.0, 4.0], [4.0, 8.0]])\nprint(solve(a, b))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -65539,7 +65539,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a batch `mats` of invertible square float matrices, shape `(batch, n, n)`, and a matching batch of right-hand sides `b` of shape `(batch, n)`, return a tuple `(values, shape)`: the solutions of `mats[i] @ x_i = b[i]` for every `i`, as a nested list rounded to 4 decimals, and the result's shape as a plain tuple. Use ONE solver call — the solver treats leading axes as a batch, just as `@` does.",
+      "question_text": "Given a batch `mats` of invertible square float matrices, shape `(batch, n, n)`, and a matching batch of right-hand sides `b` of shape `(batch, n)`, return a tuple `(values, shape)`: the solutions of `mats[i] @ x_i = b[i]` for every `i`, as a nested list, and the result's shape as a plain tuple. Use ONE solver call — the solver treats leading axes as a batch, just as `@` does.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -65570,7 +65570,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(mats, b):\n    x = t.linalg.solve(mats, b)\n    return ([[round(v, 4) for v in row] for row in x.tolist()], tuple(x.shape))\n\n\nmats = t.tensor([[[2.0, 0.0], [0.0, 4.0]], [[1.0, 0.0], [0.0, 1.0]]])\nb = t.tensor([[6.0, 8.0], [1.0, 2.0]])\nprint(solve(mats, b))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(mats, b):\n    x = t.linalg.solve(mats, b)\n    return (x.tolist(), tuple(x.shape))\n\n\nmats = t.tensor([[[2.0, 0.0], [0.0, 4.0]], [[1.0, 0.0], [0.0, 1.0]]])\nb = t.tensor([[6.0, 8.0], [1.0, 2.0]])\nprint(solve(mats, b))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -67692,6 +67692,2585 @@
       "provenance": null,
       "canonical_solution": "import torch as t\nimport einops\n\n\ndef solve(W):\n    \"\"\"W^T W per instance: how much every pair of features overlaps.\"\"\"\n    W = t.tensor(W)\n    return einops.einsum(W, W, \"inst hidden f1, inst hidden f2 -> inst f1 f2\").tolist()\n",
       "expected_output": "[[[1.0, 1.0, -2.0], [1.0, 5.0, 2.0], [-2.0, 2.0, 8.0]], [[8.0, 0.0, -4.0], [0.0, 2.0, 2.0], [-4.0, 2.0, 4.0]]]",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1563,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`start`, `stop` and `step` are ints, and `step` is positive. Return a plain list of the integers from `start` up to but NOT including `stop`, taking every `step`-th one.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(start, stop, step):\n    \"\"\"Integers from start, every step-th, stopping before stop.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0, 10, 5))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nstart, stop, step = 0, 10, 5",
+          "call": "solve(start, stop, step)",
+          "expected_expr": "[0, 5]"
+        },
+        {
+          "setup_code": "import torch as t\nstart, stop, step = 2, 9, 2",
+          "call": "solve(start, stop, step)",
+          "expected_expr": "[2, 4, 6, 8]"
+        },
+        {
+          "setup_code": "import torch as t\nstart, stop, step = 5, 6, 1",
+          "call": "solve(start, stop, step)",
+          "expected_expr": "[5]"
+        },
+        {
+          "setup_code": "import torch as t\nstart, stop, step = 1, 1, 1",
+          "call": "solve(start, stop, step)",
+          "expected_expr": "[]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0, 5, 10]",
+          "why": "The stop is exclusive already; adding one to it lets a value equal to `stop` slip in whenever it lands on the grid."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(start, stop, step):\n    \"\"\"Integers from start, every step-th, stopping before stop.\"\"\"\n    return t.arange(start, stop, step).tolist()\n\n\nprint(solve(0, 10, 5))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1564,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 44,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`n` is a positive int. Cut the interval `[0, 1]` into `n` equal bins and return the MIDPOINT of each bin, as a plain list of n floats in increasing order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The n bin midpoints of [0, 1].\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(2))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn = 2",
+          "call": "solve(n)",
+          "expected_expr": "[0.25, 0.75]"
+        },
+        {
+          "setup_code": "import torch as t\nn = 4",
+          "call": "solve(n)",
+          "expected_expr": "[0.125, 0.375, 0.625, 0.875]"
+        },
+        {
+          "setup_code": "import torch as t\nn = 1",
+          "call": "solve(n)",
+          "expected_expr": "[0.5]"
+        },
+        {
+          "setup_code": "import torch as t\nn = 8",
+          "call": "solve(n)",
+          "expected_expr": "[0.0625, 0.1875, 0.3125, 0.4375, 0.5625, 0.6875, 0.8125, 0.9375]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0.0, 0.5]",
+          "why": "Dividing the plain count by n gives the LEFT EDGE of each bin; the centre sits half a bin further along."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n):\n    \"\"\"The n bin midpoints of [0, 1].\"\"\"\n    return ((t.arange(n) + 0.5) / n).tolist()\n\n\nprint(solve(2))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1565,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`start` is a float, `step` is a positive float and `n` is a positive int. Return a tuple `(values, last)`: the n values `start, start - step, start - 2*step, …` as a plain list, and the final value as a float.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(start, step, n):\n    \"\"\"n values stepping DOWN from start by step, and the last one.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(10.0, 2.5, 4))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nstart, step, n = 10.0, 2.5, 4",
+          "call": "solve(start, step, n)",
+          "expected_expr": "([10.0, 7.5, 5.0, 2.5], 2.5)"
+        },
+        {
+          "setup_code": "import torch as t\nstart, step, n = 1.0, 0.25, 3",
+          "call": "solve(start, step, n)",
+          "expected_expr": "([1.0, 0.75, 0.5], 0.5)"
+        },
+        {
+          "setup_code": "import torch as t\nstart, step, n = 0.0, 1.0, 1",
+          "call": "solve(start, step, n)",
+          "expected_expr": "([0.0], 0.0)"
+        },
+        {
+          "setup_code": "import torch as t\nstart, step, n = -2.0, 0.5, 5",
+          "call": "solve(start, step, n)",
+          "expected_expr": "([-2.0, -2.5, -3.0, -3.5, -4.0], -4.0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([7.5, 5.0, 2.5, 0.0], 0.0)",
+          "why": "Counting from 1 skips `start` itself and runs one step too far — the first value must be start, so the count begins at 0."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(start, step, n):\n    \"\"\"n values stepping DOWN from start by step, and the last one.\"\"\"\n    values = start - t.arange(n) * step\n    return (values.tolist(), float(values[-1]))\n\n\nprint(solve(10.0, 2.5, 4))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1566,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 62,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`a` and `b` are floats with `a` smaller than `b`, and `n` is a non-negative int. Return a tuple `(points, gap)`: the n evenly spaced points strictly BETWEEN a and b (neither endpoint included), as a plain list, and the spacing between neighbours as a float — which is `(b - a) / (n + 1)`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced interior points of (a, b), and their spacing.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(0.0, 1.0, 1))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na, b, n = 0.0, 1.0, 1",
+          "call": "solve(a, b, n)",
+          "expected_expr": "([0.5], 0.5)"
+        },
+        {
+          "setup_code": "import torch as t\na, b, n = 0.0, 4.0, 3",
+          "call": "solve(a, b, n)",
+          "expected_expr": "([1.0, 2.0, 3.0], 1.0)"
+        },
+        {
+          "setup_code": "import torch as t\na, b, n = 1.0, 2.0, 0",
+          "call": "solve(a, b, n)",
+          "expected_expr": "([], 1.0)"
+        },
+        {
+          "setup_code": "import torch as t\na, b, n = -1.0, 1.0, 3",
+          "call": "solve(a, b, n)",
+          "expected_expr": "([-0.5, 0.0, 0.5], 0.5)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([0.0], 0.5)",
+          "why": "Asking for n points from a to b puts the endpoints IN the grid; the interior points are what is left after asking for n + 2 and dropping both ends."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b, n):\n    \"\"\"n evenly spaced interior points of (a, b), and their spacing.\"\"\"\n    pts = a + (b - a) * (t.arange(n) + 1) / (n + 1)\n    return (pts.tolist(), float((b - a) / (n + 1)))\n\n\nprint(solve(0.0, 1.0, 1))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1567,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D integer tensor. Return a plain list of the entries of `x` that are odd, in their original order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The odd entries of x, in order.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([3, 4, 7, 10, 11])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([3, 4, 7, 10, 11])",
+          "call": "solve(x)",
+          "expected_expr": "[3, 7, 11]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2, 4, 6])",
+          "call": "solve(x)",
+          "expected_expr": "[]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1])",
+          "call": "solve(x)",
+          "expected_expr": "[1]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([9, 8, 7, 6, 5])",
+          "call": "solve(x)",
+          "expected_expr": "[9, 7, 5]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[True, False, True, False, True]",
+          "why": "The comparison is the MASK — a True/False per position; the entries themselves come from indexing `x` with it."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"The odd entries of x, in order.\"\"\"\n    return x[x % 2 == 1].tolist()\n\n\nprint(solve(t.tensor([3, 4, 7, 10, 11])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1568,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D float tensor; `lo` and `hi` are floats with `lo` no larger than `hi`. Return a new tensor, as a plain list, in which every entry OUTSIDE the closed range `[lo, hi]` has been replaced by `0.0` and every other entry is unchanged.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x, lo, hi):\n    \"\"\"x with entries outside [lo, hi] zeroed.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([-2.0, 0.5, 3.0, 9.0]), 0.0, 5.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-2.0, 0.5, 3.0, 9.0])\nlo, hi = 0.0, 5.0",
+          "call": "solve(x, lo, hi)",
+          "expected_expr": "[0.0, 0.5, 3.0, 0.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1.0, 2.0])\nlo, hi = 1.0, 2.0",
+          "call": "solve(x, lo, hi)",
+          "expected_expr": "[1.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([7.5])\nlo, hi = 0.0, 1.0",
+          "call": "solve(x, lo, hi)",
+          "expected_expr": "[0.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-1.0, -0.5, 0.0])\nlo, hi = -0.5, 0.0",
+          "call": "solve(x, lo, hi)",
+          "expected_expr": "[0.0, -0.5, 0.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[-2.0, 0.5, 3.0, 9.0]",
+          "why": "`&` asks for entries below `lo` AND above `hi` at the same time — there are none, so nothing changed; outside means EITHER side, which is `|`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x, lo, hi):\n    \"\"\"x with entries outside [lo, hi] zeroed.\"\"\"\n    out = x.clone()\n    out[(out < lo) | (out > hi)] = 0.0\n    return out.tolist()\n\n\nprint(solve(t.tensor([-2.0, 0.5, 3.0, 9.0]), 0.0, 5.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1569,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D integer tensor. Return, as a plain int, the number of ROWS of `z` that contain at least one zero.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"How many rows of z hold at least one zero.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 0], [2, 3], [0, 0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 0], [2, 3], [0, 0]])",
+          "call": "solve(z)",
+          "expected_expr": "2"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 2, 3]])",
+          "call": "solve(z)",
+          "expected_expr": "0"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[0], [0], [5]])",
+          "call": "solve(z)",
+          "expected_expr": "2"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[4, 4], [4, 4]])",
+          "call": "solve(z)",
+          "expected_expr": "0"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "3",
+          "why": "This counts ZEROS — a row holding two of them is counted twice; the count must run over the per-row verdicts, not the per-entry mask."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"How many rows of z hold at least one zero.\"\"\"\n    return int(t.count_nonzero((z == 0).any(dim=1)))\n\n\nprint(solve(t.tensor([[1, 0], [2, 3], [0, 0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1570,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`x` and `y` are 1-D integer tensors of the same length. Return a tuple `(picked, count)`: the entries of `x` at the positions where `y` is positive AND `x` is even, as a plain list in order, and how many there are as a plain int.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x, y):\n    \"\"\"Entries of x where y > 0 and x is even, and how many.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([2, 3, 4, 6]), t.tensor([1, 1, -1, 5])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2, 3, 4, 6])\ny = t.tensor([1, 1, -1, 5])",
+          "call": "solve(x, y)",
+          "expected_expr": "([2, 6], 2)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1, 3, 5])\ny = t.tensor([1, 1, 1])",
+          "call": "solve(x, y)",
+          "expected_expr": "([], 0)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([8])\ny = t.tensor([0])",
+          "call": "solve(x, y)",
+          "expected_expr": "([], 0)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0, 2, 4])\ny = t.tensor([2, 2, 2])",
+          "call": "solve(x, y)",
+          "expected_expr": "([0, 2, 4], 3)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([2, 3, 4, 6], 4)",
+          "why": "`|` keeps a position when EITHER test passes, so odd entries with a positive `y` slipped through; both conditions at once is `&`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x, y):\n    \"\"\"Entries of x where y > 0 and x is even, and how many.\"\"\"\n    mask = (y > 0) & (x % 2 == 0)\n    return (x[mask].tolist(), int(t.count_nonzero(mask)))\n\n\nprint(solve(t.tensor([2, 3, 4, 6]), t.tensor([1, 1, -1, 5])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1571,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`a` is a float tensor of shape `(m, n)` and `b` is a float tensor of shape `(n, k)`. Return a tuple `(values, shape)`: their matrix product as a nested list, and its shape as a plain tuple.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The matrix product a·b and its shape.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[1.0, 0.0, 2.0], [0.0, 1.0, 2.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nb = t.tensor([[1.0, 0.0, 2.0], [0.0, 1.0, 2.0]])",
+          "call": "solve(a, b)",
+          "expected_expr": "([[1.0, 2.0, 6.0], [3.0, 4.0, 14.0]], (2, 3))"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[2.0, 0.0]])\nb = t.tensor([[1.0], [5.0]])",
+          "call": "solve(a, b)",
+          "expected_expr": "([[2.0]], (1, 1))"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0], [2.0], [3.0]])\nb = t.tensor([[4.0, 5.0]])",
+          "call": "solve(a, b)",
+          "expected_expr": "([[4.0, 5.0], [8.0, 10.0], [12.0, 15.0]], (3, 2))"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 1.0], [1.0, 1.0]])\nb = t.tensor([[1.0, 2.0], [3.0, 4.0]])",
+          "call": "solve(a, b)",
+          "expected_expr": "([[4.0, 6.0], [4.0, 6.0]], (2, 2))"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "call": "solve(t.tensor([[1.0, 1.0], [1.0, 1.0]]), t.tensor([[1.0, 2.0], [3.0, 4.0]]))",
+          "output": "([[1.0, 2.0], [3.0, 4.0]], (2, 2))",
+          "why": "`*` pairs entries position by position — it only ran at all because both matrices happened to be square; the matrix product contracts `a`'s columns against `b`'s rows and works for any `(m, n)` × `(n, k)`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The matrix product a·b and its shape.\"\"\"\n    r = a @ b\n    return (r.tolist(), tuple(r.shape))\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[1.0, 0.0, 2.0], [0.0, 1.0, 2.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1572,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`v` and `w` are 1-D float tensors of the same length. Return a tuple `(pairwise, dot)`: the position-by-position products as a plain list, and the single number that sums those products, as a float.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(v, w):\n    \"\"\"Position-wise products of v and w, and their dot product.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nv = t.tensor([1.0, 2.0, 3.0])\nw = t.tensor([4.0, 5.0, 6.0])",
+          "call": "solve(v, w)",
+          "expected_expr": "([4.0, 10.0, 18.0], 32.0)"
+        },
+        {
+          "setup_code": "import torch as t\nv = t.tensor([2.0])\nw = t.tensor([0.5])",
+          "call": "solve(v, w)",
+          "expected_expr": "([1.0], 1.0)"
+        },
+        {
+          "setup_code": "import torch as t\nv = t.tensor([1.0, -1.0])\nw = t.tensor([1.0, 1.0])",
+          "call": "solve(v, w)",
+          "expected_expr": "([1.0, -1.0], 0.0)"
+        },
+        {
+          "setup_code": "import torch as t\nv = t.tensor([0.0, 3.0])\nw = t.tensor([7.0, 2.0])",
+          "call": "solve(v, w)",
+          "expected_expr": "([0.0, 6.0], 6.0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(32.0, 32.0)",
+          "why": "`@` on two vectors CONTRACTS them to one number, so the first result came back as a scalar; the position-by-position product is `*`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(v, w):\n    \"\"\"Position-wise products of v and w, and their dot product.\"\"\"\n    return ((v * w).tolist(), float(v @ w))\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1573,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`a` is an invertible square float matrix. Return its inverse as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a):\n    \"\"\"The matrix inverse of a.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 2.0], [3.0, 4.0]])",
+          "call": "solve(a)",
+          "expected_expr": "[[-2.000000238418579, 1.0000001192092896], [1.5000001192092896, -0.5000000596046448]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[2.0, 0.0], [0.0, 4.0]])",
+          "call": "solve(a)",
+          "expected_expr": "[[0.5, 0.0], [0.0, 0.25]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[5.0]])",
+          "call": "solve(a)",
+          "expected_expr": "[[0.20000000298023224]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[0.0, 1.0], [1.0, 0.0]])",
+          "call": "solve(a)",
+          "expected_expr": "[[0.0, 1.0], [1.0, 0.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[1.0, 0.5], [0.3333333432674408, 0.25]]",
+          "why": "`1 / a` takes the reciprocal of each ENTRY; the inverse is the matrix that multiplies `a` back to the identity, which only agrees with that for a diagonal matrix."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a):\n    \"\"\"The matrix inverse of a.\"\"\"\n    return t.linalg.inv(a).tolist()\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1574,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`a` is an invertible square float matrix of shape `(n, n)` and `b` is a float vector of shape `(n,)`. Return the vector `x` with `a @ x == b`, as a plain list. Solve the system directly; do not form an inverse.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The x that a maps onto b.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[2.0, 0.0], [0.0, 4.0]]), t.tensor([2.0, 6.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([[2.0, 0.0], [0.0, 4.0]])\nb = t.tensor([2.0, 6.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[1.0, 1.5]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 1.0], [0.0, 1.0]])\nb = t.tensor([3.0, 1.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[2.0, 1.0]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[4.0]])\nb = t.tensor([2.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[0.5]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nb = t.tensor([5.0, 6.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[-4.000000953674316, 4.500000476837158]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[4.0, 24.0]",
+          "why": "`a @ b` APPLIES the matrix to `b`; the question asks for the vector `a` would have to be applied to in order to GET `b`, which runs the other way."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The x that a maps onto b.\"\"\"\n    return t.linalg.solve(a, b).tolist()\n\n\nprint(solve(t.tensor([[2.0, 0.0], [0.0, 4.0]]), t.tensor([2.0, 6.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1575,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 62,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`mats` is a batch of invertible square float matrices, shape `(batch, n, n)`, and `x` is a float vector of shape `(n,)`. First apply every matrix to `x` to get `b` of shape `(batch, n)`; then solve each system `mats[i] @ x_i = b[i]` for `x_i`. Return a tuple `(b, recovered)`: `b` as a nested list, and the recovered vectors as a nested list — one row per matrix.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(mats, x):\n    \"\"\"b = each matrix applied to x, then each system solved back.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[[2.0, 0.0], [0.0, 4.0]], [[1.0, 1.0], [0.0, 1.0]]]), t.tensor([1.0, 2.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nmats = t.tensor([[[2.0, 0.0], [0.0, 4.0]], [[1.0, 1.0], [0.0, 1.0]]])\nx = t.tensor([1.0, 2.0])",
+          "call": "solve(mats, x)",
+          "expected_expr": "([[2.0, 8.0], [3.0, 2.0]], [[1.0, 2.0], [1.0, 2.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nmats = t.tensor([[[3.0]]])\nx = t.tensor([2.0])",
+          "call": "solve(mats, x)",
+          "expected_expr": "([[6.0]], [[2.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nmats = t.tensor([[[1.0, 2.0], [3.0, 4.0]]])\nx = t.tensor([1.0, -1.0])",
+          "call": "solve(mats, x)",
+          "expected_expr": "([[-1.0, -1.0]], [[1.0, -1.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nmats = t.tensor([[[1.0, 0.0], [0.0, 1.0]], [[0.0, 1.0], [1.0, 0.0]], [[2.0, 0.0], [0.0, 2.0]]])\nx = t.tensor([3.0, 5.0])",
+          "call": "solve(mats, x)",
+          "expected_expr": "([[3.0, 5.0], [5.0, 3.0], [6.0, 10.0]], [[3.0, 5.0], [3.0, 5.0], [3.0, 5.0]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[2.0, 8.0], [3.0, 2.0]], [[0.5, 0.5], [-1.0, 2.0]])",
+          "why": "Solving against `x` answers a different question — which vector each matrix maps ONTO `x` — the right-hand side of each system is the `b` just computed."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(mats, x):\n    \"\"\"b = each matrix applied to x, then each system solved back.\"\"\"\n    b = mats @ x\n    return (b.tolist(), t.linalg.solve(mats, b).tolist())\n\n\nprint(solve(t.tensor([[[2.0, 0.0], [0.0, 4.0]], [[1.0, 1.0], [0.0, 1.0]]]), t.tensor([1.0, 2.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1576,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 24,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D float tensor with distinct entries. Return a tuple of two plain ints `(i_max, i_min)`: the position of the largest entry and the position of the smallest.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Positions of the largest and the smallest entry of x.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([2.0, 9.0, 4.0, 1.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2.0, 9.0, 4.0, 1.0])",
+          "call": "solve(x)",
+          "expected_expr": "(1, 3)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([5.0])",
+          "call": "solve(x)",
+          "expected_expr": "(0, 0)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-1.0, -3.0, 0.5])",
+          "call": "solve(x)",
+          "expected_expr": "(2, 1)"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([10.0, 20.0, 30.0])",
+          "call": "solve(x)",
+          "expected_expr": "(2, 0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(9.0, 1.0)",
+          "why": "These are the extreme VALUES; the question asks where they are, which is the index the arg- forms return."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"Positions of the largest and the smallest entry of x.\"\"\"\n    return (int(t.argmax(x)), int(t.argmin(x)))\n\n\nprint(solve(t.tensor([2.0, 9.0, 4.0, 1.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1577,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D float tensor. Return a plain list holding, for each ROW, the column index of that row's largest entry.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"For each row of z, the column of its largest entry.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]])",
+          "call": "solve(z)",
+          "expected_expr": "[1, 0]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[4.0, 4.5]])",
+          "call": "solve(z)",
+          "expected_expr": "[1]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0], [2.0], [3.0]])",
+          "call": "solve(z)",
+          "expected_expr": "[0, 0, 0]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[0.0, 1.0], [1.0, 0.0], [0.5, 0.5]])",
+          "call": "solve(z)",
+          "expected_expr": "[1, 0, 0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[1, 0, 1]",
+          "why": "`dim=0` walks DOWN each column and gives one row index per column; a winner per row means reducing along `dim=1`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"For each row of z, the column of its largest entry.\"\"\"\n    return z.argmax(dim=1).tolist()\n\n\nprint(solve(t.tensor([[1.0, 5.0, 2.0], [7.0, 0.0, 3.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1578,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D float tensor and `v` is a float. Return, as a plain int, the INDEX of the entry of `x` that is closest to `v`. If two are equally close, the first wins.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x, v):\n    \"\"\"Index of the entry of x nearest to v.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([0.0, 10.0, 20.0, 30.0]), 12.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0.0, 10.0, 20.0, 30.0])\nv = 12.0",
+          "call": "solve(x, v)",
+          "expected_expr": "1"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([5.0, -5.0])\nv = -4.0",
+          "call": "solve(x, v)",
+          "expected_expr": "1"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([3.0])\nv = 100.0",
+          "call": "solve(x, v)",
+          "expected_expr": "0"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1.0, 2.0, 3.0])\nv = 2.4",
+          "call": "solve(x, v)",
+          "expected_expr": "1"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "0",
+          "why": "Without the absolute value the most NEGATIVE difference wins — the entry farthest BELOW `v`, not the nearest one."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x, v):\n    \"\"\"Index of the entry of x nearest to v.\"\"\"\n    return int(t.argmin(t.abs(x - v)))\n\n\nprint(solve(t.tensor([0.0, 10.0, 20.0, 30.0]), 12.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1579,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D float tensor with distinct entries and at least two of them. Return a new tensor, as a plain list, in which the largest and the smallest entries have swapped places and everything else is unchanged.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x with its largest and smallest entries exchanged.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([2.0, 9.0, 4.0, 1.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([2.0, 9.0, 4.0, 1.0])",
+          "call": "solve(x)",
+          "expected_expr": "[2.0, 1.0, 4.0, 9.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1.0, 2.0])",
+          "call": "solve(x)",
+          "expected_expr": "[2.0, 1.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([-1.0, 5.0, 3.0])",
+          "call": "solve(x)",
+          "expected_expr": "[5.0, -1.0, 3.0]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0.5, 0.25, 0.75, 1.0, 0.0])",
+          "call": "solve(x)",
+          "expected_expr": "[0.5, 0.25, 0.75, 0.0, 1.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[2.0, 1.0, 4.0, 1.0]",
+          "why": "After the first write `out[i]` already holds the minimum, so the second write copies the minimum back — both slots end up with the smaller value. Read both values before writing either."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x with its largest and smallest entries exchanged.\"\"\"\n    out = x.clone()\n    i = t.argmax(x)\n    j = t.argmin(x)\n    out[i] = x[j]\n    out[j] = x[i]\n    return out.tolist()\n\n\nprint(solve(t.tensor([2.0, 9.0, 4.0, 1.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1580,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D float tensor and `target` is a float. Return the `(row, col)` position of the entry of `z` closest to `target`, as a tuple of two plain ints. Ties go to the earliest position in row-major order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z, target):\n    \"\"\"(row, col) of the entry of z nearest to target.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[0.0, 4.0, 8.0], [12.0, 16.0, 20.0]]), 13.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[0.0, 4.0, 8.0], [12.0, 16.0, 20.0]])\ntarget = 13.0",
+          "call": "solve(z, target)",
+          "expected_expr": "(1, 0)"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0], [5.0], [9.0]])\ntarget = 6.0",
+          "call": "solve(z, target)",
+          "expected_expr": "(1, 0)"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[2.0, 2.5]])\ntarget = 2.2",
+          "call": "solve(z, target)",
+          "expected_expr": "(0, 0)"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[10.0, 20.0], [30.0, 40.0]])\ntarget = 100.0",
+          "call": "solve(z, target)",
+          "expected_expr": "(1, 1)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(1, 1)",
+          "why": "Row-major order counts COLUMNS per row, so the flat index splits by the number of columns; dividing by the row count only agrees on a square grid."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z, target):\n    \"\"\"(row, col) of the entry of z nearest to target.\"\"\"\n    flat = int(t.argmin(t.abs(z - target)))\n    cols = z.shape[1]\n    return (flat // cols, flat % cols)\n\n\nprint(solve(t.tensor([[0.0, 4.0, 8.0], [12.0, 16.0, 20.0]]), 13.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1581,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`a` and `b` are 1-D float tensors of the same length n. Return the `(2, n)` tensor whose row 0 is `a` and row 1 is `b`, as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b as the two rows of one tensor.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([1.0, 2.0, 3.0])\nb = t.tensor([4.0, 5.0, 6.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([1.0])\nb = t.tensor([2.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[[1.0], [2.0]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([0.0, 0.0])\nb = t.tensor([1.0, -1.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[[0.0, 0.0], [1.0, -1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([5.0, 6.0, 7.0, 8.0])\nb = t.tensor([1.0, 1.0, 1.0, 1.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[[5.0, 6.0, 7.0, 8.0], [1.0, 1.0, 1.0, 1.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]",
+          "why": "Joining along an EXISTING axis makes one vector of length 2n; two rows need a new axis in front, which only stacking creates."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b as the two rows of one tensor.\"\"\"\n    return t.stack([a, b], dim=0).tolist()\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1582,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`a` and `b` are 1-D float tensors of the same length n. Return the length-2n tensor that ALTERNATES them — `a[0], b[0], a[1], b[1], …` — as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b alternated, one entry from each in turn.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na = t.tensor([1.0, 2.0, 3.0])\nb = t.tensor([4.0, 5.0, 6.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[1.0, 4.0, 2.0, 5.0, 3.0, 6.0]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([1.0])\nb = t.tensor([2.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[1.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([0.0, 0.0])\nb = t.tensor([1.0, -1.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[0.0, 1.0, 0.0, -1.0]"
+        },
+        {
+          "setup_code": "import torch as t\na = t.tensor([5.0, 6.0, 7.0, 8.0])\nb = t.tensor([1.0, 1.0, 1.0, 1.0])",
+          "call": "solve(a, b)",
+          "expected_expr": "[5.0, 1.0, 6.0, 1.0, 7.0, 1.0, 8.0, 1.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]",
+          "why": "`cat` lays ALL of `a` down before ANY of `b`; alternating needs the two stacked as columns first, so that reading the rows in order takes one from each in turn."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b alternated, one entry from each in turn.\"\"\"\n    return t.stack([a, b], dim=1).flatten().tolist()\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1583,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 44,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D float tensor of shape `(r, c)` and `row` is a 1-D float tensor of length c. Return the `(r + 1, c)` tensor with `row` appended as the new LAST row, as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z, row):\n    \"\"\"z with row added at the bottom.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([5.0, 6.0])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nrow = t.tensor([5.0, 6.0])",
+          "call": "solve(z, row)",
+          "expected_expr": "[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0, 2.0, 3.0]])\nrow = t.tensor([0.0, 0.0, 0.0])",
+          "call": "solve(z, row)",
+          "expected_expr": "[[1.0, 2.0, 3.0], [0.0, 0.0, 0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[7.0]])\nrow = t.tensor([8.0])",
+          "call": "solve(z, row)",
+          "expected_expr": "[[7.0], [8.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0], [2.0], [3.0]])\nrow = t.tensor([4.0])",
+          "call": "solve(z, row)",
+          "expected_expr": "[[1.0], [2.0], [3.0], [4.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[5.0, 6.0], [1.0, 2.0], [3.0, 4.0]]",
+          "why": "Order in the list is order in the result: the new row went on TOP; appending means the existing rows come first."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z, row):\n    \"\"\"z with row added at the bottom.\"\"\"\n    return t.cat([z, row.reshape(1, -1)], dim=0).tolist()\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([5.0, 6.0])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1584,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`parts` is a Python list of 1-D float tensors of possibly different lengths. Return a tuple `(joined, total, longest)`: all parts joined end to end in order as a plain list, the total number of entries as a plain int, and the length of the longest part as a plain int.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(parts):\n    \"\"\"parts joined end to end, the total length, and the longest part's length.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([t.tensor([1.0, 2.0]), t.tensor([3.0]), t.tensor([4.0, 5.0, 6.0])]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nparts = [t.tensor([1.0, 2.0]), t.tensor([3.0]), t.tensor([4.0, 5.0, 6.0])]",
+          "call": "solve(parts)",
+          "expected_expr": "([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 6, 3)"
+        },
+        {
+          "setup_code": "import torch as t\nparts = [t.tensor([9.0])]",
+          "call": "solve(parts)",
+          "expected_expr": "([9.0], 1, 1)"
+        },
+        {
+          "setup_code": "import torch as t\nparts = [t.tensor([1.0, 1.0]), t.tensor([2.0, 2.0])]",
+          "call": "solve(parts)",
+          "expected_expr": "([1.0, 1.0, 2.0, 2.0], 4, 2)"
+        },
+        {
+          "setup_code": "import torch as t\nparts = [t.tensor([0.5, 1.5, 2.5, 3.5]), t.tensor([]), t.tensor([7.0])]",
+          "call": "solve(parts)",
+          "expected_expr": "([0.5, 1.5, 2.5, 3.5, 7.0], 5, 4)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 3, 3)",
+          "why": "`len(parts)` counts the PIECES, not the entries; the total is the length of the joined tensor."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(parts):\n    \"\"\"parts joined end to end, the total length, and the longest part's length.\"\"\"\n    joined = t.cat(parts, dim=0)\n    return (joined.tolist(), int(joined.shape[0]), len(max(parts, key=len)))\n\n\nprint(solve([t.tensor([1.0, 2.0]), t.tensor([3.0]), t.tensor([4.0, 5.0, 6.0])]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1585,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Vectorization and broadcasting",
+      "subtopic_key": "Numpy: Vectorization and broadcasting",
+      "difficulty_score": 58,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D float tensor of shape `(r, c)`. Centre every ROW by subtracting that row's own mean from each of its entries, then return a tuple `(centred, column_means)`: the centred tensor as a nested list, and the mean of each COLUMN of the centred tensor as a plain list of c floats.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"Rows centred on their own means, then the column means of the result.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 3.0], [2.0, 6.0]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0, 3.0], [2.0, 6.0]])",
+          "call": "solve(z)",
+          "expected_expr": "([[-1.0, 1.0], [-2.0, 2.0]], [-1.5, 1.5])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[4.0, 4.0, 4.0]])",
+          "call": "solve(z)",
+          "expected_expr": "([[0.0, 0.0, 0.0]], [0.0, 0.0, 0.0])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[0.0], [2.0], [4.0]])",
+          "call": "solve(z)",
+          "expected_expr": "([[0.0], [0.0], [0.0]], [0.0])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1.0, 2.0, 3.0], [3.0, 2.0, 1.0]])",
+          "call": "solve(z)",
+          "expected_expr": "([[-1.0, 0.0, 1.0], [1.0, 0.0, -1.0]], [0.0, 0.0, 0.0])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[-0.5, -1.5], [0.5, 1.5]], [0.0, 0.0])",
+          "why": "`dim=0` averages DOWN each column, so this centred the columns — and the column means of that are all zero regardless of the input. Centring a row means the mean taken ALONG the row, `dim=1`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"Rows centred on their own means, then the column means of the result.\"\"\"\n    centred = z - z.mean(dim=1, keepdim=True)\n    return (centred.tolist(), centred.mean(dim=0).tolist())\n\n\nprint(solve(t.tensor([[1.0, 3.0], [2.0, 6.0]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1586,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 28,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D tensor and `k` is a positive int. Return every `k`-th entry of `x` starting from the first one (positions 0, k, 2k, …), as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x, k):\n    \"\"\"Every k-th entry of x, starting at position 0.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([5, 6, 7, 8, 9, 10]), 2))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([5, 6, 7, 8, 9, 10])\nk = 2",
+          "call": "solve(x, k)",
+          "expected_expr": "[5, 7, 9]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1, 2, 3, 4, 5, 6, 7])\nk = 3",
+          "call": "solve(x, k)",
+          "expected_expr": "[1, 4, 7]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([4, 4, 4])\nk = 1",
+          "call": "solve(x, k)",
+          "expected_expr": "[4, 4, 4]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([9, 8])\nk = 5",
+          "call": "solve(x, k)",
+          "expected_expr": "[9]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[7, 9]",
+          "why": "A start of `k` skips the first entry; position 0 has to be in the result, so the start is left empty."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x, k):\n    \"\"\"Every k-th entry of x, starting at position 0.\"\"\"\n    return x[::k].tolist()\n\n\nprint(solve(t.tensor([5, 6, 7, 8, 9, 10]), 2))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1587,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D tensor with at least 3 rows. Return `z` with its first and last rows removed — every row in between, in order — as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"The rows of z strictly between the first and the last.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2], [3, 4], [5, 6], [7, 8]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 2], [3, 4], [5, 6], [7, 8]])",
+          "call": "solve(z)",
+          "expected_expr": "[[3, 4], [5, 6]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1], [2], [3]])",
+          "call": "solve(z)",
+          "expected_expr": "[[2]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4]])",
+          "call": "solve(z)",
+          "expected_expr": "[[1, 1, 1], [2, 2, 2], [3, 3, 3]]"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[9, 9], [8, 8], [7, 7]])",
+          "call": "solve(z)",
+          "expected_expr": "[[8, 8]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[3, 4], [5, 6], [7, 8]]",
+          "why": "This drops only the first row; the last one has to go too, and a stop of `-1` is what excludes it."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"The rows of z strictly between the first and the last.\"\"\"\n    return z[1:-1].tolist()\n\n\nprint(solve(t.tensor([[1, 2], [3, 4], [5, 6], [7, 8]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1588,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`x` is a 1-D tensor. Return a new tensor holding the entries of `x` in reverse order, as a plain list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x back to front.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1, 2, 3, 4])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nx = t.tensor([1, 2, 3, 4])",
+          "call": "solve(x)",
+          "expected_expr": "[4, 3, 2, 1]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([7])",
+          "call": "solve(x)",
+          "expected_expr": "[7]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([3, 1, 2])",
+          "call": "solve(x)",
+          "expected_expr": "[2, 1, 3]"
+        },
+        {
+          "setup_code": "import torch as t\nx = t.tensor([0, 5, 0, 5, 9])",
+          "call": "solve(x)",
+          "expected_expr": "[9, 5, 0, 5, 0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[4]",
+          "why": "Slicing with a negative START keeps only the last entry; reversing the whole tensor is a flip along axis 0."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(x):\n    \"\"\"x back to front.\"\"\"\n    return t.flip(x, [0]).tolist()\n\n\nprint(solve(t.tensor([1, 2, 3, 4])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1589,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Indexing and selection",
+      "subtopic_key": "Numpy: Indexing and selection",
+      "difficulty_score": 52,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`z` is a 2-D tensor with at least 2 columns. Return a tuple `(swapped, original)`: a NEW tensor equal to `z` with its first and last columns exchanged, and `z` itself afterwards — both as nested lists. `z` must not change.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(z):\n    \"\"\"z with first and last columns swapped, plus the untouched original.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1, 2, 3], [4, 5, 6]])))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 2, 3], [4, 5, 6]])",
+          "call": "solve(z)",
+          "expected_expr": "([[3, 2, 1], [6, 5, 4]], [[1, 2, 3], [4, 5, 6]])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 2]])",
+          "call": "solve(z)",
+          "expected_expr": "([[2, 1]], [[1, 2]])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[5, 0, 0, 9], [6, 0, 0, 8]])",
+          "call": "solve(z)",
+          "expected_expr": "([[9, 0, 0, 5], [8, 0, 0, 6]], [[5, 0, 0, 9], [6, 0, 0, 8]])"
+        },
+        {
+          "setup_code": "import torch as t\nz = t.tensor([[1, 1], [2, 2], [3, 3]])",
+          "call": "solve(z)",
+          "expected_expr": "([[1, 1], [2, 2], [3, 3]], [[1, 1], [2, 2], [3, 3]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[3, 2, 3], [6, 5, 6]], [[3, 2, 3], [6, 5, 6]])",
+          "why": "`out = z` is the same tensor under a second name, so both writes went into `z` — and the second write read back the column the first had already overwritten. Make a separate copy before writing."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(z):\n    \"\"\"z with first and last columns swapped, plus the untouched original.\"\"\"\n    out = z.clone()\n    out[:, 0] = z[:, -1]\n    out[:, -1] = z[:, 0]\n    return (out.tolist(), z.tolist())\n\n\nprint(solve(t.tensor([[1, 2, 3], [4, 5, 6]])))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1590,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers and `j` is a valid column index. Build the tensor `a` from `rows` and return column `j` of `a` as a plain list, read off the TRANSPOSE with a single integer index.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, j):\n    \"\"\"Column j of a.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]], 1))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows, j = [[1, 2, 3], [4, 5, 6]], 1",
+          "call": "solve(rows, j)",
+          "expected_expr": "[2, 5]"
+        },
+        {
+          "setup_code": "import torch as t\nrows, j = [[7, 8]], 0",
+          "call": "solve(rows, j)",
+          "expected_expr": "[7]"
+        },
+        {
+          "setup_code": "import torch as t\nrows, j = [[1], [2], [3]], 0",
+          "call": "solve(rows, j)",
+          "expected_expr": "[1, 2, 3]"
+        },
+        {
+          "setup_code": "import torch as t\nrows, j = [[1, 2], [3, 4], [5, 6]], 1",
+          "call": "solve(rows, j)",
+          "expected_expr": "[2, 4, 6]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[4, 5, 6]",
+          "why": "`a[j]` is ROW j of `a`; the rows of the transpose are the columns of the original, so the index has to go on `a.T`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows, j):\n    \"\"\"Column j of a.\"\"\"\n    a = t.tensor(rows)\n    return a.T[j].tolist()\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]], 1))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1591,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers. Build the tensor `a` from `rows` and return a tuple of two plain ints: how many rows and how many columns its TRANSPOSE has.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"How many rows and how many columns the transpose has.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "(3, 2)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[7, 8]]",
+          "call": "solve(rows)",
+          "expected_expr": "(2, 1)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1], [2], [3]]",
+          "call": "solve(rows)",
+          "expected_expr": "(1, 3)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "(2, 2)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(2, 3)",
+          "why": "That is the shape of `a` itself; the transpose has the two sizes the other way round."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"How many rows and how many columns the transpose has.\"\"\"\n    a = t.tensor(rows)\n    return (a.T.shape[0], a.T.shape[1])\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1592,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers. Build the tensor `a` from `rows` and return a tuple `(first, last, square)`: the first row of the transpose of `a` and its last row, both as plain lists, and whether the transpose has the same shape as `a`, as a bool.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"First and last row of the transpose, and whether the shape survived.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "([1, 4], [3, 6], False)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "([1, 3], [2, 4], True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[5], [6], [7]]",
+          "call": "solve(rows)",
+          "expected_expr": "([5, 6, 7], [5, 6, 7], False)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]",
+          "call": "solve(rows)",
+          "expected_expr": "([1, 0, 0], [0, 0, 1], True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([1, 2, 3], [4, 5, 6], False)",
+          "why": "These are the first and last rows of `a` — the transpose's rows are `a`'s columns, so the indexing has to happen after `.T`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"First and last row of the transpose, and whether the shape survived.\"\"\"\n    a = t.tensor(rows)\n    return (a.T[0].tolist(), a.T[-1].tolist(), a.T.shape == a.shape)\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1593,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers. Build the tensor `a` from `rows` and return a tuple of two bools: is `a` in reading order, and is the transpose of `a` in reading order?",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"(a in order?, its transpose in order?)\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[7, 8, 9]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1], [2], [3]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(True, True)",
+          "why": "`.contiguous()` MAKES a packed copy, which is in order by construction — the question was about the transpose as it stands."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"(a in order?, its transpose in order?)\"\"\"\n    a = t.tensor(rows)\n    return (a.is_contiguous(), a.T.is_contiguous())\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1594,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers. Build the tensor `a` from `rows`, take the packed copy of its transpose, and return a tuple `(in_order, shares, shape)`: is the copy in reading order, does it start where `a` starts, and its shape as a plain tuple.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"(copy in order?, copy shares a's block?, copy's shape)\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, (3, 2))"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[7, 8, 9]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, True, (3, 1))"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1], [2], [3]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, True, (1, 3))"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "(True, False, (2, 2))"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "(False, True, (3, 2))",
+          "why": "Without a packed copy this is still the transposed VIEW: it reads `a`'s own block out of order, so it shares the block and is not in order — the opposite of a copy on both counts."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"(copy in order?, copy shares a's block?, copy's shape)\"\"\"\n    a = t.tensor(rows)\n    packed = a.T.contiguous()\n    return (packed.is_contiguous(), packed.data_ptr() == a.data_ptr(), tuple(packed.shape))\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1595,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 38,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers and `v` is an int. Build the tensor `a` from `rows`, make a packed copy of its transpose, and set the top-left entry of the COPY to `v`. Return a tuple `(a, copy)` of nested lists showing both afterwards.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, v):\n    \"\"\"a and the packed copy of a.T after writing v into the copy.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2], [3, 4]], 9))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows, v = [[1, 2], [3, 4]], 9",
+          "call": "solve(rows, v)",
+          "expected_expr": "([[1, 2], [3, 4]], [[9, 3], [2, 4]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows, v = [[5, 6, 7]], 0",
+          "call": "solve(rows, v)",
+          "expected_expr": "([[0, 6, 7]], [[0], [6], [7]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows, v = [[1], [2]], -1",
+          "call": "solve(rows, v)",
+          "expected_expr": "([[-1], [2]], [[-1, 2]])"
+        },
+        {
+          "setup_code": "import torch as t\nrows, v = [[1, 2, 3], [4, 5, 6]], 42",
+          "call": "solve(rows, v)",
+          "expected_expr": "([[1, 2, 3], [4, 5, 6]], [[42, 4], [2, 5], [3, 6]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[9, 2], [3, 4]], [[9, 3], [2, 4]])",
+          "why": "`a.T` on its own is a VIEW of `a`'s block, so the write landed in `a` as well — `a[0, 0]` changed. Only a packed copy keeps the write to itself."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows, v):\n    \"\"\"a and the packed copy of a.T after writing v into the copy.\"\"\"\n    a = t.tensor(rows)\n    packed = a.T.contiguous()\n    packed[0][0] = v\n    return (a.tolist(), packed.tolist())\n\n\nprint(solve([[1, 2], [3, 4]], 9))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1596,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers and `r` is a valid row index of the TRANSPOSE. Build the tensor `a`, take row `r` of its transpose, and return a tuple `(values, in_order)`: that row as a plain list, and whether it is in reading order.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows, r):\n    \"\"\"Row r of a.T, and whether it reads in order.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]], 1))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows, r = [[1, 2, 3], [4, 5, 6]], 1",
+          "call": "solve(rows, r)",
+          "expected_expr": "([2, 5], False)"
+        },
+        {
+          "setup_code": "import torch as t\nrows, r = [[1], [2], [3]], 0",
+          "call": "solve(rows, r)",
+          "expected_expr": "([1, 2, 3], True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows, r = [[7, 8]], 1",
+          "call": "solve(rows, r)",
+          "expected_expr": "([8], True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows, r = [[1, 2], [3, 4], [5, 6]], 0",
+          "call": "solve(rows, r)",
+          "expected_expr": "([1, 3, 5], False)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([2, 5], True)",
+          "why": "A column of `a` is spread through the block one row-length apart, so it is NOT in reading order — except when `a` has a single column, and asking the tensor is what tells the two cases apart."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows, r):\n    \"\"\"Row r of a.T, and whether it reads in order.\"\"\"\n    a = t.tensor(rows)\n    part = a.T[r]\n    return (part.tolist(), part.is_contiguous())\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]], 1))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1597,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 56,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`rows` is a nested list of equal-length inner lists of integers. Build the tensor `a` from `rows`, take the transpose view, and make a packed copy of it. Return a tuple `(values, view_in_order, copy_in_order, round_trip)`: the copy as a nested list, whether the view is in reading order, whether the copy is, and whether the copy's transpose holds exactly `a`'s values, as a bool.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"The packed copy of a.T, both layouts' order, and whether transposing the copy gives a back.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2, 3], [4, 5, 6]]",
+          "call": "solve(rows)",
+          "expected_expr": "([[1, 4], [2, 5], [3, 6]], False, True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[7, 8, 9]]",
+          "call": "solve(rows)",
+          "expected_expr": "([[7], [8], [9]], True, True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1], [2]]",
+          "call": "solve(rows)",
+          "expected_expr": "([[1, 2]], True, True, True)"
+        },
+        {
+          "setup_code": "import torch as t\nrows = [[1, 2], [3, 4]]",
+          "call": "solve(rows)",
+          "expected_expr": "([[1, 3], [2, 4]], False, True, True)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[1, 4], [2, 5], [3, 6]], False, True, False)",
+          "why": "The last slot asks whether the VALUES round-trip, not whether the memory does: the copy sits in its own block, so a pointer comparison is False even though `packed.T` holds exactly `a`'s numbers."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rows):\n    \"\"\"The packed copy of a.T, both layouts' order, and whether transposing the copy gives a back.\"\"\"\n    a = t.tensor(rows)\n    view = a.T\n    packed = view.contiguous()\n    return (packed.tolist(), view.is_contiguous(), packed.is_contiguous(), t.equal(packed.T, a))\n\n\nprint(solve([[1, 2, 3], [4, 5, 6]]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1598,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 32,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`m` and `n` are positive ints. Build an m×n zero canvas and write the values 0, 1, …, n-1 into its LAST row with a single `out=` call. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"arange written into the bottom row of a zero canvas.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 4))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nm, n = 3, 4",
+          "call": "solve(m, n)",
+          "expected_expr": "[[0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 2.0, 3.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nm, n = 1, 2",
+          "call": "solve(m, n)",
+          "expected_expr": "[[0.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nm, n = 2, 1",
+          "call": "solve(m, n)",
+          "expected_expr": "[[0.0], [0.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nm, n = 4, 3",
+          "call": "solve(m, n)",
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 1.0, 2.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 1.0, 2.0, 3.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]]",
+          "why": "`canvas[0]` is the FIRST row; the last row is index `-1`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"arange written into the bottom row of a zero canvas.\"\"\"\n    canvas = t.zeros((m, n))\n    t.arange(n, out=canvas[-1])\n    return canvas.tolist()\n\n\nprint(solve(3, 4))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1599,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`n` and `k` are positive ints and `lo`, `hi` are floats. Build an n×k zero canvas and write `n` evenly spaced values from `lo` to `hi` into its LAST column with a single `out=` call. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"linspace(lo, hi) written into the last column of an n×k canvas.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 2, 0.0, 1.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn, k, lo, hi = 3, 2, 0.0, 1.0",
+          "call": "solve(n, k, lo, hi)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, lo, hi = 2, 3, -1.0, 1.0",
+          "call": "solve(n, k, lo, hi)",
+          "expected_expr": "[[0.0, 0.0, -1.0], [0.0, 0.0, 1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, lo, hi = 1, 1, 5.0, 5.0",
+          "call": "solve(n, k, lo, hi)",
+          "expected_expr": "[[5.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, lo, hi = 4, 2, 0.0, 3.0",
+          "call": "solve(n, k, lo, hi)",
+          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 2.0], [0.0, 3.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.0], [0.0, 0.0], [0.0, 0.5]]",
+          "why": "`canvas[-1]` is the last ROW, which has `k` slots, not `n` — the last column is `canvas[:, -1]`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"linspace(lo, hi) written into the last column of an n×k canvas.\"\"\"\n    canvas = t.zeros((n, k))\n    t.linspace(lo, hi, n, out=canvas[:, -1])\n    return canvas.tolist()\n\n\nprint(solve(3, 2, 0.0, 1.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1600,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Build a 2×n zero canvas; write the values 0, 1, …, n-1 into row 0 and `n` evenly spaced values from `lo` to `hi` into row 1, each with one `out=` call. Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at row 1's last position as a float.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"arange in row 0, linspace in row 1, and the last value written.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 0.0, 1.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn, lo, hi = 3, 0.0, 1.0",
+          "call": "solve(n, lo, hi)",
+          "expected_expr": "([[0.0, 1.0, 2.0], [0.0, 0.5, 1.0]], 1.0)"
+        },
+        {
+          "setup_code": "import torch as t\nn, lo, hi = 1, 2.5, 2.5",
+          "call": "solve(n, lo, hi)",
+          "expected_expr": "([[0.0], [2.5]], 2.5)"
+        },
+        {
+          "setup_code": "import torch as t\nn, lo, hi = 4, 1.0, -2.0",
+          "call": "solve(n, lo, hi)",
+          "expected_expr": "([[0.0, 1.0, 2.0, 3.0], [1.0, 0.0, -1.0, -2.0]], -2.0)"
+        },
+        {
+          "setup_code": "import torch as t\nn, lo, hi = 2, 0.0, 10.0",
+          "call": "solve(n, lo, hi)",
+          "expected_expr": "([[0.0, 1.0], [0.0, 10.0]], 10.0)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[0.0, 0.5, 1.0], [0.0, 0.0, 0.0]], 0.0)",
+          "why": "Both writes targeted row 0, so the second overwrote the first and row 1 never received anything — the corner read back `0.0`. Each `out=` needs its own target row."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"arange in row 0, linspace in row 1, and the last value written.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[0])\n    t.linspace(lo, hi, n, out=canvas[1])\n    return (canvas.tolist(), float(canvas[1, -1]))\n\n\nprint(solve(3, 0.0, 1.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1601,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 30,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`n` and `k` are positive ints and `v` is a float. Build an n×k zero canvas and set the LAST entry of every row to `v` with a single slice assignment. Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, v):\n    \"\"\"A zero canvas whose last column is all v.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 2, 7.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn, k, v = 3, 2, 7.0",
+          "call": "solve(n, k, v)",
+          "expected_expr": "[[0.0, 7.0], [0.0, 7.0], [0.0, 7.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, v = 1, 3, -1.0",
+          "call": "solve(n, k, v)",
+          "expected_expr": "[[0.0, 0.0, -1.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, v = 2, 1, 0.5",
+          "call": "solve(n, k, v)",
+          "expected_expr": "[[0.5], [0.5]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, k, v = 2, 4, 2.0",
+          "call": "solve(n, k, v)",
+          "expected_expr": "[[0.0, 0.0, 0.0, 2.0], [0.0, 0.0, 0.0, 2.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[0.0, 0.0], [0.0, 0.0], [7.0, 7.0]]",
+          "why": "`canvas[-1]` is the last ROW, so the whole bottom row became `v`; the last entry of EVERY row is the last column, `canvas[:, -1]`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, v):\n    \"\"\"A zero canvas whose last column is all v.\"\"\"\n    canvas = t.zeros((n, k))\n    canvas[:, -1] = v\n    return canvas.tolist()\n\n\nprint(solve(3, 2, 7.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1602,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`n` is a positive int and `row` is a plain list of k floats. Build an n×k zero canvas and make EVERY row equal to `row` with a single assignment (the right-hand side broadcasts down the rows). Return the canvas as a nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, row):\n    \"\"\"n copies of row, stacked, via one broadcast assignment.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, [1.0, 2.0]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn, row = 3, [1.0, 2.0]",
+          "call": "solve(n, row)",
+          "expected_expr": "[[1.0, 2.0], [1.0, 2.0], [1.0, 2.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, row = 1, [4.0, 5.0, 6.0]",
+          "call": "solve(n, row)",
+          "expected_expr": "[[4.0, 5.0, 6.0]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, row = 2, [0.5]",
+          "call": "solve(n, row)",
+          "expected_expr": "[[0.5], [0.5]]"
+        },
+        {
+          "setup_code": "import torch as t\nn, row = 2, [9.0, 8.0, 7.0, 6.0]",
+          "call": "solve(n, row)",
+          "expected_expr": "[[9.0, 8.0, 7.0, 6.0], [9.0, 8.0, 7.0, 6.0]]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[[1.0, 2.0], [0.0, 0.0], [0.0, 0.0]]",
+          "why": "Assigning into `canvas[0]` fills the first row only; the full-slice target `canvas[:]` is what lets the vector broadcast into every row."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, row):\n    \"\"\"n copies of row, stacked, via one broadcast assignment.\"\"\"\n    canvas = t.zeros((n, len(row)))\n    canvas[:] = t.tensor(row)\n    return canvas.tolist()\n\n\nprint(solve(3, [1.0, 2.0]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1603,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 54,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`n` is a positive int and `v` is a float. Build an n×n zero canvas; set its first ROW to the values 0, 1, …, n-1, then set its first COLUMN to `v` (in that order, so the corner takes the later write). Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at `[0, 0]` as a float.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(n, v):\n    \"\"\"Row 0 = arange, then column 0 = v; the corner shows which came last.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 5.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nn, v = 3, 5.0",
+          "call": "solve(n, v)",
+          "expected_expr": "([[5.0, 1.0, 2.0], [5.0, 0.0, 0.0], [5.0, 0.0, 0.0]], 5.0)"
+        },
+        {
+          "setup_code": "import torch as t\nn, v = 1, 2.0",
+          "call": "solve(n, v)",
+          "expected_expr": "([[2.0]], 2.0)"
+        },
+        {
+          "setup_code": "import torch as t\nn, v = 2, -1.0",
+          "call": "solve(n, v)",
+          "expected_expr": "([[-1.0, 1.0], [-1.0, 0.0]], -1.0)"
+        },
+        {
+          "setup_code": "import torch as t\nn, v = 4, 0.5",
+          "call": "solve(n, v)",
+          "expected_expr": "([[0.5, 1.0, 2.0, 3.0], [0.5, 0.0, 0.0, 0.0], [0.5, 0.0, 0.0, 0.0], [0.5, 0.0, 0.0, 0.0]], 0.5)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[0.0, 1.0, 2.0], [5.0, 0.0, 0.0], [5.0, 0.0, 0.0]], 0.0)",
+          "why": "Same two writes, opposite order: the row write came last, so the corner holds `0.0` instead of `v`. In-place writes to a shared cell keep the LAST one."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, v):\n    \"\"\"Row 0 = arange, then column 0 = v; the corner shows which came last.\"\"\"\n    canvas = t.zeros((n, n))\n    canvas[0] = t.arange(n)\n    canvas[:, 0] = v\n    return (canvas.tolist(), float(canvas[0, 0]))\n\n\nprint(solve(3, 5.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1604,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 34,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "`ray` is a nested list `[[ox, oy, oz], [dx, dy, dz]]` (row 0 the origin, row 1 the direction) and `u` is a float. Return the point `O + u·D` on the ray as a plain list of three floats.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"The point at parameter u on the ray.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nray, u = [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0",
+          "call": "solve(ray, u)",
+          "expected_expr": "[2.0, 1.0, 0.0]"
+        },
+        {
+          "setup_code": "import torch as t\nray, u = [[1.0, 2.0, 3.0], [0.0, 0.0, 1.0]], 0.0",
+          "call": "solve(ray, u)",
+          "expected_expr": "[1.0, 2.0, 3.0]"
+        },
+        {
+          "setup_code": "import torch as t\nray, u = [[1.0, 1.0, 1.0], [-1.0, 2.0, 0.5]], 1.0",
+          "call": "solve(ray, u)",
+          "expected_expr": "[0.0, 3.0, 1.5]"
+        },
+        {
+          "setup_code": "import torch as t\nray, u = [[0.0, 5.0, 0.0], [2.0, -1.0, 4.0]], 0.5",
+          "call": "solve(ray, u)",
+          "expected_expr": "[1.0, 4.5, 2.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "call": "solve([[0.0, 5.0, 0.0], [2.0, -1.0, 4.0]], 0.5)",
+          "output": "[1.0, 2.0, 2.0]",
+          "why": "Only the DIRECTION is scaled by `u`; the origin is where the ray starts and is added as is. Scaling the sum moves the start point too."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, u):\n    \"\"\"The point at parameter u on the ray.\"\"\"\n    ray = t.tensor(ray)\n    origin, direction = ray[0], ray[1]\n    return (origin + u * direction).tolist()\n\n\nprint(solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], 2.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1605,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`ray` is a nested list `[[ox, oy, oz], [dx, dy, dz]]` and `p` is a plain list of three floats that lies ON the ray's line. Return the parameter `u` with `O + u·D == p`, as a float, solved from the x-coordinate. Assume `dx != 0`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(ray, p):\n    \"\"\"The u at which the ray reaches p.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [2.0, 1.0, 0.0]))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nray, p = [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [2.0, 1.0, 0.0]",
+          "call": "solve(ray, p)",
+          "expected_expr": "2.0"
+        },
+        {
+          "setup_code": "import torch as t\nray, p = [[1.0, 0.0, 0.0], [2.0, 0.0, 0.0]], [1.0, 0.0, 0.0]",
+          "call": "solve(ray, p)",
+          "expected_expr": "0.0"
+        },
+        {
+          "setup_code": "import torch as t\nray, p = [[1.0, 1.0, 1.0], [-1.0, 2.0, 0.5]], [0.0, 3.0, 1.5]",
+          "call": "solve(ray, p)",
+          "expected_expr": "1.0"
+        },
+        {
+          "setup_code": "import torch as t\nray, p = [[0.0, 5.0, 0.0], [4.0, -1.0, 4.0]], [2.0, 4.5, 2.0]",
+          "call": "solve(ray, p)",
+          "expected_expr": "0.5"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "call": "solve([[1.0, 1.0, 1.0], [-1.0, 2.0, 0.5]], [0.0, 3.0, 1.5])",
+          "output": "-0.0",
+          "why": "This forgets the origin: `u` measures how far along D the point sits FROM O, so O_x has to be subtracted from p_x first."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(ray, p):\n    \"\"\"The u at which the ray reaches p.\"\"\"\n    ray = t.tensor(ray)\n    return float((p[0] - ray[0, 0]) / ray[1, 0])\n\n\nprint(solve([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [2.0, 1.0, 0.0]))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1606,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 58,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`rays` is a nested list of shape `(n, 2, 3)` — n rays, each `[origin, direction]` — and `u` is a float. Return a tuple `(points, ahead)`: the point at parameter `u` on every ray as an `(n, 3)` nested list, and a plain list of n bools saying whether each point has a POSITIVE x-coordinate. One broadcast, no loop.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(rays, u):\n    \"\"\"All rays evaluated at u, and which of the points sit at x > 0.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[-3.0, 0.0, 0.0], [1.0, 0.0, 1.0]]], 2.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nrays, u = [[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[-3.0, 0.0, 0.0], [1.0, 0.0, 1.0]]], 2.0",
+          "call": "solve(rays, u)",
+          "expected_expr": "([[2.0, 1.0, 0.0], [-1.0, 0.0, 2.0]], [True, False])"
+        },
+        {
+          "setup_code": "import torch as t\nrays, u = [[[1.0, 1.0, 1.0], [-1.0, 0.0, 0.0]]], 1.0",
+          "call": "solve(rays, u)",
+          "expected_expr": "([[0.0, 1.0, 1.0]], [False])"
+        },
+        {
+          "setup_code": "import torch as t\nrays, u = [[[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]], [[0.5, 0.0, 0.0], [0.0, 0.0, 1.0]], [[-1.0, 2.0, 2.0], [4.0, 0.0, 0.0]]], 0.5",
+          "call": "solve(rays, u)",
+          "expected_expr": "([[0.0, 0.5, 0.0], [0.5, 0.0, 0.5], [1.0, 2.0, 2.0]], [False, True, True])"
+        },
+        {
+          "setup_code": "import torch as t\nrays, u = [[[2.0, 2.0, 2.0], [1.0, 1.0, 1.0]], [[-2.0, 0.0, 0.0], [-1.0, 0.0, 0.0]]], 0.0",
+          "call": "solve(rays, u)",
+          "expected_expr": "([[2.0, 2.0, 2.0], [-2.0, 0.0, 0.0]], [True, False])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[-6.0, 0.0, 0.0], [3.0, 0.5, 2.0]], [False, True])",
+          "why": "`rays[0]` is the whole FIRST RAY (its origin and direction), not the origins of every ray — the origins are `rays[:, 0]`, one row per ray."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(rays, u):\n    \"\"\"All rays evaluated at u, and which of the points sit at x > 0.\"\"\"\n    rays = t.tensor(rays)\n    points = rays[:, 0] + u * rays[:, 1]\n    return (points.tolist(), (points[:, 0] > 0).tolist())\n\n\nprint(solve([[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [[-3.0, 0.0, 0.0], [1.0, 0.0, 1.0]]], 2.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1607,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 36,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`num_pixels` is a positive int and `y_limit` a positive float. Build the `(num_pixels, 2, 3)` fan of `make_rays_1d` — origins all zero, directions `[1, y, 0]` with `y` running evenly from `-y_limit` to `y_limit` — and return only its direction-y values as a plain list of `num_pixels` floats.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The y-components of the fan's directions.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 1.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 3, 1.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "[-1.0, 0.0, 1.0]"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 5, 2.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "[-2.0, -1.0, 0.0, 1.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 2, 0.5",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "[-0.5, 0.5]"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 4, 3.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "[-3.0, -1.0, 1.0, 3.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[0.0, 0.0, 0.0]",
+          "why": "`rays[:, 0, 1]` reads the y of every ORIGIN, which is all zero; the directions are row 1 of each ray."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The y-components of the fan's directions.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return rays[:, 1, 1].tolist()\n\n\nprint(solve(3, 1.0))\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1608,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
+      "difficulty_score": 42,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "`num_pixels` is a positive int and `y_limit` a positive float. Build the `make_rays_1d(num_pixels, y_limit)` fan — `(num_pixels, 2, 3)`, origins zero, directions `[1, y, 0]` with `y` evenly spaced from `-y_limit` to `y_limit` — and return a tuple `(first, last)`: the first ray and the last ray, each as a `(2, 3)` nested list.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The first and last rays of the fan.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 1.0))\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 3, 1.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "([[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 9, 2.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "([[0.0, 0.0, 0.0], [1.0, -2.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 2, 0.5",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "([[0.0, 0.0, 0.0], [1.0, -0.5, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]])"
+        },
+        {
+          "setup_code": "import torch as t\nnum_pixels, y_limit = 4, 3.0",
+          "call": "solve(num_pixels, y_limit)",
+          "expected_expr": "([[0.0, 0.0, 0.0], [1.0, -3.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 3.0, 0.0]])"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]])",
+          "why": "The fan is symmetric: it runs from `-y_limit` UP to `y_limit`, so the first ray points down, not straight ahead."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\n\ndef solve(num_pixels, y_limit):\n    \"\"\"The first and last rays of the fan.\"\"\"\n    rays = t.zeros((num_pixels, 2, 3))\n    rays[:, 1, 0] = 1\n    rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)\n    return (rays[0].tolist(), rays[-1].tolist())\n\n\nprint(solve(3, 1.0))\n",
+      "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }

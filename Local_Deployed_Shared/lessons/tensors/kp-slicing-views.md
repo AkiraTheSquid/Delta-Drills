@@ -6,8 +6,8 @@ new_syntax: [Tensor.clone, syntax.multi-axis-index, syntax.slice, syntax.slice-s
 concepts: [slice-bounds, rows-and-columns, reversing, quarter-turns, writing-through-views, copying-before-writing]
 faded: [506, 507, 233, 75, 231, 74]
 guided: [76]
-independent: [189, 1501, 1502, 1503, 1504]
-integrated: [1505, 1506, 1507]
+independent: [189, 1501, 1502, 1503, 1504, 1586, 1587, 1588]
+integrated: [1505, 1506, 1507, 1589]
 ---
 
 ## Concept: Choose a stretch of values
@@ -391,6 +391,15 @@ Every second value, starting from the second one.
 ### q1504
 Reverse one row of a copy; leave the input untouched.
 
+### q1586
+A stepped slice: the step goes in the third slot.
+
+### q1587
+Trim both ends of the row axis in one slice.
+
+### q1588
+Reverse along the one axis there is.
+
 ## Integrated practice
 
 ### q1505
@@ -401,6 +410,9 @@ Cut a square from the corner, then turn it.
 
 ### q1507
 Flip alternate columns of a copy; stepping and writing through a view together.
+
+### q1589
+Copy first, then two column writes — and check the original survived.
 
 ## Misconceptions
 

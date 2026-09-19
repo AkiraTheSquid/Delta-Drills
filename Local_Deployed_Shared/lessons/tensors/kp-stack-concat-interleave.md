@@ -6,8 +6,8 @@ new_syntax: [Tensor.ravel, torch.cat, torch.cat#dim, torch.column_stack, torch.e
 concepts: [grow-existing-dimension, create-new-axis, interleave-streams]
 faded: [974, 975, 84, 976]
 guided: [146, 977]
-independent: [89, 238, 159, 978, 980]
-integrated: [981, 982, 983]
+independent: [89, 238, 159, 978, 980, 1581, 1582, 1583]
+integrated: [981, 982, 983, 1584]
 ---
 
 ## Concept: Grow an existing dimension with cat, vstack, and hstack
@@ -317,6 +317,14 @@ From the drill bank: q978 (elementwise maximum across a list of tensors).
 From the drill bank: q979 (three vectors alternated in order).
 From the drill bank: q980 (one constant column added on each side of a matrix).
 
+### q1581
+Two vectors become two rows — a new axis, not a longer one.
+
+### q1582
+Interleave two vectors: stack them as columns, then read the rows off in order.
+
+### q1583
+Append one row: the vector needs a row axis before it can join.
 
 ## Integrated practice
 
@@ -328,6 +336,9 @@ Insert a fixed number of zeros between consecutive entries.
 
 ### q983
 Return the tensor pile, its elementwise mean, and its count.
+
+### q1584
+Join ragged pieces end to end, then two counts — one of the whole, one of the biggest piece.
 
 ## Misconceptions
 

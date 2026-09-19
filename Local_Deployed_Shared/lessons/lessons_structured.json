@@ -1912,6 +1912,16 @@
        "question_id": 674,
        "prompt": "Once, then twice.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1590,
+       "prompt": "A column of a is a row of a.T \u2014 one integer index after the transpose.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1591,
+       "prompt": "Transposing swaps the two sizes \u2014 say which is which.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -1926,6 +1936,10 @@
       {
        "question_id": 675,
        "prompt": "Everything this page knows about one transpose."
+      },
+      {
+       "question_id": 1592,
+       "prompt": "Read two rows off the transpose, then compare the two shapes."
       }
      ],
      "independent_items": [
@@ -1934,7 +1948,9 @@
       671,
       672,
       673,
-      674
+      674,
+      1590,
+      1591
      ],
      "misconceptions_markdown": "- **\"`.T` is a method, so it needs parentheses.\"** \u2014 It does not. `a.T` is an\n  attribute like `a.shape`; `a.T()` raises. The habit to build is that anything\n  *describing* a tensor tends to be an attribute, and anything *doing work* on\n  one tends to be a call.\n- **\"Transposing a square tensor changes nothing.\"** \u2014 It changes the numbers,\n  it just cannot change the shape. `[[1, 2], [3, 4]]` transposes to\n  `[[1, 3], [2, 4]]` while the shape stays `(2, 2)`, so a shape check will not\n  notice a transpose you did or did not mean to do.\n- **\"`a.T` gives me a list of columns.\"** \u2014 It gives you a *tensor*. It reads\n  like a list of the original's columns once you call `.tolist()` on it, but\n  until then it is a tensor and behaves like one.\n- **\"Transposing rearranges the numbers, so it must be slow on a big tensor.\"**\n  \u2014 It does not touch them at all. What that costs, and how to tell, is the\n  next concept.",
      "notes_markdown": ""
@@ -2054,6 +2070,26 @@
        "question_id": 1525,
        "prompt": "Transpose, pack, transpose back: same numbers, whose memory?",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1593,
+       "prompt": "Same strip of numbers, two reading orders \u2014 ask each one.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1594,
+       "prompt": "A packed copy is in order and lives in its own block \u2014 and keeps the transposed shape.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1595,
+       "prompt": "A write into a copy stays in the copy.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1596,
+       "prompt": "A row of the transpose is a column of the original \u2014 strided through the block, unless the block is one column wide.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -2068,13 +2104,21 @@
       {
        "question_id": 565,
        "prompt": "Four bools about a transpose and its packed copy: order, order, values, and whose memory."
+      },
+      {
+       "question_id": 1597,
+       "prompt": "View, copy, and back again \u2014 four facts about one block."
       }
      ],
      "independent_items": [
       553,
       523,
       1524,
-      1525
+      1525,
+      1593,
+      1594,
+      1595,
+      1596
      ],
      "misconceptions_markdown": "- **\"Shares memory\" and \"is contiguous\" are the same question.** \u2014 They are\n  independent. A transpose shares the block *and* is out of reading order,\n  which is exactly the case every drill here is built on.\n- **\"A packed copy never shares the original's block.\"** \u2014 Only when the thing\n  being packed was out of order. `.contiguous()` on a tensor that is already in\n  reading order returns that tensor unchanged, address and all, which is why a\n  single-row or single-column input answers `True` where a 2\u00d73 answers `False`.\n- **\"`data_ptr()` tells me something about the values.\"** \u2014 It is an address.\n  On its own it means nothing; it is only ever useful compared against another\n  tensor's.\n- **\"`data_ptr()` equal means same block, unequal means different block.\"** \u2014\n  The second half is wrong. It is the address a tensor STARTS at, so a slice\n  that begins part-way along someone else's strip answers a different address\n  while sharing every byte. `x.untyped_storage().data_ptr()` is the question\n  that ignores where each tensor begins.\n- **\"Transposing is expensive because it moves the numbers.\"** \u2014 It moves\n  nothing and costs almost nothing. `.contiguous()` is the call that pays, and\n  it pays because it writes a whole new strip.\n- **\"A view is a copy that happens to look the same.\"** \u2014 The opposite. A view\n  is a second note on someone else's strip; write through one and the other\n  sees it.",
      "notes_markdown": ""
@@ -2531,6 +2575,21 @@
        "question_id": 1504,
        "prompt": "Reverse one row of a copy; leave the input untouched.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1586,
+       "prompt": "A stepped slice: the step goes in the third slot.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1587,
+       "prompt": "Trim both ends of the row axis in one slice.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1588,
+       "prompt": "Reverse along the one axis there is.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -2545,6 +2604,10 @@
       {
        "question_id": 1507,
        "prompt": "Flip alternate columns of a copy; stepping and writing through a view together."
+      },
+      {
+       "question_id": 1589,
+       "prompt": "Copy first, then two column writes \u2014 and check the original survived."
       }
      ],
      "independent_items": [
@@ -2552,7 +2615,10 @@
       1501,
       1502,
       1503,
-      1504
+      1504,
+      1586,
+      1587,
+      1588
      ],
      "misconceptions_markdown": "- The stop is a boundary, not a selected index.\n- Negative indices count from the end; negative slice steps are unsupported.\n- Slices share storage. Clone before writing when the original must stay unchanged.",
      "notes_markdown": ""
@@ -2730,6 +2796,14 @@
       {
        "question_id": 973,
        "prompt": "Return an evenly spaced grid and its successive gaps."
+      },
+      {
+       "question_id": 1565,
+       "prompt": "A countdown by a fixed step \u2014 count first, scale, then flip the direction."
+      },
+      {
+       "question_id": 1566,
+       "prompt": "Interior points only: the count you ask for is not the count you keep."
       }
      ],
      "independent_items": [
@@ -2738,7 +2812,9 @@
       967,
       968,
       969,
-      970
+      970,
+      1563,
+      1564
      ],
      "misconceptions_markdown": "- **\"`t.arange(3, 8)` includes 8.\"** \u2014 Like Python's `range`, the stop is\n  exclusive. Endpoint bugs from this are the most common range mistake; when\n  a task says \"inclusive\", plan the `+ step` (or switch to `linspace`).\n- **\"Float steps in arange are fine.\"** \u2014 Each element is built by repeated\n  float addition, so the endpoint may or may not appear and interior values\n  drift. Scale exact integers (`t.arange(n) * step`) or use `linspace`.\n- **\"`linspace(0, 1, 5)` has step 1/5.\"** \u2014 It has step 1/4: five points means\n  FOUR gaps. `linspace` counts points, not intervals.\n- **\"`t.arange(5)` gives floats.\"** \u2014 Integer arguments give an `int64` tensor.\n  That is what you want for indexing; if you need floats, ask for them\n  (`t.arange(5.0)` or `dtype=t.float32`).",
      "notes_markdown": ""
@@ -4527,6 +4603,26 @@
        "question_id": 513,
        "prompt": "Apply a whole BATCH of matrices to one vector with a single operator.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1571,
+       "prompt": "Matrix times matrix: which axis disappears, and what shape is left.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1572,
+       "prompt": "The same two vectors, multiplied two ways \u2014 one keeps the length, one collapses it.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1573,
+       "prompt": "The inverse of a matrix \u2014 not the reciprocal of its entries.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1574,
+       "prompt": "Solve a @ x = b \u2014 the system, not a product.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -4541,13 +4637,21 @@
       {
        "question_id": 1523,
        "prompt": "One solver call for a whole batch of systems sharing a right-hand side."
+      },
+      {
+       "question_id": 1575,
+       "prompt": "A batch of products, then the batch of solves that undoes them \u2014 one call each, no loop."
       }
      ],
      "independent_items": [
       510,
       511,
       512,
-      513
+      513,
+      1571,
+      1572,
+      1573,
+      1574
      ],
      "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first.",
      "notes_markdown": ""
@@ -4683,6 +4787,16 @@
        "question_id": 1514,
        "prompt": "Keep only what beats the opening value.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1567,
+       "prompt": "Pick out the odd entries \u2014 the test is the mask, the mask is the index.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1568,
+       "prompt": "Zero everything outside a band \u2014 one mask built from two tests.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -4693,6 +4807,14 @@
       {
        "question_id": 1516,
        "prompt": "Two masks, two writes: pull the outliers back to the nearest bound."
+      },
+      {
+       "question_id": 1569,
+       "prompt": "Count rows, not entries: a test per entry, a verdict per row, then a count."
+      },
+      {
+       "question_id": 1570,
+       "prompt": "Two conditions from two tensors, one mask, then both a filter and a count from it."
       }
      ],
      "independent_items": [
@@ -4701,7 +4823,9 @@
       202,
       1512,
       1513,
-      1514
+      1514,
+      1567,
+      1568
      ],
      "misconceptions_markdown": "- **\"Combine conditions with `and`/`or`.\"** \u2014 Those are Python's short-circuit\n  operators and raise on arrays. Masks combine with `&`, `|`, `~` \u2014 and each\n  comparison must be parenthesized because `&` binds tighter than `>`.\n- **\"`x[mask]` keeps the array's shape.\"** \u2014 It returns a 1-D array of just\n  the selected elements, however many there are. Only masked *assignment*\n  leaves the shape intact.\n- **\"Counting Trues needs a loop or list.count.\"** \u2014 A mask is 0s and 1s:\n  `mask.sum()` or `t.count_nonzero(mask)`. For yes/no rather than how-many,\n  `any()`/`all()`.",
      "notes_markdown": ""
@@ -4825,6 +4949,21 @@
        "question_id": 1509,
        "prompt": "Locate the overall maximum as a row-and-column pair.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1576,
+       "prompt": "Where the extremes sit \u2014 positions, not values.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1577,
+       "prompt": "One winner per row \u2014 pick the axis that runs along the row.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1578,
+       "prompt": "Nearest to a target: transform first, then ask where the minimum is.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -4835,6 +4974,14 @@
       {
        "question_id": 1511,
        "prompt": "The runner-up's position, without disturbing the input."
+      },
+      {
+       "question_id": 1579,
+       "prompt": "Find both extremes, then use the two positions to swap \u2014 without losing either value."
+      },
+      {
+       "question_id": 1580,
+       "prompt": "Nearest to a target on a grid: a flat winner, then turned back into a row and a column."
       }
      ],
      "independent_items": [
@@ -4842,7 +4989,10 @@
       61,
       168,
       1508,
-      1509
+      1509,
+      1576,
+      1577,
+      1578
      ],
      "misconceptions_markdown": "- **\"argmax returns the maximum.\"** \u2014 It returns the *index* of the maximum.\n  `v[v.argmax()]` is the value; needing both is common and costs one extra\n  read.\n- **\"Ties are an error / unspecified.\"** \u2014 Ties resolve to the first\n  occurrence, deterministically. Tasks that say \"first occurrence\" are\n  describing argmin/argmax's default, not asking for extra work.\n- **\"Closest-to-target needs sorting.\"** \u2014 Sorting is O(n log n) and loses\n  positions; `argmin(|v - t|)` is one pass and keeps them. Save sorting for\n  when you need full order, not one winner.",
      "notes_markdown": ""
@@ -5294,6 +5444,10 @@
       {
        "question_id": 1373,
        "prompt": "The same batch reduced three ways \u2014 every axis choice on the page at once."
+      },
+      {
+       "question_id": 1585,
+       "prompt": "Two reductions along two different axes \u2014 one kept for broadcasting, one collapsed for the answer."
       }
      ],
      "independent_items": [
@@ -5586,6 +5740,10 @@
       {
        "question_id": 983,
        "prompt": "Return the tensor pile, its elementwise mean, and its count."
+      },
+      {
+       "question_id": 1584,
+       "prompt": "Join ragged pieces end to end, then two counts \u2014 one of the whole, one of the biggest piece."
       }
      ],
      "independent_items": [
@@ -5593,7 +5751,10 @@
       238,
       159,
       978,
-      980
+      980,
+      1581,
+      1582,
+      1583
      ],
      "misconceptions_markdown": "- **\"stack and concatenate are synonyms.\"** \u2014 concatenate grows an existing\n  axis (no new dimension); stack creates a new one. (2,3)+(2,3): concat\n  axis-0 \u2192 (4,3); stack \u2192 (2,2,3). The task's result shape tells you which.\n- **\"Interleaving needs a Python loop.\"** \u2014 Either pair-and-ravel\n  (column_stack + row-major flatten) or strided slice assignment. Both are\n  single-pass, loop-free.\n- **\"t.empty is dangerous here.\"** \u2014 It's uninitialized memory, which is\n  fine EXACTLY when every slot gets written before any read \u2014 as in the\n  residue-class pattern. If any slot might stay untouched (the zeros-between\n  drill!), start from `t.zeros` instead.",
      "notes_markdown": ""
@@ -6596,6 +6757,16 @@
        "question_id": 805,
        "prompt": "One column through a 3-D canvas, written with out=.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1598,
+       "prompt": "out= targets a row this time \u2014 the last one.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1599,
+       "prompt": "A column as the out= target, chosen from the right-hand end.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -6610,6 +6781,10 @@
       {
        "question_id": 808,
        "prompt": "A ones-column and a linspace-column, both via out=."
+      },
+      {
+       "question_id": 1600,
+       "prompt": "Two out= writes into two rows of one canvas, then read one value back."
       }
      ],
      "independent_items": [
@@ -6618,7 +6793,9 @@
       802,
       803,
       804,
-      805
+      805,
+      1598,
+      1599
      ],
      "misconceptions_markdown": "- **\"`out=` is just a faster way to get a return value.\"** The return value\n  is the *target*. What changes is that the target's storage is written. If\n  you throw the return value away, the write still happened.\n- **\"A shape mismatch raises.\"** It does not. PyTorch warns, resizes the\n  target over the canvas's storage and writes the values into the wrong\n  slots \u2014 a corrupted canvas, not an error. Check the slice's slot count\n  against the number of values you pass.\n- **\"Row 0 is column 0.\"** `canvas[0]` is a row; `canvas[:, 0]` is a column.\n  Both are valid `out=` targets and both are the wrong one half the time.",
      "notes_markdown": ""
@@ -6707,6 +6884,16 @@
        "question_id": 816,
        "prompt": "A float assigned into an int tensor is truncated, not upcast.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1601,
+       "prompt": "One scalar broadcast down a column \u2014 the last column.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1602,
+       "prompt": "A row vector broadcast across all rows in one write.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -6721,6 +6908,10 @@
       {
        "question_id": 819,
        "prompt": "copy_ a block, then rewrite it from itself."
+      },
+      {
+       "question_id": 1603,
+       "prompt": "Two writes cross at one cell \u2014 the later write wins."
       }
      ],
      "independent_items": [
@@ -6729,7 +6920,9 @@
       813,
       814,
       815,
-      816
+      816,
+      1601,
+      1602
      ],
      "misconceptions_markdown": "- **\"`x[:, 0] = v` makes a new tensor.\"** It does not; it writes into the\n  storage `x` already has, and every view of that storage sees the change.\n  Rebinding (`x = ...`) is what makes new tensors.\n- **\"Rows and columns are interchangeable in a write.\"** `x[0]` is a row,\n  `x[:, 0]` a column. The shapes differ, so a 1-D right-hand side that fits\n  one will raise on the other whenever the tensor is not square.\n- **\"Assignment upcasts.\"** The tensor's dtype is fixed; a float written into\n  an int tensor is truncated toward zero.",
      "notes_markdown": ""
@@ -6818,6 +7011,16 @@
        "question_id": 827,
        "prompt": "One u, many rays.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1604,
+       "prompt": "One u, one point: unpack the two rows and apply the formula.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1605,
+       "prompt": "Read u back off a known point \u2014 one coordinate is enough.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -6832,6 +7035,10 @@
       {
        "question_id": 830,
        "prompt": "Which rays hit p ahead of the camera?"
+      },
+      {
+       "question_id": 1606,
+       "prompt": "Every ray at the same u, then a test per row."
       }
      ],
      "independent_items": [
@@ -6840,7 +7047,9 @@
       824,
       825,
       826,
-      827
+      827,
+      1604,
+      1605
      ],
      "misconceptions_markdown": "- **\"The direction must be a unit vector.\"** No. `u` is measured in\n  direction-lengths; any nonzero `D` is fine, and ARENA's rays are not\n  normalised.\n- **\"Solving for the line is solving for the ray.\"** A line accepts any\n  `u`; a ray needs `u \u2265 0`. Every \"does this ray hit\" test in 0.1 ends with\n  that sign check.\n- **\"`rays[0]` is the origins.\"** For a stack of rays `rays[0]` is the whole\n  first ray. The origins of every ray are `rays[:, 0]`.",
      "notes_markdown": ""
@@ -6928,6 +7137,16 @@
        "question_id": 838,
        "prompt": "Where the fan is at a given x.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1607,
+       "prompt": "The one column of the fan that varies \u2014 read it back off the canvas.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1608,
+       "prompt": "The two edge rays of the fan \u2014 the y-limits made concrete.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -6970,7 +7189,9 @@
       835,
       836,
       837,
-      838
+      838,
+      1607,
+      1608
      ],
      "misconceptions_markdown": "- **\"Build each ray, then stack.\"** It gives the same numbers, but the\n  exercise is teaching the allocate-then-write habit that every later\n  chapter uses. One canvas, two column writes.\n- **\"Row 0 / row 1 are x / y.\"** Rows are origin and direction; the *columns*\n  are x, y, z. `rays[:, 1, 1]` is direction-y for every ray.\n- **\"`linspace(0, y_limit)`.\"** The fan is symmetric: from `-y_limit` to\n  `+y_limit`.",
      "notes_markdown": ""

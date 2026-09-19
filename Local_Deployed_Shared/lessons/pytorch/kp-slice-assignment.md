@@ -6,8 +6,8 @@ new_syntax: [Tensor.copy_]
 previews: []
 faded: [809, 810]
 guided: []
-independent: [811, 812, 813, 814, 815, 816]
-integrated: [817, 818, 819]
+independent: [811, 812, 813, 814, 815, 816, 1601, 1602]
+integrated: [817, 818, 819, 1603]
 ---
 
 ## Concept: `x[sel] = value` writes in place, broadcasting the value
@@ -141,6 +141,12 @@ Assign a row, then copy_ a column; order matters at the crossing.
 ### q816
 A float assigned into an int tensor is truncated, not upcast.
 
+### q1601
+One scalar broadcast down a column — the last column.
+
+### q1602
+A row vector broadcast across all rows in one write.
+
 ## Integrated practice
 
 ### q817
@@ -151,6 +157,9 @@ A row-vector broadcast into a stepped row slice.
 
 ### q819
 copy_ a block, then rewrite it from itself.
+
+### q1603
+Two writes cross at one cell — the later write wins.
 
 ## Misconceptions
 

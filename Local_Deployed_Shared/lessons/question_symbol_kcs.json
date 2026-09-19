@@ -18180,9 +18180,6 @@
    "python.calling-functions": [
     "syntax.call"
    ],
-   "python.control-flow": [
-    "syntax.comprehension"
-   ],
    "python.defining-functions": [
     "syntax.def",
     "syntax.return",
@@ -18195,9 +18192,6 @@
    ],
    "python.lists-and-tuples": [
     "syntax.list-literal"
-   ],
-   "python.types-and-conversion": [
-    "builtin.round"
    ],
    "python.values-and-names": [
     "builtin.print",
@@ -18219,9 +18213,6 @@
     "syntax.call",
     "syntax.keyword-argument"
    ],
-   "python.control-flow": [
-    "syntax.comprehension"
-   ],
    "python.defining-functions": [
     "syntax.def",
     "syntax.return",
@@ -18236,8 +18227,7 @@
     "syntax.list-literal"
    ],
    "python.types-and-conversion": [
-    "builtin.bool",
-    "builtin.round"
+    "builtin.bool"
    ],
    "python.values-and-names": [
     "builtin.print",
@@ -18260,9 +18250,6 @@
    "python.calling-functions": [
     "syntax.call"
    ],
-   "python.control-flow": [
-    "syntax.comprehension"
-   ],
    "python.defining-functions": [
     "syntax.def",
     "syntax.return",
@@ -18276,9 +18263,6 @@
    "python.lists-and-tuples": [
     "builtin.tuple",
     "syntax.list-literal"
-   ],
-   "python.types-and-conversion": [
-    "builtin.round"
    ],
    "python.values-and-names": [
     "builtin.print",
@@ -19405,6 +19389,798 @@
     "torch.tensor"
    ]
   },
+  "1563": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1564": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1565": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1566": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1567": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1568": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.slicing-views": [
+    "Tensor.clone"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1569": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int",
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1570": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int",
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1571": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.tuple",
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1572": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1573": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1574": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1575": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1576": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1577": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1578": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1579": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ],
+   "torch.slicing-views": [
+    "Tensor.clone"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1580": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ]
+  },
+  "1581": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1582": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.flatten"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1583": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.tuple"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1584": {
+   "python.calling-functions": [
+    "builtin.max",
+    "builtin.max#key",
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.len",
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.int"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1585": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.mean"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1586": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1587": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1588": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1589": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
   "159": {
    "python.calling-functions": [
     "syntax.call"
@@ -19440,6 +20216,655 @@
    ],
    "torch.tensor-model": [
     "torch.tensor"
+   ]
+  },
+  "1590": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1591": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ]
+  },
+  "1592": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1593": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1594": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.tuple",
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1595": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.nested-index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1596": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1597": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.equal",
+    "torch.tensor"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1598": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1599": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1600": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.arange",
+    "torch.linspace"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1601": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1602": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.len",
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.slicing-views": [
+    "syntax.slice"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1603": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1604": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1605": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float",
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1606": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1607": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1608": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "builtin.print",
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.constructors": [
+    "torch.zeros"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
    ]
   },
   "168": {
@@ -26922,9 +28347,6 @@
     "syntax.call",
     "syntax.keyword-argument"
    ],
-   "python.control-flow": [
-    "syntax.comprehension"
-   ],
    "python.defining-functions": [
     "syntax.def",
     "syntax.docstring",
@@ -26939,8 +28361,7 @@
     "syntax.list-literal"
    ],
    "python.types-and-conversion": [
-    "builtin.bool",
-    "builtin.round"
+    "builtin.bool"
    ],
    "python.values-and-names": [
     "builtin.print",

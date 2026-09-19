@@ -6,8 +6,8 @@ new_syntax: [torch.arange#out, torch.linspace#out]
 previews: []
 faded: [798, 799]
 guided: []
-independent: [800, 801, 802, 803, 804, 805]
-integrated: [806, 807, 808]
+independent: [800, 801, 802, 803, 804, 805, 1598, 1599]
+integrated: [806, 807, 808, 1600]
 ---
 
 ## Concept: out= writes into storage you already own
@@ -157,6 +157,12 @@ arange(start, stop) into an integer canvas row.
 ### q805
 One column through a 3-D canvas, written with out=.
 
+### q1598
+out= targets a row this time — the last one.
+
+### q1599
+A column as the out= target, chosen from the right-hand end.
+
 ## Integrated practice
 
 ### q806
@@ -167,6 +173,9 @@ A column partitioned between two out= writes.
 
 ### q808
 A ones-column and a linspace-column, both via out=.
+
+### q1600
+Two out= writes into two rows of one canvas, then read one value back.
 
 ## Misconceptions
 
