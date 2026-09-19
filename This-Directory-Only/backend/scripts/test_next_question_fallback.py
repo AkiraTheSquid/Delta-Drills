@@ -158,6 +158,19 @@ finally:
     qp.select_next_subtopic, qp.pick_for_subtopic, diagnostic.should_run, content_gaps.record = _orig
     app.dependency_overrides.clear()
 
+# H. The practice clock is the concept's table number clamped to five minutes
+# (2026-09-19); the placement's reader is not clamped. Behaviour, not source
+# text — the practice/ watch pins the constant, this exercises the function.
+_orig_cap = diagnostic.kc_cap_secs
+diagnostic.kc_cap_secs = lambda kc: {"long": 900, "short": 240, None: 1200}.get(kc, 1200)
+try:
+    check("H: a 15:00 concept is served at 5:00", qp.secs_allowed_for(0, "long") == 300, str(qp.secs_allowed_for(0, "long")))
+    check("H: a 4:00 concept keeps its own number", qp.secs_allowed_for(0, "short") == 240, str(qp.secs_allowed_for(0, "short")))
+    check("H: no concept -> the default, clamped", qp.secs_allowed_for(0, None) == 300, str(qp.secs_allowed_for(0, None)))
+    check("H: the placement reader is untouched", diagnostic.kc_cap_secs("long") == 900, str(diagnostic.kc_cap_secs("long")))
+finally:
+    diagnostic.kc_cap_secs = _orig_cap
+
 print()
 print(f"{len(fails)} failure(s)" if fails else "ALL PASS")
 sys.exit(1 if fails else 0)
