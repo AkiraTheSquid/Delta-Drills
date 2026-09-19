@@ -67,6 +67,19 @@ check("exposed KC does not gate",
       lessons.unexposed_target_kcs(1, _exposed_argmin) == [])
 check("untagged question does not gate", lessons.unexposed_target_kcs(999999, {}) == [])
 
+# 🔴 python.control-flow's page is filed under ARENA 0.0 (topic PyTorch), so
+# the topic test alone parked its sixteen library-free drills and the concept
+# could never be learned — every cnn.* concept behind it was locked for good
+# (replay of Seth's state, 2026-09-19). A python.* concept is pre-library by
+# definition.
+_cf = [q for q in kc_graph.questions_for_kc("python.control-flow")]
+check("python.control-flow has drills", bool(_cf))
+check("a python.* drill is pre-library whatever lesson files its page",
+      all(lessons.is_prelibrary(q) for q in _cf), f"parked={[q for q in _cf if not lessons.is_prelibrary(q)]}")
+from app.questions import get_all_questions  # noqa: E402
+_serv = {q.id for q in get_all_questions()}
+check("...and so it is served", all(q in _serv for q in _cf), f"unserved={[q for q in _cf if q not in _serv]}")
+
 _duplicate_qid = -1
 lessons._question_target_kcs[_duplicate_qid] = [
     "torch.argmin-argmax", "torch.argmin-argmax"

@@ -415,7 +415,15 @@ def narrow_to_next_kc(
         # have not earned is the promotion-on-exhaustion this whole change
         # removes; serving one they have already left is just review.
         node = kc_graph.registry_node(next_kc) or {}
-        gap = {
+        # A spent rung on a concept the learner has ALREADY LEARNED is not a
+        # content gap: nothing was owed, so nothing ran out. Reporting it
+        # made every pick that fell into this subtopic by weakest-first
+        # (the frontier lived elsewhere) write a gap record and pin a
+        # "ran out" strip on an unrelated drill — 475 times in one replayed
+        # session, all for cnn.stride-views, learned 500 picks earlier. The
+        # walk-down below still serves its unanswered lower drills as review.
+        learned = kc_graph.kc_is_learned(user_state, next_kc)
+        gap = None if learned else {
             "kc": next_kc,
             "kc_title": node.get("title") or next_kc,
             "stage": stage,
@@ -436,7 +444,8 @@ def narrow_to_next_kc(
             spare = [q for q in narrowed if q.id in at_lower
                      and (q.id not in answered or q.id in missed)]
             if spare:
-                gap["served_from"] = lower
+                if gap:
+                    gap["served_from"] = lower
                 return spare, next_kc, gap
         # Last resort: drills this KC owns that carry NO rung tag at all.
         # 🔴 This used to be every unseen question in `narrowed`, which quietly
@@ -449,8 +458,17 @@ def narrow_to_next_kc(
             if q.id not in answered and kc_graph.ladder_rank(q.id) == kc_graph.LADDER_UNRANKED
         ]
         if spare:
-            gap["served_from"] = "unranked"
+            if gap:
+                gap["served_from"] = "unranked"
             return spare, next_kc, gap
+        if learned:
+            # Nothing unanswered anywhere on a concept the learner has
+            # LEARNED: that is review, not exhaustion. Hand back the rung and
+            # let the difficulty picker take the least-recently-served drill
+            # (question_pick's on-screen guard still refuses the one showing).
+            # Without this the end of the course was a 404 "No questions
+            # available" the moment the last frontier concept was learned.
+            return (rung or narrowed), next_kc, None
         return [], next_kc, gap
 
     if stage == "partial":
@@ -855,7 +873,23 @@ def select_next_subtopic(
     # just missed yields to the rest of the frontier; the second pass counts
     # it as work again, so it is never withheld when nothing else is left.
     done = answered_question_ids(user_state)
-    passes = (done - retakeable_question_ids(user_state), done - owed_question_ids(user_state))
+    owed_all = owed_question_ids(user_state)
+    passes = (done - retakeable_question_ids(user_state), done - owed_all)
+
+    def _review_subtopic() -> Optional[str]:
+        """A subtopic with NO outstanding work — every unlocked drill answered
+        and none owed — whose drills belong to a learned concept, weakest
+        first. Served between the two passes so a cooling retake is spaced
+        by review of learned material instead of handed straight back: with
+        one concept left on the frontier the replay served the same missed
+        drill up to nineteen times in a row (2026-09-19)."""
+        for st_name, _p, _e in sorted(_candidates(skip_served=False), key=lambda item: (-item[1], item[2], item[0])):
+            qs = [q for q in get_questions_by_subtopic(st_name) if question_is_unlocked(user_state, q)]
+            if not qs or any(q.id not in done or q.id in owed_all for q in qs):
+                continue
+            if any(kc_graph.kc_is_learned(user_state, kc) for q in qs for kc in kc_graph.question_kcs(q.id)):
+                return st_name
+        return None
 
     # KC LATTICE FIRST. The knowledge graph decides what comes next; the
     # weakest-first machinery below is the fallback for when the lattice has
@@ -863,7 +897,11 @@ def select_next_subtopic(
     # left). Ordering the frontier is `kc_graph`'s job — coreness then depth,
     # per The Math Academy Way ch. 32 — so this only has to translate the KC it
     # picks into a subtopic that actually has an unserved question for it.
-    for answered in passes:
+    for n_pass, answered in enumerate(passes):
+        if n_pass == 1:
+            review = _review_subtopic()
+            if review:
+                return review
         for kc in kc_graph.frontier(user_state):
             if kc in excluded_kcs:
                 continue
