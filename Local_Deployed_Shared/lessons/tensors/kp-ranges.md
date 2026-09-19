@@ -5,8 +5,8 @@ supporting: [torch.constructors, torch.slicing-views]
 new_syntax: [torch.arange, torch.linspace]
 faded: [229, 242, 214, 959, 960, 961, 962, 963]
 guided: [524, 964, 965]
-independent: [53, 966, 967, 968, 969, 970]
-integrated: [972, 973]
+independent: [53, 966, 967, 968, 969, 970, 1563, 1564]
+integrated: [972, 973, 1565, 1566]
 ---
 
 ## Concept: t.arange — the stop is exclusive
@@ -345,6 +345,11 @@ From the drill bank: q968 (an exact inclusive float range).
 From the drill bank: q969 (evenly spaced points including zero, excluding the far end).
 From the drill bank: q970 (equally spaced positions around a circle).
 
+### q1563
+A stepped integer range — the stop stays out.
+
+### q1564
+Bin midpoints: count the bins first, then place each centre.
 
 ## Integrated practice
 
@@ -353,6 +358,12 @@ Return equal-bin edges and centres.
 
 ### q973
 Return an evenly spaced grid and its successive gaps.
+
+### q1565
+A countdown by a fixed step — count first, scale, then flip the direction.
+
+### q1566
+Interior points only: the count you ask for is not the count you keep.
 
 ## Misconceptions
 

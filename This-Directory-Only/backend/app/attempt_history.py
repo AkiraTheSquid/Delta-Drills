@@ -118,3 +118,38 @@ def owed_question_ids(user_state) -> set:
     both subtract this set before deciding a rung is done.
     """
     return missed_question_ids(user_state) | aided_correct_question_ids(user_state)
+
+
+# How many graded attempts, on ANY concept, must pass before an owed drill is
+# handed back. Replay of Seth's state with the retakes wired in (traj.py,
+# 2026-09-18): with nothing else unseen on the concept the same drill came
+# straight back after every miss and every aided answer — q972 seventeen times
+# in a row, q839 sixteen — which is the "same problem forever" Seth reported on
+# 2026-08-28, now on a loop of one. Three is enough for the after-miss example
+# and the retake to be separated by other work; it is not a spacing schedule.
+RETAKE_COOLDOWN = 3
+
+
+def recent_question_ids(user_state, n: int = RETAKE_COOLDOWN) -> set:
+    """The last `n` drills the learner answered, across every subtopic.
+
+    Read from `SubtopicState.history` ordered by timestamp (ties keep append
+    order), the same untruncated record `answered_question_ids` reads.
+    """
+    records = []
+    for sub_state in (getattr(user_state, "subtopic_states", None) or {}).values():
+        for i, record in enumerate(getattr(sub_state, "history", None) or ()):
+            qid = getattr(record, "question_id", None)
+            if qid is not None:
+                records.append((getattr(record, "timestamp", None) or "", i, int(qid)))
+    records.sort(key=lambda r: (str(r[0]), r[1]))
+    return {qid for _, _, qid in records[-n:]} if n > 0 else set()
+
+
+def retakeable_question_ids(user_state) -> set:
+    """Owed drills that are not in their cooldown: the ones the queue should
+    serve first. `owed_question_ids` minus `recent_question_ids`. Callers fall
+    back to the full owed set when nothing else is left — a retake now beats
+    a 409 — so the cooldown orders work, it never withholds it."""
+    return owed_question_ids(user_state) - recent_question_ids(user_state)
+

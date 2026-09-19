@@ -6,7 +6,7 @@ new_syntax: [Tensor.mean#dim, Tensor.mean#keepdim, Tensor.sum#dim, syntax.bool-l
 faded: [220, 1363, 1364, 135, 1365, 1366]
 guided: [503, 504]
 independent: [108, 505, 174, 1367, 1368, 1369, 1370, 1471, 1472, 1473, 1475, 1477, 1479, 1480, 1482]
-integrated: [1371, 1372, 1373]
+integrated: [1371, 1372, 1373, 1585]
 ---
 
 ## Concept: axis= — the axis you name disappears
@@ -306,6 +306,9 @@ Every image divided by its own total, so each image's pixels sum to 1.
 
 ### q1373
 The same batch reduced three ways — every axis choice on the page at once.
+
+### q1585
+Two reductions along two different axes — one kept for broadcasting, one collapsed for the answer.
 
 ## Guided practice
 

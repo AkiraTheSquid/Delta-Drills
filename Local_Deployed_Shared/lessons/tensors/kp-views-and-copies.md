@@ -5,8 +5,8 @@ supporting: []
 new_syntax: [Tensor.contiguous, Tensor.data_ptr, Tensor.is_contiguous]
 faded: [616, 617, 618, 536]
 guided: []
-independent: [553, 523, 1524, 1525]
-integrated: [535, 561, 565]
+independent: [553, 523, 1524, 1525, 1593, 1594, 1595, 1596]
+integrated: [535, 561, 565, 1597]
 ---
 
 ## Concept: one strip of numbers, and a note saying how to read it
@@ -368,6 +368,18 @@ A column selection: same start, but is it still one straight run?
 ### q1525
 Transpose, pack, transpose back: same numbers, whose memory?
 
+### q1593
+Same strip of numbers, two reading orders — ask each one.
+
+### q1594
+A packed copy is in order and lives in its own block — and keeps the transposed shape.
+
+### q1595
+A write into a copy stays in the copy.
+
+### q1596
+A row of the transpose is a column of the original — strided through the block, unless the block is one column wide.
+
 ## Integrated practice
 
 ### q535
@@ -378,6 +390,9 @@ Shape, transposed shape, element type, and whether the transpose shares the bloc
 
 ### q565
 Four bools about a transpose and its packed copy: order, order, values, and whose memory.
+
+### q1597
+View, copy, and back again — four facts about one block.
 
 ## Misconceptions
 

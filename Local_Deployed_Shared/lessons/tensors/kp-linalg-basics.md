@@ -5,8 +5,8 @@ supporting: [torch.aggregations, torch.elementwise-ops]
 new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107]
 guided: [508, 509]
-independent: [510, 511, 512, 513]
-integrated: [1521, 1522, 1523]
+independent: [510, 511, 512, 513, 1571, 1572, 1573, 1574]
+integrated: [1521, 1522, 1523, 1575]
 ---
 
 ## Concept: two multiplications — * vs @
@@ -232,6 +232,18 @@ Solve a @ x = b, then verify a @ x really does reproduce b.
 ### q513
 Apply a whole BATCH of matrices to one vector with a single operator.
 
+### q1571
+Matrix times matrix: which axis disappears, and what shape is left.
+
+### q1572
+The same two vectors, multiplied two ways — one keeps the length, one collapses it.
+
+### q1573
+The inverse of a matrix — not the reciprocal of its entries.
+
+### q1574
+Solve a @ x = b — the system, not a product.
+
 ## Integrated practice
 
 ### q1521
@@ -242,6 +254,9 @@ Several right-hand sides at once, then verify the whole block.
 
 ### q1523
 One solver call for a whole batch of systems sharing a right-hand side.
+
+### q1575
+A batch of products, then the batch of solves that undoes them — one call each, no loop.
 
 ## Misconceptions
 

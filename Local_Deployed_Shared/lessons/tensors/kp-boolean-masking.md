@@ -5,8 +5,8 @@ supporting: [torch.slicing-views, torch.elementwise-ops, torch.aggregations]
 new_syntax: [torch.count_nonzero, syntax.bitwise]
 faded: [236, 52, 12]
 guided: [85]
-independent: [232, 145, 202, 1512, 1513, 1514]
-integrated: [1515, 1516]
+independent: [232, 145, 202, 1512, 1513, 1514, 1567, 1568]
+integrated: [1515, 1516, 1569, 1570]
 ---
 
 ## Concept: the comparison IS the mask
@@ -205,6 +205,12 @@ Count the values inside an open interval.
 ### q1514
 Keep only what beats the opening value.
 
+### q1567
+Pick out the odd entries — the test is the mask, the mask is the index.
+
+### q1568
+Zero everything outside a band — one mask built from two tests.
+
 ## Integrated practice
 
 ### q1515
@@ -212,6 +218,12 @@ Select columns by a test that looks down each one.
 
 ### q1516
 Two masks, two writes: pull the outliers back to the nearest bound.
+
+### q1569
+Count rows, not entries: a test per entry, a verdict per row, then a count.
+
+### q1570
+Two conditions from two tensors, one mask, then both a filter and a count from it.
 
 ## Misconceptions
 

@@ -6,7 +6,7 @@ new_syntax: []
 previews: []
 faded: [831, 832]
 guided: []
-independent: [833, 834, 835, 836, 837, 838]
+independent: [833, 834, 835, 836, 837, 838, 1607, 1608]
 integrated: [839, 840, 841, 842, 843, 844, 845, 846]
 ---
 
@@ -133,6 +133,12 @@ The same fan with a different x speed.
 
 ### q838
 Where the fan is at a given x.
+
+### q1607
+The one column of the fan that varies — read it back off the canvas.
+
+### q1608
+The two edge rays of the fan — the y-limits made concrete.
 
 ## Integrated practice
 
