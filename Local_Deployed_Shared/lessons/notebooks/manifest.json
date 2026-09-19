@@ -798,7 +798,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Einsum",
    "file": "es-1.json",
-   "cells": 137,
+   "cells": 180,
    "questions": [
     847,
     848,
@@ -819,16 +819,25 @@
     874,
     879,
     880,
-    884
+    884,
+    1555,
+    1556,
+    1557,
+    1558,
+    1559,
+    1560
    ],
    "kcs": [
-    "einops.einsum"
+    "einops.einsum",
+    "einops.attention-einsum"
    ],
    "segments": {
     "einops.einsum#one-operand": "dd-seg-einops-einsum-0",
     "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
     "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
-    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3"
+    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3",
+    "einops.attention-einsum#named-axes-at-rank": "dd-seg-einops-attention-einsum-0",
+    "einops.attention-einsum#per-head-weights-and-ellipsis": "dd-seg-einops-attention-einsum-1"
    }
   },
   {

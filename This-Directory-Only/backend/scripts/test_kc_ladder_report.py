@@ -393,11 +393,16 @@ def servable(seq, served, learned_prereqs=True, answered=None):
 SOLO = set(kc_graph.questions_at_stage(POOL, "solo"))
 check("this concept has a solo rung to leak from", bool(SOLO) and len(POOL) > len(SOLO),
       f"{len(POOL)} drills, solo={sorted(SOLO)}")
-for label, served in (("nothing served", []), ("every drill served", POOL)):
-    stage, ids = servable("FFFFFFFFFFFTTFFTT", served)
+# "Every drill served" keeps one Solo drill missed on the record: a learner
+# whose every Solo drill is answered CORRECTLY has cleared the rung and is
+# promoted for it (kc_graph.solo_rung_cleared, checked below), so a stuck
+# learner with the whole pool behind them has to have a miss outstanding.
+_first_floor = sorted(kc_graph.questions_at_stage(POOL, "partial"))[:1]
+for label, served, missed in (("nothing served", [], ()), ("every drill served", POOL, _first_floor)):
+    stage, ids, _ = narrowed_for("FFFFFFFFFFFTTFFTT", served, missed=missed)
     check(f"stuck on the floor, {label}: no integrated drill",
           stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
-    stage, ids = servable(POISONED, served)
+    stage, ids, _ = narrowed_for(POISONED, served, missed=missed)
     check(f"on the run, {label}: the rung it earned, not the top",
           stage == "partial" and not (set(ids) & SOLO), f"stage={stage} servable={ids}")
 # A concept with every drill served serves NOTHING, and says why. That is the
@@ -474,6 +479,129 @@ _stage, _ids, _gap = narrowed_for("FFFF", POOL, missed=POOL)
 check("every drill missed: the whole rung comes back for a retake, still no leak",
       _stage == "partial" and set(_ids) == set(_rung_floor) and not (set(_ids) & SOLO) and _gap is None,
       f"stage={_stage} servable={_ids} gap={_gap}")
+
+# 🔴 AN AIDED CORRECT ANSWER IS OWED A RETAKE TOO (2026-09-18). The example
+# schedule shows a worked example on Solo positions 0/2/5/9 and after every
+# miss; a drill answered correctly behind one is spent for the unseen-first
+# order but can never count toward the six distinct UNAIDED successes the gate
+# wants (solo_progress.successful_questions). Replayed on Seth's state, every
+# Solo-rung 409 in the course was this shape. Once nothing unseen is left the
+# aided ones come back, unaided.
+def _aided_state(seq_ok, aided_qids, answered):
+    st = _state_on_rung("", True)
+    row = st.kc_ladder[LADDER_KC]
+    row["attempts"] = [
+        {"correct": True, "stage": "partial", "ts": "2026-08-04T00:00:00+00:00",
+         "question_id": int(q), "example": q in set(aided_qids)}
+        for q in answered
+    ]
+    _seed_answered(st, answered)
+    out, _kc, gap = prioritization.narrow_to_next_kc(
+        st, [_Q(i, 50) for i in POOL], served=set(answered), last_served=None
+    )
+    return kc_graph.kc_stage(st, LADDER_KC), sorted(q.id for q in out), gap
+
+# Twelve of the fifteen behind an example: three unaided successes is a streak,
+# but not the six distinct the gate wants, so the learner is still on Solo.
+_aided = _rung_floor[:-3]
+_stage, _ids, _gap = _aided_state(True, _aided, _rung_floor)
+check("solo drills answered correctly behind an example come back once nothing unseen is left",
+      _stage == "partial" and _ids == sorted(_aided) and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+_stage, _ids, _gap = _aided_state(True, _aided, _rung_floor[:3])
+check("...but not while an unseen solo drill remains",
+      _stage == "partial" and _ids and not (set(_ids) & set(_rung_floor[:3])) and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+
+# 🔴 DEMOTED ONTO A SPENT RUNG (2026-09-18). A miss on an Integrated drill
+# steps the learner down to Solo; with every Solo drill answered and none owed
+# there was nothing to walk down onto and the queue 409'd on a concept whose
+# Solo rung the learner had finished (torch.constructors after q648 missed).
+# The missed Integrated drill is the one still owed.
+_solo_first = sorted(SOLO)[0]
+_st = _state_on_rung("TTTTTT", True)
+_row = _st.kc_ladder[LADDER_KC]
+_row["attempts"] = [
+    {"correct": True, "stage": "partial", "ts": "2026-08-04T00:00:00+00:00", "question_id": int(q), "example": False}
+    for q in _rung_floor
+] + [{"correct": False, "stage": "solo", "ts": "2026-08-04T00:00:01+00:00", "question_id": int(_solo_first), "example": False}]
+_seed_answered(_st, _rung_floor + [_solo_first], missed=[_solo_first])
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(_rung_floor + [_solo_first]), last_served=None
+)
+_stage = kc_graph.kc_stage(_st, LADDER_KC)
+check("demoted onto a spent solo rung: the missed integrated drill comes back, no 409",
+      _stage == "partial" and sorted(q.id for q in _out) == [_solo_first] and _gap is None,
+      f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
+
+# 🔴 A SPENT SOLO RUNG WITH EVERY ANSWER CORRECT (2026-09-18). Miss, retake,
+# miss another, retake: the twenty-attempt window reads "struggling", the
+# trailing streak is short, nothing is unseen and nothing is owed — the rung
+# is finished and the queue 409'd (replay: torch.broadcasting-rules on nine
+# Solo drills). Solving every drill on the rung unaided is the evidence the
+# rung asks for; it promotes on its own (kc_graph.solo_rung_cleared).
+_st = _state_on_rung("TTTTTT", True)
+_row = _st.kc_ladder[LADDER_KC]
+_poison = []
+for q in _rung_floor:
+    _poison.append({"correct": False, "stage": "partial", "ts": "2026-08-04T00:00:00+00:00", "question_id": int(q), "example": False})
+    _poison.append({"correct": True, "stage": "partial", "ts": "2026-08-04T00:00:01+00:00", "question_id": int(q), "example": False})
+_row["attempts"] = _poison[-kc_graph._LADDER_WINDOW:]
+_seed_answered(_st, _rung_floor)
+check("the poisoned window alone would hold the learner at partial",
+      kc_graph._stage_from(kc_graph.kc_estimate(_st, LADDER_KC), _row) == "partial")
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(_rung_floor), last_served=None
+)
+_stage = kc_graph.kc_stage(_st, LADDER_KC)
+check("every solo drill solved unaided clears the rung: stage solo, integrated drills served, no 409",
+      _stage == "solo" and _out and set(q.id for q in _out) <= SOLO and _gap is None,
+      f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
+_row["attempts"][-1] = dict(_row["attempts"][-1], example=True)
+check("...not while the last one was answered behind an example",
+      kc_graph.kc_stage(_st, LADDER_KC) == "partial")
+_row["attempts"][-1] = dict(_row["attempts"][-1], example=False, correct=False)
+_seed_answered(_st, _rung_floor, missed=[_rung_floor[-1]])
+check("...and never over an outstanding miss",
+      kc_graph.kc_stage(_st, LADDER_KC) == "partial")
+
+# 🔴 THE TOP RUNG SPENT WITH A DRILL OWED (2026-09-18). Every Integrated
+# drill answered — one behind the entry example, one missed and retaken —
+# (the aided one last, so the recency clause cannot call it finished) and
+# the learner back on `solo`: nothing unseen anywhere, so the walk-down
+# 409'd, though the aided one is still owed an unaided retake.
+_solo_ids = sorted(SOLO)
+_st = _state_on_rung("TTTTTT", True)
+_row = _st.kc_ladder[LADDER_KC]
+_row["attempts"] = [
+    {"correct": True, "stage": "partial", "ts": "2026-08-04T00:00:00+00:00", "question_id": int(q), "example": False}
+    for q in _rung_floor
+] + [{"correct": True, "stage": "solo", "ts": "2026-08-04T00:00:01+00:00", "question_id": int(q), "example": q == _solo_ids[-1]}
+     for q in _solo_ids]
+_seed_answered(_st, _rung_floor + _solo_ids)
+_st.get_subtopic_state("Numpy: Core array literacy").served_question_ids.extend(POOL)
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None
+)
+_stage = kc_graph.kc_stage(_st, LADDER_KC)
+check("integrated rung spent: the drill answered behind the example comes back, no 409",
+      _stage == "solo" and sorted(q.id for q in _out) == [_solo_ids[-1]] and _gap is None,
+      f"stage={_stage} servable={sorted(q.id for q in _out)} gap={_gap}")
+check("...and the concept is not yet learned while it is owed",
+      not kc_graph.kc_evidence_exhausted(_st, LADDER_KC))
+_row["attempts"][-1] = dict(_row["attempts"][-1], example=False)
+_row["attempts"][-2] = dict(_row["attempts"][-2], stage="partial")
+check("every servable drill answered correctly and unaided: evidence exhausted, whatever the tail",
+      kc_graph.kc_evidence_exhausted(_st, LADDER_KC))
+# Walk-down: an Integrated learner with a missed Solo drill on the record is
+# served that retake, not a 409.
+_seed_answered(_st, _rung_floor + _solo_ids, missed=_rung_floor[:1])
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None
+)
+check("walk-down from a spent integrated rung serves the owed solo drill",
+      sorted(q.id for q in _out) == _rung_floor[:1] and _gap and _gap.get("served_from") == "partial",
+      f"servable={sorted(q.id for q in _out)} gap={_gap}")
 
 # The frontier can also miss entirely — `frontier` drops a KC that is
 # `kc_is_learned`, and `kc_evidence_exhausted` makes that true of any concept

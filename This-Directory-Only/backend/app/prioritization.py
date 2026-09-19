@@ -26,7 +26,9 @@ from app import practice_targets
 from app import symbol_gate
 # Re-exported: every caller reads these off this module (question_pick, the
 # test scripts), and the history readers moved out only for size.
-from app.attempt_history import answered_question_ids, missed_question_ids  # noqa: F401
+from app.attempt_history import (  # noqa: F401
+    answered_question_ids, missed_question_ids, owed_question_ids,
+)
 from app import ladder_fade
 from app import lessons
 from app.adaptive import UserPracticeState
@@ -274,8 +276,11 @@ def narrow_to_next_kc(
     answered = answered_question_ids(user_state) if answered is None else answered
     # A missed drill is spent for the unseen-first order but not for the
     # concept: it is owed a retry (see missed_question_ids), so a concept whose
-    # only remaining work is retries still counts as having work.
-    missed = missed_question_ids(user_state)
+    # only remaining work is retries still counts as having work. So is a Solo
+    # drill answered correctly behind a worked example — it cannot count toward
+    # the six-distinct-unaided gate until it is retaken without one
+    # (attempt_history.owed_question_ids, 2026-09-18).
+    missed = owed_question_ids(user_state)
     # Eligibility must match what the caller can actually serve, or the
     # narrowing targets a KC whose questions are all spent and hands back a
     # list the difficulty picker then rejects — a 404 with fresh sibling work
@@ -346,13 +351,36 @@ def narrow_to_next_kc(
 
     fresh = [q for q in rung if q.id not in answered]
     if not fresh and stage == kc_graph.DRILL_FLOOR:
-        # Nothing unseen on the Solo rung — the missed ones come back. Not a
+        # Nothing unseen on the Solo rung — the missed ones come back, and so
+        # do the ones answered behind an example (`missed` holds both). Not a
         # content gap: the drill exists, the learner has seen its answer, and
         # the six-distinct-correct gate (solo_progress) cannot clear without it.
         # Only once the unseen work is gone, so a miss is never handed straight
         # back — and never on a walk-down, which is review, not a retake. The
         # picker sees every one of these as already served and recycles the
         # stalest (grading.select_question_for_difficulty).
+        retry = [q for q in rung if q.id in missed]
+        if retry:
+            return retry, next_kc, None
+        # The rung is spent and nothing on it is owed, yet the learner is
+        # standing on it: that is DEMOTION. A miss on an Integrated drill
+        # steps down to Solo (kc_graph._stage_from), and with every Solo drill
+        # answered there is nothing below to walk down onto, so the queue
+        # 409'd on a concept whose Solo rung the learner had finished (replay
+        # of Seth's state, 2026-09-18: torch.constructors after q648 missed,
+        # torch.elementwise-ops after q638). The drill whose miss sent them
+        # here is the one still owed — hand it back, and the schedule attaches
+        # the after-miss example to it.
+        owed_above = [q for q in narrowed if q.id in missed
+                      and kc_graph.ladder_rank(q.id) in kc_graph._SERVABLE_RANKS]
+        if owed_above:
+            return owed_above, next_kc, None
+    if not fresh and stage == "solo":
+        # The top rung is spent too, and a drill on it is owed — missed, or
+        # answered behind the entry example. Without this the walk-down below
+        # found nothing unanswered and 409'd a concept whose only remaining
+        # work was that retake (replay, 2026-09-18: torch.boolean-masking with
+        # q1515 answered aided, q1516 missed).
         retry = [q for q in rung if q.id in missed]
         if retry:
             return retry, next_kc, None
@@ -390,7 +418,10 @@ def narrow_to_next_kc(
         below = order[: order.index(stage)] if stage in order else []
         for lower in reversed(below):
             at_lower = set(kc_graph.questions_at_stage([q.id for q in narrowed], lower))
-            spare = [q for q in narrowed if q.id in at_lower and q.id not in answered]
+            # Unseen, or owed a retake — a missed Solo drill under an
+            # Integrated learner is still the concept's unfinished work.
+            spare = [q for q in narrowed if q.id in at_lower
+                     and (q.id not in answered or q.id in missed)]
             if spare:
                 gap["served_from"] = lower
                 return spare, next_kc, gap
@@ -802,7 +833,11 @@ def select_next_subtopic(
     # answered is still work this subtopic can offer. Gating this loop on
     # `served` let a subtopic whose drills had all been handed over — and none
     # of them answered — drop out of the running entirely.
-    answered = answered_question_ids(user_state)
+    # ...and a drill the concept is still owed — a miss, or a Solo answer made
+    # behind an example — is work too (attempt_history.owed_question_ids):
+    # without this the lattice walked past a concept whose only remaining work
+    # was retakes, and the retakes `narrow_to_next_kc` serves were unreachable.
+    answered = answered_question_ids(user_state) - owed_question_ids(user_state)
 
     # KC LATTICE FIRST. The knowledge graph decides what comes next; the
     # weakest-first machinery below is the fallback for when the lattice has

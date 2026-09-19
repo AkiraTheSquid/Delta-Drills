@@ -3687,6 +3687,20 @@
     "drill-atom",
     "part2"
    ]
+  },
+  {
+   "id": "attention-einsum",
+   "title": "einsum at model rank",
+   "topic": "Einops",
+   "subtopic": "Einsum",
+   "node_type": "concept",
+   "kind": "skill",
+   "tier": "core",
+   "description": "einops.einsum with model-rank names: per-head weight axes, distinct posn_q/posn_k names, and ... for unnamed leading axes (ARENA ch1 attention, DLA, toy models).",
+   "tags": [
+    "drill-atom",
+    "part1-transformer"
+   ]
   }
  ],
  "prerequisite_edges": [
@@ -7899,6 +7913,16 @@
    "is_encompassing": false,
    "propagation_weight": 0.0,
    "rationale": "[builds-on] the eval step calls a composed module's forward under inference_mode (wired 2026-09-14: atom had no prerequisite edge)"
+  },
+  {
+   "prerequisite_id": "einops-einsum",
+   "dependent_id": "attention-einsum",
+   "weight": 1.0,
+   "confidence": 0.8,
+   "is_hard_gate": true,
+   "is_encompassing": true,
+   "propagation_weight": 0.4,
+   "rationale": "[refines 2026-09-17] the same contraction rule at rank 3-4 with named heads/positions"
   }
  ],
  "lessons": [],

@@ -271,6 +271,13 @@ window.DD_GLOSSARY = {
       def: "Tensors first, pattern LAST: name every axis of every operand on the left of ->, list the survivors on the right. A name shared by two operands multiplies them; a name missing from the right is summed away.",
     },
 
+    {
+      term: "attention scores",
+      aliases: ["scaled scores", "posn_q posn_k", "per-head weights", "ellipsis axes"],
+      kc: "einops.attention-einsum",
+      def: "einsum at model rank: a per-head weight is just a third named axis, two position axes that must not pair get two names (posn_q, posn_k), and ... stands for every leading axis you did not name. The 1/sqrt(d_head) scaling is arithmetic AFTER the pattern.",
+    },
+
     /* ---- eo-2: reduce -------------------------------------------- */
     {
       term: "einops.reduce",
@@ -379,6 +386,7 @@ window.DD_GLOSSARY.kcLesson = {
   "raytracing.ray-parametrisation": ["Rays as tensors (ARENA 0.1)", "A ray is an origin and a direction"],
   "raytracing.make-rays-1d": ["Rays as tensors (ARENA 0.1)", "make_rays_1d: a fan of rays as one (n, 2, 3) tensor"],
   "einops.einsum": ["Einsum", "einops.einsum: name the axes, drop the ones to sum"],
+  "einops.attention-einsum": ["Einsum", "einsum at model rank: heads, positions and ..."],
   "tensor.row-normalization": ["ARENA 0.0 — Tensor reasoning", "Row lengths and unit directions"],
   "tensor.cosine-similarity": ["ARENA 0.0 — Tensor reasoning", "Compare directions across two collections"],
   "tensor.indexed-selection": ["ARENA 0.0 — Tensor reasoning", "Select values with tensor indices"],
