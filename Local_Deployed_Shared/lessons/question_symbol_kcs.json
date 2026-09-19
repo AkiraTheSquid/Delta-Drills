@@ -19194,6 +19194,217 @@
     "syntax.none"
    ]
   },
+  "1555": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1556": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1557": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1558": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index",
+    "syntax.negative-index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1559": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1560": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1561": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
+  "1562": {
+   "einops.einsum": [
+    "einops.einsum"
+   ],
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist",
+    "torch.tensor"
+   ]
+  },
   "159": {
    "python.calling-functions": [
     "syntax.call"

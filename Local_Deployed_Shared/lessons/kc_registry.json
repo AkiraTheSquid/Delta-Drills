@@ -528,6 +528,19 @@
    ]
   },
   {
+   "id": "einops.attention-einsum",
+   "lesson": "es-1",
+   "title": "einsum at model rank: heads, positions and ...",
+   "syntax": false,
+   "prereqs": [
+    "einops.einsum",
+    "einops.dl-flatten-heads"
+   ],
+   "encompassing": {
+    "einops.einsum": 0.7
+   }
+  },
+  {
    "id": "tensor.row-normalization",
    "lesson": "ar-00",
    "title": "Row lengths and unit directions",

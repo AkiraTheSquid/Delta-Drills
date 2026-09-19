@@ -19712,5 +19712,93 @@
    "torch.tensor#dtype"
   ],
   "source": "kp-integrated"
+ },
+ "1555": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1556": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1557": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1558": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1559": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1560": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1561": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1562": {
+  "target_kcs": [
+   "einops.attention-einsum"
+  ],
+  "supporting_kcs": [
+   "einops.einsum",
+   "einops.dl-flatten-heads"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

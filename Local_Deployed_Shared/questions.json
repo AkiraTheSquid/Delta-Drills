@@ -59505,5 +59505,365 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1555,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Given `x` as a nested list of shape `(b, s, d)` (a batch of sequences of `d`-dim vectors) and a weight `w` of shape `(d, n)`, project every vector with ONE einops.einsum call and return the `(b, s, n)` result as a nested list. Name the axes `b s d` and `d n`; no `@`, no loops.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x, w):\n    \"\"\"Project every position: (b, s, d) x (d, n) -> (b, s, n).\"\"\"\n    return einops.einsum(t.tensor(x), t.tensor(w), \"b s d, d n -> b s n\").tolist()\n",
+    "difficulty_score": 35,
+    "difficulty_label": "easy",
+    "expected_output": "[[[-2.0, 6.0], [-1.0, 2.0], [3.0, -2.0]], [[-1.0, 8.0], [1.0, 0.0], [-4.0, -4.0]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x, w):\n    \"\"\"Project every position: (b, s, d) x (d, n) -> (b, s, n).\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-2.0, 2.0, 2.0, 1.0], [1.0, 1.0, -1.0, -1.0], [2.0, 0.0, 1.0, 2.0]], [[-1.0, 1.0, 1.0, -2.0], [0.0, -1.0, 0.0, -1.0], [-2.0, 1.0, -1.0, 2.0]]], [[1.0, 0.0], [-1.0, 2.0], [1.0, 2.0], [0.0, -2.0]])",
+        "expected_expr": "[[[-2.0, 6.0], [-1.0, 2.0], [3.0, -2.0]], [[-1.0, 8.0], [1.0, 0.0], [-4.0, -4.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-1.0, 1.0, 0.0], [0.0, -2.0, -2.0]]], [[-2.0, 2.0, -1.0], [1.0, 2.0, -1.0], [2.0, -1.0, 0.0]])",
+        "expected_expr": "[[[3.0, 0.0, 0.0], [-6.0, -2.0, 2.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-1.0, 2.0]], [[0.0, -2.0]]], [[-2.0], [-1.0]])",
+        "expected_expr": "[[[0.0]], [[2.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[-2.0, -1.0, 3.0], [6.0, 2.0, -2.0]], [[-1.0, 1.0, -4.0], [8.0, 0.0, -4.0]]]",
+        "why": "The survivors are right but in the wrong ORDER: `-> b n s` puts the output features before the positions. The right side of `->` fixes the output's axis order, not just which axes survive."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1556,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`attn` is a nested list of shape `(b, s, n)`: for each batch item, one weight per sequence position `s` for each of `n` heads. `v` is `(b, s, d)`: one value vector per position. Return the per-head weighted sum of the values, shape `(b, n, d)`, with ONE einops.einsum call. The position axis is the one that disappears.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(attn, v):\n    \"\"\"Weighted sum of values, one per head: (b, s, n), (b, s, d) -> (b, n, d).\"\"\"\n    return einops.einsum(t.tensor(attn), t.tensor(v), \"b s n, b s d -> b n d\").tolist()\n",
+    "difficulty_score": 40,
+    "difficulty_label": "medium",
+    "expected_output": "[[[-2.0, -2.0, 4.0, 0.0], [0.0, 1.0, 1.0, 2.0]], [[0.0, 1.0, -2.0, -1.0], [2.0, 1.0, 2.0, 5.0]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(attn, v):\n    \"\"\"Weighted sum of values, one per head: (b, s, n), (b, s, d) -> (b, n, d).\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-2.0, 0.0], [-1.0, -1.0], [1.0, 0.0]], [[0.0, 2.0], [1.0, -1.0], [1.0, -1.0]]], [[[1.0, 1.0, -1.0, 2.0], [0.0, -1.0, -1.0, -2.0], [0.0, -1.0, 1.0, 2.0]], [[1.0, 1.0, 0.0, 2.0], [0.0, 1.0, -2.0, -2.0], [0.0, 0.0, 0.0, 1.0]]])",
+        "expected_expr": "[[[-2.0, -2.0, 4.0, 0.0], [0.0, 1.0, 1.0, 2.0]], [[0.0, 1.0, -2.0, -1.0], [2.0, 1.0, 2.0, 5.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-2.0], [1.0], [2.0], [0.0]]], [[[0.0, -2.0], [0.0, 0.0], [0.0, -2.0], [0.0, 0.0]]])",
+        "expected_expr": "[[[0.0, 0.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-1.0, 2.0, -2.0], [0.0, 1.0, 0.0]], [[-1.0, -2.0, 0.0], [0.0, 0.0, -2.0]]], [[[1.0], [1.0]], [[0.0], [0.0]]])",
+        "expected_expr": "[[[-1.0], [3.0], [-2.0]], [[0.0], [0.0], [0.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[-2.0, -2.0, 2.0, -4.0], [-0.0, 2.0, 2.0, 4.0], [0.0, -1.0, 1.0, 2.0]], [[2.0, 2.0, 0.0, 4.0], [0.0, 0.0, -0.0, -0.0], [0.0, 0.0, 0.0, 0.0]]]",
+        "why": "Keeping `s` and dropping `n` sums over the HEADS instead of the positions: each position's value gets multiplied by the total of its head-weights. The axis that should vanish is the one being averaged over — the positions."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1557,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "Given `x` of shape `(batch, posn, d_model)` and a weight `W` of shape `(nheads, d_model, d_head)` — one projection matrix PER HEAD — return the projected tensor of shape `(batch, posn, nheads, d_head)` as a nested list, with ONE einops.einsum call and those exact axis names.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x, W):\n    \"\"\"Per-head projection: every head gets its own matrix.\"\"\"\n    return einops.einsum(t.tensor(x), t.tensor(W), \"batch posn d_model, nheads d_model d_head -> batch posn nheads d_head\").tolist()\n",
+    "difficulty_score": 50,
+    "difficulty_label": "medium",
+    "expected_output": "[[[[2.0, 1.0], [0.0, 4.0]], [[2.0, 1.0], [0.0, -3.0]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x, W):\n    \"\"\"Per-head projection: every head gets its own matrix.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1.0, 0.0, 2.0], [-1.0, 1.0, -1.0]]], [[[-2.0, 1.0], [2.0, 2.0], [2.0, 0.0]], [[0.0, 2.0], [0.0, 0.0], [0.0, 1.0]]])",
+        "expected_expr": "[[[[2.0, 1.0], [0.0, 4.0]], [[2.0, 1.0], [0.0, -3.0]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0.0, 2.0], [-2.0, 1.0], [0.0, 2.0]], [[2.0, -1.0], [2.0, 2.0], [1.0, -2.0]]], [[[-1.0, 1.0, -2.0], [1.0, 0.0, 1.0]]])",
+        "expected_expr": "[[[[2.0, 0.0, 2.0]], [[3.0, -2.0, 5.0]], [[2.0, 0.0, 2.0]]], [[[-3.0, 2.0, -5.0]], [[0.0, 2.0, -2.0]], [[-3.0, 1.0, -4.0]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[2.0, -2.0, -1.0, 0.0]]], [[[-1.0], [1.0], [-2.0], [-2.0]], [[-1.0], [2.0], [-1.0], [-2.0]], [[2.0], [0.0], [-2.0], [-1.0]]])",
+        "expected_expr": "[[[[-2.0], [-5.0], [6.0]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[2.0, 1.0], [2.0, 1.0]], [[0.0, 4.0], [0.0, -3.0]]]]",
+        "why": "Same numbers, wrong layout: `nheads` was placed before `posn`. ARENA's attention keeps `batch posn nheads d_head` so the head axis sits beside `d_head`; a swapped order will not broadcast against the other tensors later."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1558,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`q` and `k` are both nested lists of shape `(batch, posn, nheads, d_head)`. Return the SCALED attention scores of shape `(batch, nheads, posn_q, posn_k)`: contract over `d_head` with one einops.einsum call using the two DIFFERENT position names `posn_q` and `posn_k`, then divide the result by the square root of `d_head`. Return a nested list.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(q, k):\n    \"\"\"Scaled dot-product scores: every query position against every key position, per head.\"\"\"\n    q = t.tensor(q)\n    k = t.tensor(k)\n    d_head = q.shape[-1]\n    scores = einops.einsum(q, k, \"batch posn_q nheads d_head, batch posn_k nheads d_head -> batch nheads posn_q posn_k\")\n    return (scores / d_head ** 0.5).tolist()\n",
+    "difficulty_score": 55,
+    "difficulty_label": "medium",
+    "expected_output": "[[[[-1.0, -3.0], [-2.5, -0.5]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(q, k):\n    \"\"\"Scaled dot-product scores: every query position against every key position, per head.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[-2.0, 1.0, -2.0, -2.0]], [[2.0, 2.0, 0.0, 1.0]]]], [[[[-1.0, -2.0, 0.0, 1.0]], [[2.0, -2.0, 1.0, -1.0]]]])",
+        "expected_expr": "[[[[-1.0, -3.0], [-2.5, -0.5]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[1.0], [1.0]], [[-1.0], [1.0]], [[-1.0], [2.0]]], [[[-2.0], [2.0]], [[1.0], [1.0]], [[1.0], [0.0]]]], [[[[2.0], [-1.0]], [[-1.0], [2.0]], [[0.0], [0.0]]], [[[0.0], [-1.0]], [[1.0], [-2.0]], [[-1.0], [-2.0]]]])",
+        "expected_expr": "[[[[2.0, -1.0, 0.0], [-2.0, 1.0, -0.0], [-2.0, 1.0, -0.0]], [[-1.0, 2.0, 0.0], [-1.0, 2.0, 0.0], [-2.0, 4.0, 0.0]]], [[[-0.0, -2.0, 2.0], [0.0, 1.0, -1.0], [0.0, 1.0, -1.0]], [[-2.0, -4.0, -4.0], [-1.0, -2.0, -2.0], [-0.0, -0.0, -0.0]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[-1.0, -1.0, -1.0, 0.0, -2.0, 0.0, 0.0, -1.0, 2.0], [0.0, -2.0, -1.0, 1.0, 0.0, 1.0, 0.0, -2.0, 0.0]]]], [[[[2.0, -2.0, -1.0, -2.0, 2.0, 1.0, -2.0, 2.0, 1.0], [2.0, -1.0, 0.0, 2.0, -1.0, -2.0, 2.0, 2.0, -2.0]]]])",
+        "expected_expr": "[[[[-1.0]], [[-0.6666666865348816]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[[-2.0, -6.0], [-5.0, -1.0]]]]",
+        "why": "These are the raw dot products — the division by sqrt(d_head) was skipped. einsum only contracts; the scaling is ordinary arithmetic applied AFTER it."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1559,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`feats` is a nested list whose LAST two axes are `(inst, feats)` — it may carry any number of leading batch axes. `W` has shape `(inst, hidden, feats)`: a separate weight matrix per instance. Return `feats` projected to `(..., inst, hidden)` with ONE einops.einsum call, using `...` for the leading axes so the same call works whatever their number.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(feats, W):\n    \"\"\"Per-instance projection under an unknown number of batch axes.\"\"\"\n    return einops.einsum(t.tensor(feats), t.tensor(W), \"... inst feats, inst hidden feats -> ... inst hidden\").tolist()\n",
+    "difficulty_score": 60,
+    "difficulty_label": "medium",
+    "expected_output": "[[[[1.0, -2.0], [-2.0, 1.0]], [[1.0, 1.0], [-2.0, 1.0]], [[10.0, 2.0], [4.0, 0.0]]], [[[2.0, -1.0], [-4.0, 0.0]], [[1.0, -4.0], [0.0, -4.0]], [[-4.0, -2.0], [-4.0, 2.0]]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(feats, W):\n    \"\"\"Per-instance projection under an unknown number of batch axes.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[0.0, -1.0, 1.0], [-2.0, 0.0, 1.0]], [[0.0, 1.0, 0.0], [2.0, 0.0, 1.0]], [[2.0, 2.0, 2.0], [-2.0, 1.0, -1.0]]], [[[0.0, 0.0, 1.0], [-1.0, -1.0, 1.0]], [[-1.0, -1.0, 2.0], [-1.0, -2.0, -2.0]], [[-2.0, 0.0, 0.0], [-2.0, 0.0, 2.0]]]], [[[2.0, 1.0, 2.0], [1.0, 1.0, -1.0]], [[0.0, 2.0, -2.0], [0.0, 1.0, 1.0]]])",
+        "expected_expr": "[[[[1.0, -2.0], [-2.0, 1.0]], [[1.0, 1.0], [-2.0, 1.0]], [[10.0, 2.0], [4.0, 0.0]]], [[[2.0, -1.0], [-4.0, 0.0]], [[1.0, -4.0], [0.0, -4.0]], [[-4.0, -2.0], [-4.0, 2.0]]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[2.0, 2.0, 2.0], [2.0, -2.0, -1.0]]], [[[0.0, 2.0, 1.0]], [[1.0, 1.0, 2.0]]])",
+        "expected_expr": "[[[6.0], [-2.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[[[-2.0, 1.0], [2.0, 0.0]]]], [[[[0.0, -1.0], [-1.0, 0.0]]]]], [[[0.0, 0.0], [0.0, 1.0], [-1.0, 2.0]], [[2.0, 0.0], [0.0, 0.0], [-2.0, -1.0]]])",
+        "expected_expr": "[[[[[0.0, 1.0, 4.0], [4.0, 0.0, -4.0]]]], [[[[0.0, -1.0, -2.0], [-2.0, 0.0, 2.0]]]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[-1.0, -1.0], [-1.0, 2.0], [14.0, 2.0]], [[-2.0, -1.0], [1.0, -8.0], [-8.0, 0.0]]]",
+        "why": "Dropping `inst` from the right sums the instances TOGETHER. Each instance is its own model in ARENA's toy-model setup; a name that appears in both operands is contracted only if you leave it out of the output."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1560,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`W_U` is a nested list of shape `(emb, seq)`: for each sequence position, the unembedding direction of the CORRECT next token. `resid` has shape `(seq, nhead, emb)`: each head's contribution to the residual stream at every position. Return the direct logit attribution, shape `(seq, nhead)` — the dot product of every head's output with its position's correct-token direction — as a nested list from ONE einops.einsum call.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(W_U, resid):\n    \"\"\"Direct logit attribution: dot each head's output with the correct token's direction.\"\"\"\n    return einops.einsum(t.tensor(W_U), t.tensor(resid), \"emb seq, seq nhead emb -> seq nhead\").tolist()\n",
+    "difficulty_score": 60,
+    "difficulty_label": "medium",
+    "expected_output": "[[2.0, -8.0], [-3.0, 1.0]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(W_U, resid):\n    \"\"\"Direct logit attribution: dot each head's output with the correct token's direction.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[-1.0, -2.0], [-2.0, 0.0], [2.0, -1.0]], [[[-2.0, 1.0, 1.0], [2.0, 2.0, -1.0]], [[2.0, -1.0, -1.0], [0.0, 1.0, -1.0]]])",
+        "expected_expr": "[[2.0, -8.0], [-3.0, 1.0]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[1.0, 1.0, -2.0, -2.0], [1.0, 0.0, -1.0, -2.0]], [[[1.0, 2.0]], [[0.0, 1.0]], [[-1.0, 0.0]], [[-2.0, 2.0]]])",
+        "expected_expr": "[[3.0], [0.0], [2.0], [0.0]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[0.0], [2.0], [1.0], [0.0]], [[[-2.0, -1.0, 2.0, 2.0], [-1.0, -1.0, 2.0, -1.0], [-2.0, -2.0, 0.0, 0.0]]])",
+        "expected_expr": "[[0.0, 0.0, -4.0]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[-1.0, -7.0]",
+        "why": "With `seq` gone from the right, the attribution is summed across ALL positions, one number per head. `seq` appears in both operands, so it pairs position-with-position — but it still has to be kept on the right to get one row per position."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1561,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`x` is a nested list of shape `(n, seq, d_model)`: the residual stream decomposed into `n` separate components (embeddings, each head's output, ...), one `(seq, d_model)` slab per component. `W_Q` has shape `(d_model, d_head)`. Return the per-component queries, shape `(n, seq, d_head)`, as a nested list. Choose the einsum pattern from these shapes.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(x, W_Q):\n    \"\"\"Decomposed queries: project every component of the residual stream separately.\"\"\"\n    return einops.einsum(t.tensor(x), t.tensor(W_Q), \"n seq d_model, d_model d_head -> n seq d_head\").tolist()\n",
+    "difficulty_score": 65,
+    "difficulty_label": "medium",
+    "expected_output": "[[[0.0, 0.0], [0.0, 0.0], [0.0, -4.0]], [[0.0, -4.0], [0.0, 4.0], [0.0, 4.0]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(x, W_Q):\n    \"\"\"Decomposed queries: project every component of the residual stream separately.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-1.0, 0.0], [-1.0, 0.0], [1.0, -2.0]], [[1.0, -2.0], [2.0, 2.0], [-1.0, 2.0]]], [[0.0, 0.0], [0.0, 2.0]])",
+        "expected_expr": "[[[0.0, 0.0], [0.0, 0.0], [0.0, -4.0]], [[0.0, -4.0], [0.0, 4.0], [0.0, 4.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[2.0, 0.0, -2.0, 1.0]], [[0.0, -1.0, 1.0, 2.0]], [[1.0, -1.0, 1.0, 0.0]]], [[1.0], [1.0], [-2.0], [0.0]])",
+        "expected_expr": "[[[6.0]], [[-3.0]], [[-2.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[-1.0, 1.0], [2.0, -2.0]]], [[0.0, 0.0, -1.0], [2.0, -1.0, -2.0]])",
+        "expected_expr": "[[[2.0, -1.0, -1.0], [-4.0, 2.0, 2.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[[0.0, 0.0], [0.0, -4.0]], [[0.0, 0.0], [0.0, 4.0]], [[0.0, -4.0], [0.0, 4.0]]]",
+        "why": "The component axis and the position axis were swapped in the output. Read the requested shape `(n, seq, d_head)` left to right and write the right side of `->` in that order."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1562,
+    "topic": "Einops",
+    "subtopic": "Einsum",
+    "subtopic_key": "Einops: Einsum",
+    "question_text": "`W` is a nested list of shape `(inst, hidden, feats)`: for each of `inst` toy models, a `hidden x feats` weight matrix. For every instance return the feature-overlap matrix `W^T W` of shape `(inst, feats, feats)` — entry `[i, a, b]` is the dot product of feature column `a` with feature column `b` in instance `i`. One einops.einsum call, no transposes: the same tensor is passed twice, so give the two `feats` axes DIFFERENT names.",
+    "answer_code": "import torch as t\nimport einops\n\n\ndef solve(W):\n    \"\"\"W^T W per instance: how much every pair of features overlaps.\"\"\"\n    W = t.tensor(W)\n    return einops.einsum(W, W, \"inst hidden f1, inst hidden f2 -> inst f1 f2\").tolist()\n",
+    "difficulty_score": 70,
+    "difficulty_label": "hard",
+    "expected_output": "[[[1.0, 1.0, -2.0], [1.0, 5.0, 2.0], [-2.0, 2.0, 8.0]], [[8.0, 0.0, -4.0], [0.0, 2.0, 2.0], [-4.0, 2.0, 4.0]]]",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "tensor_transform",
+    "function_name": "solve",
+    "starter_code": "import torch as t\nimport einops\n\n\ndef solve(W):\n    \"\"\"W^T W per instance: how much every pair of features overlaps.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[1.0, 1.0, -2.0], [0.0, -2.0, -2.0]], [[-2.0, -1.0, 0.0], [2.0, -1.0, -2.0]]])",
+        "expected_expr": "[[[1.0, 1.0, -2.0], [1.0, 5.0, 2.0], [-2.0, 2.0, 8.0]], [[8.0, 0.0, -4.0], [0.0, 2.0, 2.0], [-4.0, 2.0, 4.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0.0, 1.0], [0.0, -2.0], [1.0, 2.0]]])",
+        "expected_expr": "[[[1.0, 2.0], [2.0, 9.0]]]"
+      },
+      {
+        "setup_code": "import torch as t\nimport einops\n",
+        "call": "solve([[[0.0, -1.0]], [[-1.0, 1.0]], [[2.0, 2.0]]])",
+        "expected_expr": "[[[0.0, -0.0], [-0.0, 1.0]], [[1.0, -1.0], [-1.0, 1.0]], [[4.0, 4.0], [4.0, 4.0]]]"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "[[1.0, 5.0, 8.0], [8.0, 2.0, 4.0]]",
+        "why": "Naming both feature axes `feats` pairs column `a` only with itself: you get each feature's squared norm, shape `(inst, feats)`, not the full overlap matrix. Two axes that must range independently need two different names."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]

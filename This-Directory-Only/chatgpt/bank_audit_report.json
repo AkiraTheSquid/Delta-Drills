@@ -1,5 +1,5 @@
 {
- "total": 1297,
+ "total": 1305,
  "questions": {
   "64": [
    {
@@ -860,10 +860,52 @@
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['numel']"
    }
+  ],
+  "1555": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1556": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1557": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1558": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1559": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1560": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
+  ],
+  "1562": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['einsum']"
+   }
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 132,
+  "answer_symbol_in_prompt": 139,
   "precompute_leak": 8,
   "starter_passes_some_cases": 2
  }

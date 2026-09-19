@@ -42,6 +42,7 @@
     "einops.dl-flatten-heads": 600,
     "einops.channel-groups-temporal": 600,
     "einops.einsum": 480,
+    "einops.attention-einsum": 480,
     "torch.out-argument": 600,
     "torch.slice-assignment": 600,
     "raytracing.ray-parametrisation": 600,

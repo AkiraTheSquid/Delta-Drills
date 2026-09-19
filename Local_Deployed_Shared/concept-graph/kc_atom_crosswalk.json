@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1207,
-  "kcs_covered": 71,
-  "kcs_total": 71,
-  "kcs_measured": 55,
-  "atoms_used": 101,
-  "pairs": 187
+  "questions_joined": 1240,
+  "kcs_covered": 72,
+  "kcs_total": 72,
+  "kcs_measured": 56,
+  "atoms_used": 102,
+  "pairs": 189
  },
  "kcs": {
   "cnn.batch-normalization": {
@@ -677,6 +677,28 @@
     }
    ]
   },
+  "einops.attention-einsum": {
+   "n": 8,
+   "reliability": 0.634,
+   "shared_with": 0.6,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "attention-einsum",
+     "w": 0.925,
+     "share": 0.586,
+     "spec": 1.0,
+     "n": 8
+    },
+    {
+     "a": "einops-einsum",
+     "w": 0.075,
+     "share": 0.414,
+     "spec": 0.115,
+     "n": 8
+    }
+   ]
+  },
   "einops.channel-groups-temporal": {
    "n": 8,
    "reliability": 0.118,
@@ -737,15 +759,15 @@
   },
   "einops.einsum": {
    "n": 42,
-   "reliability": 0.964,
-   "shared_with": 0.0,
+   "reliability": 0.853,
+   "shared_with": 0.2,
    "tier": "measured",
    "atoms": [
     {
      "a": "einops-einsum",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.964,
+     "spec": 0.853,
      "n": 42
     }
    ]
@@ -862,7 +884,7 @@
      "a": "broadcasting-rules",
      "w": 0.002,
      "share": 0.024,
-     "spec": 0.027,
+     "spec": 0.02,
      "n": 1
     },
     {
@@ -876,22 +898,22 @@
   },
   "einops.reduce-model": {
    "n": 10,
-   "reliability": 0.159,
-   "shared_with": 5.3,
+   "reliability": 0.157,
+   "shared_with": 5.4,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "einops-reduce",
-     "w": 0.917,
+     "w": 0.932,
      "share": 0.757,
      "spec": 0.193,
      "n": 10
     },
     {
      "a": "broadcasting-rules",
-     "w": 0.063,
+     "w": 0.048,
      "share": 0.126,
-     "spec": 0.08,
+     "spec": 0.06,
      "n": 3
     },
     {
@@ -1357,13 +1379,13 @@
   },
   "torch.argmin-argmax": {
    "n": 11,
-   "reliability": 0.243,
+   "reliability": 0.242,
    "shared_with": 3.1,
    "tier": "topic-proxy",
    "atoms": [
     {
      "a": "argmax-prediction",
-     "w": 0.922,
+     "w": 0.925,
      "share": 0.745,
      "spec": 0.301,
      "n": 10
@@ -1377,9 +1399,9 @@
     },
     {
      "a": "broadcasting-rules",
-     "w": 0.012,
+     "w": 0.009,
      "share": 0.076,
-     "spec": 0.037,
+     "spec": 0.028,
      "n": 1
     }
    ]
@@ -1415,79 +1437,79 @@
   },
   "torch.boolean-masking": {
    "n": 12,
-   "reliability": 0.747,
+   "reliability": 0.745,
    "shared_with": 0.3,
    "tier": "measured",
    "atoms": [
     {
      "a": "boolean-mask-combine",
-     "w": 0.475,
+     "w": 0.477,
      "share": 0.355,
      "spec": 1.0,
      "n": 6
     },
     {
      "a": "boolean-mask-broadcast-assignment",
-     "w": 0.291,
+     "w": 0.292,
      "share": 0.217,
      "spec": 1.0,
      "n": 4
     },
     {
      "a": "any-reduce-axis",
-     "w": 0.222,
+     "w": 0.223,
      "share": 0.311,
      "spec": 0.534,
      "n": 6
     },
     {
      "a": "broadcasting-rules",
-     "w": 0.012,
+     "w": 0.009,
      "share": 0.117,
-     "spec": 0.075,
+     "spec": 0.056,
      "n": 3
     }
    ]
   },
   "torch.broadcasting-rules": {
-   "n": 17,
-   "reliability": 0.688,
-   "shared_with": 0.5,
+   "n": 25,
+   "reliability": 0.768,
+   "shared_with": 0.3,
    "tier": "measured",
    "atoms": [
     {
      "a": "broadcasting-rules",
      "w": 1.0,
-     "share": 0.974,
-     "spec": 0.706,
-     "n": 17
+     "share": 0.982,
+     "spec": 0.781,
+     "n": 25
     },
     {
      "a": "einops-repeat",
      "w": 0.0,
-     "share": 0.026,
+     "share": 0.018,
      "spec": 0.013,
      "n": 1
     }
    ]
   },
   "torch.constructors": {
-   "n": 18,
-   "reliability": 0.934,
-   "shared_with": 0.1,
+   "n": 25,
+   "reliability": 0.954,
+   "shared_with": 0.0,
    "tier": "measured",
    "atoms": [
     {
      "a": "tensor-zeros-init",
-     "w": 0.995,
-     "share": 0.93,
+     "w": 0.997,
+     "share": 0.95,
      "spec": 1.0,
-     "n": 17
+     "n": 24
     },
     {
      "a": "slice-view-mutation",
-     "w": 0.005,
-     "share": 0.07,
+     "w": 0.003,
+     "share": 0.05,
      "spec": 0.066,
      "n": 1
     }
@@ -1495,29 +1517,29 @@
   },
   "torch.dot-matmul-patterns": {
    "n": 11,
-   "reliability": 0.451,
+   "reliability": 0.448,
    "shared_with": 1.2,
    "tier": "measured",
    "atoms": [
     {
      "a": "matvec",
-     "w": 0.77,
+     "w": 0.776,
      "share": 0.347,
      "spec": 1.0,
      "n": 7
     },
     {
      "a": "matmul-2d",
-     "w": 0.184,
+     "w": 0.185,
      "share": 0.254,
      "spec": 0.327,
      "n": 4
     },
     {
      "a": "broadcasting-rules",
-     "w": 0.022,
+     "w": 0.016,
      "share": 0.131,
-     "spec": 0.075,
+     "spec": 0.056,
      "n": 2
     },
     {
@@ -1529,43 +1551,43 @@
     },
     {
      "a": "einops-einsum",
-     "w": 0.01,
+     "w": 0.009,
      "share": 0.127,
-     "spec": 0.036,
+     "spec": 0.032,
      "n": 2
     }
    ]
   },
   "torch.dtype-astype": {
    "n": 33,
-   "reliability": 0.392,
-   "shared_with": 1.5,
+   "reliability": 0.376,
+   "shared_with": 1.7,
    "tier": "measured",
    "atoms": [
     {
      "a": "tensor-wraps-ndarray",
-     "w": 0.671,
+     "w": 0.656,
      "share": 0.695,
-     "spec": 0.379,
+     "spec": 0.355,
      "n": 23
     },
     {
      "a": "torch-arange",
-     "w": 0.225,
+     "w": 0.235,
      "share": 0.245,
      "spec": 0.36,
      "n": 7
     },
     {
      "a": "stride-zero-broadcast",
-     "w": 0.055,
+     "w": 0.057,
      "share": 0.022,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "tensor-unbind",
-     "w": 0.049,
+     "w": 0.051,
      "share": 0.019,
      "spec": 1.0,
      "n": 1
@@ -1580,43 +1602,43 @@
    ]
   },
   "torch.elementwise-ops": {
-   "n": 17,
-   "reliability": 0.86,
-   "shared_with": 0.2,
+   "n": 23,
+   "reliability": 0.888,
+   "shared_with": 0.1,
    "tier": "measured",
    "atoms": [
     {
      "a": "where-clip-negative",
-     "w": 0.498,
-     "share": 0.428,
+     "w": 0.613,
+     "share": 0.545,
      "spec": 1.0,
-     "n": 9
+     "n": 15
     },
     {
      "a": "relu-elementwise-max",
-     "w": 0.241,
-     "share": 0.348,
+     "w": 0.186,
+     "share": 0.277,
      "spec": 0.596,
      "n": 6
     },
     {
      "a": "tensor-pow",
-     "w": 0.168,
-     "share": 0.144,
+     "w": 0.129,
+     "share": 0.115,
      "spec": 1.0,
      "n": 3
     },
     {
      "a": "maximum-backward-tie-split",
-     "w": 0.056,
-     "share": 0.048,
+     "w": 0.043,
+     "share": 0.038,
      "spec": 1.0,
      "n": 1
     },
     {
      "a": "sqrt-eps-stabilize",
-     "w": 0.037,
-     "share": 0.032,
+     "w": 0.029,
+     "share": 0.026,
      "spec": 1.0,
      "n": 1
     }
@@ -1851,17 +1873,17 @@
    ]
   },
   "torch.tensor-model": {
-   "n": 37,
-   "reliability": 0.621,
-   "shared_with": 0.6,
+   "n": 41,
+   "reliability": 0.645,
+   "shared_with": 0.5,
    "tier": "measured",
    "atoms": [
     {
      "a": "tensor-wraps-ndarray",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.621,
-     "n": 37
+     "spec": 0.645,
+     "n": 41
     }
    ]
   },
