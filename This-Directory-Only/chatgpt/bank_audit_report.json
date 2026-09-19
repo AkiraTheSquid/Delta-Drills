@@ -1,5 +1,5 @@
 {
- "total": 1351,
+ "total": 1396,
  "questions": {
   "64": [
    {
@@ -902,11 +902,18 @@
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['einsum']"
    }
+  ],
+  "1624": [
+   {
+    "check": "precompute_leak",
+    "var": "imgs",
+    "detail": "post-setup var 'imgs' already equals the expected value"
+   }
   ]
  },
  "counts": {
   "answer_symbol_in_prompt": 139,
-  "precompute_leak": 8,
+  "precompute_leak": 9,
   "starter_passes_some_cases": 2
  }
 }

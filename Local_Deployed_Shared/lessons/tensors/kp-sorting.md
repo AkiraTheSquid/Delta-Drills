@@ -5,8 +5,8 @@ supporting: [torch.tensor-model, torch.slicing-views]
 new_syntax: [torch.sort, torch.sort#descending, torch.sort#dim, torch.argsort, torch.argsort#descending, torch.argsort#dim, torch.topk, Tensor.values, Tensor.indices]
 faded: [58, 520, 521, 660, 661, 662]
 guided: [516, 517]
-independent: [518, 519, 522, 663, 664, 665]
-integrated: [666, 667, 668]
+independent: [518, 519, 522, 663, 664, 665, 1650, 1651]
+integrated: [666, 667, 668, 1652]
 ---
 
 ## Concept: sort returns a pair, not a tensor
@@ -420,6 +420,12 @@ print("smallest two", t.sort(v).values[:2])
 assert t.sort(v).values[:2].tolist() == [1.0, 3.0]
 ```
 
+### q1650
+Descending is a keyword; the values are one half of the pair.
+
+### q1651
+The other half of the pair: the indices, not the values.
+
 ## Integrated practice
 
 ### q666
@@ -430,6 +436,9 @@ An axis, a direction, and both halves of the pair.
 
 ### q668
 Up, down, and the untouched original.
+
+### q1652
+Sort one thing by another: the indices half drives the reorder.
 
 ## Misconceptions
 

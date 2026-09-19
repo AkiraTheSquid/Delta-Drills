@@ -1416,7 +1416,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-faded"
  },
@@ -1429,7 +1430,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -1454,7 +1456,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-guided"
  },
@@ -1500,7 +1503,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -1592,7 +1596,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -1898,7 +1903,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -1933,7 +1939,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -2232,7 +2239,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -2269,7 +2277,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-independent"
  },
@@ -9525,7 +9534,8 @@
    "torch.axis-reductions"
   ],
   "new_syntax": [
-   "einops.reduce"
+   "einops.reduce",
+   "torch.std"
   ],
   "source": "kp-integrated"
  },
@@ -20495,6 +20505,555 @@
    "torch.constructors"
   ],
   "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1609": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1610": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1611": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1612": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1613": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1614": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1615": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1616": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1617": {
+  "target_kcs": [
+   "einops.dl-flatten-heads"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1618": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1619": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1620": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1621": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1622": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1623": {
+  "target_kcs": [
+   "einops.channel-groups-temporal"
+  ],
+  "supporting_kcs": [
+   "einops.dl-flatten-heads",
+   "einops.pooling"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1624": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1625": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1626": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1627": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1628": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1629": {
+  "target_kcs": [
+   "einops.singleton-and-lists"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1630": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1631": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1632": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1633": {
+  "target_kcs": [
+   "einops.patches-space-depth"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.grids-montage"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1634": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce",
+   "torch.std"
+  ],
+  "source": "kp-independent"
+ },
+ "1635": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce",
+   "torch.std"
+  ],
+  "source": "kp-integrated"
+ },
+ "1636": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce",
+   "torch.std"
+  ],
+  "source": "kp-integrated"
+ },
+ "1637": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce",
+   "torch.std"
+  ],
+  "source": "kp-integrated"
+ },
+ "1638": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1639": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1640": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1641": {
+  "target_kcs": [
+   "einops.pooling"
+  ],
+  "supporting_kcs": [
+   "einops.reduce-model",
+   "einops.split-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1642": {
+  "target_kcs": [
+   "einops.grids-montage"
+  ],
+  "supporting_kcs": [
+   "einops.split-axes",
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1643": {
+  "target_kcs": [
+   "einops.split-axes"
+  ],
+  "supporting_kcs": [
+   "einops.merge-axes"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "1644": {
+  "target_kcs": [
+   "einops.pattern-language"
+  ],
+  "supporting_kcs": [
+   "torch.reshape-flatten"
+  ],
+  "new_syntax": [
+   "einops.rearrange"
+  ],
+  "source": "kp-integrated"
+ },
+ "1645": {
+  "target_kcs": [
+   "torch.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "torch.linalg-basics",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-independent"
+ },
+ "1646": {
+  "target_kcs": [
+   "torch.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "torch.linalg-basics",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-independent"
+ },
+ "1647": {
+  "target_kcs": [
+   "torch.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "torch.linalg-basics",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-independent"
+ },
+ "1648": {
+  "target_kcs": [
+   "torch.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "torch.linalg-basics",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-integrated"
+ },
+ "1649": {
+  "target_kcs": [
+   "torch.dot-matmul-patterns"
+  ],
+  "supporting_kcs": [
+   "torch.linalg-basics",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "torch.dot"
+  ],
+  "source": "kp-integrated"
+ },
+ "1650": {
+  "target_kcs": [
+   "torch.sorting"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-independent"
+ },
+ "1651": {
+  "target_kcs": [
+   "torch.sorting"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-independent"
+ },
+ "1652": {
+  "target_kcs": [
+   "torch.sorting"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "torch.sort",
+   "torch.sort#descending",
+   "torch.sort#dim",
+   "torch.argsort",
+   "torch.argsort#descending",
+   "torch.argsort#dim",
+   "torch.topk",
+   "Tensor.values",
+   "Tensor.indices"
+  ],
+  "source": "kp-integrated"
+ },
+ "1653": {
+  "target_kcs": [
+   "einops.reduce-model"
+  ],
+  "supporting_kcs": [
+   "einops.pattern-language",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [
+   "einops.reduce",
+   "torch.std"
+  ],
   "source": "kp-independent"
  }
 }

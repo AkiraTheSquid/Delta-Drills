@@ -5,7 +5,8 @@ supporting: [einops.merge-axes, einops.split-axes]
 new_syntax: []
 faded: [356]
 guided: [396]
-independent: [384, 394, 349]
+independent: [384, 394, 349, 1609, 1610, 1611, 1612, 1613]
+integrated: [1614, 1615, 1616, 1617]
 ---
 
 ## Concept
@@ -149,6 +150,35 @@ From the drill bank: q384 (concatenate attention heads per token), q394
 (1, c·h·w) — flatten + singleton batch in one pattern), q349 (sum EVERY
 element of a 4-D tensor via reduce's empty output — '(b c h w -> )'-shaped;
 which function, which aggregation?).
+
+### q1609
+The classifier flatten: batch stays, everything else merges c-slow.
+
+### q1610
+Heads to token vectors: nh slow inside the merged feature axis.
+
+### q1611
+The inverse of the merge: the packed axis declares (nh d), and one keyword fixes nh.
+
+### q1612
+Flatten plus the singleton batch axis in one pattern.
+
+### q1613
+Everything into one axis: one big merge, same grammar.
+
+## Integrated practice
+
+### q1614
+Split the channels into heads AND flatten the rest — both moves in one pattern.
+
+### q1615
+Unpack the heads and bring the head axis to the front, then report the shape.
+
+### q1616
+Two merges at once: heads into features, images into a block's sequence.
+
+### q1617
+Flatten, then declare the factors to unflatten: the round trip.
 
 ## Misconceptions
 

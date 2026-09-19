@@ -10275,3 +10275,321 @@ def solve(num_pixels, y_limit):
     rays[:, 1, 0] = 1
     rays[:, 1, 1] = t.linspace(-y_limit, y_limit, num_pixels)
     return (rays[0].tolist(), rays[-1].tolist())",42,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c, h, w)` — a batch of channels-first feature maps. Flatten every map for a linear layer, in the standard framework order (channel slowest, then row, then column), and return the `(b, c·h·w)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(b, c, h, w) -> (b, c*h*w), channel slowest.""""""
+    return einops.rearrange(t.tensor(x), 'b c h w -> b (c h w)').tolist()",30,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, nh, t, d)` — multi-head attention output, one `(t, d)` block per head. Concatenate the heads per token, head index slowest (head 0's d features first inside each token vector), and return the `(b, t, nh·d)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(b, nh, t, d) -> (b, t, nh*d), head slowest.""""""
+    return einops.rearrange(t.tensor(x), 'b nh t d -> b t (nh d)').tolist()",34,
+Einops,Deep Learning,"`packed` is a nested list of shape `(b, t, nh·d)` — token vectors whose feature axis holds `nh` heads concatenated head-slowest — and `nh` is an int. Split the heads back out and return the `(b, nh, t, d)` nested list.","import torch as t
+import einops
+
+
+def solve(packed, nh):
+    """"""(b, t, nh*d) -> (b, nh, t, d).""""""
+    return einops.rearrange(t.tensor(packed), 'b t (nh d) -> b nh t d', nh=nh).tolist()",38,
+Einops,Deep Learning,"`img` is a nested list of shape `(c, h, w)` — one channels-first image. A classifier expects a BATCH of flattened images. Return the `(1, c·h·w)` nested list: a batch axis of length one in front, the rest flattened channel-slowest.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""(c, h, w) -> (1, c*h*w).""""""
+    return einops.rearrange(t.tensor(img), 'c h w -> 1 (c h w)').tolist()",36,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c, h, w)`. Flatten the WHOLE tensor into one axis, batch slowest, then channel, row, column (the order the values are stored in), and return the flat list of `b·c·h·w` numbers.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(b, c, h, w) -> (b*c*h*w,), b slowest.""""""
+    return einops.rearrange(t.tensor(x), 'b c h w -> (b c h w)').tolist()",40,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c, h, w)` — a batch of feature maps — and `nh` is an int that divides `c`. Treat the channel axis as `nh` heads of `c/nh` channels each, head slowest, and return the `(b, nh, c/nh · h · w)` nested list: one flat feature vector per (image, head), channel slowest inside it.","import torch as t
+import einops
+
+
+def solve(x, nh):
+    """"""(b, c, h, w) -> (b, nh, (c/nh)*h*w).""""""
+    return einops.rearrange(t.tensor(x), 'b (nh c) h w -> b nh (c h w)', nh=nh).tolist()",52,
+Einops,Deep Learning,"`packed` is a nested list of shape `(b, t, nh·d)` — attention output with the heads concatenated head-slowest per token — and `nh` is an int. Return a tuple `(heads, shape)`: `heads` is the `(nh, b, t, d)` nested list with the HEAD axis first (so `heads[i]` is head i for the whole batch), and `shape` is its shape as a plain list of four ints.","import torch as t
+import einops
+
+
+def solve(packed, nh):
+    """"""(b, t, nh*d) -> (nh, b, t, d) and its shape.""""""
+    heads = einops.rearrange(t.tensor(packed), 'b t (nh d) -> nh b t d', nh=nh)
+    return (heads.tolist(), list(heads.shape))",56,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, nh, t, d)` — per-head attention output — and `nb` is an int that divides `b`. Concatenate the heads per token (head slowest) AND merge the batch into `nb` blocks of `b/nb` images, block index slowest, returning the `(nb, b/nb · t, nh·d)` nested list — one long token sequence per block.","import torch as t
+import einops
+
+
+def solve(x, nb):
+    """"""(b, nh, t, d) -> (nb, (b/nb)*t, nh*d).""""""
+    return einops.rearrange(t.tensor(x), '(nb b) nh t d -> nb (b t) (nh d)', nb=nb).tolist()",58,
+Einops,Deep Learning,"`imgs` is a nested list of shape `(b, c, h, w)`. Return a tuple `(flat, restored)`: `flat` is the batch flattened for a linear layer, `(b, c·h·w)` channel slowest, and `restored` is `flat` reshaped BACK to `(b, c, h, w)` using the sizes `c`, `h` and `w` you can read off `imgs` — both as nested lists.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""Flatten then unflatten; both as lists.""""""
+    x = t.tensor(imgs)
+    c = x.shape[1]
+    h = x.shape[2]
+    w = x.shape[3]
+    flat = einops.rearrange(x, 'b c h w -> b (c h w)')
+    back = einops.rearrange(flat, 'b (c h w) -> b c h w', c=c, h=h, w=w)
+    return (flat.tolist(), back.tolist())",54,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, g·c, h, w)` whose channel axis holds `g` groups of `c` channels with the GROUP index slowest (channels 0..c−1 are group 0). `g` is an int. Split the groups out in front and return the `(g, b, c, h, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x, g):
+    """"""(b, g*c, h, w) group-slow -> (g, b, c, h, w).""""""
+    return einops.rearrange(t.tensor(x), 'b (g c) h w -> g b c h w', g=g).tolist()",40,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c·g, h, w)` whose channels INTERLEAVE across groups: channel 0 is group 0's first channel, channel 1 is group 1's first channel, and so on (group index fastest). `g` is an int. Split the groups out in front and return the `(g, b, c, h, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x, g):
+    """"""(b, c*g, h, w) group-fast -> (g, b, c, h, w).""""""
+    return einops.rearrange(t.tensor(x), 'b (c g) h w -> g b c h w', g=g).tolist()",42,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c, n)` — a batch of `c`-channel sequences of length `n` — and `w` is an int that divides `n`. Average every non-overlapping window of `w` consecutive time steps and return the `(b, c, n/w)` nested list of floats.","import torch as t
+import einops
+
+
+def solve(x, w):
+    """"""Mean over length-w windows along time.""""""
+    return einops.reduce(t.tensor(x, dtype=t.float32), 'b c (n w) -> b c n', 'mean', w=w).tolist()",52,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, g1·g2·c, h, w)`: the channel axis packs two group levels and the within-group channels, slowest to fastest `g1`, then `g2`, then `c`. `g1` and `g2` are ints. Swap the two group levels — repack so `g2` is slowest, then `g1`, then `c` — and return the `(b, g2·g1·c, h, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x, g1, g2):
+    """"""(g1 g2 c) -> (g2 g1 c) on the channel axis.""""""
+    return einops.rearrange(t.tensor(x), 'b (g1 g2 c) h w -> b (g2 g1 c) h w', g1=g1, g2=g2).tolist()",56,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, g·c, h, w)` with the group index SLOWEST along the channel axis, and `g` is an int. Repack the channels so the groups INTERLEAVE — within-group channel index slowest, group index fastest — and return the `(b, c·g, h, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x, g):
+    """"""(b, g*c, h, w) group-slow -> group-fast.""""""
+    return einops.rearrange(t.tensor(x), 'b (g c) h w -> b (c g) h w', g=g).tolist()",54,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, n, d)` — token sequences — and `k` is an int that divides `n`. Chunk each sequence into consecutive blocks of `k` tokens and return the `(b, n/k, d)` nested list of floats holding the MEAN token vector of each chunk.","import torch as t
+import einops
+
+
+def solve(x, k):
+    """"""Mean over each chunk of k consecutive tokens.""""""
+    return einops.reduce(t.tensor(x, dtype=t.float32), 'b (n k) d -> b n d', 'mean', k=k).tolist()",58,
+Einops,Rearrange,"`imgs` is a Python LIST of grayscale image tensors, each of the same shape `(h, w)`. Using a single rearrange call on the list itself (no stacking first), return the `(n, h, w)` nested list with the list index as the first axis.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""List of (h, w) -> (n, h, w).""""""
+    return einops.rearrange(imgs, 'n h w -> n h w').tolist()",28,
+Einops,Rearrange,"`x` is a nested list of shape `(h, w)`. Insert a length-1 axis BETWEEN the two existing axes and return the `(h, 1, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(h, w) -> (h, 1, w).""""""
+    return einops.rearrange(t.tensor(x), 'h w -> h 1 w').tolist()",32,
+Einops,Rearrange,"`imgs` is a Python LIST of colour image tensors, each of the same shape `(h, w, c)`. Place them side by side in list order — image 0 leftmost — using ONE rearrange call on the list, and return the `(h, n·w, c)` nested list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""List of (h, w, c) -> (h, n*w, c), side by side.""""""
+    return einops.rearrange(imgs, 'n h w c -> h (n w) c').tolist()",48,
+Einops,Rearrange,"`x` is a nested list of shape `(1, h, w)` — a grayscale image with a leading singleton channel axis. Return the `(h, w, 1)` nested list: the leading singleton removed and a trailing one added, in a single pattern.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(1, h, w) -> (h, w, 1).""""""
+    return einops.rearrange(t.tensor(x), '1 h w -> h w 1').tolist()",50,
+Einops,Rearrange,"`imgs` is a Python LIST of grayscale image tensors, each of the same shape `(h, w)`. A convolution expects a channels-first batch. Return the `(n, 1, h, w)` nested list — list index as the batch axis and a singleton channel axis after it — in one rearrange call on the list.","import torch as t
+import einops
+
+
+def solve(imgs):
+    """"""List of (h, w) -> (n, 1, h, w).""""""
+    return einops.rearrange(imgs, 'n h w -> n 1 h w').tolist()",52,
+Einops,Rearrange,"`rows` is a Python LIST of 1-D tensors, each of the same length `w`. Return the `(w, n)` nested list whose COLUMN `j` is the j-th vector — stack them and transpose in one rearrange call on the list.","import torch as t
+import einops
+
+
+def solve(rows):
+    """"""List of (w,) -> (w, n), one vector per column.""""""
+    return einops.rearrange(rows, 'n w -> w n').tolist()",54,
+Einops,Deep Learning,"`img` is a nested list of shape `(h, w, c)` and `p` is an int dividing both `h` and `w`. Cut the image into non-overlapping `p×p` patches, numbered row-major (patch 0 top-left, patch 1 to its right), and return the `(h/p · w/p, p, p, c)` nested list of patches.","import torch as t
+import einops
+
+
+def solve(img, p):
+    """"""(h, w, c) -> (num_patches, p, p, c), row-major.""""""
+    return einops.rearrange(t.tensor(img), '(h p1) (w p2) c -> (h w) p1 p2 c', p1=p, p2=p).tolist()",54,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c, h, w)` and `p` is an int dividing `h` and `w`. Space-to-depth: fold every `p×p` pixel block into the channel axis, packing the new channels with the ORIGINAL channel slowest, then the block row offset, then the block column offset. Return the `(b, c·p·p, h/p, w/p)` nested list.","import torch as t
+import einops
+
+
+def solve(x, p):
+    """"""(b, c, h, w) -> (b, c*p*p, h/p, w/p), packing (c p q).""""""
+    return einops.rearrange(t.tensor(x), 'b c (h p) (w q) -> b (c p q) h w', p=p, q=p).tolist()",58,
+Einops,Deep Learning,"`x` is a nested list of shape `(b, c·p·p, h, w)` whose channel axis packs, slowest to fastest, the true channel `c`, a block row offset and a block column offset (each of size `p`). `p` is an int. Depth-to-space: unfold each block back into the spatial axes and return the `(b, c, h·p, w·p)` nested list.","import torch as t
+import einops
+
+
+def solve(x, p):
+    """"""(b, c*p*p, h, w) -> (b, c, h*p, w*p).""""""
+    return einops.rearrange(t.tensor(x), 'b (c p q) h w -> b c (h p) (w q)', p=p, q=p).tolist()",60,
+Einops,Deep Learning,"`img` is a nested list of shape `(h, w, c)` and `p` is an int dividing `h` and `w`. Turn the image into a sequence of patch TOKENS: patches numbered row-major, each flattened into one vector with the patch row slowest, then the patch column, then the channel. Return the `(h/p · w/p, p·p·c)` nested list.","import torch as t
+import einops
+
+
+def solve(img, p):
+    """"""(h, w, c) -> (num_patches, p*p*c).""""""
+    return einops.rearrange(t.tensor(img), '(h p1) (w p2) c -> (h w) (p1 p2 c)', p1=p, p2=p).tolist()",62,
+Einops,Reduce,"`x` is a nested list of shape `(b, c, h, w)`. For every channel, take the elementwise MAXIMUM across the batch — the brightest value at each pixel over all images — and return the `(c, h, w)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""(b, c, h, w) -> (c, h, w), max over b.""""""
+    return einops.reduce(t.tensor(x), 'b c h w -> c h w', 'max').tolist()",34,
+Einops,Reduce,"`x` is a nested list of shape `(h, w, c)` of floats. Subtract from every element the MAXIMUM of its column (its `w` and `c` fixed, over `h`), so each column's largest entry becomes 0. Do it with one reduce whose output keeps a singleton in place of the reduced axis, then one subtraction. Return the `(h, w, c)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""x minus its per-column max, broadcast via a kept singleton.""""""
+    x = t.tensor(x, dtype=t.float32)
+    return (x - einops.reduce(x, 'h w c -> 1 w c', 'max')).tolist()",50,
+Einops,Reduce,"`x` is a nested list of shape `(b, c, h, w)` of floats. Return a tuple `(channel_means, image_max)`: `channel_means` is the `(c, b)` nested list — the mean of each channel map, with the CHANNEL axis first — and `image_max` is the plain list of `b` floats holding each image's largest value over all its channels and pixels.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Per-channel means transposed to (c, b), and per-image maxima (b,).""""""
+    x = t.tensor(x, dtype=t.float32)
+    return (einops.reduce(x, 'b c h w -> c b', 'mean').tolist(), einops.reduce(x, 'b c h w -> b', 'max').tolist())",52,
+Einops,Reduce,"`series` is a plain list of `7·n` daily float readings, week after week. Return the plain list of `n` floats holding each week's STANDARD DEVIATION (the sample kind, dividing by 6) — one reduce call whose aggregation is a function rather than a string.","import torch as t
+import einops
+
+
+def solve(series):
+    """"""Sample standard deviation per week.""""""
+    return einops.reduce(t.tensor(series, dtype=t.float32), '(w d) -> w', t.std, d=7).tolist()",54,
+Einops,Reduce,"`img` is a nested list of shape `(h, w)` of floats with `h` and `w` both divisible by 3. Replace every non-overlapping `3×3` block by its MEAN and return the `(h/3, w/3)` nested list.","import torch as t
+import einops
+
+
+def solve(img):
+    """"""3x3 mean pooling.""""""
+    return einops.reduce(t.tensor(img, dtype=t.float32), '(h a) (w b) -> h w', 'mean', a=3, b=3).tolist()",34,
+Einops,Reduce,"`x` is a nested list of shape `(b, h, w, c)` — channels-last images — of floats, with `w` even. Halve the width by averaging every pair of ADJACENT columns and return the `(b, h, w/2, c)` nested list.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Average adjacent column pairs.""""""
+    return einops.reduce(t.tensor(x, dtype=t.float32), 'b h (w two) c -> b h w c', 'mean', two=2).tolist()",36,
+Einops,Reduce,"`vol` is a nested list of shape `(x, y, z)` — a 3-D volume — and `k` is an int dividing all three sizes. Replace every non-overlapping `k×k×k` cube by its MAXIMUM and return the `(x/k, y/k, z/k)` nested list.","import torch as t
+import einops
+
+
+def solve(vol, k):
+    """"""k×k×k max pooling.""""""
+    return einops.reduce(t.tensor(vol), '(x a) (y b) (z c) -> x y z', 'max', a=k, b=k, c=k).tolist()",38,
+Einops,Reduce,"`seq` is a nested list of shape `(c, n)` — `c` channels of a signal of length `n` — and `k` is an int dividing `n`. Sum every non-overlapping window of `k` consecutive samples and return the `(c, n/k)` nested list.","import torch as t
+import einops
+
+
+def solve(seq, k):
+    """"""Sum over length-k windows.""""""
+    return einops.reduce(t.tensor(seq), 'c (n k) -> c n', 'sum', k=k).tolist()",40,
+Einops,Rearrange,"`imgs` is a nested list of shape `(b, h, w)` — grayscale images — and `cols` is an int dividing `b`. Tile the images into a grid with `cols` columns, filled row-major (image 0 top-left, image 1 to its right), and return the `(b/cols · h, cols · w)` nested list.","import torch as t
+import einops
+
+
+def solve(imgs, cols):
+    """"""Row-major grid with a given column count.""""""
+    return einops.rearrange(t.tensor(imgs), '(r q) h w -> (r h) (q w)', q=cols).tolist()",42,
+Einops,Rearrange,"`x` is a nested list of shape `(n·k, d)` — rows stacked in `n` consecutive groups of `k` rows each (group index slowest) — and `k` is an int. Unpack the groups and return the `(n, k, d)` nested list.","import torch as t
+import einops
+
+
+def solve(x, k):
+    """"""(n*k, d) -> (n, k, d), group slowest.""""""
+    return einops.rearrange(t.tensor(x), '(n k) d -> n k d', k=k).tolist()",38,
+Einops,Rearrange,"`video` is a nested list of shape `(b, f, h, w, c)` — a batch of `f`-frame clips, channels last. Return a tuple `(out, shape)`: `out` is the clip batch reordered to frame-first, channels-first — `(f, b, c, h, w)` — as a nested list, and `shape` is its shape as a plain list of five ints.","import torch as t
+import einops
+
+
+def solve(video):
+    """"""(b, f, h, w, c) -> (f, b, c, h, w) and its shape.""""""
+    out = einops.rearrange(t.tensor(video), 'b f h w c -> f b c h w')
+    return (out.tolist(), list(out.shape))",48,
+PyTorch,Vectorization and broadcasting,"`a`, `b` and `w` are 1-D float tensors of the same length. Return the WEIGHTED dot product — the sum over i of `w[i] · a[i] · b[i]` — as a float. No Python loops.","import torch as t
+
+
+def solve(a, b, w):
+    """"""Weighted dot product.""""""
+    return float((w * a * b).sum())",30,
+PyTorch,Vectorization and broadcasting,"`a` and `b` are 1-D float tensors of the same length and `keep` is a 1-D bool tensor of that length. Return the dot product of `a` and `b` restricted to the positions where `keep` is True, as a float. No Python loops.","import torch as t
+
+
+def solve(a, b, keep):
+    """"""Dot product over the kept positions only.""""""
+    return float((a * b * keep).sum())",32,
+PyTorch,Vectorization and broadcasting,"`a` and `b` are 2-D float tensors of the same shape `(n, d)`. Return the 1-D tensor of length `n` whose entry `i` is the dot product of row `i` of `a` with row `i` of `b`. No Python loops.","import torch as t
+
+
+def solve(a, b):
+    """"""Dot of corresponding rows.""""""
+    return (a * b).sum(dim=1)",36,
+PyTorch,Vectorization and broadcasting,"`q` is a 1-D float tensor of length `d`, `keys` is a 2-D float tensor of shape `(n, d)` and `vals` is a 1-D float tensor of length `n`. Score every key by its dot product with `q`, then return the score-weighted sum of `vals` — the sum over i of `score[i] · vals[i]` — as a float. No Python loops.","import torch as t
+
+
+def solve(q, keys, vals):
+    """"""Sum of vals weighted by the key scores.""""""
+    return float((keys @ q) @ vals)",50,
+PyTorch,Vectorization and broadcasting,"`x` is a 2-D float tensor of shape `(n, d)`. Return the `(n, n)` tensor of all pairwise row dot products — entry `(i, j)` is row `i` dotted with row `j`. No Python loops.","import torch as t
+
+
+def solve(x):
+    """"""Gram matrix of the rows.""""""
+    return x @ x.T",54,
+PyTorch,Indexing and selection,"`z` is a 1-D float tensor. Return its values sorted LARGEST first, as a plain list of floats.","import torch as t
+
+
+def solve(z):
+    """"""Values sorted descending.""""""
+    return t.sort(z, descending=True).values.tolist()",26,
+PyTorch,Indexing and selection,`z` is a 1-D float tensor. Return the plain list of the INDICES that would sort `z` ascending — position 0 is the index of the smallest value.,"import torch as t
+
+
+def solve(z):
+    """"""Indices that sort z ascending.""""""
+    return t.argsort(z).tolist()",30,
+PyTorch,Indexing and selection,"`names` is a 1-D int tensor of ids and `scores` a 1-D float tensor of the same length. Return a tuple `(ordered_names, ordered_scores)` of two plain lists: the ids arranged from LOWEST score to highest, and their scores in that same order. The ids themselves are never sorted — only reordered by score.","import torch as t
+
+
+def solve(names, scores):
+    """"""Ids and scores ordered by ascending score.""""""
+    order = t.sort(scores).indices
+    return (names[order].tolist(), scores[order].tolist())",44,
+Einops,Reduce,"`x` is a nested list of shape `(n, d)` of floats — `n` samples of `d` features. Return the plain list of `d` floats holding each FEATURE'S sample standard deviation (dividing by n−1) across the samples, using one reduce call whose aggregation is the standard-deviation function rather than a string.","import torch as t
+import einops
+
+
+def solve(x):
+    """"""Sample standard deviation per feature.""""""
+    return einops.reduce(t.tensor(x, dtype=t.float32), 'n d -> d', t.std).tolist()",38,
