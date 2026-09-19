@@ -5,8 +5,8 @@ supporting: [torch.linalg-basics, torch.axis-reductions, torch.broadcasting-rule
 new_syntax: [torch.dot]
 faded: [37, 144, 121]
 guided: [514]
-independent: [141, 515, 95, 1517, 1518]
-integrated: [1519, 1520]
+independent: [141, 515, 95, 1517, 1518, 1645, 1646, 1647]
+integrated: [1519, 1520, 1648, 1649]
 ---
 
 ## Concept: the dot product — multiply, then sum
@@ -190,6 +190,15 @@ Each row dotted with itself.
 ### q1518
 Every row of one matrix against every row of another.
 
+### q1645
+Dot = multiply, then sum: a third factor slots into the multiply.
+
+### q1646
+A masked dot: zero out the terms you don't want, then sum.
+
+### q1647
+Row-wise dots: multiply elementwise, reduce the feature axis.
+
 ## Guided practice
 
 ### q514
@@ -205,6 +214,12 @@ A linear layer: contract, then add a bias to every row.
 
 ### q1520
 All-pairs squared distances from three dot-product pieces.
+
+### q1648
+One matrix-vector product for all the scores, then one more dot.
+
+### q1649
+Every row against every row: one matmul against the transpose.
 
 ## Misconceptions
 

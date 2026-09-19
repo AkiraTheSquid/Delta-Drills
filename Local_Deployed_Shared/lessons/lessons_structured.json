@@ -4126,6 +4126,16 @@
        "question_id": 665,
        "prompt": "The bottom k \u2014 the question topk does not answer.\n\ntopk is one-directional. For the smallest values, sort ascending and keep\nthe front \u2014 the slice you met on the slicing page:",
        "worked_example_code": "import torch as t\n\nv = t.tensor([5.0, 1.0, 9.0, 3.0, 7.0])\nprint(\"largest two \", t.topk(v, 2).values)\nprint(\"smallest two\", t.sort(v).values[:2])\n# Hidden checks\nassert t.sort(v).values[:2].tolist() == [1.0, 3.0]\n"
+      },
+      {
+       "question_id": 1650,
+       "prompt": "Descending is a keyword; the values are one half of the pair.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1651,
+       "prompt": "The other half of the pair: the indices, not the values.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -4140,6 +4150,10 @@
       {
        "question_id": 668,
        "prompt": "Up, down, and the untouched original."
+      },
+      {
+       "question_id": 1652,
+       "prompt": "Sort one thing by another: the indices half drives the reorder."
       }
      ],
      "independent_items": [
@@ -4148,7 +4162,9 @@
       522,
       663,
       664,
-      665
+      665,
+      1650,
+      1651
      ],
      "misconceptions_markdown": "- **\"`t.sort(z)` returns the sorted tensor.\"** \u2014 It returns a\n  `(values, indices)` pair. Take `.values`, or unpack both.\n- **\"`z.sort()` sorts in place, like the NumPy method.\"** \u2014 It does not. There\n  is no in-place sort; the input is never modified.\n- **\"There's no descending option, so I'll reverse the result.\"** \u2014 There is:\n  `descending=True`. And the NumPy reversal idiom `[::-1]` would raise here\n  anyway.\n- **\"Sorting a 2-D tensor sorts the rows as units.\"** \u2014 `t.sort(z, dim=1)`\n  sorts *within* each row independently, destroying row integrity. Keeping\n  rows intact while reordering them is an argsort + indexing pattern (later\n  KP).",
      "notes_markdown": ""
@@ -5587,6 +5603,21 @@
        "question_id": 1518,
        "prompt": "Every row of one matrix against every row of another.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1645,
+       "prompt": "Dot = multiply, then sum: a third factor slots into the multiply.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1646,
+       "prompt": "A masked dot: zero out the terms you don't want, then sum.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1647,
+       "prompt": "Row-wise dots: multiply elementwise, reduce the feature axis.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -5597,6 +5628,14 @@
       {
        "question_id": 1520,
        "prompt": "All-pairs squared distances from three dot-product pieces."
+      },
+      {
+       "question_id": 1648,
+       "prompt": "One matrix-vector product for all the scores, then one more dot."
+      },
+      {
+       "question_id": 1649,
+       "prompt": "Every row against every row: one matmul against the transpose."
       }
      ],
      "independent_items": [
@@ -5604,7 +5643,10 @@
       515,
       95,
       1517,
-      1518
+      1518,
+      1645,
+      1646,
+      1647
      ],
      "misconceptions_markdown": "- **\"Row-wise dots of two matrices = a @ b.\"** \u2014 Matmul dots every row with\n  every COLUMN. Corresponding-rows pairing is elementwise-multiply + row\n  reduction: `(a * b).sum(axis=1)`.\n- **\"The dot product is its own primitive.\"** \u2014 It's multiply + sum. Holding\n  the decomposition lets you build variants (weighted dots, masked dots,\n  batch dots) instead of hunting for a function that may not exist.\n- **\"norm of a matrix = largest row norm.\"** \u2014 Default `t.linalg.norm(z)` on\n  2-D is FROBENIUS: all entries squared, summed, rooted \u2014 as if the matrix\n  were one long vector. Operator norms exist behind `ord=`, but Frobenius is\n  the drills' default meaning of \"the norm\".",
      "notes_markdown": ""
@@ -5874,6 +5916,10 @@
       {
        "question_id": 947,
        "prompt": "Two hops in a row: each pattern names the layout it is HANDED, not the one the\ndata started in."
+      },
+      {
+       "question_id": 1644,
+       "prompt": "A pure permutation of five named axes, then read the shape back."
       }
      ],
      "independent_items": [
@@ -6059,7 +6105,8 @@
       921,
       924,
       925,
-      928
+      928,
+      1643
      ],
      "misconceptions_markdown": "- **\"einops can infer both factors of a split.\"** \u2014 It can infer ONE\n  (total \u00f7 known); the rest are yours to supply as keywords. No keyword,\n  no split \u2014 the error message will list what's missing.\n- **\"Wrong paren order in a split will error.\"** \u2014 Only if the sizes fail\n  to divide. `(h w)` vs `(w h)` with square-ish factors both \"work\" and one\n  is silently scrambled. The packing order comes from how the data was\n  BUILT \u2014 reread the task's layout description, then round-trip-test.\n- **\"Tile reassembly needs index arithmetic.\"** \u2014 The split-merge pattern\n  `('(h w) p1 p2 -> (h p1) (w p2)')` IS the index arithmetic, stated\n  declaratively. If you're computing offsets by hand around einops, the\n  pattern can probably absorb the work.",
      "notes_markdown": ""
@@ -6109,14 +6156,33 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 1626,
+       "prompt": "List axis in, merged into width out: no stack, no cat."
+      },
+      {
+       "question_id": 1627,
+       "prompt": "Consume a 1 on the left, produce a 1 on the right."
+      },
+      {
+       "question_id": 1628,
+       "prompt": "Stack via the list axis and insert the channel singleton together."
+      },
+      {
+       "question_id": 1629,
+       "prompt": "List axis becomes the last axis: stack and transpose at once."
+      }
+     ],
      "independent_items": [
       358,
       374,
       376,
       333,
       334,
-      365
+      365,
+      1624,
+      1625
      ],
      "misconceptions_markdown": "- **\"I must t.stack a list before einops can touch it.\"** \u2014 A list of\n  same-shape tensors is accepted directly; its index becomes the first\n  axis. The stack is the pattern's job.\n- **\"`1` in a pattern is a size I'm asserting for a normal axis.\"** \u2014 It's\n  a LITERAL singleton: inserted on the right, consumed (with verification)\n  on the left. Naming it (like 'c') instead would bind a real axis.\n- **\"Squeezing with einops is overkill \u2014 t.squeeze is fine.\"** \u2014\n  t.squeeze removes ALL singletons, including ones you didn't expect\n  (a batch that happens to be size 1!). `'1 h w -> h w'` removes exactly\n  the declared one and errors otherwise \u2014 overkill is the feature.",
      "notes_markdown": ""
@@ -6192,7 +6258,8 @@
       381,
       322,
       371,
-      531
+      531,
+      1642
      ],
      "misconceptions_markdown": "- **\"Montages need a loop pasting images into a canvas.\"** \u2014 The\n  split-merge pattern is the whole operation. If you're computing paste\n  offsets, the pattern replaces that code.\n- **\"g1 is rows because it's named g1.\"** \u2014 It's rows because it MERGES\n  WITH `h` on the right. Its position in the split on the left decides the\n  fill order (slow = row-major, fast = column-major), not what it means.\n  Rename freely; position does the work. (Corollary: to fill column-major, swap the split order, not the\n  names.)\n- **\"The grid pattern only works for images.\"** \u2014 Any batch \u00d7 per-item-2D\n  data montages the same way; and the same split-merge shape reappears in\n  patches, space-to-depth, and pooling. Learn it as geometry, not as an\n  image trick.",
      "notes_markdown": ""
@@ -6243,7 +6310,24 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 1630,
+       "prompt": "Patch extraction: split both spatial axes, pull the block coordinates out as one patch index."
+      },
+      {
+       "question_id": 1631,
+       "prompt": "Within-block offsets become channels; block positions stay spatial."
+      },
+      {
+       "question_id": 1632,
+       "prompt": "Pixel shuffle: the channel axis declares its factors; blocks unfold into space."
+      },
+      {
+       "question_id": 1633,
+       "prompt": "Vision-transformer tokens: extract patches and flatten each in one pattern."
+      }
+     ],
      "independent_items": [
       401,
       404,
@@ -6273,7 +6357,8 @@
       "torch.axis-reductions"
      ],
      "new_syntax": [
-      "einops.reduce"
+      "einops.reduce",
+      "torch.std"
      ],
      "concept_markdown": "Where rearrange must keep every axis, **`einops.reduce` is allowed to drop\nthem \u2014 and you say HOW the dropped values collapse**:\n\n> `einops.reduce(x, 'b c h w -> b', 'mean')`\n> \u2014 c, h, w vanish from the pattern, so each output element is the mean\n> over everything that vanished. The third argument names the aggregation:\n> `'mean'`, `'max'`, `'min'`, `'sum'`, `'prod'`.\n\nThis is PyTorch's `dim=` reductions with a deletion rule \u2014 an axis you leave\noff the right-hand side is the axis that collapses \u2014 in einops clothing.\nTwo notations, one concept:\n\n- `x.mean(dim=(1, 2, 3))` \u2014 axes by number.\n- `reduce(x, 'b c h w -> b', 'mean')` \u2014 deletion by name, aggregation\n  declared: means and maxes come out finished, nothing to divide afterwards.\n\nDetails that matter in the drills:\n\n- **Partial drops**: `'b h w c -> b h w'` maxes only over channels;\n  `'b c h w -> b c'` averages each channel map. Any subset of axes can go.\n- **Keep a singleton**: writing `1` (or `()` \u2014 same thing) in the output\n  where the dropped axis was \u2014 `'h w c -> 1 w c'` \u2014 keeps the result\n  broadcast-ready against the input, einops' keepdim. This is exactly the\n  `keepdim=True` story: reduce-then-broadcast pipelines (subtract each\n  column's max\u2026) want the singleton kept.\n- **The aggregation can be a function**: besides the five strings, the\n  third argument accepts any callable that takes a tensor and a `dim`\n  (tuple) \u2014 `einops.reduce(x, '(w d) -> w', t.std, d=7)` gives one standard\n  deviation per week, `t.std` dividing by n\u22121 as usual.\n- **Reduce + rearrange compose**: the pattern can still permute the\n  survivors while reducing (`'b c h w -> c b'` is legal), and \u2014 the next\n  KP \u2014 parenthesized factors turn reduce into pooling.",
      "worked_example_markdown": "Task: per-image scalar means; per-column max keeping a singleton row; and a\ngrayscale via mean-over-channels with the channel kept.\n\n```python\nimport torch as t\nimport einops\n\nx = t.arange(24.0).reshape(2, 3, 2, 2)      # (b, c, h, w)\n\n# All of c, h, w collapse under 'mean' -> one number per image.\nper_image = einops.reduce(x, 'b c h w -> b', 'mean')\n\nprint(\"'b c h w -> b'  \", per_image, \" (one number per image)\")\n# Hidden checks\nassert per_image.tolist() == [5.5, 17.5]\nassert t.allclose(per_image, x.mean(dim=(1, 2, 3)))   # the numpy twin\n```\n\nDrop only SOME names and the survivors index the statistics you keep.\n\n```python\nimport torch as t\nimport einops\n\n# Partial drop: mean over spatial only -> per-channel statistics.\nper_channel = einops.reduce(x, 'b c h w -> b c', 'mean')\n\nprint(\"'b c h w -> b c'\", tuple(per_channel.shape), per_channel[0])\n# Hidden checks\nassert per_channel.shape == (2, 3)\nassert per_channel[0, 0] == x[0, 0].mean()\n```\n\nKeeping a `1` where the dropped axis was is einops' `keepdim`: the result still broadcasts against the input.\n\n```python\nimport torch as t\nimport einops\n\n# Keep-a-singleton: per-column max of an image, row axis kept as 1.\nimg = t.tensor([[1.0, 5.0],\n                [7.0, 2.0]])\ncolmax = einops.reduce(img, 'h w -> 1 w', 'max')\n# Why keep it: the (1, 2) result broadcasts straight back against (2, 2).\n\nprint(\"'h w -> 1 w'    \", colmax, \"shape\", tuple(colmax.shape), \"-> broadcasts back to\", tuple((img - colmax).shape))\n# Hidden checks\nassert colmax.shape == (1, 2)\nassert colmax.tolist() == [[7.0, 5.0]]\nassert (img - colmax).shape == (2, 2)\n```\n\nThe same singleton trick at rank 4: average the channels away but keep the channel slot.\n\n```python\nimport torch as t\nimport einops\n\n# Grayscale keeping a trailing singleton channel: (b,h,w,c) -> (b,h,w,1).\nimgs = t.ones((2, 2, 2, 3))\ngray = einops.reduce(imgs, 'b h w c -> b h w 1', 'mean')\nprint(\"grayscale keeps the channel axis:\", tuple(imgs.shape), \"->\",\n      tuple(gray.shape))\n# Hidden checks\nassert gray.shape == (2, 2, 2, 1)\n```\n\nWhy each step:\n\n1. The `dim=` twin assert carries your existing axis intuition into the new\n   notation: names deleted \u2194 axis numbers listed. After a few reps the\n   named form usually reads faster \u2014 especially at rank 4+.\n2. In the singleton example, the follow-up subtraction is the POINT: the\n   kept `1` is what makes reduce-then-operate pipelines shape-safe, same as\n   keepdims in np-3.\n3. The grayscale line matches a drill's exact contract ('-> b h w 1');\n   note reduce handles mean natively \u2014 there is nothing to divide\n   afterwards.",
@@ -6317,6 +6402,18 @@
       {
        "question_id": 932,
        "prompt": "day-of-week means"
+      },
+      {
+       "question_id": 1635,
+       "prompt": "Keep the singleton so the reduced result broadcasts back over the input."
+      },
+      {
+       "question_id": 1636,
+       "prompt": "Two reductions; the first also permutes the survivors."
+      },
+      {
+       "question_id": 1637,
+       "prompt": "The aggregation argument accepts a callable; the week is a factored axis."
       }
      ],
      "independent_items": [
@@ -6326,7 +6423,9 @@
       402,
       332,
       340,
-      370
+      370,
+      1634,
+      1653
      ],
      "misconceptions_markdown": "- **\"reduce is rearrange with a mode argument.\"** \u2014 rearrange forbids\n  dropping names; reduce ALLOWS it and says how the dropped values combine.\n  (A reduce that drops nothing is legal and combines nothing.) They share\n  the pattern grammar, not the contract.\n- **\"A mean is a sum you divide afterwards.\"** \u2014 reduce's third\n  argument does real means/maxes/mins natively; dividing a `'mean'` result\n  by the window size double-counts the normalisation.\n- **\"'h w -> w' and 'h w -> 1 w' are the same reduction.\"** \u2014 Same numbers,\n  different SHAPE: (w,) vs (1, w). The singleton version survives\n  broadcasting against the original; the bare version may misalign\n  (np-3's keepdims lesson, verbatim). Drills specify which they grade.",
      "notes_markdown": ""
@@ -6411,7 +6510,11 @@
       368,
       354,
       336,
-      377
+      377,
+      1638,
+      1639,
+      1640,
+      1641
      ],
      "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form.",
      "notes_markdown": ""
@@ -6598,11 +6701,33 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 1614,
+       "prompt": "Split the channels into heads AND flatten the rest \u2014 both moves in one pattern."
+      },
+      {
+       "question_id": 1615,
+       "prompt": "Unpack the heads and bring the head axis to the front, then report the shape."
+      },
+      {
+       "question_id": 1616,
+       "prompt": "Two merges at once: heads into features, images into a block's sequence."
+      },
+      {
+       "question_id": 1617,
+       "prompt": "Flatten, then declare the factors to unflatten: the round trip."
+      }
+     ],
      "independent_items": [
       384,
       394,
-      349
+      349,
+      1609,
+      1610,
+      1611,
+      1612,
+      1613
      ],
      "misconceptions_markdown": "- **\"Any flatten order works if shapes match.\"** \u2014 The linear layer's\n  weights were trained against ONE packing order. (c h w) vs (h w c)\n  flattens produce equal shapes and incompatible semantics. Follow the\n  framework convention the drill names.\n- **\"Head merge/split order is a style choice.\"** \u2014 nh-slow is the\n  transformer ecosystem's convention; violating it silently permutes\n  features. The einops pattern documents the choice \u2014 that's half its\n  value.\n- **\"These need reshape + transpose + reshape chains.\"** \u2014 Each is ONE\n  pattern. If your solution has intermediate .transpose calls around\n  reshapes, the pattern can absorb them (and check the shapes while it's\n  at it).",
      "notes_markdown": ""
@@ -6653,14 +6778,33 @@
      ],
      "applied_items": [],
      "solo_items": [],
-     "integrated_items": [],
+     "integrated_items": [
+      {
+       "question_id": 1620,
+       "prompt": "Temporal pooling: split time into (kept \u00d7 window), reduce the window away."
+      },
+      {
+       "question_id": 1621,
+       "prompt": "Swap two group factors: unpack three, repack in the new order."
+      },
+      {
+       "question_id": 1622,
+       "prompt": "Blocked to interleaved: (g c) in, (c g) out."
+      },
+      {
+       "question_id": 1623,
+       "prompt": "Chunked sequence: the time axis is (chunks \u00d7 k), and the k collapses."
+      }
+     ],
      "independent_items": [
       369,
       372,
       378,
       397,
       316,
-      359
+      359,
+      1618,
+      1619
      ],
      "misconceptions_markdown": "- **\"(g c) and (c g) differ only in variable naming.\"** \u2014 They are\n  opposite memory layouts: blocks vs interleave. Same shape, different\n  tensor. The task's \"slowest/fastest/interleaved\" sentence is the spec \u2014\n  translate it to paren order before writing anything.\n- **\"Group tricks need index arithmetic over channel numbers.\"** \u2014 Every\n  grouped-channel task in the bank is one rearrange with the right\n  factoring. Hand-computed channel indices are the sign you're fighting\n  the notation.\n- **\"Time axes are special.\"** \u2014 To the pattern language a time axis is an\n  axis. Pooling, chunking, windowing transfer verbatim from the spatial\n  versions \u2014 reuse the pattern, rename the letters.",
      "notes_markdown": ""

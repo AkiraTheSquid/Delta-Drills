@@ -5,7 +5,8 @@ supporting: [einops.dl-flatten-heads, einops.pooling]
 new_syntax: []
 faded: [362]
 guided: [375]
-independent: [369, 372, 378, 397, 316, 359]
+independent: [369, 372, 378, 397, 316, 359, 1618, 1619]
+integrated: [1620, 1621, 1622, 1623]
 ---
 
 ## Concept
@@ -146,6 +147,26 @@ a pure but rank-heavy rearrange).
 Also from the bank: q316 (channel axis holds `coord` CONTIGUOUS groups of k,
 group index slowest — split the group out and move it to the front), q359
 (same split, phrased for unpacking: `part1, part2 = solve(x, 2)`).
+
+### q1618
+Group slowest: the factor order is (g c).
+
+### q1619
+Group fastest: the same shape, the opposite factor order.
+
+## Integrated practice
+
+### q1620
+Temporal pooling: split time into (kept × window), reduce the window away.
+
+### q1621
+Swap two group factors: unpack three, repack in the new order.
+
+### q1622
+Blocked to interleaved: (g c) in, (c g) out.
+
+### q1623
+Chunked sequence: the time axis is (chunks × k), and the k collapses.
 
 ## Misconceptions
 

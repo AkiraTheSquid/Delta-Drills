@@ -6,6 +6,7 @@ new_syntax: []
 faded: [323]
 guided: [313]
 independent: [401, 404, 343, 350, 321, 395, 398, 403]
+integrated: [1630, 1631, 1632, 1633]
 ---
 
 ## Concept
@@ -160,6 +161,20 @@ sub-positions of an enlarged pixel grid), q395 (space-to-depth, the other
 direction — block position folded INTO the channel axis), q398 (reassemble
 a channels-FIRST patch stack into one image), q403 (fold width chunks into
 height AHEAD of h — 'b h (w w4) c -> b (w4 h) w c').
+
+## Integrated practice
+
+### q1630
+Patch extraction: split both spatial axes, pull the block coordinates out as one patch index.
+
+### q1631
+Within-block offsets become channels; block positions stay spatial.
+
+### q1632
+Pixel shuffle: the channel axis declares its factors; blocks unfold into space.
+
+### q1633
+Vision-transformer tokens: extract patches and flatten each in one pattern.
 
 ## Misconceptions
 

@@ -5,7 +5,7 @@ supporting: [einops.merge-axes]
 new_syntax: []
 faded: [390]
 guided: [315]
-independent: [337, 320, 331, 921, 924, 925, 928]
+independent: [337, 320, 331, 921, 924, 925, 928, 1643]
 integrated: [922, 923, 926, 927]
 ---
 
@@ -147,6 +147,9 @@ Also from the bank: q331 (slice to the even-indexed images, then tile them
 into an r-row grid), q921 (0..n-1 into h rows), q924 (a range into w
 columns), q925 (a flat list into h rows), q928 (a grid back to a flat list —
 the merge direction, as a check that you can go both ways).
+
+### q1643
+One keyword fixes k; the other factor is forced.
 
 ## Integrated practice
 

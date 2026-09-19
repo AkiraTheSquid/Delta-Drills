@@ -5,7 +5,7 @@ supporting: [einops.split-axes, einops.merge-axes]
 new_syntax: []
 faded: [389]
 guided: [364]
-independent: [329, 382, 318, 381, 322, 371, 531]
+independent: [329, 382, 318, 381, 322, 371, 531, 1642]
 integrated: [909, 910, 911, 912]
 ---
 
@@ -137,6 +137,9 @@ subgrid indices moved OUT into the batch axis, subgrid-major), q371 (the
 inverse — subgrids packed in the batch axis, unpacked back into space),
 q531 (the same montage filled COLUMN-major — the misconception below, as a
 drill: the edit is on the input side).
+
+### q1642
+Montage by column count: the batch splits as (rows cols), then each grid coordinate merges with its image axis.
 
 ## Integrated practice
 
