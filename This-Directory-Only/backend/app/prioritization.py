@@ -873,23 +873,7 @@ def select_next_subtopic(
     # just missed yields to the rest of the frontier; the second pass counts
     # it as work again, so it is never withheld when nothing else is left.
     done = answered_question_ids(user_state)
-    owed_all = owed_question_ids(user_state)
-    passes = (done - retakeable_question_ids(user_state), done - owed_all)
-
-    def _review_subtopic() -> Optional[str]:
-        """A subtopic with NO outstanding work — every unlocked drill answered
-        and none owed — whose drills belong to a learned concept, weakest
-        first. Served between the two passes so a cooling retake is spaced
-        by review of learned material instead of handed straight back: with
-        one concept left on the frontier the replay served the same missed
-        drill up to nineteen times in a row (2026-09-19)."""
-        for st_name, _p, _e in sorted(_candidates(skip_served=False), key=lambda item: (-item[1], item[2], item[0])):
-            qs = [q for q in get_questions_by_subtopic(st_name) if question_is_unlocked(user_state, q)]
-            if not qs or any(q.id not in done or q.id in owed_all for q in qs):
-                continue
-            if any(kc_graph.kc_is_learned(user_state, kc) for q in qs for kc in kc_graph.question_kcs(q.id)):
-                return st_name
-        return None
+    passes = (done - retakeable_question_ids(user_state), done - owed_question_ids(user_state))
 
     # KC LATTICE FIRST. The knowledge graph decides what comes next; the
     # weakest-first machinery below is the fallback for when the lattice has
@@ -897,11 +881,7 @@ def select_next_subtopic(
     # left). Ordering the frontier is `kc_graph`'s job — coreness then depth,
     # per The Math Academy Way ch. 32 — so this only has to translate the KC it
     # picks into a subtopic that actually has an unserved question for it.
-    for n_pass, answered in enumerate(passes):
-        if n_pass == 1:
-            review = _review_subtopic()
-            if review:
-                return review
+    for answered in passes:
         for kc in kc_graph.frontier(user_state):
             if kc in excluded_kcs:
                 continue
