@@ -64705,7 +64705,7 @@
     "wrong_examples": [
       {
         "output": "(0, 1)",
-        "why": "`argmax` of the raw values finds the largest POSITIVE entry; the largest magnitude may be a negative one, so compare absolute values."
+        "why": "The largest of the raw values is the largest POSITIVE entry; the largest magnitude may be a negative one, so compare absolute values."
       }
     ],
     "provenance": null,

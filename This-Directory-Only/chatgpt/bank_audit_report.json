@@ -898,12 +898,6 @@
     "detail": "post-setup var 'imgs' already equals the expected value"
    }
   ],
-  "1659": [
-   {
-    "check": "answer_leak_in_wrong_example",
-    "detail": "wrong_examples[0].why names the answer's call(s) ['argmax']: '`argmax` of the raw values finds the largest POSITIVE entry; the largest magnitude may be a negative'"
-   }
-  ],
   "1686": [
    {
     "check": "precompute_leak",
@@ -914,7 +908,6 @@
  },
  "counts": {
   "answer_symbol_in_prompt": 139,
-  "precompute_leak": 10,
-  "answer_leak_in_wrong_example": 1
+  "precompute_leak": 10
  }
 }
