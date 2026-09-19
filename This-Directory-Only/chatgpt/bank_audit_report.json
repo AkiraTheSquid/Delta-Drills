@@ -1,5 +1,5 @@
 {
- "total": 1396,
+ "total": 1432,
  "questions": {
   "64": [
    {
@@ -442,12 +442,6 @@
     "detail": "post-setup var 'example' already equals the expected value"
    }
   ],
-  "550": [
-   {
-    "check": "starter_passes_some_cases",
-    "detail": "starter as handed to the learner passes 2/4 graded cases"
-   }
-  ],
   "581": [
    {
     "check": "precompute_leak",
@@ -837,12 +831,6 @@
     "detail": "prompt names solution call(s) in code form: ['apply']"
    }
   ],
-  "1531": [
-   {
-    "check": "starter_passes_some_cases",
-    "detail": "starter as handed to the learner passes 1/5 graded cases"
-   }
-  ],
   "1551": [
    {
     "check": "answer_symbol_in_prompt",
@@ -909,11 +897,24 @@
     "var": "imgs",
     "detail": "post-setup var 'imgs' already equals the expected value"
    }
+  ],
+  "1659": [
+   {
+    "check": "answer_leak_in_wrong_example",
+    "detail": "wrong_examples[0].why names the answer's call(s) ['argmax']: '`argmax` of the raw values finds the largest POSITIVE entry; the largest magnitude may be a negative'"
+   }
+  ],
+  "1686": [
+   {
+    "check": "precompute_leak",
+    "var": "ids",
+    "detail": "post-setup var 'ids' already equals the expected value"
+   }
   ]
  },
  "counts": {
   "answer_symbol_in_prompt": 139,
-  "precompute_leak": 9,
-  "starter_passes_some_cases": 2
+  "precompute_leak": 10,
+  "answer_leak_in_wrong_example": 1
  }
 }
