@@ -26,6 +26,7 @@ from app import practice_targets
 from app import symbol_gate
 # Re-exported: every caller reads these off this module (question_pick, the
 # test scripts), and the history readers moved out only for size.
+from app import remediation
 from app.attempt_history import (  # noqa: F401
     answered_question_ids, missed_question_ids, owed_question_ids,
     retakeable_question_ids,
@@ -203,9 +204,16 @@ def narrow_to_next_kc(
     answered: Optional[set] = None,
     exclude_kcs: Optional[set] = None,
     last_served: Optional[int] = None,
+    cooldown: bool = True,
 ) -> Tuple[List, Optional[str], Optional[dict]]:
     """Restrict a subtopic's servable questions to the frontier KC the tutor
     actually intends to teach next, and to the RUNG that concept is on.
+
+    `cooldown` is the request's mode (question_pick.run_queue): with it on, a
+    missed drill inside its cooldown is NOT a retake this function will hand
+    back — the concept reports its rung spent instead, and the caller fills
+    the cooldown from elsewhere. Off is the last resort, when nothing else on
+    the whole course could be served: then the retake beats a 409.
 
     `last_served` is the drill on screen right now, if any. Only the Solo band
     walk reads it, and only to step past a band that IS that one drill: the
@@ -276,33 +284,46 @@ def narrow_to_next_kc(
     # right preference. It must not decide whether the course has run out.
     answered = answered_question_ids(user_state) if answered is None else answered
     # A missed drill is spent for the unseen-first order but not for the
-    # concept: it is owed a retry (see missed_question_ids), so a concept whose
-    # only remaining work is retries still counts as having work. So is a Solo
-    # drill answered correctly behind a worked example — it cannot count toward
-    # the six-distinct-unaided gate until it is retaken without one
-    # (attempt_history.owed_question_ids, 2026-09-18).
+    # concept: it is owed a retry (attempt_history.owed_question_ids — misses
+    # only since 2026-09-19; an aided answer owes nothing on the drill), so a
+    # concept whose only remaining work is retries still counts as having work.
     missed = owed_question_ids(user_state)
     # ...but not handed straight back: an owed drill inside its cooldown
     # (attempt_history.RETAKE_COOLDOWN) yields to any other retake on the rung,
     # and comes back only when it is the only work left — the alternative was
     # the same drill seventeen times in a row (replay, 2026-09-18).
     ready = retakeable_question_ids(user_state)
+    owed_now = ready if cooldown else missed
     # Eligibility must match what the caller can actually serve, or the
     # narrowing targets a KC whose questions are all spent and hands back a
     # list the difficulty picker then rejects — a 404 with fresh sibling work
     # sitting right there. `select_next_subtopic` chose this subtopic because
-    # SOME frontier KC has unanswered work in it; find that same KC.
-    # Same two passes as `select_next_subtopic`: a concept whose only work is
-    # a retake in its cooldown yields to a sibling with fresh or ready work.
+    # SOME frontier KC has unanswered work in it; find that same KC — through
+    # `remediation.select_next_kc`, so a struggling concept resolves to the
+    # prerequisite being drilled for it and a concept that has just had its
+    # run of consecutive answers yields (both rules in app/remediation.py).
+    # Same passes as `select_next_subtopic`: cap on, then off; within each, a
+    # concept whose only work is a retake in its cooldown yields to a sibling
+    # with fresh or ready work.
     next_kc = None
-    for owed in (ready, missed):
-        next_kc = kc_graph.select_next_kc(
+    for cap in (True, False):
+        next_kc = remediation.select_next_kc(
             user_state,
-            eligible=lambda qid: qid in here and (qid not in answered or qid in owed),
-            skip=skip,
+            eligible=lambda qid: qid in here and (qid not in answered or qid in owed_now),
+            skip=skip, cap=cap,
         )
         if next_kc:
             break
+    if not next_kc:
+        # No frontier concept has fresh or ready work here. A drill nobody
+        # has answered still might — on a concept the learner has already
+        # LEARNED, whose unseen drills are review with new material. That is
+        # what `select_next_subtopic` sends here to fill a retake's cooldown
+        # (its pass 2), and it has to be found BEFORE the membership pass
+        # below hands the frontier concept its in-cooldown retake.
+        unanswered = [q for q in candidates if q.id not in answered]
+        if unanswered:
+            next_kc = _resident_kc(user_state, unanswered, skip=skip)
     if not next_kc:
         # Nothing here is unanswered. Re-ask on membership alone so the concept
         # the learner is actually on can still report its own exhaustion —
@@ -371,30 +392,16 @@ def narrow_to_next_kc(
         # back — and never on a walk-down, which is review, not a retake. The
         # picker sees every one of these as already served and recycles the
         # stalest (grading.select_question_for_difficulty).
-        retry = [q for q in rung if q.id in ready] or [q for q in rung if q.id in missed]
+        retry = [q for q in rung if q.id in owed_now]
         if retry:
             return retry, next_kc, None
-        # The rung is spent and nothing on it is owed, yet the learner is
-        # standing on it: that is DEMOTION. A miss on an Integrated drill
-        # steps down to Solo (kc_graph._stage_from), and with every Solo drill
-        # answered there is nothing below to walk down onto, so the queue
-        # 409'd on a concept whose Solo rung the learner had finished (replay
-        # of Seth's state, 2026-09-18: torch.constructors after q648 missed,
-        # torch.elementwise-ops after q638). The drill whose miss sent them
-        # here is the one still owed — hand it back, and the schedule attaches
-        # the after-miss example to it.
-        above = [q for q in narrowed if q.id in missed
-                 and kc_graph.ladder_rank(q.id) in kc_graph._SERVABLE_RANKS]
-        owed_above = [q for q in above if q.id in ready] or above
-        if owed_above:
-            return owed_above, next_kc, None
     if not fresh and stage == "solo":
         # The top rung is spent too, and a drill on it is owed — missed, or
         # answered behind the entry example. Without this the walk-down below
         # found nothing unanswered and 409'd a concept whose only remaining
         # work was that retake (replay, 2026-09-18: torch.boolean-masking with
         # q1515 answered aided, q1516 missed).
-        retry = [q for q in rung if q.id in ready] or [q for q in rung if q.id in missed]
+        retry = [q for q in rung if q.id in owed_now]
         if retry:
             return retry, next_kc, None
     if not fresh:
@@ -442,7 +449,7 @@ def narrow_to_next_kc(
             # Unseen, or owed a retake — a missed Solo drill under an
             # Integrated learner is still the concept's unfinished work.
             spare = [q for q in narrowed if q.id in at_lower
-                     and (q.id not in answered or q.id in missed)]
+                     and (q.id not in answered or q.id in owed_now)]
             if spare:
                 if gap:
                     gap["served_from"] = lower
@@ -812,6 +819,7 @@ def select_next_subtopic(
     user_state: UserPracticeState,
     exclude: Optional[set] = None,
     exclude_kcs: Optional[set] = None,
+    cooldown: bool = True,
 ) -> Optional[str]:
     """Select the subtopic to pull the next question from — weakest-first by
     BKT mastery, weighted by effective (custom) weight and by whether the
@@ -881,10 +889,12 @@ def select_next_subtopic(
     # left). Ordering the frontier is `kc_graph`'s job — coreness then depth,
     # per The Math Academy Way ch. 32 — so this only has to translate the KC it
     # picks into a subtopic that actually has an unserved question for it.
-    for answered in passes:
-        for kc in kc_graph.frontier(user_state):
-            if kc in excluded_kcs:
-                continue
+    def _frontier_walk(answered: set, cap: bool) -> Optional[str]:
+        """The subtopic holding the first frontier concept with work that
+        `answered` does not cover. `remediation.targets` walks the frontier
+        with a struggling concept redirected to its prerequisite and, with
+        `cap`, a concept that has just had its run of answers left out."""
+        for kc in remediation.targets(user_state, skip=excluded_kcs, cap=cap):
             wanted = set(kc_graph.questions_for_kc(kc))
             if not wanted:
                 continue
@@ -910,22 +920,47 @@ def select_next_subtopic(
                         for q in get_questions_by_subtopic(st_name)
                     ):
                         return st_name
+        return None
 
+    # PASS ORDER (2026-09-19). 1. Frontier work — fresh drills and retakes
+    # out of their cooldown — with the consecutive-concept cap on, then off.
+    # 2. Fresh drills ANYWHERE unlocked: a learned concept's unseen drills are
+    # review with new material. 3. Repeats anywhere, least recently served.
+    # A missed drill inside its cooldown is served by NONE of these: three
+    # other answers pass first, and then it is `ready` for pass 1. Until this
+    # order the in-cooldown retake came straight back whenever the frontier
+    # had shrunk to one spent concept — q972 on torch.ranges nine times
+    # running in replay, every prerequisite dosed, nothing fresh anywhere.
+    # `cooldown=False` is the request's last resort (question_pick.run_queue):
+    # the in-cooldown retakes come back, between passes 2 and 3, so a course
+    # with nothing else left still serves something rather than 409.
+    for cap in (True, False):
+        found = _frontier_walk(passes[0], cap)
+        if found:
+            return found
     cands = _candidates(skip_served=True)
-    if not cands:
-        # Nothing UNLOCKED and unserved is left, so the next question has to be
-        # a repeat. It used to be a repeat with amnesia: this branch cleared
-        # `served_question_ids` for every subtopic in the course, which is the
-        # only record of what the learner has already solved. A beginner hits
-        # this on their second question — the lattice opens with one root KC, so
-        # "everything unlocked is served" is the normal state early on, not an
-        # end-of-bank condition — and from then on the app genuinely could not
-        # tell a solved question from a fresh one.
-        #
-        # So: no wipe. Fall through to the full set and let
-        # select_question_for_difficulty pick the least-recently-served repeat,
-        # with the service log intact.
-        cands = _candidates(skip_served=False)
+    if cands:
+        cands.sort(key=lambda item: (-item[1], item[2], item[0]))
+        return cands[0][0]
+    if not cooldown:
+        for cap in (True, False):
+            found = _frontier_walk(passes[1], cap)
+            if found:
+                return found
+
+    # Nothing UNLOCKED and unserved is left, so the next question has to be
+    # a repeat. It used to be a repeat with amnesia: this branch cleared
+    # `served_question_ids` for every subtopic in the course, which is the
+    # only record of what the learner has already solved. A beginner hits
+    # this on their second question — the lattice opens with one root KC, so
+    # "everything unlocked is served" is the normal state early on, not an
+    # end-of-bank condition — and from then on the app genuinely could not
+    # tell a solved question from a fresh one.
+    #
+    # So: no wipe. Fall through to the full set and let
+    # select_question_for_difficulty pick the least-recently-served repeat,
+    # with the service log intact.
+    cands = _candidates(skip_served=False)
     if not cands:
         return None
 

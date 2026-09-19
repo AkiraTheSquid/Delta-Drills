@@ -380,15 +380,18 @@ def check_the_example_schedule_fades_and_then_tests():
         "the retired Faded rung is back on the example schedule"
     assert not es.plan([miss("faded")], "faded")["show"], \
         "the retired Faded rung still schedules an example"
-    assert es.plan([ok("partial"), miss("partial")], "partial")["why"] == "after_miss", \
-        "a miss on Solo does not bring the example back — with no rung below it, that was the support"
+    # 2026-09-19: a miss brings NOTHING back inside the concept — not the
+    # example, not the drill, not a lower rung. Struggle is answered by the
+    # prerequisites (app/remediation.py); the entry example is the whole of
+    # the in-concept support.
+    assert not es.plan([ok("partial"), miss("partial")], "partial")["show"], \
+        "a miss on Solo brings the example back — support inside the concept is retired"
     assert not es.plan([ok("partial")] * 3 + [miss("partial", True)], "partial")["show"], \
         "a miss made BEHIND an example buys a second example — two in a row"
 
     at = es.SCHEDULE["partial"]["at"]
-    assert at and at[0] == 0, "Solo does not open with an example"
-    gaps = [b - a for a, b in zip(at, at[1:])]
-    assert gaps == sorted(gaps), f"Solo's example gaps shrink ({at}) — the fade runs backwards"
+    assert at == (0,), f"Solo shows more than the entry example ({at})"
+    assert not es.SCHEDULE["partial"]["after_miss"], "Solo re-shows an example on a miss"
     assert es.SCHEDULE["solo"]["at"] == (0,), "Integrated shows more than the entry example"
     assert not es.SCHEDULE["solo"]["after_miss"], "Integrated re-shows an example on a miss"
 
@@ -426,7 +429,7 @@ def check_the_example_schedule_fades_and_then_tests():
 
 
 def check_only_unaided_answers_promote():
-    """Assistance may HOLD a rung and may drop one. It may not buy one.
+    """Assistance may HOLD a rung. It may not buy one, and nothing drops one.
 
     kc_graph, 2026-08-30. A drill served behind a worked-example popup had the
     answer on screen a moment earlier, so counting it as evidence of unassisted
@@ -445,7 +448,10 @@ def check_only_unaided_answers_promote():
         SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": list(att)}}), "k"
     )
 
-    entered = [miss("partial")] * 5 + [ok("partial")] * 3 + [miss("solo")]
+    # No `miss("solo")` in the fixture any more: a rung once served is HELD
+    # (2026-09-19, kc_graph._stage_from) — a miss there no longer steps the
+    # learner back to Solo, so the aided-run cases below start from Solo.
+    entered = [miss("partial")] * 5 + [ok("partial")]
     assert stage(entered + [ok("partial", True)] * 3) == "partial", (
         "three answers made BEHIND examples promoted off the Solo rung — the "
         "ladder is measuring the examples"
@@ -459,9 +465,11 @@ def check_only_unaided_answers_promote():
     # ... and the same window made of unaided answers still promotes.
     assert stage([miss("partial")] * 2 + [ok("partial")] * 12) == "solo",         "an unaided window no longer promotes"
 
-    # Demotion sees everything, and a record from before the popup existed
-    # (no `example` key at all) is unaided, which is what it was.
-    assert stage([ok("partial")] * 4 + [ok("solo"), miss("solo", True)]) == "partial",         "a miss made behind an example stopped counting as a miss"
+    # A miss — behind an example or not — no longer drops the rung: the rung
+    # the learner has been served at is held, and struggle is answered by the
+    # prerequisites (app/remediation.py), not by easier drills here.
+    assert stage([ok("partial")] * 4 + [ok("solo"), miss("solo", True)]) == "solo",         "a miss on Integrated demoted the learner — the rung is a promotion order, never a fallback"
+    assert stage([ok("partial")] * 4 + [ok("solo")] + [miss("solo")] * 6) == "solo",         "a bad window on Integrated demoted the learner"
     # Rows filed at the retired rung: they neither land a learner there nor
     # drag one below the floor.
     assert stage([miss("faded")] * 6) == "partial",         "a record of old faded misses still lands the learner on the retired rung"
@@ -469,7 +477,7 @@ def check_only_unaided_answers_promote():
     assert stage([{"correct": True, "stage": "partial"} for _ in range(4)]) == "solo",         "pre-2026-08-30 attempts, which carry no example flag, stopped promoting"
 
     est = kc_graph.kc_estimate(
-        SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": entered + [ok("partial", True)] * 3}}),
+        SimpleNamespace(kc_ladder={"k": {"worked_seen": 1, "attempts": [miss("partial")] * 5 + [ok("partial", True)] * 3}}),
         "k",
     )
     assert est["promote_lo"] == est["unaided"]["ci"][0],         "promote_lo is not the unaided bound the ladder actually promotes on"

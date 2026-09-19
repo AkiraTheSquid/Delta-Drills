@@ -272,7 +272,7 @@ function initSelfReportControls() {
 
   const NOTE_BY_LEVEL = {
     beginner: "Starting at the easiest problems — answering well moves you up fast.",
-    strong: "Starting at harder problems — a miss steps back down, no harm done.",
+    strong: "Starting at harder problems — a miss sends you to the prerequisites, no harm done.",
     default: "Starting in the middle — your answers take it from there.",
   };
 

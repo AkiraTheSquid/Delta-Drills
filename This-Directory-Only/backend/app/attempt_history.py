@@ -110,14 +110,44 @@ def aided_correct_question_ids(user_state) -> set:
     return {qid for qid, a in latest.items() if a.get("correct") and a.get("example")}
 
 
-def owed_question_ids(user_state) -> set:
-    """Answered drills the concept still has a claim on: the misses and the
-    Solo drills answered behind an example. Spent for the unseen-first order,
-    unspent for "does this concept still have work" — the picker's two readers
-    of `answered` (prioritization.select_next_subtopic, narrow_to_next_kc)
-    both subtract this set before deciding a rung is done.
+def unaided_success_question_ids(user_state) -> set:
+    """Every drill whose LATEST attempt was correct WITHOUT an example on
+    screen — the learner's own evidence. Read from `kc_ladder` like
+    `aided_correct_question_ids` (the `example` flag lives only there).
+
+    This is the debt an aided answer leaves (2026-09-19): not a retake of
+    that drill, but at least ONE of these on the concept before the concept
+    can count as learned or its Solo rung as cleared. Without it a concept
+    whose every servable drill was answered behind the entry example — a
+    one-drill concept, or a legacy record — left the frontier on the
+    example alone (codex, 2026-09-19).
     """
-    return missed_question_ids(user_state) | aided_correct_question_ids(user_state)
+    latest: Dict[int, dict] = {}
+    for row in (getattr(user_state, "kc_ladder", None) or {}).values():
+        for attempt in (row.get("attempts") if isinstance(row, dict) else None) or ():
+            qid = attempt.get("question_id")
+            if qid is not None:
+                latest[int(qid)] = attempt
+    return {qid for qid, a in latest.items() if a.get("correct") and not a.get("example")}
+
+
+def owed_question_ids(user_state) -> set:
+    """Answered drills the concept still has a claim on: the MISSES. Spent for
+    the unseen-first order, unspent for "does this concept still have work" —
+    the picker's readers of `answered` (prioritization.select_next_subtopic,
+    narrow_to_next_kc) subtract this set before deciding a rung is done.
+
+    Until 2026-09-19 this also held the drills answered correctly behind an
+    example (`aided_correct_question_ids`), each owed an unaided retake of
+    THE SAME DRILL. Measured in replay that was 37% of every pick — the
+    single largest kind — and it is the one practice condition the
+    literature agrees is weakest: immediate, massed retrieval of an item the
+    learner just saw answered (van Gog & Sweller 2015 and Karpicke & Aue 2015
+    disagree about everything else). An aided answer now owes the CONCEPT an
+    unaided success, and any fresh drill supplies it; only a miss brings a
+    drill back, and only once nothing fresh is left (remediation.py).
+    """
+    return missed_question_ids(user_state)
 
 
 # How many graded attempts, on ANY concept, must pass before an owed drill is
@@ -130,12 +160,12 @@ def owed_question_ids(user_state) -> set:
 RETAKE_COOLDOWN = 3
 
 
-def recent_question_ids(user_state, n: int = RETAKE_COOLDOWN) -> set:
-    """The last `n` drills the learner answered, across every subtopic.
-
-    Read from `SubtopicState.history` ordered by timestamp (ties keep append
-    order), the same untruncated record `answered_question_ids` reads.
-    """
+def recent_question_sequence(user_state, n: int) -> list:
+    """The last `n` drills the learner answered, oldest first, across every
+    subtopic — with repeats, so a caller can tell "three answers on one
+    concept" from "one answer". Read from `SubtopicState.history` ordered by
+    timestamp (ties keep append order), the same untruncated record
+    `answered_question_ids` reads."""
     records = []
     for sub_state in (getattr(user_state, "subtopic_states", None) or {}).values():
         for i, record in enumerate(getattr(sub_state, "history", None) or ()):
@@ -143,7 +173,12 @@ def recent_question_ids(user_state, n: int = RETAKE_COOLDOWN) -> set:
             if qid is not None:
                 records.append((getattr(record, "timestamp", None) or "", i, int(qid)))
     records.sort(key=lambda r: (str(r[0]), r[1]))
-    return {qid for _, _, qid in records[-n:]} if n > 0 else set()
+    return [qid for _, _, qid in records[-n:]] if n > 0 else []
+
+
+def recent_question_ids(user_state, n: int = RETAKE_COOLDOWN) -> set:
+    """The last `n` drills the learner answered, as a set."""
+    return set(recent_question_sequence(user_state, n))
 
 
 def retakeable_question_ids(user_state) -> set:

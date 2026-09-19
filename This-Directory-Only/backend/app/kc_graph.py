@@ -344,16 +344,20 @@ def kc_evidence_exhausted(user_state, kc: str) -> bool:
     ):
         return True
     # Or the stronger form of the same test (2026-09-18): EVERY servable
-    # drill's latest answer is correct and unaided — nothing is owed a retake
-    # (attempt_history.owed_question_ids). A learner demoted by one
-    # Integrated miss retakes it at `partial`, so the trailing attempts are
-    # never "at solo" again once the rung is spent, and the recency clause
-    # above could not fire with nothing left to serve (replay of Seth's
-    # state: torch.boolean-masking, torch.argmin-argmax, torch.axis-reductions
-    # each 409'd on `solo` with every drill answered correctly).
+    # drill's latest answer is correct — nothing is owed a retake
+    # (attempt_history.owed_question_ids: misses only, since 2026-09-19).
+    # The recency clause above cannot fire when the last answers were
+    # retakes of missed Solo drills (replay of Seth's state:
+    # torch.boolean-masking, torch.argmin-argmax, torch.axis-reductions each
+    # 409'd on `solo` with every drill answered correctly).
     from app import attempt_history
-    return servable <= attempt_history.answered_question_ids(user_state) and not (
-        servable & attempt_history.owed_question_ids(user_state)
+    return (
+        servable <= attempt_history.answered_question_ids(user_state)
+        and not (servable & attempt_history.owed_question_ids(user_state))
+        # ...and at least one of them answered without an example: the
+        # concept-level debt an aided answer leaves (attempt_history.
+        # unaided_success_question_ids). The example alone is not the test.
+        and bool(servable & attempt_history.unaided_success_question_ids(user_state))
     )
 
 
@@ -645,20 +649,17 @@ def _stage_from(est: dict, row: dict) -> str:
     page, the one `LessonGate` takes over the screen to show. Every path below
     the cold-start check therefore floors at DRILL_FLOOR (`partial`), so a
     learner who has already been taught a concept is never handed its lesson
-    again by the scheduler. Support still comes back on a miss — the example
-    schedule shows a worked example on the drills after it — but the thing
-    that comes back is the example, not the explanation. The `faded` rung that
-    used to sit between the lesson and `partial` is retired (2026-09-11); rows
-    filed there still count, but nothing lands there any more.
+    again by the scheduler. The `faded` rung that used to sit between the
+    lesson and `partial` is retired (2026-09-11); rows filed there still
+    count, but nothing lands there any more.
 
-    Why not re-teach on a bad streak. The learner has read this page; replaying
-    it is the system asserting they did not, which is both wrong (a miss says
-    they cannot yet APPLY the idea, not that they never met it) and unskippable
-    — the demotion re-fires from `attempts[-1]` on every subsequent question,
-    so one miss put the lesson in front of them again and again until they
-    happened to answer correctly. Re-reading a lesson stays available, but as
-    something the learner chooses: the concept graph's node opens it, and so
-    does `?lesson=<kc>`.
+    ONE-WAY DOOR EVERYWHERE ELSE TOO (2026-09-19). A rung, once served, is
+    held: a miss does not step the learner down, a bad window does not drop
+    them to the floor, and nothing brings the example back. All of those were
+    "easier work on the same concept", and the answer to struggle is now the
+    concept's PREREQUISITES, served at full variance (app/remediation.py).
+    Re-reading a lesson stays available as something the learner chooses: the
+    concept graph's node opens it, and so does `?lesson=<kc>`.
     """
     # Cold start: the example comes first, always. A concept nobody has been
     # shown cannot be assessed, and guessing at it is not assessment. This is
@@ -667,25 +668,24 @@ def _stage_from(est: dict, row: dict) -> str:
         return "worked"
 
     attempts = row.get("attempts") or []
-    if attempts and not attempts[-1].get("correct"):
-        # The rule a learner actually expects: miss one, drop back a rung and
-        # see the support again. Stepping down from the stage the MISSED
-        # attempt was made at, not from today's computed stage, so a wrong
-        # answer on an integrated problem lands on `partial` rather than
-        # skipping straight back past it.
-        return _step_down(_floored(attempts[-1].get("stage")), floor=DRILL_FLOOR)
-
     lo, hi = est["ci"]
     # A run of correct answers earns a rung on its own — the window average is
     # slow to forget, and on a concept with a long tail of old misses it never
-    # catches up with a learner who has plainly got it. Read before the
-    # struggling branch: `hi < DEMOTE_HI` is a statement about the same stale
-    # window, and it must not hold a learner down who is currently on a run.
+    # catches up with a learner who has plainly got it.
     streak = _streak_stage(attempts)
-    if est["n"] and hi < DEMOTE_HI and not streak:
-        # Confidently struggling: all the support there is, which is the
-        # example schedule at the floor rung.
-        return DRILL_FLOOR
+    # NO DEMOTION (2026-09-19). Until now a miss stepped the learner down a
+    # rung from where it happened, and a confidently bad window (`hi <
+    # DEMOTE_HI`) dropped them to the floor — both "easier problems on the
+    # same concept", which is the response to struggle this app no longer
+    # makes. The rung is a promotion order: once earned it is held, and a
+    # learner who is struggling on it is served their PREREQUISITES instead
+    # (app/remediation.py). `held` is the highest rung they have been served
+    # at; the estimate can lift them past it and never drops them under it.
+    held = DRILL_FLOOR
+    for a in attempts:
+        st = _floored(a.get("stage"))
+        if LADDER_STAGES.index(st) > LADDER_STAGES.index(held):
+            held = st
     # Climb one rung at a time: clearing the solo bar also clears the partial
     # bar, so test from the top down and take the highest rung earned.
     # The window route, gated on unaided answers. The streak route is NOT put
@@ -699,9 +699,10 @@ def _stage_from(est: dict, row: dict) -> str:
     if streak and LADDER_STAGES.index(streak) > LADDER_STAGES.index(earned):
         earned = streak
     solo = est.get("solo_progress")
-    previously_integrated = any(a.get("stage") == "solo" for a in attempts)
-    if earned == "solo" and solo and not solo["ready"] and not previously_integrated:
+    if earned == "solo" and solo and not solo["ready"] and held != "solo":
         earned = "partial"
+    if LADDER_STAGES.index(held) > LADDER_STAGES.index(earned):
+        return held
     return earned
 
 
@@ -740,8 +741,11 @@ def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
 
 
 def solo_rung_cleared(user_state, kc: str) -> bool:
-    """Has the learner answered EVERY Solo drill this concept owns, correctly
-    and without an example on screen, with no miss outstanding?
+    """Has the learner answered EVERY Solo drill this concept owns, correctly,
+    with no miss outstanding, and at least one of them without an example?
+    (An answer made behind the entry example counts as answered — since
+    2026-09-19 it owes nothing on the DRILL; the concept still owes one
+    unaided success, which any drill supplies.)
 
     The window rule and the streak rule both read the last twenty attempts,
     and on a concept the learner has fought with — miss, retake, miss another,
@@ -765,8 +769,10 @@ def solo_rung_cleared(user_state, kc: str) -> bool:
     rung = {q for q in questions_for_kc(kc) if ladder_rank(q) in _STAGE_TO_RANKS[DRILL_FLOOR]}
     if not rung:
         return False
-    return rung <= attempt_history.answered_question_ids(user_state) and not (
-        rung & attempt_history.owed_question_ids(user_state)
+    return (
+        rung <= attempt_history.answered_question_ids(user_state)
+        and not (rung & attempt_history.owed_question_ids(user_state))
+        and bool(rung & attempt_history.unaided_success_question_ids(user_state))
     )
 
 

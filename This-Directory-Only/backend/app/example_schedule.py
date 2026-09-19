@@ -17,18 +17,17 @@ from typing import Dict, List, Optional
 
 # Per stored rung name (kc_graph.LADDER_STAGES): `at` is the set of positions —
 # attempts made in a row at this rung, counted from 0 — on which the example is
-# shown; `after_miss` shows one right after a wrong answer at this rung,
-# provided that wrong answer was not itself made behind an example (so two
-# misses in a row buy one example, not two). `partial` is the first drill rung
-# now that `faded` is retired (2026-09-11), so its position 0 is the learner's
-# first problem after the lesson and the example there is the bridge from
-# reading to doing. `solo` shows one on entry and then none — that rung is the
-# test. No entry for `faded`: nothing is served there, so `plan` never asks.
-# `after_miss` moved from `faded` to `partial` with the retirement: "miss one,
-# see the support again" used to be a demotion onto the faded rung, and with
-# no rung below `partial` the support that comes back is the example.
+# shown; `after_miss` shows one right after a wrong answer at this rung. Both
+# rungs open with ONE example and then none (2026-09-19). The example is the
+# bridge from reading to doing, and it is the whole of the novice support
+# beside the lesson itself: after it every drill is fresh and unaided. Seth:
+# "you see a lesson, you see a worked example, but then you see a problem
+# that's completely separate." Bringing the example back on a miss, or on
+# positions 2/5/9, was support inside the concept; struggle is now answered
+# by the prerequisites instead (app/remediation.py). No entry for `faded`:
+# nothing is served there, so `plan` never asks.
 SCHEDULE: Dict[str, dict] = {
-    "partial": {"at": (0, 2, 5, 9), "after_miss": True},
+    "partial": {"at": (0,), "after_miss": False},
     "solo": {"at": (0,), "after_miss": False},
 }
 

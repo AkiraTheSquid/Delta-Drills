@@ -70,11 +70,11 @@ def run(select_script, pick_script, focus=None):
     sel = iter(select_script)
     pk = iter(pick_script)
 
-    def fake_select(st, exclude=None, exclude_kcs=None):
+    def fake_select(st, exclude=None, exclude_kcs=None, cooldown=True):
         calls["select"].append((set(exclude or ()), set(exclude_kcs or ())))
         return next(sel, None)
 
-    def fake_pick(uid, st, subtopic, focus_subtopic, exclude_kcs=None, record=True):
+    def fake_pick(uid, st, subtopic, focus_subtopic, exclude_kcs=None, record=True, cooldown=True):
         calls["pick"].append((subtopic, set(exclude_kcs or ())))
         calls.setdefault("record", []).append(record)
         step = next(pk)
@@ -144,11 +144,13 @@ try:
     _orig_by_sub = qr.get_questions_by_subtopic
     qr.get_questions_by_subtopic = lambda name: [_q] if name == "S1" else _orig_by_sub(name)
     try:
-        resp, calls = run(["S9"], [SubtopicDry(GAP_A)], focus="S1")
+        resp, calls = run(["S9"], [SubtopicDry(GAP_A), SubtopicDry(GAP_A)], focus="S1")
     finally:
         qr.get_questions_by_subtopic = _orig_by_sub
-    check("F: focused dry -> immediate 409, selector never asked",
-          resp.status_code == 409 and calls["select"] == [] and calls["pick"] == [("S1", set())],
+    # 2026-09-19: a focused request is picked twice — cooldown on, then
+    # relaxed — but its pool alone; the selector is never asked.
+    check("F: focused dry -> 409 after both rounds, selector never asked",
+          resp.status_code == 409 and calls["select"] == [] and calls["pick"] == [("S1", set()), ("S1", set())],
           f"{resp.status_code} {calls}")
     check("F: focused 409 carries the learner message",
           "Concept A" in resp.json()["detail"].get("message", ""), str(resp.json())[:160])
