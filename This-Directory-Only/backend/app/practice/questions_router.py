@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app import diagnostic, kc_graph, lessons, practice_targets
+from app import diagnostic, kc_graph, lesson_readiness, lessons, practice_targets
 from app.adaptive import (
     COLD_START_TARGETS,
     UNRATED,
@@ -266,8 +266,12 @@ def next_question(
         problem_notebook_path=question.problem_notebook_path,
         # Exposure guard: placement probes are never gated (the diagnostic
         # measures prior knowledge — teaching first would corrupt it), so
-        # this only runs on the normal adaptive-queue path.
-        lesson_gate=lessons.unexposed_target_kcs(question.id, practice_targets.effective_exposure(user_state)),
+        # this only runs on the normal adaptive-queue path. Unread pages, then
+        # a page the engine says the learner needs to re-read before THIS
+        # drill is a drill rather than a problem (lesson_readiness).
+        lesson_gate=lesson_readiness.lesson_gate(
+            user_state, question.id, difficulty_score=question.difficulty_score
+        ),
         # The problem's own clock — its concept's placement cap, not a choice
         # made before the block. See question_pick.secs_allowed_for.
         secs_allowed=secs_allowed_for(question.id, ladder.get("ladder_kc")),

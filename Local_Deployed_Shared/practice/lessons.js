@@ -34,9 +34,12 @@ const LessonGate = (() => {
     try {
       const map = _localExposure();
       const now = new Date().toISOString();
-      kcs.forEach((kc) => {
-        if (!map[kc]) map[kc] = now;
-      });
+      // Always the LATEST read, never the first: `_pendingSteps` compares
+      // this stamp against the reading the server called stale, and a stamp
+      // frozen at the first read would let a revisit page show twice. In
+      // backend mode this browser stamp is provisional — `_markBackendExposure`
+      // replaces it with the server's as soon as the POST lands.
+      kcs.forEach((kc) => { map[kc] = now; });
       localStorage.setItem(_exposureKey(), JSON.stringify(map));
     } catch (_) {}
   };
@@ -58,6 +61,7 @@ const LessonGate = (() => {
     // taught, and every later segment stays locked. Roll the local mark back
     // so the lesson is offered again and the POST gets another try.
     let ok = false;
+    let exposed = null;
     try {
       const res = await apiFetch("/api/practice/exposure", {
         method: "POST",
@@ -66,8 +70,42 @@ const LessonGate = (() => {
       });
       if (res.status === 401) handleExpiredToken();
       ok = res.ok;
+      if (ok) exposed = (await res.json())?.exposed || null;
     } catch (_) {}
-    if (!ok) _unmarkLocalExposure(kcs);
+    if (!ok) {
+      _unmarkLocalExposure(kcs);
+      return;
+    }
+    // Keep the SERVER's stamp for this read, not the browser's. The revisit
+    // filter in `_pendingSteps` compares the local stamp against a `read_at`
+    // the server wrote, and two clocks for one event is a race: a browser
+    // clock a few seconds ahead makes the ORIGINAL read look newer than the
+    // reading the server called stale, and the refresher never shows. One
+    // clock, one stamp — equal on the first read, strictly newer after the
+    // refresher is taken. A 2xx whose body could not be read is the same
+    // race with no way to settle it, so the browser's stamp goes: the server
+    // has the read (no unread gate will re-fire) and it alone decides a
+    // refresher (codex, 2026-09-19).
+    _adoptServerStamps(kcs, exposed || {});
+  };
+
+  const _adoptServerStamps = (kcs, exposed) => {
+    // A key the server did not stamp back (unknown id, or an ack we could
+    // not parse) loses its browser stamp rather than keeping a clock the
+    // server never saw.
+    try {
+      const map = _localExposure();
+      let changed = false;
+      kcs.forEach((kc) => {
+        if (typeof exposed[kc] === "string" && exposed[kc]) {
+          if (map[kc] !== exposed[kc]) { map[kc] = exposed[kc]; changed = true; }
+        } else if (kc in map) {
+          delete map[kc];
+          changed = true;
+        }
+      });
+      if (changed) localStorage.setItem(_exposureKey(), JSON.stringify(map));
+    } catch (_) {}
   };
 
   const _fetchJson = async (path) => {
@@ -144,7 +182,31 @@ const LessonGate = (() => {
     segmentIndex: Number(entry.segment_index) || 0,
     segmentTotal: Number(entry.segment_total) || 1,
     exposureKey: entry.exposure_key || entry.kc,
+    // A page read long ago and never drilled, taught again
+    // (app/lessons.py REVISIT_AFTER). `readAt` is the reading the server
+    // judged stale, ISO-8601.
+    revisit: !!entry.revisit,
+    readAt: entry.read_at || "",
   });
+
+  /* Has THIS browser read the page since the reading the server is
+     re-teaching? A first-time entry carries no `read_at`, so any local mark
+     suppresses it (the resume case below); a revisit entry names a page the
+     learner HAS read, and only a local read NEWER than the server's stale one
+     — the learner just took the refresher, then paused on its drill — is a
+     reason not to show it. Both stamps are the SERVER's (`_adoptServerStamps`),
+     so the first read compares equal and only a later read wins; parsed as
+     instants because a stamp the POST never confirmed is the browser's `Z`
+     form against the server's `+00:00`. */
+  const _readSinceServerSaw = (entry, localStamp) => {
+    if (!entry.revisit || !entry.read_at) return true;
+    const local = Date.parse(localStamp);
+    const server = Date.parse(entry.read_at);
+    // A stamp that cannot be read is not evidence of a newer read; the
+    // server asked for this page and the server decides (codex, 2026-09-19).
+    if (Number.isNaN(local) || Number.isNaN(server)) return false;
+    return local > server;
+  };
 
   const _pendingSteps = async (question) => {
     // `attempt_first` is the learner's OWN choice — the notebook dialog's
@@ -179,7 +241,11 @@ const LessonGate = (() => {
       const exposed = _localExposure();
       const seen = new Set();
       return (question?.lesson_gate || [])
-        .filter((entry) => entry?.kc && !exposed[entry.exposure_key || entry.kc])
+        .filter((entry) => {
+          if (!entry?.kc) return false;
+          const local = exposed[entry.exposure_key || entry.kc];
+          return !local || !_readSinceServerSaw(entry, local);
+        })
         .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc))
         .map(_stepFromGate);
     }
@@ -560,6 +626,12 @@ const LessonGate = (() => {
     // spans the page and survives this innerHTML being replaced — see
     // practice/concept-topbar.js and `_showTopbar` below.
     let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
+    if (page.step && page.step.revisit) {
+      // Say why a page they have seen is back: the engine put the next
+      // drill below its bar without it, and over the bar with it re-read.
+      html += `<p class="lesson-revisit-note">Refresher — you read this ${esc(_agoLabel(page.step.readAt))}. ` +
+        "The next drill looks like a stretch without it; a re-read should make it doable.</p>";
+    }
     /* `nb-scope` marks the regions whose ```python fences are programs rather
        than illustrations — the same two sections validate_lessons.py executes
        against one shared namespace. LessonNotebook turns those into cells; a
@@ -598,16 +670,29 @@ const LessonGate = (() => {
     return html;
   };
 
+  /* "2 days ago" / "9 hours ago" for the refresher note; "a while ago" when
+     the stamp is unreadable. Never finer than an hour — the gate itself only
+     re-arms after eight. */
+  const _agoLabel = (iso) => {
+    const then = Date.parse(iso || "");
+    if (Number.isNaN(then)) return "a while ago";
+    const hours = Math.max(1, Math.round((Date.now() - then) / 3600000));
+    if (hours < 36) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  };
+
   const _showTopbar = async (page) => {
     const bar = window.StageLadder;
     if (!bar) return;
     const { lesson, kp, seg } = page;
+    const revisit = page.step && page.step.revisit ? " · Refresher" : "";
     bar.show({
       kc: kp.kc,
       title: seg.title || kp.title,
-      eyebrow: page.segCount > 1
+      eyebrow: (page.segCount > 1
         ? `${_topicLabel(lesson.topic)} · Concept ${page.segIndex + 1} of ${page.segCount}`
-        : `${_topicLabel(lesson.topic)} · Lesson`,
+        : `${_topicLabel(lesson.topic)} · Lesson`) + revisit,
       stage: "lesson",
     });
   };

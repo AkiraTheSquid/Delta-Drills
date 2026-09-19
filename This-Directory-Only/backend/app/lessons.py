@@ -21,8 +21,10 @@ import json
 import logging
 import os
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
 
 logger = logging.getLogger(__name__)
 
@@ -432,6 +434,114 @@ def unexposed_target_kcs(question_id: int, kc_exposure: Dict[str, str]) -> List[
             if step["exposure_key"] not in kc_exposure:
                 gates.append({**info, **step})
     return gates
+
+
+def target_kcs(question_id: int) -> List[str]:
+    """The concepts this question is tagged to, in q-matrix order."""
+    _load()
+    return list(_question_target_kcs.get(int(question_id), []))
+
+
+def gate_info(kc: str) -> Optional[dict]:
+    """The lesson pointers a gate entry for `kc` carries, or None for a KC no
+    KP introduces (which can't be taught, so is never gated on)."""
+    _load()
+    info = _kc_gate_info.get(kc)
+    return dict(info) if info else None
+
+
+def _parse_ts(value) -> Optional[datetime]:
+    """An ISO-8601 stamp as an aware UTC datetime, or None for anything else."""
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        ts = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return ts if ts.tzinfo else ts.replace(tzinfo=timezone.utc)
+
+
+def _page_fields(kc: str, index: Optional[int]) -> dict:
+    """Gate step fields for one page of a KP: concept `index`, or the whole KP
+    (`None`) — the same two shapes `_segment_step` hands out."""
+    segments = _kc_segments.get(kc) or []
+    if index is not None and 0 <= index < len(segments):
+        seg = segments[index]
+        return {
+            "concept_id": seg["concept_id"],
+            "segment_title": seg["title"],
+            "segment_index": index,
+            "segment_total": len(segments),
+            "exposure_key": f"{kc}#{seg['concept_id']}",
+            "drills": list(seg["drills"]),
+        }
+    return {
+        "concept_id": "",
+        "segment_title": "",
+        "segment_index": max(len(segments) - 1, 0),
+        "segment_total": max(len(segments), 1),
+        "exposure_key": kc,
+        "drills": [],
+    }
+
+
+def _last_read_page(kc: str, read_at: Dict[str, str], segment_index: Optional[int] = None) -> Optional[dict]:
+    """The page of this KP a drill would re-teach, with the `read_at` datetime.
+
+    For a drill authored under one concept (`segment_index`) that concept's own
+    page, if this learner ever read it; a learner who holds only the KC's key
+    read the KP before it was split, and gets the whole-KP step. For any other
+    drill, the page read most recently. A learner with no read key at all
+    (placed past the KP by the diagnostic, or never gated) has no page.
+    """
+    segments = _kc_segments.get(kc) or []
+    if segment_index is not None and 0 <= segment_index < len(segments):
+        key = f"{kc}#{segments[segment_index]['concept_id']}"
+        ts = _parse_ts(read_at.get(key))
+        if ts is not None:
+            return {**_page_fields(kc, segment_index), "read_at": ts}
+        ts = _parse_ts(read_at.get(kc))
+        return {**_page_fields(kc, None), "read_at": ts} if ts is not None else None
+    best = None
+    for index, seg in enumerate(segments):
+        ts = _parse_ts(read_at.get(f"{kc}#{seg['concept_id']}"))
+        if ts is not None and (best is None or ts > best["read_at"]):
+            best = {**_page_fields(kc, index), "read_at": ts}
+    ts = _parse_ts(read_at.get(kc))
+    # A KP's last concept and the KC's own key land in the same POST, so on a
+    # tie the concept page wins — it is the one with prose on it.
+    if ts is not None and (best is None or ts > best["read_at"]):
+        best = {**_page_fields(kc, None), "read_at": ts}
+    return best
+
+
+def read_page_for(question_id: int, kc: str, read_at: Dict[str, str]) -> Optional[dict]:
+    """The page of `kc` this drill would re-teach — its step fields plus
+    `read_at` as an aware datetime — or None when this learner never read one.
+    `read_at` is the learner's own `kc_exposure`: reads only, never the
+    placement-derived map, because a concept the diagnostic placed them past
+    was never read and has nothing to come back to."""
+    _load()
+    seg_info = _question_segment.get(int(question_id))
+    index = seg_info[1] if seg_info is not None and seg_info[0] == kc else None
+    return _last_read_page(kc, read_at or {}, index)
+
+
+def page_age_days(page: Optional[dict], now: Optional[datetime] = None) -> Optional[float]:
+    """Days since a `read_page_for` page was read, None for no page. A stamp
+    in the future (two clocks) reads as just now, never as negative age."""
+    if page is None:
+        return None
+    now = now or datetime.now(timezone.utc)
+    return max(0.0, (now - page["read_at"]).total_seconds() / 86400.0)
+
+
+def page_read_age_days(
+    question_id: int, kc: str, read_at: Dict[str, str], now: Optional[datetime] = None
+) -> Optional[float]:
+    """Days since this learner last read the drill's page of `kc`, None for
+    never. The `lesson` feature's input (`logistic_engine.lesson_value`)."""
+    return page_age_days(read_page_for(question_id, kc, read_at), now)
 
 
 def kc_exists(kc: str) -> bool:

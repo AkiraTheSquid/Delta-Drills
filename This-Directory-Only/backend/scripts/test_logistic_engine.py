@@ -13,6 +13,7 @@ for the state and the "posteriors are disposable" claim is false.
 import json
 import math
 import shutil
+from dataclasses import replace
 import sys
 import tempfile
 from pathlib import Path
@@ -487,6 +488,10 @@ KC_CHILD = "torch.broadcasting-rules"
 vec = F.build(state, KC_CHILD, "worked", difficulty_score=55)
 check("build returns every configured feature", set(vec) == {f.name for f in CFG.features}, str(sorted(vec)))
 check("ability is the unit design entry", vec["ability"] == 1.0)
+check("build carries no page unless told of one", vec["lesson"] == 0.0 and vec.sources["days_since_read"] is None)
+_read_vec = F.build(state, KC_CHILD, "worked", difficulty_score=55, lesson_days=0.0)
+check("build carries a page read just now at the config's lesson_offset",
+      abs(_read_vec["lesson"] - CFG.lesson_offset) < 1e-12 and _read_vec.sources["days_since_read"] == 0.0)
 check("provenance names the prerequisites used", isinstance(vec.sources.get("prereqs"), dict))
 check(
     "a real KC with parents produces a non-neutral prereq term",
@@ -560,6 +565,32 @@ check(
     abs(E.recency_value(CFG.recency_half_life_days) - 0.5) < 1e-12,
 )
 check("sigmoid is stable at extremes", E.sigmoid(-800) == 0.0 and E.sigmoid(800) == 1.0)
+# The `lesson` feature (v0.3): the page in memory, fading.
+check("a page read just now is worth the config's lesson_offset",
+      abs(E.lesson_value(0.0) - CFG.lesson_offset) < 1e-12)
+check("the page halves at one lesson half-life",
+      abs(E.lesson_value(CFG.lesson_half_life_days) - CFG.lesson_offset / 2) < 1e-12)
+check("a page never read contributes nothing", E.lesson_value(None) == 0.0)
+check("a negative age reads as just now", E.lesson_value(-3.0) == E.lesson_value(0.0))
+check("the page in memory cannot outweigh its example on screen",
+      CFG.lesson_offset <= CFG.example_offset <= CFG.stage_offsets[E.STAGE_FADED])
+try:
+    replace(CFG, lesson_offset=CFG.stage_offsets[E.STAGE_FADED] + 0.1).validate()
+    check("validator rejects a lesson_offset above the faded rung", False)
+except ValueError:
+    check("validator rejects a lesson_offset above the faded rung", True)
+try:
+    replace(CFG, lesson_half_life_days=0.0).validate()
+    check("validator rejects a non-positive lesson half-life", False)
+except ValueError:
+    check("validator rejects a non-positive lesson half-life", True)
+_v02_row = {"ability": 1.0, "difficulty": 0.0, "stage": 0.7}
+_post = {"ability": E.Posterior(0.0, 0.5)}
+check("a v0.2 log row (no `lesson` key) replays unchanged",
+      abs(E.predict(_v02_row, _post).p - E.predict({**_v02_row, "lesson": 0.0}, _post).p) < 1e-12)
+check("the lesson term raises P(correct) by exactly its value in logits",
+      abs(E.predict({**_v02_row, "lesson": 0.7}, _post).logit_mean
+          - E.predict(_v02_row, _post).logit_mean - 0.7) < 1e-12)
 check("posterior sd is sqrt(var)", abs(E.Posterior(0.0, 0.25).sd - 0.5) < 1e-12)
 check(
     "posterior survives a dict round-trip",

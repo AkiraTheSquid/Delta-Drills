@@ -55,7 +55,7 @@ import math
 from datetime import datetime, timezone
 from typing import Dict, Mapping, Optional
 
-from app import attempt_log
+from app import attempt_log, lessons
 from app.engine_features import FeatureVector, bkt_mastery, kc_graph
 from app import logistic_engine as E
 
@@ -234,8 +234,16 @@ def feature_values(
     stage: Optional[str],
     example: bool = False,
     posteriors: Optional[Mapping[str, E.Posterior]] = None,
+    lesson_days: Optional[float] = None,
 ) -> Dict[str, float]:
     """One row of the design matrix, for this learner on this item.
+
+    `lesson_days` is how long ago the learner last read the drill's own lesson
+    page (`lessons.page_read_age_days`), None for never. It is the `lesson`
+    feature's input and NOTHING here looks it up: the serving gate passes the
+    age it is deciding on, the scoring path passes the age at the time of the
+    answer, and `mastery` leaves it out on purpose — its question is "unaided",
+    and a page fresh in memory is aid.
 
     `ability` is 1.0 — the design-matrix entry saying "this learner's ability
     applies to this item"; the posterior supplies the coefficient. Every other
@@ -257,6 +265,7 @@ def feature_values(
         E.DIFFICULTY.name: E.difficulty_to_logits(difficulty_score),
         E.STAGE.name: E.stage_offset(stage),
         E.EXAMPLE.name: E.example_offset(example),
+        E.LESSON.name: E.lesson_value(lesson_days),
         E.PREREQ.name: E.centred_mastery(prereqs.values()),
         E.ENCOMPASSING.name: E.centred_mastery(encompassed.values()),
         E.RECENCY.name: E.recency_value(days),
@@ -272,6 +281,7 @@ def feature_values(
         "prereqs": prereqs,
         "encompassed": encompassed,
         "days_since_kc": days,
+        "days_since_read": lesson_days,
     })
 
 
@@ -282,11 +292,13 @@ def predict(
     difficulty_score: Optional[float],
     stage: Optional[str],
     example: bool = False,
+    lesson_days: Optional[float] = None,
 ) -> E.Prediction:
     """P(correct) for an item this learner has not answered yet."""
     return E.predict(
         feature_values(
-            user_state, kc, difficulty_score=difficulty_score, stage=stage, example=example
+            user_state, kc, difficulty_score=difficulty_score, stage=stage,
+            example=example, lesson_days=lesson_days,
         ),
         posteriors_for(user_state, kc),
     )
@@ -327,6 +339,7 @@ def record(
     example: bool = False,
     grade: Optional[float] = None,
     atoms: Optional[list] = None,
+    lesson_days: Optional[float] = None,
 ) -> Optional[E.Prediction]:
     """Fold one graded attempt into the concept's posterior, and log it.
 
@@ -351,7 +364,7 @@ def record(
     posteriors = posteriors_for(user_state, kc, exclude_latest_attempt=True)
     values = feature_values(
         user_state, kc, difficulty_score=difficulty_score, stage=normalized,
-        example=example, posteriors=posteriors,
+        example=example, posteriors=posteriors, lesson_days=lesson_days,
     )
     ability = posteriors.get(E.ABILITY.name)
     now = _now_iso()
@@ -496,6 +509,10 @@ def record_attempt_across_kcs(
             correct=correct,
             grade=grade,
             atoms=atoms,
+            # The page as it stood when the answer was given — read a moment
+            # ago behind the readiness gate, days ago, or never — so a success
+            # right after re-reading is discounted the way an aided one is.
+            lesson_days=lessons.page_read_age_days(question_id, kc, user_state.kc_exposure),
         )
         if prediction is not None:
             out[kc] = prediction

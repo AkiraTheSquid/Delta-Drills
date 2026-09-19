@@ -160,6 +160,8 @@ check("every row carries the prediction made BEFORE the outcome",
       all(r.predicted_p is not None for r in rows))
 check("every row carries the design matrix it was scored on",
       all(r.features for r in rows))
+check("every row carries the `lesson` feature (v0.3), so its weight can be fitted",
+      all("lesson" in r.features for r in rows))
 check("calibration is computable from the log",
       attempt_log.calibration("engine-bridge-test").get("n") == len(rows))
 

@@ -89,7 +89,7 @@ from typing import Dict, Iterable, Mapping, Optional, Tuple
 # tuple or the default weights change, so a later refit can tell which rows were
 # produced by which model instead of silently mixing them.
 # ---------------------------------------------------------------------------
-MODEL_VERSION = "logistic-v0.2"  # v0.2 (2026-08-31): + the `example` feature
+MODEL_VERSION = "logistic-v0.3"  # v0.3 (2026-09-19): + the `lesson` feature
 
 
 # ---------------------------------------------------------------------------
@@ -234,6 +234,18 @@ EXAMPLE = Feature(
     ),
 )
 
+LESSON = Feature(
+    name="lesson",
+    kind=FIXED,
+    weight=1.0,
+    description=(
+        "The drill's own lesson page as it survives in memory, in logits: the "
+        "config's lesson_offset times the retention of the last read (1.0 a "
+        "moment after reading, halving every lesson_half_life_days). A fact "
+        "about the RECENT PAST the way `example` is a fact about the screen."
+    ),
+)
+
 PREREQ = Feature(
     name="prereq",
     kind=FIXED,
@@ -273,6 +285,7 @@ DEFAULT_FEATURES: Tuple[Feature, ...] = (
     DIFFICULTY,
     STAGE,
     EXAMPLE,
+    LESSON,
     PREREQ,
     ENCOMPASSING,
     RECENCY,
@@ -323,6 +336,31 @@ DEFAULT_STAGE_OFFSETS: Dict[str, float] = {
 # settle it.
 DEFAULT_EXAMPLE_OFFSET = 0.7
 
+# --- the lesson-page term -----------------------------------------------------
+#
+# Seth, 2026-09-19, on a drill missed two days after its page was read and
+# never practised: "it should have essentially shown me the lesson again ...
+# it needs to be based on the probability, not on some 8+ hour metric ...
+# adaptive based on the current backend model." The model had no term for the
+# page at all: a lesson is read, not answered (GRADED_STAGES), so it never
+# reached the estimator, and the prediction for that drill was the same whether
+# the page had been read a minute or a month earlier. This term is the page's
+# assistance, and it FADES: value = lesson_offset * 0.5 ** (days / half_life).
+#
+# Magnitude, derived the way `example_offset` was: the page holds the worked
+# example, and a page read a moment ago is worth what its example is worth on
+# the screen — no more, since the validator's argument that a faded drill plus
+# its example cannot outweigh the fully worked page applies to the page in
+# memory at least as strongly. Half-life: one day, v0 and unfitted. A single
+# unpractised reading is the weakest encoding the literature measures (the
+# study-only arms of the testing-effect experiments lose most of what they
+# held within a day or two), and it is a different quantity from
+# `recency_half_life_days`, which is the forgetting of PRACTISED skill. The
+# attempt log carries this feature per row, so both numbers are now fittable
+# rather than asserted. `lesson_readiness.py` is the decision that reads it.
+DEFAULT_LESSON_OFFSET = DEFAULT_EXAMPLE_OFFSET
+DEFAULT_LESSON_HALF_LIFE_DAYS = 1.0
+
 
 @dataclass(frozen=True)
 class EngineConfig:
@@ -345,6 +383,11 @@ class EngineConfig:
     # 0.7 + 0.7 = the lesson page's 1.4 — blanks plus a solved instance is very
     # nearly the fully worked page, which is why the validator caps it there.
     example_offset: float = DEFAULT_EXAMPLE_OFFSET
+    # Assistance value of the drill's lesson page read a moment ago, in logits,
+    # and the half-life of that value while the page goes unread. See the
+    # DEFAULT_LESSON_* note above.
+    lesson_offset: float = DEFAULT_LESSON_OFFSET
+    lesson_half_life_days: float = DEFAULT_LESSON_HALF_LIFE_DAYS
     # Item difficulty arrives on the question bank's 1..100 scale. This divisor
     # converts it to logits: 25 puts a difficulty-100 item ~2 logits above a
     # difficulty-50 one, i.e. roughly 0.5 -> 0.12 P(correct) for a median
@@ -387,6 +430,8 @@ class EngineConfig:
             raise ValueError("difficulty_scale must be positive")
         if self.recency_half_life_days <= 0:
             raise ValueError("recency_half_life_days must be positive")
+        if self.lesson_half_life_days <= 0:
+            raise ValueError("lesson_half_life_days must be positive")
 
         offs = self.stage_offsets
         missing = [s for s in GRADED_STAGES if s not in offs]
@@ -411,6 +456,12 @@ class EngineConfig:
                 "the same sign error the rung ordering rules out. Above the faded "
                 "offset says the example plus the rung's own scaffold is worth more "
                 "than the lesson page that contains both."
+            )
+        if not 0.0 < self.lesson_offset <= self.example_offset:
+            raise ValueError(
+                f"lesson_offset must satisfy 0 < l <= example ({self.example_offset}); "
+                f"got {self.lesson_offset}. The page in memory cannot be worth "
+                "more than its own example on the screen."
             )
 
 
@@ -505,6 +556,23 @@ def example_offset(aided: bool, config: EngineConfig = DEFAULT_CONFIG) -> float:
     zero, and those attempts were in fact unaided.
     """
     return float(config.example_offset) if aided else 0.0
+
+
+def lesson_retention(days_since_read: Optional[float], config: EngineConfig = DEFAULT_CONFIG) -> float:
+    """How much of the drill's lesson page is still held, in [0,1].
+
+    1.0 the moment the page is read, halving every `lesson_half_life_days`.
+    `None` — the page was never read (placed past it by the diagnostic, or
+    never gated) — is 0.0: there is nothing in memory to fade.
+    """
+    if days_since_read is None:
+        return 0.0
+    return 0.5 ** (max(0.0, float(days_since_read)) / config.lesson_half_life_days)
+
+
+def lesson_value(days_since_read: Optional[float], config: EngineConfig = DEFAULT_CONFIG) -> float:
+    """The `lesson` feature's value: the page's assistance as it survives, in logits."""
+    return float(config.lesson_offset) * lesson_retention(days_since_read, config)
 
 
 # ---------------------------------------------------------------------------
