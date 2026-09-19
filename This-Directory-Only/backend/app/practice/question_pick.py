@@ -20,18 +20,28 @@ from app.prioritization import (
     target_difficulty,
 )
 from app.questions import get_questions_by_subtopic
+# The most any PRACTICE drill gets on the clock. Seth, 2026-09-19: "why don't
+# we set a limit of 5 minutes" — his own log runs 3–5 minutes per answer, and
+# the table below charges 6–20. The table still orders concepts relative to
+# each other under this ceiling (a 5:00 python drill stays 5:00); the
+# placement is NOT on this path — a probe keeps the table's full number so
+# its evidence stays comparable across learners (diagnostic.kc_cap_secs).
+PRACTICE_MAX_SECS = 5 * 60
+
+
 def secs_allowed_for(question_id: int, ladder_kc: str | None) -> int:
     """The answer clock this practice question gets: its concept's cap from
     lessons/placement_time_caps.json — the same number a placement probe on
     that concept gets (diagnostic.kc_cap_secs), so the time is the PROBLEM's,
-    never a choice made before the block (Seth, 2026-09-09). The concept is
-    the one the ladder narrowed to; a question served un-narrowed is timed by
-    the LONGEST of the concepts it targets (a problem that integrates two
-    needs the longer clock); one with no concept at all gets the table's
-    default."""
+    never a choice made before the block (Seth, 2026-09-09) — clamped to
+    PRACTICE_MAX_SECS. The concept is the one the ladder narrowed to; a
+    question served un-narrowed is timed by the LONGEST of the concepts it
+    targets (a problem that integrates two needs the longer clock); one with
+    no concept at all gets the table's default."""
     kcs = [ladder_kc] if ladder_kc else kc_graph.question_kcs(question_id)
     caps = [diagnostic.kc_cap_secs(kc) for kc in kcs if kc]
-    return max(caps) if caps else diagnostic.kc_cap_secs(None)
+    cap = max(caps) if caps else diagnostic.kc_cap_secs(None)
+    return min(cap, PRACTICE_MAX_SECS)
 
 
 class SubtopicDry(Exception):

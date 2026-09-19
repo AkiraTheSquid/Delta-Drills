@@ -10,6 +10,7 @@ Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 """
 import ast
 import os
+import json
 import re
 import sys
 
@@ -727,6 +728,36 @@ def check_the_kernel_timeout_cap_matches_the_client():
         "maximum is a 422")
 
 
+# ── The practice clock never exceeds five minutes ──
+# Seth, 2026-09-19: "why don't we set a limit of 5 minutes". The concept table
+# (lessons/placement_time_caps.json) charges 6–20 minutes and stays the
+# placement's number; practice clamps it. A concept with a LONGER table entry
+# must still come out at the ceiling, and the placement's own reader must not.
+def check_the_practice_clock_is_capped_at_five_minutes():
+    with open(os.path.join(THIS, 'question_pick.py')) as f:
+        src = f.read()
+    m = re.search(r'^PRACTICE_MAX_SECS = (.+)$', src, re.MULTILINE)
+    assert m, "question_pick.py lost PRACTICE_MAX_SECS"
+    ceiling = eval(m.group(1), {})  # a literal like `5 * 60`
+    assert ceiling == 300, f"the practice ceiling is {ceiling}s, not five minutes"
+    assert re.search(r'return min\(cap, PRACTICE_MAX_SECS\)', src), \
+        "secs_allowed_for no longer clamps to PRACTICE_MAX_SECS"
+    table = os.path.join(THIS, '..', '..', '..', '..', 'Local_Deployed_Shared', 'lessons', 'placement_time_caps.json')
+    with open(table) as f:
+        caps = json.load(f)
+    entries = [v for k, v in caps.get('kcs', caps).items() if isinstance(v, int)] if isinstance(caps, dict) else []
+    nested = [v for v in caps.values() if isinstance(v, dict)] if isinstance(caps, dict) else []
+    for d in nested:
+        entries += [v for v in d.values() if isinstance(v, int)]
+    assert entries and max(entries) > ceiling, \
+        "no table entry is above the ceiling any more; the clamp proves nothing"
+    # The placement reads the table itself (diagnostic.kc_cap_secs), never
+    # through question_pick — a probe keeps the full number.
+    with open(os.path.join(THIS, '..', 'diagnostic.py')) as f:
+        diag = f.read()
+    assert 'PRACTICE_MAX_SECS' not in diag, "the placement clock picked up the practice ceiling"
+
+
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
@@ -737,7 +768,8 @@ if __name__ == '__main__':
               check_repair_queue_never_loses_an_open_job,
               check_the_two_nudge_tables_agree,
               check_placement_cannot_classify_without_a_direct_probe,
-              check_the_kernel_timeout_cap_matches_the_client]
+              check_the_kernel_timeout_cap_matches_the_client,
+              check_the_practice_clock_is_capped_at_five_minutes]
     for fn in checks:
         try:
             fn()
