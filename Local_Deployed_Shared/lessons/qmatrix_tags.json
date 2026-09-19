@@ -21055,5 +21055,605 @@
    "torch.std"
   ],
   "source": "kp-independent"
+ },
+ "1654": {
+  "target_kcs": [
+   "torch.slicing-views"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1655": {
+  "target_kcs": [
+   "torch.slicing-views"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1656": {
+  "target_kcs": [
+   "torch.slicing-views"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1657": {
+  "target_kcs": [
+   "torch.slicing-views"
+  ],
+  "supporting_kcs": [
+   "torch.tensor-model"
+  ],
+  "new_syntax": [
+   "Tensor.clone",
+   "syntax.multi-axis-index",
+   "syntax.slice",
+   "syntax.slice-step",
+   "torch.flip",
+   "torch.rot90"
+  ],
+  "source": "kp-integrated"
+ },
+ "1658": {
+  "target_kcs": [
+   "torch.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1659": {
+  "target_kcs": [
+   "torch.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1660": {
+  "target_kcs": [
+   "torch.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1661": {
+  "target_kcs": [
+   "torch.argmin-argmax"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.argmax",
+   "torch.abs",
+   "torch.argmax",
+   "torch.argmin"
+  ],
+  "source": "kp-integrated"
+ },
+ "1662": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1663": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1664": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1665": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-integrated"
+ },
+ "1666": {
+  "target_kcs": [
+   "torch.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "torch.reshape-flatten",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
+  "source": "kp-integrated"
+ },
+ "1667": {
+  "target_kcs": [
+   "torch.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "torch.reshape-flatten",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
+  "source": "kp-integrated"
+ },
+ "1668": {
+  "target_kcs": [
+   "torch.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "torch.reshape-flatten",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
+  "source": "kp-integrated"
+ },
+ "1669": {
+  "target_kcs": [
+   "torch.stack-concat-interleave"
+  ],
+  "supporting_kcs": [
+   "torch.reshape-flatten",
+   "torch.slicing-views"
+  ],
+  "new_syntax": [
+   "Tensor.ravel",
+   "torch.cat",
+   "torch.cat#dim",
+   "torch.column_stack",
+   "torch.empty",
+   "torch.empty#dtype",
+   "torch.hstack",
+   "torch.stack",
+   "torch.stack#dim",
+   "torch.vstack"
+  ],
+  "source": "kp-integrated"
+ },
+ "1670": {
+  "target_kcs": [
+   "torch.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.elementwise-ops",
+   "torch.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1671": {
+  "target_kcs": [
+   "torch.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.elementwise-ops",
+   "torch.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1672": {
+  "target_kcs": [
+   "torch.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.elementwise-ops",
+   "torch.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1673": {
+  "target_kcs": [
+   "torch.boolean-masking"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.elementwise-ops",
+   "torch.aggregations"
+  ],
+  "new_syntax": [
+   "torch.count_nonzero",
+   "syntax.bitwise"
+  ],
+  "source": "kp-integrated"
+ },
+ "1674": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "torch.ranges",
+   "torch.slicing-views",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "1675": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "torch.ranges",
+   "torch.slicing-views",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "1676": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "torch.ranges",
+   "torch.slicing-views",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "1677": {
+  "target_kcs": [
+   "torch.out-argument"
+  ],
+  "supporting_kcs": [
+   "torch.ranges",
+   "torch.slicing-views",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "torch.arange#out",
+   "torch.linspace#out"
+  ],
+  "source": "kp-integrated"
+ },
+ "1678": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.broadcasting-rules",
+   "torch.constructors",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "1679": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.broadcasting-rules",
+   "torch.constructors",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "1680": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.broadcasting-rules",
+   "torch.constructors",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "1681": {
+  "target_kcs": [
+   "torch.slice-assignment"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.broadcasting-rules",
+   "torch.constructors",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.copy_"
+  ],
+  "source": "kp-integrated"
+ },
+ "1682": {
+  "target_kcs": [
+   "tensor.row-normalization"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.broadcasting-rules",
+   "torch.boolean-masking",
+   "torch.argmin-argmax",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "Tensor.norm",
+   "Tensor.norm#dim",
+   "Tensor.norm#keepdim",
+   "torch.where"
+  ],
+  "source": "kp-integrated"
+ },
+ "1683": {
+  "target_kcs": [
+   "tensor.row-normalization"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.broadcasting-rules",
+   "torch.boolean-masking",
+   "torch.argmin-argmax",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "Tensor.norm",
+   "Tensor.norm#dim",
+   "Tensor.norm#keepdim",
+   "torch.where"
+  ],
+  "source": "kp-integrated"
+ },
+ "1684": {
+  "target_kcs": [
+   "tensor.row-normalization"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.broadcasting-rules",
+   "torch.boolean-masking",
+   "torch.argmin-argmax",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "Tensor.norm",
+   "Tensor.norm#dim",
+   "Tensor.norm#keepdim",
+   "torch.where"
+  ],
+  "source": "kp-integrated"
+ },
+ "1685": {
+  "target_kcs": [
+   "tensor.row-normalization"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.broadcasting-rules",
+   "torch.boolean-masking",
+   "torch.argmin-argmax",
+   "torch.constructors"
+  ],
+  "new_syntax": [
+   "Tensor.norm",
+   "Tensor.norm#dim",
+   "Tensor.norm#keepdim",
+   "torch.where"
+  ],
+  "source": "kp-integrated"
+ },
+ "1686": {
+  "target_kcs": [
+   "tensor.indexed-selection"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.ranges",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.gather",
+   "Tensor.abs"
+  ],
+  "source": "kp-integrated"
+ },
+ "1687": {
+  "target_kcs": [
+   "tensor.indexed-selection"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.ranges",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.gather",
+   "Tensor.abs"
+  ],
+  "source": "kp-integrated"
+ },
+ "1688": {
+  "target_kcs": [
+   "tensor.indexed-selection"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.ranges",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.gather",
+   "Tensor.abs"
+  ],
+  "source": "kp-integrated"
+ },
+ "1689": {
+  "target_kcs": [
+   "tensor.indexed-selection"
+  ],
+  "supporting_kcs": [
+   "torch.slicing-views",
+   "torch.ranges",
+   "torch.axis-reductions",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [
+   "Tensor.gather",
+   "Tensor.abs"
+  ],
+  "source": "kp-integrated"
  }
 }

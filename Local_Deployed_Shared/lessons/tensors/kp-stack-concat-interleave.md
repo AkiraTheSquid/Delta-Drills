@@ -7,7 +7,7 @@ concepts: [grow-existing-dimension, create-new-axis, interleave-streams]
 faded: [974, 975, 84, 976]
 guided: [146, 977]
 independent: [89, 238, 159, 978, 980, 1581, 1582, 1583]
-integrated: [981, 982, 983, 1584]
+integrated: [981, 982, 983, 1584, 1666, 1667, 1668, 1669]
 ---
 
 ## Concept: Grow an existing dimension with cat, vstack, and hstack
@@ -339,6 +339,18 @@ Return the tensor pile, its elementwise mean, and its count.
 
 ### q1584
 Join ragged pieces end to end, then two counts — one of the whole, one of the biggest piece.
+
+### q1666
+Two streams and a gap: three streams paired on a new axis, then flattened.
+
+### q1667
+A separator between two blocks: a vector given a row axis, then three pieces joined along the rows.
+
+### q1668
+A checkerboard of two blocks: two strips joined along the columns, then joined along the rows.
+
+### q1669
+The same two streams joined two ways: end to end on the axis they have, and as two rows on a new one.
 
 ## Misconceptions
 

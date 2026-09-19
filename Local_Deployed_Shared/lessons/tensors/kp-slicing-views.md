@@ -7,7 +7,7 @@ concepts: [slice-bounds, rows-and-columns, reversing, quarter-turns, writing-thr
 faded: [506, 507, 233, 75, 231, 74]
 guided: [76]
 independent: [189, 1501, 1502, 1503, 1504, 1586, 1587, 1588]
-integrated: [1505, 1506, 1507, 1589]
+integrated: [1505, 1506, 1507, 1589, 1654, 1655, 1656, 1657]
 ---
 
 ## Concept: Choose a stretch of values
@@ -413,6 +413,18 @@ Flip alternate columns of a copy; stepping and writing through a view together.
 
 ### q1589
 Copy first, then two column writes — and check the original survived.
+
+### q1654
+Exchange the two halves of a copy; two slice writes that must not alias.
+
+### q1655
+Turn only the interior of a copy through 180°: a two-axis slice, a reversal on both axes, a write through the view.
+
+### q1656
+Reverse every second row of a copy: a stepped row slice, a reversal along the right axis, one write.
+
+### q1657
+Trim both ends by k, then reverse — with a stop that survives k = 0.
 
 ## Misconceptions
 
