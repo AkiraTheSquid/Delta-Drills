@@ -136,7 +136,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Core array literacy",
    "file": "np-1.json",
-   "cells": 1699,
+   "cells": 1707,
    "questions": [
     8,
     19,
@@ -408,7 +408,9 @@
     1593,
     1594,
     1595,
-    1596
+    1596,
+    1650,
+    1651
    ],
    "kcs": [
     "torch.tensor-model",
@@ -520,7 +522,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "file": "np-3.json",
-   "cells": 359,
+   "cells": 371,
    "questions": [
     37,
     84,
@@ -586,7 +588,10 @@
     1534,
     1581,
     1582,
-    1583
+    1583,
+    1645,
+    1646,
+    1647
    ],
    "kcs": [
     "torch.broadcasting-rules",
@@ -613,7 +618,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Rearrange",
    "file": "eo-1.json",
-   "cells": 368,
+   "cells": 384,
    "questions": [
     313,
     314,
@@ -680,7 +685,11 @@
     941,
     942,
     943,
-    944
+    944,
+    1624,
+    1625,
+    1642,
+    1643
    ],
    "kcs": [
     "einops.pattern-language",
@@ -698,7 +707,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Reduce",
    "file": "eo-2.json",
-   "cells": 87,
+   "cells": 111,
    "questions": [
     324,
     325,
@@ -714,7 +723,13 @@
     370,
     377,
     399,
-    402
+    402,
+    1634,
+    1638,
+    1639,
+    1640,
+    1641,
+    1653
    ],
    "kcs": [
     "einops.reduce-model",
@@ -728,7 +743,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Deep Learning",
    "file": "eo-3.json",
-   "cells": 150,
+   "cells": 178,
    "questions": [
     316,
     317,
@@ -757,7 +772,14 @@
     894,
     896,
     901,
-    902
+    902,
+    1609,
+    1610,
+    1611,
+    1612,
+    1613,
+    1618,
+    1619
    ],
    "kcs": [
     "einops.repeat-model",
