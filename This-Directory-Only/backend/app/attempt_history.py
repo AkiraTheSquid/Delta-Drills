@@ -68,3 +68,53 @@ def missed_question_ids(user_state) -> set:
     answer for each, and the retry is the evidence the gate is waiting on.
     """
     return {qid for qid, correct in _latest_outcomes(user_state).items() if not correct}
+
+
+def aided_correct_question_ids(user_state) -> set:
+    """Every drill whose LATEST attempt was correct BEHIND an example.
+
+    The third kind of spent-but-owed drill, beside the misses above. Promotion
+    off Solo needs six DISTINCT correct answers made WITHOUT an example
+    (solo_progress.successful_questions), and the example schedule shows one
+    on Solo positions 0, 2, 5 and 9 plus the drill after every miss
+    (example_schedule.SCHEDULE). A drill answered correctly behind one of
+    those is spent for the unseen-first order — it was answered — but it can
+    never count, and unlike a miss nothing brought it back. So a nine-drill
+    bank had at most six countable drills and one wrong answer anywhere made
+    the gate unreachable; a six-drill bank could never clear it at all.
+    Measured by replaying Seth's state (traj.py, 2026-09-18): every one of
+    the course's 409s at the Solo rung was this, and a Monte Carlo of the
+    schedule against the gate put the dead-lock at 48% for six drills and
+    10% for twelve, before any content was too thin.
+
+    Read from `kc_ladder`, not history: the `example` flag lives only there.
+    That row is windowed to the last 20 attempts per concept, the same window
+    `solo_progress` counts from, so what this forgets the gate has forgotten
+    too. Latest attempt per question wins, so a drill retaken unaided leaves
+    the set, whether or not the retake was right.
+
+    Integrated drills count too: the top rung opens behind an example
+    (SCHEDULE["solo"] position 0), and `kc_graph.kc_evidence_exhausted` calls
+    a concept learned only when every servable drill's latest answer was
+    given unaided — the aided entry drill is owed its retake, or the rung is
+    spent with the concept unlearned and nothing to serve (replay 2026-09-18,
+    torch.boolean-masking). Placement probes are not ladder attempts and the
+    lesson rung holds no drill, so every attempt here is at a drill rung.
+    """
+    latest: Dict[int, dict] = {}
+    for row in (getattr(user_state, "kc_ladder", None) or {}).values():
+        for attempt in (row.get("attempts") if isinstance(row, dict) else None) or ():
+            qid = attempt.get("question_id")
+            if qid is not None:
+                latest[int(qid)] = attempt
+    return {qid for qid, a in latest.items() if a.get("correct") and a.get("example")}
+
+
+def owed_question_ids(user_state) -> set:
+    """Answered drills the concept still has a claim on: the misses and the
+    Solo drills answered behind an example. Spent for the unseen-first order,
+    unspent for "does this concept still have work" — the picker's two readers
+    of `answered` (prioritization.select_next_subtopic, narrow_to_next_kc)
+    both subtract this set before deciding a rung is done.
+    """
+    return missed_question_ids(user_state) | aided_correct_question_ids(user_state)

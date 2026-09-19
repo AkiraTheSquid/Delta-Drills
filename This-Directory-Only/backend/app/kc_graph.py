@@ -339,8 +339,21 @@ def kc_evidence_exhausted(user_state, kc: str) -> bool:
     # off an example is not the test. The last UNAIDED_TO_FINISH answers at
     # `solo` must have been made without one — "you should really be tested
     # before you move on".
-    return example_schedule.unaided_finish(
+    if example_schedule.unaided_finish(
         ladder_view(user_state, kc).get("attempts") or [], "solo"
+    ):
+        return True
+    # Or the stronger form of the same test (2026-09-18): EVERY servable
+    # drill's latest answer is correct and unaided — nothing is owed a retake
+    # (attempt_history.owed_question_ids). A learner demoted by one
+    # Integrated miss retakes it at `partial`, so the trailing attempts are
+    # never "at solo" again once the rung is spent, and the recency clause
+    # above could not fire with nothing left to serve (replay of Seth's
+    # state: torch.boolean-masking, torch.argmin-argmax, torch.axis-reductions
+    # each 409'd on `solo` with every drill answered correctly).
+    from app import attempt_history
+    return servable <= attempt_history.answered_question_ids(user_state) and not (
+        servable & attempt_history.owed_question_ids(user_state)
     )
 
 
@@ -726,9 +739,42 @@ def _capped_by_unaided(earned: str, est: dict, attempts: List[dict]) -> str:
     return LADDER_STAGES[max(LADDER_STAGES.index(held), LADDER_STAGES.index(supported))]
 
 
+def solo_rung_cleared(user_state, kc: str) -> bool:
+    """Has the learner answered EVERY Solo drill this concept owns, correctly
+    and without an example on screen, with no miss outstanding?
+
+    The window rule and the streak rule both read the last twenty attempts,
+    and on a concept the learner has fought with — miss, retake, miss another,
+    retake — that window can say "struggling" long after every drill on the
+    rung has in fact been solved unaided. With the rung spent there is nothing
+    left to serve at `partial`, nothing owed, and no way to earn `solo`: the
+    queue 409'd (replay of Seth's state, 2026-09-18: `torch.broadcasting-rules`
+    on nine Solo drills, `torch.boolean-masking` on six, each with every latest
+    answer correct). Solving the whole rung IS the evidence the rung asks for,
+    so it promotes on its own — one rung, like a streak; the Integrated drills
+    still have to be earned above it.
+
+    Coverage reads `attempt_history` (untruncated), the example flag the ladder
+    row (the only place it is stored — an aided answer that has fallen out of
+    the window counts as unaided here, the same as `owed_question_ids`).
+    """
+    from app import attempt_history
+    attempts = ladder_view(user_state, kc).get("attempts") or []
+    if not attempts or not attempts[-1].get("correct"):
+        return False
+    rung = {q for q in questions_for_kc(kc) if ladder_rank(q) in _STAGE_TO_RANKS[DRILL_FLOOR]}
+    if not rung:
+        return False
+    return rung <= attempt_history.answered_question_ids(user_state) and not (
+        rung & attempt_history.owed_question_ids(user_state)
+    )
+
+
 def kc_stage(user_state, kc: str) -> str:
     """Which rung to serve for this concept right now."""
     stage = _stage_from(kc_estimate(user_state, kc), ladder_view(user_state, kc))
+    if stage == DRILL_FLOOR and solo_rung_cleared(user_state, kc):
+        stage = "solo"
     if practice_targets.solo_entry(user_state, kc) and LADDER_STAGES.index(stage) < LADDER_STAGES.index("partial"):
         return "partial"
     return stage
