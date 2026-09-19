@@ -472,8 +472,15 @@ def is_prelibrary(question_id: int) -> bool:
     kcs = _question_target_kcs.get(int(question_id)) or []
     if not kcs:
         return False
+    # A `python.*` concept is pre-library by definition, whichever lesson its
+    # page is filed under. `python.control-flow` sits in ARENA 0.0 (topic
+    # PyTorch), so the topic test alone parked all sixteen of its drills;
+    # the concept could never be learned and every cnn.* concept behind it
+    # was locked for good. Found by replaying Seth's state (traj.py,
+    # 2026-09-19): the frontier collapsed to that one concept at ~45 h.
     return all(
-        (_kc_gate_info.get(kc) or {}).get("topic") in _PRELIBRARY_TOPICS
+        kc.startswith("python.")
+        or (_kc_gate_info.get(kc) or {}).get("topic") in _PRELIBRARY_TOPICS
         for kc in kcs
     )
 

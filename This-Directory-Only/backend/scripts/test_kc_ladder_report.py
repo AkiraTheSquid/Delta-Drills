@@ -663,6 +663,29 @@ check(f"the cooldown is {attempt_history.RETAKE_COOLDOWN} answers wide",
       attempt_history.RETAKE_COOLDOWN == 3 and sorted(q.id for q in _out) == _rung_floor[:1] and _gap is None,
       f"servable={sorted(q.id for q in _out)} gap={_gap}")
 
+# 🔴 A SPENT RUNG ON A LEARNED CONCEPT IS NOT A GAP (2026-09-19). Replay of
+# Seth's state: once the frontier lived in other subtopics, weakest-first kept
+# landing in ar-02, whose resident concept (cnn.stride-views) was learned and
+# spent 500 picks earlier — and every one of those picks wrote a gap record
+# and pinned a "ran out" strip on the unrelated drill it served instead.
+_st = _state_on_rung("TTTTTT", True)
+_seed_answered(_st, POOL)
+for _atom in (kc_graph._crosswalk().get(LADDER_KC) or {}).get("atoms") or []:
+    _st.atom_mastery[_atom["a"]] = 1.0
+    _st.atom_last_ts[_atom["a"]] = NOW
+check("fixture: the concept is learned", kc_graph.kc_is_learned(_st, LADDER_KC))
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
+check("a spent rung on a learned concept reports no gap and is served as review",
+      _gap is None and _kc2 == LADDER_KC and _out and not (set(q.id for q in _out) - set(POOL)),
+      f"gap={_gap} kc={_kc2} servable={sorted(q.id for q in _out)}")
+_st2 = _state_on_rung("TTTTTT", True)
+_seed_answered(_st2, POOL)
+_out, _kc2, _gap = prioritization.narrow_to_next_kc(
+    _st2, [_Q(i, 50) for i in POOL], served=set(POOL), last_served=None)
+check("...while the same spent rung on an UNLEARNED concept still does",
+      _gap is not None and _gap.get("kc") == LADDER_KC, f"gap={_gap}")
+
 print()
 if fails:
     print(f"FAILED ({len(fails)}): " + ", ".join(fails))
