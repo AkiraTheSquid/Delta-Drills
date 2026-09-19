@@ -985,69 +985,16 @@ def subtopics_for_kc(kc: str) -> List[str]:
 
 
 def kc_report(user_state, eligible=None) -> dict:
-    """Full lattice state for the API — one row per KC, plus the selection the
-    queue will actually make. This is what lets the knowledge graph draw the
-    system's real state instead of a decorative model: every field the graph
-    colours by is computed here, by the same code that gates practice.
-    """
-    reg = _registry()
-    descendants, depth = _closure()
-    by_kc = _questions_by_kc()
-    order = {kc: i for i, kc in enumerate(frontier(user_state))}
-    # `eligible` makes the reported next_kc the one the QUEUE will reach, not
-    # the frontier head it would like to reach. Without it the graph can ring a
-    # concept whose questions are all spent while practice serves the next one
-    # along — a highlight that promises something the app then does not do.
-    next_kc = select_next_kc(user_state, eligible=eligible)
+    """Full lattice state for the API. Lives in `kc_report.py` since
+    2026-09-19 (this file crossed Modulario's 700-LOC line); kept here so
+    every caller keeps reading it off kc_graph. Lazy import: that module
+    imports this one."""
+    from app.kc_report import kc_report as _report
+    return _report(user_state, eligible)
 
-    rows = {}
-    for kc, node in reg.items():
-        m, covered, tier = kc_mastery(user_state, kc)
-        # Same predicate the practice gate uses, exhaustion credit included —
-        # a node the queue treats as cleared must not draw as still-frontier.
-        learned = kc_is_learned(user_state, kc)
-        unlocked = kc_is_unlocked(user_state, kc)
-        ladder_est = kc_estimate(user_state, kc)
-        # The concept's OWN graded record, alongside the crosswalk mastery.
-        #
-        # These answer different questions and the graph has only ever had the
-        # first. `mastery` is a BKT posterior over the ATOMS a KC's questions
-        # exercise, and the crosswalk that joins concepts to atoms separates
-        # only 20 of 63 — for the other 43 the number shown is the topic's,
-        # which is why a learner with real drill history still saw bubbles that
-        # claimed nothing had been measured about them.
-        #
-        # The ladder record has no such gap: `record_ladder_outcome` writes one
-        # row per graded attempt against every KC the question tags, for all 63.
-        # It is a smaller claim than a posterior — k correct out of n, on this
-        # concept, recently — but it is this concept's, always, and it is the
-        # same quantity the practice topbar draws and the rung gate promotes on.
-        # Shipping it here is what lets the graph and the practice screen agree.
-        rows[kc] = {
-            "title": node["title"],
-            "lesson": node["lesson"],
-            "topic": node["topic"],
-            "prereqs": node["prereqs"],
-            "mastery": round(m, 4),
-            "covered_w": round(covered, 3),
-            "tier": tier,
-            "evidenced": covered >= MIN_COVERED_W,
-            "state": ("disabled" if kc_prefs.is_disabled(user_state, kc)
-                      else "learned" if learned
-                      else "frontier" if unlocked else "locked"),
-            # The learner's own controls for this concept (graph Settings tab).
-            "pref": kc_prefs.pref_row(user_state, kc),
-            "coreness": descendants.get(kc, 0),
-            "depth": depth.get(kc, 0),
-            "n_questions": len(by_kc.get(kc, ())),
-            "frontier_rank": order.get(kc),
-            "ladder_stage": kc_stage(user_state, kc),
-            "ladder_estimate": ladder_est,
-        }
 
-    return {
-        "learned_threshold": LEARNED_THRESHOLD,
-        "next_kc": next_kc,
-        "frontier": frontier(user_state),
-        "kcs": rows,
-    }
+# Public names for the loaders `kc_report.py` reads; the underscored ones
+# stay the implementation.
+registry = _registry
+closure = _closure
+questions_by_kc = _questions_by_kc
