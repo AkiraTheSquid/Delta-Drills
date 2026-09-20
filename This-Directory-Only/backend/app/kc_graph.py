@@ -63,7 +63,7 @@ from app import lessons
 from app import example_schedule
 
 from app import bkt_mastery
-from app import kc_prefs, solo_progress, practice_targets
+from app import arena_mix, kc_prefs, solo_progress, practice_targets
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -411,8 +411,9 @@ def kc_is_unlocked(user_state, kc: str) -> bool:
     by_lesson = kc.startswith(LESSON_UNLOCK_PREFIXES)
     exposure = practice_targets.effective_exposure(user_state) if by_lesson else None
     # A prerequisite the learner disabled is skipped, not blocking: "turn this
-    # off" must not lock everything downstream out of reach.
-    return all(
+    # off" must not lock everything downstream out of reach. An ARENA exercise
+    # concept under a set share is served early (arena_mix.unlocks).
+    return arena_mix.unlocks(user_state, kc) or all(
         kc_prefs.is_disabled(user_state, p) or kc_is_learned(user_state, p)
         or p in practice_targets.readiness(user_state)
         or (by_lesson and lessons.kc_lesson_read(p, exposure))
