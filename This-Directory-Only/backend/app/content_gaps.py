@@ -131,7 +131,7 @@ def learner_message(gap: dict) -> str:
     # NOTHING WRITTEN AT THIS RUNG is not the same as HAVING FINISHED IT, and
     # saying the second when the first is true reads as a lie to the one person
     # who can tell: the learner looking at the same problem for the third time.
-    # prioritization.rung_gap reports seen=0 for exactly this case.
+    # practice.rung_gap.rung_gap reports seen=0 for exactly this case.
     # A concept that owns NOTHING at any rung — a retired course id, or a node
     # the bank never got drills for. Replaying Seth's live state on 2026-09-07
     # put `numpy.memory-model` and `einsum.batch-dims` (total=0) through the
@@ -156,7 +156,7 @@ def learner_message(gap: dict) -> str:
     # repeat guard, which fires precisely when the learner has NOT answered the
     # question coming back at them — so telling somebody who skipped all three
     # lesson drills that they "finished every lesson problem, all 3 of them" is
-    # false to the one person who can tell. prioritization.rung_gap carries the
+    # false to the one person who can tell. practice.rung_gap.rung_gap carries the
     # answered count; `None` means an older gap dict that predates it, and those
     # only ever came from the every-drill-answered path. (codex, 2026-09-07.)
     answered = gap.get("answered")

@@ -1,0 +1,10 @@
+This is a SESSION job: a live agent session starts it and its stdout lands in
+that session. No image, no systemd unit, on purpose — scheduled, its lines would
+print to nobody.
+
+Start it from inside Claude Code with the Monitor tool (persistent: true):
+
+    python3 -u ops/feedback-watch/dd_feedback_watch.py
+
+`-u` matters: Python block-buffers stdout when it is not a terminal, and the
+point is that a line reaches the session the moment it is printed.

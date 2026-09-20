@@ -22111,5 +22111,95 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "1722": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
+ },
+ "1723": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
+ },
+ "1724": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
+ },
+ "1725": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
+ },
+ "1726": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
+ },
+ "1727": {
+  "target_kcs": [
+   "torch.linalg-basics"
+  ],
+  "supporting_kcs": [
+   "torch.aggregations",
+   "torch.elementwise-ops"
+  ],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
+  "source": "kp-faded"
  }
 }
