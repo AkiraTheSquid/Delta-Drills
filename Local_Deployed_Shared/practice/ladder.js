@@ -59,6 +59,7 @@ const LadderUI = (() => {
   // and the queue reached down a rung for something they have not done. Named
   // by the rung it reached TO, because that is the one on the screen.
   const GAP_FROM_LABEL = {
+    worked: "lesson",
     faded: "fill-in-the-blank",
     partial: "solo",
     solo: "integrated",
@@ -83,11 +84,31 @@ const LadderUI = (() => {
        concept that ran dry, not the one on screen. */
     if (gap.served_from === "other_concept") {
       const dry = gap.kc_title || gap.kc || "the next concept";
+      const word = GAP_FROM_LABEL[gap.stage] ? `${GAP_FROM_LABEL[gap.stage]} problem` : "problem";
+      /* Three different truths, and the first version said the first one for
+         all three. `seen` is what the rung holds for THIS learner, `answered`
+         how many of those they have given an answer to
+         (practice/rung_gap.py). seen=0: nothing authored. answered<seen: the
+         rung's drills were on screen and skipped past — the on-screen guard
+         never hands the same drill straight back, so the queue stepped
+         sideways; those drills return. Otherwise: genuinely finished. Seth,
+         2026-09-20: told "nothing new is written" for torch.linalg-basics
+         when its one lesson drill was the one he had just skipped. */
+      const skipped = gap.seen > 0 && gap.answered != null && gap.answered < gap.seen;
+      let why;
+      if (!gap.seen) {
+        why = `Nothing new is written yet for “${esc(dry)}” at your rung`;
+      } else if (skipped) {
+        const done = gap.answered ? `${esc(gap.answered)} answered` : "none answered";
+        why = `Every ${esc(word)} written for “${esc(dry)}” has already been on your screen `
+          + `(${esc(gap.seen)}, ${done}) and nothing is repeated back to back`;
+      } else {
+        why = `You have done every ${esc(word)} written for “${esc(dry)}” (all ${esc(gap.seen)})`;
+      }
+      const next = skipped ? "The skipped ones come back." : "Ask Claude for more drills on it.";
       return (
         '<p class="ladder-stage-callout ladder-gap-callout">'
-        + `Nothing new is written yet for “${esc(dry)}” at your rung, so this `
-        + "problem is from another concept on your frontier. Ask Claude for "
-        + "more drills on it."
+        + `${why}, so this problem is from another concept on your frontier. ${next}`
         + "</p>"
       );
     }

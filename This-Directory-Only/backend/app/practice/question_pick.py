@@ -16,10 +16,10 @@ from app.prioritization import (
     answered_question_ids,
     narrow_to_next_kc,
     question_is_unlocked,
-    rung_gap,
     select_next_subtopic,
     target_difficulty,
 )
+from app.practice.rung_gap import rung_gap
 from app.questions import get_questions_by_subtopic
 # The most any PRACTICE drill gets on the clock. Seth, 2026-09-19: "why don't
 # we set a limit of 5 minutes" — his own log runs 3–5 minutes per answer, and
