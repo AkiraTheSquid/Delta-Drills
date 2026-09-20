@@ -8,14 +8,14 @@ previews: []
 faded: [1121, 1122, 1123, 1124]
 guided: []
 independent: [1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1133]
-integrated: [1134, 1135, 1136]
+integrated: [1134, 1135, 1136, 1710, 1711, 1712, 1713]
 ---
 
 ## Concept: Pixels form a product of two axes
 
 An image of `ny × nz` pixels is stored as a flat list of `ny * nz` rays, and the flat order must be decided before anything is built: here `z` changes fastest, so the list walks across one row of `z` values, then moves to the next `y`. The pixel coordinates along each axis are `t.linspace(-limit, limit, n)` — `n` samples from `−limit` to `+limit` inclusive, with the single-pixel case sitting at `−limit`. The grid is the product of the two vectors, made by broadcasting `y[:, None]` against `z[None, :]` to `(ny, nz)`, stacking the two coordinates on a last axis to `(ny, nz, 2)`, and reshaping to `(ny * nz, 2)`.
 
-The reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place — a transposed image that still has the right shape. The reason to test on a `2 × 3` grid rather than `3 × 3` is the same: a square image hides the swap, a rectangular one makes it a shape error.
+The reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place — a transposed image that still has the right shape. The reason to test on a `2 × 3` grid rather than `3 × 3` is the same: a square image hides the swap, a rectangular one shows it in the coordinate sequence — the flat count `ny * nz` is the same either way, so the shape alone never tells.
 
 ```python
 import torch as t
@@ -215,6 +215,18 @@ Return rays through plane x=1 with the image reversed along z within each y row,
 
 ### q1136
 Return rays from camera (-1,1,0) through fixed plane x=1 with unit-length directions, shape (ny*nz,2,3). ny: pixels along y; nz: pixels along z; yl: half-width along y; zl: half-width along z. Each axis is sampled inclusively from -limit to +limit (a single pixel sits at -limit); flatten with z changing fastest.
+
+### q1710
+Return the flat pixel index whose camera ray (from the origin through the plane x=1) points closest to the +x axis, i.e. has the largest cosine with (1,0,0), as an int64 scalar; ties choose the earlier pixel. ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.
+
+### q1711
+Return camera rays from the origin through the image plane x=f with UNIT-LENGTH directions, shape (ny*nz,2,3): each direction is the pixel point (f, y, z) scaled to length 1. ny, nz: pixels along y and z; yl, zl: half-widths along y and z; f: the plane's distance along x, positive. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.
+
+### q1712
+Return rays that leave from a vertical bar of cameras instead of one point, shape (ny*nz,2,3): the ray for pixel (y, z) starts at origin (0, y, 0) and has direction (1, 0, z). ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.
+
+### q1713
+Return the flat indices of the pixels on the image border — any pixel in the first or last row, or in the first or last column — in increasing flat order, shape (2·ny + 2·nz − 4,), int64. ny: pixels along y (rows); nz: pixels along z (columns), both ≥ 2; z changes fastest in the flat order.
 
 ## Misconceptions
 

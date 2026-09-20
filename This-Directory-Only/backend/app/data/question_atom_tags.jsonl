@@ -1663,3 +1663,35 @@
 {"question_id": 1687, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.85}]}
 {"question_id": 1688, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.85}]}
 {"question_id": 1689, "atoms": [{"atom_id": "index-by-tensor", "confidence": 0.85}]}
+{"question_id": 1690, "atoms": [{"atom_id": "softmax-from-logits", "confidence": 0.85}, {"atom_id": "argmax-prediction", "confidence": 0.85}]}
+{"question_id": 1691, "atoms": [{"atom_id": "softmax-from-logits", "confidence": 0.85}]}
+{"question_id": 1692, "atoms": [{"atom_id": "softmax-from-logits", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1693, "atoms": [{"atom_id": "softmax-from-logits", "confidence": 0.85}, {"atom_id": "broadcasting-rules", "confidence": 0.85}]}
+{"question_id": 1694, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1695, "atoms": [{"atom_id": "cross-entropy-loss", "confidence": 0.85}, {"atom_id": "argmax-prediction", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1696, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1697, "atoms": [{"atom_id": "argmax-prediction", "confidence": 0.85}, {"atom_id": "index-by-tensor", "confidence": 0.85}]}
+{"question_id": 1698, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.85}, {"atom_id": "argmax-prediction", "confidence": 0.85}]}
+{"question_id": 1699, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1700, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.85}, {"atom_id": "argmax-prediction", "confidence": 0.85}]}
+{"question_id": 1701, "atoms": [{"atom_id": "vector-normalize-keepdim", "confidence": 0.85}, {"atom_id": "argmax-prediction", "confidence": 0.85}]}
+{"question_id": 1702, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
+{"question_id": 1703, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
+{"question_id": 1704, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1705, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.85}]}
+{"question_id": 1706, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}, {"atom_id": "any-reduce-axis", "confidence": 0.85}]}
+{"question_id": 1707, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
+{"question_id": 1708, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}, {"atom_id": "any-reduce-axis", "confidence": 0.85}]}
+{"question_id": 1709, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}, {"atom_id": "any-reduce-axis", "confidence": 0.85}]}
+{"question_id": 1710, "atoms": [{"atom_id": "make-rays-1d", "confidence": 0.85}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.85}]}
+{"question_id": 1711, "atoms": [{"atom_id": "make-rays-1d", "confidence": 0.85}]}
+{"question_id": 1712, "atoms": [{"atom_id": "make-rays-1d", "confidence": 0.85}]}
+{"question_id": 1713, "atoms": [{"atom_id": "make-rays-1d", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1714, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}]}
+{"question_id": 1715, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.85}]}
+{"question_id": 1716, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}]}
+{"question_id": 1717, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}]}
+{"question_id": 1718, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}, {"atom_id": "any-reduce-axis", "confidence": 0.85}]}
+{"question_id": 1719, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}, {"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
+{"question_id": 1720, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}, {"atom_id": "boolean-mask-combine", "confidence": 0.85}]}
+{"question_id": 1721, "atoms": [{"atom_id": "triangle-barycentric", "confidence": 0.85}, {"atom_id": "vector-normalize-keepdim", "confidence": 0.85}]}
