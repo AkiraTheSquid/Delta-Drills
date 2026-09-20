@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from app import arena_mix, content_gaps, diagnostic, kc_graph
 from app.practice.grading import select_question_for_difficulty
+from app.attempt_history import owed_question_ids
 from app.prioritization import (
     answered_question_ids,
     narrow_to_next_kc,
@@ -258,38 +259,72 @@ def run_queue(
     # the wanted half excluded, so a dry half falls back to the other rather
     # than 409. A focused request is one concept by the learner's own hand
     # and takes no side.
+    # A half whose only work is a REVIEW REPEAT — a drill already answered
+    # and not owed a retake — does not win its turn on that: within a
+    # cooldown round the other half's fresh work is served first, and the
+    # repeat only when both halves are down to repeats. A repeat still ends
+    # the round the way any pick did before: the cooldown is relaxed only when
+    # a round finds NOTHING. Replay, 2026-09-20: with the 0.1 target the
+    # ARENA half spent raytracing.make-rays-2d and recycled its three
+    # Integrated drills forty times while the graph half sat on unseen
+    # prerequisite work. Without the mix (one round, `[set()]`) nothing
+    # changes: the repeat is the only candidate and is served as before.
     first_gap: dict | None = None
-    picked = None
     halves = [set()] if focus_subtopic is not None else arena_mix.rounds(user_state)
-    for cooldown, half in ((c, h) for c in (True, False) for h in halves):
-        tried: set = set()
-        tried_kcs: set = set(half)
-        sub = subtopic
-        while True:
-            if sub is None:
-                sub = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs, cooldown=cooldown)
-            if sub is None:
-                break
-            try:
-                picked = pick_for_subtopic(
-                    user_id, user_state, sub, focus_subtopic, exclude_kcs=tried_kcs,
-                    record=record, cooldown=cooldown,
-                )
-                break
-            except SubtopicDry as dry:
-                if first_gap is None and dry.gap:
-                    first_gap = dry.gap
-                if focus_subtopic is not None:
-                    break
-                dry_kc = (dry.gap or {}).get("kc")
-                if dry_kc and dry_kc not in tried_kcs:
-                    tried_kcs.add(dry_kc)
-                else:
-                    tried.add(sub)
-                sub = None
-        if picked:
-            break
-    return picked, first_gap
+    for cooldown in (True, False):
+        repeat = None
+        for half in halves:
+            picked, gap = _pick_in_half(user_id, user_state, subtopic, focus_subtopic, half, record, cooldown)
+            if first_gap is None:
+                first_gap = gap
+            if not picked:
+                continue
+            if len(halves) > 1 and _is_review_repeat(user_state, picked[1].id):
+                repeat = repeat or picked
+                continue
+            return picked, first_gap
+        if repeat:
+            return repeat, first_gap
+    return None, first_gap
+
+
+def _pick_in_half(user_id, user_state, subtopic, focus_subtopic, half: set, record: bool, cooldown: bool):
+    """One pass of the selection with `half`'s concepts excluded from the
+    start. Returns `(picked, first_gap)` for this pass — `picked` None when
+    nothing in the rest of the course can be served in this cooldown mode."""
+    first_gap: dict | None = None
+    tried: set = set()
+    tried_kcs: set = set(half)
+    sub = subtopic
+    while True:
+        if sub is None:
+            sub = select_next_subtopic(user_state, exclude=tried, exclude_kcs=tried_kcs, cooldown=cooldown)
+        if sub is None:
+            return None, first_gap
+        try:
+            return pick_for_subtopic(
+                user_id, user_state, sub, focus_subtopic, exclude_kcs=tried_kcs,
+                record=record, cooldown=cooldown,
+            ), first_gap
+        except SubtopicDry as dry:
+            if first_gap is None and dry.gap:
+                first_gap = dry.gap
+            if focus_subtopic is not None:
+                return None, first_gap
+            dry_kc = (dry.gap or {}).get("kc")
+            if dry_kc and dry_kc not in tried_kcs:
+                tried_kcs.add(dry_kc)
+            else:
+                tried.add(sub)
+            sub = None
+
+
+def _is_review_repeat(user_state, qid: int) -> bool:
+    """Answered before and not owed a retake. The picker recycles such a drill
+    only once its concept has nothing unseen or owed left (prioritization.
+    narrow_to_next_kc), so this IS "the concept is spent" — serving it again
+    is review, not work, and must not pre-empt fresh work on the other half."""
+    return qid in answered_question_ids(user_state) and qid not in owed_question_ids(user_state)
 
 
 def queue_next_kc(user_state) -> str | None:
