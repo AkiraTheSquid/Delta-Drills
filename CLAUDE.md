@@ -273,6 +273,21 @@ skill report the same thing from the other side.
   trips `setup_exec_error` (starter returns None) — put the call in the `call` expression.
   Next: `ar-03` (optimisers, 7 KCs), then `ar-04` (16), `ar-05` (12) per the spec.
 
+- **Feedback watcher + the "Nothing new is written yet" banner on a one-drill lesson
+  floor** (2026-09-20): `ops/feedback-watch/dd_feedback_watch.py` — start it (and
+  `ops/gap-watch/`) with the Monitor tool, `persistent: true`, in EVERY session; both
+  were dead this evening. One line per new learner feedback entry, drill or lesson.
+  The q810 banner: the `worked` stage has no rank of its own (the lesson is the rung;
+  the picker serves the concept's FLOOR under it), so `rung_gap` counted seen=0 and
+  the learner was told nothing was written — the truth was one unlocked floor drill
+  (q239) that was already on screen. `practice/rung_gap.py` (lifted from
+  prioritization.py) counts the unlocked floor; `ladder.js` words the callout by
+  `seen`/`answered`. q1722–1727: three faded drills per linalg segment. 🔴 Faded
+  traps: `Tensor.T` / `sum(dim=)` / multi-axis indexing are taught AFTER linalg;
+  `torch.linalg.inv` is in no ARENA notebook; three single-call solves are ONE program
+  to the same-move ratchet — differ by what is returned; a `git checkout --` with one
+  bad path reverts nothing.
+
 - **Integrated rungs on the eight ARENA exercise concepts, 3→7 each** (2026-09-20):
   q1690–1721 on `tensor.stable-probabilities` / `classifier-evaluation` /
   `cosine-similarity` and `raytracing.segment-intersection` / `batched-segments` /
