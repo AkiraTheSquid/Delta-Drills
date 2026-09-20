@@ -11279,3 +11279,33 @@ def solve(r,tr):
     seen=near<float(""inf"")
     dist=near*r[:,1].norm(dim=1)
     return t.where(seen,1/(1+dist),t.tensor(0.))",88,
+Numpy,Applied patterns and advanced,"Return the matrix–vector product of the floating-point PyTorch tensors `a`, shape `(m, k)`, and `v`, shape `(k,)`, as a PyTorch tensor of shape `(m,)`: entry `i` multiplies row `i` of `a` with `v` entry by entry and adds the products.","import torch as t
+
+def solve(a, v):
+    """"""Matrix times vector: entry i is row i of a combined with v.""""""
+    return a @ v",14,
+Numpy,Applied patterns and advanced,"Return the vector–matrix product of the floating-point PyTorch tensors `v`, shape `(k,)`, and `b`, shape `(k, n)`, as a plain Python list of `n` floats: entry `j` multiplies `v` with column `j` of `b` entry by entry and adds the products.","import torch as t
+
+def solve(v, b):
+    """"""Vector on the left: a (k,) row combined with each column of b.""""""
+    return (v @ b).tolist()",16,
+Numpy,Applied patterns and advanced,"Return the matrix product of the floating-point PyTorch tensors `a`, `b` and `c`, in that order, as a PyTorch tensor of shape `(m, p)`. Their shapes are `(m, k)`, `(k, n)` and `(n, p)`: `k` and `n` are both contracted away.","import torch as t
+
+def solve(a, b, c):
+    """"""A chain of two matrix products: the inner sizes vanish twice.""""""
+    return a @ b @ c",20,
+Numpy,Core array literacy,"Return the floating-point PyTorch tensor `x` of shape `(n, r)` with `a @ x = b`, in ONE call and without forming an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `b` is one of shape `(n, r)`, `r` right-hand sides side by side.","import torch as t
+
+def solve(a, b):
+    """"""Solve a @ x = b for r right-hand sides at once.""""""
+    return t.linalg.solve(a, b)",20,
+Numpy,Core array literacy,"Recover the vector `x` with `a @ x = y` and return its entries as a plain Python list of `n` floats — without ever building an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `y = a @ x` is one of shape `(n,)`.","import torch as t
+
+def solve(a, y):
+    """"""Recover the vector a was applied to: undo y = a @ x.""""""
+    return t.linalg.solve(a, y).tolist()",22,
+Numpy,Core array literacy,"Return the total of every solution entry across all the systems, as a 0-d floating-point PyTorch tensor: solve every system `mats[i] @ x_i = b[i]` in ONE call, then add up all entries of the result. `mats` is a floating-point PyTorch tensor of shape `(batch, n, n)`, every matrix invertible; `b` is one of shape `(batch, n)`, one right-hand side per matrix.","import torch as t
+
+def solve(mats, b):
+    """"""One solve per batch entry, in a single call; then total everything.""""""
+    return t.linalg.solve(mats, b).sum()",26,

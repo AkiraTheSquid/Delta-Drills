@@ -76612,5 +76612,341 @@
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
+  },
+  {
+    "id": 1722,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 14,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the matrix–vector product of the floating-point PyTorch tensors `a`, shape `(m, k)`, and `v`, shape `(k,)`, as a PyTorch tensor of shape `(m,)`: entry `i` multiplies row `i` of `a` with `v` entry by entry and adds the products.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, v):\n    \"\"\"Matrix times vector: entry i is row i of a combined with v.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na=t.tensor([[2.,1.],[0.,3.]]); v=t.tensor([1.,1.])",
+          "call": "solve(a, v)",
+          "expected_expr": "t.tensor([3.0, 3.0], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[5.,0.,2.]]); v=t.tensor([1.,4.,-1.])",
+          "call": "solve(a, v)",
+          "expected_expr": "t.tensor([3.0], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]]); v=t.tensor([7.,8.,9.])",
+          "call": "solve(a, v)",
+          "expected_expr": "t.tensor([7.0, 8.0, 9.0], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,-1.],[0.,2.],[3.,0.]]); v=t.tensor([2.,3.])",
+          "call": "solve(a, v)",
+          "expected_expr": "t.tensor([-1.0, 6.0, 6.0], dtype=t.float32)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "t.tensor([[2.0, 1.0], [0.0, 3.0]], dtype=t.float32)",
+          "why": "`*` multiplies each row entry by entry with `v` and adds nothing, so the result keeps the shape `(m, k)`. The product that contracts `k` away — row meets vector, products added — is the matrix product."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(a, v):\n    \"\"\"Matrix times vector: entry i is row i of a combined with v.\"\"\"\n    return a @ v\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1723,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 16,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the vector–matrix product of the floating-point PyTorch tensors `v`, shape `(k,)`, and `b`, shape `(k, n)`, as a plain Python list of `n` floats: entry `j` multiplies `v` with column `j` of `b` entry by entry and adds the products.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(v, b):\n    \"\"\"Vector on the left: a (k,) row combined with each column of b.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nv=t.tensor([1.,2.]); b=t.tensor([[3.,0.,1.],[1.,1.,0.]])",
+          "call": "solve(v, b)",
+          "expected_expr": "[5.0, 2.0, 1.0]"
+        },
+        {
+          "setup_code": "import torch as t\nv=t.tensor([2.]); b=t.tensor([[4.,-1.]])",
+          "call": "solve(v, b)",
+          "expected_expr": "[8.0, -2.0]"
+        },
+        {
+          "setup_code": "import torch as t\nv=t.tensor([1.,1.,1.]); b=t.tensor([[1.,2.],[3.,4.],[5.,6.]])",
+          "call": "solve(v, b)",
+          "expected_expr": "[9.0, 12.0]"
+        },
+        {
+          "setup_code": "import torch as t\nv=t.tensor([0.,5.]); b=t.tensor([[9.,9.],[1.,2.]])",
+          "call": "solve(v, b)",
+          "expected_expr": "[5.0, 10.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "raises RuntimeError: The size of tensor a (2) must match the size of tensor b (3) at non-singleton di",
+          "why": "Elementwise `*` needs broadcast-compatible shapes — `(2,)` against `(2, 3)` is not — and adds nothing even when it runs. The vector–matrix product pairs `v` with each COLUMN of `b` and adds the products, leaving `(n,)`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(v, b):\n    \"\"\"Vector on the left: a (k,) row combined with each column of b.\"\"\"\n    return (v @ b).tolist()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1724,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Applied patterns and advanced",
+      "subtopic_key": "Numpy: Applied patterns and advanced",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the matrix product of the floating-point PyTorch tensors `a`, `b` and `c`, in that order, as a PyTorch tensor of shape `(m, p)`. Their shapes are `(m, k)`, `(k, n)` and `(n, p)`: `k` and `n` are both contracted away.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, b, c):\n    \"\"\"A chain of two matrix products: the inner sizes vanish twice.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,2.]]); b=t.tensor([[1.,0.],[0.,1.]]); c=t.tensor([[3.],[4.]])",
+          "call": "solve(a, b, c)",
+          "expected_expr": "t.tensor([[11.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[2.,0.],[1.,1.]]); b=t.tensor([[1.,0.,1.],[0.,1.,1.]]); c=t.tensor([[1.],[2.],[3.]])",
+          "call": "solve(a, b, c)",
+          "expected_expr": "t.tensor([[8.0], [9.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,1.,1.]]); b=t.tensor([[1.],[2.],[3.]]); c=t.tensor([[2.,-1.]])",
+          "call": "solve(a, b, c)",
+          "expected_expr": "t.tensor([[12.0, -6.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[2.],[0.]]); b=t.tensor([[1.,1.]]); c=t.tensor([[1.],[1.]])",
+          "call": "solve(a, b, c)",
+          "expected_expr": "t.tensor([[4.0], [0.0]], dtype=t.float32)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "t.tensor([[3.0, 6.0], [4.0, 8.0]], dtype=t.float32)",
+          "why": "`*` between the `(m, n)` product and `c` broadcasts entry by entry and never contracts `n` — it either errors or gives the wrong shape. A second `@` is what carries the chain on to `(m, p)`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(a, b, c):\n    \"\"\"A chain of two matrix products: the inner sizes vanish twice.\"\"\"\n    return a @ b @ c\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1725,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the floating-point PyTorch tensor `x` of shape `(n, r)` with `a @ x = b`, in ONE call and without forming an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `b` is one of shape `(n, r)`, `r` right-hand sides side by side.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Solve a @ x = b for r right-hand sides at once.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na=t.tensor([[4.,0.],[0.,2.]]); b=t.tensor([[4.,8.],[2.,6.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "t.tensor([[1.0, 2.0], [1.0, 3.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,1.],[0.,1.]]); b=t.tensor([[3.],[1.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "t.tensor([[2.0], [1.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[5.,2.],[1.,3.]]); b=t.tensor([[1.,9.],[-5.,7.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "t.tensor([[1.0, 1.0], [-2.0, 2.0]], dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,0.,0.],[0.,2.,0.],[0.,0.,4.]]); b=t.tensor([[1.,2.,3.],[2.,4.,6.],[4.,8.,12.]])",
+          "call": "solve(a, b)",
+          "expected_expr": "t.tensor([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], dtype=t.float32)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "t.tensor([[1.0, 0.0], [0.0, 3.0]], dtype=t.float32)",
+          "why": "Inverse times `b` would need the matrix product — and even `t.linalg.inv(a) @ b` does more work than solving directly, which is the page's point. `*` here multiplies entries in place and solves nothing."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(a, b):\n    \"\"\"Solve a @ x = b for r right-hand sides at once.\"\"\"\n    return t.linalg.solve(a, b)\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1726,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 22,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Recover the vector `x` with `a @ x = y` and return its entries as a plain Python list of `n` floats — without ever building an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `y = a @ x` is one of shape `(n,)`.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(a, y):\n    \"\"\"Recover the vector a was applied to: undo y = a @ x.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\na=t.tensor([[4.,1.],[1.,3.]]); y=t.tensor([15.,1.])",
+          "call": "solve(a, y)",
+          "expected_expr": "[4.0, -1.0]"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[4.]]); y=t.tensor([10.])",
+          "call": "solve(a, y)",
+          "expected_expr": "[2.5]"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[1.,0.],[0.,0.5]]); y=t.tensor([5.,1.])",
+          "call": "solve(a, y)",
+          "expected_expr": "[5.0, 2.0]"
+        },
+        {
+          "setup_code": "import torch as t\na=t.tensor([[2.,1.],[0.,1.]]); y=t.tensor([7.,3.])",
+          "call": "solve(a, y)",
+          "expected_expr": "[2.0, 3.0]"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "[61.0, 18.0]",
+          "why": "Applying `a` again moves further away from `x`, not back to it. Undoing `a @ x = y` is a solve — that is what `a⁻¹ y` means, computed without ever forming `a⁻¹`."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(a, y):\n    \"\"\"Recover the vector a was applied to: undo y = a @ x.\"\"\"\n    return t.linalg.solve(a, y).tolist()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
+  },
+  {
+    "id": 1727,
+    "source": {
+      "type": "csv",
+      "path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+    },
+    "curriculum": {
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
+      "difficulty_score": 26,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Return the total of every solution entry across all the systems, as a 0-d floating-point PyTorch tensor: solve every system `mats[i] @ x_i = b[i]` in ONE call, then add up all entries of the result. `mats` is a floating-point PyTorch tensor of shape `(batch, n, n)`, every matrix invertible; `b` is one of shape `(batch, n)`, one right-hand side per matrix.",
+      "task_type": "function_impl",
+      "language": "python",
+      "primary_library": "torch",
+      "function_name": "solve",
+      "starter_code": "import torch as t\n\ndef solve(mats, b):\n    \"\"\"One solve per batch entry, in a single call; then total everything.\"\"\"\n    pass\n",
+      "test_cases": [
+        {
+          "setup_code": "import torch as t\nmats=t.tensor([[[2.,0.],[0.,4.]],[[1.,0.],[0.,1.]]]); b=t.tensor([[2.,4.],[5.,6.]])",
+          "call": "solve(mats, b)",
+          "expected_expr": "t.tensor(13.0, dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\nmats=t.tensor([[[1.,1.],[0.,1.]]]); b=t.tensor([[3.,1.]])",
+          "call": "solve(mats, b)",
+          "expected_expr": "t.tensor(3.0, dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\nmats=t.tensor([[[3.]],[[0.5]],[[2.]]]); b=t.tensor([[6.],[1.],[4.]])",
+          "call": "solve(mats, b)",
+          "expected_expr": "t.tensor(6.0, dtype=t.float32)"
+        },
+        {
+          "setup_code": "import torch as t\nmats=t.tensor([[[1.,0.,0.],[0.,2.,0.],[0.,0.,4.]],[[2.,0.,0.],[0.,2.,0.],[0.,0.,2.]]]); b=t.tensor([[1.,2.,4.],[2.,2.,2.]])",
+          "call": "solve(mats, b)",
+          "expected_expr": "t.tensor(6.0, dtype=t.float32)"
+        }
+      ],
+      "submission_mode": "function",
+      "wrong_examples": [
+        {
+          "output": "t.tensor(2.0, dtype=t.float32)",
+          "why": "That solves only the first system and totals one solution. `t.linalg.solve` batches on its own: the whole `(batch, n, n)` stack in, one solution per batch entry out — and the total must run over all of them."
+        }
+      ],
+      "provenance": null,
+      "canonical_solution": "import torch as t\n\ndef solve(mats, b):\n    \"\"\"One solve per batch entry, in a single call; then total everything.\"\"\"\n    return t.linalg.solve(mats, b).sum()\n",
+      "expected_output": "",
+      "expected_artifact_type": "stdout",
+      "supports_visual_output": false
+    }
   }
 ]

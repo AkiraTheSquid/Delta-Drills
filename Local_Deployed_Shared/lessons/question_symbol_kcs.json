@@ -25113,6 +25113,116 @@
     "torch.tensor"
    ]
   },
+  "1722": {
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ]
+  },
+  "1723": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1724": {
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ]
+  },
+  "1725": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ]
+  },
+  "1726": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.tensor-model": [
+    "Tensor.tolist"
+   ]
+  },
+  "1727": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.sum"
+   ]
+  },
   "174": {
    "python.calling-functions": [
     "syntax.call",

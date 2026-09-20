@@ -3,7 +3,7 @@ kc: torch.linalg-basics
 title: Matrix multiply and t.linalg basics
 supporting: [torch.aggregations, torch.elementwise-ops]
 new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
-faded: [239, 107]
+faded: [239, 107, 1722, 1723, 1724, 1725, 1726, 1727]
 guided: [508, 509]
 independent: [510, 511, 512, 513, 1571, 1572, 1573, 1574]
 integrated: [1521, 1522, 1523, 1575, 1662, 1663, 1664, 1665]
@@ -14,12 +14,14 @@ integrated: [1521, 1522, 1523, 1575, 1662, 1663, 1664, 1665]
 Two different "multiplications" exist for matrices, and PyTorch gives each its
 own operator:
 
-- **`a * b` — elementwise**: multiplies corresponding entries; shapes must
-  match (or broadcast). No summing happens.
+- **`a * b` — elementwise**: pairs the entries at the same row and column
+  and multiplies them; for this comparison use matrices of equal shape. No
+  summing happens.
 - **`a @ b` — matrix multiplication**: row-times-column with a sum inside.
-  For `a` of shape (m, k) and `b` of shape (k, n), the result is (m, n):
-  entry `[i, j]` is the dot product of row i of `a` with column j of `b`.
-  The inner dimensions (k) must agree, and they disappear in the output.
+  For `a` of shape (m, k) and `b` of shape (k, n), the result is (m, n): to
+  get entry `[i, j]`, multiply the corresponding entries of row i of `a` and
+  column j of `b`, then add those products. The inner dimensions (k) must
+  agree, and they disappear in the output.
 
 ```python
 import torch as t
@@ -58,6 +60,9 @@ assert "cannot be multiplied" in _delta_output
 code you will meet `a.T` for the transpose that so often precedes it.
 
 ## Worked example
+
+The example below runs both products on the same two matrices, then
+checks how the input shapes fix the shape of the matrix product.
 
 ```python
 import torch as t
@@ -108,6 +113,63 @@ import torch as t
 def solve(a, b):
     """The (m, n) matrix product of a (m, k) and b (k, n)."""
     return a @ b
+```
+
+### q1722
+Return the matrix–vector product of the floating-point PyTorch tensors `a`, shape `(m, k)`, and `v`, shape `(k,)`, as a PyTorch tensor of shape `(m,)`: entry `i` multiplies row `i` of `a` with `v` entry by entry and adds the products.
+
+```python starter
+import torch as t
+
+def solve(a, v):
+    """Matrix times vector: entry i is row i of a combined with v."""
+    return a _____ v
+```
+
+```python solution
+import torch as t
+
+def solve(a, v):
+    """Matrix times vector: entry i is row i of a combined with v."""
+    return a @ v
+```
+
+### q1723
+Return the vector–matrix product of the floating-point PyTorch tensors `v`, shape `(k,)`, and `b`, shape `(k, n)`, as a plain Python list of `n` floats: entry `j` multiplies `v` with column `j` of `b` entry by entry and adds the products.
+
+```python starter
+import torch as t
+
+def solve(v, b):
+    """Vector on the left: a (k,) row combined with each column of b."""
+    return (v _____ b).tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(v, b):
+    """Vector on the left: a (k,) row combined with each column of b."""
+    return (v @ b).tolist()
+```
+
+### q1724
+Return the matrix product of the floating-point PyTorch tensors `a`, `b` and `c`, in that order, as a PyTorch tensor of shape `(m, p)`. Their shapes are `(m, k)`, `(k, n)` and `(n, p)`: `k` and `n` are both contracted away.
+
+```python starter
+import torch as t
+
+def solve(a, b, c):
+    """A chain of two matrix products: the inner sizes vanish twice."""
+    return a _____ b _____ c
+```
+
+```python solution
+import torch as t
+
+def solve(a, b, c):
+    """A chain of two matrix products: the inner sizes vanish twice."""
+    return a @ b @ c
 ```
 
 ## Concept: t.linalg.solve — never build the inverse
@@ -164,6 +226,9 @@ assert t.allclose(x, via_inverse)
 
 ## Worked example
 
+The example below recovers an unknown vector from two linear equations,
+then substitutes the result back into those equations to check it.
+
 ```python
 import torch as t
 
@@ -181,8 +246,10 @@ assert x.tolist() == [3.0, 2.0]
 assert t.allclose(a_sys @ x, b_vec)
 ```
 
-Why: `solve` + `allclose` verification — the pair costs one line and
-catches both wrong answers and ill-conditioned systems.
+Why: `solve` + `allclose` verification — the pair costs one line and catches
+a wrong answer. Substituting back checks that the candidate approximately
+satisfies the equations; it does not diagnose an ill-conditioned system, where
+a small change in the inputs moves the solution a long way.
 
 ## Faded practice
 
@@ -203,6 +270,63 @@ import torch as t
 def solve(a, b):
     """Return x such that a @ x = b (use a solver, not an inverse)."""
     return t.linalg.solve(a, b)
+```
+
+### q1725
+Return the floating-point PyTorch tensor `x` of shape `(n, r)` with `a @ x = b`, in ONE call and without forming an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `b` is one of shape `(n, r)`, `r` right-hand sides side by side.
+
+```python starter
+import torch as t
+
+def solve(a, b):
+    """Solve a @ x = b for r right-hand sides at once."""
+    return t.linalg._____(a, b)
+```
+
+```python solution
+import torch as t
+
+def solve(a, b):
+    """Solve a @ x = b for r right-hand sides at once."""
+    return t.linalg.solve(a, b)
+```
+
+### q1726
+Recover the vector `x` with `a @ x = y` and return its entries as a plain Python list of `n` floats — without ever building an inverse. `a` is an invertible floating-point PyTorch tensor of shape `(n, n)`; `y = a @ x` is one of shape `(n,)`.
+
+```python starter
+import torch as t
+
+def solve(a, y):
+    """Recover the vector a was applied to: undo y = a @ x."""
+    return t.linalg._____(a, y).tolist()
+```
+
+```python solution
+import torch as t
+
+def solve(a, y):
+    """Recover the vector a was applied to: undo y = a @ x."""
+    return t.linalg.solve(a, y).tolist()
+```
+
+### q1727
+Return the total of every solution entry across all the systems, as a 0-d floating-point PyTorch tensor: solve every system `mats[i] @ x_i = b[i]` in ONE call, then add up all entries of the result. `mats` is a floating-point PyTorch tensor of shape `(batch, n, n)`, every matrix invertible; `b` is one of shape `(batch, n)`, one right-hand side per matrix.
+
+```python starter
+import torch as t
+
+def solve(mats, b):
+    """One solve per batch entry, in a single call; then total everything."""
+    return t.linalg._____(mats, b).sum()
+```
+
+```python solution
+import torch as t
+
+def solve(mats, b):
+    """One solve per batch entry, in a single call; then total everything."""
+    return t.linalg.solve(mats, b).sum()
 ```
 
 ## Guided practice
