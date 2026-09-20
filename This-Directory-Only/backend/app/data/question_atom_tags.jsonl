@@ -1701,3 +1701,6 @@
 {"question_id": 1725, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
 {"question_id": 1726, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
 {"question_id": 1727, "atoms": [{"atom_id": "linalg-solve-batched", "confidence": 0.85}]}
+{"question_id": 1728, "atoms": [{"atom_id": "log-sum-exp-stability", "confidence": 0.85}]}
+{"question_id": 1729, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}
+{"question_id": 1730, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}

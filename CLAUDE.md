@@ -273,6 +273,42 @@ skill report the same thing from the other side.
   trips `setup_exec_error` (starter returns None) — put the call in the `call` expression.
   Next: `ar-03` (optimisers, 7 KCs), then `ar-04` (16), `ar-05` (12) per the spec.
 
+- **BACKLOG — `kp-stable-probabilities` needs the mathematics** (Seth, 2026-09-20, via
+  lesson feedback on q1034, tag `confusing`): "I don't actually want you to change this
+  … put a note for later that I want to come back to this and make it such that the
+  drills have a lot more math because it took me a long time to mathematically
+  understand this drill, and I had to use ChatGPT in order to understand it." Do not
+  touch until he asks; then: the derivation (why the row-max shift leaves softmax
+  unchanged, log-sum-exp as the log-normaliser, why log space avoids underflow) in the
+  lesson, plus drills that ask for the mathematical steps.
+
+- **Feedback watcher + the "Nothing new is written yet" banner on a one-drill lesson
+  floor** (2026-09-20): `ops/feedback-watch/dd_feedback_watch.py` — start it (and
+  `ops/gap-watch/`) with the Monitor tool, `persistent: true`, in EVERY session; both
+  were dead this evening. One line per new learner feedback entry, drill or lesson.
+  The q810 banner: the `worked` stage has no rank of its own (the lesson is the rung;
+  the picker serves the concept's FLOOR under it), so `rung_gap` counted seen=0 and
+  the learner was told nothing was written — the truth was one unlocked floor drill
+  (q239) that was already on screen. `practice/rung_gap.py` (lifted from
+  prioritization.py) counts the unlocked floor; `ladder.js` words the callout by
+  `seen`/`answered`. q1722–1727: three faded drills per linalg segment. 🔴 Faded
+  traps: `Tensor.T` / `sum(dim=)` / multi-axis indexing are taught AFTER linalg;
+  `torch.linalg.inv` is in no ARENA notebook; three single-call solves are ONE program
+  to the same-move ratchet — differ by what is returned; a `git checkout --` with one
+  bad path reverts nothing.
+  Same night, q1728–1730: 🔴 the ARENA share unlocks a concept BEFORE its
+  prerequisites are read, and the symbol gate then locks every floor drill that uses a
+  symbol an unread prerequisite owns — batched-segments had ONE servable floor drill
+  (q1106 needs `torch.linalg.det`, owned by segment-intersection) → on-screen guard →
+  dry → gap watcher fired for a LESSON rung. Fill floors with drills that use only the
+  page's own symbols (`diag_bseg.py`: `symbol_gate.blocking_kcs(state, qid)`). 🔴 The
+  bank audit's leak checks interact: a call named in the prompt is exempt from the
+  near-miss-`why` leak check; drop it from the prompt and the `why` starts BLOCKING —
+  write the `why` in prose, never code-span an answer call. A case whose input already
+  equals its output (`precompute_leak`) lets `return x` pass. A drill whose segment is
+  unread renders the LESSON into the left column by design (`#question-text` under
+  `body.lesson-mode`) — q1034 (softmax) was filed under the log-space segment; moved.
+
 - **Integrated rungs on the eight ARENA exercise concepts, 3→7 each** (2026-09-20):
   q1690–1721 on `tensor.stable-probabilities` / `classifier-evaluation` /
   `cosine-similarity` and `raytracing.segment-intersection` / `batched-segments` /
