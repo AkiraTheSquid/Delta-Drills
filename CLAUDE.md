@@ -273,6 +273,15 @@ skill report the same thing from the other side.
   trips `setup_exec_error` (starter returns None) — put the call in the `call` expression.
   Next: `ar-03` (optimisers, 7 KCs), then `ar-04` (16), `ar-05` (12) per the spec.
 
+- **BACKLOG — `kp-stable-probabilities` needs the mathematics** (Seth, 2026-09-20, via
+  lesson feedback on q1034, tag `confusing`): "I don't actually want you to change this
+  … put a note for later that I want to come back to this and make it such that the
+  drills have a lot more math because it took me a long time to mathematically
+  understand this drill, and I had to use ChatGPT in order to understand it." Do not
+  touch until he asks; then: the derivation (why the row-max shift leaves softmax
+  unchanged, log-sum-exp as the log-normaliser, why log space avoids underflow) in the
+  lesson, plus drills that ask for the mathematical steps.
+
 - **Feedback watcher + the "Nothing new is written yet" banner on a one-drill lesson
   floor** (2026-09-20): `ops/feedback-watch/dd_feedback_watch.py` — start it (and
   `ops/gap-watch/`) with the Monitor tool, `persistent: true`, in EVERY session; both
