@@ -138,9 +138,10 @@ class SubmitRequest(BaseModel):
     # client that does not report; the server then falls back to its schedule.
     example_shown: bool | None = None
     # The answer clock ran out and the client submitted the editor as it
-    # stood. A wrong answer under that flag is logged as a `timeout`, not a
-    # miss — no ability update, no ladder step, no pending attempt to rate.
-    # A RIGHT answer at the buzzer still counts. Older clients omit it.
+    # stood. A wrong answer under that flag is a MISS that also leaves a
+    # `timeout` audit row (2026-09-20; before that it was scored nowhere and
+    # re-served). A RIGHT answer at the buzzer still counts. Older clients
+    # omit it.
     timed_out: bool = False
 
 
@@ -195,9 +196,12 @@ class SubmitResponse(BaseModel):
     solution_code: str
     failed_tests: list[dict] = Field(default_factory=list)
     ladder_estimate: dict | None = None
-    # False when the grade was recorded as a timeout: nothing is pending, so
-    # the client skips the felt-difficulty step and goes to Next.
+    # False when the grade was recorded but not scored. Always True since
+    # 2026-09-20 — a timeout is a scored miss now — and kept so a client from
+    # before then still reads it; `timed_out` is what the current client
+    # reads to say "the clock did this" over the miss.
     scored: bool = True
+    timed_out: bool = False
 
 
 class FeedbackRequest(BaseModel):

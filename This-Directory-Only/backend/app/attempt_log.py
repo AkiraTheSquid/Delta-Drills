@@ -87,11 +87,16 @@ KIND_LESSON_VIEW = "lesson_view"
 # which is the designed rollback behaviour.
 KIND_BKT_UPDATE = "bkt_update"
 # `timeout` is the answer clock running out with the editor not yet right:
-# the client force-submits whatever is there and the grader says no. That is
-# not evidence about the concept — Seth's 2026-08 record held 88 of these,
-# logged as misses in the 2:00-clock era, and they drove two concepts' ability
-# to -2.9 and held him on the faded rung for weeks. Recorded so the audit can
-# see them; never scored (`is_graded` is kind-gated), never on the ladder.
+# the client force-submits whatever is there and the grader says no. Written
+# BESIDE the ordinary `attempt` row for the same answer, never instead of it
+# (2026-09-20): the miss is scored through the attempt row, and this row is
+# the audit's way of telling a clock miss from a wrong-code miss. It carried
+# the miss ALONE from 2026-09-06 to 09-20 — "not evidence about the concept",
+# after the 2:00-clock era drove two concepts' ability to -2.9 — and in that
+# time Seth's record grew 103 of them against 107 answers, all invisible to
+# mastery, struggle and the picker, every one re-served. Seth: "It should
+# count it as wrong whenever I run out of time." Still never graded HERE
+# (`is_graded` is kind-gated) — that would double-count the attempt row.
 KIND_TIMEOUT = "timeout"
 KINDS = (KIND_ATTEMPT, KIND_LESSON_VIEW, KIND_BKT_UPDATE, KIND_TIMEOUT)
 

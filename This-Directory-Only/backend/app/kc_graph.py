@@ -268,6 +268,10 @@ def kc_mastery(
     if total_w <= 0:
         return params.p_init, 0.0, row.get("tier") or "topic-proxy"
 
+    # getattr: `kc_estimate` reaches here since 2026-09-20 and the watch
+    # runners hand it ladder-only states with no BKT fields at all.
+    atom_mastery = getattr(user_state, "atom_mastery", None) or {}
+    atom_last_ts = getattr(user_state, "atom_last_ts", None) or {}
     acc = 0.0
     covered = 0.0
     for a in atoms:
@@ -276,9 +280,9 @@ def kc_mastery(
             continue
         atom_id = a.get("a")
         acc += w * bkt_mastery.current_mastery(
-            user_state.atom_mastery, user_state.atom_last_ts, atom_id, now=now, params=params, apply_decay=decay
+            atom_mastery, atom_last_ts, atom_id, now=now, params=params, apply_decay=decay
         )
-        if atom_id in (user_state.atom_mastery or {}):
+        if atom_id in atom_mastery:
             covered += w
     return acc / total_w, covered / total_w, row.get("tier") or "topic-proxy"
 
@@ -379,20 +383,39 @@ def kc_is_learned(user_state, kc: str) -> bool:
     return kc_evidence_exhausted(user_state, kc)
 
 
+# Concepts whose prerequisite edges are VOCABULARY, not reasoning. Seth,
+# 2026-09-19: "It feels like I'm studying flashcards of various different
+# syntax parts ... the lower nodes of the graph aren't really prerequisites
+# for the higher nodes of the graph, and I can study the higher nodes of the
+# graph without the lower nodes for a lot of the parts." He is right about the
+# `torch.*` layer: `torch.reductions` needs the learner to have SEEN what a
+# tensor and a dim are, not to have cleared a 0.85 posterior on
+# `torch.tensor-model` — the mastery gate there was holding syntax behind
+# syntax. For these targets a prerequisite is satisfied once its lesson has
+# been read. `tensor.*`, `raytracing.*` and `cnn.*` keep the mastery gate:
+# their edges are real (you cannot write the ray-segment intersection without
+# actually being able to do the batched solve).
+LESSON_UNLOCK_PREFIXES = ("torch.",)
+
+
 def kc_is_unlocked(user_state, kc: str) -> bool:
-    """A KC is unlocked when every prerequisite is learned. Roots (no prereqs)
-    are unlocked from the first session — they are the cold-start entry points,
-    and there is always at least one or the course would be unenterable."""
+    """A KC is unlocked when every prerequisite is learned — or, for a target
+    in LESSON_UNLOCK_PREFIXES, read. Roots (no prereqs) are unlocked from the
+    first session — they are the cold-start entry points, and there is always
+    at least one or the course would be unenterable."""
     node = _registry().get(kc)
     if node is None:
         # A KC nothing in the registry knows about cannot be gated on. Serving
         # it is the lesser evil versus locking content out of reach entirely.
         return True
+    by_lesson = kc.startswith(LESSON_UNLOCK_PREFIXES)
+    exposure = practice_targets.effective_exposure(user_state) if by_lesson else None
     # A prerequisite the learner disabled is skipped, not blocking: "turn this
     # off" must not lock everything downstream out of reach.
     return all(
         kc_prefs.is_disabled(user_state, p) or kc_is_learned(user_state, p)
         or p in practice_targets.readiness(user_state)
+        or (by_lesson and lessons.kc_lesson_read(p, exposure))
         for p in node["prereqs"]
     )
 
@@ -565,7 +588,25 @@ def ladder_view(user_state, kc: str) -> dict:
 
 
 def kc_estimate(user_state, kc: str) -> dict:
-    """The learner's level on ONE concept, as an interval over its own attempts."""
+    """The learner's level on ONE concept: the interval over its own attempts,
+    plus the number the LEARNED gate actually reads."""
+    # `kc_is_learned` is the atom-BKT posterior against LEARNED_THRESHOLD (or
+    # the pool exhausted) — neither the rung nor `solo_progress`, which the
+    # strip was drawing as "% understanding" while the graph stayed locked.
+    # Seth, 2026-09-19: "why does it feel like my progress is a bit slow" —
+    # the bar and the gate were two different numbers. Added HERE and not in
+    # `_kc_estimate_core`: `kc_is_learned` reaches `kc_stage`, which needs the
+    # core estimate — the gate in the core recursed without limit the first
+    # time a pool was fully served.
+    est = _kc_estimate_core(user_state, kc)
+    est["mastery"] = round(kc_mastery(user_state, kc, decay=False)[0], 4)
+    est["learned_at"] = LEARNED_THRESHOLD
+    est["learned"] = kc_is_learned(user_state, kc)
+    return est
+
+
+def _kc_estimate_core(user_state, kc: str) -> dict:
+    """`kc_estimate` without the gate fields — what `kc_stage` reads."""
     row = ladder_view(user_state, kc)
     attempts = row.get("attempts") or []
     recent = attempts[-_LADDER_WINDOW:]
@@ -778,7 +819,7 @@ def solo_rung_cleared(user_state, kc: str) -> bool:
 
 def kc_stage(user_state, kc: str) -> str:
     """Which rung to serve for this concept right now."""
-    stage = _stage_from(kc_estimate(user_state, kc), ladder_view(user_state, kc))
+    stage = _stage_from(_kc_estimate_core(user_state, kc), ladder_view(user_state, kc))
     if stage == DRILL_FLOOR and solo_rung_cleared(user_state, kc):
         stage = "solo"
     if practice_targets.solo_entry(user_state, kc) and LADDER_STAGES.index(stage) < LADDER_STAGES.index("partial"):

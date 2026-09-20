@@ -174,12 +174,13 @@ def finalize_attempt(
 
 
 def record_timeout_submit(user_state, question) -> None:
-    """A wrong answer the clock submitted: logged as `timeout`, scored nowhere.
+    """A wrong answer the clock submitted: the `timeout` AUDIT row.
 
-    Reads the rung and concept the drill was served at BEFORE anything moves
-    (nothing does — that is the point), so the audit can see which rung the
-    learner ran out of time on. No pending attempt is created: the client is
-    told `scored=false` and skips the felt-difficulty step.
+    Reads the rung and concept the drill was served at BEFORE the miss is
+    recorded, so the audit can see which rung the learner ran out of time on.
+    Since 2026-09-20 this is the first half of a miss, not the whole of it:
+    the caller records the attempt and the ladder outcome right after, the
+    same as any wrong answer (questions_router.submit_answer).
     """
     served = ladder_fields(user_state, question.id)
     attempt_log.record_timeout(

@@ -187,6 +187,14 @@
   min-width: 0;
 }
 
+/* The name is hidden until the drill is answered (practice/concept-mask.js).
+   Both layers, since both carry the same string. Italic so the placeholder
+   never reads as a concept called "Concept hidden until you answer". */
+.dd-concept.is-masked .dd-concept-label {
+  font-style: italic;
+  opacity: 0.8;
+}
+
 /* The eyebrow that used to sit above the concept in the left panel's heading
    card is NOT reproduced here. The chip is a name and a fraction; anything
    else on it makes it the thing it replaced. */

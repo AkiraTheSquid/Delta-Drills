@@ -299,7 +299,12 @@ function renderQuestion(q, count) {
     (q.ladder_kc_title || "").trim() ||
     displaySubtopic(String(q.subtopic || "")).trim() ||
     "Question " + practiceQuestionCount;
-  questionNumber.textContent = conceptHeading;
+  /* The real title rides in `data-concept`; the text is the MASK while the
+     drill is ungraded (practice/concept-mask.js puts the title back when the
+     grade lands). The heading is only on screen under 620px, but there it is
+     the topbar pill's stand-in and leaks the same call. */
+  questionNumber.dataset.concept = conceptHeading;
+  questionNumber.textContent = window.ConceptMask?.label(conceptHeading) ?? conceptHeading;
   renderQuestionBody(q);
   // Names the concept under test and, on the scaffolded rungs, puts the worked
   // example back on screen beside the problem. Must run AFTER renderQuestionBody

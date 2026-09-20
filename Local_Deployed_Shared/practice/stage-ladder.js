@@ -243,8 +243,17 @@ const StageLadder = (() => {
   const _streakOf = (estimate) => {
     const n = estimate && estimate.streak;
     const need = estimate && estimate.streak_needed;
+    const mastery = estimate && estimate.mastery;
+    const learnedAt = estimate && estimate.learned_at;
     return {
       soloProgress: estimate && estimate.solo_progress,
+      /* The atom-BKT posterior the LEARNED gate reads, and the bar it has to
+         clear (`kc_graph.LEARNED_THRESHOLD`), plus the gate's own verdict —
+         which can also be true on an exhausted pool. Absent from a payload
+         older than 2026-09-20; the bar then falls back to the rung reading. */
+      mastery: Number.isFinite(mastery) ? mastery : null,
+      learnedAt: Number.isFinite(learnedAt) && learnedAt > 0 ? learnedAt : null,
+      learned: estimate && estimate.learned === true,
       streak: Number.isFinite(n) ? n : null,
       streakNeeded: Number.isFinite(need) && need > 0 ? need : null,
       /* WHICH rung this run was counted against (`kc_estimate` sends its own
@@ -342,7 +351,23 @@ const StageLadder = (() => {
     const active = _index(current.stage);
     if (active < 0) return null;
     const partial = _progress();
-    return (active + (partial === null ? 0 : partial)) / STAGES.length;
+    const byRung = (active + (partial === null ? 0 : partial)) / STAGES.length;
+    /* 2026-09-20: THE NUMBER IS THE GATE'S NUMBER. The rung reading above
+       topped out short of full and moved on a Solo tally the graph never
+       reads, so Seth watched "75%" for days while the next concept stayed
+       locked ("why does it feel like my progress is a bit slow"). The graph
+       counts a concept learned on `kc_is_learned` — posterior ≥ threshold,
+       or the pool exhausted — and that is what this returns: full the
+       moment the door opens, and up to it the posterior's share of the
+       threshold. The rung reading is kept as a FLOOR so the fill never sits
+       behind the section the labels mark as current; 0.99 is the ceiling
+       short of learned, because 100% is the gate and nothing else. */
+    if (current.learned === true) return 1;
+    if (current.mastery !== null && current.learnedAt) {
+      const byGate = current.mastery / current.learnedAt;
+      return Math.min(0.99, Math.max(byRung, byGate));
+    }
+    return byRung;
   };
 
   /* The seams: one per boundary BETWEEN rungs, so `STAGES.length - 1` of them
@@ -498,9 +523,21 @@ const StageLadder = (() => {
        menu is the same trip, gated on the same tag, in both modes. */
     const kcBtn = _el("stage-ladder-kc");
     if (kcBtn) {
-      const heading = (_el("question-number")?.textContent || "").trim();
+      const hEl = _el("question-number");
+      /* While practice/concept-mask.js has the heading masked, its text is
+         the mask and the title is in `data-concept`; comparing against the
+         text would un-hide this button, naming the concept the heading just
+         hid. Off the mask the text is the truth (the lesson writes "Lesson"
+         there and leaves a stale `data-concept` behind). */
+      const masked = !!window.ConceptMask?.masked();
+      const heading = (
+        (masked && hEl?.dataset.concept) || hEl?.textContent || ""
+      ).trim();
       const label = (name || "").trim();
-      kcBtn.hidden = !label || (!!heading && heading === label);
+      /* Masked: hidden outright. The button IS the concept's name, and a
+         page title that differs from the ladder's name (the lesson's "Lesson",
+         a retitled rung) would otherwise show it before the answer. */
+      kcBtn.hidden = !label || masked || (!!heading && heading === label);
     }
 
     /* What the rung asks of the learner used to be a whole row of the strip.
@@ -794,7 +831,18 @@ const StageLadder = (() => {
     // Exported so `practice/watch.py` can assert the mirror of the backend's
     // promotion thresholds from outside the module.
     PROMOTE_AT,
+    /* Redraw the card for the concept already shown (no state change). */
+    refresh: () => { if (current.kc || current.title) _render(); },
   };
 })();
 
 window.StageLadder = StageLadder;
+
+/* The concept button's visibility is decided inside `_render`, which runs at
+   `show()` — while the name is still masked. When practice/concept-mask.js
+   reveals it (the answer is graded) the card must be redrawn or the button
+   keeps the masked decision until the next drill. */
+window.addEventListener("dd-concept-mask", () => {
+  const host = document.getElementById("stage-ladder");
+  if (host && !host.classList.contains("hidden")) StageLadder.refresh();
+});

@@ -89,6 +89,11 @@
      already holds starts no transition, so the fill does not stutter; only the
      text write needed a guard, and the text has no null state. */
   let shownTitle = null;
+  /* The CONCEPT last drawn, mask or no mask. The snap rule below must key on
+     this and not on `shownTitle`: unmasking swaps the label on the same
+     concept, and a snap there would kill the forward slide the grade just
+     started — the one move the chip exists to show. */
+  let shownConcept = null;
 
   /* The last fraction actually written, held for ONE decision and no other:
      animate forwards, snap backwards. It is not a write guard — see the note
@@ -113,10 +118,9 @@
   const _tooltip = (title, pct) => {
     if (pct === null) return `${title} — no reading for this concept yet.`;
     return (
-      `${title} — ${Math.round(pct)}% of the way through this concept. ` +
-      "The bar fills as your answers raise the tutor's estimate; it stops " +
-      "short of full because reaching the unscaffolded rung is not the same " +
-      "as being finished with the concept."
+      `${title} — ${Math.round(pct)}% of the way to this concept counting ` +
+      "as learned. The bar fills as your answers raise the tutor's estimate, " +
+      "and reaches full when the graph unlocks what comes next."
     );
   };
 
@@ -216,7 +220,13 @@
 
     const screen = _screen();
     const detail = screen === "practice" ? last : screen === "notebook" ? nbLast : null;
-    const title = (detail && (detail.title || detail.kc)) || null;
+    const realTitle = (detail && (detail.title || detail.kc)) || null;
+    /* THE NAME IS HIDDEN UNTIL THE DRILL IS ANSWERED — practice/concept-mask.js
+       owns that state and says why. Only the practice reading: a notebook
+       section's heading is on the page anyway. `title` from here on is what
+       gets DRAWN; the fraction is untouched, it gives nothing away. */
+    const masked = screen === "practice" && !!window.ConceptMask?.masked();
+    const title = masked && realTitle ? window.ConceptMask.MASK_TEXT : realTitle;
     /* No concept, or no question on screen to have one: the readout goes, it
        does not go blank. An empty chip in the topbar is a control the learner
        will try to click.
@@ -235,10 +245,12 @@
     const raw = detail ? detail.pct : null;
     const pct = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : null;
 
-    const conceptChanged = title !== shownTitle || screen !== shownScreen;
+    const conceptChanged = realTitle !== shownConcept || screen !== shownScreen;
     shownScreen = screen;
-    if (conceptChanged) {
-      /* BOTH layers, same string, same call — see the header. */
+    shownConcept = realTitle;
+    if (title !== shownTitle) {
+      /* BOTH layers, same string, same call — see the header. Rewritten on a
+         concept change AND on a mask flip; only the former snaps. */
       const base = _el("dd-concept-label");
       const on = _el("dd-concept-label-on");
       if (base) base.textContent = title;
@@ -295,11 +307,15 @@
       );
     }
 
-    host.title = notebook ? _readyTooltip(title, pct, detail.source) : _tooltip(title, pct);
+    host.title = notebook ? _readyTooltip(title, pct, detail.source)
+      : masked ? window.ConceptMask.MASK_TIP : _tooltip(title, pct);
+    host.classList.toggle("is-masked", masked);
     host.classList.remove("hidden");
   }
 
   window.addEventListener("dd-concept-progress", (e) => _render(e.detail));
+  // The grade landed (or the next drill loaded): same concept, other name.
+  window.addEventListener("dd-concept-mask", _paint);
   window.addEventListener("dd-notebook-concept", (e) => {
     nbLast = (e.detail && (e.detail.title || e.detail.kc)) ? e.detail : null;
     _paint();

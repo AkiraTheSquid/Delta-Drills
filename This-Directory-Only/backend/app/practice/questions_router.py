@@ -310,18 +310,21 @@ def submit_answer(
     timed_out = bool(payload.timed_out) and not correct
     if is_diagnostic:
         pass
-    elif timed_out:
-        # The clock submitted this, not the learner. Kept in the log for the
-        # audit, kept OUT of ability, ladder and the pending attempt — a
-        # placement deadline is a deadline (the branch above), a practice
-        # clock is not evidence. See attempt_log.KIND_TIMEOUT. An attempt
-        # parked by an EARLIER submit is still closed out here, same as the
-        # ordinary path — this one just never parks a successor.
-        flush_stale_attempt(user_state)
-        record_timeout_submit(user_state, question)
     else:
         # Anything still parked is about to be overwritten by this one.
         flush_stale_attempt(user_state)
+        if timed_out:
+            # The clock submitted this, not the learner — and it COUNTS AS A
+            # MISS. Until 2026-09-20 it was logged and scored nowhere, and the
+            # drill came back: Seth's record held 103 timeouts against 107
+            # answers, invisible to mastery, struggle and the picker. Seth:
+            # "It should count it as wrong whenever I run out of time because
+            # usually it's because I was struggling on a problem and couldn't
+            # finish." The `timeout` row is still written first, so the audit
+            # can tell which misses were the clock; the miss itself then takes
+            # the ordinary path below — ability, ladder, pending attempt,
+            # felt-difficulty rating. See attempt_log.KIND_TIMEOUT.
+            record_timeout_submit(user_state, question)
         record_attempt(
             user_state=user_state,
             question_id=question.id,
@@ -344,7 +347,7 @@ def submit_answer(
         solution_code=compose_full_solution(question.starter_code, question.answer_code),
         failed_tests=failed_tests,
         ladder_estimate=ladder.get("ladder_estimate"),
-        scored=not timed_out,
+        timed_out=timed_out,
     )
 
 
