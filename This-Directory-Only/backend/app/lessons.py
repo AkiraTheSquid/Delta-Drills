@@ -302,6 +302,14 @@ def _kc_is_fully_exposed(kc: str, kc_exposure: Dict[str, str]) -> bool:
     return False
 
 
+def kc_lesson_read(kc: str, kc_exposure: Dict[str, str]) -> bool:
+    """Has the learner read this concept's lesson — the whole page, or every
+    one of its segments? The public name for `_kc_is_fully_exposed`, for the
+    lattice gate: since 2026-09-20 a `torch.*` concept unlocks when its
+    prerequisites' lessons have been READ, not mastered (kc_graph.kc_is_unlocked)."""
+    return _kc_is_fully_exposed(kc, kc_exposure)
+
+
 def question_is_segment_unlocked(question_id: int, kc_exposure: Dict[str, str]) -> bool:
     """Is this question unlocked with respect to concept segments?
 

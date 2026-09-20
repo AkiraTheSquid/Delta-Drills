@@ -118,10 +118,9 @@
   const _tooltip = (title, pct) => {
     if (pct === null) return `${title} — no reading for this concept yet.`;
     return (
-      `${title} — ${Math.round(pct)}% of the way through this concept. ` +
-      "The bar fills as your answers raise the tutor's estimate; it stops " +
-      "short of full because reaching the unscaffolded rung is not the same " +
-      "as being finished with the concept."
+      `${title} — ${Math.round(pct)}% of the way to this concept counting ` +
+      "as learned. The bar fills as your answers raise the tutor's estimate, " +
+      "and reaches full when the graph unlocks what comes next."
     );
   };
 

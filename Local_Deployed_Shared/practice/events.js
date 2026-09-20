@@ -147,6 +147,14 @@ practiceSubmitBtn.addEventListener("click", async () => {
     feedbackPrompt.textContent = "Time ran out — not counted against you. Next problem when you are ready.";
     showNextProblemButton(feedbackPrompt.textContent);
   }
+  // Since 2026-09-20 the clock's wrong answer IS a miss (Seth: "It should
+  // count it as wrong whenever I run out of time"): scored, on the ladder,
+  // rated like any other. The prompt keeps the rating question — the tail
+  // is what `promptIsAskingForRating` matches — and says what happened.
+  else if (result.timed_out && !result.correct) {
+    feedbackPrompt.textContent = "Time ran out — that counts as a miss. " +
+      "How much easier do you want the next problem to be?";
+  }
   // Placement probe: the backend already recorded it at /submit — there is no
   // pending attempt and no felt-difficulty step. Go straight to Next.
   if (q.diagnostic_active && practiceMode === "backend") {
