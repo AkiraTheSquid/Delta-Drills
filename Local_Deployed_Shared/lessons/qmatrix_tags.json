@@ -22201,5 +22201,45 @@
    "torch.linalg.solve"
   ],
   "source": "kp-faded"
+ },
+ "1728": {
+  "target_kcs": [
+   "tensor.stable-probabilities"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.elementwise-ops",
+   "torch.broadcasting-rules",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-faded"
+ },
+ "1729": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "1730": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
  }
 }

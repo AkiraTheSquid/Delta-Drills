@@ -11309,3 +11309,28 @@ Numpy,Core array literacy,"Return the total of every solution entry across all t
 def solve(mats, b):
     """"""One solve per batch entry, in a single call; then total everything.""""""
     return t.linalg.solve(mats, b).sum()",26,
+PyTorch,ar-00,"Return the natural-log softmax probability of every entry as a floating-point PyTorch tensor of shape `(c, b)`: column `j` holds example `j`'s log-probabilities over the `c` classes, and every result must stay finite even where the probability itself would round to zero. `x`: the unnormalised class scores (logits), a floating-point PyTorch tensor of shape `(c, b)` — rows are classes, columns are examples; the softmax of a column is proportional to `e` raised to each score and sums to one.","import torch as t
+
+def solve(x):
+    """"""The natural-log class probabilities of every column.""""""
+    m=x.max(dim=0,keepdim=True)[0]
+    return x-m-(x-m).exp().sum(dim=0,keepdim=True).log()",34,
+PyTorch,ar-01,"Return the edge vector `end − start` of every segment, in the xy plane, as a floating-point PyTorch tensor of shape `(nr, ns, 2)` — position `[i, j]` holds segment `j`'s edge, so the table has a row for every ray even though the edge does not depend on the ray. `r` and `s` are floating-point PyTorch tensors of shapes `(nr, 2, 3)` and `(ns, 2, 3)`, holding `[origin, direction]` per ray and `[start, end]` per segment; coordinates are `(x, y, z)` and `z` is ignored.","import torch as t
+
+def solve(r,s):
+    """"""The edge vector of every segment, laid out once per ray: shape (nr, ns, 2).""""""
+    o=r[:,0,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    return (b-a)+t.zeros_like(o)",26,
+PyTorch,ar-01,"Return, for every ray–segment pair, the 2×2 matrix whose first column is the ray's xy direction and whose second column is the segment's `start − end`, as a floating-point PyTorch tensor of shape `(nr, ns, 2, 2)`: position `[i, j]` is the matrix for ray `i` against segment `j`; within it, rows are the x and y coordinates and the columns are the ray direction and the segment's `start − end`, in that order. `r` and `s` are floating-point PyTorch tensors of shapes `(nr, 2, 3)` and `(ns, 2, 3)`, holding `[origin, direction]` per ray and `[start, end]` per segment; coordinates are `(x, y, z)` and `z` is ignored.","import torch as t
+
+def solve(r,s):
+    """"""The required 2x2 matrix for every ray-segment pair.""""""
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    return t.stack((d,e),dim=-1)",30,

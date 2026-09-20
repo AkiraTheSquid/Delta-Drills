@@ -25223,6 +25223,110 @@
     "Tensor.sum"
    ]
   },
+  "1728": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ]
+  },
+  "1729": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.zeros_like"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ]
+  },
+  "1730": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.docstring",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.zeros_like"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
   "174": {
    "python.calling-functions": [
     "syntax.call",

@@ -296,6 +296,18 @@ skill report the same thing from the other side.
   `torch.linalg.inv` is in no ARENA notebook; three single-call solves are ONE program
   to the same-move ratchet — differ by what is returned; a `git checkout --` with one
   bad path reverts nothing.
+  Same night, q1728–1730: 🔴 the ARENA share unlocks a concept BEFORE its
+  prerequisites are read, and the symbol gate then locks every floor drill that uses a
+  symbol an unread prerequisite owns — batched-segments had ONE servable floor drill
+  (q1106 needs `torch.linalg.det`, owned by segment-intersection) → on-screen guard →
+  dry → gap watcher fired for a LESSON rung. Fill floors with drills that use only the
+  page's own symbols (`diag_bseg.py`: `symbol_gate.blocking_kcs(state, qid)`). 🔴 The
+  bank audit's leak checks interact: a call named in the prompt is exempt from the
+  near-miss-`why` leak check; drop it from the prompt and the `why` starts BLOCKING —
+  write the `why` in prose, never code-span an answer call. A case whose input already
+  equals its output (`precompute_leak`) lets `return x` pass. A drill whose segment is
+  unread renders the LESSON into the left column by design (`#question-text` under
+  `body.lesson-mode`) — q1034 (softmax) was filed under the log-space segment; moved.
 
 - **Integrated rungs on the eight ARENA exercise concepts, 3→7 each** (2026-09-20):
   q1690–1721 on `tensor.stable-probabilities` / `classifier-evaluation` /

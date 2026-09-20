@@ -68128,5 +68128,155 @@
     "supports_visual_output": false,
     "source_type": "csv",
     "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1728,
+    "topic": "PyTorch",
+    "subtopic": "ar-00",
+    "subtopic_key": "PyTorch: ar-00",
+    "question_text": "Return the natural-log softmax probability of every entry as a floating-point PyTorch tensor of shape `(c, b)`: column `j` holds example `j`'s log-probabilities over the `c` classes, and every result must stay finite even where the probability itself would round to zero. `x`: the unnormalised class scores (logits), a floating-point PyTorch tensor of shape `(c, b)` — rows are classes, columns are examples; the softmax of a column is proportional to `e` raised to each score and sums to one.",
+    "answer_code": "import torch as t\n\ndef solve(x):\n    \"\"\"The natural-log class probabilities of every column.\"\"\"\n    m=x.max(dim=0,keepdim=True)[0]\n    return x-m-(x-m).exp().sum(dim=0,keepdim=True).log()\n",
+    "difficulty_score": 34,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(x):\n    \"\"\"The natural-log class probabilities of every column.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1.],[-1999.]])",
+        "call": "solve(x)",
+        "expected_expr": "t.tensor([[0.0], [-2000.0]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1.,4.],[2.,4.],[3.,4.]])",
+        "call": "solve(x)",
+        "expected_expr": "t.tensor([[-2.4076058864593506, -1.0986123085021973], [-1.4076058864593506, -1.0986123085021973], [-0.40760594606399536, -1.0986123085021973]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[5.,0.],[5.,0.]])",
+        "call": "solve(x)",
+        "expected_expr": "t.tensor([[-0.6931471824645996, -0.6931471824645996], [-0.6931471824645996, -0.6931471824645996]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nx=t.tensor([[1000.,0.],[999.,0.],[998.,0.]])",
+        "call": "solve(x)",
+        "expected_expr": "t.tensor([[-0.40760594606399536, -1.0986123085021973], [-1.4076058864593506, -1.0986123085021973], [-2.4076058864593506, -1.0986123085021973]], dtype=t.float32)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "t.tensor([[0.0], [-float('inf')]], dtype=t.float32)",
+        "why": "Forming the probability first underflows a class two thousand below the best to exactly zero, and its log is `-inf`. Subtract the column's log-sum-exp from the scores instead and that class's log-probability is a finite `-2000`."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1729,
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
+    "question_text": "Return the edge vector `end − start` of every segment, in the xy plane, as a floating-point PyTorch tensor of shape `(nr, ns, 2)` — position `[i, j]` holds segment `j`'s edge, so the table has a row for every ray even though the edge does not depend on the ray. `r` and `s` are floating-point PyTorch tensors of shapes `(nr, 2, 3)` and `(ns, 2, 3)`, holding `[origin, direction]` per ray and `[start, end]` per segment; coordinates are `(x, y, z)` and `z` is ignored.",
+    "answer_code": "import torch as t\n\ndef solve(r,s):\n    \"\"\"The edge vector of every segment, laid out once per ray: shape (nr, ns, 2).\"\"\"\n    o=r[:,0,None,:2]\n    a=s[None,:,0,:2]\n    b=s[None,:,1,:2]\n    return (b-a)+t.zeros_like(o)\n",
+    "difficulty_score": 26,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(r,s):\n    \"\"\"The edge vector of every segment, laid out once per ray: shape (nr, ns, 2).\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[1.,1.,0.],[0.,1.,0.]]]); s=t.tensor([[[2.,-1.,0.],[2.,1.,0.]],[[0.,3.,0.],[4.,3.,0.]],[[5.,5.,0.],[6.,6.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[0.0, 2.0], [4.0, 0.0], [1.0, 1.0]], [[0.0, 2.0], [4.0, 0.0], [1.0, 1.0]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[2.,1.,0.]]]); s=t.tensor([[[1.,0.,0.],[1.,2.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[0.0, 2.0]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[0.,0.,0.],[0.,1.,0.]],[[3.,3.,0.],[-1.,-1.,0.]]]); s=t.tensor([[[1.,-1.,0.],[1.,1.,0.]],[[-2.,2.,0.],[2.,2.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[0.0, 2.0], [4.0, 0.0]], [[0.0, 2.0], [4.0, 0.0]], [[0.0, 2.0], [4.0, 0.0]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[1.,2.,0.],[3.,4.,0.]],[[0.,0.,0.],[1.,1.,0.]]]); s=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[0.,0.,0.],[0.,1.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]]], dtype=t.float32)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "t.tensor([[[0.0, 2.0], [4.0, 0.0], [1.0, 1.0]]], dtype=t.float32)",
+        "why": "`b - a` is `(1, ns, 2)`: the segment axis is there but the ray axis is still the inserted length-1 stub. The pair table needs a real row per ray — add a table of zeros in the origins' `(nr, 1, 2)` shape and broadcasting fills in one copy of the edge per ray."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
+  },
+  {
+    "id": 1730,
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
+    "question_text": "Return, for every ray–segment pair, the 2×2 matrix whose first column is the ray's xy direction and whose second column is the segment's `start − end`, as a floating-point PyTorch tensor of shape `(nr, ns, 2, 2)`: position `[i, j]` is the matrix for ray `i` against segment `j`; within it, rows are the x and y coordinates and the columns are the ray direction and the segment's `start − end`, in that order. `r` and `s` are floating-point PyTorch tensors of shapes `(nr, 2, 3)` and `(ns, 2, 3)`, holding `[origin, direction]` per ray and `[start, end]` per segment; coordinates are `(x, y, z)` and `z` is ignored.",
+    "answer_code": "import torch as t\n\ndef solve(r,s):\n    \"\"\"The required 2x2 matrix for every ray-segment pair.\"\"\"\n    o=r[:,0,None,:2]\n    d=r[:,1,None,:2]\n    a=s[None,:,0,:2]\n    b=s[None,:,1,:2]\n    d=d+t.zeros_like(a)\n    e=(a-b)+t.zeros_like(o)\n    return t.stack((d,e),dim=-1)\n",
+    "difficulty_score": 30,
+    "difficulty_label": "easy",
+    "expected_output": "",
+    "language": "python",
+    "primary_library": "torch",
+    "task_type": "function_impl",
+    "function_name": "solve",
+    "starter_code": "import torch as t\n\ndef solve(r,s):\n    \"\"\"The required 2x2 matrix for every ray-segment pair.\"\"\"\n    pass\n",
+    "test_cases": [
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[1.,1.,0.],[0.,1.,0.]]]); s=t.tensor([[[2.,-1.,0.],[2.,1.,0.]],[[0.,3.,0.],[4.,3.,0.]],[[5.,5.,0.],[6.,6.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[[1.0, 0.0], [0.0, -2.0]], [[1.0, -4.0], [0.0, 0.0]], [[1.0, -1.0], [0.0, -1.0]]], [[[0.0, 0.0], [1.0, -2.0]], [[0.0, -4.0], [1.0, 0.0]], [[0.0, -1.0], [1.0, -1.0]]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[2.,1.,0.]]]); s=t.tensor([[[1.,0.,0.],[1.,2.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[[2.0, 0.0], [1.0, -2.0]]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[0.,0.,0.],[0.,1.,0.]],[[3.,3.,0.],[-1.,-1.,0.]]]); s=t.tensor([[[1.,-1.,0.],[1.,1.,0.]],[[-2.,2.,0.],[2.,2.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[[1.0, 0.0], [0.0, -2.0]], [[1.0, -4.0], [0.0, 0.0]]], [[[0.0, 0.0], [1.0, -2.0]], [[0.0, -4.0], [1.0, 0.0]]], [[[-1.0, 0.0], [-1.0, -2.0]], [[-1.0, -4.0], [-1.0, 0.0]]]], dtype=t.float32)"
+      },
+      {
+        "setup_code": "import torch as t\nr=t.tensor([[[1.,2.,0.],[3.,4.,0.]],[[0.,0.,0.],[1.,1.,0.]]]); s=t.tensor([[[0.,0.,0.],[1.,0.,0.]],[[0.,0.,0.],[0.,1.,0.]]])",
+        "call": "solve(r,s)",
+        "expected_expr": "t.tensor([[[[3.0, -1.0], [4.0, 0.0]], [[3.0, 0.0], [4.0, -1.0]]], [[[1.0, -1.0], [1.0, 0.0]], [[1.0, 0.0], [1.0, -1.0]]]], dtype=t.float32)"
+      }
+    ],
+    "submission_mode": "function",
+    "wrong_examples": [
+      {
+        "output": "raises RuntimeError: stack expects each tensor to be equal size, but got [2, 1, 2] at entry 0 and [1, 3, 2] at entry 1",
+        "why": "Stacking refuses shapes that differ — `(nr, 1, 2)` against `(1, ns, 2)` — because it is not broadcasting: it only joins tensors that already match. Expand each column to the full `(nr, ns, 2)` pair shape first, by adding zeros shaped like the other side so broadcasting does the copying, then stack on the last axis."
+      }
+    ],
+    "provenance": null,
+    "expected_artifact_type": "stdout",
+    "supports_visual_output": false,
+    "source_type": "csv",
+    "source_path": "This-Directory-Only/csv files of problems/curated_additions.csv"
   }
 ]
