@@ -141,7 +141,7 @@
        question.css declares that card with. Later sheet wins. Reversed, the
        concept is named twice — once up here and once in a 20px <h2> under it —
        and nothing throws. `watch_concept_pill.py` asserts the order. -->
-  <link rel="stylesheet" href="styles/concept-pill.css?v=3" />
+  <link rel="stylesheet" href="styles/concept-pill.css?v=4" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
@@ -2319,7 +2319,11 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=43"></script>
+  <!-- Owns "is the concept's name hidden right now" (drill on screen, not yet
+       graded). ui.js, stage-ladder.js and concept-pill.js read it; loaded
+       first so the heading's first write is already masked. -->
+  <script src="practice/concept-mask.js?v=1"></script>
+  <script src="practice/ui.js?v=44"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
   <script src="practice/test-check.js?v=3"></script>
@@ -2366,11 +2370,11 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=18"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=17"></script>
+  <script src="practice/stage-ladder.js?v=18"></script>
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=4"></script>
+  <script src="concept-pill.js?v=5"></script>
   <script src="practice/notch-menu.js?v=12"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and

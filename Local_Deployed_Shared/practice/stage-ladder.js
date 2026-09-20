@@ -498,9 +498,21 @@ const StageLadder = (() => {
        menu is the same trip, gated on the same tag, in both modes. */
     const kcBtn = _el("stage-ladder-kc");
     if (kcBtn) {
-      const heading = (_el("question-number")?.textContent || "").trim();
+      const hEl = _el("question-number");
+      /* While practice/concept-mask.js has the heading masked, its text is
+         the mask and the title is in `data-concept`; comparing against the
+         text would un-hide this button, naming the concept the heading just
+         hid. Off the mask the text is the truth (the lesson writes "Lesson"
+         there and leaves a stale `data-concept` behind). */
+      const masked = !!window.ConceptMask?.masked();
+      const heading = (
+        (masked && hEl?.dataset.concept) || hEl?.textContent || ""
+      ).trim();
       const label = (name || "").trim();
-      kcBtn.hidden = !label || (!!heading && heading === label);
+      /* Masked: hidden outright. The button IS the concept's name, and a
+         page title that differs from the ladder's name (the lesson's "Lesson",
+         a retitled rung) would otherwise show it before the answer. */
+      kcBtn.hidden = !label || masked || (!!heading && heading === label);
     }
 
     /* What the rung asks of the learner used to be a whole row of the strip.
@@ -794,7 +806,18 @@ const StageLadder = (() => {
     // Exported so `practice/watch.py` can assert the mirror of the backend's
     // promotion thresholds from outside the module.
     PROMOTE_AT,
+    /* Redraw the card for the concept already shown (no state change). */
+    refresh: () => { if (current.kc || current.title) _render(); },
   };
 })();
 
 window.StageLadder = StageLadder;
+
+/* The concept button's visibility is decided inside `_render`, which runs at
+   `show()` — while the name is still masked. When practice/concept-mask.js
+   reveals it (the answer is graded) the card must be redrawn or the button
+   keeps the masked decision until the next drill. */
+window.addEventListener("dd-concept-mask", () => {
+  const host = document.getElementById("stage-ladder");
+  if (host && !host.classList.contains("hidden")) StageLadder.refresh();
+});
