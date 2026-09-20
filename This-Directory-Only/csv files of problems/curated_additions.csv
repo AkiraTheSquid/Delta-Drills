@@ -10884,3 +10884,398 @@ def solve(x, ids):
     """"""One requested row per column, each measured against its column's mean.""""""
     picked = x[ids, t.arange(x.shape[1])]
     return (picked - x.mean(dim=0)).tolist()",56,
+PyTorch,ar-00,"Return the probability each row assigns to its TRUE class, shape (b,). x: logits (b,c), finite float; y: true class index per example (b,).","import torch as t
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    p=z.exp()/z.exp().sum(dim=1,keepdim=True)
+    member=(t.arange(x.shape[1]).reshape(1,-1)==y.reshape(-1,1))*1.
+    return (p*member).sum(dim=1)",76,
+PyTorch,ar-00,"Return the entropy of each row's class distribution, −Σ p·log p over the classes, computed in log space, shape (b,). x: logits (b,c), finite float.","import torch as t
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    return -(l.exp()*l).sum(dim=1)",80,
+PyTorch,ar-00,"Return the class probabilities renormalized over the ALLOWED classes only: zero for a disallowed class, and the allowed probabilities summing to 1 per row, shape (b,c). Stay stable when a disallowed score is enormous. x: logits (b,c), finite float; keep: Boolean (c,), at least one True.","import torch as t
+
+def solve(x,keep):
+    keepf=keep*1.
+    low=x.min(dim=1,keepdim=True)[0]-1
+    allowed=x*keepf+low*(1-keepf)
+    m=allowed.max(dim=1,keepdim=True)[0]
+    e=(allowed-m).exp()*keepf
+    total=e.sum(dim=1,keepdim=True)
+    return e/total",84,
+PyTorch,ar-00,"Return the temperature-scaled class probabilities: the softmax of each row's scores divided by that row's own temperature, shape (b,c). x: logits (b,c), finite float; temp: positive temperatures (b,), one per row.","import torch as t
+
+def solve(x,temp):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    s=z/temp.reshape(-1,1)
+    e=s.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p",88,
+PyTorch,ar-00,"Return the per-class accuracy: for each class index k, the fraction of examples whose label is k that were predicted as k, shape (c,); a class with no examples scores 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).","import torch as t
+
+def solve(x,y):
+    pred=x.argmax(dim=1)
+    hit=(pred==y).to(t.float32)
+    member=(y[:,None]==t.arange(x.shape[1])[None,:]).to(t.float32)
+    correct=(member*hit[:,None]).sum(dim=0)
+    total=member.sum(dim=0)
+    return correct/(total+(total==0))",76,
+PyTorch,ar-00,"Return the mean cross entropy over the examples the model classified correctly and over those it got wrong, as a (2,) tensor [mean over correct, mean over wrong]; a group with no examples contributes 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).","import torch as t
+
+def solve(x,y):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    l=z-z.exp().sum(dim=1,keepdim=True).log()
+    loss=-l[t.arange(len(y)),y]
+    hit=x.argmax(dim=1)==y
+    miss=~hit
+    right=(loss*hit).sum()/(hit.sum()+(hit.sum()==0))
+    wrong=(loss*miss).sum()/(miss.sum()+(miss.sum()==0))
+    return t.tensor([right.item(),wrong.item()])",80,
+PyTorch,ar-00,"Return the top-2 accuracy: the fraction of examples whose true class is beaten by at most ONE other class in its row (a class tied with the true class does not beat it), as a scalar tensor. x: logits (b,c) with c ≥ 2, finite float; y: true class index per example (b,).","import torch as t
+
+def solve(x,y):
+    own=(x*(t.arange(x.shape[1])[None,:]==y[:,None])).sum(dim=1,keepdim=True)
+    better=(x>own).sum(dim=1)
+    return (better<=1).to(t.float32).mean()",84,
+PyTorch,ar-00,"Return the confusion matrix, shape (c,c), int64: entry [i,j] counts the examples whose true class is i and whose predicted class is j, the predicted class being the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).","import torch as t
+
+def solve(x,y):
+    c=x.shape[1]
+    pred=x.argmax(dim=1)
+    flat=y*c+pred
+    counts=(flat[:,None]==t.arange(c*c)[None,:]).sum(dim=0)
+    return counts.reshape(c,c)",88,
+PyTorch,ar-00,"Return, for each candidate, how many queries have it as their nearest candidate by cosine similarity (every query has a unique nearest candidate), shape (n,), int64. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows.","import torch as t
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    won=s==s.max(dim=1,keepdim=True)[0]
+    return won.sum(dim=0)",76,
+PyTorch,ar-00,"Return the mean cosine similarity over all ordered pairs of DISTINCT candidates, as a scalar tensor. y: candidates (n,d), n ≥ 2. Float tensor with nonzero rows.","import torch as t
+
+def solve(y):
+    b=y/y.norm(dim=1,keepdim=True)
+    s=b@b.T
+    n=y.shape[0]
+    return (s.sum()-n)/(n*n-n)",80,
+PyTorch,ar-00,"Return whether each query's nearest candidate by cosine similarity is also its nearest candidate by Euclidean distance between the ORIGINAL vectors, shape (m,), Boolean; ties choose the earlier candidate on both sides. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows.","import torch as t
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    by_cos=(a@b.T).argmax(dim=1)
+    by_dist=(-(x[:,None,:]-y[None,:,:]).norm(dim=-1)).argmax(dim=1)
+    return by_cos==by_dist",84,
+PyTorch,ar-00,"Return the SECOND-nearest candidate index for each query by cosine similarity (every query has a unique nearest candidate; among the rest, ties choose the earlier candidate), shape (m,), int64. x: queries (m,d); y: candidates (n,d) with n ≥ 2. Float tensors with nonzero rows.","import torch as t
+
+def solve(x,y):
+    a=x/x.norm(dim=1,keepdim=True)
+    b=y/y.norm(dim=1,keepdim=True)
+    s=a@b.T
+    won=(s==s.max(dim=1,keepdim=True)[0])*1.
+    floor=s.min(dim=1,keepdim=True)[0]-1
+    rest=s*(1-won)+floor*won
+    return rest.argmax(dim=1)",88,
+PyTorch,ar-01,"Return the point where the ray meets the segment, shape (2,), or the ray's origin on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,a-o)
+    u,w=uv[0],uv[1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return t.where(hit,o+u*d,o)",76,
+PyTorch,ar-01,"Return which endpoint of the segment the hit is nearer to, as an int64 scalar: 0 for the start, 1 for the end (a hit exactly halfway counts as the start), or −1 on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,a-o)
+    u,w=uv[0],uv[1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return t.where(hit,(w>0.5)*1,t.tensor(-1))",80,
+PyTorch,ar-01,"Return whether the segment is hit going forward along the ray, and whether it would be hit going backward (the direction negated), as a (2,) Boolean tensor [forward, backward]. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair misses both ways.","import torch as t
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,a-o)
+    u,w=uv[0],uv[1]
+    on_segment=valid&(w>=0)&(w<=1)
+    return t.stack((on_segment&(u>=0),on_segment&(u<=0)))",84,
+PyTorch,ar-01,"Return the hit point when the ray meets the segment; otherwise the point of the segment nearest to the ray's origin (an endpoint when the perpendicular foot falls outside the segment), shape (2,). r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss, and a segment collapsed to one point has that point as its nearest point.","import torch as t
+
+def solve(r,s):
+    o,d=r[0,:2],r[1,:2]
+    a,b=s[0,:2],s[1,:2]
+    m=t.stack((d,a-b),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    m=t.where(valid,m,t.eye(2))
+    uv=t.linalg.solve(m,a-o)
+    u,w=uv[0],uv[1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    e=b-a
+    den=e@e
+    den=t.where(den>0,den,t.tensor(1.))
+    f=((o-a)@e)/den
+    f=t.where(f<0,t.tensor(0.),f)
+    f=t.where(f>1,t.tensor(1.),f)
+    return t.where(hit,o+u*d,a+f*e)",88,
+PyTorch,ar-01,"Return the index of the lowest-numbered segment each ray hits, or −1 for a ray that hits nothing, shape (nr,), int64. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    first=(hit*1).argmax(dim=1)
+    return t.where(hit.any(dim=1),first,t.tensor(-1))",76,
+PyTorch,ar-01,"Return the nearest hit point of each ray, shape (nr,2), or the ray's own origin where it hits nothing. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    near=t.where(hit,u,t.tensor(float(""inf""))).min(dim=1)[0]
+    seen=near<float(""inf"")
+    step=t.where(seen,near,t.tensor(0.))
+    origin=r[:,0,:2]
+    return t.where(seen[:,None],origin+step[:,None]*r[:,1,:2],origin)",80,
+PyTorch,ar-01,"Return, for each segment, the index of the ray that hits it with the smallest ray parameter u, or −1 for a segment no ray hits, shape (ns,), int64; ties choose the earlier ray. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    travel=t.where(hit,u,t.tensor(float(""inf"")))
+    return t.where(hit.any(dim=0),(-travel).argmax(dim=0),t.tensor(-1))",84,
+PyTorch,ar-01,"Return the fraction of rays that hit at least one segment and the fraction of segments hit by at least one ray, as a (2,) float tensor [rays, segments]. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.","import torch as t
+
+def solve(r,s):
+    o=r[:,0,None,:2]
+    d=r[:,1,None,:2]
+    a=s[None,:,0,:2]
+    b=s[None,:,1,:2]
+    d=d+t.zeros_like(a)
+    e=(a-b)+t.zeros_like(o)
+    m=t.stack((d,e),dim=-1)
+    v=a-o
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(2))
+    uv=t.linalg.solve(safe,v[...,None])[...,0]
+    u,w=uv[...,0],uv[...,1]
+    hit=valid&(u>=0)&(w>=0)&(w<=1)
+    return t.stack(((hit.any(dim=1)*1.).mean(),(hit.any(dim=0)*1.).mean()))",88,
+PyTorch,ar-01,"Return the flat pixel index whose camera ray (from the origin through the plane x=1) points closest to the +x axis, i.e. has the largest cosine with (1,0,0), as an int64 scalar; ties choose the earlier pixel. ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.","import torch as t
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    d=t.stack((t.ones(ny*nz),yy.reshape(-1),zz.reshape(-1)),dim=1)
+    cos=d[:,0]/d.norm(dim=1)
+    return cos.argmax()",76,
+PyTorch,ar-01,"Return camera rays from the origin through the image plane x=f with UNIT-LENGTH directions, shape (ny*nz,2,3): each direction is the pixel point (f, y, z) scaled to length 1. ny, nz: pixels along y and z; yl, zl: half-widths along y and z; f: the plane's distance along x, positive. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.","import torch as t
+
+def solve(ny,nz,yl,zl,f):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,1,0]=f
+    r[:,1,1]=yy.reshape(-1)
+    r[:,1,2]=zz.reshape(-1)
+    r[:,1]=r[:,1]/r[:,1].norm(dim=1,keepdim=True)
+    return r",80,
+PyTorch,ar-01,"Return rays that leave from a vertical bar of cameras instead of one point, shape (ny*nz,2,3): the ray for pixel (y, z) starts at origin (0, y, 0) and has direction (1, 0, z). ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from −limit to +limit inclusive (a single pixel sits at −limit), and z changes fastest in the flat order.","import torch as t
+
+def solve(ny,nz,yl,zl):
+    y=t.linspace(-yl,yl,ny)
+    z=t.linspace(-zl,zl,nz)
+    yy=y[:,None]+t.zeros_like(z)[None,:]
+    zz=t.zeros_like(y)[:,None]+z[None,:]
+    r=t.zeros(ny*nz,2,3)
+    r[:,0,1]=yy.reshape(-1)
+    r[:,1,0]=1
+    r[:,1,2]=zz.reshape(-1)
+    return r",84,
+PyTorch,ar-01,"Return the flat indices of the pixels on the image border — any pixel in the first or last row, or in the first or last column — in increasing flat order, shape (2·ny + 2·nz − 4,), int64. ny: pixels along y (rows); nz: pixels along z (columns), both ≥ 2; z changes fastest in the flat order.","import torch as t
+
+def solve(ny,nz):
+    idx=t.arange(ny*nz).reshape(ny,nz)
+    edge=t.zeros(ny,nz,dtype=t.bool)
+    edge[0,:]=True
+    edge[-1,:]=True
+    edge[:,0]=True
+    edge[:,-1]=True
+    return idx[edge]",88,
+PyTorch,ar-01,"Return the colour seen along the ray: the triangle's per-vertex colours blended by the hit's barycentric weights [wA, wB, wC] (the weights with hit = wA·A + wB·B + wC·C and wA + wB + wC = 1), shape (3,), or zeros on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C; col: colours (3,3), one RGB row per vertex in the same order. Parallel or degenerate pairs are misses.","import torch as t
+
+def solve(r,tr,col):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    w=t.stack((1-u-v,u,v))
+    return t.where(hit,w@col,t.zeros(3))",76,
+PyTorch,ar-01,"Return the Euclidean distance from the hit point to the nearest of the three vertices, as a scalar tensor, or −1 on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs are misses.","import torch as t
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    p=o+s*d
+    return t.where(hit,(tr-p).norm(dim=1).min(),t.tensor(-1.))",80,
+PyTorch,ar-01,"Return the travel parameter s (the point is origin + s·direction) at which the ray hits the triangle and at which it hits the parallelogram with corners A, B, C and B+C−A, as a (2,) tensor [triangle, parallelogram], with −1 for each miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs miss both.","import torch as t
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    base=valid&(s>=0)&(u>=0)&(v>=0)
+    tri=base&(u+v<=1)
+    par=base&(u<=1)&(v<=1)
+    return t.stack((t.where(tri,s,t.tensor(-1.)),t.where(par,s,t.tensor(-1.))))",84,
+PyTorch,ar-01,"Return the travel parameter s (the point is origin + s·direction) at which the ray's line crosses the triangle's plane and whether that crossing is a hit, as a (2,) tensor [s, hit] with hit written as 1. or 0.; return [−1, 0] when the pair is singular (ray parallel to the plane). A crossing behind the origin is not a hit. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C.","import torch as t
+
+def solve(r,tr):
+    o,d=r
+    a,b,c=tr
+    m=t.stack((-d,b-a,c-a),dim=1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid,m,t.eye(3))
+    suv=t.linalg.solve(safe,o-a)
+    s,u,v=suv
+    hit=(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    return t.where(valid,t.stack((s,hit*1.)),t.tensor([-1.,0.]))",88,
+PyTorch,ar-01,"Return whether each triangle is visible — the NEAREST hit of at least one ray, not merely hit by one; equal depths choose the smaller triangle index — shape (nt,), Boolean. r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.","import torch as t
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    value,index=depth.min(dim=1)
+    winner=t.where(value<float(""inf""),index,t.tensor(-1))
+    return (winner[:,None]==t.arange(tr.shape[0])[None,:]).any(dim=0)",76,
+PyTorch,ar-01,"Return, per ray, the depth gap between its nearest and second-nearest hit (second s minus nearest s, where the hit point is origin + s·direction), or infinity where the ray has fewer than two hits, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.","import torch as t
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit,s,t.tensor(float(""inf"")))
+    near,index=depth.min(dim=1)
+    rest=t.where(t.arange(tr.shape[0])[None,:]==index[:,None],t.tensor(float(""inf"")),depth)
+    second=rest.min(dim=1)[0]
+    return t.where(second<float(""inf""),second-near,t.tensor(float(""inf"")))",80,
+PyTorch,ar-01,"Return the depth image restricted to the KEPT triangles: per ray, the smallest s among hits on triangles flagged True (the hit point is origin + s·direction), or infinity if none, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C; keep: Boolean (nt,). Singular pairs and hits behind the origin are misses.","import torch as t
+
+def solve(r,tr,keep):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    depth=t.where(hit&keep[None,:],s,t.tensor(float(""inf"")))
+    value,index=depth.min(dim=1)
+    return value",84,
+PyTorch,ar-01,"Return a shaded image: per ray, 1/(1 + distance) where distance is the physical Euclidean distance from the origin to the nearest hit (directions need not be unit length), and 0 for background, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.","import torch as t
+
+def solve(r,tr):
+    o=r[:,None,0,:]
+    d=r[:,None,1,:]
+    a=tr[None,:,0,:]
+    b=tr[None,:,1,:]
+    c=tr[None,:,2,:]
+    m=t.stack((-d+t.zeros_like(a),b-a+t.zeros_like(o),c-a+t.zeros_like(o)),dim=-1)
+    valid=t.linalg.det(m).abs()>=1e-8
+    safe=t.where(valid[...,None,None],m,t.eye(3))
+    suv=t.linalg.solve(safe,(o-a)[...,None])[...,0]
+    s,u,v=suv[...,0],suv[...,1],suv[...,2]
+    hit=valid&(s>=0)&(u>=0)&(v>=0)&(u+v<=1)
+    near=t.where(hit,s,t.tensor(float(""inf""))).min(dim=1)[0]
+    seen=near<float(""inf"")
+    dist=near*r[:,1].norm(dim=1)
+    return t.where(seen,1/(1+dist),t.tensor(0.))",88,

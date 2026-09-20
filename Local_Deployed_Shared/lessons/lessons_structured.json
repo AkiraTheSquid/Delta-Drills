@@ -8226,6 +8226,22 @@
       {
        "question_id": 1018,
        "prompt": "Return each query\u2019s similarity to the unit direction of the candidate centroid, shape (m,). Candidate mean is nonzero. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows."
+      },
+      {
+       "question_id": 1698,
+       "prompt": "Return, for each candidate, how many queries have it as their nearest candidate by cosine similarity (every query has a unique nearest candidate), shape (n,), int64. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows."
+      },
+      {
+       "question_id": 1699,
+       "prompt": "Return the mean cosine similarity over all ordered pairs of DISTINCT candidates, as a scalar tensor. y: candidates (n,d), n \u2265 2. Float tensor with nonzero rows."
+      },
+      {
+       "question_id": 1700,
+       "prompt": "Return whether each query's nearest candidate by cosine similarity is also its nearest candidate by Euclidean distance between the ORIGINAL vectors, shape (m,), Boolean; ties choose the earlier candidate on both sides. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows."
+      },
+      {
+       "question_id": 1701,
+       "prompt": "Return the SECOND-nearest candidate index for each query by cosine similarity (every query has a unique nearest candidate; among the rest, ties choose the earlier candidate), shape (m,), int64. x: queries (m,d); y: candidates (n,d) with n \u2265 2. Float tensors with nonzero rows."
       }
      ],
      "independent_items": [
@@ -8239,7 +8255,7 @@
       1075,
       1076
      ],
-     "misconceptions_markdown": "- **A larger dot product means more similar.** Only after normalizing; before, it also grows with length.\n- **`a @ b` compares all pairs.** With two matrices of shape `(m, d)` and `(n, d)` it fails unless `m = d`; the candidate matrix must be transposed.\n- **Normalizing the table normalizes the inputs.** Cosine similarity divides each *input row* by its length before the product; scaling the result afterwards is a different quantity.\n- **The result can exceed `1`.** For unit rows it cannot; a value above `1` means something was not normalized.",
+     "misconceptions_markdown": "- **A larger dot product means more similar.** Only after normalizing; before, it also grows with length.\n- **`a @ b` compares all pairs.** With two matrices of shape `(m, d)` and `(n, d)` it fails unless `d = n`; the candidate matrix must be transposed.\n- **Normalizing the table normalizes the inputs.** Cosine similarity divides each *input row* by its length before the product; scaling the result afterwards is a different quantity.\n- **The result can exceed `1`.** For unit rows it cannot, beyond a rounding hair such as `1.0000002`; a value clearly above `1` means something was not normalized.",
      "notes_markdown": ""
     },
     {
@@ -8575,6 +8591,22 @@
       {
        "question_id": 1044,
        "prompt": "Return how much probability each row assigns to scores strictly below that row\u2019s average, shape (b,). x: logits (b,c), finite float."
+      },
+      {
+       "question_id": 1690,
+       "prompt": "Return the probability each row assigns to its TRUE class, shape (b,). x: logits (b,c), finite float; y: true class index per example (b,)."
+      },
+      {
+       "question_id": 1691,
+       "prompt": "Return the entropy of each row's class distribution, \u2212\u03a3 p\u00b7log p over the classes, computed in log space, shape (b,). x: logits (b,c), finite float."
+      },
+      {
+       "question_id": 1692,
+       "prompt": "Return the class probabilities renormalized over the ALLOWED classes only: zero for a disallowed class, and the allowed probabilities summing to 1 per row, shape (b,c). Stay stable when a disallowed score is enormous. x: logits (b,c), finite float; keep: Boolean (c,), at least one True."
+      },
+      {
+       "question_id": 1693,
+       "prompt": "Return the temperature-scaled class probabilities: the softmax of each row's scores divided by that row's own temperature, shape (b,c). x: logits (b,c), finite float; temp: positive temperatures (b,), one per row."
       }
      ],
      "independent_items": [
@@ -8738,6 +8770,22 @@
       {
        "question_id": 1057,
        "prompt": "Return the index of the example with largest cross entropy, as a scalar integer tensor; ties choose first. x: logits (b,c), finite float; y: true class index per example (b,)."
+      },
+      {
+       "question_id": 1694,
+       "prompt": "Return the per-class accuracy: for each class index k, the fraction of examples whose label is k that were predicted as k, shape (c,); a class with no examples scores 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,)."
+      },
+      {
+       "question_id": 1695,
+       "prompt": "Return the mean cross entropy over the examples the model classified correctly and over those it got wrong, as a (2,) tensor [mean over correct, mean over wrong]; a group with no examples contributes 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,)."
+      },
+      {
+       "question_id": 1696,
+       "prompt": "Return the top-2 accuracy: the fraction of examples whose true class is beaten by at most ONE other class in its row (a class tied with the true class does not beat it), as a scalar tensor. x: logits (b,c) with c \u2265 2, finite float; y: true class index per example (b,)."
+      },
+      {
+       "question_id": 1697,
+       "prompt": "Return the confusion matrix, shape (c,c), int64: entry [i,j] counts the examples whose true class is i and whose predicted class is j, the predicted class being the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,)."
       }
      ],
      "independent_items": [
@@ -9268,6 +9316,22 @@
       {
        "question_id": 1104,
        "prompt": "Return whether the ray meets the segment strictly between its endpoints; exclude endpoint hits, as a scalar Boolean tensor. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1702,
+       "prompt": "Return the point where the ray meets the segment, shape (2,), or the ray's origin on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1703,
+       "prompt": "Return which endpoint of the segment the hit is nearer to, as an int64 scalar: 0 for the start, 1 for the end (a hit exactly halfway counts as the start), or \u22121 on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1704,
+       "prompt": "Return whether the segment is hit going forward along the ray, and whether it would be hit going backward (the direction negated), as a (2,) Boolean tensor [forward, backward]. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair misses both ways."
+      },
+      {
+       "question_id": 1705,
+       "prompt": "Return the hit point when the ray meets the segment; otherwise the point of the segment nearest to the ray's origin (an endpoint when the perpendicular foot falls outside the segment), shape (2,). r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss, and a segment collapsed to one point has that point as its nearest point."
       }
      ],
      "independent_items": [
@@ -9428,6 +9492,22 @@
       {
        "question_id": 1120,
        "prompt": "Return nearest-hit Euclidean travel distances, or infinity for misses, shape (nr,). r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1706,
+       "prompt": "Return the index of the lowest-numbered segment each ray hits, or \u22121 for a ray that hits nothing, shape (nr,), int64. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1707,
+       "prompt": "Return the nearest hit point of each ray, shape (nr,2), or the ray's own origin where it hits nothing. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1708,
+       "prompt": "Return, for each segment, the index of the ray that hits it with the smallest ray parameter u, or \u22121 for a segment no ray hits, shape (ns,), int64; ties choose the earlier ray. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
+      },
+      {
+       "question_id": 1709,
+       "prompt": "Return the fraction of rays that hit at least one segment and the fraction of segments hit by at least one ray, as a (2,) float tensor [rays, segments]. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss."
       }
      ],
      "independent_items": [
@@ -9456,13 +9536,13 @@
       "tensor.row-normalization"
      ],
      "new_syntax": [],
-     "concept_markdown": "An image of `ny \u00d7 nz` pixels is stored as a flat list of `ny * nz` rays, and the flat order must be decided before anything is built: here `z` changes fastest, so the list walks across one row of `z` values, then moves to the next `y`. The pixel coordinates along each axis are `t.linspace(-limit, limit, n)` \u2014 `n` samples from `\u2212limit` to `+limit` inclusive, with the single-pixel case sitting at `\u2212limit`. The grid is the product of the two vectors, made by broadcasting `y[:, None]` against `z[None, :]` to `(ny, nz)`, stacking the two coordinates on a last axis to `(ny, nz, 2)`, and reshaping to `(ny * nz, 2)`.\n\nThe reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place \u2014 a transposed image that still has the right shape. The reason to test on a `2 \u00d7 3` grid rather than `3 \u00d7 3` is the same: a square image hides the swap, a rectangular one makes it a shape error.\n\n```python\nimport torch as t\ny=t.tensor([-3.,3.]); z=t.tensor([-1.,0.,1.])\nyy=y[:,None]+t.zeros_like(z)[None,:]\nzz=t.zeros_like(y)[:,None]+z[None,:]\nprint(t.stack((yy,zz),dim=-1).reshape(-1,2))\n# Hidden checks\nassert t.stack((yy,zz),dim=-1).reshape(-1,2).tolist()==[[-3.,-1.],[-3.,0.],[-3.,1.],[3.,-1.],[3.,0.],[3.,1.]]\n```\n\nThe camera sits at the origin and looks along `+x`; the image plane is `x = 1`. A pixel at `(y, z)` on that plane is the point `(1, y, z)`, and the ray through it from the origin has direction `(1, y, z)` \u2014 the point itself, because the origin is zero. Each stored ray is `[origin, direction]`, shape `(2, 3)`, so the whole fan is `(ny * nz, 2, 3)`: allocate zeros, set `[:, 1, 0]` to `1`, and write the flattened `y` and `z` grids into `[:, 1, 1]` and `[:, 1, 2]`.\n\nThe reason direction equals the pixel point only for a camera at the origin is that a direction is a difference: `pixel \u2212 origin`. Move the camera to `O` while the image plane stays where it is in the world and the direction becomes `pixel \u2212 O`; move the camera *and* its plane together and the direction is unchanged. The stored ray keeps both origin and direction so that later code can evaluate `O + u\u00b7D` without knowing where the camera was.\n\n```python\nimport torch as t\npixels=t.tensor([[1.,-.5,-1.],[1.,-.5,1.]])\nr=t.zeros(2,2,3)\nr[:,1]=pixels\nprint(r)\n# Hidden checks\nassert r[:,0].eq(0).all() and r[:,1].tolist()==pixels.tolist()\n```",
+     "concept_markdown": "An image of `ny \u00d7 nz` pixels is stored as a flat list of `ny * nz` rays, and the flat order must be decided before anything is built: here `z` changes fastest, so the list walks across one row of `z` values, then moves to the next `y`. The pixel coordinates along each axis are `t.linspace(-limit, limit, n)` \u2014 `n` samples from `\u2212limit` to `+limit` inclusive, with the single-pixel case sitting at `\u2212limit`. The grid is the product of the two vectors, made by broadcasting `y[:, None]` against `z[None, :]` to `(ny, nz)`, stacking the two coordinates on a last axis to `(ny, nz, 2)`, and reshaping to `(ny * nz, 2)`.\n\nThe reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place \u2014 a transposed image that still has the right shape. The reason to test on a `2 \u00d7 3` grid rather than `3 \u00d7 3` is the same: a square image hides the swap, a rectangular one shows it in the coordinate sequence \u2014 the flat count `ny * nz` is the same either way, so the shape alone never tells.\n\n```python\nimport torch as t\ny=t.tensor([-3.,3.]); z=t.tensor([-1.,0.,1.])\nyy=y[:,None]+t.zeros_like(z)[None,:]\nzz=t.zeros_like(y)[:,None]+z[None,:]\nprint(t.stack((yy,zz),dim=-1).reshape(-1,2))\n# Hidden checks\nassert t.stack((yy,zz),dim=-1).reshape(-1,2).tolist()==[[-3.,-1.],[-3.,0.],[-3.,1.],[3.,-1.],[3.,0.],[3.,1.]]\n```\n\nThe camera sits at the origin and looks along `+x`; the image plane is `x = 1`. A pixel at `(y, z)` on that plane is the point `(1, y, z)`, and the ray through it from the origin has direction `(1, y, z)` \u2014 the point itself, because the origin is zero. Each stored ray is `[origin, direction]`, shape `(2, 3)`, so the whole fan is `(ny * nz, 2, 3)`: allocate zeros, set `[:, 1, 0]` to `1`, and write the flattened `y` and `z` grids into `[:, 1, 1]` and `[:, 1, 2]`.\n\nThe reason direction equals the pixel point only for a camera at the origin is that a direction is a difference: `pixel \u2212 origin`. Move the camera to `O` while the image plane stays where it is in the world and the direction becomes `pixel \u2212 O`; move the camera *and* its plane together and the direction is unchanged. The stored ray keeps both origin and direction so that later code can evaluate `O + u\u00b7D` without knowing where the camera was.\n\n```python\nimport torch as t\npixels=t.tensor([[1.,-.5,-1.],[1.,-.5,1.]])\nr=t.zeros(2,2,3)\nr[:,1]=pixels\nprint(r)\n# Hidden checks\nassert r[:,0].eq(0).all() and r[:,1].tolist()==pixels.tolist()\n```",
      "worked_example_markdown": "We look at how a flat index maps back to a pixel. A `2 \u00d7 3` grid numbered in flat order shows `z` changing fastest: the first row holds `0, 1, 2`, the second `3, 4, 5`.\n\n```python\nimport torch as t\nimage=t.arange(6).reshape(2,3)\nprint(image)\n# Hidden checks\nassert image.tolist()==[[0,1,2],[3,4,5]]\n```\n\n`linspace` samples the coordinates. With four samples over `[-1, 1]` the spacing is two thirds, and both ends are included; with one sample the result is just `-limit`.\n\n```python\nprint(t.linspace(-1.,1.,4), t.linspace(-1.,1.,1))\n# Hidden checks\nassert t.allclose(t.linspace(-1.,1.,4),t.tensor([-1.,-1/3,1/3,1.])) and t.linspace(-1.,1.,1).tolist()==[-1.]\n```\n\nWe move the camera to `(0, 2, 0)` while the image plane stays at `x = 1`. The direction to a pixel is the pixel minus the new origin, and it is no longer equal to the pixel's coordinates.\n\n```python\nimport torch as t\no=t.tensor([0.,2.,0.]); pixel=t.tensor([1.,3.,1.])\nd=pixel-o\nprint(d)\n# Hidden checks\nassert d.tolist()==[1.,1.,1.]\n```\n\nWalking `u = 2` along that ray from the origin lands at `O + 2\u00b7D`; at `u = 1` it passes exactly through the pixel, which is the check that the direction was computed the right way round.\n\n```python\nprint(o+1*d, o+2*d)\n# Hidden checks\nassert (o+1*d).tolist()==pixel.tolist() and (o+2*d).tolist()==[2.,4.,2.]\n```",
      "segments": [
       {
        "concept_id": "pixel-grid",
        "title": "Pixels form a product of two axes",
-       "concept_markdown": "An image of `ny \u00d7 nz` pixels is stored as a flat list of `ny * nz` rays, and the flat order must be decided before anything is built: here `z` changes fastest, so the list walks across one row of `z` values, then moves to the next `y`. The pixel coordinates along each axis are `t.linspace(-limit, limit, n)` \u2014 `n` samples from `\u2212limit` to `+limit` inclusive, with the single-pixel case sitting at `\u2212limit`. The grid is the product of the two vectors, made by broadcasting `y[:, None]` against `z[None, :]` to `(ny, nz)`, stacking the two coordinates on a last axis to `(ny, nz, 2)`, and reshaping to `(ny * nz, 2)`.\n\nThe reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place \u2014 a transposed image that still has the right shape. The reason to test on a `2 \u00d7 3` grid rather than `3 \u00d7 3` is the same: a square image hides the swap, a rectangular one makes it a shape error.\n\n```python\nimport torch as t\ny=t.tensor([-3.,3.]); z=t.tensor([-1.,0.,1.])\nyy=y[:,None]+t.zeros_like(z)[None,:]\nzz=t.zeros_like(y)[:,None]+z[None,:]\nprint(t.stack((yy,zz),dim=-1).reshape(-1,2))\n# Hidden checks\nassert t.stack((yy,zz),dim=-1).reshape(-1,2).tolist()==[[-3.,-1.],[-3.,0.],[-3.,1.],[3.,-1.],[3.,0.],[3.,1.]]\n```",
+       "concept_markdown": "An image of `ny \u00d7 nz` pixels is stored as a flat list of `ny * nz` rays, and the flat order must be decided before anything is built: here `z` changes fastest, so the list walks across one row of `z` values, then moves to the next `y`. The pixel coordinates along each axis are `t.linspace(-limit, limit, n)` \u2014 `n` samples from `\u2212limit` to `+limit` inclusive, with the single-pixel case sitting at `\u2212limit`. The grid is the product of the two vectors, made by broadcasting `y[:, None]` against `z[None, :]` to `(ny, nz)`, stacking the two coordinates on a last axis to `(ny, nz, 2)`, and reshaping to `(ny * nz, 2)`.\n\nThe reason the product order matters is that `reshape(-1, 2)` reads the `(ny, nz)` grid row by row, so the axis you put first is the one that changes slowest. Put `z` first and every pixel lands in the wrong place \u2014 a transposed image that still has the right shape. The reason to test on a `2 \u00d7 3` grid rather than `3 \u00d7 3` is the same: a square image hides the swap, a rectangular one shows it in the coordinate sequence \u2014 the flat count `ny * nz` is the same either way, so the shape alone never tells.\n\n```python\nimport torch as t\ny=t.tensor([-3.,3.]); z=t.tensor([-1.,0.,1.])\nyy=y[:,None]+t.zeros_like(z)[None,:]\nzz=t.zeros_like(y)[:,None]+z[None,:]\nprint(t.stack((yy,zz),dim=-1).reshape(-1,2))\n# Hidden checks\nassert t.stack((yy,zz),dim=-1).reshape(-1,2).tolist()==[[-3.,-1.],[-3.,0.],[-3.,1.],[3.,-1.],[3.,0.],[3.,1.]]\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "We look at how a flat index maps back to a pixel. A `2 \u00d7 3` grid numbered in flat order shows `z` changing fastest: the first row holds `0, 1, 2`, the second `3, 4, 5`.\n\n```python\nimport torch as t\nimage=t.arange(6).reshape(2,3)\nprint(image)\n# Hidden checks\nassert image.tolist()==[[0,1,2],[3,4,5]]\n```\n\n`linspace` samples the coordinates. With four samples over `[-1, 1]` the spacing is two thirds, and both ends are included; with one sample the result is just `-limit`.\n\n```python\nprint(t.linspace(-1.,1.,4), t.linspace(-1.,1.,1))\n# Hidden checks\nassert t.allclose(t.linspace(-1.,1.,4),t.tensor([-1.,-1/3,1/3,1.])) and t.linspace(-1.,1.,1).tolist()==[-1.]\n```",
        "worked_example_code": "import torch as t\nimage=t.arange(6).reshape(2,3)\nprint(image)\n# Hidden checks\nassert image.tolist()==[[0,1,2],[3,4,5]]\n",
@@ -9591,6 +9671,22 @@
       {
        "question_id": 1136,
        "prompt": "Return rays from camera (-1,1,0) through fixed plane x=1 with unit-length directions, shape (ny*nz,2,3). ny: pixels along y; nz: pixels along z; yl: half-width along y; zl: half-width along z. Each axis is sampled inclusively from -limit to +limit (a single pixel sits at -limit); flatten with z changing fastest."
+      },
+      {
+       "question_id": 1710,
+       "prompt": "Return the flat pixel index whose camera ray (from the origin through the plane x=1) points closest to the +x axis, i.e. has the largest cosine with (1,0,0), as an int64 scalar; ties choose the earlier pixel. ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from \u2212limit to +limit inclusive (a single pixel sits at \u2212limit), and z changes fastest in the flat order."
+      },
+      {
+       "question_id": 1711,
+       "prompt": "Return camera rays from the origin through the image plane x=f with UNIT-LENGTH directions, shape (ny*nz,2,3): each direction is the pixel point (f, y, z) scaled to length 1. ny, nz: pixels along y and z; yl, zl: half-widths along y and z; f: the plane's distance along x, positive. Each axis is sampled at equally spaced points from \u2212limit to +limit inclusive (a single pixel sits at \u2212limit), and z changes fastest in the flat order."
+      },
+      {
+       "question_id": 1712,
+       "prompt": "Return rays that leave from a vertical bar of cameras instead of one point, shape (ny*nz,2,3): the ray for pixel (y, z) starts at origin (0, y, 0) and has direction (1, 0, z). ny, nz: pixels along y and z; yl, zl: half-widths along y and z. Each axis is sampled at equally spaced points from \u2212limit to +limit inclusive (a single pixel sits at \u2212limit), and z changes fastest in the flat order."
+      },
+      {
+       "question_id": 1713,
+       "prompt": "Return the flat indices of the pixels on the image border \u2014 any pixel in the first or last row, or in the first or last column \u2014 in increasing flat order, shape (2\u00b7ny + 2\u00b7nz \u2212 4,), int64. ny: pixels along y (rows); nz: pixels along z (columns), both \u2265 2; z changes fastest in the flat order."
       }
      ],
      "independent_items": [
@@ -9617,14 +9713,14 @@
      ],
      "new_syntax": [],
      "concept_markdown": "Starting at vertex `A`, the vectors `B \u2212 A` and `C \u2212 A` span the triangle's plane, and every point of the plane is `A + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A)` for some pair `(u, v)`. The point is inside the triangle exactly when `u \u2265 0`, `v \u2265 0` and `u + v \u2264 1`. The weight left over, `1 \u2212 u \u2212 v`, belongs to `A`; the three weights are the point's barycentric coordinates, each in `[0, 1]` for an interior point.\n\nThe reason the sum constraint is needed is that `u \u2264 1` and `v \u2264 1` on their own describe the *parallelogram* with corners `A`, `B`, `C` and `B + C \u2212 A` \u2014 twice the triangle, including the far corner past the edge `BC`. The line `u + v = 1` is that edge; requiring `u + v \u2264 1` keeps the half on `A`'s side. Endpoints are included, so a point exactly on an edge or at a vertex counts as inside. Stacking the two edge vectors as columns, `t.stack((b \u2212 a, c \u2212 a), dim=1)`, gives the `(3, 2)` matrix that maps `(u, v)` to a displacement from `A` \u2014 the same column-per-unknown rule as for segments.\n\n```python\nimport torch as t\na=t.tensor([2.,0.,0.]); b=t.tensor([2.,4.,0.]); c=t.tensor([2.,0.,4.])\np=a+.25*(b-a)+.5*(c-a)\nprint(p)\n# Hidden checks\nassert p.tolist()==[2.,1.,2.]\n```\n\nA ray point is `O + s\u00b7D`; a triangle point is `A + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A)`. Setting them equal and moving unknowns left gives `\u2212s\u00b7D + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A) = O \u2212 A`: three equations in three unknowns, with matrix columns `\u2212D`, `B \u2212 A`, `C \u2212 A` and right-hand side `O \u2212 A`. The solution `(s, u, v)` reads as: travel `s` along the ray, then triangle coordinates `(u, v)`. A hit needs all of `s \u2265 0` (in front of the origin), `u \u2265 0`, `v \u2265 0` and `u + v \u2264 1`.\n\nThe reason the first column is `\u2212D` rather than `D` is the side of the equation it was moved from; use `D` and `s` comes out negated, so every forward hit looks like it is behind the camera. The reason for a validity mask, as with segments, is that a ray parallel to the triangle's plane, or a degenerate triangle, makes the matrix singular: test `det(m).abs() >= 1e-8`, substitute the `3 \u00d7 3` identity where it fails so a batched solve cannot raise, and mask those pairs out afterwards. Under this contract they are misses.\n\n```python\nimport torch as t\nm=t.tensor([[-1.,0.,0.],[0.,4.,0.],[0.,0.,4.]])\nsuv=t.linalg.solve(m,t.tensor([-2.,1.,2.]))\nprint(suv)\n# Hidden checks\nassert suv.tolist()==[2.,.25,.5]\n```",
-     "worked_example_markdown": "We judge three `(u, v)` pairs. The first is well inside; the second has both coordinates below `1` but their sum exceeds `1`, so it lies in the parallelogram's far corner; the third sits exactly on vertex `C`.\n\n```python\nimport torch as t\nuv=t.tensor([[.2,.3],[.8,.7],[0.,1.]])\ninside=(uv>=0).all(dim=1)&(uv.sum(dim=1)<=1)\nprint(inside)\n# Hidden checks\nassert inside.tolist()==[True,False,True]\n```\n\nDropping the sum test admits the second pair. That is the parallelogram, not the triangle \u2014 a bug that renders every triangle as a quadrilateral.\n\n```python\nparallelogram=(uv>=0).all(dim=1)&(uv<=1).all(dim=1)\nprint(parallelogram)\n# Hidden checks\nassert parallelogram.tolist()==[True,True,True]\n```\n\nWe assemble the system for a ray from the origin along `+x` and a triangle standing in the plane `x = 3`. The first column is `\u2212D`; the other two are the edges from `A`.\n\n```python\nimport torch as t\no=t.tensor([0.,0.,0.]); d=t.tensor([1.,0.,0.])\na=t.tensor([3.,-1.,-1.]); b=t.tensor([3.,1.,-1.]); c=t.tensor([3.,-1.,1.])\nm=t.stack((-d,b-a,c-a),dim=1)\nprint(m)\n# Hidden checks\nassert m.tolist()==[[-1.,0.,0.],[0.,2.,0.],[0.,0.,2.]]\n```\n\nSolving against `O \u2212 A` gives `s = 3` \u2014 three direction-lengths to reach the plane \u2014 and `(u, v) = (0.5, 0.5)`, the midpoint of edge `BC`, which is on the boundary and therefore a hit.\n\n```python\nsuv=t.linalg.solve(m,o-a)\ns,u,v=suv\nprint(suv, bool((s>=0)&(u>=0)&(v>=0)&(u+v<=1)))\n# Hidden checks\nassert suv.tolist()==[3.,.5,.5] and bool((s>=0)&(u>=0)&(v>=0)&(u+v<=1))\n```",
+     "worked_example_markdown": "We judge three `(u, v)` pairs. The first is well inside; the second has both coordinates below `1` but their sum exceeds `1`, so it lies in the parallelogram's far corner; the third sits exactly on vertex `C`.\n\n```python\nimport torch as t\nuv=t.tensor([[.2,.3],[.8,.7],[0.,1.]])\ninside=(uv>=0).all(dim=1)&(uv.sum(dim=1)<=1)\nprint(inside)\n# Hidden checks\nassert inside.tolist()==[True,False,True]\n```\n\nReplacing the sum test by the separate bounds `u <= 1` and `v <= 1` admits the second pair. That is the parallelogram, not the triangle \u2014 a bug that renders every triangle as a quadrilateral.\n\n```python\nparallelogram=(uv>=0).all(dim=1)&(uv<=1).all(dim=1)\nprint(parallelogram)\n# Hidden checks\nassert parallelogram.tolist()==[True,True,True]\n```\n\nWe assemble the system for a ray from the origin along `+x` and a triangle standing in the plane `x = 3`. The first column is `\u2212D`; the other two are the edges from `A`.\n\n```python\nimport torch as t\no=t.tensor([0.,0.,0.]); d=t.tensor([1.,0.,0.])\na=t.tensor([3.,-1.,-1.]); b=t.tensor([3.,1.,-1.]); c=t.tensor([3.,-1.,1.])\nm=t.stack((-d,b-a,c-a),dim=1)\nprint(m)\n# Hidden checks\nassert m.tolist()==[[-1.,0.,0.],[0.,2.,0.],[0.,0.,2.]]\n```\n\nSolving against `O \u2212 A` gives `s = 3` \u2014 three direction-lengths to reach the plane \u2014 and `(u, v) = (0.5, 0.5)`, the midpoint of edge `BC`, which is on the boundary and therefore a hit.\n\n```python\nsuv=t.linalg.solve(m,o-a)\ns,u,v=suv\nprint(suv, bool((s>=0)&(u>=0)&(v>=0)&(u+v<=1)))\n# Hidden checks\nassert suv.tolist()==[3.,.5,.5] and bool((s>=0)&(u>=0)&(v>=0)&(u+v<=1))\n```",
      "segments": [
       {
        "concept_id": "barycentric",
        "title": "A triangle is spanned by two edge vectors",
        "concept_markdown": "Starting at vertex `A`, the vectors `B \u2212 A` and `C \u2212 A` span the triangle's plane, and every point of the plane is `A + u\u00b7(B \u2212 A) + v\u00b7(C \u2212 A)` for some pair `(u, v)`. The point is inside the triangle exactly when `u \u2265 0`, `v \u2265 0` and `u + v \u2264 1`. The weight left over, `1 \u2212 u \u2212 v`, belongs to `A`; the three weights are the point's barycentric coordinates, each in `[0, 1]` for an interior point.\n\nThe reason the sum constraint is needed is that `u \u2264 1` and `v \u2264 1` on their own describe the *parallelogram* with corners `A`, `B`, `C` and `B + C \u2212 A` \u2014 twice the triangle, including the far corner past the edge `BC`. The line `u + v = 1` is that edge; requiring `u + v \u2264 1` keeps the half on `A`'s side. Endpoints are included, so a point exactly on an edge or at a vertex counts as inside. Stacking the two edge vectors as columns, `t.stack((b \u2212 a, c \u2212 a), dim=1)`, gives the `(3, 2)` matrix that maps `(u, v)` to a displacement from `A` \u2014 the same column-per-unknown rule as for segments.\n\n```python\nimport torch as t\na=t.tensor([2.,0.,0.]); b=t.tensor([2.,4.,0.]); c=t.tensor([2.,0.,4.])\np=a+.25*(b-a)+.5*(c-a)\nprint(p)\n# Hidden checks\nassert p.tolist()==[2.,1.,2.]\n```",
        "watch_out_markdown": "",
-       "worked_example_markdown": "We judge three `(u, v)` pairs. The first is well inside; the second has both coordinates below `1` but their sum exceeds `1`, so it lies in the parallelogram's far corner; the third sits exactly on vertex `C`.\n\n```python\nimport torch as t\nuv=t.tensor([[.2,.3],[.8,.7],[0.,1.]])\ninside=(uv>=0).all(dim=1)&(uv.sum(dim=1)<=1)\nprint(inside)\n# Hidden checks\nassert inside.tolist()==[True,False,True]\n```\n\nDropping the sum test admits the second pair. That is the parallelogram, not the triangle \u2014 a bug that renders every triangle as a quadrilateral.\n\n```python\nparallelogram=(uv>=0).all(dim=1)&(uv<=1).all(dim=1)\nprint(parallelogram)\n# Hidden checks\nassert parallelogram.tolist()==[True,True,True]\n```",
+       "worked_example_markdown": "We judge three `(u, v)` pairs. The first is well inside; the second has both coordinates below `1` but their sum exceeds `1`, so it lies in the parallelogram's far corner; the third sits exactly on vertex `C`.\n\n```python\nimport torch as t\nuv=t.tensor([[.2,.3],[.8,.7],[0.,1.]])\ninside=(uv>=0).all(dim=1)&(uv.sum(dim=1)<=1)\nprint(inside)\n# Hidden checks\nassert inside.tolist()==[True,False,True]\n```\n\nReplacing the sum test by the separate bounds `u <= 1` and `v <= 1` admits the second pair. That is the parallelogram, not the triangle \u2014 a bug that renders every triangle as a quadrilateral.\n\n```python\nparallelogram=(uv>=0).all(dim=1)&(uv<=1).all(dim=1)\nprint(parallelogram)\n# Hidden checks\nassert parallelogram.tolist()==[True,True,True]\n```",
        "worked_example_code": "import torch as t\nuv=t.tensor([[.2,.3],[.8,.7],[0.,1.]])\ninside=(uv>=0).all(dim=1)&(uv.sum(dim=1)<=1)\nprint(inside)\n# Hidden checks\nassert inside.tolist()==[True,False,True]\n",
        "faded_items": [
         {
@@ -9751,6 +9847,22 @@
       {
        "question_id": 1152,
        "prompt": "Return the displacement from the triangle centroid to a hit, else zero, shape (3,). r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs are misses."
+      },
+      {
+       "question_id": 1714,
+       "prompt": "Return the colour seen along the ray: the triangle's per-vertex colours blended by the hit's barycentric weights [wA, wB, wC] (the weights with hit = wA\u00b7A + wB\u00b7B + wC\u00b7C and wA + wB + wC = 1), shape (3,), or zeros on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C; col: colours (3,3), one RGB row per vertex in the same order. Parallel or degenerate pairs are misses."
+      },
+      {
+       "question_id": 1715,
+       "prompt": "Return the Euclidean distance from the hit point to the nearest of the three vertices, as a scalar tensor, or \u22121 on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs are misses."
+      },
+      {
+       "question_id": 1716,
+       "prompt": "Return the travel parameter s (the point is origin + s\u00b7direction) at which the ray hits the triangle and at which it hits the parallelogram with corners A, B, C and B+C\u2212A, as a (2,) tensor [triangle, parallelogram], with \u22121 for each miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs miss both."
+      },
+      {
+       "question_id": 1717,
+       "prompt": "Return the travel parameter s (the point is origin + s\u00b7direction) at which the ray's line crosses the triangle's plane and whether that crossing is a hit, as a (2,) tensor [s, hit] with hit written as 1. or 0.; return [\u22121, 0] when the pair is singular (ray parallel to the plane). A crossing behind the origin is not a hit. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C."
       }
      ],
      "independent_items": [
@@ -9913,6 +10025,22 @@
       {
        "question_id": 1168,
        "prompt": "Return how many pixels show each triangle as the nearest surface, shape (nt,), excluding background; ties choose first. r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses."
+      },
+      {
+       "question_id": 1718,
+       "prompt": "Return whether each triangle is visible \u2014 the NEAREST hit of at least one ray, not merely hit by one; equal depths choose the smaller triangle index \u2014 shape (nt,), Boolean. r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses."
+      },
+      {
+       "question_id": 1719,
+       "prompt": "Return, per ray, the depth gap between its nearest and second-nearest hit (second s minus nearest s, where the hit point is origin + s\u00b7direction), or infinity where the ray has fewer than two hits, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses."
+      },
+      {
+       "question_id": 1720,
+       "prompt": "Return the depth image restricted to the KEPT triangles: per ray, the smallest s among hits on triangles flagged True (the hit point is origin + s\u00b7direction), or infinity if none, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C; keep: Boolean (nt,). Singular pairs and hits behind the origin are misses."
+      },
+      {
+       "question_id": 1721,
+       "prompt": "Return a shaded image: per ray, 1/(1 + distance) where distance is the physical Euclidean distance from the origin to the nearest hit (directions need not be unit length), and 0 for background, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses."
       }
      ],
      "independent_items": [

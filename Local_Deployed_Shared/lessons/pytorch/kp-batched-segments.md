@@ -8,7 +8,7 @@ previews: []
 faded: [1105, 1106, 1107, 1108]
 guided: []
 independent: [1109, 1110, 1111, 1112, 1113, 1114, 1115, 1116, 1117]
-integrated: [1118, 1119, 1120]
+integrated: [1118, 1119, 1120, 1706, 1707, 1708, 1709]
 ---
 
 ## Concept: Pair axes are independent
@@ -230,6 +230,18 @@ Return counts of rays hitting each segment strictly inside its endpoints, shape 
 
 ### q1120
 Return nearest-hit Euclidean travel distances, or infinity for misses, shape (nr,). r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1706
+Return the index of the lowest-numbered segment each ray hits, or −1 for a ray that hits nothing, shape (nr,), int64. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1707
+Return the nearest hit point of each ray, shape (nr,2), or the ray's own origin where it hits nothing. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1708
+Return, for each segment, the index of the ray that hits it with the smallest ray parameter u, or −1 for a segment no ray hits, shape (ns,), int64; ties choose the earlier ray. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1709
+Return the fraction of rays that hit at least one segment and the fraction of segments hit by at least one ray, as a (2,) float tensor [rays, segments]. r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
 
 ## Misconceptions
 

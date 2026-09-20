@@ -23444,6 +23444,1675 @@
     "Tensor.tolist"
    ]
   },
+  "1690": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape"
+   ]
+  },
+  "1691": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ]
+  },
+  "1692": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.min",
+    "Tensor.min#dim",
+    "Tensor.min#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ]
+  },
+  "1693": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ]
+  },
+  "1694": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.sum"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.dtype-astype": [
+    "Tensor.to"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.float32"
+   ]
+  },
+  "1695": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.lists-and-tuples": [
+    "builtin.len",
+    "syntax.list-literal"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "tensor.stable-probabilities": [
+    "Tensor.exp",
+    "Tensor.log"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum",
+    "Tensor.sum#keepdim"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.item",
+    "torch.tensor"
+   ]
+  },
+  "1696": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.mean",
+    "Tensor.sum",
+    "Tensor.sum#keepdim",
+    "syntax.compare"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.dtype-astype": [
+    "Tensor.to"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.float32"
+   ]
+  },
+  "1697": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.aggregations": [
+    "Tensor.sum"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape"
+   ]
+  },
+  "1698": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "Tensor.norm#keepdim"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.sum"
+   ],
+   "torch.axis-reductions": [
+    "Tensor.sum#dim",
+    "syntax.bool-literal"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1699": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "Tensor.norm#keepdim"
+   ],
+   "torch.aggregations": [
+    "Tensor.sum"
+   ],
+   "torch.axis-reductions": [
+    "syntax.bool-literal"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1700": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "Tensor.norm#keepdim"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.axis-reductions": [
+    "syntax.bool-literal"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1701": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "Tensor.norm#keepdim"
+   ],
+   "torch.aggregations": [
+    "Tensor.max",
+    "Tensor.max#dim",
+    "Tensor.max#keepdim",
+    "Tensor.min",
+    "Tensor.min#dim",
+    "Tensor.min#keepdim"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.axis-reductions": [
+    "syntax.bool-literal"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul"
+   ],
+   "torch.transpose-axes": [
+    "Tensor.T"
+   ]
+  },
+  "1702": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
+  "1703": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1704": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
+  "1705": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul",
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1706": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim",
+    "syntax.compare"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1707": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.min",
+    "Tensor.min#dim",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1708": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim",
+    "syntax.compare"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax",
+    "Tensor.argmax#dim"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1709": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim",
+    "Tensor.mean",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
+  "1710": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim"
+   ],
+   "torch.argmin-argmax": [
+    "Tensor.argmax"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.ones",
+    "torch.zeros_like"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
+  "1711": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "Tensor.norm#keepdim"
+   ],
+   "torch.axis-reductions": [
+    "syntax.bool-literal"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.zeros",
+    "torch.zeros_like"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ]
+  },
+  "1712": {
+   "python.calling-functions": [
+    "syntax.call"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.zeros",
+    "torch.zeros_like"
+   ],
+   "torch.ranges": [
+    "torch.linspace"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ]
+  },
+  "1713": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "torch.axis-reductions": [
+    "syntax.bool-literal"
+   ],
+   "torch.constructors": [
+    "torch.bool",
+    "torch.zeros",
+    "torch.zeros#dtype"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.reshape-flatten": [
+    "Tensor.reshape"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ]
+  },
+  "1714": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros"
+   ],
+   "torch.linalg-basics": [
+    "syntax.matmul",
+    "torch.linalg.solve"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ]
+  },
+  "1715": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.min",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1716": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1717": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.lists-and-tuples": [
+    "syntax.list-literal"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.constructors": [
+    "torch.eye"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1718": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float",
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.any",
+    "Tensor.any#dim",
+    "Tensor.min",
+    "Tensor.min#dim",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ]
+  },
+  "1719": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float",
+    "syntax.equality"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.min",
+    "Tensor.min#dim",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.ranges": [
+    "torch.arange"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "Tensor.shape",
+    "torch.tensor"
+   ]
+  },
+  "1720": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.min",
+    "Tensor.min#dim",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
+  "1721": {
+   "python.calling-functions": [
+    "syntax.call",
+    "syntax.keyword-argument"
+   ],
+   "python.defining-functions": [
+    "syntax.def",
+    "syntax.return"
+   ],
+   "python.dots-and-imports": [
+    "syntax.attribute",
+    "syntax.import",
+    "syntax.import-as"
+   ],
+   "python.indexing": [
+    "syntax.index"
+   ],
+   "python.types-and-conversion": [
+    "builtin.float"
+   ],
+   "python.values-and-names": [
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
+   ],
+   "raytracing.ray-parametrisation": [
+    "syntax.unpack"
+   ],
+   "raytracing.segment-intersection": [
+    "torch.linalg.det"
+   ],
+   "tensor.indexed-selection": [
+    "Tensor.abs"
+   ],
+   "tensor.row-normalization": [
+    "Tensor.norm",
+    "Tensor.norm#dim",
+    "torch.where"
+   ],
+   "torch.aggregations": [
+    "Tensor.min",
+    "Tensor.min#dim",
+    "syntax.compare"
+   ],
+   "torch.boolean-masking": [
+    "syntax.bitwise"
+   ],
+   "torch.broadcasting-rules": [
+    "syntax.none"
+   ],
+   "torch.constructors": [
+    "torch.eye",
+    "torch.zeros_like"
+   ],
+   "torch.linalg-basics": [
+    "torch.linalg.solve"
+   ],
+   "torch.slicing-views": [
+    "syntax.multi-axis-index"
+   ],
+   "torch.stack-concat-interleave": [
+    "torch.stack",
+    "torch.stack#dim"
+   ],
+   "torch.tensor-model": [
+    "torch.tensor"
+   ]
+  },
   "174": {
    "python.calling-functions": [
     "syntax.call",

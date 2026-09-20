@@ -8,7 +8,7 @@ previews: []
 faded: [1045, 1046, 1047, 1048]
 guided: []
 independent: [1049, 1050, 1051, 1052, 1053, 1054, 1083, 1084, 1085]
-integrated: [1055, 1056, 1057]
+integrated: [1055, 1056, 1057, 1694, 1695, 1696, 1697]
 ---
 
 ## Concept: Predictions and labels meet example by example
@@ -206,6 +206,18 @@ Return accuracy weighted by prediction confidence: sum maximum class probabiliti
 
 ### q1057
 Return the index of the example with largest cross entropy, as a scalar integer tensor; ties choose first. x: logits (b,c), finite float; y: true class index per example (b,).
+
+### q1694
+Return the per-class accuracy: for each class index k, the fraction of examples whose label is k that were predicted as k, shape (c,); a class with no examples scores 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).
+
+### q1695
+Return the mean cross entropy over the examples the model classified correctly and over those it got wrong, as a (2,) tensor [mean over correct, mean over wrong]; a group with no examples contributes 0. The predicted class is the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).
+
+### q1696
+Return the top-2 accuracy: the fraction of examples whose true class is beaten by at most ONE other class in its row (a class tied with the true class does not beat it), as a scalar tensor. x: logits (b,c) with c ≥ 2, finite float; y: true class index per example (b,).
+
+### q1697
+Return the confusion matrix, shape (c,c), int64: entry [i,j] counts the examples whose true class is i and whose predicted class is j, the predicted class being the index of the row's largest score (ties: the smaller index). x: logits (b,c), finite float; y: true class index per example (b,).
 
 ## Misconceptions
 

@@ -8,7 +8,7 @@ previews: []
 faded: [1153, 1154, 1155, 1156]
 guided: []
 independent: [1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164, 1165]
-integrated: [1166, 1167, 1168]
+integrated: [1166, 1167, 1168, 1718, 1719, 1720, 1721]
 ---
 
 ## Concept: Visibility chooses the nearest of many hits
@@ -240,6 +240,18 @@ Return nearest-hit Euclidean distance for each ray, or infinity for background, 
 
 ### q1168
 Return how many pixels show each triangle as the nearest surface, shape (nt,), excluding background; ties choose first. r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
+
+### q1718
+Return whether each triangle is visible — the NEAREST hit of at least one ray, not merely hit by one; equal depths choose the smaller triangle index — shape (nt,), Boolean. r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
+
+### q1719
+Return, per ray, the depth gap between its nearest and second-nearest hit (second s minus nearest s, where the hit point is origin + s·direction), or infinity where the ray has fewer than two hits, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
+
+### q1720
+Return the depth image restricted to the KEPT triangles: per ray, the smallest s among hits on triangles flagged True (the hit point is origin + s·direction), or infinity if none, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C; keep: Boolean (nt,). Singular pairs and hits behind the origin are misses.
+
+### q1721
+Return a shaded image: per ray, 1/(1 + distance) where distance is the physical Euclidean distance from the origin to the nearest hit (directions need not be unit length), and 0 for background, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
 
 ## Misconceptions
 

@@ -21655,5 +21655,461 @@
    "Tensor.abs"
   ],
   "source": "kp-integrated"
+ },
+ "1690": {
+  "target_kcs": [
+   "tensor.stable-probabilities"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.elementwise-ops",
+   "torch.broadcasting-rules",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-integrated"
+ },
+ "1691": {
+  "target_kcs": [
+   "tensor.stable-probabilities"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.elementwise-ops",
+   "torch.broadcasting-rules",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-integrated"
+ },
+ "1692": {
+  "target_kcs": [
+   "tensor.stable-probabilities"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.elementwise-ops",
+   "torch.broadcasting-rules",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-integrated"
+ },
+ "1693": {
+  "target_kcs": [
+   "tensor.stable-probabilities"
+  ],
+  "supporting_kcs": [
+   "torch.axis-reductions",
+   "torch.elementwise-ops",
+   "torch.broadcasting-rules",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "Tensor.exp",
+   "Tensor.log"
+  ],
+  "source": "kp-integrated"
+ },
+ "1694": {
+  "target_kcs": [
+   "tensor.classifier-evaluation"
+  ],
+  "supporting_kcs": [
+   "tensor.stable-probabilities",
+   "tensor.indexed-selection",
+   "torch.argmin-argmax",
+   "torch.boolean-masking",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1695": {
+  "target_kcs": [
+   "tensor.classifier-evaluation"
+  ],
+  "supporting_kcs": [
+   "tensor.stable-probabilities",
+   "tensor.indexed-selection",
+   "torch.argmin-argmax",
+   "torch.boolean-masking",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1696": {
+  "target_kcs": [
+   "tensor.classifier-evaluation"
+  ],
+  "supporting_kcs": [
+   "tensor.stable-probabilities",
+   "tensor.indexed-selection",
+   "torch.argmin-argmax",
+   "torch.boolean-masking",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1697": {
+  "target_kcs": [
+   "tensor.classifier-evaluation"
+  ],
+  "supporting_kcs": [
+   "tensor.stable-probabilities",
+   "tensor.indexed-selection",
+   "torch.argmin-argmax",
+   "torch.boolean-masking",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1698": {
+  "target_kcs": [
+   "tensor.cosine-similarity"
+  ],
+  "supporting_kcs": [
+   "tensor.row-normalization",
+   "torch.dot-matmul-patterns",
+   "torch.transpose-axes",
+   "torch.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1699": {
+  "target_kcs": [
+   "tensor.cosine-similarity"
+  ],
+  "supporting_kcs": [
+   "tensor.row-normalization",
+   "torch.dot-matmul-patterns",
+   "torch.transpose-axes",
+   "torch.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1700": {
+  "target_kcs": [
+   "tensor.cosine-similarity"
+  ],
+  "supporting_kcs": [
+   "tensor.row-normalization",
+   "torch.dot-matmul-patterns",
+   "torch.transpose-axes",
+   "torch.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1701": {
+  "target_kcs": [
+   "tensor.cosine-similarity"
+  ],
+  "supporting_kcs": [
+   "tensor.row-normalization",
+   "torch.dot-matmul-patterns",
+   "torch.transpose-axes",
+   "torch.argmin-argmax"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1702": {
+  "target_kcs": [
+   "raytracing.segment-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.ray-parametrisation",
+   "torch.linalg-basics",
+   "torch.stack-concat-interleave",
+   "torch.constructors",
+   "torch.boolean-masking",
+   "tensor.row-normalization",
+   "tensor.indexed-selection"
+  ],
+  "new_syntax": [
+   "torch.linalg.det"
+  ],
+  "source": "kp-integrated"
+ },
+ "1703": {
+  "target_kcs": [
+   "raytracing.segment-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.ray-parametrisation",
+   "torch.linalg-basics",
+   "torch.stack-concat-interleave",
+   "torch.constructors",
+   "torch.boolean-masking",
+   "tensor.row-normalization",
+   "tensor.indexed-selection"
+  ],
+  "new_syntax": [
+   "torch.linalg.det"
+  ],
+  "source": "kp-integrated"
+ },
+ "1704": {
+  "target_kcs": [
+   "raytracing.segment-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.ray-parametrisation",
+   "torch.linalg-basics",
+   "torch.stack-concat-interleave",
+   "torch.constructors",
+   "torch.boolean-masking",
+   "tensor.row-normalization",
+   "tensor.indexed-selection"
+  ],
+  "new_syntax": [
+   "torch.linalg.det"
+  ],
+  "source": "kp-integrated"
+ },
+ "1705": {
+  "target_kcs": [
+   "raytracing.segment-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.ray-parametrisation",
+   "torch.linalg-basics",
+   "torch.stack-concat-interleave",
+   "torch.constructors",
+   "torch.boolean-masking",
+   "tensor.row-normalization",
+   "tensor.indexed-selection"
+  ],
+  "new_syntax": [
+   "torch.linalg.det"
+  ],
+  "source": "kp-integrated"
+ },
+ "1706": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1707": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1708": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1709": {
+  "target_kcs": [
+   "raytracing.batched-segments"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1710": {
+  "target_kcs": [
+   "raytracing.make-rays-2d"
+  ],
+  "supporting_kcs": [
+   "raytracing.make-rays-1d",
+   "torch.broadcasting-rules",
+   "torch.reshape-flatten",
+   "torch.slice-assignment",
+   "torch.stack-concat-interleave",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1711": {
+  "target_kcs": [
+   "raytracing.make-rays-2d"
+  ],
+  "supporting_kcs": [
+   "raytracing.make-rays-1d",
+   "torch.broadcasting-rules",
+   "torch.reshape-flatten",
+   "torch.slice-assignment",
+   "torch.stack-concat-interleave",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1712": {
+  "target_kcs": [
+   "raytracing.make-rays-2d"
+  ],
+  "supporting_kcs": [
+   "raytracing.make-rays-1d",
+   "torch.broadcasting-rules",
+   "torch.reshape-flatten",
+   "torch.slice-assignment",
+   "torch.stack-concat-interleave",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1713": {
+  "target_kcs": [
+   "raytracing.make-rays-2d"
+  ],
+  "supporting_kcs": [
+   "raytracing.make-rays-1d",
+   "torch.broadcasting-rules",
+   "torch.reshape-flatten",
+   "torch.slice-assignment",
+   "torch.stack-concat-interleave",
+   "tensor.row-normalization"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1714": {
+  "target_kcs": [
+   "raytracing.triangle-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.linalg-basics",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1715": {
+  "target_kcs": [
+   "raytracing.triangle-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.linalg-basics",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1716": {
+  "target_kcs": [
+   "raytracing.triangle-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.linalg-basics",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1717": {
+  "target_kcs": [
+   "raytracing.triangle-intersection"
+  ],
+  "supporting_kcs": [
+   "raytracing.segment-intersection",
+   "torch.linalg-basics",
+   "torch.broadcasting-rules"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1718": {
+  "target_kcs": [
+   "raytracing.mesh-visibility"
+  ],
+  "supporting_kcs": [
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1719": {
+  "target_kcs": [
+   "raytracing.mesh-visibility"
+  ],
+  "supporting_kcs": [
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1720": {
+  "target_kcs": [
+   "raytracing.mesh-visibility"
+  ],
+  "supporting_kcs": [
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "1721": {
+  "target_kcs": [
+   "raytracing.mesh-visibility"
+  ],
+  "supporting_kcs": [
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

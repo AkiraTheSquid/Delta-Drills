@@ -8,7 +8,7 @@ previews: []
 faded: [1032, 1033, 1034, 1035]
 guided: []
 independent: [1036, 1037, 1038, 1039, 1040, 1041, 1080, 1081, 1082, 103]
-integrated: [1042, 1043, 1044]
+integrated: [1042, 1043, 1044, 1690, 1691, 1692, 1693]
 ---
 
 ## Concept: Only score differences matter
@@ -209,6 +209,18 @@ Return the mean class distribution across the batch, shape (c,). x: logits (b,c)
 
 ### q1044
 Return how much probability each row assigns to scores strictly below that row’s average, shape (b,). x: logits (b,c), finite float.
+
+### q1690
+Return the probability each row assigns to its TRUE class, shape (b,). x: logits (b,c), finite float; y: true class index per example (b,).
+
+### q1691
+Return the entropy of each row's class distribution, −Σ p·log p over the classes, computed in log space, shape (b,). x: logits (b,c), finite float.
+
+### q1692
+Return the class probabilities renormalized over the ALLOWED classes only: zero for a disallowed class, and the allowed probabilities summing to 1 per row, shape (b,c). Stay stable when a disallowed score is enormous. x: logits (b,c), finite float; keep: Boolean (c,), at least one True.
+
+### q1693
+Return the temperature-scaled class probabilities: the softmax of each row's scores divided by that row's own temperature, shape (b,c). x: logits (b,c), finite float; temp: positive temperatures (b,), one per row.
 
 ## Misconceptions
 
