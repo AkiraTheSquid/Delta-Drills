@@ -273,6 +273,21 @@ skill report the same thing from the other side.
   trips `setup_exec_error` (starter returns None) — put the call in the `call` expression.
   Next: `ar-03` (optimisers, 7 KCs), then `ar-04` (16), `ar-05` (12) per the spec.
 
+- **Integrated rungs on the eight ARENA exercise concepts, 3→7 each** (2026-09-20):
+  q1690–1721 on `tensor.stable-probabilities` / `classifier-evaluation` /
+  `cosine-similarity` and `raytracing.segment-intersection` / `batched-segments` /
+  `make-rays-2d` / `triangle-intersection` / `mesh-visibility`. Written for the ARENA
+  share mix (`app/arena_mix.py`, Account → Advanced & developer settings slider; Seth at
+  50%). 🔴 A drill's topic/subtopic must be the PAGE'S OWN (`PyTorch` / `ar-00`,
+  `ar-01`): filed under `Numpy / Applied patterns` the picker never reached them —
+  `pick_for_subtopic` only sees one subtopic. 🔴 `run_queue` now holds a REVIEW REPEAT
+  (answered, not owed) from the wanted half and serves the other half's fresh work first.
+  Astra + codex reconciled (`scripts/content_review/20260920-arena-integrated-astra.md`);
+  kept as course convention: the 1e-8 determinant tolerance and plain norms. Left:
+  batched-segments Faded solution fences q1107/q1108 are 17 lines; Solo q1124/1127/1128
+  on make-rays-2d omit the camera geometry when served alone; q103's prompt says "shift
+  before exponentiating".
+
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.
 
