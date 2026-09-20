@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import diagnostic, practice_targets
+from app import arena_mix, diagnostic, practice_targets
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -26,6 +26,7 @@ from app.practice_schemas import (
     DiagnosticPlanResponse,
     DiagnosticStartRequest,
     DiagnosticStatusResponse,
+    ArenaShareRequest,
     PracticeTargetRequest,
 )
 from app.questions import get_question_by_id
@@ -116,6 +117,21 @@ def set_practice_target(payload: PracticeTargetRequest, user: User = Depends(get
     state.practice_target = payload.target
     save_user_state(str(user.id))
     return practice_target(user)
+
+
+@router.get("/arena-share")
+def arena_share(user: User = Depends(get_current_user)):
+    """The ARENA-vs-graph mix (app/arena_mix.py): the share, and which turn
+    the next drill would be."""
+    return arena_mix.status(get_user_state(str(user.id)))
+
+
+@router.post("/arena-share")
+def set_arena_share(payload: ArenaShareRequest, user: User = Depends(get_current_user)):
+    state = get_user_state(str(user.id))
+    state.arena_share = payload.share
+    save_user_state(str(user.id))
+    return arena_mix.status(state)
 
 
 @router.post("/diagnostic/answer", response_model=DiagnosticStatusResponse)

@@ -203,6 +203,9 @@ class UserPracticeState:
     # posterior is always recomputed from the probe log, never persisted.
     diagnostic: Dict = field(default_factory=dict)
     practice_target: str = "all"
+    # Fraction of practice served from the ARENA exercise concepts themselves
+    # (app/arena_mix.py). 0 = off; the account page sets it.
+    arena_share: float = 0.0
     # The drill on screen right now: the LAST question served, across every
     # subtopic. The on-screen guard in question_pick reads this. It used to
     # read each subtopic's own served tail, which is not "on screen" at all —
@@ -279,6 +282,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "self_reported_level": state.self_reported_level,
         "diagnostic": state.diagnostic,
         "practice_target": state.practice_target,
+        "arena_share": state.arena_share,
         "last_served_question_id": state.last_served_question_id,
         "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
@@ -325,6 +329,8 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.self_reported_level = data.get("self_reported_level")
         state.diagnostic = data.get("diagnostic") or {}
         state.practice_target = data.get("practice_target") or "all"
+        # Additive: a save without a share is a learner who never set one.
+        state.arena_share = float(data.get("arena_share") or 0.0)
         state.last_served_question_id = data.get("last_served_question_id")
         state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}

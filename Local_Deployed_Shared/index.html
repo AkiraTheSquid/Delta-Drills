@@ -1388,6 +1388,11 @@
                 <label for="account-mathpix-key">Mathpix App Key</label>
                 <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
               </div>
+              <div class="field" id="account-arena-share-field">
+                <label for="account-arena-share" data-dd-info="arena-share">ARENA share of practice: <output id="account-arena-share-out" for="account-arena-share">—</output></label>
+                <input id="account-arena-share" type="range" min="0" max="100" step="5" value="0" disabled />
+                <div class="hint" id="account-arena-share-note" role="status">Loading…</div>
+              </div>
               <div class="field" id="account-token-field">
                 <label for="account-dd-token" data-dd-info="dd-token">Your API token (DD_TOKEN)</label>
                 <div class="dd-token-row">
@@ -2219,7 +2224,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=13"></script>
+  <script src="infotips-registry.js?v=14"></script>
   <script src="infotips.js?v=2"></script>
   <script src="lessons/glossary.js?v=2"></script>
   <script src="jargon.js?v=2"></script>
@@ -2451,6 +2456,7 @@ t.manual_seed(0)
   <script src="practice/placement-plan.js?v=3"></script>
   <script src="practice/placement-results.js?v=5"></script>
   <script src="practice/practice-target.js?v=1"></script>
+  <script src="practice/arena-share.js?v=1"></script>
   <script src="practice/diagnostic-page.js?v=25"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call

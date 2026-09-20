@@ -848,9 +848,14 @@ def select_next_subtopic(
         for st_name in subtopics:
             if st_name in excluded:
                 continue
+            # A drill that belongs ONLY to excluded concepts is not this
+            # subtopic's work (the other half of the ARENA mix, or a concept
+            # already found dry) — same rule as `narrow_to_next_kc`.
             available = [
                 q for q in get_questions_by_subtopic(st_name)
                 if question_is_unlocked(user_state, q)
+                and not (excluded_kcs and (kcs := set(kc_graph.question_kcs(q.id)))
+                         and kcs <= excluded_kcs)
             ]
             if not available:
                 continue

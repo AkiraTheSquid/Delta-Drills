@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, diagnostic, kc_graph
+from app import arena_mix, content_gaps, diagnostic, kc_graph
 from app.practice.grading import select_question_for_difficulty
 from app.prioritization import (
     answered_question_ids,
@@ -252,11 +252,18 @@ def run_queue(
     # rounds too (its pool alone, the selector never asked): a focused
     # concept whose only work is an in-cooldown retake serves the retake,
     # not a 409 (codex, 2026-09-19).
+    # THE ARENA MIX (2026-09-20, app/arena_mix.py). With a share set, each
+    # request is an ARENA turn or a GRAPH turn, and the round is run with
+    # the OTHER half's concepts excluded from the start — then again with
+    # the wanted half excluded, so a dry half falls back to the other rather
+    # than 409. A focused request is one concept by the learner's own hand
+    # and takes no side.
     first_gap: dict | None = None
     picked = None
-    for cooldown in (True, False):
+    halves = [set()] if focus_subtopic is not None else arena_mix.rounds(user_state)
+    for cooldown, half in ((c, h) for c in (True, False) for h in halves):
         tried: set = set()
-        tried_kcs: set = set()
+        tried_kcs: set = set(half)
         sub = subtopic
         while True:
             if sub is None:

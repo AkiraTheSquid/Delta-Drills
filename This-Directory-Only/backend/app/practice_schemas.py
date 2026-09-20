@@ -368,6 +368,12 @@ class PracticeTargetRequest(BaseModel):
     target: Literal["all", "raytracing-0.1"]
 
 
+class ArenaShareRequest(BaseModel):
+    """Fraction of practice served from the ARENA exercise concepts
+    themselves (app/arena_mix.py). 0 turns the mix off."""
+    share: float = Field(ge=0.0, le=1.0)
+
+
 class DiagnosticPlanResponse(BaseModel):
     options: list[DiagnosticPlanOption] = Field(default_factory=list)
     assessed_kcs: int = 0
