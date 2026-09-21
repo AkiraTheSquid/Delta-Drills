@@ -26717,7 +26717,7 @@
     "topic": "PyTorch",
     "subtopic": "Rays as tensors",
     "subtopic_key": "PyTorch: Rays as tensors",
-    "question_text": "Given a ray `[[ox, oy, oz], [dx, dy, dz]]` and a list of parameters `us`, return one point per parameter as a nested list — a single broadcast, no loop.",
+    "question_text": "`ray` is `[[ox, oy, oz], [dx, dy, dz]]` (row 0 the origin O, row 1 the direction D) and `us` is a list of k floats. For every `u` in `us` compute the point `O + u·D`. Return the k points as a plain Python list of k `[x, y, z]` rows (not a tensor), row i for `us[i]` — one broadcast multiply, no loop.",
     "answer_code": "import torch as t\n\n\ndef solve(ray, us):\n    \"\"\"Many points on one ray, by broadcasting u down a column.\"\"\"\n    ray = t.tensor(ray)\n    u = t.tensor(us)\n    return (ray[0] + u[:, None] * ray[1]).tolist()\n\n\nexample = ([[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]], [0.0, 1.0, 2.0])\nprint(solve(*example))\n",
     "difficulty_score": 26,
     "difficulty_label": "easy",

@@ -122,10 +122,19 @@
     return rows;
   }
 
+  /* THE `why` WAITS FOR THE GRADE. A near miss's explanation says what the
+     wrong output got wrong — "without the added axis, (k,) * (3,) only
+     broadcasts when k == 3" — which, read BEFORE answering, is the method.
+     Seth on q821, 2026-09-21: "shouldn't be giving hints". The wrong OUTPUT
+     stays on screen from the start (that is the "examples of incorrect
+     output" he asked for on 2026-08-28); the sentence under it renders
+     `hidden` and is shown when practice/concept-mask.js announces the grade
+     landed (`dd-concept-mask`, masked → false) — the same moment the concept's
+     name comes back. */
   function rowHtml(row, kind) {
     const mark = kind === "wrong" ? "✗" : "→";
     const why = row.why
-      ? `<div class="qex-why">${esc(row.why)}</div>`
+      ? `<div class="qex-why" hidden>${esc(row.why)}</div>`
       : "";
     return (
       `<div class="qex-row qex-${kind}">` +
@@ -190,5 +199,15 @@
     host.classList.remove("hidden");
   }
 
-  window.QuestionExamples = { render };
+  function revealWhy() {
+    const host = document.getElementById("question-examples");
+    if (!host) return;
+    host.querySelectorAll(".qex-why[hidden]").forEach((el) => { el.hidden = false; });
+  }
+
+  window.addEventListener("dd-concept-mask", (ev) => {
+    if (ev && ev.detail && ev.detail.masked === false) revealWhy();
+  });
+
+  window.QuestionExamples = { render, revealWhy };
 })();
