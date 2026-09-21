@@ -7312,8 +7312,8 @@
      "solo_items": [
       {
        "question_id": 822,
-       "prompt": "Solve O_x + u\u00b7D_x = x for u.",
-       "worked_example_code": ""
+       "prompt": "Solve O_x + u\u00b7D_x = x for u.\n\nOne coordinate pins `u`. Rearranging `O_y + u\u00b7D_y = y` gives\n`u = (y \u2212 O_y) / D_y`: subtract the origin's coordinate first, then divide\nby the direction's. Putting `u` back into the formula is the check \u2014 the\ny-coordinate of the point must be the `y` you started from. The drill asks\nthe same question of x: same two steps, the other coordinate index.",
+       "worked_example_code": "import torch as t\n\nray = t.tensor([[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]])\nfor y in (1.0, 5.0):\n    u = (y - ray[0, 1]) / ray[1, 1]\n    print(\"y =\", y, \"-> u =\", u.item(), \"-> point\", (ray[0] + u * ray[1]).tolist())\n# Hidden checks\nassert ((1.0 - ray[0, 1]) / ray[1, 1]).item() == 0.0\nassert ((5.0 - ray[0, 1]) / ray[1, 1]).item() == 2.0\n"
       },
       {
        "question_id": 823,
@@ -7332,18 +7332,18 @@
       },
       {
        "question_id": 826,
-       "prompt": "n integer steps along one ray.",
-       "worked_example_code": ""
+       "prompt": "n integer steps along one ray.\n\nSeveral `u` on one ray: make `u` a column so it lines up against the three\ncoordinates, and broadcasting adds the origin to every row. This example\npicks its two `u` by hand; the drill wants `u = 0, 1, \u2026, n\u22121`, and building\nthat list is the part left to you (`t.arange(n)` is the tool):",
+       "worked_example_code": "import torch as t\n\nray = t.tensor([[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]])\nus = t.tensor([0.5, 1.5])\nprint(\"u as a column:\", tuple(us[:, None].shape))\npoints = ray[0] + us[:, None] * ray[1]\nprint(tuple(points.shape), points.tolist())\n# Hidden checks\nassert points.tolist() == [[1.5, 2.0, 2.5], [4.5, 4.0, 3.5]]\n"
       },
       {
        "question_id": 827,
-       "prompt": "One u, many rays.",
-       "worked_example_code": ""
+       "prompt": "One u, many rays.\n\nA stack of rays is `(n, 2, 3)`. The first index picks a ray; the second\npicks a row inside it. Leave the first as `:` and you get the same row of\nevery ray at once \u2014 all the origins, or all the directions:",
+       "worked_example_code": "import torch as t\n\nrays = t.tensor([[[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]],\n                 [[1.0, 1.0, 1.0], [0.0, 1.0, 0.0]]])\nprint(\"rays[0] is one whole ray:\", tuple(rays[0].shape))\nprint(\"rays[:, 0] is every origin:\", rays[:, 0].tolist())\nprint(\"rays[:, 1] is every direction:\", rays[:, 1].tolist())\n# Hidden checks\nassert rays[:, 0].tolist() == [[0.0, 1.0, 2.0], [1.0, 1.0, 1.0]]\nassert tuple(rays[0].shape) == (2, 3)\n"
       },
       {
        "question_id": 1604,
-       "prompt": "One u, one point: unpack the two rows and apply the formula.",
-       "worked_example_code": ""
+       "prompt": "One u, one point: unpack the two rows and apply the formula.\n\n`u = 0` is the origin itself; every other `u` walks along the direction.\nUnpack the two rows first and the formula is one line, the same line for\nevery `u`:",
+       "worked_example_code": "import torch as t\n\nray = t.tensor([[2.0, 1.0, 0.0], [1.0, 3.0, 0.0]])\norigin, direction = ray[0], ray[1]\nfor u in (0.0, 2.0):\n    point = origin + u * direction\n    print(\"u =\", u, \"->\", point.tolist())\n# Hidden checks\nassert (origin + 0.0 * direction).tolist() == [2.0, 1.0, 0.0]\nassert (origin + 2.0 * direction).tolist() == [4.0, 7.0, 0.0]\n"
       },
       {
        "question_id": 1605,
