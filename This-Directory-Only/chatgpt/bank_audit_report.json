@@ -442,12 +442,6 @@
     "detail": "post-setup var 'example' already equals the expected value"
    }
   ],
-  "550": [
-   {
-    "check": "starter_passes_some_cases",
-    "detail": "starter as handed to the learner passes 2/4 graded cases"
-   }
-  ],
   "581": [
    {
     "check": "precompute_leak",
@@ -538,12 +532,6 @@
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['copy_']"
-   }
-  ],
-  "811": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['zeros']"
    }
   ],
   "812": [
@@ -837,12 +825,6 @@
     "detail": "prompt names solution call(s) in code form: ['apply']"
    }
   ],
-  "1531": [
-   {
-    "check": "starter_passes_some_cases",
-    "detail": "starter as handed to the learner passes 1/5 graded cases"
-   }
-  ],
   "1551": [
    {
     "check": "answer_symbol_in_prompt",
@@ -919,8 +901,7 @@
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 139,
-  "precompute_leak": 10,
-  "starter_passes_some_cases": 2
+  "answer_symbol_in_prompt": 138,
+  "precompute_leak": 10
  }
 }
