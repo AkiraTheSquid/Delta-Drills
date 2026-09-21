@@ -532,6 +532,17 @@ def load_function_overrides() -> dict[int, dict]:
     corrections = json.loads((Path(__file__).with_name("question_content_corrections.json")).read_text())
     for qid, fields in corrections.items():
         base[int(qid)] = {**base.get(int(qid), {}), **fields}
+    # TypeSafe (Jev) per-concept difficulty re-rate, the last word on
+    # difficulty_score. It carries ONLY that field, so it cannot clobber a
+    # reviewed prompt or case, but it must outrank the corrections layer too:
+    # that file holds the authored scores for q993+ and the re-rate replaces
+    # every score in the bank. Regenerate with scripts/typesafe_difficulty/
+    # (rate.py -> scale.py -> validate.py). Keep in sync with backend/app/questions.py::_load_function_overrides.
+    for qid, record in _read_jsonl_overrides(
+        CHATGPT_RUNTIME_DIR / "typesafe_difficulty_overrides.jsonl"
+    ).items():
+        if "difficulty_score" in record:
+            base[qid] = {**base.get(qid, {}), "difficulty_score": record["difficulty_score"]}
     return base
 
 

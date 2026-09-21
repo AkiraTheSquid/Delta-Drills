@@ -185,6 +185,15 @@ def _load_function_overrides() -> Dict[int, dict]:
     corrections = json.loads(corrections_path.read_text(encoding="utf-8"))
     for qid, fields in corrections.items():
         base[int(qid)] = {**base.get(int(qid), {}), **fields}
+    # TypeSafe (Jev) per-concept difficulty re-rate, the last word on
+    # difficulty_score. It carries ONLY that field, so it cannot clobber a
+    # reviewed prompt or case, but it must outrank the corrections layer too:
+    # that file holds the authored scores for q993+ and the re-rate replaces
+    # every score in the bank. Regenerate with scripts/typesafe_difficulty/
+    # (rate.py -> scale.py -> validate.py). Keep in sync with the exporter.
+    for qid, record in _load_jsonl_overrides("typesafe_difficulty_overrides.jsonl").items():
+        if "difficulty_score" in record:
+            base[qid] = {**base.get(qid, {}), "difficulty_score": record["difficulty_score"]}
     return base
 
 

@@ -5,291 +5,295 @@
   "lessons/qmatrix_tags.json target_kcs",
   "questions.json difficulty_score"
  ],
- "mean": 38.4,
+ "mean": 51.2,
  "kcs": {
   "cnn.batch-normalization": {
-   "d": 50.2,
+   "d": 38.9,
    "n": 18
   },
   "cnn.block-group": {
-   "d": 53.5,
+   "d": 53.6,
    "n": 11
   },
   "cnn.convolution-1d": {
-   "d": 56.2,
+   "d": 49.4,
    "n": 16
   },
   "cnn.convolution-2d": {
-   "d": 44.8,
+   "d": 46.9,
    "n": 21
   },
   "cnn.feature-extraction": {
-   "d": 50.5,
+   "d": 40.3,
    "n": 15
   },
   "cnn.forward-hooks": {
-   "d": 48.8,
+   "d": 40.0,
    "n": 13
   },
   "cnn.linear-layer": {
-   "d": 40.9,
+   "d": 63.8,
    "n": 16
   },
   "cnn.mlp": {
-   "d": 45.3,
+   "d": 55.9,
    "n": 16
   },
   "cnn.module-state": {
-   "d": 44.1,
+   "d": 56.6,
    "n": 16
   },
   "cnn.pooling": {
-   "d": 48.5,
+   "d": 42.4,
    "n": 17
   },
   "cnn.residual-block": {
-   "d": 51.5,
+   "d": 57.7,
    "n": 13
   },
   "cnn.resnet34": {
-   "d": 50.8,
+   "d": 53.5,
    "n": 13
   },
   "cnn.sequential": {
-   "d": 42.4,
+   "d": 43.8,
    "n": 16
   },
   "cnn.stride-views": {
-   "d": 57.9,
+   "d": 40.0,
    "n": 16
   },
   "cnn.training-loop": {
-   "d": 46.8,
+   "d": 43.1,
    "n": 18
   },
-  "einops.channel-groups-temporal": {
-   "d": 45.9,
+  "einops.attention-einsum": {
+   "d": 51.9,
    "n": 8
   },
+  "einops.channel-groups-temporal": {
+   "d": 59.3,
+   "n": 14
+  },
   "einops.dl-flatten-heads": {
-   "d": 36.8,
-   "n": 5
+   "d": 38.2,
+   "n": 14
   },
   "einops.einsum": {
-   "d": 43.4,
+   "d": 55.4,
    "n": 42
   },
   "einops.grids-montage": {
-   "d": 55.3,
-   "n": 13
+   "d": 46.1,
+   "n": 14
   },
   "einops.merge-axes": {
-   "d": 38.1,
+   "d": 55.3,
    "n": 19
   },
   "einops.patches-space-depth": {
-   "d": 59.5,
-   "n": 10
+   "d": 55.0,
+   "n": 14
   },
   "einops.pattern-language": {
-   "d": 28.8,
-   "n": 19
+   "d": 43.2,
+   "n": 20
   },
   "einops.pooling": {
-   "d": 48.0,
-   "n": 13
-  },
-  "einops.reduce-model": {
-   "d": 33.5,
-   "n": 10
-  },
-  "einops.repeat-model": {
-   "d": 40.8,
-   "n": 30
-  },
-  "einops.singleton-and-lists": {
-   "d": 28.0,
-   "n": 8
-  },
-  "einops.split-axes": {
-   "d": 39.5,
-   "n": 13
-  },
-  "python.calling-functions": {
-   "d": 20.4,
-   "n": 24
-  },
-  "python.control-flow": {
-   "d": 24.2,
-   "n": 16
-  },
-  "python.defining-functions": {
-   "d": 26.5,
-   "n": 8
-  },
-  "python.dots-and-imports": {
-   "d": 27.5,
-   "n": 8
-  },
-  "python.indexing": {
-   "d": 20.5,
-   "n": 24
-  },
-  "python.lists-and-tuples": {
-   "d": 20.3,
-   "n": 24
-  },
-  "python.types-and-conversion": {
-   "d": 20.2,
-   "n": 24
-  },
-  "python.values-and-names": {
-   "d": 19.5,
-   "n": 24
-  },
-  "raytracing.batched-segments": {
-   "d": 70.4,
-   "n": 16
-  },
-  "raytracing.make-rays-1d": {
-   "d": 44.5,
-   "n": 16
-  },
-  "raytracing.make-rays-2d": {
-   "d": 57.5,
-   "n": 16
-  },
-  "raytracing.mesh-visibility": {
-   "d": 75.1,
-   "n": 16
-  },
-  "raytracing.ray-parametrisation": {
-   "d": 40.1,
-   "n": 11
-  },
-  "raytracing.segment-intersection": {
-   "d": 47.1,
-   "n": 16
-  },
-  "raytracing.triangle-intersection": {
-   "d": 54.1,
-   "n": 16
-  },
-  "tensor.classifier-evaluation": {
-   "d": 53.1,
-   "n": 16
-  },
-  "tensor.cosine-similarity": {
-   "d": 45.9,
-   "n": 16
-  },
-  "tensor.indexed-selection": {
-   "d": 47.5,
-   "n": 16
-  },
-  "tensor.inverse-cdf": {
-   "d": 58.8,
-   "n": 16
-  },
-  "tensor.row-normalization": {
-   "d": 40.1,
-   "n": 16
-  },
-  "tensor.stable-probabilities": {
-   "d": 51.0,
-   "n": 17
-  },
-  "torch.aggregations": {
-   "d": 46.5,
-   "n": 37
-  },
-  "torch.argmin-argmax": {
-   "d": 34.4,
-   "n": 11
-  },
-  "torch.axis-reductions": {
-   "d": 32.2,
-   "n": 26
-  },
-  "torch.boolean-masking": {
-   "d": 33.9,
-   "n": 12
-  },
-  "torch.broadcasting-rules": {
    "d": 41.2,
    "n": 17
   },
-  "torch.constructors": {
-   "d": 13.6,
+  "einops.reduce-model": {
+   "d": 72.0,
+   "n": 15
+  },
+  "einops.repeat-model": {
+   "d": 39.3,
+   "n": 30
+  },
+  "einops.singleton-and-lists": {
+   "d": 70.4,
+   "n": 14
+  },
+  "einops.split-axes": {
+   "d": 53.6,
+   "n": 14
+  },
+  "python.calling-functions": {
+   "d": 53.5,
+   "n": 24
+  },
+  "python.control-flow": {
+   "d": 48.4,
+   "n": 16
+  },
+  "python.defining-functions": {
+   "d": 44.4,
+   "n": 8
+  },
+  "python.dots-and-imports": {
+   "d": 57.5,
+   "n": 8
+  },
+  "python.indexing": {
+   "d": 60.6,
+   "n": 24
+  },
+  "python.lists-and-tuples": {
+   "d": 53.8,
+   "n": 24
+  },
+  "python.types-and-conversion": {
+   "d": 44.2,
+   "n": 24
+  },
+  "python.values-and-names": {
+   "d": 56.5,
+   "n": 24
+  },
+  "raytracing.batched-segments": {
+   "d": 53.0,
+   "n": 22
+  },
+  "raytracing.make-rays-1d": {
+   "d": 39.7,
    "n": 18
   },
+  "raytracing.make-rays-2d": {
+   "d": 55.5,
+   "n": 20
+  },
+  "raytracing.mesh-visibility": {
+   "d": 38.2,
+   "n": 20
+  },
+  "raytracing.ray-parametrisation": {
+   "d": 40.4,
+   "n": 14
+  },
+  "raytracing.segment-intersection": {
+   "d": 48.5,
+   "n": 20
+  },
+  "raytracing.triangle-intersection": {
+   "d": 53.2,
+   "n": 20
+  },
+  "tensor.classifier-evaluation": {
+   "d": 47.5,
+   "n": 20
+  },
+  "tensor.cosine-similarity": {
+   "d": 38.5,
+   "n": 20
+  },
+  "tensor.indexed-selection": {
+   "d": 61.0,
+   "n": 20
+  },
+  "tensor.inverse-cdf": {
+   "d": 42.5,
+   "n": 16
+  },
+  "tensor.row-normalization": {
+   "d": 57.0,
+   "n": 20
+  },
+  "tensor.stable-probabilities": {
+   "d": 51.6,
+   "n": 22
+  },
+  "torch.aggregations": {
+   "d": 52.2,
+   "n": 37
+  },
+  "torch.argmin-argmax": {
+   "d": 51.0,
+   "n": 20
+  },
+  "torch.axis-reductions": {
+   "d": 57.6,
+   "n": 27
+  },
+  "torch.boolean-masking": {
+   "d": 61.8,
+   "n": 20
+  },
+  "torch.broadcasting-rules": {
+   "d": 56.2,
+   "n": 25
+  },
+  "torch.constructors": {
+   "d": 52.6,
+   "n": 25
+  },
   "torch.dot-matmul-patterns": {
-   "d": 36.2,
-   "n": 11
+   "d": 45.6,
+   "n": 16
   },
   "torch.dtype-astype": {
-   "d": 25.0,
+   "d": 64.7,
    "n": 33
   },
   "torch.elementwise-ops": {
-   "d": 18.7,
-   "n": 17
+   "d": 53.5,
+   "n": 23
   },
   "torch.linalg-basics": {
-   "d": 35.5,
-   "n": 11
+   "d": 44.0,
+   "n": 26
   },
   "torch.out-argument": {
-   "d": 39.4,
-   "n": 11
+   "d": 55.3,
+   "n": 18
   },
   "torch.random-samplers": {
-   "d": 17.7,
+   "d": 45.8,
    "n": 12
   },
   "torch.random-seeding": {
-   "d": 23.5,
+   "d": 47.5,
    "n": 12
   },
   "torch.random-threading": {
-   "d": 22.0,
+   "d": 43.6,
    "n": 11
   },
   "torch.ranges": {
-   "d": 36.5,
-   "n": 19
+   "d": 58.0,
+   "n": 23
   },
   "torch.reshape-flatten": {
-   "d": 31.9,
+   "d": 55.0,
    "n": 48
   },
   "torch.slice-assignment": {
-   "d": 38.6,
-   "n": 11
+   "d": 53.1,
+   "n": 18
   },
   "torch.slicing-views": {
-   "d": 29.7,
-   "n": 15
+   "d": 45.7,
+   "n": 23
   },
   "torch.sorting": {
-   "d": 23.6,
-   "n": 17
+   "d": 57.5,
+   "n": 20
   },
   "torch.stack-concat-interleave": {
-   "d": 43.7,
-   "n": 14
+   "d": 53.6,
+   "n": 22
   },
   "torch.tensor-model": {
-   "d": 23.7,
-   "n": 37
+   "d": 55.4,
+   "n": 41
   },
   "torch.transpose-axes": {
-   "d": 19.6,
-   "n": 15
+   "d": 40.6,
+   "n": 18
   },
   "torch.views-and-copies": {
-   "d": 28.2,
-   "n": 11
+   "d": 53.1,
+   "n": 16
   }
  }
 }
