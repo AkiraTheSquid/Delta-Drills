@@ -148,7 +148,9 @@ def compile_lessons():
             "concept_markdown": seg["concept"],
             "watch_out_markdown": seg["watch_out"],
             "worked_example_markdown": seg["worked"],
-            "worked_example_code": code_fences(seg["worked"], "python")[0],
+            # A `kind: math` page has no runnable fence; the player then
+            # leaves the scratch editor empty rather than crashing the compile.
+            "worked_example_code": (code_fences(seg["worked"], "python") or [""])[0],
             "faded_items": _faded_items(seg["faded"]),
         } for i, seg in enumerate(kp["segments"])]
         faded_items = [item for seg in segments for item in seg["faded_items"]]
@@ -224,6 +226,7 @@ def compile_lessons():
             })
         lessons[kc["lesson"]]["kps"].append({
             "kc": kp["kc"],
+            "kind": kp["kind"],
             "title": kp["title"] or kc["title"],
             "supporting_kcs": kp["supporting"],
             "new_syntax": kp["new_syntax"],

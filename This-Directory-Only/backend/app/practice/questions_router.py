@@ -26,8 +26,9 @@ from app.auth import get_current_user
 from app.models import User
 from app.practice.attempt_scoring import finalize_attempt, flush_stale_attempt, record_timeout_submit
 from app.practice.grading import (
+    expected_output_for,
     grade_submission,
-    run_and_get_expected_output,
+    mc_fields,
 )
 from app.practice_schemas import (
     ClaimQuestionRequest,
@@ -99,11 +100,6 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
     user_state.last_served_question_id = question.id
     save_user_state(user_id)
 
-    expected_output = (
-        question.expected_output
-        if question.supports_visual_output
-        else (question.expected_output or run_and_get_expected_output(question.answer_code))
-    )
     return NextQuestionResponse(
         question_id=question.id,
         question_text=question.question_text,
@@ -111,7 +107,7 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
         subtopic=question.subtopic,
         difficulty=question.difficulty_score,
         target_difficulty=question.difficulty_score,
-        expected_output=expected_output,
+        expected_output=expected_output_for(question),
         solution_code=compose_full_solution(question.starter_code, question.answer_code),
         is_cold_start=False,
         subtopic_n=sub_state.n,
@@ -127,6 +123,7 @@ def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | 
         wrong_examples=question.wrong_examples,
         provenance=question.provenance,
         hint=question.hint,
+        **mc_fields(question),
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,
         diagnostic_active=True,
@@ -207,12 +204,6 @@ def next_question(
     user_state.last_served_question_id = question.id
     save_user_state(user_id)
 
-    expected_output = (
-        question.expected_output
-        if question.supports_visual_output
-        else (question.expected_output or run_and_get_expected_output(question.answer_code))
-    )
-
     # Ladder rung for this concept, and the scaffolded starter that goes with
     # it. On the faded/partial rungs the learner is handed the canonical
     # solution with its TAIL removed (backward fading), not a blank page.
@@ -246,7 +237,7 @@ def next_question(
         subtopic=question.subtopic,
         difficulty=question.difficulty_score,
         target_difficulty=target_diff,
-        expected_output=expected_output,
+        expected_output=expected_output_for(question),
         solution_code=compose_full_solution(question.starter_code, question.answer_code),
         is_cold_start=sub_state.n < len(COLD_START_TARGETS),
         subtopic_n=sub_state.n,
@@ -262,6 +253,7 @@ def next_question(
         wrong_examples=question.wrong_examples,
         provenance=question.provenance,
         hint=question.hint,
+        **mc_fields(question),
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,
         # Exposure guard: placement probes are never gated (the diagnostic

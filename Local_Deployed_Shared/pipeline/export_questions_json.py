@@ -739,7 +739,31 @@ def load_questions() -> list[dict]:
                 }
             )
 
+    questions.extend(load_math_questions(questions))
     return questions
+
+
+def load_math_questions(csv_questions: list[dict]) -> list[dict]:
+    """The math (multiple-choice) bank, appended AFTER every CSV source.
+
+    Rows come from lessons/*/kp-*.problems.json through the one shared loader
+    (lessons/math_bank.py) and carry their own ids at or above
+    MATH_ID_FLOOR, so the CSV walk above can never renumber them. The two
+    ranges must not meet: a CSV that grew to 50,000 rows would be a different
+    problem, but a math file that copied a drill's id would silently shadow it
+    in every by-id map downstream, so refuse here.
+    """
+    sys.path.insert(0, str(SHARED_DIR / "lessons"))
+    import math_bank  # noqa: E402
+
+    rows = math_bank.load_math_rows(SHARED_DIR / "lessons")
+    csv_ids = {int(q["id"]) for q in csv_questions}
+    bad = sorted(r["id"] for r in rows if r["id"] < math_bank.MATH_ID_FLOOR or r["id"] in csv_ids)
+    if bad:
+        print(f"ERROR: math problem ids collide with the CSV bank or sit below "
+              f"{math_bank.MATH_ID_FLOOR}: {bad}", file=sys.stderr)
+        sys.exit(1)
+    return rows
 
 
 def build_structured_questions(flat_questions: list[dict]) -> list[dict]:
@@ -774,6 +798,13 @@ def build_structured_questions(flat_questions: list[dict]) -> list[dict]:
                     "expected_output": question["expected_output"],
                     "expected_artifact_type": question["expected_artifact_type"],
                     "supports_visual_output": question["supports_visual_output"],
+                    # Multiple-choice (math) rows only; absent on coding rows so
+                    # the structured file for the existing bank is unchanged.
+                    **{
+                        k: question[k]
+                        for k in ("math_kind", "math_kc", "choices", "correct_choice", "solution_md", "verify", "hint")
+                        if k in question
+                    },
                 },
             }
         )

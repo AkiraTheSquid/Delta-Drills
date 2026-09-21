@@ -672,11 +672,16 @@ def main() -> int:
                 f"so remove it from that KP's rungs"
             )
 
-    # Every authored problem must be reachable, exactly once.
+    # Every authored problem must be reachable, exactly once. A math
+    # (multiple-choice) problem is prose in a notebook, not an anchor — see
+    # colab_cells.mc_problem_cell — so it is not owed one.
+    def _anchored(qid: int) -> bool:
+        return bank.get(qid, {}).get("exercise", {}).get("submission_mode") != "mc"
+
     expected = sum(
-        len({i["question_id"] for s in (kp.get("segments") or []) for i in (s.get("faded_items") or [])})
-        + len(kp.get("guided_items") or [])
-        + len(kp.get("independent_items") or [])
+        len({i["question_id"] for s in (kp.get("segments") or []) for i in (s.get("faded_items") or []) if _anchored(i["question_id"])})
+        + sum(_anchored(i["question_id"]) for i in (kp.get("guided_items") or []))
+        + sum(_anchored(qid) for qid in (kp.get("independent_items") or []))
         for l in lessons
         for kp in l.get("kps") or []
     )

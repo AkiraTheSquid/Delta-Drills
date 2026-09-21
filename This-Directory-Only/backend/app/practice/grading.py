@@ -33,6 +33,32 @@ def run_and_get_expected_output(answer_code: str) -> str:
     return result.stdout.strip()
 
 
+def expected_output_for(question) -> str:
+    """The expected-output string a served question shows the learner.
+
+    A multiple-choice question shows NOTHING before the verdict: its stored
+    `expected_output` is the keyed answer, and /submit returns it. Visual
+    questions keep their stored string; everything else recomputes stdout
+    under the grading harness (never the CSV-era capture, see grading.py).
+    """
+    if question.submission_mode == "mc":
+        return ""
+    if question.supports_visual_output:
+        return question.expected_output
+    return question.expected_output or run_and_get_expected_output(question.answer_code)
+
+
+def mc_fields(question) -> dict:
+    """The multiple-choice payload, empty on a coding question (practice_schemas)."""
+    if question.submission_mode != "mc":
+        return {}
+    return {
+        "choices": [{"key": c.get("key"), "text": c.get("text")} for c in question.choices],
+        "math_kind": question.math_kind,
+        "solution_md": question.solution_md,
+    }
+
+
 def select_question_for_difficulty(
     candidates: List[Question],
     target_difficulty: float,
@@ -94,6 +120,24 @@ def select_question_for_difficulty(
     )
 
 
+def grade_choice(question: Question, chosen: str) -> Tuple[bool, str, str, List[dict]]:
+    """Grade a multiple-choice (math) answer: the chosen key against the keyed one.
+
+    `chosen` arrives in `user_code` — the same field a coding submit uses, so
+    the attempt path (record, ladder, rating, timeout) is untouched. Nothing
+    runs: the correctness of the KEY is the validator's job at authoring time
+    (scripts/validate_math.py proves the keyed choice with SymPy and every
+    distractor different), so at grade time there is exactly one thing to
+    check. Keys compare case-insensitively after trimming; an empty pick is a
+    miss, not an error, because the answer clock can submit an untouched page
+    and a timeout is scored as a miss (attempt_scoring.record_timeout_submit).
+    """
+    picked = (chosen or "").strip().upper()
+    key = (question.correct_choice or "").strip().upper()
+    correct = bool(picked) and picked == key
+    return correct, picked, key, []
+
+
 def grade_submission(
     question: Question,
     user_code: str,
@@ -105,6 +149,9 @@ def grade_submission(
 
     Returns: (correct, actual_output, expected_output, failed_tests)
     """
+    if question.submission_mode == "mc":
+        return grade_choice(question, user_code)
+
     # Torch drills grade in-process via the fork runner when torch is
     # preloaded (app startup). Refuse with the Colab-routing message only
     # when torch genuinely isn't available in this environment.

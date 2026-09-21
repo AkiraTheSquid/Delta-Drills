@@ -31,6 +31,7 @@ import traceback
 from pathlib import Path
 
 import content_safety
+import validate_math
 from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_question, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
@@ -41,7 +42,7 @@ from checks import run_checked
 sys.path.append(str(REPO / "Local_Deployed_Shared"))
 from delta_paths import ensure_torch_python  # noqa: E402
 
-EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays)
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch", "Mathematics")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays); "Mathematics" = the math MC lane (validate_math.py)
 
 
 def run_code(code, ns):
@@ -120,6 +121,12 @@ def check_kp(path, registry, bank, errors):
     for s in kp["supporting"]:
         if s not in kc_ids:
             errors.append(f"{name}: supporting kc '{s}' not in registry")
+    if kp["kind"] == "math":
+        # No kernel, no fences, no bank test cases: the multiple-choice lane
+        # has its own rules (scripts/validate_math.py) and none of the code
+        # checks below apply to it.
+        validate_math.check_math_kp(kp, path, bank, errors)
+        return kp
     if kp["concepts"]:
         if len(kp["concepts"]) != len(kp["segments"]):
             errors.append(
@@ -445,6 +452,11 @@ def main(argv):
     kps = [check_kp(p, registry, bank, errors) for p in paths]
     if not files:
         check_previews(paths, errors)
+        # The problems files beside `kind: math` pages: shape, SymPy proof of
+        # every keyed choice, rung placement, atom tags.
+        validate_math.check_all(errors)
+        for w in validate_math.WARNINGS:
+            print(f"WARN — {w}")
     if coverage:
         check_coverage(registry, bank, kps, errors)
     if LEAK_WARNINGS:

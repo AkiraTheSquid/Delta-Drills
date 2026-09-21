@@ -506,8 +506,14 @@ def parse_kp(path):
     sections["Faded practice"] = "\n\n".join(s["faded"] for s in segments if s["faded"])
     kp = {
         "segments": segments,
-        "file": str(path.relative_to(REPO)),
+        # Repo-relative when the page is in the tree; a test fixture parsed
+        # from a temp dir keeps its absolute path.
+        "file": str(path.relative_to(REPO)) if path.is_relative_to(REPO) else str(path),
         "kc": meta.get("kc"),
+        # `code` (default) or `math`: a math page has no kernel and pairs with
+        # a `kp-<slug>.problems.json` of multiple-choice problems — see
+        # scripts/validate_math.py and docs/spec-math-mc-backbone.md.
+        "kind": meta.get("kind") or "code",
         "title": meta.get("title"),
         "supporting": meta.get("supporting", []),
         "new_syntax": meta.get("new_syntax", []),

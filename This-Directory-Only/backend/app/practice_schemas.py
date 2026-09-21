@@ -48,6 +48,14 @@ class NextQuestionResponse(BaseModel):
     wrong_examples: list[dict] = Field(default_factory=list)
     provenance: dict | None = None
     hint: str | None = None  # short nudge, revealed by the Show Hint button
+    # Multiple-choice (math) questions — `submission_mode == "mc"`. The
+    # learner picks a key; /submit takes it as `user_code`. `correct_choice`
+    # is NOT sent (expected_output carries "" for these until graded).
+    # practice/math-drill.js renders `choices` in place of the editor and
+    # `solution_md` (markdown + LaTeX) after the verdict.
+    choices: list[dict] = Field(default_factory=list)
+    math_kind: str | None = None
+    solution_md: str | None = None
     # repo-relative path to the per-question solution Colab (arena-procedural-drills/…);
     # the frontend routes it to GitHub via colabUpstreamHref for the Show Answer button.
     solution_notebook_path: str | None = None

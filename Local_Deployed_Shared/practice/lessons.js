@@ -307,7 +307,21 @@ const LessonGate = (() => {
      lessons/ tree contained ZERO markdown links, so no authored page changes
      shape. Images come first because `![alt](src)` also matches the link
      pattern, and a link whose text begins with `!` is not a thing. */
+  /* A `$…$` / `$$…$$` span is LaTeX, not prose: `*`, `_` and backticks in
+     it are maths, and the italic rule below would turn `$a*b*c$` into an
+     <em>. Those spans are only escaped here; practice/math-drill.js runs
+     KaTeX over the rendered element afterwards. Additive: at the time this
+     went in the lessons/ tree held ZERO dollar signs (math pages are the
+     `kind: math` lane, docs/spec-math-mc-backbone.md), and the ARENA
+     notebooks' maths was already reaching KaTeX mangled. */
+  const MATH_SPAN = /(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g;
   const inline = (value) =>
+    String(value == null ? "" : value)
+      .split(MATH_SPAN)
+      .map((part, index) => (index % 2 ? esc(part) : inlineProse(part)))
+      .join("");
+
+  const inlineProse = (value) =>
     esc(value)
       .replace(/`([^`]+)`/g, "<code>$1</code>")
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -836,6 +850,8 @@ const LessonGate = (() => {
         activeQuestion = _runtimeContext(page);
         if (questionNumber) questionNumber.textContent = "Lesson";
         questionText.innerHTML = _pageHtml(page);
+        // The KaTeX pass: a math page (`kind: math`) is markdown + LaTeX.
+        window.DeltaMath?.render(questionText);
         // Every runnable block on the page becomes a cell, explanation blocks
         // included, and they share state top to bottom. Mounting the whole
         // page rather than `.lesson-worked` is what lets a concept be taught
