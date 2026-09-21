@@ -316,8 +316,27 @@ def question_is_segment_unlocked(question_id: int, kc_exposure: Dict[str, str]) 
     For a segmented KC:
     - If the question belongs to a specific segment i, all prior segments 0..i-1
       must be exposed in kc_exposure (or the KC itself exposed).
-    - If the question does NOT belong to a specific segment of the KC (e.g. a
-      whole-KP integrated/independent drill), ALL segments must be exposed.
+    - If the question does NOT belong to a specific segment of the KC (a
+      whole-KP Solo/Integrated drill), at most ONE segment OF THAT KC may still
+      be unread. The lesson gate teaches that one right in front of the drill
+      (`unexposed_target_kcs` → `_segment_step`), so the drill still comes
+      after its last page — the same read-then-drill order the carriers gave.
+      The budget is per owning KC on purpose: a drill tagged to two segmented
+      KCs with one page left each gets both pages back to back and then the
+      drill, exactly how a drill tagged to two never-read single-concept KCs
+      has always been served (one gate entry per KC, lessons.js renders the
+      list). A global budget of one would lock that drill and fall back to
+      the carriers, which is the thing this relaxation exists to stop.
+
+    Until 2026-09-21 the whole-KP drills needed EVERY segment read, and the
+    only thing servable on a KP with one page left was that page's rank-0
+    fill-in-the-blank carrier — the rung retired on 2026-09-11. Seth's queue
+    sat on `torch.dtype-astype` with two of three pages read: 22 Solo drills
+    locked, the carriers served plain, and he skipped through them (the gap
+    watcher: "seen all 18, answered 1 — skipped through"). "There are supposed
+    to be NO faded problems." A KP with two or more pages unread still teaches
+    them one carrier at a time; that is the one place a carrier is still the
+    only drill the gate can put its page in front of.
     """
     _load()
     qid = int(question_id)
@@ -336,10 +355,12 @@ def question_is_segment_unlocked(question_id: int, kc_exposure: Dict[str, str]) 
                 if key not in kc_exposure:
                     return False
         else:
-            for seg in segments:
-                key = f"{kc}#{seg['concept_id']}"
-                if key not in kc_exposure:
-                    return False
+            unread = sum(
+                1 for seg in segments
+                if f"{kc}#{seg['concept_id']}" not in kc_exposure
+            )
+            if unread > 1:
+                return False
     return True
 
 

@@ -903,9 +903,22 @@ def record_kc_outcome(
 # `partial` falls back to unranked leftovers, and `solo` falls back to
 # `kp-independent` and then leftovers, so a KP that authored no `## Integrated
 # practice` still has a top rung to serve. Every KC in the registry has at
-# least one rank-2/3/unranked drill (checked 2026-09-11), so retiring the
-# faded ranks leaves no concept with an empty floor rung.
+# least one rank-2/3/unranked drill (checked 2026-09-11, again 2026-09-21: 72
+# of 72), so retiring the faded ranks leaves no concept with an empty floor rung.
+#
+# `worked` serves the SAME ranks as `partial` (2026-09-21). It is the first
+# contact — the lesson page is the rung and a drill is attached behind it —
+# and until now it had no entry here, so `questions_at_stage` returned [] and
+# `prioritization.narrow_to_next_kc` fell to `lowest_rung`: the concept's
+# rank-0 fill-in-the-blank item, the rung retired on 2026-09-11. That is how
+# q820 opened `raytracing.ray-parametrisation` for Seth ("there are supposed
+# to be NO faded problems, but this one got through"). The floor fallback
+# still exists for the one case it is right in — a segmented KP whose real
+# rungs are locked behind pages not yet read, where the segment's carrier is
+# the only drill the gate can teach — but a concept with an unlocked Solo
+# drill now opens on it.
 _STAGE_TO_RANKS = {
+    "worked": (2, _LADDER_UNRANKED),
     "partial": (2, _LADDER_UNRANKED),
     "solo": (3, 2, _LADDER_UNRANKED),
 }

@@ -45,9 +45,10 @@ def rung_gap(user_state: UserPracticeState, kc: Optional[str], question) -> dict
     owned = list(kc_graph.questions_for_kc(kc))
     at_stage = set(kc_graph.questions_at_stage(owned, stage))
     if not at_stage and stage == "worked":
-        # `worked` serves no rank of its own — narrow_to_next_kc falls back to
-        # the concept's floor rung, narrowed to what this learner may be shown
-        # (a segment's carrier stays locked until its page is read). Count THAT.
+        # `worked` serves the Solo ranks since 2026-09-21; when none of those is
+        # authored, narrow_to_next_kc falls back to the concept's floor rung,
+        # narrowed to what this learner may be shown (a segment's carrier stays
+        # locked until its page is read). Count THAT.
         # Counting the stage's own (empty) rank told Seth "nothing is written at
         # this rung" for torch.linalg-basics on 2026-09-20, when the truth was
         # that its one unlocked floor drill (q239) was the drill on screen.
