@@ -1,11 +1,17 @@
 """Pairwise "which is harder" judgments from TypeSafe's Jev, with a cache.
 
-One request carries one champion and a batch of challengers in `state`, and
-two Noul questions per challenger — "challenger harder than champion" and
-"champion harder than challenger" — so a framing bias averages out the way
-the legacy rater's forward + reversed prompts did. Both directions come back
-from a single call because Jev answers every question over the same state in
-parallel.
+One request carries one champion and ONE challenger in `state`, and two Noul
+questions — "challenger harder than champion" and "champion harder than
+challenger" — so a framing bias averages out the way the legacy rater's
+forward + reversed prompts did. Both directions come back from a single call
+because Jev answers every question over the same state in parallel. Requests
+for different challengers run concurrently on a thread pool.
+
+`BATCH` > 1 packs several challengers into one state and addresses them as
+`challengers[i]`; measured 2026-09-21 that is NOT safe — the judgment drifts
+from position 3 and flipped outright at position 6 (q780 vs q797: alone
+0.03/0.91, at index 6 of 8 0.68/0.17). Keep it at 1; the batch size is part
+of the cache fingerprint so rows judged under a wider batch are never reused.
 
 Every judgment is appended to `cache.jsonl` keyed by (model, champion,
 challenger, framing, fingerprint) where the fingerprint hashes everything the
@@ -20,12 +26,19 @@ import hashlib
 import json
 import math
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from bank import DATA_DIR, Problem
 
 MODEL = os.environ.get("TYPESAFE_MODEL", "jev-1.13.0")
-BATCH = int(os.environ.get("TYPESAFE_BATCH", "8"))
+BATCH = int(os.environ.get("TYPESAFE_BATCH", "1"))
+if BATCH != 1:
+    # Positional references into a multi-challenger state drift (see module docstring);
+    # a wider batch would also need the companions and position in the fingerprint.
+    raise SystemExit(f"TYPESAFE_BATCH={BATCH} is unsafe; only 1 is supported")
+WORKERS = int(os.environ.get("TYPESAFE_WORKERS", "12"))
 CACHE = DATA_DIR / "cache.jsonl"
 
 CONTEXT = (
@@ -61,7 +74,7 @@ def sigmoid(x: float) -> float:
 def fingerprint(champion: Problem, challenger: Problem) -> str:
     """Hash of everything the model sees for this pair (both directions share it)."""
     h = hashlib.sha1()
-    for part in (CONTEXT, json.dumps(CRITERIA, sort_keys=True), json.dumps(FRAMINGS, sort_keys=True),
+    for part in (f"batch={BATCH}", CONTEXT, json.dumps(CRITERIA, sort_keys=True), json.dumps(FRAMINGS, sort_keys=True),
                  json.dumps(champion.as_state(), sort_keys=True), json.dumps(challenger.as_state(), sort_keys=True)):
         h.update(part.encode())
         h.update(b"\x00")
@@ -92,6 +105,7 @@ class Judge:
     def __init__(self) -> None:
         self.cache = load_cache()
         self._client = None
+        self._lock = threading.Lock()
         self.calls = 0
         self.input_tokens = 0
 
@@ -116,9 +130,12 @@ class Judge:
                 out[c.id] = self._combine(self.cache[keys["fwd"]], self.cache[keys["rev"]])
             else:
                 todo.append(c)
-        for start in range(0, len(todo), BATCH):
-            batch = todo[start:start + BATCH]
-            out.update(self._ask(champion, batch))
+        batches = [todo[start:start + BATCH] for start in range(0, len(todo), BATCH)]
+        if batches:
+            self._get_client()
+            with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+                for got in pool.map(lambda b: self._ask(champion, b), batches):
+                    out.update(got)
         return out
 
     @staticmethod
@@ -139,16 +156,19 @@ class Judge:
             for framing, text in FRAMINGS.items():
                 questions[f"{framing}_{i}"] = Noul(instructions=text.format(i=i), criteria=criteria)
         resp = self._get_client().system_one(model=MODEL, state=state, questions=questions)
-        self.calls += 1
-        self.input_tokens += int(getattr(resp.usage, "input_tokens", 0) or 0)
+        with self._lock:
+            self.calls += 1
+            self.input_tokens += int(getattr(resp.usage, "input_tokens", 0) or 0)
         rows, out = [], {}
         for i, c in enumerate(batch):
             got = {f: float(resp.answers[f"{f}_{i}"].noul) for f in FRAMINGS}
             fp = fingerprint(champion, c)
             for f, noul in got.items():
-                self.cache[(MODEL, champion.id, c.id, f, fp)] = noul
                 rows.append({"model": MODEL, "champion": champion.id, "challenger": c.id,
                              "framing": f, "fp": fp, "noul": noul})
             out[c.id] = self._combine(got["fwd"], got["rev"])
-        _append_cache(rows)
+        with self._lock:
+            for r in rows:
+                self.cache[(MODEL, r["champion"], r["challenger"], r["framing"], r["fp"])] = r["noul"]
+            _append_cache(rows)
         return out

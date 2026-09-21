@@ -57,12 +57,15 @@ def _write_atomic(path: Path, text: str) -> None:
     os.replace(tmp, path)
 
 
-def load_ratings() -> dict[str, dict[int, float]]:
+def load_ratings() -> tuple[dict[str, dict[int, float]], dict[str, set[int]]]:
+    """p_harder per drill per concept, plus the champion id(s) each concept's rows name."""
     by_concept: dict[str, dict[int, float]] = {}
+    champions: dict[str, set[int]] = {}
     with RATINGS.open() as fh:
         for r in csv.DictReader(fh):
             by_concept.setdefault(r["concept"], {})[int(r["question_id"])] = float(r["p_harder"])
-    return by_concept
+            champions.setdefault(r["concept"], set()).add(int(r["champion_id"]))
+    return by_concept, champions
 
 
 def main() -> int:
@@ -72,7 +75,7 @@ def main() -> int:
     args = ap.parse_args()
 
     groups = group_by_concept(load_problems())
-    ratings = load_ratings()
+    ratings, champions_by_concept = load_ratings()
     rateable = {c for c, ds in groups.items() if len(ds) >= 2}
     missing = sorted(rateable - set(ratings))
     incomplete = sorted(c for c in ratings if set(ratings[c]) != {d.id for d in groups.get(c, [])})
@@ -89,8 +92,12 @@ def main() -> int:
 
     rows, flat = [], []
     for concept, p_by_id in sorted(ratings.items()):
-        champions = [qid for qid, p in p_by_id.items() if p == 0.5]
-        assert len(champions) == 1, f"{concept}: expected exactly one champion at p=0.5, got {champions}"
+        # One champion per concept, and its self-comparison is the 0.5 anchor. A
+        # challenger may legitimately tie at 0.5 too (Jev returned a coin flip).
+        champions = champions_by_concept[concept]
+        assert len(champions) == 1, f"{concept}: rows name several champions {sorted(champions)}"
+        (champion,) = champions
+        assert p_by_id.get(champion) == 0.5, f"{concept}: champion {champion} is not at p=0.5"
         scores = scale_concept(p_by_id)
         if scores is None:
             flat.append(concept)

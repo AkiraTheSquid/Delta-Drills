@@ -170,3 +170,7 @@ tools/visual-diff/out/*.json
 tools/visual-diff/__pycache__/
 tools/visual-diff/reference/*-toc.html
 tools/visual-diff/reference/*-toc.css
+
+# TypeSafe (Jev) difficulty re-rater: API key + raw judgment cache stay local
+This-Directory-Only/typesafe_difficulty/.env
+This-Directory-Only/typesafe_difficulty/cache.jsonl
