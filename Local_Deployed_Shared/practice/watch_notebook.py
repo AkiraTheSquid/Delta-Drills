@@ -731,8 +731,13 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
        ends up with NO answer anywhere, which is the bug this feature exists
        to fix. `renderFailedTests` makes the same test, and both must agree or
        the failures and the answer land in different columns.
-    2. A correct RESUBMIT takes the answer away. Otherwise the solution to a
-       question already solved sits under the learner's working code.
+    2. EVERY verdict shows the answer, correct included. Until 2026-09-21 a
+       correct grade CLEARED the cell ("yours already works"); Seth: "it
+       doesn't hide the freaking solution when you solve it correctly. it
+       really shouldn't have done that in the first place." The reference
+       answer is the review step of a correct answer too. showSolution
+       re-renders in place, so a resubmit swaps the source rather than
+       stacking a stale copy.
     3. Replacing the source clears the run. The output and its `[n]` marker
        would otherwise describe code no longer in the box.
     4. New cells go BEFORE the answer. `addCell` is reachable after a grade,
@@ -785,9 +790,14 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
         "and the answer; a new cell would land between them"
     )
     events = read(os.path.join(HERE, "events.js"))
-    assert "clearSolution" in events, (
-        "a correct resubmission never clears the solution cell — the answer to "
-        "a question the learner just got right stays on screen under their code"
+    submit = re.search(r"if \(PracticeAPI\.currentQuestion !== q\) return;.*?recordGradedDetail\(", events, re.S)
+    assert submit, "events.js: the graded-submit block moved; update this check"
+    assert "clearSolution" not in submit.group(0) and "if (result.correct)" not in submit.group(0), (
+        "the submit path hides the solution on a CORRECT grade again — the "
+        "reference answer must show on every verdict (Seth, 2026-09-21)"
+    )
+    assert "showSolution?.(solCode, einopsSol)" in submit.group(0), (
+        "the submit path no longer renders the solution cell after grading"
     )
 
     # 5. Both restore paths rebuild the feedback in the notebook, and both do it
@@ -803,6 +813,10 @@ def check_the_answer_only_lives_where_the_learner_can_see_it():
     assert "showSolution" in restore.group(0) and "renderFailedTests" in restore.group(0), (
         "the restore helper no longer puts BOTH halves of the review back; a "
         "restored grade must read the same as a live one"
+    )
+    assert "clearSolution" not in restore.group(0), (
+        "a RESTORED correct grade clears the solution cell — the answer must "
+        "come back on every verdict, the same as the live submit"
     )
     assert "recordGradedDetail" in restore.group(0), (
         "a RESTORED review no longer re-arms the graded-detail record — rating "

@@ -74,15 +74,21 @@ practiceSubmitBtn.addEventListener("click", async () => {
   // The graded verdict supersedes the Run button's dry check of the same code.
   window.DeltaTestCheck?.hide?.();
   if (typeof renderFailedTests === "function") renderFailedTests(result, q);
-  /* The answer, under the code that missed it. Ordered AFTER renderFailedTests
+  /* The answer, under the code you wrote. Ordered AFTER renderFailedTests
      because showSolution re-appends itself last, so the read is: your cells →
-     which cases failed → what it should have been. Only on a miss: a correct
-     answer already showed you a working one, yours — and a correct RESUBMIT
-     has to take the old one away, or the answer to a question you have since
-     solved sits under your working code until the next question loads. */
-  if (result.correct) {
-    window.DeltaNotebook?.clearSolution?.();
-  } else if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
+     which cases failed (on a miss) → the reference answer.
+
+     🔴 ON EVERY VERDICT, CORRECT INCLUDED. This used to be a miss-only reveal
+     ("a correct answer already showed you a working one, yours"), and a
+     correct grade actively CLEARED the cell. Seth, 2026-09-21: "it doesn't
+     hide the freaking solution when you solve it correctly. it really
+     shouldn't have done that in the first place." A working answer is not
+     the same as the reference answer — the comparison (one broadcast vs. a
+     loop, the idiom vs. the workaround) is the review step of a correct
+     answer, and it was being deleted at the exact moment it became useful.
+     showSolution re-renders in place, so a resubmit swaps the cell's source
+     instead of leaving a stale one. */
+  if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
     /* Appended is not seen: the answer lands under cells as tall as whatever
        the learner just wrote, i.e. below the fold of the notebook pane. Scroll
        it into view in the next frame — the cell was appended and auto-sized in

@@ -918,16 +918,16 @@ function restoreGradedFeedbackInNotebook({ correct, failedTests, solutionCode: s
   // (a paused session resumes mid-review, with the three buttons still live).
   recordGradedDetail(q?.question_id, failedTests, solCode || q?.solution_code || "");
   if (correct) {
-    // A rated-correct question keeps no answer key under it: the working code
-    // on screen is the learner's own.
+    // No failing cases to list; the reference answer still comes back below
+    // (Seth, 2026-09-21: a correct answer must not hide the solution — the
+    // same rule as the live submit in events.js).
     hideFailedTests();
-    window.DeltaNotebook?.clearSolution?.();
-    return;
+  } else {
+    renderFailedTests(
+      { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
+      q,
+    );
   }
-  renderFailedTests(
-    { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
-    q,
-  );
   const einopsSol = q?.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(q?.question_id || q?.id) : "") || "";
   // A saved state from before this field existed has no code of its own; the
   // question payload carries the same answer, so the restore is not lossy.
