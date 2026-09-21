@@ -26292,7 +26292,7 @@
     "topic": "PyTorch",
     "subtopic": "Rays as tensors",
     "subtopic_key": "PyTorch: Rays as tensors",
-    "question_text": "Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, built from `t.zeros` and two slice assignments.",
+    "question_text": "Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, filling each column with one slice assignment.",
     "answer_code": "import torch as t\n\n\ndef solve(n, a, b):\n    \"\"\"Two scalar broadcasts into two columns.\"\"\"\n    canvas = t.zeros((n, 2))\n    canvas[:, 0] = a\n    canvas[:, 1] = b\n    return canvas.tolist()\n\n\nexample = (3, 1.0, -1.0)\nprint(solve(*example))\n",
     "difficulty_score": 32,
     "difficulty_label": "easy",

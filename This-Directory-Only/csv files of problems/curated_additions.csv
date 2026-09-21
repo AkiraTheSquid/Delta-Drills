@@ -3542,7 +3542,7 @@ def solve(m, row, row_values):
 example = (2, 1, [1.0, 2.0, 3.0])
 print(solve(*example))
 ",24,"[[0.0, 0.0, 0.0], [1.0, 2.0, 3.0]]"
-PyTorch,Rays as tensors,"Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, built from `t.zeros` and two slice assignments.","import torch as t
+PyTorch,Rays as tensors,"Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, filling each column with one slice assignment.","import torch as t
 
 
 def solve(n, a, b):

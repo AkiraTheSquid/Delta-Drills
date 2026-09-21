@@ -540,12 +540,6 @@
     "detail": "prompt names solution call(s) in code form: ['copy_']"
    }
   ],
-  "811": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['zeros']"
-   }
-  ],
   "812": [
    {
     "check": "answer_symbol_in_prompt",
@@ -919,7 +913,7 @@
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 139,
+  "answer_symbol_in_prompt": 138,
   "precompute_leak": 10,
   "starter_passes_some_cases": 2
  }

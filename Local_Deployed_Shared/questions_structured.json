@@ -29667,7 +29667,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, built from `t.zeros` and two slice assignments.",
+      "question_text": "Return an n×2 canvas as a nested list with column 0 all equal to `a` and column 1 all equal to `b`, filling each column with one slice assignment.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
