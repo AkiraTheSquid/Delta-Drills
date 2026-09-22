@@ -23,7 +23,7 @@
    "topic": "Mathematics",
    "subtopic_key": "Mathematics: ARENA 0.1",
    "file": "ma-01.json",
-   "cells": 72,
+   "cells": 78,
    "questions": [],
    "kcs": [
     "math.ray-geometry",

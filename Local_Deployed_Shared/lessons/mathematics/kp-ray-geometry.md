@@ -8,8 +8,8 @@ previews: []
 concepts: [affine]
 faded: [50000, 50001]
 guided: []
-independent: [50002, 50003]
-integrated: [50004, 50005]
+independent: [50002, 50003, 50072, 50073, 50074, 50075, 50076, 50077]
+integrated: [50004, 50005, 50078, 50079]
 ---
 
 ## Concept: A position plus a displacement
@@ -89,6 +89,24 @@ A = (1, 2), B = (5, 6). What does v = 1.25 give in A + v(B − A)?
 ### q50003
 A ray is written O + cD, where the scalar c is its parameter. The point P = O + 6D sits at c = 6. Rewrite the same ray as O + sD′ with a longer direction D′ = 3D (same O). For which value of s is O + sD′ = O + 6D?
 
+### q50072
+A ray starts at O = (1, 2, −1) and passes through Q = (4, 0, 5). Write it as P(s) = O + sD with D = Q − O. Which point is P(2)?
+
+### q50073
+A = (2, −1), B = (8, 5). Which point is P(1/3) on the segment P(v) = A + v(B − A)?
+
+### q50074
+A ray is P(s) = O + sD with O = (0, 0) and D = (2, −1). For which value of s is P(s) = (6, −3)?
+
+### q50075
+P(s) = (1, 1) + s(2, −1), s ≥ 0. Is (−3, 3) on this ray?
+
+### q50076
+A four-pixel camera includes both y-limits −3 and 3 at x = 1, equally spaced. What is the direction-y coordinate of pixel i = 2 (counting from i = 0)?
+
+### q50077
+A = (0, 4, 2), B = (6, −2, 8). Which v puts A + v(B − A) at (4, 0, 6)?
+
 ## Integrated practice
 
 ### q50004
@@ -96,3 +114,9 @@ A five-pixel camera includes both y-limits −3 and 3 at x = 1. Which sequence c
 
 ### q50005
 A point has v = 0.2 from A to B. Swap the endpoints and write P = B + w(A − B). What is w?
+
+### q50078
+make_rays_1d(num_pixels=5, y_limit=2) stores ray i as [[0, 0, 0], [1, y_i, 0]], with y_i from −2 to 2. Where does ray i = 3 reach x = 4?
+
+### q50079
+A camera stores ray i's direction as [1, y_i, 0]. A second version stores [2, 2y_i, 0] instead, same origins. What changes about where each ray hits a wall?
