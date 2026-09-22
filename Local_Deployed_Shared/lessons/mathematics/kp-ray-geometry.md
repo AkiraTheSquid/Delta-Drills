@@ -14,41 +14,64 @@ integrated: [50004, 50005]
 
 ## Concept: A position plus a displacement
 
-First master [vector arithmetic](?lesson=math.vector-arithmetic): components, displacement, and scalar multiplication. This lesson applies those skills to rays.
+This lesson builds on vector arithmetic: components, displacement, and scalar multiplication. Here those skills describe rays.
 
-A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from A to B, move by B − A. Adding a displacement to a point gives another point.
+A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from $A$ to $B$, move by $B-A$. Adding a displacement to a point gives another point.
 
-A ray uses P(s) = O + sD, where O is its origin, D is a nonzero direction, and s ≥ 0. D is a displacement, even when ARENA stores it in the second row of a (2, 3) tensor. It is not an endpoint. Given an endpoint Q, first compute D = Q − O. At s = 0 you are at O; negative s lies behind the ray.
+A ray is every point
+$$P(s)=O+sD,\qquad s\ge0,$$
+where $O$ is its origin and $D$ a nonzero direction. $D$ is a displacement, even when ARENA stores it in the second row of a $(2,3)$ tensor. It is not an endpoint: given an endpoint $Q$, first compute $D=Q-O$. At $s=0$ you are at $O$; negative $s$ lies behind the ray.
 
-A segment uses P(v) = (1 − v)A + vB = A + v(B − A), with 0 ≤ v ≤ 1. The weights add to one. The supporting line allows any real v; the segment does not.
+A segment from $A$ to $B$ is
+$$P(v)=(1-v)A+vB=A+v(B-A),\qquad 0\le v\le1.$$
+The weights $1-v$ and $v$ add to one. The supporting line allows any real $v$; the segment does not.
 
-For n ≥ 2 camera pixels and y-limit L at x = 1, equally spaced direction-y values are −L + i·2L/(n−1). There are n−1 gaps between n endpoints. ARENA uses Dₓ = 1, so s = x when O = 0.
+A camera with $n\ge2$ pixels and y-limit $L$ at $x=1$ has equally spaced direction-y values
+$$y_i=-L+i\cdot\frac{2L}{n-1},\qquad i=0,\dots,n-1.$$
+There are $n-1$ gaps between $n$ endpoints. ARENA uses $D_x=1$, so $s=x$ when $O=0$.
+
+The ray point $O+2D$ for $O=(2,-1)$, $D=(3,2)$. Tensor arithmetic acts on every component at once:
 
 ```python
-origin, direction, s = (2, -1), (3, 2), 2
-point = tuple(origin[i] + s * direction[i]
-              for i in range(2))
+import torch as t
+
+origin = t.tensor([2.0, -1.0])
+direction = t.tensor([3.0, 2.0])
+s = 2
+
+point = origin + s * direction
 print(point)
 # Hidden checks
-assert point == (8, 3)
-assert _delta_output == '(8, 3)\n'
+assert point.tolist() == [8.0, 3.0]
+assert _delta_output == 'tensor([8., 3.])\n'
 ```
 
 ## Worked example
 
-Find the midpoint from A = (−2, 3) to B = (6, 7). Half the displacement is (4, 2); adding it to A gives (2, 5). This arithmetic becomes a tensor expression in intersect_ray_1d.
+Find the midpoint of the segment from $A=(-2,3)$ to $B=(6,7)$, and the point that a ray from $O=(2,-1)$ with direction $D=(3,2)$ reaches at $s=2$.
+
+**On paper.** The midpoint is $v=\tfrac12$. Subtract, halve, add:
+$$A+\tfrac12(B-A)=\begin{pmatrix}-2\\3\end{pmatrix}+\tfrac12\begin{pmatrix}6-(-2)\\7-3\end{pmatrix}=\begin{pmatrix}-2\\3\end{pmatrix}+\begin{pmatrix}4\\2\end{pmatrix}=\begin{pmatrix}2\\5\end{pmatrix}.$$
+Check with the weighted form: $\tfrac12A+\tfrac12B=\tfrac12(4,10)=(2,5)$.
+
+For the ray, scale the direction and add it to the origin:
+$$O+2D=\begin{pmatrix}2\\-1\end{pmatrix}+2\begin{pmatrix}3\\2\end{pmatrix}=\begin{pmatrix}2+6\\-1+4\end{pmatrix}=\begin{pmatrix}8\\3\end{pmatrix}.$$
+
+**In code.** The midpoint, as one tensor expression.
 
 ```python
-a, b, v = (-2, 3), (6, 7), 0.5
-point = tuple(a[i] + v * (b[i] - a[i])
-              for i in range(2))
+import torch as t
+
+a = t.tensor([-2.0, 3.0])
+b = t.tensor([6.0, 7.0])
+v = 0.5
+
+point = a + v * (b - a)
 print(point)
 # Hidden checks
-assert point == (2.0, 5.0)
-assert _delta_output == '(2.0, 5.0)\n'
+assert point.tolist() == [2.0, 5.0]
+assert _delta_output == 'tensor([2., 5.])\n'
 ```
-
-Return to [the connected PyTorch lesson](?lesson=raytracing.ray-parametrisation) to implement this reasoning. ARENA 0.1 transfer: `make_rays_1d`, `make_rays_2d`, `intersect_ray_1d`.
 
 ## Faded practice
 

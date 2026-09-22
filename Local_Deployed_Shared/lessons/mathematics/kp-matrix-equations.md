@@ -14,7 +14,9 @@ integrated: [50054, 50055]
 
 ## Concept
 
-An $m$-by-$n$ matrix has $m$ rows and $n$ columns. Multiplying it by an $n$-component column vector gives $m$ components. Each output component is a row's weighted sum. Equivalently, $M\mathbf x$ combines the columns of $M$ using the entries of $\mathbf x$ as weights. This is not elementwise multiplication.
+An $m$-by-$n$ matrix has $m$ rows and $n$ columns. Multiplying it by an $n$-component column vector gives $m$ components. Each output component is a row's weighted sum; equivalently, $M\mathbf x$ combines the columns of $M$ using the entries of $\mathbf x$ as weights:
+$$\begin{pmatrix}a&b\\c&d\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}ax+by\\cx+dy\end{pmatrix}=x\begin{pmatrix}a\\c\end{pmatrix}+y\begin{pmatrix}b\\d\end{pmatrix}.$$
+This is not elementwise multiplication.
 
 In $M\mathbf x=\mathbf b$, $\mathbf x$ holds unknown coefficients, $M$ holds their coefficients in each equation, and $\mathbf b$ holds the right-hand sides. Rows correspond to equations; columns correspond to unknowns. Keep the order of unknowns fixed. Moving a term across equality changes its sign.
 
@@ -24,27 +26,40 @@ Use elimination or substitution on paper: add a multiple of one equation to anot
 
 ## Worked example
 
-Solve $2u+v=5$ and $u-v=1$. Adding the equations cancels $v$, giving $3u=6$, hence $u=2$. Back-substitute: $2-v=1$, so $v=1$.
+Solve
+$$\begin{aligned}2u+v&=5\\u-v&=1\end{aligned}$$
 
-With unknown order $(u,v)$, the matrix is $\begin{pmatrix}2&1\\1&-1\end{pmatrix}$. Check both rows: $2(2)+1=5$ and $2-1=1$. The residual is $(0,0)$.
+**On paper.** Add the equations to cancel $v$: $3u=6$, so $u=2$. Back-substitute into the second: $2-v=1$, so $v=1$.
 
-For a 3D triangular system, solve the last row first: $w=2$, $v+w=5$, $u+2v=7$ gives $w=2$, $v=3$, $u=1$. The principle is unchanged; there is one more coordinate equation.
+In matrix form, with unknown order $(u,v)$:
+$$\begin{pmatrix}2&1\\1&-1\end{pmatrix}\begin{pmatrix}u\\v\end{pmatrix}=\begin{pmatrix}5\\1\end{pmatrix}.$$
+Check by multiplying row by row:
+$$\begin{pmatrix}2&1\\1&-1\end{pmatrix}\begin{pmatrix}2\\1\end{pmatrix}=\begin{pmatrix}2\cdot2+1\cdot1\\1\cdot2-1\cdot1\end{pmatrix}=\begin{pmatrix}5\\1\end{pmatrix},$$
+so the residual is $(0,0)$.
+
+For a 3D triangular system, solve the last row first and work upward:
+$$\begin{aligned}u+2v&=7\\v+w&=5\\w&=2\end{aligned}\quad\Longrightarrow\quad w=2,\;v=3,\;u=1.$$
+The principle is unchanged; there is one more coordinate equation.
+
+**In code.** `t.linalg.solve` does the elimination; `@` is the matrix–vector product, so the residual is one line.
 
 ```python
-matrix, solution, rhs = ((2, 1), (1, -1)), (2, 1), (5,
-    1)
-product = tuple(sum(a * x for a,
-                    x in zip(row, solution))
-    for row in matrix)
-residual = tuple(a - b for a, b in zip(product, rhs))
-print(product, residual)
-# Hidden checks
-assert product == rhs
-assert residual == (0, 0)
-assert _delta_output == '(5, 1) (0, 0)\n'
-```
+import torch as t
 
-ARENA 0.1 transfer: continue with [intersection systems](?lesson=math.intersection-systems). These are standalone mathematics problems; no PyTorch knowledge is required. Work the answer on paper, then select one choice in practice.
+matrix = t.tensor([[2.0, 1.0],
+                   [1.0, -1.0]])
+rhs = t.tensor([5.0, 1.0])
+
+solution = t.linalg.solve(matrix, rhs)
+residual = matrix @ solution - rhs
+
+print(solution)
+print(residual)
+# Hidden checks
+assert t.allclose(solution, t.tensor([2.0, 1.0]))
+assert t.allclose(residual, t.zeros(2))
+assert _delta_output == 'tensor([2., 1.])\ntensor([0., 0.])\n'
+```
 
 ## Faded practice
 
