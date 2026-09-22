@@ -19962,16 +19962,22 @@
     "syntax.import",
     "syntax.import-as"
    ],
+   "python.indexing": [
+    "syntax.index"
+   ],
    "python.lists-and-tuples": [
     "syntax.list-literal"
    ],
    "python.values-and-names": [
-    "builtin.print"
+    "builtin.print",
+    "syntax.arith",
+    "syntax.tuple"
    ],
    "torch.reshape-flatten": [
-    "Tensor.flatten"
+    "Tensor.reshape"
    ],
    "torch.tensor-model": [
+    "Tensor.shape",
     "Tensor.tolist",
     "torch.tensor"
    ]
