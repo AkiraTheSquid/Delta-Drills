@@ -14,33 +14,47 @@ integrated: [50036, 50037, 50068, 50069, 50070, 50071]
 
 ## Concept
 
-A vector is an ordered list of components: $\mathbf v=(v_x,v_y,v_z)$. Add and subtract matching coordinates; multiply every component by a scalar. Thus $(1,2,3)+(4,-1,0)=(5,1,3)$ and $-2(1,2,3)=(-2,-4,-6)$. A negative scale reverses direction; zero gives the zero vector.
+A vector is an ordered list of components, written as a column:
+$$\mathbf v=\begin{pmatrix}v_x\\v_y\\v_z\end{pmatrix}.$$
+Add and subtract matching components; multiply every component by a scalar:
+$$\begin{pmatrix}1\\2\\3\end{pmatrix}+\begin{pmatrix}4\\-1\\0\end{pmatrix}=\begin{pmatrix}5\\1\\3\end{pmatrix},\qquad -2\begin{pmatrix}1\\2\\3\end{pmatrix}=\begin{pmatrix}-2\\-4\\-6\end{pmatrix}.$$
+A negative scale reverses direction; zero gives the zero vector.
 
-A point is a location in a chosen coordinate frame. The displacement from point $A$ to point $B$ is $B-A$, not $A+B$. Adding a displacement to a point gives a point. Check the order with $A+(B-A)=B$.
+A point is a location in a chosen coordinate frame. The displacement from point $A$ to point $B$ is $B-A$, not $A+B$. Adding a displacement to a point gives a point. Check the order with
+$$A+(B-A)=B.$$
 
-Translation changes point coordinates but not a displacement: $(B+T)-(A+T)=B-A$. Direction vectors are not endpoints. Their components describe how a point changes when a parameter increases by one.
+Translation changes point coordinates but not a displacement:
+$$(B+T)-(A+T)=B-A.$$
+Direction vectors are not endpoints. Their components describe how a point changes when a parameter increases by one.
 
 ## Worked example
 
-Let $A=(2,-1,3)$ and $B=(5,3,1)$. Subtract coordinate by coordinate:
-$$B-A=(5-2,\;3-(-1),\;1-3)=(3,4,-2).$$
-Half this displacement is $(1.5,2,-1)$, so the midpoint is $A+\tfrac12(B-A)=(3.5,1,2)$. Reversing the subtraction gives $A-B=(-3,-4,2)$, the displacement back.
+Find the displacement from $A=(2,-1,3)$ to $B=(5,3,1)$, then the midpoint of $AB$.
 
-Predict the printed displacement before running this optional check.
+**On paper.** Write both points as columns and subtract component by component:
+$$B-A=\begin{pmatrix}5\\3\\1\end{pmatrix}-\begin{pmatrix}2\\-1\\3\end{pmatrix}=\begin{pmatrix}5-2\\3-(-1)\\1-3\end{pmatrix}=\begin{pmatrix}3\\4\\-2\end{pmatrix}.$$
+The midpoint is $A$ plus half that displacement:
+$$A+\tfrac12(B-A)=\begin{pmatrix}2\\-1\\3\end{pmatrix}+\begin{pmatrix}1.5\\2\\-1\end{pmatrix}=\begin{pmatrix}3.5\\1\\2\end{pmatrix}.$$
+Reversing the subtraction gives $A-B=(-3,-4,2)$, the displacement back.
+
+**In code.** The same two steps on tensors. Arithmetic on a tensor acts on every component at once, so no loop is needed. Predict the printed values before running it.
 
 ```python
-a, b = (2, -1, 3), (5, 3, 1)
-displacement = tuple(y - x for x, y in zip(a, b))
-midpoint = tuple(x + 0.5 * d for x,
-                 d in zip(a, displacement))
-print(displacement, midpoint)
-# Hidden checks
-assert displacement == (3, 4, -2)
-assert midpoint == (3.5, 1, 2)
-assert _delta_output == '(3, 4, -2) (3.5, 1.0, 2.0)\n'
-```
+import torch as t
 
-ARENA 0.1 transfer: continue with [ray geometry](?lesson=math.ray-geometry). These are standalone mathematics problems; no PyTorch knowledge is required. Work the answer on paper, then select one choice in practice.
+a = t.tensor([2.0, -1.0, 3.0])
+b = t.tensor([5.0, 3.0, 1.0])
+
+displacement = b - a
+midpoint = a + 0.5 * displacement
+
+print(displacement)
+print(midpoint)
+# Hidden checks
+assert displacement.tolist() == [3.0, 4.0, -2.0]
+assert midpoint.tolist() == [3.5, 1.0, 2.0]
+assert _delta_output == 'tensor([ 3.,  4., -2.])\ntensor([3.5000, 1.0000, 2.0000])\n'
+```
 
 ## Faded practice
 

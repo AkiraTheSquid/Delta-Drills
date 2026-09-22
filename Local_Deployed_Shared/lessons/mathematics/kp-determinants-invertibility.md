@@ -20,33 +20,50 @@ Its absolute value is the area-scaling factor; a negative sign indicates reverse
 
 Zero determinant means singular: columns are dependent. Some right-hand sides are unreachable (no solution); reachable right-hand sides have infinitely many solutions. It does not mean every system has no solution.
 
-In 3D, absolute determinant measures volume scaling. For a triangular matrix, the determinant is the product of diagonal entries. In general, expanding the first row of $\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix}$ gives $a(ei-fh)-b(di-fg)+c(dh-eg)$.
+In 3D, absolute determinant measures volume scaling. For a triangular matrix, the determinant is the product of diagonal entries. In general, expand along the first row:
+$$\det\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix}=a(ei-fh)-b(di-fg)+c(dh-eg).$$
 
 These statements are exact. Numerical ray tracing uses a tolerance on $|\det M|$ to avoid unstable solves. That cutoff is an implementation convention, not the definition of singularity; determinant magnitude alone is not a scale-independent conditioning test.
 
 ## Worked example
 
-For $M=\begin{pmatrix}2&1\\1&-1\end{pmatrix}$, $\det M=-2-1=-3$. The determinant is negative but nonzero, so every right-hand side has a unique solution.
+Decide which of these systems have unique solutions.
 
-For $N=\begin{pmatrix}1&2\\2&4\end{pmatrix}$, $\det N=4-4=0$. The equation $N(u,v)=(3,6)$ reduces to $u+2v=3$, giving infinitely many solutions. But $N(u,v)=(3,7)$ is impossible: doubling the first equation would require $6=7$.
+**On paper.** First matrix:
+$$\det M=\det\begin{pmatrix}2&1\\1&-1\end{pmatrix}=2\cdot(-1)-1\cdot1=-3.$$
+Negative but nonzero, so every right-hand side has a unique solution.
 
-A 3D triangular matrix with diagonal $(2,-1,3)$ has determinant $-6$ and is also invertible.
+Second matrix:
+$$\det N=\det\begin{pmatrix}1&2\\2&4\end{pmatrix}=1\cdot4-2\cdot2=0.$$
+Singular. Write out $N(u,v)=(3,6)$:
+$$\begin{aligned}u+2v&=3\\2u+4v&=6\end{aligned}$$
+The second row is twice the first, so there is really one equation: infinitely many solutions, such as $(3,0)$ and $(1,1)$. With right-hand side $(3,7)$ instead, doubling the first row gives $2u+4v=6$ while the second demands $7$: no solution.
+
+A triangular matrix multiplies its diagonal:
+$$\det\begin{pmatrix}2&5&1\\0&-1&4\\0&0&3\end{pmatrix}=2\cdot(-1)\cdot3=-6,$$
+nonzero, so it is invertible too.
+
+**In code.** $ad-bc$ read straight off the tensor entries. `t.linalg.det(regular)` gives the same value, up to floating-point rounding.
 
 ```python
-def det2(matrix):
-    (a, b), (c, d) = matrix
-    return a * d - b * c
+import torch as t
 
-regular = det2(((2, 1), (1, -1)))
-singular = det2(((1, 2), (2, 4)))
-print(regular, singular)
+regular = t.tensor([[2.0, 1.0],
+                    [1.0, -1.0]])
+singular = t.tensor([[1.0, 2.0],
+                     [2.0, 4.0]])
+
+det_regular = regular[0, 0] * regular[1, 1] - regular[0, 1] * regular[1, 0]
+det_singular = singular[0, 0] * singular[1, 1] - singular[0, 1] * singular[1, 0]
+
+print(det_regular)
+print(det_singular)
 # Hidden checks
-assert regular == -3
-assert singular == 0
-assert _delta_output == '-3 0\n'
+assert det_regular.item() == -3.0
+assert det_singular.item() == 0.0
+assert abs(t.linalg.det(regular).item() + 3) < 1e-6
+assert _delta_output == 'tensor(-3.)\ntensor(0.)\n'
 ```
-
-ARENA 0.1 transfer: continue with [singular systems](?lesson=math.singular-systems). These are standalone mathematics problems; no PyTorch knowledge is required. Work the answer on paper, then select one choice in practice.
 
 ## Faded practice
 
