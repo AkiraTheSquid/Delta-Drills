@@ -88,7 +88,7 @@
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=12" />
-  <link rel="stylesheet" href="styles/practice/notebook-view.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/notebook-view.css?v=7" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
@@ -2369,7 +2369,7 @@ t.manual_seed(0)
   <!-- The ONE cell builder. Must precede notebook.js, notebook-view.js and
        arena-notebook.js, all of which call DeltaNotebookCells at render
        time, and notebook-code-edit.js, whose selectors mirror its markup. -->
-  <script src="practice/notebook-cells.js?v=2"></script>
+  <script src="practice/notebook-cells.js?v=3"></script>
   <script src="practice/notebook-code-edit.js?v=5"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
   <script src="practice/runner.js?v=24"></script>
@@ -2436,8 +2436,8 @@ t.manual_seed(0)
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-timer.js?v=3"></script>
-  <script src="practice/exercise-session.js?v=8"></script>
+  <script src="practice/exercise-timer.js?v=4"></script>
+  <script src="practice/exercise-session.js?v=9"></script>
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
        concept pill which section the reader is in. -->

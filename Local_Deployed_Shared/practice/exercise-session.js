@@ -471,6 +471,8 @@
      four `forward` keys (codex, 2026-09-11). Whitespace is allowed only after
      the glued ▶. */
   const DEF_RE = /(?:^|\n|▶\s*)(?:def|class)\s+([A-Za-z_]\w*)\s*[(:]/g;
+  const _srcOf = (cell) =>
+    cell.querySelector("textarea")?.value ?? cell.querySelector("pre, code")?.textContent ?? cell.textContent ?? "";
   const _cellKeys = (cell) => {
     if (cell.classList.contains("nbv-md")) {
       const h = cell.querySelector("h1, h2, h3, h4");
@@ -481,10 +483,119 @@
       return tag ? [`(${tag[1]})`] : [];
     }
     if (cell.classList.contains("nbv-code")) {
-      const src = cell.querySelector("textarea")?.value ?? cell.querySelector("pre, code")?.textContent ?? cell.textContent ?? "";
-      return Array.from(src.matchAll(DEF_RE), (m) => m[1]);
+      return Array.from(_srcOf(cell).matchAll(DEF_RE), (m) => m[1]);
     }
     return [];
+  };
+
+  /* ── WHERE THE TWO BUTTONS GO ───────────────────────────────────
+     🔴 ABOVE THE CELL THE LEARNER TYPES IN, NOT UNDER WHATEVER CELL
+     HAPPENED TO CARRY THE EXERCISE'S NAME. Seth, 2026-09-22: "it should show
+     up below the problem statement and question, rather than below any of
+     your code cells ... sometimes it's just not consistent."
+
+     The inconsistency was structural. A block was inserted `afterend` of its
+     ANCHOR, and the anchor is whichever cell the name was found in — which
+     is a different kind of cell from one notebook to the next:
+
+       0.1 / 0.2  the name is in the heading (`### Exercise - implement
+                  make_rays_1d`), so the buttons landed between the heading
+                  and the rest of the prose that explains the problem — above
+                  half the question.
+       0.0 A–I    the name is only in the CODE cell (`def rearrange_1(`), so
+                  the buttons landed UNDER the answer cell, below the box the
+                  learner is about to type in.
+       0.0 (1)–(8) the name is a `(N)` tag on the heading, and the heading is
+                  followed by `display_soln_array_as_img(N)` — the picture the
+                  learner has to reproduce. That cell IS the question (Seth:
+                  "it essentially has a code block that has the solution
+                  image, and that code block would go above the buttons"), so
+                  the buttons belong after it, not before it.
+
+     One rule covers all three: walk forward from the anchor over everything
+     that is still the PROBLEM — more prose, the target-image cell — and stop
+     immediately above the first cell the learner answers in. The question
+     ends where their cursor starts.
+
+     A question written INSIDE the answer cell as a comment (`# Your code here
+     - define arr1`) is the one case where the buttons sit above part of the
+     question, and Seth called that out as fine: "that's an edge case where
+     it's okay that the button is above or whatever."
+
+     When nothing below the anchor looks like an answer cell the old
+     behaviour stands — the buttons go straight under the anchor, which for a
+     prose anchor is still under the statement. */
+  /* What a cell the learner is meant to fill in says about itself. ARENA
+     marks them three ways and uses all three within one chapter. */
+  const ANSWER_RE = /your code here|raise\s+NotImplementedError|#\s*(?:TODO|EXERCISE)\b/i;
+  /* 🔴 A FUSE, NOT THE RULE. This was 6 siblings, and codex (2026-09-22) was
+     right that a budget is the wrong bound: it counts the disclosures the walk
+     SKIPS and the blocks the walk itself injects, so a statement with four
+     hints and two blocks above it exhausts the budget and falls back to the
+     anchor — reinstating, for exactly the longest questions, the bug this rule
+     exists to remove. What actually ends a question is a BOUNDARY: a heading,
+     the Solution, or the next exercise's own cell. Those are what the walk
+     stops on. This number only keeps a malformed DOM from walking the whole
+     notebook, and nothing should ever reach it. */
+  const PLACE_FUSE = 60;
+
+  /* A disclosure BEFORE the answer is part of the offer — ARENA's "Help - …",
+     "Hint 2", "Question - why …", "Aside - …" are all things the learner reads
+     while deciding how to attack the problem, and 0.2 puts several of them
+     between the exercise heading and the stub. The one that is NOT is the
+     solution, which upstream titles exactly "Solution"; reaching it means this
+     exercise has no answer cell of its own and the walk has to stop rather
+     than run into the next section. */
+  const SOLUTION_RE = /^\s*solutions?\b/i;
+
+  const _isAnswerCell = (cell, table) => {
+    if (!cell.classList?.contains("nbv-code")) return false;
+    // A `%pip install` setup cell is nobody's answer.
+    if (cell.dataset.role === "magic") return false;
+    if (ANSWER_RE.test(_srcOf(cell))) return true;
+    // 0.0's `def rearrange_1(` / 0.2's `class ReLU(`: the stub IS the answer.
+    return _cellKeys(cell).some((key) => table[key]?.kc) || !!table[CELL_KEY(cell) || ""]?.kc;
+  };
+
+  /* The tracked exercises a cell is the stub FOR — empty for a cell that only
+     looks like an answer (`# Your code here`, a bare `raise`). */
+  const _ownersOf = (cell, table) =>
+    _cellKeys(cell).concat(CELL_KEY(cell) || []).filter((key) => table[key]?.kc);
+
+  /** Where this exercise's block belongs, as an `insertAdjacentElement` pair.
+      `wanted` = the exercise keys this anchor is about to mint blocks for. */
+  const _placeFor = (anchor, table, wanted) => {
+    if (_isAnswerCell(anchor, table)) return { ref: anchor, where: "beforebegin" };
+    let node = anchor.nextElementSibling;
+    for (let i = 0; node && i < PLACE_FUSE; i += 1) {
+      // Our own injected blocks are not content and cost the walk nothing.
+      if (node.classList.contains("dd-ex-block")) { node = node.nextElementSibling; continue; }
+      if (node.dataset.role === "details") {
+        if (SOLUTION_RE.test(node.querySelector("summary")?.textContent || "")) break;
+        node = node.nextElementSibling;
+        continue;
+      }
+      /* 🔴 ANOTHER EXERCISE'S CELL IS A BOUNDARY, NOT PART OF THIS QUESTION.
+         Every cell says which tracked exercises it belongs to — a stub by its
+         `def`/`class`, a heading or `(N)` tag by its name — so a cell naming
+         only OTHER exercises is where this question ended. Stop there rather
+         than hoist the block above someone else's box or read their statement
+         as more of this one. A cell that claims nobody (`# Your code here -
+         define arr3`, a paragraph of prose) is still fair game, which is what
+         keeps 0.0's untitled answer cells and target images working. Found by
+         codex, 2026-09-22. */
+      const owners = _ownersOf(node, table);
+      const mine = !owners.length || !wanted?.length || owners.some((key) => wanted.includes(key));
+      if (_isAnswerCell(node, table)) {
+        if (!mine) break;
+        return { ref: node, where: "beforebegin" };
+      }
+      if (!mine) break;
+      // A new heading is a new section — stop rather than jump the boundary.
+      if (node.classList.contains("nbv-md") && node.querySelector("h1, h2, h3, h4")) break;
+      node = node.nextElementSibling;
+    }
+    return { ref: anchor, where: "afterend" };
   };
 
   const _syncButton = (block) => {
@@ -538,11 +649,19 @@
       (block) => block._exercise?.fn).filter(Boolean));
     const titles = [];
     host.querySelectorAll(".nbv-cell.nbv-md, .nbv-cell.nbv-code").forEach((cell) => {
-      if (cell.nextElementSibling?.classList?.contains("dd-ex-block")) return;
       const byId = CELL_KEY(cell);
       const keys = byId && table[byId]?.kc ? [byId] : _cellKeys(cell);
-      // Blocks go after the cell in reverse so several defs in one cell read top-down.
-      keys.filter((fn) => table[fn]?.kc && !seen.has(fn)).reverse().forEach((fn) => {
+      const wanted = keys.filter((fn) => table[fn]?.kc && !seen.has(fn));
+      if (!wanted.length) return;
+      /* 🔴 THE ORDER DEPENDS ON THE DIRECTION. Several defs share one cell
+         (0.0's five `einsum_*`), and every block is inserted against the SAME
+         reference node — so `afterend` has to run backwards to read top-down
+         and `beforebegin` has to run forwards. Reversing unconditionally, as
+         this did when there was only one direction, stacks the einsum blocks
+         bottom-up above their cell. */
+      const at = _placeFor(cell, table, wanted);
+      const ordered = at.where === "beforebegin" ? wanted : wanted.slice().reverse();
+      ordered.forEach((fn) => {
       seen.add(fn);
       const entry = table[fn];
       const ex = {
@@ -580,7 +699,7 @@
         if (T.pausedFor(ex)) T.resume(ex, block);
         else T.start(ex, block);
       };
-      cell.insertAdjacentElement("afterend", block);
+      at.ref.insertAdjacentElement(at.where, block);
       _syncButton(block);
       // A clock the learner started before a reload comes back here, because
       // this is the first moment the exercise and its block exist together.
