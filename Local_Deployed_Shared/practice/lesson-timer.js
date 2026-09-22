@@ -241,9 +241,8 @@ const LessonTimer = (() => {
   /* Rendered here rather than in the page HTML because this file owns what the
      button SAYS, and what it says depends on what pausing means right now: in
      a session it is "Pause & save" and it drops the learner back to the idle
-     screen; on the sessionless `?lesson=<kc>` route there is no session to
-     drop out of, so it freezes the clock where it is and offers to start it
-     again. One button either way, which is what lets practice/notch-menu.js
+     screen; on the sessionless `?lesson=<kc>` route it is "Exit lesson" and
+     it leaves the page (`_exitLesson`). One button either way, which is what lets practice/notch-menu.js
      proxy to it the way it proxies to everything else. */
   const _renderControl = () => {
     const host = document.getElementById("lesson-clock-row");
@@ -263,19 +262,19 @@ const LessonTimer = (() => {
   const _paintControl = () => {
     const btn = document.getElementById("lesson-pause-btn");
     if (!btn) return;
+    if (!_inSession()) {
+      btn.textContent = "Exit lesson";
+      btn.title = "Leave this lesson. Its page keeps the time it has left for when you come back.";
+      return;
+    }
     if (live && live.paused) {
       btn.textContent = "Resume reading";
       btn.title = "Start this page's clock again where you left it.";
       return;
     }
-    if (_inSession()) {
-      btn.textContent = "Pause & save";
-      btn.title =
-        "Pause and save. You come back to this lesson page, on the time it has left.";
-    } else {
-      btn.textContent = "Pause";
-      btn.title = "Stop this page's clock. Nothing else changes; the lesson stays open.";
-    }
+    btn.textContent = "Pause & save";
+    btn.title =
+      "Pause and save. You come back to this lesson page, on the time it has left.";
   };
 
   /* THE ONE PLACE PAUSING A LESSON IS DECIDED.
@@ -287,16 +286,24 @@ const LessonTimer = (() => {
      first, so the time left travels with the paused session and the lesson
      comes back on it (practice/timer.js `resume()` re-shows the gate).
 
-     Off a session there is nothing to exit to, so the clock freezes in place
-     and the button becomes Resume. */
+     Off a session the button LEAVES the lesson (`_exitLesson`). It used to
+     freeze the clock and leave the page up, which is not what the square next
+     to the notch clock means anywhere else. Seth, 2026-09-22: "when I press
+     the button to exit … it doesn't actually exit the lesson like it should." */
   const _pauseClicked = () => {
     if (!live) return;
+    /* Before the paused check: a sessionless page can be paused (a record
+       saved paused, or one frozen by the old off-session Pause), and Resume
+       there would be one more click that does not get the learner out. */
+    if (!_inSession()) {
+      _exitLesson();
+      return;
+    }
     if (live.paused) {
       resume();
       return;
     }
     pause();
-    if (!_inSession()) return;
     const ok = _session()?.pauseFromLesson?.();
     // The session refused (it was not running after all). The frozen clock and
     // the Resume button are still the honest state, so leave them.
@@ -314,6 +321,37 @@ const LessonTimer = (() => {
        The record is kept (`clearSaved: false`), which is the whole point: the
        re-shown lesson starts on the time it had left. */
     stop({ clearSaved: false });
+  };
+
+  /* LEAVE A SESSIONLESS LESSON. Off a session a lesson is only ever the
+     `?lesson=<kc>` route: either the Knowledge Graph's ⤢ overlay (an
+     `&embed=1` iframe over the graph) or that URL opened on its own. The
+     record is kept (`clearSaved: false`) so reopening the page resumes on the
+     time it had left, exactly as a paused session's lesson does.
+
+     In the overlay the way out is the graph's own Minimize, clicked rather
+     than copied: it tears the iframe down and recolours the node from what
+     the frame wrote. Same origin, so the parent's DOM is reachable; a frame
+     that is not the graph's (or a cross-origin embedder) falls through. On
+     its own the page goes to the app's front door with the `lesson` and
+     `embed` params dropped, so a reload does not reopen the lesson. */
+  const _exitLesson = () => {
+    stop({ clearSaved: false });
+    try {
+      if (window.parent && window.parent !== window) {
+        const min = window.parent.document.getElementById("kg-maxi-min");
+        if (min) {
+          min.click();
+          return;
+        }
+      }
+    } catch (_) {
+      /* cross-origin embedder: leave by navigating this frame instead */
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.delete("lesson");
+    url.searchParams.delete("embed");
+    window.location.assign(url.pathname + url.search + url.hash);
   };
 
   /* ── the API ───────────────────────────────────────────────────── */
