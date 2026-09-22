@@ -82941,5 +82941,493 @@
       },
       "hint": null
     }
+  },
+  {
+    "id": 50096,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "One ray has candidate hits s = [3, −1, 0.5, 6] with valid = [True, True, False, True]. Which s is the visible hit?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−1",
+          "value": "-1"
+        },
+        {
+          "key": "B",
+          "text": "0.5",
+          "value": "Rational(1,2)"
+        },
+        {
+          "key": "C",
+          "text": "3",
+          "value": "3"
+        },
+        {
+          "key": "D",
+          "text": "6",
+          "value": "6"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Keep only hits that are valid and forward ($s \\ge 0$): $3$ and $6$. The others become $+\\infty$. The smallest remaining is $3$.\n\n- A: $s < 0$ is behind the origin.\n- B: that triangle pair is invalid (the ray misses it).\n- D: a valid hit, but farther than $3$.",
+      "verify": {
+        "sympy": {
+          "truth": "Min(3, 6)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50097,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "O = (0, 0, 0), D = (1, 2, 2). A surface is hit at s = 3. How far is the hit point from O?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "3",
+          "value": "3"
+        },
+        {
+          "key": "B",
+          "text": "9",
+          "value": "9"
+        },
+        {
+          "key": "C",
+          "text": "15",
+          "value": "15"
+        },
+        {
+          "key": "D",
+          "text": "81",
+          "value": "81"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Distance $= s\\,\\lVert D \\rVert = 3\\sqrt{1 + 4 + 4} = 3 \\cdot 3 = 9$.\n\n- A: the parameter, which equals distance only when $\\lVert D \\rVert = 1$.\n- C: adds the components, $3(1 + 2 + 2)$, which is not a length.\n- D: the squared distance.",
+      "verify": {
+        "sympy": {
+          "truth": "3*sqrt(1+4+4)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50098,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A kernel forgets the s ≥ 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "2",
+          "value": "2"
+        },
+        {
+          "key": "B",
+          "text": "−3",
+          "value": "-3"
+        },
+        {
+          "key": "C",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "D",
+          "text": "inf",
+          "value": "oo"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Nothing is masked, so the minimum of $[2, -3, 5]$ is $-3$: a surface behind the camera wins. With `forward = valid & (s >= 0)` the $-3$ becomes $+\\infty$ and the answer is 2, the correct visible hit.\n\n- A: what the code should return, not what it does.\n- C: the maximum.\n- D: only if every candidate were masked.",
+      "verify": {
+        "sympy": {
+          "truth": "Min(2, -3, 5)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50099,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A camera ray from O = (0, 0, 0) has direction D = (1, 0.6, 0.8) and hits at s = 5. How far is the hit point from O?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "B",
+          "text": "12",
+          "value": "12"
+        },
+        {
+          "key": "C",
+          "text": "5√2",
+          "value": "5*sqrt(2)"
+        },
+        {
+          "key": "D",
+          "text": "10",
+          "value": "10"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "$\\lVert D \\rVert = \\sqrt{1 + 0.36 + 0.64} = \\sqrt{2}$, so the distance is $5\\sqrt{2} \\approx 7.07$. With $D_x = 1$, $s = 5$ is the x-depth, but this off-axis ray travels farther than that.\n\n- A: the x-depth, not the distance.\n- B: adds the components: $5(1 + 0.6 + 0.8)$.\n- D: uses $\\lVert D \\rVert^2 = 2$ instead of $\\sqrt{2}$.",
+      "verify": {
+        "sympy": {
+          "truth": "5*sqrt(1+Rational(36,100)+Rational(64,100))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50100,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Two rays share the origin O. Ray A has D = (1, 0, 0) and hits at s = 4. Ray B has D = (1, 1, 0) and hits at s = 3. Which hit point is farther from O?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "A, because 4 > 3.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "B: its distance is 3√2 ≈ 4.24, more than A's 4.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "They are equally far.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "It can't be told without the surfaces.",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Distance is $s\\,\\lVert D \\rVert$. A: $4 \\cdot 1 = 4$. B: $3\\sqrt{2} \\approx 4.24$. Across rays with different $\\lVert D \\rVert$, raw $s$ values can't be compared.\n\n- A: compares parameters across differently scaled rays.\n- C: $4 \\neq 3\\sqrt{2}$.\n- D: $s$ and $D$ already fix each hit point.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50101,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "O = (0, 0, 0), D = (0, 3, 4). A hit is at s = 2. Using the unit direction D̂ = D / ‖D‖ instead, what parameter reaches the same point?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "2",
+          "value": "2"
+        },
+        {
+          "key": "B",
+          "text": "2/5",
+          "value": "Rational(2,5)"
+        },
+        {
+          "key": "C",
+          "text": "50",
+          "value": "50"
+        },
+        {
+          "key": "D",
+          "text": "10",
+          "value": "10"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "The point is $2D = (0, 6, 8)$, at distance 10. Along a unit direction, the parameter is the distance, so it is $2\\lVert D \\rVert = 10$.\n\n- A: keeps the old parameter; each step along $\\hat D$ is only $1/5$ as long.\n- B: divides by $\\lVert D \\rVert$ instead of multiplying.\n- C: multiplies by $\\lVert D \\rVert^2$.",
+      "verify": {
+        "sympy": {
+          "truth": "2*sqrt(9+16)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50102,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([2., 3., 4.])",
+          "value": "Matrix([2,3,4])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([2., -1., 4.])",
+          "value": "Matrix([2,-1,4])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([2., 3., 1.])",
+          "value": "Matrix([2,3,1])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([2., 3.])",
+          "value": "Matrix([2,3])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Mask each row, then take the minimum across triangles (`dim=1`):\n\n- ray 0: $[2, 5] \\to 2$\n- ray 1: $[+\\infty, 3] \\to 3$ ($-1$ is behind the origin)\n- ray 2: $[+\\infty, 4] \\to 4$ (the first pair is invalid)\n\nWrong choices:\n\n- B: drops the $s \\ge 0$ check.\n- C: drops the `valid` mask.\n- D: `dim=0`, one value per triangle instead of per ray.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([Min(2,5), 3, 4])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50103,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 65,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Three rays share O = (0, 0, 0). Ray A: D = (1, 0, 0), hit at s = 6. Ray B: D = (1, 1, 1), hit at s = 4. Ray C: D = (2, 0, 0), hit at s = 3.5. Order the hit points from nearest to farthest.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.ray-distance",
+      "choices": [
+        {
+          "key": "A",
+          "text": "C, B, A",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "A, C, B",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "A, B, C",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "B, A, C",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Distance $= s\\,\\lVert D \\rVert$: A $= 6$, B $= 4\\sqrt{3} \\approx 6.93$, C $= 3.5 \\cdot 2 = 7$. So A, B, C.\n\n- A: sorts by raw $s$, which ignores each ray's $\\lVert D \\rVert$.\n- B: uses $\\lVert D \\rVert$ for C but treats B's $s$ as a distance.\n- D: no consistent rule gives this order.",
+      "verify": null,
+      "hint": null
+    }
   }
 ]

@@ -23203,5 +23203,93 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50096": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50097": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50098": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50099": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50100": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50101": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50102": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50103": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }
