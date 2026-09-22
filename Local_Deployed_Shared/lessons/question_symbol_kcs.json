@@ -28991,18 +28991,21 @@
    ],
    "python.defining-functions": [
     "syntax.def",
+    "syntax.docstring",
     "syntax.return"
    ],
    "python.dots-and-imports": [
     "syntax.import",
     "syntax.import-as"
    ],
-   "python.types-and-conversion": [
-    "builtin.int"
+   "python.indexing": [
+    "syntax.index"
    ],
    "python.values-and-names": [
     "builtin.print",
-    "syntax.arith"
+    "syntax.arith",
+    "syntax.assign",
+    "syntax.tuple"
    ]
   },
   "407": {
@@ -33965,8 +33968,7 @@
   },
   "555": {
    "python.calling-functions": [
-    "syntax.call",
-    "syntax.keyword-argument"
+    "syntax.call"
    ],
    "python.defining-functions": [
     "syntax.def",
@@ -33987,11 +33989,9 @@
    ],
    "python.values-and-names": [
     "builtin.print",
+    "syntax.arith",
     "syntax.assign",
     "syntax.tuple"
-   ],
-   "torch.broadcasting-rules": [
-    "syntax.none"
    ]
   },
   "556": {

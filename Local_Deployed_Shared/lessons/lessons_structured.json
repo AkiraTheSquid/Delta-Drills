@@ -7944,7 +7944,7 @@
       },
       {
        "question_id": 1599,
-       "prompt": "A column as the out= target, chosen from the right-hand end.",
+       "prompt": "Which slice of the canvas is its last column, and can the values land there directly?",
        "worked_example_code": ""
       }
      ],

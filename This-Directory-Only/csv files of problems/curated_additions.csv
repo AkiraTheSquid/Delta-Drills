@@ -886,20 +886,19 @@ def solve(values):
 example = [1.9, 2.2, 3.7]
 print(solve(example))
 ",30,"('torch.int64', [1, 2, 3])"
-Numpy,Core array literacy,"Write a function solve(values) that returns a tuple (inferred_name, forced_name, same) — the dtype name PyTorch infers from the FLAT list, the dtype name you get by forcing torch.float32 on the same list, and whether the two names are equal.","import torch
+Numpy,Core array literacy,"`a_vals` and `b_vals` are FLAT Python lists of numbers. Return a tuple `(same, combined_name)`: whether the tensors built from each list separately get the same dtype, and str() of the dtype of the tensor built from the two lists joined into one (`a_vals + b_vals`).","import torch
 import torch as t
 
-def solve(values):
-    """"""Return (inferred dtype name, forced float32 name, equal?).""""""
-    inferred = t.tensor(values)
-    forced = t.tensor(values, dtype=t.float32)
-    return (str(inferred.dtype), str(forced.dtype),
-            inferred.dtype == forced.dtype)
+def solve(a_vals, b_vals):
+    """"""(same dtype separately?, dtype name of the joined list)""""""
+    a = t.tensor(a_vals)
+    b = t.tensor(b_vals)
+    both = t.tensor(a_vals + b_vals)
+    return (a.dtype == b.dtype, str(both.dtype))
 
 
-example = [1, 2, 3]
-print(solve(example))
-",29,"('torch.int64', 'torch.float32', False)"
+print(solve([1, 2], [3.5]))
+",29,"(False, 'torch.float32')"
 Numpy,Core array literacy,"Write a function solve(rows_a, rows_b) that returns a tuple (same_numel, same_shape) for the two tensors built from the nested lists. Two tensors can hold the same COUNT of numbers arranged differently, so these are not the same question.","import torch
 import torch as t
 
@@ -10192,11 +10191,11 @@ def solve(m, n):
     canvas = t.zeros((m, n))
     t.arange(n, out=canvas[-1])
     return canvas.tolist()",32,
-PyTorch,Rays as tensors,"`n` and `k` are positive ints and `lo`, `hi` are floats. Build an n×k zero canvas and write `n` evenly spaced values from `lo` to `hi` into its LAST column with a single `out=` call. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` and `k` are positive ints and `lo`, `hi` are floats. Return an n×k tensor, as a nested list, with `n` evenly spaced values from `lo` to `hi` in its LAST column and zeros everywhere else. The values must be written straight into that column: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, k, lo, hi):
-    """"""linspace(lo, hi) written into the last column of an n×k canvas.""""""
+    """"""n evenly spaced values from lo to hi down the last column; zeros elsewhere.""""""
     canvas = t.zeros((n, k))
     t.linspace(lo, hi, n, out=canvas[:, -1])
     return canvas.tolist()",36,
