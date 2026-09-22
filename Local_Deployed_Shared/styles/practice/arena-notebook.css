@@ -373,8 +373,18 @@
      values would destroy the provenance — every one of them was read off a
      render, and a hand-scaled copy can no longer be checked against theirs.
      The fallback is 1, so without this attribute the sheet is still their
-     measure. */
-  --anb-zoom: 1.4;
+     measure.
+
+     🔴 IT WAS 1.4 AND IT IS 1 AGAIN (Seth, 2026-09-22: "make it
+     resized such that it's much more aligned with the size of the lessons
+     ... because I like the way the lessons look more"). A lesson page sets no
+     zoom, so it renders the measured sheet at 1; this page multiplying it by
+     1.4 was the ONLY reason the two surfaces looked like different products
+     — same measurements, same faces, same palette, one knob apart. Matching
+     the lessons therefore means this number and nothing else: 25.48px prose
+     and code in a 954.8px column become 18.2px in 682px, which is what a
+     lesson already renders and what LessWrong actually measures at. */
+  --anb-zoom: 1;
 
   /* 🪦 --anb-measure, --anb-code-size and --anb-code-lh WERE DECLARED HERE,
      and then briefly at :root in styles/practice/notebook-view.css, and now

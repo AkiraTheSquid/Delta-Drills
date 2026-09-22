@@ -123,7 +123,9 @@ We take stride-2 windows of kernel `3` over that padded signal. The formula give
 ```python
 import torch as t
 padded=t.tensor([0.,1.,2.,3.,0.])
-windows=padded.as_strided((2,3),(2*padded.stride(0),padded.stride(0)))
+windows=padded.as_strided((2,3),
+                          (2*padded.stride(0),
+                           padded.stride(0)))
 print(windows)
 # Hidden checks
 assert windows.tolist()==[[0.,1.,2.],[2.,3.,0.]]

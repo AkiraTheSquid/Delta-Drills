@@ -19,7 +19,8 @@ A residual block's left branch is the chain conv → norm → ReLU → conv → 
 
 ```python
 import torch as t
-conv=t.nn.Conv2d(3,8,kernel_size=3,stride=2,padding=1,bias=False)
+conv=t.nn.Conv2d(3,8,kernel_size=3,stride=2,padding=1,
+                 bias=False)
 bn=t.nn.BatchNorm2d(8)
 x=t.zeros(2,3,6,6)
 print(conv.weight.shape, bn(conv(x)).shape)
@@ -33,7 +34,8 @@ We give a one-channel `3×3` convolution all-ones weights and feed a `3×3` imag
 
 ```python
 import torch as t
-conv=t.nn.Conv2d(1,1,kernel_size=3,stride=1,padding=1,bias=False)
+conv=t.nn.Conv2d(1,1,kernel_size=3,stride=1,padding=1,
+                 bias=False)
 with t.no_grad():
     conv.weight.copy_(t.ones(1,1,3,3))
 x=t.ones(1,1,3,3)
@@ -107,9 +109,13 @@ The reason for a `1×1` kernel rather than `3×3` is that the shortcut is not su
 import torch as t
 def right_branch(i,o,s):
     if (s,i)!=(1,o):
-        return t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=1,stride=s,bias=False),t.nn.BatchNorm2d(o))
+        return t.nn.Sequential(
+            t.nn.Conv2d(i,o,kernel_size=1,stride=s,
+                        bias=False),
+            t.nn.BatchNorm2d(o))
     return t.nn.Identity()
-print(type(right_branch(4,4,1)), len(right_branch(4,8,2)))
+print(type(right_branch(4,4,1)),
+      len(right_branch(4,8,2)))
 # Hidden checks
 assert type(right_branch(4,4,1)) is t.nn.Identity and len(right_branch(4,8,2))==2
 ```
@@ -120,10 +126,26 @@ We build a shape-preserving block on a one-channel `3×3` image of ones, with ev
 
 ```python
 import torch as t
+def left_branch(i,o,s):
+    return t.nn.Sequential(
+        t.nn.Conv2d(i,o,kernel_size=3,stride=s,
+                    padding=1,bias=False),
+        t.nn.BatchNorm2d(o),t.nn.ReLU(),
+        t.nn.Conv2d(o,o,kernel_size=3,stride=1,
+                    padding=1,bias=False),
+        t.nn.BatchNorm2d(o))
+print(len(left_branch(1,1,1)))
+# Hidden checks
+assert len(left_branch(1,1,1))==5
+```
+
+Five children: convolution, batch norm, ReLU, convolution, batch norm. Only the first convolution takes the stride, so only it can change the shape. The block itself is that branch beside the shortcut, added and passed through one more ReLU:
+
+```python
 class Block(t.nn.Module):
     def __init__(self,i,o,s):
         super().__init__()
-        self.left=t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=3,stride=s,padding=1,bias=False),t.nn.BatchNorm2d(o),t.nn.ReLU(),t.nn.Conv2d(o,o,kernel_size=3,stride=1,padding=1,bias=False),t.nn.BatchNorm2d(o))
+        self.left=left_branch(i,o,s)
         self.right=right_branch(i,o,s)
         self.relu=t.nn.ReLU()
     def forward(self,x):

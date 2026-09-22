@@ -31,7 +31,8 @@ ray = t.tensor([[0.0, 0.0, 0.0],    # O
                 [1.0, 0.5, 0.0]])   # D
 origin, direction = ray[0], ray[1]
 u = 2.0
-print(origin + u * direction)       # the point at u = 2
+# the point at u = 2
+print(origin + u * direction)
 # Hidden checks
 assert _delta_output == 'tensor([2., 1., 0.])\n'
 ```
@@ -48,7 +49,8 @@ import torch as t
 origin = t.tensor([0.0, 0.0, 0.0])
 direction = t.tensor([1.0, 0.5, 0.0])
 u = t.tensor([0.0, 1.0, 2.0])
-points = origin + u[:, None] * direction    # (3,1) * (3,) → (3,3)
+# (3,1) * (3,) → (3,3)
+points = origin + u[:, None] * direction
 print(points)
 # Hidden checks
 assert _delta_output == 'tensor([[0.0000, 0.0000, 0.0000],\n        [1.0000, 0.5000, 0.0000],\n        [2.0000, 1.0000, 0.0000]])\n'
@@ -147,7 +149,8 @@ import torch as t
 ray = t.tensor([[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]])
 for y in (1.0, 5.0):
     u = (y - ray[0, 1]) / ray[1, 1]
-    print("y =", y, "-> u =", u.item(), "-> point", (ray[0] + u * ray[1]).tolist())
+    print("y =", y, "-> u =", u.item(), "-> point",
+          (ray[0] + u * ray[1]).tolist())
 # Hidden checks
 assert ((1.0 - ray[0, 1]) / ray[1, 1]).item() == 0.0
 assert ((5.0 - ray[0, 1]) / ray[1, 1]).item() == 2.0
@@ -194,9 +197,12 @@ import torch as t
 
 rays = t.tensor([[[0.0, 1.0, 2.0], [3.0, 2.0, 1.0]],
                  [[1.0, 1.0, 1.0], [0.0, 1.0, 0.0]]])
-print("rays[0] is one whole ray:", tuple(rays[0].shape))
-print("rays[:, 0] is every origin:", rays[:, 0].tolist())
-print("rays[:, 1] is every direction:", rays[:, 1].tolist())
+print("rays[0] is one whole ray:",
+      tuple(rays[0].shape))
+print("rays[:, 0] is every origin:",
+      rays[:, 0].tolist())
+print("rays[:, 1] is every direction:",
+      rays[:, 1].tolist())
 # Hidden checks
 assert rays[:, 0].tolist() == [[0.0, 1.0, 2.0], [1.0, 1.0, 1.0]]
 assert tuple(rays[0].shape) == (2, 3)

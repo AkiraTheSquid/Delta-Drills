@@ -67,7 +67,8 @@ lengths — it read both off the tensor.
 
 ```python
 square = t.tensor([[1, 2], [3, 4]])
-print("a square tensor keeps its shape:", tuple(square.T.shape))
+print("a square tensor keeps its shape:",
+      tuple(square.T.shape))
 print("...but not its contents:", square.T.tolist())
 # Hidden checks
 assert _delta_output == 'a square tensor keeps its shape: (2, 2)\n...but not its contents: [[1, 3], [2, 4]]\n'
@@ -155,7 +156,8 @@ import torch as t
 a = t.tensor([[1, 2, 3], [4, 5, 6]])
 print("a          :", a.tolist())
 print("a.T        :", a.T.tolist())
-print("a.T row 0  :", a.T.tolist()[0], "  <- column 0 of a")
+print("a.T row 0  :", a.T.tolist()[0],
+      "  <- column 0 of a")
 # Hidden checks
 assert _delta_output == 'a          : [[1, 2, 3], [4, 5, 6]]\na.T        : [[1, 4], [2, 5], [3, 6]]\na.T row 0  : [1, 4]   <- column 0 of a\n'
 ```
@@ -169,7 +171,8 @@ again — same shape, same numbers:
 
 ```python
 back = a.T.T
-print("shape is back:", tuple(back.shape) == tuple(a.shape))
+print("shape is back:",
+      tuple(back.shape) == tuple(a.shape))
 print("values are back:", t.equal(back, a))
 # Hidden checks
 assert _delta_output == 'shape is back: True\nvalues are back: True\n'
@@ -186,8 +189,10 @@ import torch as t
 
 a = t.tensor([[10, 20], [30, 40], [50, 60]])
 
-view = a.T                 # step 1: the tensor, turned on its side
-rows = view.tolist()       # step 2: the same numbers as plain Python lists
+# step 1: the tensor, turned on its side
+view = a.T
+# step 2: the same numbers as plain Python lists
+rows = view.tolist()
 
 print("every row's first number:", rows[0])
 print("every row's second number:", rows[1])

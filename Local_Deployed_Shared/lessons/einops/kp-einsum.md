@@ -53,10 +53,14 @@ The four patterns below differ only in what survives on the right of `->`.
 import torch as t
 import einops
 
-whole = einops.einsum(a, "i j ->")       # nothing kept -> every element summed
-cols = einops.einsum(a, "i j -> j")      # i vanishes -> one number per column
-rows = einops.einsum(a, "i j -> i")      # j vanishes -> one number per row
-flip = einops.einsum(a, "i j -> j i")    # both kept, reordered -> transpose
+# nothing kept -> every element summed
+whole = einops.einsum(a, "i j ->")
+# i vanishes -> one number per column
+cols = einops.einsum(a, "i j -> j")
+# j vanishes -> one number per row
+rows = einops.einsum(a, "i j -> i")
+# both kept, reordered -> transpose
+flip = einops.einsum(a, "i j -> j i")
 
 print(cols, rows, flip.shape)
 # Hidden checks
@@ -143,7 +147,8 @@ a = t.arange(6).reshape(2, 3)      # (i, j)
 v = t.arange(3)                    # (j,)
 b = t.arange(15).reshape(3, 5)     # (j, k)
 
-print("shapes:", tuple(a.shape), tuple(v.shape), tuple(b.shape))
+print("shapes:", tuple(a.shape), tuple(v.shape),
+      tuple(b.shape))
 # Hidden checks
 assert _delta_output == 'shapes: (2, 3) (3,) (3, 5)\n'
 ```
@@ -154,8 +159,10 @@ assert _delta_output == 'shapes: (2, 3) (3,) (3, 5)\n'
 import torch as t
 import einops
 
-mv = einops.einsum(a, v, "i j, j -> i")        # == a @ v
-mm = einops.einsum(a, b, "i j, j k -> i k")    # == a @ b
+# == a @ v
+mv = einops.einsum(a, v, "i j, j -> i")
+# == a @ b
+mm = einops.einsum(a, b, "i j, j k -> i k")
 
 print(mv, mm.shape)
 # Hidden checks
@@ -241,7 +248,8 @@ a = t.arange(3)                    # [0, 1, 2]
 b = t.arange(3, 6)                 # [3, 4, 5]
 m = t.tensor([[1, 2], [3, 4]])
 
-print("a =", a.tolist(), "b =", b.tolist(), "m =", m.tolist())
+print("a =", a.tolist(), "b =", b.tolist(), "m =",
+      m.tolist())
 # Hidden checks
 assert _delta_output == 'a = [0, 1, 2] b = [3, 4, 5] m = [[1, 2], [3, 4]]\n'
 ```
@@ -252,10 +260,13 @@ Now the same two rules on data where the answer is easy to check by hand.
 import torch as t
 import einops
 
-dot = einops.einsum(a, b, "i, i ->")          # 0*3 + 1*4 + 2*5
-outer = einops.einsum(a, b, "i, j -> i j")     # (3, 3): a[i] * b[j]
+# 0*3 + 1*4 + 2*5
+dot = einops.einsum(a, b, "i, i ->")
+# (3, 3): a[i] * b[j]
+outer = einops.einsum(a, b, "i, j -> i j")
 had = einops.einsum(m, m, "i j, i j -> i j")   # m * m
-print("dot", dot.item(), "| outer row 1", outer[1].tolist(), "| hadamard", had.tolist())
+print("dot", dot.item(), "| outer row 1",
+      outer[1].tolist(), "| hadamard", had.tolist())
 # Hidden checks
 assert _delta_output == 'dot 14 | outer row 1 [3, 4, 5] | hadamard [[1, 4], [9, 16]]\n'
 ```
@@ -350,12 +361,15 @@ We multiply two matrices by two identities in one call — one product per batch
 import torch as t
 import einops
 
-x = t.arange(8).reshape(2, 2, 2)     # (b, i, j): two 2x2 matrices
-y = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)   # (b, j, k): two identities
+# (b, i, j): two 2x2 matrices
+x = t.arange(8).reshape(2, 2, 2)
+# (b, j, k): two identities
+y = t.tensor([[1, 0], [0, 1]]).expand(2, 2, 2)
 
 bmm = einops.einsum(x, y, "b i j, b j k -> b i k")
 
-print("bmm shape", tuple(bmm.shape), "== x:", bmm.tolist() == x.tolist())
+print("bmm shape", tuple(bmm.shape), "== x:",
+      bmm.tolist() == x.tolist())
 # Hidden checks
 assert bmm.tolist() == x.tolist()             # times the identity, per batch
 ```

@@ -34,12 +34,14 @@ import torch as t
 
 v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
-# Index of the minimum. 2.0 appears twice — argmin reports the FIRST.
+# Index of the minimum. 2.0 appears twice — argmin
+# reports the FIRST.
 i = int(t.argmin(v))
 
 # The value at that index is the min itself.
 print("v", v)
-print("argmin ->", i, "| v[i] =", v[i].item(), "| v.min() =", v.min().item())
+print("argmin ->", i, "| v[i] =", v[i].item(),
+      "| v.min() =", v.min().item())
 # Hidden checks
 assert i == 1
 assert v[i] == v.min()
@@ -86,9 +88,11 @@ import torch as t
 
 v = t.tensor([4.0, 2.0, 7.0, 2.0, 9.0])
 
-# Replace the max with 0 on a copy: the index is the handle.
+# Replace the max with 0 on a copy: the index is the
+# handle.
 out = v.clone()
-out[out.argmax()] = 0.0          # argmax -> 4; out[4] = 0
+# argmax -> 4; out[4] = 0
+out[out.argmax()] = 0.0
 print("out", out)
 print("v  ", v, " <- untouched")
 # Hidden checks
@@ -147,7 +151,8 @@ target = 6.5
 j = int(t.argmin(t.abs(v - target)))
 closest_value = v[j]
 print("gaps to", target, ":", t.abs(v - target))
-print("smallest gap at index", j, "-> value", closest_value.item())
+print("smallest gap at index", j, "-> value",
+      closest_value.item())
 # Hidden checks
 assert j == 2                     # |7.0 - 6.5| = 0.5 is the smallest gap
 assert closest_value == 7.0

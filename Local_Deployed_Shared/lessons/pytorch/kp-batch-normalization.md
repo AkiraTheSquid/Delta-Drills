@@ -46,7 +46,8 @@ Dividing by `sqrt(var + eps)` leaves values roughly between `-1.4` and `1.4`; th
 
 ```python
 g=t.tensor([2.]); b=t.tensor([1.]); eps=1e-5
-z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+z=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,
+                                        None]+eps)
 y=z*g[None,:,None,None]+b[None,:,None,None]
 print(y)
 # Hidden checks
@@ -106,7 +107,8 @@ running=t.tensor([2.,6.])
 batch_mean=t.tensor([4.,2.])
 momentum=.25
 with t.no_grad():
-    running.copy_((1-momentum)*running+momentum*batch_mean)
+    running.copy_(
+        (1-momentum)*running+momentum*batch_mean)
 print(running)
 # Hidden checks
 assert running.tolist()==[2.5,5.]
@@ -122,7 +124,8 @@ running=t.tensor([0.])
 batch_mean=t.tensor([8.])
 momentum=.5
 with t.no_grad():
-    running.copy_((1-momentum)*running+momentum*batch_mean)
+    running.copy_(
+        (1-momentum)*running+momentum*batch_mean)
 print(running)
 # Hidden checks
 assert running.tolist()==[4.]
@@ -132,7 +135,8 @@ The second step starts from the updated value, not the original: `(1-0.5)*4 + 0.
 
 ```python
 with t.no_grad():
-    running.copy_((1-momentum)*running+momentum*batch_mean)
+    running.copy_(
+        (1-momentum)*running+momentum*batch_mean)
 print(running)
 # Hidden checks
 assert running.tolist()==[6.]
@@ -184,7 +188,8 @@ We normalize the same one-channel batch in both modes and compare. In evaluation
 import torch as t
 x=t.tensor([[[[1.,3.]]]])
 rm=t.tensor([1.]); rv=t.tensor([4.]); eps=1e-5
-z_eval=(x-rm[None,:,None,None])/t.sqrt(rv[None,:,None,None]+eps)
+z_eval=(x-rm[None,:,None,None])/t.sqrt(rv[None,:,None,
+                                          None]+eps)
 print(z_eval)
 # Hidden checks
 assert t.allclose(z_eval,t.tensor([[[[0.,1.]]]]),atol=1e-3)
@@ -193,8 +198,11 @@ assert t.allclose(z_eval,t.tensor([[[[0.,1.]]]]),atol=1e-3)
 In training mode the batch's own statistics apply — mean `2`, variance `1` — so the same two pixels land symmetrically at `-1` and `1`. Same input, different output: that is the flag doing its job.
 
 ```python
-mean=x.mean(dim=(0,2,3)); var=((x-mean[None,:,None,None])**2).mean(dim=(0,2,3))
-z_train=(x-mean[None,:,None,None])/t.sqrt(var[None,:,None,None]+eps)
+mean=x.mean(dim=(0,2,
+                 3)); var=((x-mean[
+    None,:,None,None])**2).mean(dim=(0,2,3))
+z_train=(x-mean[None,:,None,None])/t.sqrt(var[None,:,
+    None,None]+eps)
 print(z_train)
 # Hidden checks
 assert t.allclose(z_train,t.tensor([[[[-1.,1.]]]]),atol=1e-3)

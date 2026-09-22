@@ -30,9 +30,11 @@ library you would import as `torch`.
 import torch as t
 
 # A list can hold three different types at once.
-print([type(item).__name__ for item in [1, "two", [3]]])
+print([type(item).__name__
+       for item in [1, "two", [3]]])
 
-# A tensor holds one, for every element, and says which one.
+# A tensor holds one, for every element, and says
+# which one.
 a = t.tensor([[1, 2, 3], [4, 5, 6]])
 print(a)
 print("dtype of the whole block:", a.dtype)
@@ -61,7 +63,8 @@ through the same procedure.
 cube = t.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
 print("shape:", cube.shape)
 
-# A cell ending in a bare expression prints its value, the way a notebook does.
+# A cell ending in a bare expression prints its value,
+# the way a notebook does.
 cube * 10
 # Hidden checks
 assert _delta_output == 'shape: torch.Size([2, 2, 2])\ntensor([[[10, 20],\n         [30, 40]],\n\n        [[50, 60],\n         [70, 80]]])\n'
@@ -77,14 +80,17 @@ element" would be a guess.
 ```python
 same = t.tensor([[1, 2], [3, 4]])
 also = t.tensor([[1, 2], [3, 4]])
-print("t.equal ->", t.equal(same, also), "  one answer for the whole tensor")
+print("t.equal ->", t.equal(same, also),
+      "  one answer for the whole tensor")
 
 one = t.tensor([7])
-print("one.item() ->", one.item(), "as a", type(one.item()).__name__)
+print("one.item() ->", one.item(), "as a",
+      type(one.item()).__name__)
 try:
     same.item()
 except RuntimeError as exc:
-    print("four elements ->", type(exc).__name__, "- item() wants exactly one")
+    print("four elements ->", type(exc).__name__,
+          "- item() wants exactly one")
 # Hidden checks
 assert _delta_output == 't.equal -> True   one answer for the whole tensor\none.item() -> 7 as a int\nfour elements -> RuntimeError - item() wants exactly one\n'
 ```
@@ -239,11 +245,14 @@ Getting those two confused is the classic first-week error, and it is worth
 fixing now: `ndim` counts axes, `numel()` counts numbers.
 
 ```python
-# Four numbers, three nestings, three different answers for ndim — and the same
-# answer for numel every time.
-for data in ([1, 2, 3, 4], [[1, 2], [3, 4]], [[[1], [2]], [[3], [4]]]):
+# Four numbers, three nestings, three different
+# answers for ndim — and the same answer for numel
+# every time.
+for data in ([1, 2, 3, 4], [[1, 2], [3, 4]],
+             [[[1], [2]], [[3], [4]]]):
     x = t.tensor(data)
-    print(tuple(x.shape), "ndim", x.ndim, "numel", x.numel())
+    print(tuple(x.shape), "ndim", x.ndim, "numel",
+          x.numel())
 # Hidden checks
 assert _delta_output == '(4,) ndim 1 numel 4\n(2, 2) ndim 2 numel 4\n(2, 2, 1) ndim 3 numel 4\n'
 ```
@@ -671,7 +680,8 @@ product = 1
 for length in shape:
     product = product * length
 
-print(shape, "multiplies out to", product, "and numel is", a.numel())
+print(shape, "multiplies out to", product,
+      "and numel is", a.numel())
 # Hidden checks
 assert product == a.numel()
 ```

@@ -19,11 +19,13 @@ If the hook returns a value, that value **replaces** the module's output for the
 
 ```python
 import torch as t
-net=t.nn.Sequential(t.nn.Linear(4,3),t.nn.ReLU(),t.nn.Linear(3,2))
+net=t.nn.Sequential(t.nn.Linear(4,3),t.nn.ReLU(),
+                    t.nn.Linear(3,2))
 shapes=[]
 def record(module,inputs,output):
     shapes.append(tuple(output.shape))
-handles=[child.register_forward_hook(record) for child in net]
+handles=[child.register_forward_hook(record)
+         for child in net]
 net(t.zeros(5,4))
 print(shapes)
 for h in handles:
@@ -41,7 +43,8 @@ Attach a hook that doubles the output of the ReLU. Predict, before running, how 
 ```python
 with t.no_grad():
     for p in net.parameters():
-        p.copy_(t.linspace(-1.,1.,p.numel()).reshape(p.shape))
+        p.copy_(t.linspace(
+            -1.,1.,p.numel()).reshape(p.shape))
 x=t.ones(1,4)
 before=net(x)
 def double(module,inputs,output):
@@ -137,7 +140,10 @@ import torch as t
 class NanModule(t.nn.Module):
     def forward(self,x):
         return x*float("nan")
-net=t.nn.Sequential(t.nn.Identity(),t.nn.Sequential(NanModule(),t.nn.Identity()),t.nn.Identity())
+net=t.nn.Sequential(t.nn.Identity(),
+                    t.nn.Sequential(NanModule(),
+                                    t.nn.Identity()),
+                    t.nn.Identity())
 count=[0]
 def tally(module):
     count[0]+=1
@@ -159,7 +165,8 @@ def check(module,inputs,output):
         flagged.append(module)
 handles=[]
 def add_hook(module):
-    handles.append(module.register_forward_hook(check))
+    handles.append(
+        module.register_forward_hook(check))
 net.apply(add_hook)
 net(t.ones(3))
 print(len(flagged), type(flagged[0]) is NanModule)

@@ -19,9 +19,15 @@ The `padding = 3` on a `7×7` window and `padding = 1` on a `3×3` window are th
 
 ```python
 import torch as t
-stem=t.nn.Sequential(t.nn.Conv2d(3,64,kernel_size=7,stride=2,padding=3),t.nn.BatchNorm2d(64),t.nn.ReLU(),t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
+stem=t.nn.Sequential(
+    t.nn.Conv2d(3,64,kernel_size=7,stride=2,
+                padding=3),t.nn.BatchNorm2d(64),
+    t.nn.ReLU(),
+    t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
 print(stem(t.zeros(1,3,224,224)).shape)
-print(t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1)(t.arange(16.).reshape(1,1,4,4)))
+print(t.nn.MaxPool2d(kernel_size=3,stride=2,
+                     padding=1)(t.arange(16.).reshape(
+    1,1,4,4)))
 # Hidden checks
 assert stem(t.zeros(1,3,224,224)).shape==(1,64,56,56)
 assert t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1)(t.arange(16.).reshape(1,1,4,4)).tolist()==[[[[5.,7.],[13.,15.]]]]
@@ -32,7 +38,10 @@ assert t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1)(t.arange(16.).reshape(1,
 We push a batch of two `3×30×30` images through a stem with `8` output channels. Predict the shape after the convolution and after the pool before running: each strided step gives `ceil(30 / 2) = 15`, then `ceil(15 / 2) = 8`.
 
 ```python
-stem=t.nn.Sequential(t.nn.Conv2d(3,8,kernel_size=7,stride=2,padding=3),t.nn.BatchNorm2d(8),t.nn.ReLU(),t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
+stem=t.nn.Sequential(
+    t.nn.Conv2d(3,8,kernel_size=7,stride=2,padding=3),
+    t.nn.BatchNorm2d(8),t.nn.ReLU(),
+    t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
 x=t.zeros(2,3,30,30)
 print(stem[0](x).shape, stem(x).shape)
 # Hidden checks
@@ -42,7 +51,8 @@ assert stem[0](x).shape==(2,8,15,15) and stem(x).shape==(2,8,8,8)
 The pool has no parameters, so the stem's parameter count is the convolution's plus the batch norm's:
 
 ```python
-print(sum([p.numel() for p in stem.parameters()]), 8*3*49+8, 2*8)
+print(sum([p.numel() for p in stem.parameters()]),
+      8*3*49+8, 2*8)
 # Hidden checks
 assert sum([p.numel() for p in stem.parameters()])==8*3*49+8+2*8
 ```
@@ -94,8 +104,18 @@ import torch as t
 class ResidualBlock(t.nn.Module):
     def __init__(self,i,o,s):
         super().__init__()
-        self.left=t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=3,stride=s,padding=1,bias=False),t.nn.BatchNorm2d(o),t.nn.ReLU(),t.nn.Conv2d(o,o,kernel_size=3,stride=1,padding=1,bias=False),t.nn.BatchNorm2d(o))
-        self.right=t.nn.Identity() if (s,i)==(1,o) else t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=1,stride=s,bias=False),t.nn.BatchNorm2d(o))
+        self.left=t.nn.Sequential(
+            t.nn.Conv2d(i,o,kernel_size=3,stride=s,
+                        padding=1,bias=False),
+            t.nn.BatchNorm2d(o),t.nn.ReLU(),
+            t.nn.Conv2d(o,o,kernel_size=3,stride=1,
+                        padding=1,bias=False),
+            t.nn.BatchNorm2d(o))
+        self.right=t.nn.Identity() if (s,i)==(1,
+            o) else t.nn.Sequential(
+            t.nn.Conv2d(i,o,kernel_size=1,stride=s,
+                        bias=False),
+            t.nn.BatchNorm2d(o))
         self.relu=t.nn.ReLU()
     def forward(self,x):
         return self.relu(self.left(x)+self.right(x))
@@ -103,10 +123,13 @@ class BlockGroup(t.nn.Module):
     def __init__(self,n,i,o,s):
         super().__init__()
         self.blocks=t.nn.Sequential()
-        self.blocks.add_module("0",ResidualBlock(i,o,s))
+        self.blocks.add_module("0",
+                               ResidualBlock(i,o,s))
         k=1
         for extra in [o]*(n-1):
-            self.blocks.add_module(str(k),ResidualBlock(o,o,1))
+            self.blocks.add_module(str(k),
+                                   ResidualBlock(o,o,
+                1))
             k+=1
     def forward(self,x):
         return self.blocks(x)
@@ -119,19 +142,30 @@ class AveragePool(t.nn.Module):
     def forward(self,x):
         return x.mean((2,3))
 class ResNet(t.nn.Module):
-    def __init__(self,c0,n_blocks,out_feats,strides,n_classes):
+    def __init__(self,c0,n_blocks,out_feats,strides,
+                 n_classes):
         super().__init__()
-        self.in_layers=t.nn.Sequential(t.nn.Conv2d(3,c0,kernel_size=7,stride=2,padding=3),t.nn.BatchNorm2d(c0),t.nn.ReLU(),t.nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
+        self.in_layers=t.nn.Sequential(
+            t.nn.Conv2d(3,c0,kernel_size=7,stride=2,
+                        padding=3),
+            t.nn.BatchNorm2d(c0),t.nn.ReLU(),
+            t.nn.MaxPool2d(kernel_size=3,stride=2,
+                           padding=1))
         self.residual_layers=t.nn.Sequential()
         i=c0
         k=0
         for n in n_blocks:
-            self.residual_layers.add_module(str(k),BlockGroup(n,i,out_feats[k],strides[k]))
+            self.residual_layers.add_module(str(k),
+                BlockGroup(n,i,out_feats[k],
+                           strides[k]))
             i=out_feats[k]
             k+=1
-        self.out_layers=t.nn.Sequential(AveragePool(),t.nn.Linear(out_feats[-1],n_classes))
+        self.out_layers=t.nn.Sequential(AveragePool(),
+                                        t.nn.Linear(
+            out_feats[-1],n_classes))
     def forward(self,x):
-        return self.out_layers(self.residual_layers(self.in_layers(x)))
+        return self.out_layers(
+            self.residual_layers(self.in_layers(x)))
 # Hidden checks
 assert ResNet(8,[1,1],[8,16],[1,2],5)(t.zeros(2,3,32,32)).shape==(2,5)
 ```
@@ -153,8 +187,12 @@ assert a.shape==(2,8,8,8) and b.shape==(2,16,4,4) and net.out_layers(b).shape==(
 The real ResNet34 is the same class with the paper's numbers, and its last feature map for a `224×224` input is `512` channels of `7×7`:
 
 ```python
-big=ResNet(64,[3,4,6,3],[64,128,256,512],[1,2,2,2],1000)
-print(sum([len(g.blocks) for g in big.residual_layers]), big.residual_layers(big.in_layers(t.zeros(1,3,224,224))).shape)
+big=ResNet(64,[3,4,6,3],[64,128,256,512],[1,2,2,2],
+           1000)
+print(
+    sum([len(g.blocks) for g in big.residual_layers]),
+    big.residual_layers(big.in_layers(t.zeros(1,3,224,
+    224))).shape)
 # Hidden checks
 assert sum([len(g.blocks) for g in big.residual_layers])==16
 assert big.residual_layers(big.in_layers(t.zeros(1,3,224,224))).shape==(1,512,7,7)

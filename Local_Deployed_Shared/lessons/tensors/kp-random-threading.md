@@ -25,18 +25,22 @@ concepts. What is new is a rule:
 import torch as t
 
 def good(rng, n):
-    return t.rand(n, generator=rng)      # threads the caller's stream
+    # threads the caller's stream
+    return t.rand(n, generator=rng)
 
 def ignores(rng, n):
-    return t.rand(n)                     # silently uses the GLOBAL stream
+    # silently uses the GLOBAL stream
+    return t.rand(n)
 
 def rewinds(rng, n):
-    rng.manual_seed(0)                   # silently rewinds the CALLER's stream
+    # silently rewinds the CALLER's stream
+    rng.manual_seed(0)
     return t.rand(n, generator=rng)
 
 shared = t.Generator().manual_seed(7)
 print("threaded:", good(shared, 3))
-print("the caller's stream has now advanced by three draws")
+print("the caller's stream has now advanced"
+      " by three draws")
 # Hidden checks
 reference = t.Generator().manual_seed(7)
 t.rand(3, generator=reference)
@@ -61,16 +65,18 @@ import torch as t
 def draw(rng, n):
     return t.rand(n, generator=rng)
 
-# The caller seeds once and calls twice. The two results differ because the
-# stream MOVED — not because anything is random about `draw` itself.
+# The caller seeds once and calls twice. The two
+# results differ because the stream MOVED — not
+# because anything is random about `draw` itself.
 rng = t.Generator().manual_seed(0)
 first = draw(rng, 3)
 second = draw(rng, 3)
 print("first :", first)
 print("second:", second)
 
-# And because `draw` threaded the stream instead of making its own, the caller
-# can reproduce the whole run from the seed alone.
+# And because `draw` threaded the stream instead of
+# making its own, the caller can reproduce the whole
+# run from the seed alone.
 replay = draw(t.Generator().manual_seed(0), 3)
 print("replay:", replay)
 # Hidden checks
@@ -90,8 +96,10 @@ ordinary tensor work:
 import torch as t
 
 rng = t.Generator().manual_seed(1)
-order = t.randperm(4, generator=rng)   # random part: needs the stream
-perm = t.eye(4)[order]                 # ordinary part: does not
+# random part: needs the stream
+order = t.randperm(4, generator=rng)
+# ordinary part: does not
+perm = t.eye(4)[order]
 print("order:", order)
 print(perm)
 # Hidden checks
@@ -121,26 +129,32 @@ show that threading is what makes the result the caller's rather than yours.
 import torch as t
 
 def next_uniforms(rng, n):
-    """The next n uniform floats from rng's stream — the caller's stream."""
+    """The next n uniform floats from rng's stream —
+    which is the caller's stream."""
     return t.rand(n, generator=rng)
 
-# The caller owns the seed, so the caller can predict what comes out.
+# The caller owns the seed, so the caller can predict
+# what comes out.
 rng = t.Generator().manual_seed(42)
 first = next_uniforms(rng, 3)
 print("first draw :", first)
 
-# The same generator, a second call: the stream has MOVED ON.
+# The same generator, a second call: the stream has
+# MOVED ON.
 second = next_uniforms(rng, 3)
 print("second draw:", second)
 
-# Every sampler takes the same keyword, off the same stream, in call order.
+# Every sampler takes the same keyword, off the same
+# stream, in call order.
 ints = t.randint(0, 10, (3,), generator=rng)
 perm = t.randperm(4, generator=rng)
 print("ints:", ints, " perm:", perm)
 
-# And threading is what makes it reproducible for the caller: a fresh generator
-# on the same seed replays the first draw exactly.
-replay = next_uniforms(t.Generator().manual_seed(42), 3)
+# And threading is what makes it reproducible for the
+# caller: a fresh generator on the same seed replays
+# the first draw exactly.
+replay = next_uniforms(t.Generator().manual_seed(42),
+                       3)
 print("replayed   :", replay)
 # Hidden checks
 assert first.tolist() != second.tolist()

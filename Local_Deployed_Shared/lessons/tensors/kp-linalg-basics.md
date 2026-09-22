@@ -44,11 +44,14 @@ both whether a product is legal and what comes out. It also covers
 matrix–vector: `(m, k) @ (k,) → (m,)`.
 
 ```python
-print((t.ones((2, 3)) @ t.ones((3, 4))).shape)     # (2,4): the 3s vanish
-print((t.ones((2, 3)) @ t.ones(3)).shape)          # (2,): matrix times vector
+# (2,4): the 3s vanish
+print((t.ones((2, 3)) @ t.ones((3, 4))).shape)
+# (2,): matrix times vector
+print((t.ones((2, 3)) @ t.ones(3)).shape)
 
 try:
-    t.ones((2, 3)) @ t.ones((2, 3))                # inner dims 3 vs 2
+    # inner dims 3 vs 2
+    t.ones((2, 3)) @ t.ones((2, 3))
 except RuntimeError as err:
     print("RuntimeError:", err)
 # Hidden checks
@@ -72,16 +75,20 @@ a = t.tensor([[1.0, 2.0],
 b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
-# Elementwise vs matrix product — same operands, different operations:
-elem = a * b            # [[5, 12], [21, 32]] — corresponding entries
+# Elementwise vs matrix product — same operands,
+# different operations:
+# [[5, 12], [21, 32]] — corresponding entries
+elem = a * b
 mat = a @ b             # row·column with a sum inside
-# Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19. Row 0 · column 0.
+# Check one entry by hand: mat[0,0] = 1*5 + 2*7 = 19.
+# Row 0 · column 0.
 print("a * b")
 print(elem)
 print("a @ b")
 print(mat)
 
-# Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s must match and vanish.
+# Shape rule: (2,3) @ (3,2) -> (2,2); the inner 3s
+# must match and vanish.
 p = t.ones((2, 3)) @ t.ones((3, 2))
 # Hidden checks
 assert elem.tolist() == [[5.0, 12.0], [21.0, 32.0]]
@@ -207,8 +214,10 @@ Sanity-checking a solve is one line: plug `x` back in and compare
 
 ```python
 print("a @ x =", a_sys @ x, " b =", b_vec)
-print("exactly equal? ", bool(t.equal(a_sys @ x, b_vec)))
-print("close enough?  ", bool(t.allclose(a_sys @ x, b_vec)))
+print("exactly equal? ",
+      bool(t.equal(a_sys @ x, b_vec)))
+print("close enough?  ",
+      bool(t.allclose(a_sys @ x, b_vec)))
 # Hidden checks
 assert t.allclose(a_sys @ x, b_vec)
 ```
@@ -239,7 +248,8 @@ b_vec = t.tensor([6.0, 8.0])
 x = t.linalg.solve(a_sys, b_vec)
 print("x =", x)
 
-# Verification pattern: substitute back, compare with float tolerance.
+# Verification pattern: substitute back, compare with
+# float tolerance.
 print("a @ x =", a_sys @ x, " b =", b_vec)
 # Hidden checks
 assert x.tolist() == [3.0, 2.0]

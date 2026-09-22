@@ -373,6 +373,72 @@
   overflow: hidden;
 }
 
+/* ---- growing right ------------------------------------------------------
+   🔴 THE COLUMN IS A PROSE MEASURE AND CODE IS NOT PROSE. 682px at the
+   lesson's zoom, less the 52px run gutter, the borders and `.nbv-src`'s
+   padding, is 54 characters — measured in the browser, not derived on paper.
+   Authored lesson code is held to those 54 columns by the WIDTH rule in
+   scripts/lesson_quality.py. A learner typing into a cell is held to nothing,
+   and the 55th character used to vanish behind `overflow-x: auto` — a
+   scrollbar they have to find before they can read what they just typed.
+
+   So a block of code sizes itself to its own longest line and keeps the
+   column as a FLOOR, never as a ceiling. Seth, 2026-09-22: "expand to the
+   right instead of also expanding to the left. That way the left alignment
+   stays fine, but it can expand to the right if it really needs to."
+
+   `min-width: 100%` is what makes it rightward only: the left edge is the
+   column's, always, and only the right edge moves. The ceiling comes from
+   practice/notebook-cells.js, which measures how much room there is beside
+   the column and writes `--nbv-grow-max` onto each cell parent; past that the
+   `overflow-x: auto` below is still there and still scrolls, because a
+   200-character line has to end somewhere. With the property unset — a hidden
+   tab, no JS — this is exactly the old behaviour.
+
+   🔴 `:not(.nbv-src)` IS LOAD-BEARING. On a lesson the cells are built INSIDE
+   a `.nbv-md` container, so `.nbv-md pre` also matches the `<pre class=
+   "nbv-src">` inside every cell — it is already how that pre gets its 14px
+   padding. Letting this rule reach it too made the pre a max-content box
+   inside a `flex: 1 1 0%` body, and the two sizings cancelled: the cell laid
+   out correctly ONCE and then never re-sized again, so a learner could type a
+   200-character line and watch the cell sit still. The growth belongs to the
+   CELL; the pre inside it stays a flex item. */
+.nbv-code,
+.nbv-hints,
+.nbv-solution,
+.nbv-md pre:not(.nbv-src) {
+  max-width: var(--nbv-grow-max, 100%);
+  min-width: 100%;
+  width: max-content;
+}
+
+/* 🔴 ONLY THE SOURCE MAY DRIVE THE WIDTH. Output, status and checker notes
+   live inside the same cell, and `print(tensor)` emits lines hundreds of
+   characters wide — letting those size the cell would peg it to the ceiling
+   on every run and make the column jump around between one cell and the next.
+   `width: 0` removes them from the cell's max-content calculation; the
+   `min-width: 100%` puts them back to full width for painting. */
+.nbv-out,
+.nbv-status,
+.nbv-checker-note {
+  min-width: 100%;
+  width: 0;
+}
+
+/* 🔴 AND NEITHER MAY PROSE. A Hints disclosure is a growable box wrapped
+   around a paragraph, and a paragraph's max-content is the whole sentence on
+   ONE line — so opening a two-line hint would throw the box out to the
+   ceiling even though nothing in it was ever clipped. Same `width: 0` trick
+   as the output above, and it stops at `pre`: a hint that carries a code
+   block still gets to size itself to that code, which is the one thing in
+   there that cannot be re-wrapped. (codex, via S, 2026-09-22.) */
+.nbv-hints > summary,
+.nbv-solution > summary,
+.nbv-hints > .nbv-md > :not(pre) {
+  min-width: 100%;
+  width: 0;
+}
+
 .nbv-gutter {
   align-items: center;
   border-right: 1px solid var(--border);

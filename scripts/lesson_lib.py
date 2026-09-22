@@ -161,9 +161,14 @@ def split_items(section_text):
     return {int(qid): content.strip() for qid, content in zip(parts[1::2], parts[2::2])}
 
 
+# The one fence split. Shared so a second reader of the same markdown cannot
+# drift from this one about where a fence starts and ends (scripts/lesson_width.py).
+FENCE_RE = re.compile(r"```([^\n]*)\n(.*?)```", re.S)
+
+
 def code_fences(text, info=None):
     """Return code blocks; info filters the fence info string exactly."""
-    blocks = re.findall(r"```([^\n]*)\n(.*?)```", text, flags=re.S)
+    blocks = FENCE_RE.findall(text)
     out = []
     for fence_info, code in blocks:
         fence_info = fence_info.strip()

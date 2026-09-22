@@ -35,8 +35,8 @@ b = t.tensor([4.0, -5.0, 6.0])
 # The atom, three spellings — same number.
 d = float(t.dot(a, b))
 print("a * b (no sum yet):", a * b)
-print("t.dot:", d, "| a @ b:", float(a @ b), "| (a*b).sum():",
-      float((a * b).sum()))
+print("t.dot:", d, "| a @ b:", float(a @ b),
+      "| (a*b).sum():", float((a * b).sum()))
 # Hidden checks
 assert d == float(a @ b) == float((a * b).sum()) == 12.0
 ```
@@ -79,12 +79,14 @@ row, so an (n, m) matrix against a length-m vector yields n dots.
 ```python
 import torch as t
 
-# Matrix @ vector: row i of the result = (row i of z) . v
+# Matrix @ vector: row i of the result = (row i of z)
+# . v
 z = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
 v = t.tensor([10.0, 1.0])
 zv = z @ v
-print(tuple(z.shape), "@", tuple(v.shape), "->", tuple(zv.shape), ":", zv)
+print(tuple(z.shape), "@", tuple(v.shape), "->",
+      tuple(zv.shape), ":", zv)
 # Hidden checks
 assert zv.tolist() == [12.0, 34.0]        # 1*10+2*1, 3*10+4*1
 ```
@@ -134,7 +136,8 @@ summed axis simply left off the output.
 ```python
 import torch as t
 
-# Row-wise dots of two SAME-SHAPE matrices: NOT a matmul.
+# Row-wise dots of two SAME-SHAPE matrices: NOT a
+# matmul.
 p = t.tensor([[1.0, 2.0],
               [3.0, 4.0]])
 q = t.tensor([[5.0, 6.0],

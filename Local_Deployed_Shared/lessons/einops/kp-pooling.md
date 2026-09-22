@@ -51,10 +51,14 @@ adjacent column pairs.
 import torch as t
 import einops
 
-x = t.arange(16.0).reshape(1, 1, 4, 4)      # (b, c, H, W)
+# (b, c, H, W)
+x = t.arange(16.0).reshape(1, 1, 4, 4)
 
-# Split H into (2 blocks x 2 rows), W likewise; reduce the window names.
-pooled = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'mean', h2=2, w2=2)
+# Split H into (2 blocks x 2 rows), W likewise; reduce
+# the window names.
+pooled = einops.reduce(x,
+                       'b c (h h2) (w w2) -> b c h w',
+                       'mean', h2=2, w2=2)
 # Window (0,0) = mean of [[0,1],[4,5]] = 2.5:
 
 print(x[0, 0], "\n")
@@ -71,8 +75,10 @@ Same windows, different aggregation: the geometry lives in the pattern, the sema
 import torch as t
 import einops
 
-# Max pooling is the same pattern, different aggregation.
-mx = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w', 'max', h2=2, w2=2)
+# Max pooling is the same pattern, different
+# aggregation.
+mx = einops.reduce(x, 'b c (h h2) (w w2) -> b c h w',
+                   'max', h2=2, w2=2)
 
 print("max-pooled  2x2 ->\n", mx[0, 0])
 # Hidden checks
@@ -86,10 +92,15 @@ Pool ONE axis by factoring only that axis; everything outside the parens rides a
 import torch as t
 import einops
 
-# One-axis pooling: average adjacent COLUMN pairs, everything else intact.
-imgs = t.arange(8.0).reshape(1, 2, 4, 1)    # (b, h, w=4, c)
-halved = einops.reduce(imgs, 'b h (w w2) c -> b h w c', 'mean', w2=2)
-print("column pairs averaged:", imgs[0, 0, :, 0].tolist(), "->",
+# One-axis pooling: average adjacent COLUMN pairs,
+# everything else intact.
+# (b, h, w=4, c)
+imgs = t.arange(8.0).reshape(1, 2, 4, 1)
+halved = einops.reduce(imgs,
+                       'b h (w w2) c -> b h w c',
+                       'mean', w2=2)
+print("column pairs averaged:",
+      imgs[0, 0, :, 0].tolist(), "->",
       halved[0, 0, :, 0].tolist())
 # Hidden checks
 assert halved.shape == (1, 2, 2, 1)

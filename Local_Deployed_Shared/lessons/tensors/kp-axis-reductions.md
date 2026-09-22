@@ -45,16 +45,21 @@ axis out of `(2, 3)`.
 import torch as t
 
 x = t.tensor([[1.0, 2.0, 3.0],
-              [10.0, 20.0, 30.0]])    # shape (2, 3) — float, so mean works
+              # shape (2, 3) — float, so mean works
+              [10.0, 20.0, 30.0]])
 
-# dim=1 -> the 3 columns collapse -> one total PER ROW.
+# dim=1 -> the 3 columns collapse -> one total PER
+# ROW.
 row_sums = x.sum(dim=1)
 
-# dim=0 -> the 2 rows collapse onto each other -> one mean PER COLUMN.
+# dim=0 -> the 2 rows collapse onto each other -> one
+# mean PER COLUMN.
 col_means = x.mean(dim=0)
 print("x shape", tuple(x.shape))
-print("sum(dim=1) ", row_sums,  "shape", tuple(row_sums.shape))
-print("mean(dim=0)", col_means, "shape", tuple(col_means.shape))
+print("sum(dim=1) ", row_sums,  "shape",
+      tuple(row_sums.shape))
+print("mean(dim=0)", col_means, "shape",
+      tuple(col_means.shape))
 # Hidden checks
 assert tuple(row_sums.shape) == (2,)  # (2, 3) with dim 1 crossed out
 assert row_sums.tolist() == [6.0, 60.0]
@@ -149,11 +154,13 @@ matrix. Both halves hinge on the output shape, so predict it first.
 ```python
 import torch as t
 
-# Tuple of axes on a 4-D batch (a, b, c, d): collapse the two LEADING axes
-# in one call -> one total per (c, d) position.
+# Tuple of axes on a 4-D batch (a, b, c, d): collapse
+# the two LEADING axes in one call -> one total per
+# (c, d) position.
 batch = t.arange(24).reshape(2, 3, 2, 2)
 totals = batch.sum(dim=(0, 1))
-print("(2,3,2,2) summed over the first two ->", tuple(totals.shape))
+print("(2,3,2,2) summed over the first two ->",
+      tuple(totals.shape))
 print(totals)
 # Hidden checks
 assert totals.shape == (2, 2)
@@ -168,9 +175,12 @@ refuses ints):
 
 ```python
 x = t.tensor([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
-rm = x.mean(dim=1, keepdim=True)      # (2, 1), not (2,)
-centered = x - rm                     # (2,3) - (2,1): broadcasts by row
-print("keepdim=True keeps the axis as 1:", tuple(rm.shape), "->", rm.tolist())
+# (2, 1), not (2,)
+rm = x.mean(dim=1, keepdim=True)
+# (2,3) - (2,1): broadcasts by row
+centered = x - rm
+print("keepdim=True keeps the axis as 1:",
+      tuple(rm.shape), "->", rm.tolist())
 print(centered)
 # Hidden checks
 assert tuple(rm.shape) == (2, 1)

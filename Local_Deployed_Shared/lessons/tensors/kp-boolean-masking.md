@@ -27,10 +27,12 @@ import torch as t
 
 x = t.tensor([1, 4, 6, 9, 3, 7])
 
-# The comparison itself is the mask — same shape as x, dtype bool.
+# The comparison itself is the mask — same shape as x,
+# dtype bool.
 mask = x > 5
 
-# Any elementwise condition works the same way, e.g. divisibility:
+# Any elementwise condition works the same way, e.g.
+# divisibility:
 even = x % 2 == 0
 print("x      ", x)
 print("x > 5  ", mask, mask.dtype)
@@ -84,7 +86,8 @@ mask = x > 5
 
 # Count: True behaves as 1, so both spellings work.
 
-# Filter: mask indexing keeps just the True positions (as a copy).
+# Filter: mask indexing keeps just the True positions
+# (as a copy).
 print("count", int(mask.sum()), "| kept", x[mask])
 # Hidden checks
 assert t.count_nonzero(mask) == 3
@@ -134,8 +137,9 @@ import torch as t
 
 x = t.tensor([1, 4, 6, 9, 3, 7])
 
-# Combined condition + masked assignment, on a copy to protect x.
-# Parentheses around EACH comparison are mandatory with & and |.
+# Combined condition + masked assignment, on a copy to
+# protect x. Parentheses around EACH comparison are
+# mandatory with & and |.
 out = x.clone()
 out[(out > 3) & (out < 8)] *= -1
 print("(x > 3) & (x < 8) ->", (x > 3) & (x < 8))

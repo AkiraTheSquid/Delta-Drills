@@ -54,7 +54,8 @@ import torch as t
 readings = t.tensor([[3.5, -2.0, 7.25],
                      [0.0,  9.5, -8.75]])
 
-# min/max with no dim argument scan the WHOLE tensor, ignoring shape.
+# min/max with no dim argument scan the WHOLE tensor,
+# ignoring shape.
 lo, hi = readings.min(), readings.max()
 print("min", lo.item(), "| max", hi.item())
 # Hidden checks
@@ -127,7 +128,8 @@ import torch as t
 grid = t.tensor([[3.0, 8.0, 1.0],
                  [6.0, 2.0, 9.0]])
 raw = grid.mean()
-print(raw, "| ndim", raw.ndim, "| type", type(raw).__name__)
+print(raw, "| ndim", raw.ndim, "| type",
+      type(raw).__name__)
 print(float(raw), "| type", type(float(raw)).__name__)
 # Hidden checks
 assert _delta_output == 'tensor(4.8333) | ndim 0 | type Tensor\n4.833333492279053 | type float\n'
@@ -136,9 +138,12 @@ assert _delta_output == 'tensor(4.8333) | ndim 0 | type Tensor\n4.83333349227905
 The first line still says `tensor(...)`. That is the whole distinction:
 
 ```python
-print("raw.ndim", raw.ndim, "-> still a tensor:", isinstance(raw, t.Tensor))
-print("int(grid.sum())", int(grid.sum()), type(int(grid.sum())).__name__)
-print("bool((grid > 0).all())", bool((grid > 0).all()),
+print("raw.ndim", raw.ndim, "-> still a tensor:",
+      isinstance(raw, t.Tensor))
+print("int(grid.sum())", int(grid.sum()),
+      type(int(grid.sum())).__name__)
+print("bool((grid > 0).all())",
+      bool((grid > 0).all()),
       type(bool((grid > 0).all())).__name__)
 # Hidden checks
 assert raw.ndim == 0 and isinstance(raw, t.Tensor)
@@ -159,8 +164,9 @@ import torch as t
 readings = t.tensor([[3.5, -2.0, 7.25],
                      [0.0,  9.5, -8.75]])
 
-# mean returns a 0-d TENSOR. Usually fine, but when the contract says
-# "a single float scalar", unwrap it explicitly.
+# mean returns a 0-d TENSOR. Usually fine, but when
+# the contract says "a single float scalar", unwrap it
+# explicitly.
 raw = readings.mean()
 
 avg = float(raw)
@@ -248,7 +254,8 @@ tensor (and `if` on it raises an error).
 ```python
 a = t.tensor([1.0, 2.0])
 b = t.tensor([1.0, 5.0])
-print(a == b)                 # a tensor, not an answer
+# a tensor, not an answer
+print(a == b)
 print(t.equal(a, b))          # one bool
 # Hidden checks
 assert _delta_output == 'tensor([ True, False])\nFalse\n'
@@ -273,17 +280,20 @@ import torch as t
 readings = t.tensor([[3.5, -2.0, 7.25],
                      [0.0,  9.5, -8.75]])
 
-# Boolean pipeline: comparison (elementwise) then reduction (any).
-# Read it aloud: "readings less than zero — any?"
+# Boolean pipeline: comparison (elementwise) then
+# reduction (any). Read it aloud: "readings less than
+# zero — any?"
 has_negative = bool((readings < 0).any())
 
-# Float-safe equality: after arithmetic, prefer allclose. Ten 0.1s summed
-# in float32 land just past 1.0.
+# Float-safe equality: after arithmetic, prefer
+# allclose. Ten 0.1s summed in float32 land just past
+# 1.0.
 a = t.full((10,), 0.1).sum()
 b = t.tensor(1.0)
 print("any negative?", has_negative)
-print("ten 0.1s summed:", a.item(), "| equal:", bool(t.equal(a, b)),
-      "| allclose:", bool(t.allclose(a, b)))
+print("ten 0.1s summed:", a.item(), "| equal:",
+      bool(t.equal(a, b)), "| allclose:",
+      bool(t.allclose(a, b)))
 # Hidden checks
 assert has_negative is True
 assert not t.equal(a, b)         # bitwise-exact? no — accumulated float error

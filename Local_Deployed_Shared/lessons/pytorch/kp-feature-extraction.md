@@ -19,7 +19,9 @@ Two models built the same way — the same layers registered in the same order �
 
 ```python
 import torch as t
-m=t.nn.Sequential(t.nn.Conv2d(1,2,kernel_size=3,bias=False),t.nn.BatchNorm2d(2))
+m=t.nn.Sequential(
+    t.nn.Conv2d(1,2,kernel_size=3,bias=False),
+    t.nn.BatchNorm2d(2))
 sd=m.state_dict()
 print(list(sd))
 print(sd["1.running_var"])
@@ -34,15 +36,27 @@ assert sd["1.running_var"].tolist()==[1.,1.] and list(zip(["a","b","c"],[1,2,3])
 Two chains with the same layers but different child names. Predict, before running, how many entries each state dict has and which entries pair up.
 
 ```python
-mine=t.nn.Sequential(t.nn.Conv2d(1,2,kernel_size=3,bias=False),t.nn.BatchNorm2d(2))
+mine=t.nn.Sequential(
+    t.nn.Conv2d(1,2,kernel_size=3,bias=False),
+    t.nn.BatchNorm2d(2))
 theirs=t.nn.Sequential()
-theirs.add_module("conv",t.nn.Conv2d(1,2,kernel_size=3,bias=False))
+theirs.add_module("conv",
+                  t.nn.Conv2d(1,2,kernel_size=3,
+                              bias=False))
 theirs.add_module("bn",t.nn.BatchNorm2d(2))
-pairs=list(zip(list(mine.state_dict()),list(theirs.state_dict())))
-print(len(mine.state_dict()), len(theirs.state_dict()))
-print(pairs[:2])
+print(len(mine.state_dict()),
+      len(theirs.state_dict()))
 # Hidden checks
 assert len(mine.state_dict())==6==len(theirs.state_dict())
+```
+
+Six entries each, because both chains hold the same two layers — the child names differ but the count cannot. Now line the two key lists up side by side:
+
+```python
+pairs=list(zip(list(mine.state_dict()),
+               list(theirs.state_dict())))
+print(pairs[:2])
+# Hidden checks
 assert pairs[:2]==[("0.weight","conv.weight"),("1.weight","bn.weight")]
 ```
 
@@ -98,9 +112,13 @@ A module's *parameters* are the subset of its state that is trained: its weights
 
 ```python
 import torch as t
-mine=t.nn.Sequential(t.nn.Conv2d(1,2,kernel_size=3,bias=False),t.nn.BatchNorm2d(2))
+mine=t.nn.Sequential(
+    t.nn.Conv2d(1,2,kernel_size=3,bias=False),
+    t.nn.BatchNorm2d(2))
 theirs=t.nn.Sequential()
-theirs.add_module("conv",t.nn.Conv2d(1,2,kernel_size=3,bias=False))
+theirs.add_module("conv",
+                  t.nn.Conv2d(1,2,kernel_size=3,
+                              bias=False))
 theirs.add_module("bn",t.nn.BatchNorm2d(2))
 sd=mine.state_dict()
 ps=theirs.state_dict()
@@ -120,7 +138,8 @@ Fill the pretrained chain with known numbers, copy into a fresh chain, and check
 ```python
 with t.no_grad():
     for p in theirs.parameters():
-        p.copy_(t.linspace(-1.,1.,p.numel()).reshape(p.shape))
+        p.copy_(t.linspace(
+            -1.,1.,p.numel()).reshape(p.shape))
 sd=mine.state_dict()
 ps=theirs.state_dict()
 for a,b in zip(list(sd),list(ps)):
@@ -135,7 +154,10 @@ The fresh chain now carries the filled numbers, so the two chains agree on any i
 
 ```python
 x=t.arange(16.).reshape(1,1,4,4)
-print((mine.eval()(x)-theirs.eval()(x)).abs().sum().item(), sum([p.numel() for p in mine.parameters()]))
+print(
+    (mine.eval()(x)-theirs.eval()(x)).abs().sum(
+    ).item(),
+    sum([p.numel() for p in mine.parameters()]))
 # Hidden checks
 assert (mine.eval()(x)-theirs.eval()(x)).abs().sum().item()==0
 assert sum([p.numel() for p in mine.parameters()])==18+2+2
@@ -202,7 +224,10 @@ import torch as t
 class AveragePool(t.nn.Module):
     def forward(self,x):
         return x.mean((2,3))
-net=t.nn.Sequential(t.nn.Conv2d(3,4,kernel_size=3,padding=1,bias=False),t.nn.BatchNorm2d(4),t.nn.ReLU(),AveragePool(),t.nn.Linear(4,10))
+net=t.nn.Sequential(
+    t.nn.Conv2d(3,4,kernel_size=3,padding=1,
+                bias=False),t.nn.BatchNorm2d(4),
+    t.nn.ReLU(),AveragePool(),t.nn.Linear(4,10))
 net.requires_grad_(False)
 net[-1]=t.nn.Linear(4,3)
 print([p.requires_grad for p in net.parameters()])
@@ -217,9 +242,12 @@ assert net(t.zeros(2,3,8,8)).shape==(2,3)
 Count trainable versus frozen parameter values after the freeze-and-replace. Predict both numbers before running: the body holds `4*3*9 + 2*4 = 116` values, the new head `4*3 + 3 = 15`.
 
 ```python
-trainable=[p for p in net.parameters() if p.requires_grad]
-frozen=[p for p in net.parameters() if not p.requires_grad]
-print(sum([p.numel() for p in trainable]), sum([p.numel() for p in frozen]))
+trainable=[p for p in net.parameters()
+           if p.requires_grad]
+frozen=[p for p in net.parameters()
+        if not p.requires_grad]
+print(sum([p.numel() for p in trainable]),
+      sum([p.numel() for p in frozen]))
 # Hidden checks
 assert sum([p.numel() for p in trainable])==15 and sum([p.numel() for p in frozen])==116
 ```

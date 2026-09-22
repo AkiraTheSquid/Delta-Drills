@@ -53,14 +53,19 @@ them back.
 import torch as t
 import einops
 
-feats = t.arange(24.0).reshape(2, 3, 2, 2)     # (b, c, h, w)
+# (b, c, h, w)
+feats = t.arange(24.0).reshape(2, 3, 2, 2)
 
-# Classifier flatten: batch survives, (c h w) merge in that order.
+# Classifier flatten: batch survives, (c h w) merge in
+# that order.
 flat = einops.rearrange(feats, 'b c h w -> b (c h w)')
-# c slow: the first 4 entries of item 0 are channel 0's pixels.
+# c slow: the first 4 entries of item 0 are channel
+# 0's pixels.
 
-print("feats", tuple(feats.shape), "-> flat", tuple(flat.shape))
-print("item 0 starts with channel 0's pixels:", flat[0, :4])
+print("feats", tuple(feats.shape), "-> flat",
+      tuple(flat.shape))
+print("item 0 starts with channel 0's pixels:",
+      flat[0, :4])
 # Hidden checks
 assert flat.shape == (2, 12)
 assert flat[0, :4].tolist() == feats[0, 0].ravel().tolist()
@@ -73,12 +78,17 @@ import torch as t
 import einops
 
 # Heads merge: (b, nh, t, d) -> (b, t, (nh d)).
-heads = t.arange(16.0).reshape(1, 2, 2, 4)     # (b, nh=2, t, d=4)
-merged = einops.rearrange(heads, 'b nh t d -> b t (nh d)')
-# Token 0's vector = head 0's features then head 1's (nh slow):
+# (b, nh=2, t, d=4)
+heads = t.arange(16.0).reshape(1, 2, 2, 4)
+merged = einops.rearrange(heads,
+                          'b nh t d -> b t (nh d)')
+# Token 0's vector = head 0's features then head 1's
+# (nh slow):
 
-print("heads", tuple(heads.shape), "-> merged", tuple(merged.shape))
-print("token 0 =", merged[0, 0], " (head 0's four, then head 1's)")
+print("heads", tuple(heads.shape), "-> merged",
+      tuple(merged.shape))
+print("token 0 =", merged[0, 0],
+      " (head 0's four, then head 1's)")
 # Hidden checks
 assert merged.shape == (1, 2, 8)
 assert merged[0, 0].tolist() == (heads[0, 0, 0].tolist()
@@ -91,9 +101,13 @@ Splitting the packed axis back needs the head count; matching conventions round-
 import torch as t
 import einops
 
-# The inverse split — declare how the packed axis factors.
-unmerged = einops.rearrange(merged, 'b t (nh d) -> b nh t d', nh=2)
-print("split back exactly:", bool(t.equal(unmerged, heads)))
+# The inverse split — declare how the packed axis
+# factors.
+unmerged = einops.rearrange(merged,
+                            'b t (nh d) -> b nh t d',
+                            nh=2)
+print("split back exactly:",
+      bool(t.equal(unmerged, heads)))
 # Hidden checks
 assert t.equal(unmerged, heads)          # round trip exact
 ```

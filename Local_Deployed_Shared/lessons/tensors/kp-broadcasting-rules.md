@@ -36,17 +36,20 @@ has shape (n,) — aligned right, it matches z's last axis).
 ```python
 import torch as t
 
-a = t.arange(3).reshape(3, 1)      # column: [[0], [1], [2]]           (3, 1)
-b = t.arange(4).reshape(1, 4)      # row:    [[0, 1, 2, 3]]            (1, 4)
+# column: [[0], [1], [2]]           (3, 1)
+a = t.arange(3).reshape(3, 1)
+# row:    [[0, 1, 2, 3]]            (1, 4)
+b = t.arange(4).reshape(1, 4)
 
-# Align right:  (3, 1)
-#               (1, 4)
-# axis 1: 1 vs 4 -> stretch a across columns; axis 0: 3 vs 1 -> stretch b
-# down rows. Result (3, 4): the "addition table" of the two vectors.
+# Align right:  (3, 1) (1, 4) axis 1: 1 vs 4 ->
+# stretch a across columns; axis 0: 3 vs 1 -> stretch
+# b down rows. Result (3, 4): the "addition table" of
+# the two vectors.
 table = a + b
 
-# The result SHAPE is decidable from the two input shapes alone, with nothing
-# allocated — which is what you want when the real tensors are large and you
+# The result SHAPE is decidable from the two input
+# shapes alone, with nothing allocated — which is what
+# you want when the real tensors are large and you
 # only need to know whether they will fit together.
 
 # Incompatible shapes fail here too, and fail early.
@@ -58,7 +61,8 @@ try:
 except RuntimeError as err:
     print("RuntimeError:", err)
 else:
-    raise AssertionError("(3, 4) and (5, 4) should not broadcast")
+    raise AssertionError(
+        "(3, 4) and (5, 4) should not broadcast")
 # Hidden checks
 assert table.shape == (3, 4)
 assert table.tolist() == [[0, 1, 2, 3],
@@ -139,21 +143,27 @@ and place it deliberately.
 ```python
 import torch as t
 
-# The addition table again, from FLAT vectors — we place the 1-axes:
+# The addition table again, from FLAT vectors — we
+# place the 1-axes:
 va, vb = t.arange(3), t.arange(4)
 table = va[:, None] + vb[None, :]
 
-# 3-D case: image (h, w, c) scaled per-PIXEL by map (h, w).
-# Align right: (2, 2, 3) vs (2, 2) -> trailing axes are 3 vs 2: INCOMPATIBLE.
-# The map needs its stretch-axis at the END: scale[:, :, None] is (2, 2, 1).
+# 3-D case: image (h, w, c) scaled per-PIXEL by map
+# (h, w). Align right: (2, 2, 3) vs (2, 2) -> trailing
+# axes are 3 vs 2: INCOMPATIBLE. The map needs its
+# stretch-axis at the END: scale[:, :, None] is (2, 2,
+# 1).
 img = t.ones((2, 2, 3))
 scale = t.tensor([[1.0, 2.0],
                   [3.0, 4.0]])
 scaled = img * scale[:, :, None]
-print("flat vectors, 1-axes placed by hand ->", tuple(table.shape))
+print("flat vectors, 1-axes placed by hand ->",
+      tuple(table.shape))
 print(table)
-print("scale", tuple(scale.shape), "-> scale[:, :, None]",
-      tuple(scale[:, :, None].shape), "-> img * it", tuple(scaled.shape))
+print("scale", tuple(scale.shape),
+      "-> scale[:, :, None]",
+      tuple(scale[:, :, None].shape), "-> img * it",
+      tuple(scaled.shape))
 print("pixel [1, 0] scaled by 3:", scaled[1, 0])
 # Hidden checks
 assert table.shape == (3, 4)

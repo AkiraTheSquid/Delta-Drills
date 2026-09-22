@@ -873,24 +873,48 @@ const PracticeSession = (() => {
       sessionResumeBtn.disabled = true;
       return;
     }
-    // A reload during the lesson-gate overlay leaves the question resumable
-    // with its KC still unexposed — re-show the lesson before the question
-    // becomes visible. Already-exposed KCs (the normal case) never gate, and
-    // review-phase resumes are post-answer so teaching first is moot.
+    /* A reload during the lesson-gate overlay leaves the question resumable
+       with its KC still unexposed — re-show the lesson before the question
+       becomes visible. Already-exposed KCs (the normal case) never gate, and
+       review-phase resumes are post-answer so teaching first is moot.
+
+       🔴 AND PAINT THE QUESTION AGAIN WHEN THE GATE HANDS BACK. This is the
+       one caller that renders BEFORE the gate (above, so the gate reads the
+       right KC) and so the one whose `onDone` is not `renderQuestion` —
+       `_resumeCore` restarts the clock and nothing else. The gate now clears
+       the column it borrowed (practice/lessons.js `_cleanup`), which means
+       Continue lands on an EMPTY prompt unless the question is drawn back
+       here. Before that clearing it landed on the lesson, still on screen,
+       with the drill's examples and editor underneath and the answer clock
+       running — Seth, 2026-09-22, on q512.
+
+       Rendering twice is safe: the session is not active until `_resumeCore`
+       runs, so `onQuestionRendered` takes its paused branch and neither
+       advances `served` nor restarts the countdown, and `_resumeCore` puts
+       the saved draft back into the editor after this. */
+    const _repaintRestored = () => {
+      if (pausedState) renderQuestion(PracticeAPI.currentQuestion, pausedState.served);
+    };
+    let taught = false;
     try {
-      if (
+      taught = !!(
         window.LessonGate &&
         pausedState.phase !== "review" &&
         (await window.LessonGate.maybeShow(PracticeAPI.currentQuestion, () => {
           resumePending = false;
+          _repaintRestored();
           _resumeCore();
         }))
-      ) {
-        return;
-      }
+      );
     } catch (err) {
       console.warn("[session] lesson gate failed during resume:", err);
     }
+    if (taught) return;
+    // The gate can draw a page and then fail — it swallows its own errors and
+    // answers false, having already cleared the column on the way out. An
+    // empty prompt is the tell; a gate that never painted leaves the render
+    // above untouched, and that path stays at exactly one render.
+    if (questionText && !questionText.firstChild) _repaintRestored();
     resumePending = false;
     _resumeCore();
   };
