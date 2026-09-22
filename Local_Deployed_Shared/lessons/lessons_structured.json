@@ -196,6 +196,36 @@
        "question_id": 50041,
        "prompt": "u = (2, 1), v = (1, \u22122). What does u \u00b7 v = 0 imply?",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50080,
+       "prompt": "Which unit vector points the same way as u = (2, \u22121, 2)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50081,
+       "prompt": "u = (3, 4), v = (4, 3). What is cos \u03b8 for the angle \u03b8 between them?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50082,
+       "prompt": "A ray starts at O with direction D = (1, 2). A point X has X \u2212 O = (\u22123, 1). The dot product (X \u2212 O) \u00b7 D = \u22121. What does its sign tell you?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50083,
+       "prompt": "O = (0, 0), D = (3, 4), X = (5, 10). How far along D's direction does X project from O, i.e. what is (X \u2212 O) \u00b7 D / \u2016D\u2016?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50084,
+       "prompt": "\u2016u\u2016 = 3, \u2016v\u2016 = 4 and u \u00b7 v = 2. What is \u2016u \u2212 v\u2016\u00b2?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50085,
+       "prompt": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -206,11 +236,25 @@
       {
        "question_id": 50043,
        "prompt": "A nonzero vector D has norm 5. What is the norm of \u22122D?"
+      },
+      {
+       "question_id": 50086,
+       "prompt": "A ray starts at O = (0, 0) with direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to the ray's line?"
+      },
+      {
+       "question_id": 50087,
+       "prompt": "A camera ray from the origin has direction D = (1, 0.75, 0). It meets the wall x = 4 at s = 4 in P(s) = sD. How far from the origin is that hit point?"
       }
      ],
      "independent_items": [
       50040,
-      50041
+      50041,
+      50080,
+      50081,
+      50082,
+      50083,
+      50084,
+      50085
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""

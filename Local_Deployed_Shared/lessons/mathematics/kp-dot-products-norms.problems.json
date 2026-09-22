@@ -201,6 +201,277 @@
           "truth": "Abs(-2)*5"
         }
       }
+    },
+    {
+      "id": 50080,
+      "kind": "compute",
+      "difficulty": 45,
+      "prompt": "Which unit vector points the same way as u = (2, −1, 2)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2/3, −1/3, 2/3)",
+          "value": "Matrix([Rational(2,3),Rational(-1,3),Rational(2,3)])"
+        },
+        {
+          "key": "B",
+          "text": "(2/9, −1/9, 2/9)",
+          "value": "Matrix([Rational(2,9),Rational(-1,9),Rational(2,9)])"
+        },
+        {
+          "key": "C",
+          "text": "(−2/3, 1/3, −2/3)",
+          "value": "Matrix([Rational(-2,3),Rational(1,3),Rational(-2,3)])"
+        },
+        {
+          "key": "D",
+          "text": "(2/5, −1/5, 2/5)",
+          "value": "Matrix([Rational(2,5),Rational(-1,5),Rational(2,5)])"
+        }
+      ],
+      "answer": "A",
+      "solution": "$\\lVert u \\rVert = \\sqrt{4 + 1 + 4} = 3$, so $u / \\lVert u \\rVert = (2/3, -1/3, 2/3)$.\n\n- B: divides by $\\lVert u \\rVert^2 = 9$ instead of $\\lVert u \\rVert$.\n- C: has length 1 but points the opposite way.\n- D: divides by the sum of the entries, which is not a length.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,-1,2])/sqrt(4+1+4)"
+        }
+      }
+    },
+    {
+      "id": 50081,
+      "kind": "compute",
+      "difficulty": 45,
+      "prompt": "u = (3, 4), v = (4, 3). What is cos θ for the angle θ between them?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "24",
+          "value": "24"
+        },
+        {
+          "key": "B",
+          "text": "24/25",
+          "value": "Rational(24,25)"
+        },
+        {
+          "key": "C",
+          "text": "7/25",
+          "value": "Rational(7,25)"
+        },
+        {
+          "key": "D",
+          "text": "1",
+          "value": "1"
+        }
+      ],
+      "answer": "B",
+      "solution": "$\\cos\\theta = \\dfrac{u \\cdot v}{\\lVert u \\rVert\\,\\lVert v \\rVert} = \\dfrac{12 + 12}{5 \\cdot 5} = \\dfrac{24}{25}$.\n\n- A: the dot product alone, not divided by the lengths.\n- C: $\\sin\\theta$, not $\\cos\\theta$.\n- D: would mean the vectors point the same way; they don't.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([3,4]).dot(Matrix([4,3]))/(5*5)"
+        }
+      }
+    },
+    {
+      "id": 50082,
+      "kind": "statement",
+      "difficulty": 50,
+      "prompt": "A ray starts at O with direction D = (1, 2). A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "X lies on the ray."
+        },
+        {
+          "key": "B",
+          "text": "X − O is perpendicular to D."
+        },
+        {
+          "key": "C",
+          "text": "X − O makes an obtuse angle with D, so X is behind O along D's direction."
+        },
+        {
+          "key": "D",
+          "text": "X is in front of O along D's direction."
+        }
+      ],
+      "answer": "C",
+      "solution": "$(X - O) \\cdot D = -3 + 2 = -1 < 0$. A negative dot product means the angle is more than $90^\\circ$, so moving from $O$ toward $X$ goes partly backwards against $D$. Any parameter $s$ that gets near $X$ would be negative, which a ray ($s \\ge 0$) does not allow.\n\n- A: on the ray, $X - O$ would be a nonnegative multiple of $D$; $(-3, 1)$ is not.\n- B: perpendicular needs a dot product of exactly 0.\n- D: in front needs a positive dot product."
+    },
+    {
+      "id": 50083,
+      "kind": "compute",
+      "difficulty": 50,
+      "prompt": "O = (0, 0), D = (3, 4), X = (5, 10). How far along D's direction does X project from O, i.e. what is (X − O) · D / ‖D‖?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "55",
+          "value": "55"
+        },
+        {
+          "key": "B",
+          "text": "11/5",
+          "value": "Rational(11,5)"
+        },
+        {
+          "key": "C",
+          "text": "5√5",
+          "value": "5*sqrt(5)"
+        },
+        {
+          "key": "D",
+          "text": "11",
+          "value": "11"
+        }
+      ],
+      "answer": "D",
+      "solution": "$(X - O) \\cdot D = 15 + 40 = 55$ and $\\lVert D \\rVert = 5$, so the projected length is $55 / 5 = 11$.\n\n- A: forgets to divide by $\\lVert D \\rVert$.\n- B: divides by $\\lVert D \\rVert^2 = 25$; that is the parameter $s$ in $O + sD$, not a length.\n- C: $\\lVert X \\rVert$, the full distance, not the part along $D$.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([5,10]).dot(Matrix([3,4]))/sqrt(9+16)"
+        }
+      }
+    },
+    {
+      "id": 50084,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "‖u‖ = 3, ‖v‖ = 4 and u · v = 2. What is ‖u − v‖²?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "25",
+          "value": "25"
+        },
+        {
+          "key": "B",
+          "text": "21",
+          "value": "21"
+        },
+        {
+          "key": "C",
+          "text": "29",
+          "value": "29"
+        },
+        {
+          "key": "D",
+          "text": "23",
+          "value": "23"
+        }
+      ],
+      "answer": "B",
+      "solution": "$\\lVert u - v \\rVert^2 = (u - v) \\cdot (u - v) = \\lVert u \\rVert^2 - 2\\,u \\cdot v + \\lVert v \\rVert^2 = 9 - 4 + 16 = 21$.\n\n- A: drops the cross term, which is only right when $u \\perp v$.\n- C: adds the cross term; that is $\\lVert u + v \\rVert^2$.\n- D: subtracts $u \\cdot v$ once instead of twice.",
+      "verify": {
+        "sympy": {
+          "truth": "9 - 2*2 + 16"
+        }
+      }
+    },
+    {
+      "id": 50085,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([5., 7., 2.])",
+          "value": "Matrix([5,7,2])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([9., 25., 4.])",
+          "value": "Matrix([9,25,4])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([3., 5., 2.])",
+          "value": "Matrix([3,5,2])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([2.2361, 3.6056, 4.4721])",
+          "value": "Matrix([sqrt(5),sqrt(13),sqrt(20)])"
+        }
+      ],
+      "answer": "C",
+      "solution": "`dim=1` reduces across each row, giving one length per ray: $\\sqrt{1+4+4} = 3$, $\\sqrt{0+9+16} = 5$, $\\sqrt{4} = 2$.\n\n- A: sums absolute values (the L1 norm).\n- B: squared lengths, before the square root.\n- D: `dim=0`, one length per column.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([sqrt(1+4+4), sqrt(0+9+16), sqrt(4)])"
+        }
+      }
+    },
+    {
+      "id": 50086,
+      "kind": "compute",
+      "difficulty": 60,
+      "prompt": "A ray starts at O = (0, 0) with direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to the ray's line?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "3",
+          "value": "3"
+        },
+        {
+          "key": "B",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "C",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "D",
+          "text": "16/5",
+          "value": "Rational(16,5)"
+        }
+      ],
+      "answer": "C",
+      "solution": "Unit direction $\\hat D = (3/5, 4/5)$. The part of $X - O$ along the line is $(X - O) \\cdot \\hat D = 3$, so the foot of the perpendicular is $3\\hat D = (9/5, 12/5)$. What is left, $X - (9/5, 12/5) = (16/5, -12/5)$, has length $\\sqrt{256 + 144}/5 = 4$. Check with Pythagoras: $\\sqrt{\\lVert X \\rVert^2 - 3^2} = \\sqrt{25 - 9} = 4$.\n\n- A: the distance along the line, not across it.\n- B: $\\lVert X - O \\rVert$, the straight-line distance to $O$.\n- D: only the x-component of the perpendicular.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt(25 - (Matrix([5,0]).dot(Matrix([3,4]))/5)**2)"
+        }
+      }
+    },
+    {
+      "id": 50087,
+      "kind": "compute",
+      "difficulty": 60,
+      "prompt": "A camera ray from the origin has direction D = (1, 0.75, 0). It meets the wall x = 4 at s = 4 in P(s) = sD. How far from the origin is that hit point?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "B",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "C",
+          "text": "7",
+          "value": "7"
+        },
+        {
+          "key": "D",
+          "text": "25",
+          "value": "25"
+        }
+      ],
+      "answer": "B",
+      "solution": "$P(4) = 4D = (4, 3, 0)$, so the distance is $\\lVert P(4) \\rVert = \\sqrt{16 + 9} = 5$. The parameter is 4 but the distance is 5, because $\\lVert D \\rVert = 1.25$, not 1: $s$ counts steps of $D$, and each step is 1.25 long.\n\n- A: the parameter $s$, which equals distance only for a unit direction.\n- C: adds the coordinates instead of combining them as a length.\n- D: the squared distance.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt(4**2 + 3**2)"
+        }
+      }
     }
   ]
 }
