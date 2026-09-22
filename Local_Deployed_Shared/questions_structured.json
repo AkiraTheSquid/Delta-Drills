@@ -81473,5 +81473,493 @@
       "verify": null,
       "hint": null
     }
+  },
+  {
+    "id": 50072,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A ray starts at O = (1, 2, −1) and passes through Q = (4, 0, 5). Write it as P(s) = O + sD with D = Q − O. Which point is P(2)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(9, 2, 9)",
+          "value": "Matrix([9,2,9])"
+        },
+        {
+          "key": "B",
+          "text": "(7, −2, 11)",
+          "value": "Matrix([7,-2,11])"
+        },
+        {
+          "key": "C",
+          "text": "(6, −4, 12)",
+          "value": "Matrix([6,-4,12])"
+        },
+        {
+          "key": "D",
+          "text": "(10, −4, 17)",
+          "value": "Matrix([10,-4,17])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "First the direction: $D = Q - O = (3, -2, 6)$. Then $O + 2D = (1, 2, -1) + (6, -4, 12) = (7, -2, 11)$.\n\n- A: $O + 2Q$ uses the endpoint as the direction.\n- C: $2D$ is the displacement, not the point.\n- D: $Q + 2D$ starts from the wrong point.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,2,-1])+2*(Matrix([4,0,5])-Matrix([1,2,-1]))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50073,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (2, −1), B = (8, 5). Which point is P(1/3) on the segment P(v) = A + v(B − A)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(4, 1)",
+          "value": "Matrix([4,1])"
+        },
+        {
+          "key": "B",
+          "text": "(6, 3)",
+          "value": "Matrix([6,3])"
+        },
+        {
+          "key": "C",
+          "text": "(2, 2)",
+          "value": "Matrix([2,2])"
+        },
+        {
+          "key": "D",
+          "text": "(10/3, 4/3)",
+          "value": "Matrix([Rational(10,3),Rational(4,3)])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "$B - A = (6, 6)$, so $A + \\tfrac13(6, 6) = (2, -1) + (2, 2) = (4, 1)$.\n\n- B: that is $v = \\tfrac23$.\n- C: $\\tfrac13(B - A)$ is the step, not the point.\n- D: $\\tfrac13(A + B)$ is not a point of this parametrization.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,-1])+Rational(1,3)*(Matrix([8,5])-Matrix([2,-1]))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50074,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A ray is P(s) = O + sD with O = (0, 0) and D = (2, −1). For which value of s is P(s) = (6, −3)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "1/3",
+          "value": "Rational(1,3)"
+        },
+        {
+          "key": "B",
+          "text": "6",
+          "value": "6"
+        },
+        {
+          "key": "C",
+          "text": "3",
+          "value": "3"
+        },
+        {
+          "key": "D",
+          "text": "−3",
+          "value": "-3"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "$sD = (2s, -s) = (6, -3)$ gives $s = 3$ from both components.\n\n- A: divides the wrong way round.\n- B: reads off the $x$ coordinate; the direction's $x$ step is 2, not 1.\n- D: $-3$ matches only the $y$ coordinate's value and flips the sign.",
+      "verify": {
+        "sympy": {
+          "truth": "Rational(6,2)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50075,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "P(s) = (1, 1) + s(2, −1), s ≥ 0. Is (−3, 3) on this ray?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Yes, at s = 2",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Yes, at s = −2",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "No: it is on the supporting line at s = −2, behind the origin",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "No: it is not on the supporting line at all",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "$(-3, 3) - (1, 1) = (-4, 2) = -2(2, -1)$, so the point is on the line at $s = -2$. A ray needs $s \\ge 0$, so it is behind the origin and not on the ray.\n\n- A: $s = 2$ gives $(5, -1)$.\n- B: $s = -2$ is the right parameter, but a negative one is off the ray.\n- D: both components agree on $s = -2$, so it is on the line.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50076,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A four-pixel camera includes both y-limits −3 and 3 at x = 1, equally spaced. What is the direction-y coordinate of pixel i = 2 (counting from i = 0)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "0",
+          "value": "0"
+        },
+        {
+          "key": "B",
+          "text": "1",
+          "value": "1"
+        },
+        {
+          "key": "C",
+          "text": "3",
+          "value": "3"
+        },
+        {
+          "key": "D",
+          "text": "−1",
+          "value": "-1"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Four points have three gaps: spacing $2L/(n-1) = 6/3 = 2$. So $y_2 = -3 + 2\\cdot 2 = 1$; the full list is $-3, -1, 1, 3$.\n\n- A: divides by $n = 4$ instead of $n - 1 = 3$.\n- C: that is pixel $i = 3$, the last one.\n- D: that is pixel $i = 1$.",
+      "verify": {
+        "sympy": {
+          "truth": "-3+2*Rational(6,3)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50077,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (0, 4, 2), B = (6, −2, 8). Which v puts A + v(B − A) at (4, 0, 6)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "3/2",
+          "value": "Rational(3,2)"
+        },
+        {
+          "key": "B",
+          "text": "1/3",
+          "value": "Rational(1,3)"
+        },
+        {
+          "key": "C",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "D",
+          "text": "2/3",
+          "value": "Rational(2,3)"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "$(4, 0, 6) - A = (4, -4, 4)$ and $B - A = (6, -6, 6)$. The first is $\\tfrac23$ of the second in every component, so $v = \\tfrac23$.\n\n- A: divides the wrong way round.\n- B: that is the weight on $A$, $1 - v$.\n- C: reads off the $x$ coordinate without dividing by the step.",
+      "verify": {
+        "sympy": {
+          "truth": "Rational(4,6)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50078,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "make_rays_1d(num_pixels=5, y_limit=2) stores ray i as [[0, 0, 0], [1, y_i, 0]], with y_i from −2 to 2. Where does ray i = 3 reach x = 4?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(4, 1, 0)",
+          "value": "Matrix([4,1,0])"
+        },
+        {
+          "key": "B",
+          "text": "(4, 4, 0)",
+          "value": "Matrix([4,4,0])"
+        },
+        {
+          "key": "C",
+          "text": "(4, 3, 0)",
+          "value": "Matrix([4,3,0])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 4, 0)",
+          "value": "Matrix([1,4,0])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Five points from $-2$ to $2$ are $-2, -1, 0, 1, 2$, so $y_3 = 1$ and $D = (1, 1, 0)$. With $D_x = 1$, $x = 4$ needs $s = 4$: $4D = (4, 4, 0)$.\n\n- A: moves $x$ but leaves $y$ at the direction's value.\n- C: uses the index $i = 3$ as the $y$ value.\n- D: swaps the parameter into the wrong component.",
+      "verify": {
+        "sympy": {
+          "truth": "4*Matrix([1,1,0])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50079,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-geometry.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "difficulty_score": 65,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A camera stores ray i's direction as [1, y_i, 0]. A second version stores [2, 2y_i, 0] instead, same origins. What changes about where each ray hits a wall?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.ray-geometry",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Every hit point moves twice as far away",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "The rays now spread twice as wide",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Nothing: both the hit points and their s values are unchanged",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Same hit points; each hit's s value halves",
+          "value": null
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "$[2, 2y_i, 0] = 2[1, y_i, 0]$: the same direction, twice as long. The ray covers the same points, so every hit point is unchanged, but reaching one takes half the parameter: $O + sD = O + \\tfrac{s}{2}(2D)$.\n\n- A: a direction's length changes the parameter, not the points.\n- B: the ratio $y/x$ is unchanged, so the spread is the same.\n- C: the points match, the parameters do not.",
+      "verify": null,
+      "hint": null
+    }
   }
 ]

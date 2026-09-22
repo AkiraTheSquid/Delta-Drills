@@ -22963,5 +22963,85 @@
   "supporting_kcs": [],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50072": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50073": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50074": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50075": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50076": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50077": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50078": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50079": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }
