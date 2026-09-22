@@ -74,6 +74,40 @@
     });
   }
 
+  /* A LESSON NAMES ITS OWN CONCEPT, and the q-matrix cannot answer for it.
+   *
+   * `updateGraphJump` maps a QUESTION id through `qmatrix_tags.json`, and it
+   * is called from renderQuestion — which does not run while a lesson screen
+   * is up (practice/lessons.js draws into `#question-text` itself and the
+   * question is rendered only on Continue). So on a lesson this row was
+   * hidden, or worse, still pointing at the previous question's concept.
+   *
+   * The lesson has no such ambiguity: it IS one KC, and it knows which.
+   * Nothing is looked up, so nothing can disagree — which also means the
+   * auditing this file exists for is untouched, since there is no mapping
+   * here to audit. Seth, 2026-09-22: the three-dots menu should take you to
+   * the concept in the knowledge graph on a lesson the way it does elsewhere.
+   */
+  function setGraphJumpKc(kc, label) {
+    var btn = document.getElementById("practice-graph-jump");
+    if (!btn) return;
+    if (!kc) { clearGraphJumpKc(); return; }
+    currentKcs = [kc];
+    btn.hidden = false;
+    btn.textContent = "See in knowledge graph";
+    btn.classList.remove("is-untagged");
+    btn.title = "Open “" + (label || kc) + "” in the knowledge graph — the concept this lesson teaches.";
+  }
+
+  /* Hand the row back to the question side. Hidden rather than left pointing
+   * at the lesson: the next renderQuestion will set it from the q-matrix, and
+   * between the two there is no concept this button is about. */
+  function clearGraphJumpKc() {
+    var btn = document.getElementById("practice-graph-jump");
+    currentKcs = [];
+    if (btn) btn.hidden = true;
+  }
+
   function onClick() {
     if (typeof switchTab === "function") switchTab("knowledge-graph");
     // Untagged question: open the map with nothing focused. Seeing the graph
@@ -94,4 +128,6 @@
   });
 
   window.updateGraphJump = updateGraphJump;
+  window.setGraphJumpKc = setGraphJumpKc;
+  window.clearGraphJumpKc = clearGraphJumpKc;
 })();

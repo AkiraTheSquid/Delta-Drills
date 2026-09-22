@@ -66,6 +66,7 @@ from watch_notebook import (
     check_the_verdict_line_is_read_the_same_way_everywhere,
 )
 from watch_lessons import (
+    check_a_lesson_page_is_on_a_clock_you_can_pause,
     check_a_resumed_clock_matches_the_break,
     check_colab_lesson_goes_to_the_notebook,
     check_lesson_code_can_actually_run,
@@ -646,6 +647,7 @@ if __name__ == '__main__':
               check_a_resumed_clock_matches_the_break,
               check_the_clock_is_the_problems_own,
               check_the_gate_teaches_one_concept_then_drills_it,
+              check_a_lesson_page_is_on_a_clock_you_can_pause,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
               check_no_cell_asks_for_more_time_than_the_kernel_allows,

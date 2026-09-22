@@ -445,3 +445,101 @@ def check_no_cell_asks_for_more_time_than_the_kernel_allows():
 
 
 # ── Run all checks ────────────────────────────
+
+
+def check_a_lesson_page_is_on_a_clock_you_can_pause():
+    """A lesson screen carries a clock, and the notch can put it down.
+
+    Seth, 2026-09-22: "a limit of 15 minutes to look at each lesson … so that
+    you don't get stuck on a lesson for too long", plus the square and the
+    three-dots menu working there "just like it has for the exercises".
+
+    Four things have to hold together or the feature is quietly half-present,
+    and none of them announces itself when it breaks:
+
+    1. The page STARTS a clock. `showPage` is the one place a lesson page is
+       drawn, so a lesson whose clock is not started there has no clock at all.
+    2. Expiry presses the page's OWN Continue. The button writes exposure,
+       credits the `worked` rung and either draws the next concept or hands the
+       drill back; a second implementation here would teach a KP the ladder
+       never heard about (the `worked`/`kc_exposure` split that has bitten this
+       gate before).
+    3. The notch ranks the lesson clock ABOVE the session. Both are true at
+       once during a lesson — the session row is unhidden and its countdown
+       reads `--:--` because the gate runs in the `loading` phase — so ranking
+       the session first puts a blank clock over a page that is counting.
+    4. `pauseFromLesson` gives the waiting drill its own allowance. `remaining`
+       at that moment is the LAST question's leftover, and `_resumeCore` starts
+       the resumed clock on whatever the snapshot says.
+    """
+    lessons = read(os.path.join(HERE, 'lessons.js'))
+    show = lessons.split('const showPage = () => {', 1)[-1]
+    assert 'LessonTimer?.start?.(' in show, (
+        "showPage draws a lesson page without starting its clock — practice/"
+        "lesson-timer.js is what stops a learner sitting on one screen all "
+        "afternoon, and a page that never starts it has no limit at all"
+    )
+    assert 'setGraphJumpKc' in show, (
+        "the lesson does not name its concept to the notch's graph row — "
+        "updateGraphJump runs from renderQuestion, which does not run while a "
+        "lesson is up, so the row stays on the PREVIOUS question's concept"
+    )
+
+    timer = read(os.path.join(HERE, 'lesson-timer.js'))
+    assert 'LESSON_SECS = 15 * 60' in timer, (
+        "the lesson budget is no longer fifteen minutes per page"
+    )
+    expire = timer.split('const _expire = () => {', 1)[-1].split('\n  };', 1)[0]
+    assert 'onExpire' in expire and 'exposure' not in expire.lower(), (
+        "the lesson clock records something of its own on expiry — running out "
+        "must press the page's own Continue and nothing else, or a timed-out "
+        "lesson and a read one stop being the same event"
+    )
+
+    notch = read(os.path.join(HERE, 'notch-menu.js'))
+    target = notch.split('function _pauseTarget() {', 1)[-1].split('}', 1)[0]
+    lesson_at = target.find('_lessonOnClock')
+    session_at = target.find('_sessionOpen')
+    assert lesson_at != -1, (
+        "the notch's pause square has no lesson target — #session-pause-btn is "
+        "disabled for the whole of a lesson (phase 'loading'), so without this "
+        "the square is grey on every lesson screen"
+    )
+    assert lesson_at < session_at, (
+        "the notch prefers the session's clock to the lesson's; during a lesson "
+        "the session countdown reads '--:--', so this shows a blank clock over "
+        "a page that is counting down"
+    )
+
+    session = read(os.path.join(HERE, 'timer.js'))
+    assert 'pauseFromLesson' in session, (
+        "practice/timer.js has no lesson pause — pause() refuses the 'loading' "
+        "phase a lesson screen runs in"
+    )
+    body = session.split('const pauseFromLesson = () => {', 1)[-1].split('\n  };', 1)[0]
+    assert 'remaining = _answerSecsFor()' in body, (
+        "pausing from a lesson saves the LAST question's leftover clock; the "
+        "drill behind the lesson has not started and is owed its allowance whole"
+    )
+    assert 'state.served += 1' in body, (
+        "pausing from a lesson saves a question count one short — the resume "
+        "path renders while the session is still paused, so onQuestionRendered "
+        "takes its paused branch and never bumps it"
+    )
+
+    assert 'visibilitychange' in timer, (
+        "the lesson clock keeps counting behind a hidden tab — expiry presses "
+        "Continue, so a learner who stepped away comes back to a lesson marked "
+        "read, at whatever moment a throttled background interval fired"
+    )
+    assert 'LessonTimer?.forget?.()' in session, (
+        "discard() does not drop the lesson record — pausing from a lesson ends "
+        "with stop({clearSaved:false}), so stop() finds nothing live and returns; "
+        "the discarded session's lesson comes back on its shortened clock"
+    )
+
+    index = read(os.path.join(SHARED, 'index.html'))
+    assert 'practice/lesson-timer.js' in index, (
+        "index.html does not load practice/lesson-timer.js — every call into it "
+        "is optional-chained, so the lessons simply go back to being untimed"
+    )

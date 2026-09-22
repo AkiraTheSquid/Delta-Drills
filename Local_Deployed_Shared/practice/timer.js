@@ -752,6 +752,60 @@ const PracticeSession = (() => {
     _showResumeOption();
   };
 
+  /* PAUSE FROM A LESSON SCREEN, 2026-09-22.
+
+     `pause()` refuses every phase but answer and review, and a lesson screen
+     is neither: the gate runs BETWEEN questions, so the session sits in
+     `loading` with `#session-countdown` blank and `#session-pause-btn` greyed
+     behind "Pause becomes available when this short step finishes". That is
+     the whole of why the notch's square was dead on every lesson — Seth,
+     2026-09-22: "whenever you're on a lesson, you need to have the ability to
+     pause".
+
+     There is something real to save. The drill the gate is holding back is
+     already `PracticeAPI.currentQuestion`, so `_snapshot()` names it and its
+     concept, and `resume()` re-shows the lesson before handing it over. Two
+     fields have to be corrected first, because this is a moment `pause()` was
+     never written for:
+
+       • THE CLOCK. `remaining` still holds whatever was left of the LAST
+         question when it was submitted. The drill behind this lesson has not
+         started and is owed its own allowance whole — and nothing else would
+         ever set it, because the resume path renders while the session is
+         still paused and `onQuestionRendered` therefore takes its paused
+         branch. `_resumeCore` reads this number and starts the clock on it.
+       • THE COUNT. `served` is bumped at render for the same reason, so the
+         snapshot has to carry the number this question WILL have or the
+         progress readout comes back one short.
+
+     The lesson's own fifteen minutes are stopped and saved by
+     practice/lesson-timer.js before this is called; that record is keyed per
+     lesson page in localStorage, so the re-shown lesson picks up the time it
+     had left rather than a fresh clock. */
+  const pauseFromLesson = () => {
+    if (!isActive()) return false;
+    if (!document.body.classList.contains("lesson-mode")) return false;
+    _stopTick();
+    _stopPoll();
+    clockHolds.clear();
+    remaining = _answerSecsFor();
+    state.served += 1;
+    state.phase = "answer";
+    state.review = null;
+    pause();
+    // `pause()` clears `state`; anything else means it refused after all.
+    if (isActive()) return false;
+    /* 🔴 AND THE SCREEN IS NOT A LESSON ANY MORE. `LessonGate._cleanup` is what
+       normally drops this class, and it does not run on a pause — the gate is
+       still holding the column, behind an idle screen that hides it. Left set,
+       it outlives the resume whenever the gate declines to re-show (an
+       already-exposed KC returns false before it ever touches the class), and
+       `_draft()` then answers "" for the rest of the block: every later pause
+       would save the learner's code as empty. */
+    document.body.classList.remove("lesson-mode");
+    return true;
+  };
+
   /* Put the saved question back on screen. The paused snapshot stores only the
      id, but the static question bank is complete in BOTH modes (backend mode
      still ships questions.json for offline grading), so the question can always
@@ -973,6 +1027,15 @@ const PracticeSession = (() => {
     resumeReady = false;
     sessionConfig = null;
     window.KcPractice?.stop?.();
+    /* The discarded session may have been paused on a LESSON page, and that
+       page's clock is a separate record (practice/lesson-timer.js). Left
+       behind, the lesson comes back on its shortened clock for a block nobody
+       is waiting on any more. 🔴 `forget()`, not `stop()`: pausing a session
+       from a lesson deliberately keeps the record with no live clock behind
+       it, and `stop()` returns on the spot when nothing is live — which is
+       how the record survived a discard (codex, 2026-09-22). */
+    window.LessonTimer?.forget?.();
+    document.body.classList.remove("lesson-mode");
     _showResumeOption();
     if (dropped) window.ExerciseSession?.onEnd?.("discarded", 0, dropped);
     sessionSummary.textContent = "Saved session discarded. Set up a new block when you're ready.";
@@ -1175,6 +1238,7 @@ const PracticeSession = (() => {
     configure,
     start,
     pause,
+    pauseFromLesson,
     resume,
     discard,
     hasSavedQuestion,
