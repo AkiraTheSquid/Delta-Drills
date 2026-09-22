@@ -24,9 +24,12 @@ All other dimension sizes must match exactly; the chosen axis simply adds up. Th
 import torch as t
 
 pair = [t.tensor([[1, 2]]), t.tensor([[3, 4]])]
-print("dim=0 (taller):", t.cat(pair, dim=0).shape, t.cat(pair, dim=0).tolist())
-print("dim=1 (wider): ", t.cat(pair, dim=1).shape, t.cat(pair, dim=1).tolist())
-print("vstack is dim=0:", t.equal(t.vstack(pair), t.cat(pair, dim=0)))
+print("dim=0 (taller):", t.cat(pair, dim=0).shape,
+      t.cat(pair, dim=0).tolist())
+print("dim=1 (wider): ", t.cat(pair, dim=1).shape,
+      t.cat(pair, dim=1).tolist())
+print("vstack is dim=0:",
+      t.equal(t.vstack(pair), t.cat(pair, dim=0)))
 # Hidden checks
 assert _delta_output == 'dim=0 (taller): torch.Size([2, 2]) [[1, 2], [3, 4]]\ndim=1 (wider):  torch.Size([1, 4]) [[1, 2, 3, 4]]\nvstack is dim=0: True\n'
 ```
@@ -43,7 +46,8 @@ a = t.tensor([[1.0, 2.0],
 b = t.tensor([[5.0, 6.0],
               [7.0, 8.0]])
 
-# Grow axis 0 (rows below) vs axis 1 (columns to the right)
+# Grow axis 0 (rows below) vs axis 1 (columns to the
+# right)
 v = t.vstack([a, b])
 h = t.hstack([a, b])
 print("vstack shape:", tuple(v.shape))
@@ -242,10 +246,12 @@ import torch as t
 x = t.tensor([1, 3, 5])
 y = t.tensor([2, 4, 6])
 
-# Solution Version 1: Pair columns, then unroll row-major
+# Solution Version 1: Pair columns, then unroll
+# row-major
 sol1 = t.column_stack((x, y)).ravel()
 
-# Solution Version 2: Preallocate and assign with stride 2
+# Solution Version 2: Preallocate and assign with
+# stride 2
 sol2 = t.empty(len(x) + len(y), dtype=x.dtype)
 sol2[0::2] = x
 sol2[1::2] = y

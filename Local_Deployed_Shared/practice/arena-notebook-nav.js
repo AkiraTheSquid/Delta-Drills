@@ -220,12 +220,21 @@ const ArenaNotebookNav = (() => {
     contents = cells;
     rail = document.createElement("nav");
     rail.className = "anb-toc";
-    rail.setAttribute("aria-label", "Notebook contents");
+    /* 🪦 THE PANEL'S OWN TITLE ROW IS DELETED (Seth, 2026-09-22: "not
+       have that thing at the top left"). It restated the notebook's own h1 —
+       which is on screen, two inches to the right — and because the panel is
+       revealed by a pointer passing through the margin, the first thing the
+       tree showed was a line you could not act on. The notebook's name is not
+       lost: it is the rail's accessible name now, so a screen reader still
+       hears WHICH notebook's contents these are, and nothing paints for it. */
+    rail.setAttribute(
+      "aria-label",
+      titleText ? `${titleText} — contents` : "Notebook contents",
+    );
     rail.innerHTML =
       '<div class="anb-toc-hit" aria-hidden="true"></div>' +
       '<button type="button" class="anb-toc-toggle" aria-label="Notebook contents" aria-expanded="false">☰</button>' +
       '<div class="anb-toc-panel">' +
-      `<div class="anb-toc-title">${esc(titleText)}</div>` +
       '<ol class="anb-toc-rows"></ol>' +
       "</div>";
     list = rail.querySelector(".anb-toc-rows");

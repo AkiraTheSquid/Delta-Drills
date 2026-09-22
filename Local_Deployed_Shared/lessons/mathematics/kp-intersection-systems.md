@@ -26,7 +26,8 @@ First solve the supporting lines. Then require u ≥ 0 and 0 ≤ v ≤ 1. Solvin
 
 ```python
 column_1, column_2, u, v = (2, 1), (1, -3), 3, 2
-product = tuple(u * column_1[i] + v * column_2[i] for i in range(2))
+product = tuple(u * column_1[i] + v * column_2[i]
+                for i in range(2))
 print(product)
 # Hidden checks
 assert product == (8, -3)
@@ -41,7 +42,8 @@ Let O = (1, 0), D = (2, 1), A = (5, −1), B = (5, 5). The x-equation is 2u = 4,
 o, d, a, b = (1, 0), (2, 1), (5, -1), (5, 5)
 u, v = 2, 0.5
 ray_point = tuple(o[i] + u * d[i] for i in range(2))
-segment_point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))
+segment_point = tuple(a[i] + v * (b[i] - a[i])
+                      for i in range(2))
 print(ray_point, segment_point)
 # Hidden checks
 assert ray_point == segment_point == (5, 2)

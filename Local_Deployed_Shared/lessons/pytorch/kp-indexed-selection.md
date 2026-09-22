@@ -33,7 +33,8 @@ A batch of three examples has logits for four classes, and `y` holds the true cl
 
 ```python
 import torch as t
-logits=t.tensor([[1.,5.,2.,0.],[3.,1.,4.,1.],[0.,0.,2.,9.]])
+logits=t.tensor([[1.,5.,2.,0.],[3.,1.,4.,1.],
+                 [0.,0.,2.,9.]])
 y=t.tensor([1,2,3])
 true_scores=logits[t.arange(3),y]
 print(true_scores)

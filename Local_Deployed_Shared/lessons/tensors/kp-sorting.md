@@ -16,8 +16,10 @@ sorted values and the indices that produced them — and forgetting that is the
 mistake this KP exists to prevent:
 
 ```python no-run
-t.sort(z)          # -> torch.return_types.sort(values=..., indices=...)
-t.sort(z).values   # the sorted tensor you actually wanted
+# -> torch.return_types.sort(values=..., indices=...)
+t.sort(z)
+# the sorted tensor you actually wanted
+t.sort(z).values
 ```
 
 ```python
@@ -69,15 +71,19 @@ import torch as t
 
 z = t.tensor([0.5, 0.25, 0.75])
 
-# sort returns a PAIR — take .values for the sorted tensor.
+# sort returns a PAIR — take .values for the sorted
+# tensor.
 result = t.sort(z)
 
-# The input keeps its original order (the grader often checks this).
+# The input keeps its original order (the grader often
+# checks this).
 
-# Descending is a keyword here — no reverse step needed.
+# Descending is a keyword here — no reverse step
+# needed.
 desc = t.sort(z, descending=True).values
 
-# Unpacking works too, and reads well when you want both halves.
+# Unpacking works too, and reads well when you want
+# both halves.
 values, indices = t.sort(z)
 print("input     ", z)
 print("values    ", values)
@@ -180,7 +186,8 @@ same items. Sorting them separately is the bug this pattern prevents:
 
 ```python
 broken = t.sort(ids, descending=True).values
-print("independently sorted ids:", broken, "— no longer paired with anything")
+print("independently sorted ids:", broken,
+      "— no longer paired with anything")
 # Hidden checks
 assert t.equal(scores[order], t.sort(scores, descending=True).values)
 ```
@@ -193,16 +200,19 @@ import torch as t
 names = t.tensor([10, 20, 30])
 scores = t.tensor([0.5, 0.25, 0.75])
 
-# The positions that WOULD sort scores ascending — not the values.
+# The positions that WOULD sort scores ascending — not
+# the values.
 order = t.argsort(scores)
 
-# Index both tensors with the SAME order and they stay in correspondence.
+# Index both tensors with the SAME order and they stay
+# in correspondence.
 
 # argsort takes the same direction keyword sort does.
 best_first = t.argsort(scores, descending=True)
 print("scores       ", scores, " names", names)
 print("best-first   ", best_first)
-print("names ranked ", names[best_first], " scores", scores[best_first])
+print("names ranked ", names[best_first], " scores",
+      scores[best_first])
 # Hidden checks
 assert order.tolist() == [1, 0, 2]
 assert scores[order].tolist() == [0.25, 0.5, 0.75]
@@ -302,20 +312,25 @@ import torch as t
 
 m = t.tensor([[3.0, 1.0, 2.0], [9.0, 7.0, 8.0]])
 
-# dim=1 sorts WITHIN each row, independently of the other rows.
+# dim=1 sorts WITHIN each row, independently of the
+# other rows.
 
 # dim=0 does the same down the columns.
 
-# argsort takes the same dim= keyword, and answers with positions not values.
+# argsort takes the same dim= keyword, and answers
+# with positions not values.
 
-# ...and the same descending= keyword you met a segment ago.
+# ...and the same descending= keyword you met a
+# segment ago.
 z = t.tensor([0.5, 0.25, 0.75, 0.125])
 
-# topk: the k largest, largest first — a pair again, so take .values.
+# topk: the k largest, largest first — a pair again,
+# so take .values.
 top = t.topk(z, 2)
 print("dim=1 (within rows)")
 print(t.sort(m, dim=1).values)
-print("dim=0 (down columns) — unchanged, columns were already ascending")
+print("dim=0 (down columns) — unchanged,"
+      " columns were already ascending")
 print(t.sort(m, dim=0).values)
 print("topk:", top)
 # Hidden checks

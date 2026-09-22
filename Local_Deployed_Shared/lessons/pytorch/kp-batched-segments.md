@@ -150,7 +150,8 @@ The reason to reduce last is that every ingredient of the verdict — the validi
 
 ```python
 import torch as t
-hits=t.tensor([[False,True,False],[False,False,False]])
+hits=t.tensor([[False,True,False],
+               [False,False,False]])
 print(hits.any(dim=1),hits.any(dim=0))
 # Hidden checks
 assert hits.any(1).tolist()==[True,False] and hits.any(0).tolist()==[False,True,False]
@@ -162,7 +163,8 @@ We reduce a `(3, 2)` hit table both ways. Three rays, two segments: the first ra
 
 ```python
 import torch as t
-hits=t.tensor([[True,False],[True,True],[False,False]])
+hits=t.tensor([[True,False],[True,True],
+               [False,False]])
 print(hits.sum(dim=1))
 # Hidden checks
 assert hits.sum(1).tolist()==[1,2,0]

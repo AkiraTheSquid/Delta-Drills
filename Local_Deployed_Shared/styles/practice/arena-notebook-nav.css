@@ -76,16 +76,11 @@
   transform: none;
 }
 
-.anb-toc-title {
-  color: var(--text);
-  font-size: calc(15.08px * var(--anb-zoom, 1));
-  font-weight: 600;
-  line-height: 1.3;
-  overflow: hidden;
-  padding: 2px 8px 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* 🪦 `.anb-toc-title` — the notebook's name across the top of the panel —
+   is DELETED (Seth, 2026-09-22). It repeated the h1 the reading column already
+   shows, and it was the only thing in the tree that was not a destination. The
+   name lives on as the rail's aria-label; see practice/arena-notebook-nav.js.
+   The panel's own top padding is what holds the first row off the topbar. */
 
 .anb-toc-rows {
   list-style: none;

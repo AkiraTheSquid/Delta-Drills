@@ -19,7 +19,9 @@ The reason the sum constraint is needed is that `u ≤ 1` and `v ≤ 1` on their
 
 ```python
 import torch as t
-a=t.tensor([2.,0.,0.]); b=t.tensor([2.,4.,0.]); c=t.tensor([2.,0.,4.])
+a=t.tensor([2.,0.,0.]); b=t.tensor([2.,4.,
+                                    0.]); c=t.tensor([
+    2.,0.,4.])
 p=a+.25*(b-a)+.5*(c-a)
 print(p)
 # Hidden checks
@@ -109,7 +111,8 @@ We assemble the system for a ray from the origin along `+x` and a triangle stand
 ```python
 import torch as t
 o=t.tensor([0.,0.,0.]); d=t.tensor([1.,0.,0.])
-a=t.tensor([3.,-1.,-1.]); b=t.tensor([3.,1.,-1.]); c=t.tensor([3.,-1.,1.])
+a=t.tensor([3.,-1.,-1.]); b=t.tensor([
+    3.,1.,-1.]); c=t.tensor([3.,-1.,1.])
 m=t.stack((-d,b-a,c-a),dim=1)
 print(m)
 # Hidden checks

@@ -50,7 +50,8 @@ a tuple, whichever reads better:
 import torch as t
 
 print(t.rand(2, 3).shape)      # loose integers
-print(t.rand((2, 3)).shape)    # the same shape as a tuple
+# the same shape as a tuple
+print(t.rand((2, 3)).shape)
 print(t.randn(4).shape)        # 1-D, four numbers
 # Hidden checks
 assert _delta_output == 'torch.Size([2, 3])\ntorch.Size([2, 3])\ntorch.Size([4])\n'
@@ -128,19 +129,23 @@ that are true on every run.
 ```python
 import torch as t
 
-# Uniform: shape you asked for, floats, every value in [0, 1).
+# Uniform: shape you asked for, floats, every value in
+# [0, 1).
 u = t.rand(2, 3)
 print("uniform:", u)
 
-# Normal: same shape rules, same dtype, but NOT bounded to [0, 1).
+# Normal: same shape rules, same dtype, but NOT
+# bounded to [0, 1).
 g = t.randn(2, 3)
 print("normal :", g)
 
-# Ints: the range comes first, the SHAPE third, and the dtype is integral.
+# Ints: the range comes first, the SHAPE third, and
+# the dtype is integral.
 i = t.randint(0, 10, (5,))
 print("ints   :", i)
 
-# Permutation: a count, not a shape — and every value appears exactly once.
+# Permutation: a count, not a shape — and every value
+# appears exactly once.
 p = t.randperm(5)
 print("perm   :", p)
 # Hidden checks

@@ -148,7 +148,8 @@ back_to_text = str(as_int)
 print(as_int, type(as_int).__name__)
 print(as_float, type(as_float).__name__)
 print(back_to_text, type(back_to_text).__name__)
-print("the original is untouched:", text, type(text).__name__)
+print("the original is untouched:", text,
+      type(text).__name__)
 # Hidden checks
 assert _delta_output == '12 int\n12.0 float\n12 str\nthe original is untouched: 12 str\n'
 ```

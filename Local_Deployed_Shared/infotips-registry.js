@@ -101,7 +101,7 @@ window.DD_INFOTIPS = {
   },
   "kg-legend": {
     title: "Legend",
-    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Sections</strong> asks whether ARENA's own curriculum tests a concept: the vivid colours are section 0.0 and 0.1, where an exercise the ARENA authors wrote covers it, and the muted ones are our run-up to them &mdash; &minus;1.0 Python, &minus;1.1 arrays, einops and tensors. <strong>Categories</strong> is the subject instead: broadcasting, einops, einsum, ray tracing. A subject can straddle a section, so the two are separate readings rather than one nested inside the other.",
+    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Sections</strong> asks whether ARENA's own curriculum tests a concept: the vivid colours are section 0.0 and 0.1, where an exercise the ARENA authors wrote covers it, and the muted ones are our run-up to them &mdash; &minus;1.0 Python, &minus;1.1 arrays, einops and tensors, &minus;1.2 the maths underneath. <strong>Categories</strong> is the subject instead &mdash; ten families in five areas: maths; Python; tensors (foundations, indexing, and broadcasting/matmul); einops and einsum; and ARENA's own material (tensor reasoning, ray tracing, CNNs). <strong>Math / code</strong> is the coarsest cut of all: rose for the concepts you reason out on paper, blue for the ones you type. A subject can straddle a section, so these are separate readings rather than one nested inside another.",
   },
   "kg-info": {
     title: "Concept detail",

@@ -39,7 +39,8 @@ Two rays each have three candidate crossings. A hit needs both solver validity a
 
 ```python
 valid = [[False, True, True], [True, True, False]]
-within_bounds = [[True, False, False], [False, True, True]]
+within_bounds = [[True, False, False],
+                 [False, True, True]]
 hits = [any(v and h for v, h in zip(vrow, hrow))
         for vrow, hrow in zip(valid, within_bounds)]
 print(hits)

@@ -67,7 +67,8 @@ import torch as t
 
 x = t.tensor([1, 2, 3])
 
-# .to() returns a NEW tensor with converted values; x is untouched.
+# .to() returns a NEW tensor with converted values; x
+# is untouched.
 y = x.to(t.float32)
 print("x", x, x.dtype)
 print("y", y, y.dtype)
@@ -171,7 +172,8 @@ import torch as t
 
 name = 'float32'
 
-# PyTorch wants the dtype OBJECT, so look it up from the name.
+# PyTorch wants the dtype OBJECT, so look it up from
+# the name.
 z = t.arange(3, dtype=getattr(t, name))
 print(repr(name), "->", getattr(t, name), "->", z)
 # Hidden checks
@@ -238,8 +240,10 @@ import torch as t
 grid = t.zeros((10, 10))
 for dtype in (t.float64, t.float32, t.int16, t.bool):
     z = grid.to(dtype)
-    print(f"{str(dtype):15} {z.numel()} x {z.element_size()} = "
-          f"{z.numel() * z.element_size()} bytes")
+    print(
+        f"{str(dtype):15} {z.numel()} x {
+        z.element_size()} = " f"{
+        z.numel() * z.element_size()} bytes")
 # Hidden checks
 assert _delta_output == 'torch.float64   100 x 8 = 800 bytes\ntorch.float32   100 x 4 = 400 bytes\ntorch.int16     100 x 2 = 200 bytes\ntorch.bool      100 x 1 = 100 bytes\n'
 ```
@@ -247,10 +251,13 @@ assert _delta_output == 'torch.float64   100 x 8 = 800 bytes\ntorch.float32   10
 Same 100 numbers, an 8× spread in what they cost:
 
 ```python
-print("float64 is exactly", grid.to(t.float64).element_size(), "bytes/element,",
-      "float32", grid.to(t.float32).element_size())
+print("float64 is exactly",
+      grid.to(t.float64).element_size(),
+      "bytes/element,", "float32",
+      grid.to(t.float32).element_size())
 print("100 float32 elements =",
-      grid.to(t.float32).numel() * grid.to(t.float32).element_size(), "bytes")
+      grid.to(t.float32).numel() * grid.to(
+    t.float32).element_size(), "bytes")
 # Hidden checks
 assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
 assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
@@ -261,9 +268,11 @@ assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
 ```python
 import torch as t
 
-x = t.tensor([1, 2, 3])             # int64: 8 bytes each
+# int64: 8 bytes each
+x = t.tensor([1, 2, 3])
 
-# float32 elements are 4 bytes, so the converted copy is half the size.
+# float32 elements are 4 bytes, so the converted copy
+# is half the size.
 y = x.to(t.float32)
 print(x.dtype, x.numel() * x.element_size(), "bytes")
 print(y.dtype, y.numel() * y.element_size(), "bytes")

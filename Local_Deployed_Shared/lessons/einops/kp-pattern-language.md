@@ -52,13 +52,17 @@ time-first — with one-element verification.
 import torch as t
 import einops
 
-arr = t.arange(24).reshape(2, 2, 2, 3)      # (b, h, w, c) channels-LAST
+# (b, h, w, c) channels-LAST
+arr = t.arange(24).reshape(2, 2, 2, 3)
 
-# Name the four axes; emit them with c pulled to the front block.
+# Name the four axes; emit them with c pulled to the
+# front block.
 first = einops.rearrange(arr, 'b h w c -> b c h w')
-# Track one element: input (b=1, h=0, w=1, c=2) must land at (1, 2, 0, 1).
+# Track one element: input (b=1, h=0, w=1, c=2) must
+# land at (1, 2, 0, 1).
 
-print("channels-last", tuple(arr.shape), "-> channels-first", tuple(first.shape))
+print("channels-last", tuple(arr.shape),
+      "-> channels-first", tuple(first.shape))
 # Hidden checks
 assert first.shape == (2, 3, 2, 2)
 assert arr[1, 0, 1, 2] == first[1, 2, 0, 1]
@@ -71,10 +75,12 @@ import torch as t
 import einops
 
 # Sequence layout swap: batch-first -> time-first.
-seq = t.arange(12).reshape(2, 3, 2)         # (b, t, d)
+# (b, t, d)
+seq = t.arange(12).reshape(2, 3, 2)
 tfirst = einops.rearrange(seq, 'b t d -> t b d')
 
-print("batch-first", tuple(seq.shape), "-> time-first", tuple(tfirst.shape))
+print("batch-first", tuple(seq.shape),
+      "-> time-first", tuple(tfirst.shape))
 # Hidden checks
 assert tfirst.shape == (3, 2, 2)
 assert seq[1, 2, 0] == tfirst[2, 1, 0]
@@ -86,16 +92,20 @@ Finally, the pattern is an EXPECTATION about the input, and einops enforces it.
 import torch as t
 import einops
 
-# The pattern is checked against reality: wrong axis count = loud error.
+# The pattern is checked against reality: wrong axis
+# count = loud error.
 try:
-    einops.rearrange(seq, 'b h w c -> b c h w')   # 3-D data, 4-name pattern
+    # 3-D data, 4-name pattern
+    einops.rearrange(seq, 'b h w c -> b c h w')
     raised = False
 except Exception as err:
     raised = True
-    print("4-name pattern on 3-D data ->", type(err).__name__)
+    print("4-name pattern on 3-D data ->",
+          type(err).__name__)
 
 print("element (1,0,1,2) moved to (1,2,0,1):",
-      arr[1, 0, 1, 2].item(), "==", first[1, 2, 0, 1].item())
+      arr[1, 0, 1, 2].item(), "==",
+      first[1, 2, 0, 1].item())
 # Hidden checks
 assert raised
 ```

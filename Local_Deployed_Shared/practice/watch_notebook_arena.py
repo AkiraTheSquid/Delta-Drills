@@ -81,6 +81,24 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
         "completed tree rows lost their green check"
     )
 
+    # 🪦 The panel's title row is DELETED (Seth, 2026-09-22: "not have
+    # that thing at the top left"). It restated the notebook's h1, which the
+    # reading column is already showing, so the first line of a tree revealed
+    # by a passing mouse was the one line in it you could not go anywhere
+    # from. The name is not dropped, it MOVES: it is the rail's accessible
+    # name, which is why both halves are asserted together — putting the div
+    # back would read the name out twice, and dropping the label leaves a
+    # screen reader with "Notebook contents" and no idea which notebook.
+    assert "anb-toc-title" not in nav and "anb-toc-title" not in css, (
+        "the contents panel has a visible title row again — it repeats the "
+        "notebook heading two inches to its right"
+    )
+    assert re.search(r'setAttribute\(\s*"aria-label",\s*\n?\s*titleText', nav), (
+        "the contents rail no longer names its notebook to a screen reader — "
+        "the visible title is gone, so the aria-label is the only place left "
+        "that says WHICH notebook these contents belong to"
+    )
+
     # Editing uses source state, not KaTeX-mutated rendered text. Cell changes
     # persist by notebook id and every structural edit rebuilds the heading tree.
     assert "arena-nb-md-editor" in view and "_ddMarkdown" in view, (
@@ -288,6 +306,85 @@ def check_a_contents_row_can_actually_be_clicked():
     )
     assert "window.scrollTo(" in nav and "JUMP_CLEARANCE" in nav, (
         "_jump no longer scrolls the document to the heading it names"
+    )
+
+
+def check_the_exercise_buttons_sit_above_the_cell_the_learner_types_in():
+    """Start-timer / Drill-prerequisites goes under the QUESTION, not under
+    the answer.
+
+    Seth, 2026-09-22: "it should show up below the problem statement and
+    question, rather than below any of your code cells ... sometimes it's just
+    not consistent." The inconsistency was that the block was inserted after
+    whichever cell the exercise's NAME was found in, and that cell is a
+    different thing in each chapter — a heading in 0.1/0.2, the answer stub in
+    0.0's A-I sections, a `(N)` tag above `display_soln_array_as_img(N)` in
+    0.0's image ops. Only the last of those put the buttons where the question
+    ends.
+
+    So the placement is DERIVED now: walk down from the anchor over the rest of
+    the statement and stop above the first cell the learner answers in. The
+    einops case is the one that proves it is not simply "after the prose" —
+    the target picture is drawn by a CODE cell that belongs to the question
+    ("that code block would go above the buttons"), so a rule that stopped at
+    the first code cell would put the buttons above the picture.
+    """
+    js = _live(read(os.path.join(HERE, "exercise-session.js")))
+    timer = _live(read(os.path.join(HERE, "exercise-timer.js")))
+
+    assert "_placeFor" in js and "beforebegin" in js, (
+        "the exercise block is pinned to its anchor cell again — whichever "
+        "cell carried the name decides where the buttons land, which is the "
+        "inconsistency this rule exists to remove"
+    )
+    # Signature-agnostic on purpose: the walk gained a `wanted` argument on
+    # 2026-09-22 and the check should follow the behaviour, not the arity.
+    place = js.split("const _placeFor = (", 1)
+    assert len(place) == 2, "exercise-session.js::_placeFor is gone"
+    body = place[1].split("\n  };", 1)[0]
+    assert "_isAnswerCell(node, table)" in body and "beforebegin" in body, (
+        "_placeFor no longer stops above the learner's own cell"
+    )
+    # 🔴 THE PICTURE IS PART OF THE QUESTION. A code cell is skipped unless it
+    # is the ANSWER; stopping at `nbv-code` would hoist the buttons above
+    # `display_soln_array_as_img(N)`, which is the thing the learner is being
+    # asked to reproduce.
+    assert 'contains("nbv-code")' not in body, (
+        "_placeFor stops at the first code cell — 0.0's target image is a code "
+        "cell, so the buttons would land above the question's own picture"
+    )
+    # 🔴 THE WALK IS BOUNDED BY BOUNDARIES, NOT BY A SIBLING BUDGET. A count
+    # spends itself on the disclosures the walk skips and on the blocks the
+    # walk itself injects, so the LONGEST questions — four hints and two
+    # blocks above the stub — are exactly the ones that run out and fall back
+    # to the anchor, which is the bug. codex, 2026-09-22.
+    assert "PLACE_LOOKAHEAD" not in js, (
+        "_placeFor is bounded by a sibling budget again — a long statement "
+        "exhausts it and the buttons fall back under the anchor"
+    )
+    assert "_ownersOf(node, table)" in body and "wanted" in body, (
+        "_placeFor no longer stops at the next exercise's own cell, so a "
+        "question with no answer cell of its own captures the next one's box"
+    )
+
+    answer = js.split("const _isAnswerCell = (cell, table) => {", 1)
+    assert len(answer) == 2, "exercise-session.js::_isAnswerCell is gone"
+    answer_body = answer[1].split("\n  };", 1)[0]
+    assert "ANSWER_RE" in answer_body and "_cellKeys(cell)" in answer_body, (
+        "an answer cell is recognised by only one of its two marks — ARENA "
+        "writes both `# Your code here` and a bare `def`/`class` stub"
+    )
+
+    # 🔴 AND THE CLOCK HAS TO KNOW. The block now sits ABOVE its own anchor for
+    # a code-cell exercise, so the anchor is the first node the end-of-exercise
+    # scan meets; left in the set it ends the exercise at the answer cell and
+    # focus mode hides the box the clock was started for.
+    end = timer.split("const _endCell = (block) => {", 1)
+    assert len(end) == 2, "exercise-timer.js::_endCell is gone"
+    end_body = end[1].split("\n  };", 1)[0]
+    assert "anchors.delete(source)" in end_body, (
+        "_endCell can stop on the block's OWN anchor again — the exercise "
+        "would end at the cell the learner types in, and focus mode would hide it"
     )
 
 

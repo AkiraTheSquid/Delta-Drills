@@ -30,8 +30,10 @@ import torch as t
 
 x = t.zeros((3, 4))
 x[:, 1] = 3.0                 # scalar → whole column
-x[0] = t.arange(4)            # 1-D of length 4 → one row
-x[1:, 2:] = t.ones((2, 2))    # block of matching shape
+# 1-D of length 4 → one row
+x[0] = t.arange(4)
+# block of matching shape
+x[1:, 2:] = t.ones((2, 2))
 print(x)
 # Hidden checks
 assert _delta_output == 'tensor([[0., 1., 2., 3.],\n        [0., 3., 1., 1.],\n        [0., 3., 1., 1.]])\n'
@@ -47,7 +49,8 @@ import torch as t
 
 x = t.zeros((2, 3))
 x[1].copy_(t.tensor([1.0, 2.0, 3.0]))
-x[:, 0].copy_(t.tensor(7.0))        # a 0-d tensor broadcasts like a scalar
+# a 0-d tensor broadcasts like a scalar
+x[:, 0].copy_(t.tensor(7.0))
 print(x)
 # Hidden checks
 assert _delta_output == 'tensor([[7., 0., 0.],\n        [7., 2., 3.]])\n'
@@ -67,9 +70,12 @@ writes, one canvas:
 import torch as t
 
 slabs = t.zeros((3, 2, 3))
-slabs[:, 1, 0] = 1.0                 # scalar broadcast to 3 slots
-slabs[:, 1, 1] = t.arange(3)         # 1-D of length 3 into 3 slots
-slabs[1, 1] = slabs[1, 1] * 10       # a whole row, rewritten from itself
+# scalar broadcast to 3 slots
+slabs[:, 1, 0] = 1.0
+# 1-D of length 3 into 3 slots
+slabs[:, 1, 1] = t.arange(3)
+# a whole row, rewritten from itself
+slabs[1, 1] = slabs[1, 1] * 10
 print(slabs)
 # Hidden checks
 assert slabs[1, 1].tolist() == [10.0, 10.0, 0.0]

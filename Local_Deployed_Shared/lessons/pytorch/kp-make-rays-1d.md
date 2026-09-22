@@ -31,8 +31,10 @@ Everything you need is the three pages before this one, in order:
 import torch as t
 
 def make_rays_1d(num_pixels, y_limit):
-    rays = t.zeros((num_pixels, 2, 3), dtype=t.float32)
-    t.linspace(-y_limit, y_limit, num_pixels, out=rays[:, 1, 1])
+    rays = t.zeros((num_pixels, 2, 3),
+                   dtype=t.float32)
+    t.linspace(-y_limit, y_limit, num_pixels,
+               out=rays[:, 1, 1])
     rays[:, 1, 0] = 1
     return rays
 
@@ -59,7 +61,8 @@ import torch as t
 rays = t.zeros((5, 2, 3))
 rays[:, 1, 0] = 1
 rays[:, 1, 1] = t.linspace(-2.0, 2.0, 5)
-print(rays[:, 1])                          # every direction row
+# every direction row
+print(rays[:, 1])
 # Hidden checks
 assert (rays[:, 0] == 0).all()             # all origins at 0
 assert rays[:, 1, 1].tolist() == [-2.0, -1.0, 0.0, 1.0, 2.0]

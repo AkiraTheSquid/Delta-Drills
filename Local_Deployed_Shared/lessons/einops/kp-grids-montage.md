@@ -49,15 +49,21 @@ locating specific images.
 import torch as t
 import einops
 
-# Six 2x2 single-channel images; image k is constant k (easy to locate).
-imgs = t.stack([t.full((2, 2, 1), float(k)) for k in range(6)])
+# Six 2x2 single-channel images; image k is constant k
+# (easy to locate).
+imgs = t.stack([t.full((2, 2, 1), float(k))
+                for k in range(6)])
 
-grid = einops.rearrange(imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)
+grid = einops.rearrange(
+    imgs, '(g1 g2) h w c -> (g1 h) (g2 w) c', g1=3)
 
-# Row-major placement: grid row 0 holds images 0,1; row 1 -> 2,3; row 2 -> 4,5.
+# Row-major placement: grid row 0 holds images 0,1;
+# row 1 -> 2,3; row 2 -> 4,5.
 
-print("6 images", tuple(imgs.shape), "-> montage", tuple(grid.shape))
-print(grid[:, :, 0])          # each image is a constant block, so read them off
+print("6 images", tuple(imgs.shape), "-> montage",
+      tuple(grid.shape))
+# each image is a constant block, so read them off
+print(grid[:, :, 0])
 # Hidden checks
 assert imgs.shape == (6, 2, 2, 1)
 assert grid.shape == (6, 4, 1)               # (3*2, 2*2, 1)
@@ -73,11 +79,14 @@ The montage runs in reverse by swapping the pattern's sides — but now each mer
 import torch as t
 import einops
 
-# Reverse: carve the montage back into the batch. Each merged input axis
-# hides two unknowns, so each group needs one keyword: g1 (fixes h) AND
-# g2 (fixes w).
-back = einops.rearrange(grid, '(g1 h) (g2 w) c -> (g1 g2) h w c', g1=3, g2=2)
-print("carved back to the batch exactly:", bool(t.equal(back, imgs)))
+# Reverse: carve the montage back into the batch. Each
+# merged input axis hides two unknowns, so each group
+# needs one keyword: g1 (fixes h) AND g2 (fixes w).
+back = einops.rearrange(
+    grid, '(g1 h) (g2 w) c -> (g1 g2) h w c', g1=3,
+    g2=2)
+print("carved back to the batch exactly:",
+      bool(t.equal(back, imgs)))
 # Hidden checks
 assert t.equal(back, imgs)
 ```

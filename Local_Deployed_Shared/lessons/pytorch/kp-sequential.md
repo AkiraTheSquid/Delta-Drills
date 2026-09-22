@@ -249,7 +249,8 @@ assert net(x).detach().tolist()==[[2.],[0.]]
 The weight is a real parameter: it requires a gradient and it is the only entry the chain would hand an optimizer. The ReLU contributes nothing, which is why the count is one.
 
 ```python
-print(net[0].weight.requires_grad, len(list(net.state_dict())))
+print(net[0].weight.requires_grad,
+      len(list(net.state_dict())))
 # Hidden checks
 assert net[0].weight.requires_grad and len(list(net.state_dict()))==1
 ```

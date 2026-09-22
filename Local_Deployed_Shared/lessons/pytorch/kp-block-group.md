@@ -22,8 +22,18 @@ import torch as t
 class Block(t.nn.Module):
     def __init__(self,i,o,s):
         super().__init__()
-        self.left=t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=3,stride=s,padding=1,bias=False),t.nn.BatchNorm2d(o),t.nn.ReLU(),t.nn.Conv2d(o,o,kernel_size=3,stride=1,padding=1,bias=False),t.nn.BatchNorm2d(o))
-        self.right=t.nn.Identity() if (s,i)==(1,o) else t.nn.Sequential(t.nn.Conv2d(i,o,kernel_size=1,stride=s,bias=False),t.nn.BatchNorm2d(o))
+        self.left=t.nn.Sequential(
+            t.nn.Conv2d(i,o,kernel_size=3,stride=s,
+                        padding=1,bias=False),
+            t.nn.BatchNorm2d(o),t.nn.ReLU(),
+            t.nn.Conv2d(o,o,kernel_size=3,stride=1,
+                        padding=1,bias=False),
+            t.nn.BatchNorm2d(o))
+        self.right=t.nn.Identity() if (s,i)==(1,
+            o) else t.nn.Sequential(
+            t.nn.Conv2d(i,o,kernel_size=1,stride=s,
+                        bias=False),
+            t.nn.BatchNorm2d(o))
         self.relu=t.nn.ReLU()
     def forward(self,x):
         a=self.left(x)
@@ -46,12 +56,15 @@ class Group(t.nn.Module):
         self.blocks.add_module("0",Block(i,o,s))
         k=1
         for extra in [o]*(n-1):
-            self.blocks.add_module(str(k),Block(o,o,1))
+            self.blocks.add_module(str(k),
+                                   Block(o,o,1))
             k+=1
     def forward(self,x):
         return self.blocks(x)
 g=Group(3,4,8,2)
-print(len(g.blocks), [type(b.right) is t.nn.Identity for b in g.blocks])
+print(len(g.blocks),
+      [type(b.right) is t.nn.Identity
+        for b in g.blocks])
 # Hidden checks
 assert len(g.blocks)==3 and [type(b.right) is t.nn.Identity for b in g.blocks]==[False,True,True]
 ```

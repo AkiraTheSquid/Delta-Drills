@@ -78,12 +78,14 @@ reading left-to-right, top-to-bottom.
 import torch as t
 
 n = 3
-# Step 1: make the flat run 0..8. It's 1-D — shape (9,).
+# Step 1: make the flat run 0..8. It's 1-D — shape
+# (9,).
 flat = t.arange(n * n)
 
-# Step 2: reshape to (3, 3). The first three numbers become row 0, the next
-# three row 1 — exactly the "reading order" the task describes. No data
-# is copied; only the note about the shape changed.
+# Step 2: reshape to (3, 3). The first three numbers
+# become row 0, the next three row 1 — exactly the
+# "reading order" the task describes. No data is
+# copied; only the note about the shape changed.
 grid = flat.reshape(n, n)
 
 # The -1 shortcut: "3 rows, you work out the columns."
@@ -279,9 +281,12 @@ after flattening selects individual values. Decide which unit the task names
 before choosing where to index.
 
 ```python
-letters_as_numbers = t.tensor([[14, 25, 36], [47, 58, 69]])
-print("one original row:", letters_as_numbers[1:].flatten().tolist())
-print("all but one entry:", letters_as_numbers.flatten()[1:].tolist())
+letters_as_numbers = t.tensor([[14, 25, 36],
+                               [47, 58, 69]])
+print("one original row:",
+      letters_as_numbers[1:].flatten().tolist())
+print("all but one entry:",
+      letters_as_numbers.flatten()[1:].tolist())
 # Hidden checks
 assert letters_as_numbers[1:].flatten().tolist() == [47, 58, 69]
 assert letters_as_numbers.flatten()[1:].tolist() == [25, 36, 47, 58, 69]
@@ -296,10 +301,12 @@ import torch as t
 
 grid = t.arange(9).reshape(3, 3)
 
-# Step 1: flatten undoes the reshape — the row-major walk gives 0..8 back.
+# Step 1: flatten undoes the reshape — the row-major
+# walk gives 0..8 back.
 
-# Step 2: the column-major walk reads DOWN each column instead. No order=
-# keyword exists, so transpose first and let the row-major walk do the work.
+# Step 2: the column-major walk reads DOWN each column
+# instead. No order= keyword exists, so transpose
+# first and let the row-major walk do the work.
 print(grid)
 print("row-major   ", grid.flatten())
 print("column-major", grid.T.flatten())
@@ -489,11 +496,13 @@ import torch as t
 
 x = t.tensor([[1, 2], [3, 4]])
 
-# Step 1: a reshaped view of a tensor in reading order shares its memory.
+# Step 1: a reshaped view of a tensor in reading order
+# shares its memory.
 flat = x.reshape(-1)
 flat[0] = 99
 
-# Step 2: the round trip — flatten, reshape back — is the same tensor.
+# Step 2: the round trip — flatten, reshape back — is
+# the same tensor.
 again = x.flatten().reshape(x.shape)
 print("x after the write:", x.tolist())
 print("round trip equal: ", t.equal(again, x))
@@ -650,7 +659,8 @@ import torch as t
 
 x = t.arange(12)
 
-g = x.reshape(2, 2, -1)      # 12 = 2 * 2 * ?, so the last axis is 3
+# 12 = 2 * 2 * ?, so the last axis is 3
+g = x.reshape(2, 2, -1)
 print(g)
 print("shape:", tuple(g.shape))
 # Hidden checks

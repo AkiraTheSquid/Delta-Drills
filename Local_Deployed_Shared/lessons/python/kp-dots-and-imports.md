@@ -197,7 +197,8 @@ point of the drill:
 text = "abc"
 
 print("the value goes BEFORE the dot:", text.upper())
-print("the value goes INSIDE the parentheses:", len(text))
+print("the value goes INSIDE the parentheses:",
+      len(text))
 # Hidden checks
 assert _delta_output == 'the value goes BEFORE the dot: ABC\nthe value goes INSIDE the parentheses: 3\n'
 ```

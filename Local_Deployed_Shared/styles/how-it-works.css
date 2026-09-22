@@ -705,7 +705,10 @@ body.kg-maxi-open { overflow: hidden; }
    in two unreadable columns. One name, two unrelated things, and the collision
    only showed once the lesson pane was narrow enough to notice. */
 #kg-colormode { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px); }
-#kg-colormode button { background: transparent; color: var(--muted); border: 0; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+/* 5px 9px, not 5px 11px: the switch carries FOUR readings now (Mastery /
+   Sections / Categories / Math-code) and at the old padding the strip reached
+   the Fit button on a narrow pane. */
+#kg-colormode button { background: transparent; color: var(--muted); border: 0; padding: 5px 9px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
 #kg-colormode button + button { border-left: 1px solid var(--border); }
 #kg-colormode button.active { background: var(--accent); color: var(--on-accent); font-weight: 700; }
 #kg-colormode button:not(.active):hover { color: var(--text); }

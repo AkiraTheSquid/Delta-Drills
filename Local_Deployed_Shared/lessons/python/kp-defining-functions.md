@@ -41,7 +41,7 @@ after it never runs:
 
 ```python
 def first_only(a, b):
-    """The first argument, and proof that the second line is dead."""
+    """Return a. The second return is unreachable."""
     return a
     return b
 
@@ -98,7 +98,7 @@ step gets a name without leaking out into the rest of the program:
 
 ```python
 def ends_doubled(values):
-    """Double the first and last items, via one local helper."""
+    """Double the first and last items."""
     def double(n):
         """Twice n."""
         return n * 2
@@ -126,7 +126,7 @@ One function, two parameters, a default, and a tuple of two answers.
 
 ```python
 def summarize(values, places=2):
-    """Return (count, mean) with the mean rounded to `places` places."""
+    """Return (count, mean), rounded to `places`."""
     count = len(values)
     mean = round(sum(values) / count, places)
     return (count, mean)

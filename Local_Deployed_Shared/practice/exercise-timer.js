@@ -121,6 +121,15 @@ const ExerciseTimer = (() => {
     const heading = source?.querySelector("h1,h2,h3,h4,h5,h6");
     const level = heading ? Number(heading.tagName.slice(1)) : 6;
     const anchors = new Set(Array.from(block.parentElement.querySelectorAll(".dd-ex-block"), _sourceCell));
+    /* 🔴 THE BLOCK'S OWN ANCHOR CAN NOW SIT BELOW IT. Since 2026-09-22 the
+       buttons go ABOVE the cell the learner types in (practice/
+       exercise-session.js), so for a code-cell exercise — 0.0's
+       `def rearrange_1(`, 0.2's `class ReLU(` — the anchor is the very next
+       node in this scan. Left in the set it answers "where does this exercise
+       end?" with the answer cell itself: `recommendedSecs` stops before
+       reading a single line of prose, and focus mode HIDES the box the clock
+       was started for. Another exercise's anchor still ends this one. */
+    anchors.delete(source);
     for (let node = block.nextElementSibling; node; node = node.nextElementSibling) {
       if (node.classList.contains("dd-ex-block")) continue;
       const h = node.querySelector("h1,h2,h3,h4,h5,h6");

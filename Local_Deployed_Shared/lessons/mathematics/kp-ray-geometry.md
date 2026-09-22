@@ -26,7 +26,8 @@ For n ≥ 2 camera pixels and y-limit L at x = 1, equally spaced direction-y val
 
 ```python
 origin, direction, s = (2, -1), (3, 2), 2
-point = tuple(origin[i] + s * direction[i] for i in range(2))
+point = tuple(origin[i] + s * direction[i]
+              for i in range(2))
 print(point)
 # Hidden checks
 assert point == (8, 3)
@@ -39,7 +40,8 @@ Find the midpoint from A = (−2, 3) to B = (6, 7). Half the displacement is (4,
 
 ```python
 a, b, v = (-2, 3), (6, 7), 0.5
-point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))
+point = tuple(a[i] + v * (b[i] - a[i])
+              for i in range(2))
 print(point)
 # Hidden checks
 assert point == (2.0, 5.0)

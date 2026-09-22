@@ -25,7 +25,8 @@ Before taking a minimum, replace every invalid or backward hit by +∞. A miss m
 ```python
 s = [4.0, -2.0, 1.0]
 valid = [True, True, False]
-candidates = [x if ok and x >= 0 else float('inf') for x, ok in zip(s, valid)]
+candidates = [x if ok and x >= 0 else float('inf')
+              for x, ok in zip(s, valid)]
 nearest = min(candidates)
 print(nearest)
 # Hidden checks
@@ -40,7 +41,8 @@ A ray has D = (1, 2, 2) and hits at s = 4. Its direction length is 3. Its x disp
 ```python
 from math import sqrt
 direction, s = (1, 2, 2), 4
-length = sqrt(sum(component**2 for component in direction))
+length = sqrt(sum(component**2
+                  for component in direction))
 depth, distance = s * direction[0], s * length
 print(depth, distance)
 # Hidden checks

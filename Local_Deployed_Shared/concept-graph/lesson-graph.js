@@ -80,8 +80,13 @@
   // are ours, blue and violet are theirs.
   const PREP_PYTHON = { id: "sm10", label: "Section −1.0 — Python", color: "#dfae74" };
   const PREP_ARRAYS = { id: "sm11", label: "Section −1.1 — arrays, einops, tensors (our prep)", color: "#b0b4c0" };
-  // Legend order: the two prep tiers, then ARENA's sections in notebook order.
-  const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS]
+  // Maths is OURS too, and it is not array work: `math.*` used to fall through
+  // to −1.1 and read as another einops tier. Its own tier, in the rose the
+  // Mathematics family and the Math/Code mode both use, so the one colour means
+  // "this is maths" on every reading of the map.
+  const PREP_MATH = { id: "sm12", label: "Section −1.2 — the maths underneath (our prep)", color: "#f0a3a3" };
+  // Legend order: the prep tiers, then ARENA's sections in notebook order.
+  const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS, PREP_MATH]
     .concat(Object.keys(ARENA_SECTIONS).sort().map((k) => ARENA_SECTIONS[k]))
     .concat([ARENA_LATER]);
 
@@ -110,53 +115,75 @@
     arenaMapLoaded = true;
   };
 
+  /* Ten families in five areas, not sixteen in six. The fine cut painted
+     three shades of one blue and three of one green, and at bubble size that
+     is one colour with a legend claiming otherwise: the rows were readable,
+     the MAP was not. It had also gone stale — its NumPy rules were keyed on
+     `numpy.*`, and those ids became `torch.*` in the rename, so six of its
+     sixteen families painted nothing at all while every tensor concept fell
+     into one bucket. These are the coarsest splits that still answer "what
+     kind of work is this?" — a subject a learner would name, each with a hue
+     of its own rather than a tint of a neighbour's. First matching rule wins,
+     so specific tests sit above the catch-alls. */
   const FAMILIES = [
-    { id: "tensor.reasoning", group: "Tensor reasoning", label: "ARENA tensor reasoning", color: "#84c8ed", test: id => id.startsWith("tensor.") },
-    { id: "cnn.modules", group: "Neural networks", label: "CNNs & ResNets", color: "#e8a765", test: id => id.startsWith("cnn.") },
-    /* --- Python: warm ambers ------------------------------------------ */
-    { id: "py.data", group: "Python", label: "Values, types & sequences", color: "#f8dda6",
-      test: (id) => /^python\.(values-and-names|types-and-conversion|lists-and-tuples|indexing)$/.test(id) },
-    { id: "py.funcs", group: "Python", label: "Functions & imports", color: "#eeb257",
+    /* --- maths: rose. Same colour as the −1.2 section tier and the Math side
+       of Math/code, so maths reads as maths in all three modes. ---------- */
+    { id: "fa.math", group: "Mathematics", label: "Linear algebra & geometry", color: "#f0a3a3",
+      test: (id) => id.startsWith("math.") },
+
+    /* --- Python: amber ------------------------------------------------- */
+    { id: "fa.python", group: "Python", label: "The Python language", color: "#eeb257",
       test: (id) => id.startsWith("python.") },
 
-    /* --- numpy: blues -------------------------------------------------- */
-    { id: "np.random", group: "NumPy", label: "Randomness", color: "#b6c8dc",
-      test: (id) => /^numpy\.random-/.test(id) },
-    { id: "np.linalg", group: "NumPy", label: "Matmul & linear algebra", color: "#7d8ce4",
-      test: (id) => /^numpy\.(linalg-basics|dot-matmul-patterns)$/.test(id) },
-    { id: "np.broadcasting", group: "NumPy", label: "Broadcasting & shape ops", color: "#4f97dd",
-      test: (id) => /^numpy\.(broadcasting-rules|axis-reductions|stack-concat-interleave)$/.test(id) },
-    { id: "np.indexing", group: "NumPy", label: "Indexing & selection", color: "#9fadf0",
-      test: (id) => /^numpy\.(boolean-masking|argmin-argmax)$/.test(id) },
-    { id: "np.elementwise", group: "NumPy", label: "Elementwise math & aggregation", color: "#8ec7ef",
-      test: (id) => /^numpy\.(elementwise-ufuncs|aggregations|sorting)$/.test(id) },
-    { id: "np.foundations", group: "NumPy", label: "Array foundations", color: "#c2e0f7",
-      test: (id) => id.startsWith("numpy.") },
+    /* --- tensors: blues, split the way the lessons split (np-1 / np-2 /
+       np-3). Specific tests above the catch-all. ------------------------ */
+    { id: "fa.shapes", group: "Tensors", label: "Broadcasting, reductions & matmul", color: "#4f97dd",
+      test: (id) => /^torch\.(broadcasting-rules|axis-reductions|stack-concat-interleave|dot-matmul-patterns|linalg-basics|elementwise-ops|aggregations)$/.test(id) },
+    { id: "fa.indexing", group: "Tensors", label: "Indexing, masking & writes", color: "#7d8ce4",
+      test: (id) => /^torch\.(boolean-masking|argmin-argmax|slice-assignment|out-argument|slicing-views)$/.test(id) },
+    { id: "fa.tensors", group: "Tensors", label: "Tensor foundations & shapes", color: "#a9d3f2",
+      test: (id) => id.startsWith("torch.") },
 
-    /* --- einsum: teal --------------------------------------------------
-       Above the einops rules on purpose: the concept lands as
-       `einops.einsum`, so a plain `^einops\.` catch-all would swallow it and
-       einsum would lose the separate colour it is asked for. */
-    { id: "es.einsum", group: "Einops & einsum", label: "Einsum", color: "#57cfca",
+    /* --- einsum above einops: the concept lands as `einops.einsum`, so a
+       plain `^einops\.` catch-all would swallow it. --------------------- */
+    { id: "fa.einsum", group: "Einops & einsum", label: "Einsum", color: "#57cfca",
       test: (id) => id.includes("einsum") },
-
-    /* --- einops: greens ------------------------------------------------ */
-    { id: "eo.reduce", group: "Einops & einsum", label: "Einops: reduce & pooling", color: "#85d79c",
-      test: (id) => /^einops\.(reduce-model|pooling)$/.test(id) },
-    { id: "eo.repeat", group: "Einops & einsum", label: "Einops: repeat & DL patterns", color: "#4cbe82",
-      test: (id) => /^einops\.(repeat-model|dl-flatten-heads|channel-groups-temporal)$/.test(id) },
-    { id: "eo.rearrange", group: "Einops & einsum", label: "Einops: rearrange", color: "#c3ebcb",
+    { id: "fa.einops", group: "Einops & einsum", label: "Einops — rearrange, reduce & repeat", color: "#7fd3a0",
       test: (id) => id.startsWith("einops.") },
 
-    /* --- tensors & ray tracing: violets -------------------------------- */
-    { id: "tr.raytracing", group: "PyTorch & ray tracing", label: "Ray tracing", color: "#e79ad9",
+    /* --- ARENA's own material: light blue, pink, orange ---------------- */
+    { id: "fa.tensor", group: "ARENA exercises", label: "ARENA tensor reasoning", color: "#84c8ed",
+      test: (id) => id.startsWith("tensor.") },
+    { id: "fa.ray", group: "ARENA exercises", label: "Ray tracing", color: "#e79ad9",
       test: (id) => id.startsWith("raytracing.") },
-    { id: "tr.tensors", group: "PyTorch & ray tracing", label: "Tensor writes (PyTorch)", color: "#d8b6f6",
-      test: (id) => id.startsWith("torch.") },
+    { id: "fa.cnn", group: "ARENA exercises", label: "CNNs & ResNets", color: "#e8a765",
+      test: (id) => id.startsWith("cnn.") },
   ];
   const FAMILY_GROUPS = [];
   FAMILIES.forEach((f) => { if (FAMILY_GROUPS.indexOf(f.group) < 0) FAMILY_GROUPS.push(f.group); });
   const UNFILED = { id: "other", group: "Other", label: "Uncategorised", color: "#dddddd" };
+
+  /* ---- the fourth reading: MATHEMATICS vs CODE -------------------------
+     The coarsest cut there is, and the one the other three modes cannot make.
+     Sections answer "whose curriculum is this", categories answer "what
+     subject", mastery answers "do I know it" — none of them separates the
+     concepts you reason about on paper from the ones you type. With maths now
+     on the map (`math.*`, lessons ma-00/ma-01) that split is half the reason a
+     learner is stuck: the ray-triangle solve is a linear system before it is a
+     `torch.linalg.solve` call. Two colours only. A third bucket would make it
+     a fourth category mode instead of the contrast it exists to draw. */
+  const DOMAINS = [
+    { id: "dm.math", label: "Mathematics — reason it out on paper", color: "#f0a3a3",
+      test: (id) => id.startsWith("math.") },
+    // Catch-all: no test, so anything that is not maths is code.
+    { id: "dm.code", label: "Code — write it in Python, NumPy, einops or PyTorch", color: "#6fa8dc" },
+  ];
+  const _domainOf = (kc) => {
+    const id = typeof kc === "string" ? kc : "";
+    for (let i = 0; i < DOMAINS.length; i++) if (!DOMAINS[i].test || DOMAINS[i].test(id)) return DOMAINS[i];
+    return DOMAINS[DOMAINS.length - 1];
+  };
+  const domainColor = (kc) => _domainOf(kc).color;
 
   const FALLBACK = "#dddddd";
   const ACCENT = "#ffd23f"; // prerequisite-path highlight
@@ -183,6 +210,7 @@
     const id = typeof kc === "string" ? kc : "";
     const lid = (kcById[kc] || {}).lesson || "";
     if (id.startsWith("python.") || /^py-/.test(lid)) return PREP_PYTHON;
+    if (id.startsWith("math.") || /^ma-/.test(lid)) return PREP_MATH;
     return PREP_ARRAYS;
   };
   const familyColor = (kc) => _familyOf(kc).color;
@@ -207,7 +235,7 @@
   const UNKNOWN_COLOR = "#5b5b70";       // no estimate yet
   const DISABLED_COLOR = "#94949d";      // deliberately neutral in every colour mode
   const DIM_DISABLED_KEY = "dd_kg_dim_disabled";
-  let colorMode = "mastery";             // "mastery" | "section" | "category"
+  let colorMode = "mastery";             // "mastery" | "section" | "category" | "domain"
   let dimDisabled = true;
   try { dimDisabled = localStorage.getItem(DIM_DISABLED_KEY) !== "false"; } catch (_) {}
 
@@ -334,6 +362,7 @@
   const nodeColor = (kc) => {
     if (colorMode === "section") return sectionColor(kc);
     if (colorMode === "category") return familyColor(kc);
+    if (colorMode === "domain") return domainColor(kc);
     return masteryColor(kcReadiness(kc));
   };
   const masteryBand = (r) => {
@@ -1598,7 +1627,15 @@
       el.classList.remove("kg2-legend-mastery");
       el.classList.add("kg2-legend-grouped");
       const ids = Object.keys(kcById);
-      if (colorMode === "section") {
+      if (colorMode === "domain") {
+        // Two rows. No fold, no group heads — the whole point is that it fits
+        // in a glance, and a colour is listed only where it is painted.
+        const has = {};
+        ids.forEach((id) => { has[_domainOf(id).id] = true; });
+        el.innerHTML = DOMAINS.filter((d) => has[d.id]).map((d) =>
+          `<span class="kg2-li"><span class="kg2-li-dot" style="background:${d.color}"></span>${esc(d.label)}</span>`
+        ).join("") + _disabledLegend();
+      } else if (colorMode === "section") {
         const has = {};
         ids.forEach((id) => { has[_sectionOf(id).id] = true; });
         const rows = SECTION_ORDER.filter((sec) => has[sec.id]).map((sec) =>
@@ -1609,9 +1646,10 @@
         el.innerHTML = rows + _disabledLegend() + (arenaMapLoaded ? "" :
           '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>');
       } else {
-        // Fourteen families is a legend tall enough to sit on top of the
-        // bubbles it is explaining — the prerequisite floor lands in exactly
-        // that corner of a BT layout. So it folds, and the fold is REMEMBERED:
+        // Even at ten families the legend is tall enough to sit on top of
+        // the bubbles it is explaining — the prerequisite floor lands in
+        // exactly that corner of a BT layout. So it folds, and the fold is
+        // REMEMBERED:
         // this whole element is replaced on every legend build, so a plain
         // `open` attribute would silently reopen — and re-cover the map — the
         // moment the learner flipped to Sections and back.
@@ -1996,7 +2034,7 @@
       // Styled by ID. It carried `.kg2-seg` and that is the lesson-segment
       // class in the pane opposite — see how-it-works.css.
       seg.id = "kg-colormode";
-      // Three readings, not two. "Lessons" used to be the only alternative to
+      // Four readings, not two. "Lessons" used to be the only alternative to
       // Mastery and it painted one pastel per lesson id — eleven near-identical
       // tints that answered a question nobody asked (which teaching unit is
       // this?) while hiding the two that get asked: is this ARENA's own
@@ -2004,7 +2042,8 @@
       seg.innerHTML =
         '<button type="button" data-mode="mastery" class="active">Mastery</button>' +
         '<button type="button" data-mode="section">Sections</button>' +
-        '<button type="button" data-mode="category">Categories</button>';
+        '<button type="button" data-mode="category">Categories</button>' +
+        '<button type="button" data-mode="domain">Math / code</button>';
       controls.insertBefore(seg, controls.firstChild);
       seg.querySelectorAll("button").forEach((b) =>
         b.addEventListener("click", () => {

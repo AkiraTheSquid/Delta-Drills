@@ -48,6 +48,7 @@ from watch_notebook_arena import (
     check_a_contents_row_can_actually_be_clicked,
     check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
     check_code_on_the_arena_page_is_set_at_the_prose_size,
+    check_the_exercise_buttons_sit_above_the_cell_the_learner_types_in,
 )
 from watch_notebook import (
     check_a_code_cell_grows_to_fit_its_own_code,
@@ -656,6 +657,7 @@ if __name__ == '__main__':
               check_a_contents_row_can_actually_be_clicked,
               check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
               check_code_on_the_arena_page_is_set_at_the_prose_size,
+              check_the_exercise_buttons_sit_above_the_cell_the_learner_types_in,
               check_no_worked_example_is_attached_to_a_drill,
               check_the_verdict_line_is_read_the_same_way_everywhere,
               check_a_problem_is_recorded_once_per_visit,
