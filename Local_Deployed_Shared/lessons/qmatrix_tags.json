@@ -22241,5 +22241,321 @@
   ],
   "new_syntax": [],
   "source": "kp-faded"
+ },
+ "50000": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50001": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50002": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50003": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50004": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50005": {
+  "target_kcs": [
+   "math.ray-geometry"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50006": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50007": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50008": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50009": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50010": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50011": {
+  "target_kcs": [
+   "math.intersection-systems"
+  ],
+  "supporting_kcs": [
+   "math.ray-geometry"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50012": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50013": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50014": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50015": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50016": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50017": {
+  "target_kcs": [
+   "math.singular-systems"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50018": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50019": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50020": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50021": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50022": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50023": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50024": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50025": {
+  "target_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "supporting_kcs": [
+   "math.intersection-systems",
+   "math.singular-systems"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50026": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50027": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50028": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50029": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50030": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50031": {
+  "target_kcs": [
+   "math.ray-distance"
+  ],
+  "supporting_kcs": [
+   "math.barycentric-coordinates"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

@@ -1704,3 +1704,35 @@
 {"question_id": 1728, "atoms": [{"atom_id": "log-sum-exp-stability", "confidence": 0.85}]}
 {"question_id": 1729, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}
 {"question_id": 1730, "atoms": [{"atom_id": "broadcasting-rules", "confidence": 0.85}]}
+{"question_id":50000,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50001,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50002,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50003,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50004,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50005,"atoms":[{"atom_id":"ray-parametric-form","confidence":1}]}
+{"question_id":50006,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50007,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50008,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50009,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50010,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50011,"atoms":[{"atom_id":"segment-line-intersect-2d","confidence":1}]}
+{"question_id":50012,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50013,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50014,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50015,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50016,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50017,"atoms":[{"atom_id":"determinant-singularity-test","confidence":1}]}
+{"question_id":50018,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50019,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50020,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50021,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50022,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50023,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50024,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50025,"atoms":[{"atom_id":"triangle-barycentric","confidence":1}]}
+{"question_id":50026,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}
+{"question_id":50027,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}
+{"question_id":50028,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}
+{"question_id":50029,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}
+{"question_id":50030,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}
+{"question_id":50031,"atoms":[{"atom_id":"ray-distance-depth","confidence":1}]}

@@ -2,6 +2,11 @@
    Regenerate after changing lessons; the panel navigates by this map. */
 Object.assign(window.DD_NOTEBOOKS, {
   "kcs": {
+    "math.ray-geometry": "ma-01",
+    "math.intersection-systems": "ma-01",
+    "math.singular-systems": "ma-01",
+    "math.barycentric-coordinates": "ma-01",
+    "math.ray-distance": "ma-01",
     "python.values-and-names": "py-0",
     "python.types-and-conversion": "py-0",
     "python.lists-and-tuples": "py-0",
@@ -46,6 +51,7 @@ Object.assign(window.DD_NOTEBOOKS, {
     "raytracing.ray-parametrisation": "tr-1",
     "raytracing.make-rays-1d": "tr-1",
     "einops.einsum": "es-1",
+    "einops.attention-einsum": "es-1",
     "tensor.row-normalization": "ar-00",
     "tensor.cosine-similarity": "ar-00",
     "tensor.indexed-selection": "ar-00",
@@ -75,6 +81,11 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.forward-hooks": "ar-02"
   },
   "kps": {
+    "math.ray-geometry": "dd-kp-math-ray-geometry",
+    "math.intersection-systems": "dd-kp-math-intersection-systems",
+    "math.singular-systems": "dd-kp-math-singular-systems",
+    "math.barycentric-coordinates": "dd-kp-math-barycentric-coordinates",
+    "math.ray-distance": "dd-kp-math-ray-distance",
     "python.values-and-names": "dd-kp-python-values-and-names",
     "python.types-and-conversion": "dd-kp-python-types-and-conversion",
     "python.lists-and-tuples": "dd-kp-python-lists-and-tuples",
@@ -119,6 +130,7 @@ Object.assign(window.DD_NOTEBOOKS, {
     "raytracing.ray-parametrisation": "dd-kp-raytracing-ray-parametrisation",
     "raytracing.make-rays-1d": "dd-kp-raytracing-make-rays-1d",
     "einops.einsum": "dd-kp-einops-einsum",
+    "einops.attention-einsum": "dd-kp-einops-attention-einsum",
     "tensor.row-normalization": "dd-kp-tensor-row-normalization",
     "tensor.cosine-similarity": "dd-kp-tensor-cosine-similarity",
     "tensor.indexed-selection": "dd-kp-tensor-indexed-selection",
@@ -148,6 +160,8 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.forward-hooks": "dd-kp-cnn-forward-hooks"
   },
   "segments": {
+    "math.barycentric-coordinates#weights": "dd-seg-math-barycentric-coordinates-0",
+    "math.barycentric-coordinates#three-unknowns": "dd-seg-math-barycentric-coordinates-1",
     "torch.tensor-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-torch-tensor-model-0",
     "torch.tensor-model#s1-nesting-becomes-axes-shape-ndim-numel": "dd-seg-torch-tensor-model-1",
     "torch.tensor-model#s2-dtype-is-a-property-of-the-whole-block": "dd-seg-torch-tensor-model-2",
@@ -206,6 +220,8 @@ Object.assign(window.DD_NOTEBOOKS, {
     "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
     "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
     "einops.einsum#batch-axes": "dd-seg-einops-einsum-3",
+    "einops.attention-einsum#named-axes-at-rank": "dd-seg-einops-attention-einsum-0",
+    "einops.attention-einsum#per-head-weights-and-ellipsis": "dd-seg-einops-attention-einsum-1",
     "tensor.row-normalization#row-length": "dd-seg-tensor-row-normalization-0",
     "tensor.row-normalization#unit-rows": "dd-seg-tensor-row-normalization-1",
     "tensor.cosine-similarity#alignment": "dd-seg-tensor-cosine-similarity-0",

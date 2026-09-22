@@ -279,9 +279,17 @@ class MathKp(unittest.TestCase):
     def test_clean(self):
         self.assertEqual(self.check(KP_MD), [])
 
-    def test_runnable_fence_refused(self):
+    def test_unchecked_runnable_fence_refused(self):
         text = KP_MD.replace("## Worked example\n", "## Worked example\n```python\nprint(1)\n```\n")
-        self.assertTrue(any("no kernel" in e for e in self.check(text)))
+        self.assertTrue(any("no assertion" in e for e in self.check(text)))
+
+    def test_checked_demonstration_allowed(self):
+        text = KP_MD.replace("## Worked example\n", "## Worked example\n```python\nx = 2 + 3\nprint(x)\n# Hidden checks\nassert x == 5\n```\n")
+        self.assertEqual(self.check(text), [])
+
+    def test_wrong_demonstration_refused(self):
+        text = KP_MD.replace("## Worked example\n", "## Worked example\n```python\nx = 2 + 3\n# Hidden checks\nassert x == 6\n```\n")
+        self.assertTrue(self.check(text))
 
     def test_no_run_fence_allowed(self):
         text = KP_MD.replace("## Worked example\n", "## Worked example\n```python no-run\nt.dot(a, b)\n```\n")
@@ -304,7 +312,7 @@ class MathKp(unittest.TestCase):
 
     def test_indented_runnable_fence_refused(self):
         text = KP_MD.replace("## Worked example\n", "## Worked example\n  ```python\n  print(1)\n  ```\n")
-        self.assertTrue(any("no kernel" in e for e in self.check(text)))
+        self.assertTrue(any("no assertion" in e for e in self.check(text)))
 
     def test_coding_drill_refused_on_math_page(self):
         self.bank[50001] = {"exercise": {"submission_mode": "function"}}

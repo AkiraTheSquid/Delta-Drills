@@ -342,6 +342,11 @@ window.DD_GLOSSARY = {
    cannot fail that way. watch_jargon.py re-derives this map from the registry
    on every run, so the copy cannot drift without failing the guard. */
 window.DD_GLOSSARY.kcLesson = {
+  "math.ray-geometry": ["Math for ARENA 0.1", "Points, directions, and finite segments"],
+  "math.intersection-systems": ["Math for ARENA 0.1", "Turn an intersection into a linear system"],
+  "math.singular-systems": ["Math for ARENA 0.1", "Unique crossings and batched validity"],
+  "math.barycentric-coordinates": ["Math for ARENA 0.1", "Triangle coordinates and ray–triangle systems"],
+  "math.ray-distance": ["Math for ARENA 0.1", "Nearest hit, depth, and actual distance"],
   "python.values-and-names": ["Python you need first", "Values and names: what = really does"],
   "python.types-and-conversion": ["Python you need first", "The everyday types, and converting between them"],
   "python.lists-and-tuples": ["Python you need first", "Lists and tuples: holding more than one value"],

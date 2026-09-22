@@ -3,6 +3,12 @@
  "description": "Knowledge-component registry for first-encounter course content (spec: docs/spec-first-encounter-course-content.md). KCs are a finer layer under existing subtopic_key values; subtopic_key mapping keeps BKT compatibility.",
  "lessons": [
   {
+   "id": "ma-01",
+   "topic": "Mathematics",
+   "title": "Math for ARENA 0.1",
+   "subtopic_key": "Mathematics: ARENA 0.1"
+  },
+  {
    "id": "py-0",
    "topic": "Python",
    "title": "Python you need first",
@@ -76,6 +82,50 @@
   }
  ],
  "kcs": [
+  {
+   "id": "math.ray-geometry",
+   "lesson": "ma-01",
+   "title": "Points, directions, and finite segments",
+   "syntax": false,
+   "prereqs": []
+  },
+  {
+   "id": "math.intersection-systems",
+   "lesson": "ma-01",
+   "title": "Turn an intersection into a linear system",
+   "syntax": false,
+   "prereqs": [
+    "math.ray-geometry"
+   ]
+  },
+  {
+   "id": "math.singular-systems",
+   "lesson": "ma-01",
+   "title": "Unique crossings and batched validity",
+   "syntax": false,
+   "prereqs": [
+    "math.intersection-systems"
+   ]
+  },
+  {
+   "id": "math.barycentric-coordinates",
+   "lesson": "ma-01",
+   "title": "Triangle coordinates and ray\u2013triangle systems",
+   "syntax": false,
+   "prereqs": [
+    "math.intersection-systems",
+    "math.singular-systems"
+   ]
+  },
+  {
+   "id": "math.ray-distance",
+   "lesson": "ma-01",
+   "title": "Nearest hit, depth, and actual distance",
+   "syntax": false,
+   "prereqs": [
+    "math.barycentric-coordinates"
+   ]
+  },
   {
    "id": "python.values-and-names",
    "lesson": "py-0",
@@ -501,6 +551,7 @@
    "title": "A ray is an origin and a direction",
    "syntax": false,
    "prereqs": [
+    "math.ray-geometry",
     "torch.constructors",
     "torch.broadcasting-rules",
     "torch.ranges"
@@ -641,6 +692,7 @@
    "title": "Solve a ray\u2013segment intersection",
    "syntax": true,
    "prereqs": [
+    "math.intersection-systems",
     "raytracing.ray-parametrisation",
     "torch.linalg-basics",
     "torch.stack-concat-interleave",
@@ -658,6 +710,7 @@
    "title": "Every ray against every segment",
    "syntax": false,
    "prereqs": [
+    "math.singular-systems",
     "raytracing.segment-intersection",
     "torch.broadcasting-rules",
     "torch.axis-reductions"
@@ -687,6 +740,7 @@
    "title": "Barycentric coordinates and triangle hits",
    "syntax": false,
    "prereqs": [
+    "math.barycentric-coordinates",
     "raytracing.segment-intersection",
     "torch.linalg-basics",
     "torch.broadcasting-rules"
@@ -700,6 +754,7 @@
    "title": "Render the nearest visible mesh surface",
    "syntax": false,
    "prereqs": [
+    "math.ray-distance",
     "raytracing.triangle-intersection",
     "raytracing.batched-segments",
     "raytracing.make-rays-2d",
