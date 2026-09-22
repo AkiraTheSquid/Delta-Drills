@@ -83429,5 +83429,493 @@
       "verify": null,
       "hint": null
     }
+  },
+  {
+    "id": 50104,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "M has rows (2, −1, 0) and (1, 3, 2). Find Mx for x = (1, 2, −1).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(5, 0)",
+          "value": "Matrix([5,0])"
+        },
+        {
+          "key": "B",
+          "text": "(0, 9)",
+          "value": "Matrix([0,9])"
+        },
+        {
+          "key": "C",
+          "text": "(0, 5)",
+          "value": "Matrix([0,5])"
+        },
+        {
+          "key": "D",
+          "text": "(2, 6)",
+          "value": "Matrix([2,6])"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Each output is a row dotted with $x$: $2 \\cdot 1 - 1 \\cdot 2 + 0 = 0$ and $1 + 3 \\cdot 2 + 2 \\cdot (-1) = 5$. A 2-by-3 matrix times a 3-vector gives a 2-vector.\n\n- A: swaps the two outputs.\n- B: drops the sign of $x_3 = -1$ in the second row.\n- D: multiplies only the matching positions and drops the other terms.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,-1,0],[1,3,2]])*Matrix([1,2,-1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50105,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 45,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Rewrite 2u = 3v + 4 and v − u = 1 as M(u, v) = (4, 1). Which M? Matrices are written as rows.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "((2, 3), (−1, 1))",
+          "value": "Matrix([[2,3],[-1,1]])"
+        },
+        {
+          "key": "B",
+          "text": "((2, −3), (−1, 1))",
+          "value": "Matrix([[2,-3],[-1,1]])"
+        },
+        {
+          "key": "C",
+          "text": "((−3, 2), (1, −1))",
+          "value": "Matrix([[-3,2],[1,-1]])"
+        },
+        {
+          "key": "D",
+          "text": "((2, −3), (1, −1))",
+          "value": "Matrix([[2,-3],[1,-1]])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Move every unknown to the left and keep the order $(u, v)$: $2u - 3v = 4$ and $-u + v = 1$. So the rows are $(2, -3)$ and $(-1, 1)$.\n\n- A: forgets that moving $3v$ across the equals sign flips its sign.\n- C: writes the coefficients in the order $(v, u)$.\n- D: flips the second row's signs, which would need right side $-1$.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,-3],[-1,1]])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50106,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "M has shape (4, 3). For M @ x to work, what shape must x have, and what shape is the result?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "x: (3,); result: (4,)",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "x: (4,); result: (3,)",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "x: (3,); result: (3,)",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "x: (4,); result: (4,)",
+          "value": null
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "$x$ supplies one weight per column, so it needs 3 entries. Each of the 4 rows produces one output, so the result has 4 entries: 4 equations in 3 unknowns.\n\n- B: swaps rows and columns.\n- C, D: the input and output lengths come from different axes of $M$.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50107,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Solve 3u + 2v = 12 and u − 2v = −4. Choose (u, v).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(3, 2)",
+          "value": "Matrix([3,2])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 3)",
+          "value": "Matrix([2,3])"
+        },
+        {
+          "key": "C",
+          "text": "(4, 0)",
+          "value": "Matrix([4,0])"
+        },
+        {
+          "key": "D",
+          "text": "(2, −3)",
+          "value": "Matrix([2,-3])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Add the equations to cancel $v$: $4u = 8$, so $u = 2$. Then $2 - 2v = -4$ gives $v = 3$. Check: $3 \\cdot 2 + 2 \\cdot 3 = 12$.\n\n- A: swaps $u$ and $v$; the second equation gives $3 - 4 = -1$.\n- C: satisfies only the first equation.\n- D: a sign slip when back-substituting.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[3,2],[1,-2]]).solve(Matrix([12,-4]))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50108,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "M = t.tensor([[1., 2.], [3., 4.]]), x = t.tensor([1., -1.]). What is M @ x?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([-1., -1.])",
+          "value": "Matrix([-1,-1])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([-2., -2.])",
+          "value": "Matrix([-2,-2])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([1., -4.])",
+          "value": "Matrix([1,-4])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([3., 7.])",
+          "value": "Matrix([3,7])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "`@` dots each row with $x$: $1 - 2 = -1$ and $3 - 4 = -1$.\n\n- B: `x @ M`, which combines the rows: $(1 - 3, 2 - 4)$.\n- C: the diagonal of `M * x`, elementwise products, not a matrix product.\n- D: ignores the minus sign in $x$.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,2],[3,4]])*Matrix([1,-1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50109,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 50,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "M has rows (1, 2) and (3, −1), b = (3, 3). Candidate x = (1, 1). What is the residual Mx − b?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(0, 0)",
+          "value": "Matrix([0,0])"
+        },
+        {
+          "key": "B",
+          "text": "(0, 1)",
+          "value": "Matrix([0,1])"
+        },
+        {
+          "key": "C",
+          "text": "(3, 2)",
+          "value": "Matrix([3,2])"
+        },
+        {
+          "key": "D",
+          "text": "(0, −1)",
+          "value": "Matrix([0,-1])"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "$Mx = (1 + 2, 3 - 1) = (3, 2)$, so $Mx - b = (0, -1)$. The second equation fails, so $x$ is not a solution even though the first holds.\n\n- A: a solution would need every component zero.\n- B: $b - Mx$, the opposite sign.\n- C: $Mx$ before subtracting $b$.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,2],[3,-1]])*Matrix([1,1]) - Matrix([3,3])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50110,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 60,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 − L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 − L2](u, v) = L1 − O. Which (u, v) solves it?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1/2, 1)",
+          "value": "Matrix([Rational(1,2),1])"
+        },
+        {
+          "key": "B",
+          "text": "(1, 1/2)",
+          "value": "Matrix([1,Rational(1,2)])"
+        },
+        {
+          "key": "C",
+          "text": "(1, −1/2)",
+          "value": "Matrix([1,Rational(-1,2)])"
+        },
+        {
+          "key": "D",
+          "text": "(2, 0)",
+          "value": "Matrix([2,0])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Move the segment terms left: $uD - v(L_2 - L_1) = L_1 - O$, i.e. columns $D = (1, 1)$ and $L_1 - L_2 = (2, -2)$:\n\n$$\\begin{pmatrix}1 & 2\\\\ 1 & -2\\end{pmatrix}\\begin{pmatrix}u\\\\ v\\end{pmatrix} = \\begin{pmatrix}2\\\\ 0\\end{pmatrix}$$\n\nAdding the rows gives $2u = 2$, so $u = 1$ and $v = 1/2$. Both sides meet at $(1, 1)$.\n\n- A: swaps $u$ and $v$.\n- C: uses $L_2 - L_1$ as the column without flipping its sign.\n- D: satisfies only the first row.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,2],[1,-2]]).solve(Matrix([2,0]))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50111,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 65,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2,)",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "(5, 2, 2)",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "(2, 5)",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "(5, 2)",
+          "value": null
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "The leading 5 is a batch dimension: `solve` solves five separate $2 \\times 2$ systems and returns one 2-component solution per system, shape $(5, 2)$, in the same layout as `b`.\n\n- A: a single system's solution; the batch dimension is kept.\n- B: the shape of `A`, not of the solutions.\n- C: puts the batch dimension last.",
+      "verify": null,
+      "hint": null
+    }
   }
 ]

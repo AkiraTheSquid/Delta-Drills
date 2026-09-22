@@ -23291,5 +23291,85 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50104": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50105": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50106": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50107": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50108": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50109": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50110": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50111": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }
