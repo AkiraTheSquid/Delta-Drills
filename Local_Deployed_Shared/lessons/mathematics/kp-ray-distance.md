@@ -8,8 +8,8 @@ previews: []
 concepts: [distance]
 faded: [50026, 50027]
 guided: []
-independent: [50028, 50029]
-integrated: [50030, 50031]
+independent: [50028, 50029, 50096, 50097, 50098, 50099, 50100, 50101]
+integrated: [50030, 50031, 50102, 50103]
 ---
 
 ## Concept: Compare hits along the same ray
@@ -89,6 +89,24 @@ O = (3, 0, 0), D = (2, 0, 0), s = 4. Which pair is (x displacement, world x-coor
 ### q50029
 A ray misses every triangle. Miss candidates become +∞ before taking the minimum. What results?
 
+### q50096
+One ray has candidate hits s = [3, −1, 0.5, 6] with valid = [True, True, False, True]. Which s is the visible hit?
+
+### q50097
+O = (0, 0, 0), D = (1, 2, 2). A surface is hit at s = 3. How far is the hit point from O?
+
+### q50098
+A kernel forgets the s ≥ 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?
+
+### q50099
+A camera ray from O = (0, 0, 0) has direction D = (1, 0.6, 0.8) and hits at s = 5. How far is the hit point from O?
+
+### q50100
+Two rays share the origin O. Ray A has D = (1, 0, 0) and hits at s = 4. Ray B has D = (1, 1, 0) and hits at s = 3. Which hit point is farther from O?
+
+### q50101
+O = (0, 0, 0), D = (0, 3, 4). A hit is at s = 2. Using the unit direction D̂ = D / ‖D‖ instead, what parameter reaches the same point?
+
 ## Integrated practice
 
 ### q50030
@@ -96,3 +114,9 @@ Ray A has ‖D_A‖ = 10, s_A = 1. Ray B has ‖D_B‖ = 1, s_B = 3. Which hit i
 
 ### q50031
 D = (1, 0, 0) hits at s = 8. Replace D with D′ = (4, 0, 0), keeping O and the surface fixed. What are the new parameter and distance?
+
+### q50102
+Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?
+
+### q50103
+Three rays share O = (0, 0, 0). Ray A: D = (1, 0, 0), hit at s = 6. Ray B: D = (1, 1, 1), hit at s = 4. Ray C: D = (2, 0, 0), hit at s = 3.5. Order the hit points from nearest to farthest.
