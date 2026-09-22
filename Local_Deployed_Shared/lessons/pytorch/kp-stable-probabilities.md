@@ -3,12 +3,12 @@ kc: tensor.stable-probabilities
 title: Stable softmax and log-softmax
 new_syntax: ['Tensor.exp', 'Tensor.log']
 concepts: [shift-invariance, log-space]
-supporting: ['numpy.axis-reductions', 'numpy.elementwise-ufuncs', 'numpy.broadcasting-rules', 'numpy.ranges']
+supporting: ['torch.axis-reductions', 'torch.elementwise-ops', 'torch.broadcasting-rules', 'torch.ranges']
 previews: []
-faded: [1032, 1033, 1034, 1035]
+faded: [1032, 1033, 1034, 1035, 1728]
 guided: []
-independent: [1036, 1037, 1038, 1039, 1040, 1041, 1080, 1081, 1082]
-integrated: [1042, 1043, 1044]
+independent: [1036, 1037, 1038, 1039, 1040, 1041, 1080, 1081, 1082, 103]
+integrated: [1042, 1043, 1044, 1690, 1691, 1692, 1693]
 ---
 
 ## Concept: Only score differences matter
@@ -88,6 +88,26 @@ def solve(x):
     return z.exp()
 ```
 
+### q1034
+Return normalized class probabilities, shape (b,c). x: logits (b,c), finite float.
+
+```python starter
+import torch as t
+
+def solve(x):
+    pass
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    z=x-x.max(dim=1,keepdim=True)[0]
+    e=z.exp()
+    p=e/e.sum(dim=1,keepdim=True)
+    return p
+```
+
 ## Concept: Keep tiny probabilities in log space
 
 A probability of `exp(-1000)` underflows to exactly zero in floating point, and `log(0)` is minus infinity — so "take softmax, then log" destroys the very numbers a loss function needs. The remedy is to never form the probability: compute the log-probability directly as score minus log-normalizer, where the log-normalizer of a row is `log(sum(exp(x)))`, the log-sum-exp. `x.log()` is the natural logarithm, elementwise.
@@ -129,26 +149,6 @@ assert t.allclose(lse,t.logsumexp(x,dim=1))
 
 ## Faded practice
 
-### q1034
-Return normalized class probabilities, shape (b,c). x: logits (b,c), finite float.
-
-```python starter
-import torch as t
-
-def solve(x):
-    pass
-```
-
-```python solution
-import torch as t
-
-def solve(x):
-    z=x-x.max(dim=1,keepdim=True)[0]
-    e=z.exp()
-    p=e/e.sum(dim=1,keepdim=True)
-    return p
-```
-
 ### q1035
 Return row log-normalizers, shape (b,). x: logits (b,c), finite float.
 
@@ -165,6 +165,26 @@ import torch as t
 def solve(x):
     m=x.max(dim=1)[0]
     return m+(x-m[:,None]).exp().sum(dim=1).log()
+```
+
+### q1728
+Return the natural-log softmax probability of every entry as a floating-point PyTorch tensor of shape `(c, b)`: column `j` holds example `j`'s log-probabilities over the `c` classes, and every result must stay finite even where the probability itself would round to zero. `x`: the unnormalised class scores (logits), a floating-point PyTorch tensor of shape `(c, b)` — rows are classes, columns are examples; the softmax of a column is proportional to `e` raised to each score and sums to one.
+
+```python starter
+import torch as t
+
+def solve(x):
+    """The natural-log class probabilities of every column."""
+    pass
+```
+
+```python solution
+import torch as t
+
+def solve(x):
+    """The natural-log class probabilities of every column."""
+    m=x.max(dim=0,keepdim=True)[0]
+    return x-m-(x-m).exp().sum(dim=0,keepdim=True).log()
 ```
 
 ## Solo practice
@@ -196,6 +216,9 @@ Return squared distance of each class distribution from uniform, shape (b,). x: 
 ### q1082
 Return effective number of equally likely classes, defined as the exponential of entropy, shape (b,). x: logits (b,c), finite float.
 
+### q103
+Softmax of a logit vector that survives entries like 1000 — shift before exponentiating.
+
 ## Integrated practice
 
 ### q1042
@@ -206,6 +229,18 @@ Return the mean class distribution across the batch, shape (c,). x: logits (b,c)
 
 ### q1044
 Return how much probability each row assigns to scores strictly below that row’s average, shape (b,). x: logits (b,c), finite float.
+
+### q1690
+Return the probability each row assigns to its TRUE class, shape (b,). x: logits (b,c), finite float; y: true class index per example (b,).
+
+### q1691
+Return the entropy of each row's class distribution, −Σ p·log p over the classes, computed in log space, shape (b,). x: logits (b,c), finite float.
+
+### q1692
+Return the class probabilities renormalized over the ALLOWED classes only: zero for a disallowed class, and the allowed probabilities summing to 1 per row, shape (b,c). Stay stable when a disallowed score is enormous. x: logits (b,c), finite float; keep: Boolean (c,), at least one True.
+
+### q1693
+Return the temperature-scaled class probabilities: the softmax of each row's scores divided by that row's own temperature, shape (b,c). x: logits (b,c), finite float; temp: positive temperatures (b,), one per row.
 
 ## Misconceptions
 

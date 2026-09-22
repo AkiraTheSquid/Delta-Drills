@@ -1,0 +1,197 @@
+{
+  "kc": "math.ray-geometry",
+  "problems": [
+    {
+      "id": 50000,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "O = (3, −2), Q = (7, 4). A ray starts at O and passes through Q. Which D makes O + D = Q?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(7, 4)",
+          "value": "Matrix([7,4])"
+        },
+        {
+          "key": "B",
+          "text": "(4, 6)",
+          "value": "Matrix([4,6])"
+        },
+        {
+          "key": "C",
+          "text": "(−4, −6)",
+          "value": "Matrix([-4,-6])"
+        },
+        {
+          "key": "D",
+          "text": "(10, 2)",
+          "value": "Matrix([10,2])"
+        }
+      ],
+      "answer": "B",
+      "solution": "D = Q − O = (4, 6). Adding O recovers Q.\n\n- A: Q is a point; subtract O.\n- C: This points from Q back to O.\n- D: Adding the points does not give their displacement.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([7,4])-Matrix([3,-2])"
+        }
+      }
+    },
+    {
+      "id": 50001,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "P(s) = (2, 1) + s(−1, 2), s ≥ 0. Does (3, −1) belong to this ray?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Yes, because it lies on the line."
+        },
+        {
+          "key": "B",
+          "text": "No; the required parameter is s = −1."
+        },
+        {
+          "key": "C",
+          "text": "No; directions cannot have negative coordinates."
+        },
+        {
+          "key": "D",
+          "text": "Yes; its x-coordinate is positive."
+        }
+      ],
+      "answer": "B",
+      "solution": "Both coordinates require s = −1, behind the origin.\n\n- A: Line membership is insufficient: s must be nonnegative.\n- C: Direction coordinates may be negative; the restriction is on s.\n- D: Coordinate signs do not determine whether a point is ahead of O."
+    },
+    {
+      "id": 50002,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "A = (1, 2), B = (5, 6). What does v = 1.25 give in A + v(B − A)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(5, 6), the endpoint"
+        },
+        {
+          "key": "B",
+          "text": "(6, 7), inside the segment"
+        },
+        {
+          "key": "C",
+          "text": "(6, 7), beyond B"
+        },
+        {
+          "key": "D",
+          "text": "(5, 7), beyond B"
+        }
+      ],
+      "answer": "C",
+      "solution": "A + 1.25(4, 4) = (6, 7), outside the segment.\n\n- A: v = 1 reaches B; 1.25 goes farther.\n- B: The point is correct, but v > 1 puts it outside.\n- D: Both coordinates receive a displacement of 5."
+    },
+    {
+      "id": 50003,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "A point is O + 6D. Replace D by D′ = 3D, leaving O fixed. Which parameter reaches the same point?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "18",
+          "value": "18"
+        },
+        {
+          "key": "B",
+          "text": "6",
+          "value": "6"
+        },
+        {
+          "key": "C",
+          "text": "−2",
+          "value": "-2"
+        },
+        {
+          "key": "D",
+          "text": "2",
+          "value": "2"
+        }
+      ],
+      "answer": "D",
+      "solution": "2D′ = 2·3D = 6D.\n\n- A: Multiplying both quantities changes the displacement by nine.\n- B: The new direction is three times as long.\n- C: Negative parameters reverse the displacement.",
+      "verify": {
+        "sympy": {
+          "truth": "6/3"
+        }
+      }
+    },
+    {
+      "id": 50004,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A five-pixel camera includes both y-limits −3 and 3 at x = 1. Which sequence contains the direction-y coordinates?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[−3, −1.5, 0, 1.5, 3]",
+          "value": "Matrix([-3,-Rational(3,2),0,Rational(3,2),3])"
+        },
+        {
+          "key": "B",
+          "text": "[−3, −1.8, −0.6, 0.6, 1.8]",
+          "value": "Matrix([-3,-Rational(9,5),-Rational(3,5),Rational(3,5),Rational(9,5)])"
+        },
+        {
+          "key": "C",
+          "text": "[−3, 0, 3]",
+          "value": "Matrix([-3,0,3])"
+        },
+        {
+          "key": "D",
+          "text": "[0, 0.75, 1.5, 2.25, 3]",
+          "value": "Matrix([0,Rational(3,4),Rational(3,2),Rational(9,4),3])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Four gaps share a span of six: each is 1.5.\n\n- B: Dividing by five omits the positive endpoint.\n- C: This has three pixels, not five.\n- D: The negative endpoint is missing.",
+      "verify": {
+        "sympy": {
+          "truth": "-3*ones(5,1)+Rational(3,2)*Matrix([0,1,2,3,4])"
+        }
+      }
+    },
+    {
+      "id": 50005,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A point has v = 0.2 from A to B. Swap the endpoints and write P = B + w(A − B). What is w?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−0.2",
+          "value": "-Rational(1,5)"
+        },
+        {
+          "key": "B",
+          "text": "0.2",
+          "value": "Rational(1,5)"
+        },
+        {
+          "key": "C",
+          "text": "0.8",
+          "value": "Rational(4,5)"
+        },
+        {
+          "key": "D",
+          "text": "1.2",
+          "value": "Rational(6,5)"
+        }
+      ],
+      "answer": "C",
+      "solution": "w = 1 − v = 0.8; both expressions give 0.8A + 0.2B.\n\n- A: Negating v does not account for changing the starting point.\n- B: The fraction is now measured from the other endpoint.\n- D: w > 1 would put the point beyond A.",
+      "verify": {
+        "sympy": {
+          "truth": "1-Rational(1,5)"
+        }
+      }
+    }
+  ]
+}

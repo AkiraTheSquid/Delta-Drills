@@ -21,8 +21,6 @@
    ================================================================ */
 
 const KcPractice = (() => {
-  const FADED_CEIL = 0.75; // ERE band shared with arena-unlock.js
-
   let active = false;
   let kcId = null;
   let kcTitle = null;      // the KP's own title — see _stamp
@@ -141,43 +139,21 @@ const KcPractice = (() => {
   // Composite form — what the backend's focus_subtopic expects.
   const _compositeKey = () => subtopicKeys.find((k) => k.includes(": ")) || subtopicKeys[0] || null;
 
-  const _mastery = () => {
-    for (const key of subtopicKeys) {
-      const live = window.__subtopicMastery && window.__subtopicMastery[key];
-      if (Number.isFinite(live)) return live;
-    }
-    for (const key of subtopicKeys) {
-      try {
-        const p = getEwmaFromAdaptiveState(key);
-        if (Number.isFinite(p)) return p;
-      } catch (_err) { /* try the next key */ }
-    }
-    return null;
-  };
+  /* NO FADED OR GUIDED ITEMS (2026-09-21). The blanked-starter and hint rungs
+     were retired server-side on 2026-09-11 (kc_graph._STAGE_TO_RANKS serves
+     ranks 2/3/unranked only), but this ladder kept queueing a KP's
+     `faded_items` FIRST whenever the posterior sat under 0.75 — so the
+     `?lesson=<kc>` flow handed Seth q820 and q821 with `_____` blanks the
+     moment he finished the ray-parametrisation page. Seth, 2026-09-21: "there
+     are supposed to be NO faded problems, but this one got through." The
+     ladder is now independent → integrated, the same two rungs the adaptive
+     queue serves; the authored faded/guided items stay in
+     lessons_structured.json for the lesson player and are not served here.
 
-  // The KP's numbered hints are one markdown list; the practice card shows a
-  // single hint string. Keep the numbering — the hints are written to escalate
-  // (conceptual nudge → names the function → near-solution), so a learner who
-  // reads only the first line has still been helped the least.
-  const _hintText = (markdown) =>
-    String(markdown || "")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .join("\n");
-
-  // Three rungs, decreasing support: faded hands over a blanked solution,
-  // guided hands over a hint, independent hands over nothing. Below the
-  // independent band a learner climbs up; above it they start at the top and
-  // the scaffolded items stay in reserve (still useful, just not the entry
-  // point). Guided sits in the middle either way.
+     Two rungs, decreasing support: independent hands over the drill, integrated
+     the whole-KP problem. The posterior no longer orders anything here, so the
+     mastery reader that fed it is gone too. */
   const _buildQueue = (kp) => {
-    const faded = (kp.faded_items || [])
-      .filter((it) => Number.isFinite(it?.question_id))
-      .map((it) => ({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null }));
-    const guided = (kp.guided_items || [])
-      .filter((it) => Number.isFinite(it?.question_id))
-      .map((it) => ({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) }));
     const independent = (kp.independent_items || [])
       .filter((id) => Number.isFinite(id))
       .map((id) => ({ kind: "independent", questionId: id, starter: null }));
@@ -189,11 +165,7 @@ const KcPractice = (() => {
     const integrated = (kp.integrated_items || [])
       .filter((it) => Number.isFinite(it?.question_id))
       .map((it) => ({ kind: "integrated", questionId: it.question_id, starter: null }));
-    const p = _mastery();
-    const scaffoldFirst = !Number.isFinite(p) || p < FADED_CEIL;
-    return scaffoldFirst
-      ? [...faded, ...guided, ...independent, ...integrated]
-      : [...independent, ...guided, ...faded, ...integrated];
+    return [...independent, ...integrated];
   };
 
   // Any bank record for this KP — used only to read its subtopic naming.
@@ -224,19 +196,14 @@ const KcPractice = (() => {
   const PREREQ_PER_RUNG = 1;
   const _prereqItems = (kp, kc) => {
     const tag = (it) => ({ ...it, kc, kcTitle: (kp && kp.title) || kc });
-    const faded = (kp.faded_items || [])
-      .filter((it) => Number.isFinite(it?.question_id))
-      .slice(0, PREREQ_PER_RUNG)
-      .map((it) => tag({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null }));
-    const guided = (kp.guided_items || [])
-      .filter((it) => Number.isFinite(it?.question_id))
-      .slice(0, PREREQ_PER_RUNG)
-      .map((it) => tag({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) }));
+    // Independent only — the faded and guided rungs are retired (see
+    // _buildQueue); a prerequisite pulled in on a miss is still drilled
+    // unaided, one problem, not re-taught with blanks.
     const independent = (kp.independent_items || [])
       .filter((id) => Number.isFinite(id))
       .slice(0, PREREQ_PER_RUNG)
       .map((id) => tag({ kind: "independent", questionId: id, starter: null }));
-    return [...faded, ...guided, ...independent];
+    return independent;
   };
 
   const _hydrate = (item) => {
@@ -370,11 +337,11 @@ const KcPractice = (() => {
      concept's own kc/title so a served drill reads as that concept's rung. */
   const _nodePools = (kp, kc) => {
     const tag = (it) => ({ ...it, kc, kcTitle: (kp && kp.title) || kc });
+    // The planner still keys its GAIN table by all three kinds; the two retired
+    // rungs are handed EMPTY pools so it can never choose them (see _buildQueue).
     return {
-      faded: (kp.faded_items || []).filter((it) => Number.isFinite(it?.question_id))
-        .map((it) => tag({ kind: "faded", questionId: it.question_id, starter: it.starter_code || null })),
-      guided: (kp.guided_items || []).filter((it) => Number.isFinite(it?.question_id))
-        .map((it) => tag({ kind: "guided", questionId: it.question_id, hint: _hintText(it.hints_markdown) })),
+      faded: [],
+      guided: [],
       independent: (kp.independent_items || []).filter((id) => Number.isFinite(id))
         .map((id) => tag({ kind: "independent", questionId: id, starter: null })),
     };

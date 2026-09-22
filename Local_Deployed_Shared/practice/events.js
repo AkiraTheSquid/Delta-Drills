@@ -14,9 +14,21 @@ const TOPBAR_SETTLE_MS = 700;
 
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
-  const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
+  // A math (multiple-choice) question's answer IS the picked key — the same
+  // `user_code` slot, graded by key compare (grading.grade_choice). Empty
+  // only on a clock expiry: mount() holds Submit until a pick.
+  const userCode = window.DeltaMath?.active()
+    ? window.DeltaMath.selectedKey()
+    : window.DeltaNotebook?.submissionCode() || codeEditor.value;
   // Read BEFORE pauseForGrading: one read, and it must belong to this submit.
   const timedOut = PracticeSession.consumeTimedOut?.() === true;
+  // A math question with nothing picked: the learner's own click goes
+  // nowhere (the button only looks inert — math-drill.js says why); the
+  // clock's click carries on and grades the empty key as a timeout miss.
+  if (!timedOut && window.DeltaMath?.active() && !window.DeltaMath.hasPick()) {
+    window.DeltaMath.nudge();
+    return;
+  }
   PracticeSession.pauseForGrading();
   // Same contract for a placement probe's fixed clock: once the grade is in
   // flight the learner is no longer answering, so the countdown stops instead
@@ -74,14 +86,24 @@ practiceSubmitBtn.addEventListener("click", async () => {
   // The graded verdict supersedes the Run button's dry check of the same code.
   window.DeltaTestCheck?.hide?.();
   if (typeof renderFailedTests === "function") renderFailedTests(result, q);
-  /* The answer, under the code that missed it. Ordered AFTER renderFailedTests
+  /* The answer, under the code you wrote. Ordered AFTER renderFailedTests
      because showSolution re-appends itself last, so the read is: your cells →
-     which cases failed → what it should have been. Only on a miss: a correct
-     answer already showed you a working one, yours — and a correct RESUBMIT
-     has to take the old one away, or the answer to a question you have since
-     solved sits under your working code until the next question loads. */
-  if (result.correct) {
-    window.DeltaNotebook?.clearSolution?.();
+     which cases failed (on a miss) → the reference answer.
+
+     🔴 ON EVERY VERDICT, CORRECT INCLUDED. This used to be a miss-only reveal
+     ("a correct answer already showed you a working one, yours"), and a
+     correct grade actively CLEARED the cell. Seth, 2026-09-21: "it doesn't
+     hide the freaking solution when you solve it correctly. it really
+     shouldn't have done that in the first place." A working answer is not
+     the same as the reference answer — the comparison (one broadcast vs. a
+     loop, the idiom vs. the workaround) is the review step of a correct
+     answer, and it was being deleted at the exact moment it became useful.
+     showSolution re-renders in place, so a resubmit swaps the cell's source
+     instead of leaving a stale one. */
+  if (window.DeltaMath?.showSolution?.(q, result)) {
+    /* Math: the keyed choice is marked in the list and the authored
+       solution (markdown + LaTeX) renders in the solution section. There is
+       no code cell to append, so nothing to scroll to. */
   } else if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
     /* Appended is not seen: the answer lands under cells as tall as whatever
        the learner just wrote, i.e. below the fold of the notebook pane. Scroll
@@ -146,6 +168,14 @@ practiceSubmitBtn.addEventListener("click", async () => {
   if (result.scored === false) {
     feedbackPrompt.textContent = "Time ran out — not counted against you. Next problem when you are ready.";
     showNextProblemButton(feedbackPrompt.textContent);
+  }
+  // Since 2026-09-20 the clock's wrong answer IS a miss (Seth: "It should
+  // count it as wrong whenever I run out of time"): scored, on the ladder,
+  // rated like any other. The prompt keeps the rating question — the tail
+  // is what `promptIsAskingForRating` matches — and says what happened.
+  else if (result.timed_out && !result.correct) {
+    feedbackPrompt.textContent = "Time ran out — that counts as a miss. " +
+      "How much easier do you want the next problem to be?";
   }
   // Placement probe: the backend already recorded it at /submit — there is no
   // pending attempt and no felt-difficulty step. Go straight to Next.
@@ -487,6 +517,10 @@ const _loadNextPracticeQuestion = async () => {
   _resetProblemFeedbackRow();
   if (typeof hideFailedTests === "function") hideFailedTests();
   window.DeltaTestCheck?.hide?.();
+  // The math switch comes off HERE, not only in renderQuestion: a lesson
+  // gate renders a page instead of the next drill, and a math question's
+  // choice list and `html.dd-math-mc` would otherwise outlive it.
+  window.DeltaMath?.mount(null);
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor

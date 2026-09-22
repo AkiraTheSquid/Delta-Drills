@@ -1,13 +1,13 @@
 ---
 kc: torch.slice-assignment
 title: Writing tensors into slices: broadcasting on the left
-supporting: [numpy.slicing-views, numpy.broadcasting-rules, numpy.constructors, numpy.ranges]
+supporting: [torch.slicing-views, torch.broadcasting-rules, torch.constructors, torch.ranges]
 new_syntax: [Tensor.copy_]
 previews: []
 faded: [809, 810]
 guided: []
-independent: [811, 812, 813, 814, 815, 816]
-integrated: [817, 818, 819]
+independent: [811, 812, 813, 814, 815, 816, 1601, 1602]
+integrated: [817, 818, 819, 1603, 1678, 1679, 1680, 1681]
 ---
 
 ## Concept: `x[sel] = value` writes in place, broadcasting the value
@@ -141,6 +141,12 @@ Assign a row, then copy_ a column; order matters at the crossing.
 ### q816
 A float assigned into an int tensor is truncated, not upcast.
 
+### q1601
+One scalar broadcast down a column — the last column.
+
+### q1602
+A row vector broadcast across all rows in one write.
+
 ## Integrated practice
 
 ### q817
@@ -151,6 +157,21 @@ A row-vector broadcast into a stepped row slice.
 
 ### q819
 copy_ a block, then rewrite it from itself.
+
+### q1603
+Two writes cross at one cell — the later write wins.
+
+### q1678
+Two blocks, two broadcasts: a scalar into the top-left, a row vector into every row of the bottom-right.
+
+### q1679
+Even slots of one row, odd slots of another: two stepped writes, the second starting at 1.
+
+### q1680
+A block copied into the centre view of a bigger canvas, then four scalar writes at the corners.
+
+### q1681
+A column block filled with a scalar, then one column copied over another in place.
 
 ## Misconceptions
 

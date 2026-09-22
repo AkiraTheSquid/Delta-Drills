@@ -3,12 +3,12 @@ kc: raytracing.triangle-intersection
 title: Ray–triangle intersection
 new_syntax: []
 concepts: [barycentric, three-unknowns]
-supporting: ['raytracing.segment-intersection', 'numpy.linalg-basics', 'numpy.broadcasting-rules']
+supporting: ['raytracing.segment-intersection', 'torch.linalg-basics', 'torch.broadcasting-rules']
 previews: []
 faded: [1137, 1138, 1139, 1140]
 guided: []
 independent: [1141, 1142, 1143, 1144, 1145, 1146, 1147, 1148, 1149]
-integrated: [1150, 1151, 1152]
+integrated: [1150, 1151, 1152, 1714, 1715, 1716, 1717]
 ---
 
 ## Concept: A triangle is spanned by two edge vectors
@@ -39,7 +39,7 @@ print(inside)
 assert inside.tolist()==[True,False,True]
 ```
 
-Dropping the sum test admits the second pair. That is the parallelogram, not the triangle — a bug that renders every triangle as a quadrilateral.
+Replacing the sum test by the separate bounds `u <= 1` and `v <= 1` admits the second pair. That is the parallelogram, not the triangle — a bug that renders every triangle as a quadrilateral.
 
 ```python
 parallelogram=(uv>=0).all(dim=1)&(uv<=1).all(dim=1)
@@ -215,6 +215,18 @@ Return interpolated vertex value at a hit when A,B,C carry values 2,5,11; return
 
 ### q1152
 Return the displacement from the triangle centroid to a hit, else zero, shape (3,). r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs are misses.
+
+### q1714
+Return the colour seen along the ray: the triangle's per-vertex colours blended by the hit's barycentric weights [wA, wB, wC] (the weights with hit = wA·A + wB·B + wC·C and wA + wB + wC = 1), shape (3,), or zeros on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C; col: colours (3,3), one RGB row per vertex in the same order. Parallel or degenerate pairs are misses.
+
+### q1715
+Return the Euclidean distance from the hit point to the nearest of the three vertices, as a scalar tensor, or −1 on a miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs are misses.
+
+### q1716
+Return the travel parameter s (the point is origin + s·direction) at which the ray hits the triangle and at which it hits the parallelogram with corners A, B, C and B+C−A, as a (2,) tensor [triangle, parallelogram], with −1 for each miss. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C. Parallel or degenerate pairs miss both.
+
+### q1717
+Return the travel parameter s (the point is origin + s·direction) at which the ray's line crosses the triangle's plane and whether that crossing is a hit, as a (2,) tensor [s, hit] with hit written as 1. or 0.; return [−1, 0] when the pair is singular (ray parallel to the plane). A crossing behind the origin is not a hit. r: ray (2,3) as [origin, direction]; tr: triangle (3,3), vertices A,B,C.
 
 ## Misconceptions
 

@@ -3,12 +3,12 @@ kc: tensor.cosine-similarity
 title: Cosine similarity
 new_syntax: []
 concepts: [alignment, all-pairs]
-supporting: ['tensor.row-normalization', 'numpy.dot-matmul-patterns', 'numpy.transpose-axes', 'numpy.argmin-argmax']
+supporting: ['tensor.row-normalization', 'torch.dot-matmul-patterns', 'torch.transpose-axes', 'torch.argmin-argmax']
 previews: []
 faded: [1006, 1007, 1008, 1009]
 guided: []
 independent: [1010, 1011, 1012, 1013, 1014, 1015, 1074, 1075, 1076]
-integrated: [1016, 1017, 1018]
+integrated: [1016, 1017, 1018, 1698, 1699, 1700, 1701]
 ---
 
 ## Concept: A dot product measures alignment
@@ -202,9 +202,21 @@ Return Euclidean distances between normalized query and candidate directions, sh
 ### q1018
 Return each query’s similarity to the unit direction of the candidate centroid, shape (m,). Candidate mean is nonzero. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows.
 
+### q1698
+Return, for each candidate, how many queries have it as their nearest candidate by cosine similarity (every query has a unique nearest candidate), shape (n,), int64. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows.
+
+### q1699
+Return the mean cosine similarity over all ordered pairs of DISTINCT candidates, as a scalar tensor. y: candidates (n,d), n ≥ 2. Float tensor with nonzero rows.
+
+### q1700
+Return whether each query's nearest candidate by cosine similarity is also its nearest candidate by Euclidean distance between the ORIGINAL vectors, shape (m,), Boolean; ties choose the earlier candidate on both sides. x: queries (m,d); y: candidates (n,d). Float tensors with nonzero rows.
+
+### q1701
+Return the SECOND-nearest candidate index for each query by cosine similarity (every query has a unique nearest candidate; among the rest, ties choose the earlier candidate), shape (m,), int64. x: queries (m,d); y: candidates (n,d) with n ≥ 2. Float tensors with nonzero rows.
+
 ## Misconceptions
 
 - **A larger dot product means more similar.** Only after normalizing; before, it also grows with length.
-- **`a @ b` compares all pairs.** With two matrices of shape `(m, d)` and `(n, d)` it fails unless `m = d`; the candidate matrix must be transposed.
+- **`a @ b` compares all pairs.** With two matrices of shape `(m, d)` and `(n, d)` it fails unless `d = n`; the candidate matrix must be transposed.
 - **Normalizing the table normalizes the inputs.** Cosine similarity divides each *input row* by its length before the product; scaling the result afterwards is a different quantity.
-- **The result can exceed `1`.** For unit rows it cannot; a value above `1` means something was not normalized.
+- **The result can exceed `1`.** For unit rows it cannot, beyond a rounding hair such as `1.0000002`; a value clearly above `1` means something was not normalized.

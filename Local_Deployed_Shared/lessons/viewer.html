@@ -39,6 +39,7 @@
   .misconceptions { border-left: 3px solid var(--misc); padding-left: 1rem; }
   .pill { display: inline-block; background: var(--code-bg); border-radius: 999px;
     padding: .05rem .6rem; margin: 0 .25rem .25rem 0; font-size: .78rem; color: var(--dim); }
+  table { border-collapse: collapse; margin: 1rem 0; } th, td { border: 1px solid var(--border, #444); padding: .25rem .6rem; }
   blockquote { border-left: 3px solid var(--accent); margin: 1rem 0; padding: .2rem 1rem;
     color: #c4cbd8; background: rgba(90,169,230,.06); border-radius: 0 6px 6px 0; }
   .empty { color: var(--dim); font-style: italic; }
@@ -62,6 +63,31 @@ function inline(s) {
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
+// Pipe tables, as practice/lessons.js renders them (added 2026-09-17 for the ARENA
+// notebooks; no authored lesson uses one yet). Indent allowed: a table may sit inside a list item.
+const TABLE_ROW = /^\s*\|.*\|\s*$/;
+const TABLE_DELIM = /^(?=.*\|)\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/;
+const tableStartsAt = (lines, i) => TABLE_ROW.test(lines[i] || '') && TABLE_DELIM.test(lines[i + 1] || '');
+function splitRow(line) {
+  const cells = line.trim().split('|');
+  if (cells[0].trim() === '') cells.shift();
+  if (cells.length && cells[cells.length - 1].trim() === '') cells.pop();
+  return cells.map(c => c.trim());
+}
+function renderTable(lines, start) {
+  const aligns = splitRow(lines[start + 1]).map(spec => {
+    const l = spec.startsWith(':'), r = spec.endsWith(':');
+    return l && r ? 'center' : r ? 'right' : l ? 'left' : '';
+  });
+  const row = (tag, cells) => '<tr>' + cells.map((c, col) =>
+    '<' + tag + (aligns[col] ? ' style="text-align:' + aligns[col] + '"' : '') + '>' + inline(c) + '</' + tag + '>').join('') + '</tr>';
+  const body = [];
+  let i = start + 2;
+  while (i < lines.length && TABLE_ROW.test(lines[i])) { body.push(row('td', splitRow(lines[i]))); i++; }
+  const html = '<table><thead>' + row('th', splitRow(lines[start])) + '</thead>' +
+    (body.length ? '<tbody>' + body.join('') + '</tbody>' : '') + '</table>';
+  return { html, next: i };
+}
 function md(text) {
   if (!text) return '';
   const lines = text.split('\n');
@@ -69,7 +95,8 @@ function md(text) {
   let i = 0, list = null, para = [], quote = [];
   const flushPara = () => { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } };
   const flushList = () => { if (list) { out.push('</' + list + '>'); list = null; } };
-  const flushQuote = () => { if (quote.length) { out.push('<blockquote>' + inline(quote.join(' ')) + '</blockquote>'); quote = []; } };
+  // The quote body is markdown (headings, lists, fences), not one sentence — render it recursively.
+  const flushQuote = () => { if (quote.length) { out.push('<blockquote>' + md(quote.join('\n')) + '</blockquote>'); quote = []; } };
   while (i < lines.length) {
     const line = lines[i];
     const fence = line.match(/^```(.*)$/);
@@ -92,6 +119,10 @@ function md(text) {
     const h = line.match(/^(#{1,6})\s+(.*)$/);
     if (h) { flushPara(); flushList(); flushQuote(); out.push('<h4>' + inline(h[2]) + '</h4>'); i++; continue; }
     if (/^>\s?/.test(line)) { flushPara(); flushList(); quote.push(line.replace(/^>\s?/, '')); i++; continue; }
+    if (tableStartsAt(lines, i)) {
+      flushPara(); flushList(); flushQuote();
+      const t = renderTable(lines, i); out.push(t.html); i = t.next; continue;
+    }
     const li = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
     if (li) {
       flushPara(); flushQuote();
@@ -99,7 +130,7 @@ function md(text) {
       if (list !== kind) { flushList(); out.push('<' + kind + '>'); list = kind; }
       // gather hanging-indent continuation lines
       let item = li[3]; i++;
-      while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i])) {
+      while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i]) && !tableStartsAt(lines, i)) {
         item += ' ' + lines[i].trim(); i++;
       }
       out.push('<li>' + inline(item) + '</li>');

@@ -15,7 +15,7 @@ import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
-from delta_paths import THIS_DIR_ONLY, get_backend_python, get_chatgpt_runtime_dir
+from delta_paths import THIS_DIR_ONLY, ensure_torch_python, get_backend_python, get_chatgpt_runtime_dir
 
 QUESTIONS_PATH = THIS_DIR_ONLY / "questions_full.json"
 CHATGPT_RUNTIME_DIR = get_chatgpt_runtime_dir()
@@ -219,6 +219,7 @@ def _validate_test_case(code_runner, answer_code: str, case: dict) -> tuple[list
 
 
 def main() -> None:
+    ensure_torch_python()
     code_runner = load_code_runner()
     questions = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
     failures = []

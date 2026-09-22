@@ -5,7 +5,8 @@ supporting: [einops.pattern-language]
 new_syntax: []
 faded: [361]
 guided: [360]
-independent: [358, 374, 376, 333, 334, 365]
+independent: [358, 374, 376, 333, 334, 365, 1624, 1625]
+integrated: [1626, 1627, 1628, 1629]
 ---
 
 ## Concept
@@ -158,6 +159,26 @@ q376 (exactly two images side by side — a two-element list works).
 Also from the bank: q333 (a PYTHON LIST of channels-first images to one
 channels-last batch), q334 (two images whose rows INTERLEAVE — '(h b)' on
 a list), q365 (list stacked and rearranged so the list axis lands LAST).
+
+### q1624
+A list is axis 0: the identity pattern does the stacking.
+
+### q1625
+A literal 1 on the output side inserts the singleton where you write it.
+
+## Integrated practice
+
+### q1626
+List axis in, merged into width out: no stack, no cat.
+
+### q1627
+Consume a 1 on the left, produce a 1 on the right.
+
+### q1628
+Stack via the list axis and insert the channel singleton together.
+
+### q1629
+List axis becomes the last axis: stack and transpose at once.
 
 ## Misconceptions
 

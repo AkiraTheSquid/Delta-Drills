@@ -3,7 +3,7 @@ kc: cnn.mlp
 title: A two-layer MLP for images
 new_syntax: []
 concepts: [flatten-per-image, hidden-nonlinearity]
-supporting: ['cnn.linear-layer', 'numpy.reshape-flatten', 'tensor.classifier-evaluation']
+supporting: ['cnn.linear-layer', 'torch.reshape-flatten', 'tensor.classifier-evaluation']
 previews: []
 faded: [1201, 1202, 1203, 1204]
 guided: []

@@ -87,8 +87,8 @@
   <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=11" />
-  <link rel="stylesheet" href="styles/practice/notebook-view.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=12" />
+  <link rel="stylesheet" href="styles/practice/notebook-view.css?v=6" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
@@ -141,11 +141,14 @@
        question.css declares that card with. Later sheet wins. Reversed, the
        concept is named twice — once up here and once in a 20px <h2> under it —
        and nothing throws. `watch_concept_pill.py` asserts the order. -->
-  <link rel="stylesheet" href="styles/concept-pill.css?v=3" />
+  <link rel="stylesheet" href="styles/concept-pill.css?v=4" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=6" />
+  <!-- A math (multiple-choice) question: choice list in, editor column out.
+       practice/math-drill.js toggles `html.dd-math-mc` per question. -->
+  <link rel="stylesheet" href="styles/practice/math-drill.css?v=1" />
   <link rel="stylesheet" href="practice/bars.css?v=11" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -1388,6 +1391,11 @@
                 <label for="account-mathpix-key">Mathpix App Key</label>
                 <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
               </div>
+              <div class="field" id="account-arena-share-field">
+                <label for="account-arena-share" data-dd-info="arena-share">ARENA share of practice: <output id="account-arena-share-out" for="account-arena-share">—</output></label>
+                <input id="account-arena-share" type="range" min="0" max="100" step="5" value="0" disabled />
+                <div class="hint" id="account-arena-share-note" role="status">Loading…</div>
+              </div>
               <div class="field" id="account-token-field">
                 <label for="account-dd-token" data-dd-info="dd-token">Your API token (DD_TOKEN)</label>
                 <div class="dd-token-row">
@@ -2219,7 +2227,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=13"></script>
+  <script src="infotips-registry.js?v=14"></script>
   <script src="infotips.js?v=2"></script>
   <script src="lessons/glossary.js?v=2"></script>
   <script src="jargon.js?v=2"></script>
@@ -2283,7 +2291,7 @@ t.manual_seed(0)
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
   <script src="practice/mode.js?v=11"></script>
-  <script src="practice/questions.js?v=26"></script>
+  <script src="practice/questions.js?v=27"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=7"></script>
@@ -2306,6 +2314,9 @@ t.manual_seed(0)
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
+  <!-- Math (multiple-choice) questions: `window.DeltaMath`. Before ui.js
+       (renderQuestion mounts it) and lessons.js (the KaTeX pass). -->
+  <script src="practice/math-drill.js?v=1"></script>
   <script src="practice/visuals.js?v=18"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
@@ -2319,7 +2330,11 @@ t.manual_seed(0)
        classic script on the page — window.DDGraphColab is guaranteed to exist
        by the time a bubble can be clicked. -->
   <script src="concept-graph/kc-colab-route.js?v=2"></script>
-  <script src="practice/ui.js?v=43"></script>
+  <!-- Owns "is the concept's name hidden right now" (drill on screen, not yet
+       graded). ui.js, stage-ladder.js and concept-pill.js read it; loaded
+       first so the heading's first write is already masked. -->
+  <script src="practice/concept-mask.js?v=1"></script>
+  <script src="practice/ui.js?v=45"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
   <script src="practice/test-check.js?v=3"></script>
@@ -2328,9 +2343,9 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=31"></script>
+  <script src="practice/api.js?v=32"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=34"></script>
+  <script src="practice/timer.js?v=35"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2366,11 +2381,11 @@ t.manual_seed(0)
   <script src="practice/ere-tiers-manifest.js?v=3"></script>
   <script src="practice/arena-unlock.js?v=18"></script>
   <script src="practice/competency-bar.js?v=5"></script>
-  <script src="practice/stage-ladder.js?v=17"></script>
+  <script src="practice/stage-ladder.js?v=19"></script>
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=4"></script>
+  <script src="concept-pill.js?v=6"></script>
   <script src="practice/notch-menu.js?v=12"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
@@ -2382,10 +2397,10 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
-  <script src="practice/lessons.js?v=39"></script>
+  <script src="practice/lessons.js?v=44"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
-  <script src="practice/notebook-view.js?v=7"></script>
+  <script src="practice/notebook-view.js?v=8"></script>
   <!-- The ARENA sections, opened in the app rather than in Colab. Same two
        dependencies as the view above (LessonGate.renderMarkdown for prose,
        LessonNotebook.runSource for a cell) plus app.js's `switchTab`, which is
@@ -2430,7 +2445,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=49"></script>
+  <script src="practice/events.js?v=51"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
@@ -2447,6 +2462,7 @@ t.manual_seed(0)
   <script src="practice/placement-plan.js?v=3"></script>
   <script src="practice/placement-results.js?v=5"></script>
   <script src="practice/practice-target.js?v=1"></script>
+  <script src="practice/arena-share.js?v=1"></script>
   <script src="practice/diagnostic-page.js?v=25"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call

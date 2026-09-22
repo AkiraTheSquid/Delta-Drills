@@ -3,11 +3,11 @@ kc: cnn.pooling
 title: Pooling
 new_syntax: []
 concepts: [global-pool, local-max]
-supporting: ['cnn.convolution-2d', 'numpy.axis-reductions', 'numpy.argmin-argmax', 'tensor.row-normalization']
+supporting: ['cnn.convolution-2d', 'torch.axis-reductions', 'torch.argmin-argmax', 'tensor.row-normalization']
 previews: []
 faded: [1265, 1268, 1266, 1267]
 guided: []
-independent: [1269, 1270, 1271, 1272, 1273, 1274, 1275, 1276, 1277]
+independent: [1269, 1270, 1271, 1272, 1273, 1274, 1275, 1276, 1277, 418]
 integrated: [1278, 1279, 1280]
 ---
 
@@ -195,6 +195,9 @@ Return unit-length global-average feature vectors, shape (batch,channels). A zer
 
 ### q1277
 Return root-mean-square activation per example/channel, shape (batch,channels). x: float (batch,channels,height,width).
+
+### q418
+Collapse each channel's spatial map to one number: a (B, C, H, W) map becomes (B, C).
 
 ## Integrated practice
 

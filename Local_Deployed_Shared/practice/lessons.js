@@ -34,9 +34,12 @@ const LessonGate = (() => {
     try {
       const map = _localExposure();
       const now = new Date().toISOString();
-      kcs.forEach((kc) => {
-        if (!map[kc]) map[kc] = now;
-      });
+      // Always the LATEST read, never the first: `_pendingSteps` compares
+      // this stamp against the reading the server called stale, and a stamp
+      // frozen at the first read would let a revisit page show twice. In
+      // backend mode this browser stamp is provisional — `_markBackendExposure`
+      // replaces it with the server's as soon as the POST lands.
+      kcs.forEach((kc) => { map[kc] = now; });
       localStorage.setItem(_exposureKey(), JSON.stringify(map));
     } catch (_) {}
   };
@@ -58,6 +61,7 @@ const LessonGate = (() => {
     // taught, and every later segment stays locked. Roll the local mark back
     // so the lesson is offered again and the POST gets another try.
     let ok = false;
+    let exposed = null;
     try {
       const res = await apiFetch("/api/practice/exposure", {
         method: "POST",
@@ -66,8 +70,42 @@ const LessonGate = (() => {
       });
       if (res.status === 401) handleExpiredToken();
       ok = res.ok;
+      if (ok) exposed = (await res.json())?.exposed || null;
     } catch (_) {}
-    if (!ok) _unmarkLocalExposure(kcs);
+    if (!ok) {
+      _unmarkLocalExposure(kcs);
+      return;
+    }
+    // Keep the SERVER's stamp for this read, not the browser's. The revisit
+    // filter in `_pendingSteps` compares the local stamp against a `read_at`
+    // the server wrote, and two clocks for one event is a race: a browser
+    // clock a few seconds ahead makes the ORIGINAL read look newer than the
+    // reading the server called stale, and the refresher never shows. One
+    // clock, one stamp — equal on the first read, strictly newer after the
+    // refresher is taken. A 2xx whose body could not be read is the same
+    // race with no way to settle it, so the browser's stamp goes: the server
+    // has the read (no unread gate will re-fire) and it alone decides a
+    // refresher (codex, 2026-09-19).
+    _adoptServerStamps(kcs, exposed || {});
+  };
+
+  const _adoptServerStamps = (kcs, exposed) => {
+    // A key the server did not stamp back (unknown id, or an ack we could
+    // not parse) loses its browser stamp rather than keeping a clock the
+    // server never saw.
+    try {
+      const map = _localExposure();
+      let changed = false;
+      kcs.forEach((kc) => {
+        if (typeof exposed[kc] === "string" && exposed[kc]) {
+          if (map[kc] !== exposed[kc]) { map[kc] = exposed[kc]; changed = true; }
+        } else if (kc in map) {
+          delete map[kc];
+          changed = true;
+        }
+      });
+      if (changed) localStorage.setItem(_exposureKey(), JSON.stringify(map));
+    } catch (_) {}
   };
 
   const _fetchJson = async (path) => {
@@ -111,7 +149,7 @@ const LessonGate = (() => {
 
   /* ONE CONCEPT PER VISIT.
 
-     A KP is not one idea — `kp-ndarray-model` teaches three, and the markdown
+     A KP is not one idea — `kp-tensor-model` teaches three, and the markdown
      has always been written that way, each concept with its own worked example
      and its own faded drill. The gate used to render all of them back to back
      and then hand over one question, which produces a learner who has read
@@ -144,7 +182,31 @@ const LessonGate = (() => {
     segmentIndex: Number(entry.segment_index) || 0,
     segmentTotal: Number(entry.segment_total) || 1,
     exposureKey: entry.exposure_key || entry.kc,
+    // A page read long ago and never drilled, taught again
+    // (app/lessons.py REVISIT_AFTER). `readAt` is the reading the server
+    // judged stale, ISO-8601.
+    revisit: !!entry.revisit,
+    readAt: entry.read_at || "",
   });
+
+  /* Has THIS browser read the page since the reading the server is
+     re-teaching? A first-time entry carries no `read_at`, so any local mark
+     suppresses it (the resume case below); a revisit entry names a page the
+     learner HAS read, and only a local read NEWER than the server's stale one
+     — the learner just took the refresher, then paused on its drill — is a
+     reason not to show it. Both stamps are the SERVER's (`_adoptServerStamps`),
+     so the first read compares equal and only a later read wins; parsed as
+     instants because a stamp the POST never confirmed is the browser's `Z`
+     form against the server's `+00:00`. */
+  const _readSinceServerSaw = (entry, localStamp) => {
+    if (!entry.revisit || !entry.read_at) return true;
+    const local = Date.parse(localStamp);
+    const server = Date.parse(entry.read_at);
+    // A stamp that cannot be read is not evidence of a newer read; the
+    // server asked for this page and the server decides (codex, 2026-09-19).
+    if (Number.isNaN(local) || Number.isNaN(server)) return false;
+    return local > server;
+  };
 
   const _pendingSteps = async (question) => {
     // `attempt_first` is the learner's OWN choice — the notebook dialog's
@@ -167,7 +229,7 @@ const LessonGate = (() => {
          Continue re-taught, from page one, the concept the learner had just
          read on the way to that drill — the snapshot still said it was
          pending. Reproduced on prod: the local exposure map held
-         `numpy.ndarray-model#s0-…` while the question's gate still listed it.
+         `torch.tensor-model#s0-…` while the question's gate still listed it.
 
          So a page whose `exposure_key` is already in this browser's map is
          dropped. That is a SUPPRESSION on top of the server's decision, never
@@ -179,7 +241,11 @@ const LessonGate = (() => {
       const exposed = _localExposure();
       const seen = new Set();
       return (question?.lesson_gate || [])
-        .filter((entry) => entry?.kc && !exposed[entry.exposure_key || entry.kc])
+        .filter((entry) => {
+          if (!entry?.kc) return false;
+          const local = exposed[entry.exposure_key || entry.kc];
+          return !local || !_readSinceServerSaw(entry, local);
+        })
         .filter((entry) => !seen.has(entry.kc) && seen.add(entry.kc))
         .map(_stepFromGate);
     }
@@ -241,7 +307,21 @@ const LessonGate = (() => {
      lessons/ tree contained ZERO markdown links, so no authored page changes
      shape. Images come first because `![alt](src)` also matches the link
      pattern, and a link whose text begins with `!` is not a thing. */
+  /* A `$…$` / `$$…$$` span is LaTeX, not prose: `*`, `_` and backticks in
+     it are maths, and the italic rule below would turn `$a*b*c$` into an
+     <em>. Those spans are only escaped here; practice/math-drill.js runs
+     KaTeX over the rendered element afterwards. Additive: at the time this
+     went in the lessons/ tree held ZERO dollar signs (math pages are the
+     `kind: math` lane, docs/spec-math-mc-backbone.md), and the ARENA
+     notebooks' maths was already reaching KaTeX mangled. */
+  const MATH_SPAN = /(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g;
   const inline = (value) =>
+    String(value == null ? "" : value)
+      .split(MATH_SPAN)
+      .map((part, index) => (index % 2 ? esc(part) : inlineProse(part)))
+      .join("");
+
+  const inlineProse = (value) =>
     esc(value)
       .replace(/`([^`]+)`/g, "<code>$1</code>")
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -268,6 +348,49 @@ const LessonGate = (() => {
      a whole lesson at once — lesson title, KP titles, segment titles, problem
      headers — and the depths are the only thing that says which of those
      contains which. Flattened, a 656-cell notebook is 400 identical bumps. */
+  /* Pipe tables — `| a | b |` rows under a `|:---|---:|` delimiter row.
+
+     Added 2026-09-17 for the ARENA notebooks: 0.0's VSCode shortcuts table
+     rendered as one paragraph of pipes. Leading indent is allowed because
+     that table sits INSIDE a list item, four spaces in, and the list branch
+     below hands such a line back rather than gluing it onto the item. The
+     alignment column is honoured (`:--` / `--:` / `:-:`) since a shortcuts
+     table centres every cell on purpose. Nothing authored in lessons/ uses a
+     table today, so every existing page keeps its shape. */
+  const _TABLE_ROW = /^\s*\|.*\|\s*$/;
+  const _TABLE_DELIM = /^(?=.*\|)\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/;
+  const _tableStartsAt = (lines, i) =>
+    _TABLE_ROW.test(lines[i] || "") && _TABLE_DELIM.test(lines[i + 1] || "");
+  const _splitRow = (line) => {
+    const cells = line.trim().split("|");
+    if (cells[0].trim() === "") cells.shift();
+    if (cells.length && cells[cells.length - 1].trim() === "") cells.pop();
+    return cells.map((cell) => cell.trim());
+  };
+  const _renderTable = (lines, start) => {
+    const head = _splitRow(lines[start]);
+    const aligns = _splitRow(lines[start + 1]).map((spec) => {
+      const left = spec.startsWith(":");
+      const right = spec.endsWith(":");
+      return left && right ? "center" : right ? "right" : left ? "left" : "";
+    });
+    const td = (tag, cell, col) =>
+      `<${tag}${aligns[col] ? ` style="text-align:${aligns[col]}"` : ""}>${inline(cell)}</${tag}>`;
+    const row = (tag, cells) =>
+      "<tr>" + cells.map((cell, col) => td(tag, cell, col)).join("") + "</tr>";
+    const body = [];
+    let i = start + 2;
+    while (i < lines.length && _TABLE_ROW.test(lines[i])) {
+      body.push(row("td", _splitRow(lines[i])));
+      i++;
+    }
+    const html =
+      "<table><thead>" + row("th", head) + "</thead>" +
+      (body.length ? "<tbody>" + body.join("") + "</tbody>" : "") +
+      "</table>";
+    return { html, next: i };
+  };
+
   const md = (text, { renderCode = true, headingLevels = false } = {}) => {
     if (!text) return "";
     const lines = text.split("\n");
@@ -288,9 +411,18 @@ const LessonGate = (() => {
         list = null;
       }
     };
+    /* A quote's body is MARKDOWN, not a sentence. The compiled ARENA cells
+       put a `##### Learning Objectives` heading, a blank line and a bullet
+       list inside one `>` block, and every exercise's difficulty box is a
+       ```yaml fence inside one — 1006 quotes across the notebooks, ~700 with
+       block structure. Joining the lines with spaces and running `inline()`
+       printed those as one run-on paragraph with a literal `#####` in it.
+       Rendering the body through this same function keeps the quote's own
+       headings, lists, paragraphs and fences at the same depth they were
+       authored, and nests a `> >` quote the same way. */
     const flushQuote = () => {
       if (quote.length) {
-        out.push("<blockquote>" + inline(quote.join(" ")) + "</blockquote>");
+        out.push("<blockquote>" + md(quote.join("\n"), { renderCode, headingLevels }) + "</blockquote>");
         quote = [];
       }
     };
@@ -343,6 +475,15 @@ const LessonGate = (() => {
         i++;
         continue;
       }
+      if (_tableStartsAt(lines, i)) {
+        flushPara();
+        flushList();
+        flushQuote();
+        const table = _renderTable(lines, i);
+        out.push(table.html);
+        i = table.next;
+        continue;
+      }
       const item = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
       if (item) {
         flushPara();
@@ -355,7 +496,12 @@ const LessonGate = (() => {
         }
         let itemText = item[3];
         i++;
-        while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+\.)\s/.test(lines[i])) {
+        while (
+          i < lines.length &&
+          /^\s{2,}\S/.test(lines[i]) &&
+          !/^\s*([-*]|\d+\.)\s/.test(lines[i]) &&
+          !_tableStartsAt(lines, i)
+        ) {
           itemText += " " + lines[i].trim();
           i++;
         }
@@ -494,6 +640,12 @@ const LessonGate = (() => {
     // spans the page and survives this innerHTML being replaced — see
     // practice/concept-topbar.js and `_showTopbar` below.
     let html = `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">${esc(pageTitle)}</h2>`;
+    if (page.step && page.step.revisit) {
+      // Say why a page they have seen is back: the engine put the next
+      // drill below its bar without it, and over the bar with it re-read.
+      html += `<p class="lesson-revisit-note">Refresher — you read this ${esc(_agoLabel(page.step.readAt))}. ` +
+        "The next drill looks like a stretch without it; a re-read should make it doable.</p>";
+    }
     /* `nb-scope` marks the regions whose ```python fences are programs rather
        than illustrations — the same two sections validate_lessons.py executes
        against one shared namespace. LessonNotebook turns those into cells; a
@@ -532,16 +684,29 @@ const LessonGate = (() => {
     return html;
   };
 
+  /* "2 days ago" / "9 hours ago" for the refresher note; "a while ago" when
+     the stamp is unreadable. Never finer than an hour — the gate itself only
+     re-arms after eight. */
+  const _agoLabel = (iso) => {
+    const then = Date.parse(iso || "");
+    if (Number.isNaN(then)) return "a while ago";
+    const hours = Math.max(1, Math.round((Date.now() - then) / 3600000));
+    if (hours < 36) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  };
+
   const _showTopbar = async (page) => {
     const bar = window.StageLadder;
     if (!bar) return;
     const { lesson, kp, seg } = page;
+    const revisit = page.step && page.step.revisit ? " · Refresher" : "";
     bar.show({
       kc: kp.kc,
       title: seg.title || kp.title,
-      eyebrow: page.segCount > 1
+      eyebrow: (page.segCount > 1
         ? `${_topicLabel(lesson.topic)} · Concept ${page.segIndex + 1} of ${page.segCount}`
-        : `${_topicLabel(lesson.topic)} · Lesson`,
+        : `${_topicLabel(lesson.topic)} · Lesson`) + revisit,
       stage: "lesson",
     });
   };
@@ -685,6 +850,8 @@ const LessonGate = (() => {
         activeQuestion = _runtimeContext(page);
         if (questionNumber) questionNumber.textContent = "Lesson";
         questionText.innerHTML = _pageHtml(page);
+        // The KaTeX pass: a math page (`kind: math`) is markdown + LaTeX.
+        window.DeltaMath?.render(questionText);
         // Every runnable block on the page becomes a cell, explanation blocks
         // included, and they share state top to bottom. Mounting the whole
         // page rather than `.lesson-worked` is what lets a concept be taught
@@ -722,10 +889,17 @@ const LessonGate = (() => {
         }
         questionText.scrollTop = 0;
         if (typeof window.scrollTo === "function") window.scrollTo({ top: 0 });
-        const lessonCode = colabHref
+        /* A lesson fence may end in a `# Hidden checks` tail (asserts the
+           grader runs, never meant for the learner's eyes). The cell builder
+           in notebook-cells.js splits that off; the plain editor reset here
+           did not, so kp-ranges' linspace example rendered its asserts. */
+        const rawLessonCode = colabHref
           ? DEFAULT_EDITOR
           : (page.seg.worked_example_code ||
             _firstPythonFence(page.seg.worked_example_markdown) || DEFAULT_EDITOR);
+        const lessonCode = window.DeltaNotebookCells?.splitChecks
+          ? (window.DeltaNotebookCells.splitChecks(rawLessonCode).code || DEFAULT_EDITOR) + "\n"
+          : rawLessonCode;
         if (window.DeltaNotebook) window.DeltaNotebook.reset(lessonCode, { addScratch: false });
         else editor.value = lessonCode;
         if (output) output.textContent = "";

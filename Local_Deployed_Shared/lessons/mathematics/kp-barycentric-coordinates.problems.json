@@ -1,0 +1,240 @@
+{
+  "kc": "math.barycentric-coordinates",
+  "problems": [
+    {
+      "id": 50018,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "P = A + 0.2(B − A) + 0.3(C − A). What is the weight on A?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "0.2",
+          "value": "Rational(1,5)"
+        },
+        {
+          "key": "B",
+          "text": "0.3",
+          "value": "Rational(3,10)"
+        },
+        {
+          "key": "C",
+          "text": "0.5",
+          "value": "Rational(1,2)"
+        },
+        {
+          "key": "D",
+          "text": "1",
+          "value": "1"
+        }
+      ],
+      "answer": "C",
+      "solution": "The remaining weight is 1 − 0.2 − 0.3 = 0.5.\n\n- A: 0.2 weights B.\n- B: 0.3 weights C.\n- D: All weights sum to one; A alone does not have weight one.",
+      "verify": {
+        "sympy": {
+          "truth": "1-Rational(1,5)-Rational(3,10)"
+        }
+      }
+    },
+    {
+      "id": 50019,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B − A) + v(C − A)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Inside, since each parameter is below one."
+        },
+        {
+          "key": "B",
+          "text": "Outside, beyond BC."
+        },
+        {
+          "key": "C",
+          "text": "On AB."
+        },
+        {
+          "key": "D",
+          "text": "At C."
+        }
+      ],
+      "answer": "B",
+      "solution": "u + v = 1.2 makes the weight on A negative.\n\n- A: Separate upper bounds describe a parallelogram.\n- C: AB requires v = 0.\n- D: C requires u = 0, v = 1."
+    },
+    {
+      "id": 50020,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "Which triangle boundary contains u = 0.25, v = 0.75?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "AB"
+        },
+        {
+          "key": "B",
+          "text": "AC"
+        },
+        {
+          "key": "C",
+          "text": "Vertex A"
+        },
+        {
+          "key": "D",
+          "text": "BC"
+        }
+      ],
+      "answer": "D",
+      "solution": "u + v = 1 leaves zero weight on A, placing the point on BC.\n\n- A: AB requires v = 0.\n- B: AC requires u = 0.\n- C: A requires u = v = 0."
+    },
+    {
+      "id": 50021,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A = (1, 0, 0), B = (1, 8, 0), C = (1, 0, 4). Which point has u = 0.25, v = 0.5?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 2, 2)",
+          "value": "Matrix([1,2,2])"
+        },
+        {
+          "key": "B",
+          "text": "(0.75, 2, 2)",
+          "value": "Matrix([Rational(3,4),2,2])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 4, 1)",
+          "value": "Matrix([1,4,1])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 0.25, 0.5)",
+          "value": "Matrix([1,Rational(1,4),Rational(1,2)])"
+        }
+      ],
+      "answer": "A",
+      "solution": "The edge displacements are (0, 2, 0) and (0, 0, 2), added to A.\n\n- B: Every vertex has x = 1; the weights sum to one.\n- C: This swaps the weights on B and C.\n- D: Parameters scale edges; they are not raw spatial coordinates.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,0,0])+Rational(1,4)*(Matrix([1,8,0])-Matrix([1,0,0]))+Rational(1,2)*(Matrix([1,0,4])-Matrix([1,0,0]))"
+        }
+      }
+    },
+    {
+      "id": 50022,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "With unknowns [s, u, v] and right-hand side O − A, which columns describe ray–triangle equality?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[D, B − A, C − A]"
+        },
+        {
+          "key": "B",
+          "text": "[−D, A − B, A − C]"
+        },
+        {
+          "key": "C",
+          "text": "[−D, B − A, C − A]"
+        },
+        {
+          "key": "D",
+          "text": "[B − A, C − A, −D]"
+        }
+      ],
+      "answer": "C",
+      "solution": "−sD + u(B−A) + v(C−A) = O−A determines these columns.\n\n- A: Changing only the ray column negates the returned s.\n- B: The edge terms remain positive with this right-hand side.\n- D: This would require unknown order [u, v, s]."
+    },
+    {
+      "id": 50023,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "A nonsingular ray–triangle system gives [s, u, v] = [2, 0.7, 0.6]. Does it hit the filled triangle?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "No; the plane crossing is outside the triangle."
+        },
+        {
+          "key": "B",
+          "text": "Yes; all parameters are positive."
+        },
+        {
+          "key": "C",
+          "text": "No; s must be at most one."
+        },
+        {
+          "key": "D",
+          "text": "Yes; u and v are each at most one."
+        }
+      ],
+      "answer": "A",
+      "solution": "u + v = 1.3 makes the weight on A negative.\n\n- B: Positivity alone omits the third triangle weight.\n- C: A ray has no upper parameter bound.\n- D: These separate bounds admit the parallelogram."
+    },
+    {
+      "id": 50024,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "A nonsingular ray–triangle system gives [s, u, v] = [0, 0, 1]. With boundaries included, what results?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "A miss because s is zero."
+        },
+        {
+          "key": "B",
+          "text": "A hit at C, also the ray origin."
+        },
+        {
+          "key": "C",
+          "text": "A hit at A."
+        },
+        {
+          "key": "D",
+          "text": "A singularity because two parameters are zero."
+        }
+      ],
+      "answer": "B",
+      "solution": "Weights are (0, 0, 1), and s = 0 places the point at O.\n\n- A: s ≥ 0 includes the origin.\n- C: A requires u = v = 0.\n- D: Zero solution entries do not imply matrix singularity."
+    },
+    {
+      "id": 50025,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "O = (1, 1, 1), D = (2, 0, 0), A = (5, 0, 0), B = (5, 4, 0), C = (5, 0, 4). Which [s, u, v] is correct?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[2.5, 0.25, 0.25]",
+          "value": "Matrix([Rational(5,2),Rational(1,4),Rational(1,4)])"
+        },
+        {
+          "key": "B",
+          "text": "[2, 0.5, 0.5]",
+          "value": "Matrix([2,Rational(1,2),Rational(1,2)])"
+        },
+        {
+          "key": "C",
+          "text": "[−2, 0.25, 0.25]",
+          "value": "Matrix([-2,Rational(1,4),Rational(1,4)])"
+        },
+        {
+          "key": "D",
+          "text": "[2, 0.25, 0.25]",
+          "value": "Matrix([2,Rational(1,4),Rational(1,4)])"
+        }
+      ],
+      "answer": "D",
+      "solution": "1 + 2s = 5; 4u = 1; 4v = 1. All bounds hold.\n\n- A: Subtract Oₓ = 1 before dividing by 2.\n- B: The edges have length 4; the weights are 1/4.\n- C: The plane is ahead along D.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[-2,0,0],[0,4,0],[0,0,4]]).inv()*(Matrix([1,1,1])-Matrix([5,0,0]))"
+        }
+      }
+    }
+  ]
+}

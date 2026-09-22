@@ -299,7 +299,12 @@ function renderQuestion(q, count) {
     (q.ladder_kc_title || "").trim() ||
     displaySubtopic(String(q.subtopic || "")).trim() ||
     "Question " + practiceQuestionCount;
-  questionNumber.textContent = conceptHeading;
+  /* The real title rides in `data-concept`; the text is the MASK while the
+     drill is ungraded (practice/concept-mask.js puts the title back when the
+     grade lands). The heading is only on screen under 620px, but there it is
+     the topbar pill's stand-in and leaks the same call. */
+  questionNumber.dataset.concept = conceptHeading;
+  questionNumber.textContent = window.ConceptMask?.label(conceptHeading) ?? conceptHeading;
   renderQuestionBody(q);
   // Names the concept under test and, on the scaffolded rungs, puts the worked
   // example back on screen beside the problem. Must run AFTER renderQuestionBody
@@ -392,6 +397,11 @@ function renderQuestion(q, count) {
   // Torch drills swap the submit flow for the Colab-routing notice (must run
   // AFTER the submit area is un-hidden above so it can re-hide it for torch).
   applyTorchRouting(q);
+  // A math (multiple-choice) question swaps the editor for a choice list and
+  // holds Submit until a pick; a coding one gets its editor back. Runs for
+  // EVERY question, after the submit area is reset, so the toggle is per
+  // question and never inherited (practice/math-drill.js).
+  window.DeltaMath?.mount(q);
 
   /* Subtopic EWMA before this answer. It is no longer shown as understanding —
      KC BKT + coverage owns that readout — but this number is not
@@ -913,16 +923,16 @@ function restoreGradedFeedbackInNotebook({ correct, failedTests, solutionCode: s
   // (a paused session resumes mid-review, with the three buttons still live).
   recordGradedDetail(q?.question_id, failedTests, solCode || q?.solution_code || "");
   if (correct) {
-    // A rated-correct question keeps no answer key under it: the working code
-    // on screen is the learner's own.
+    // No failing cases to list; the reference answer still comes back below
+    // (Seth, 2026-09-21: a correct answer must not hide the solution — the
+    // same rule as the live submit in events.js).
     hideFailedTests();
-    window.DeltaNotebook?.clearSolution?.();
-    return;
+  } else {
+    renderFailedTests(
+      { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
+      q,
+    );
   }
-  renderFailedTests(
-    { correct: false, failed_tests: Array.isArray(failedTests) ? failedTests : [] },
-    q,
-  );
   const einopsSol = q?.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(q?.question_id || q?.id) : "") || "";
   // A saved state from before this field existed has no code of its own; the
   // question payload carries the same answer, so the restore is not lossy.

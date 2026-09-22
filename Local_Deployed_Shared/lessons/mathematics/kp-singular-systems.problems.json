@@ -1,0 +1,161 @@
+{
+  "kc": "math.singular-systems",
+  "problems": [
+    {
+      "id": 50012,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "A matrix has rows [[2, 4], [1, 2]]. Which statement is justified?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "det = 8; there is one solution."
+        },
+        {
+          "key": "B",
+          "text": "det = 0; the right-hand side determines whether there are zero or infinitely many solutions."
+        },
+        {
+          "key": "C",
+          "text": "det = 0; every right-hand side has no solution."
+        },
+        {
+          "key": "D",
+          "text": "det = −2; the solution is behind the ray."
+        }
+      ],
+      "answer": "B",
+      "solution": "The second column is twice the first; no unique solution exists.\n\n- A: ad − bc = 4 − 4, not a sum.\n- C: A compatible right-hand side such as (2, 1) has infinitely many solutions.\n- D: The determinant is zero; its sign would not determine the ray parameter anyway."
+    },
+    {
+      "id": 50013,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "A ray and a segment overlap on the same line. Their matrix is singular. Under ARENA's singular-pair-as-miss contract, what should the function report?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "A miss, although the objects geometrically overlap."
+        },
+        {
+          "key": "B",
+          "text": "A hit because every singular system has one solution."
+        },
+        {
+          "key": "C",
+          "text": "A hit because the determinant is negative."
+        },
+        {
+          "key": "D",
+          "text": "A miss because coincident objects cannot overlap."
+        }
+      ],
+      "answer": "A",
+      "solution": "The course convention excludes singular pairs; full geometric intersection needs additional handling.\n\n- B: A singular system does not have exactly one solution.\n- C: Coincident directions give zero determinant.\n- D: The miss is a convention, not a claim that overlap is impossible."
+    },
+    {
+      "id": 50014,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "Invalid means |det(M)| < 10⁻⁸. Which listed pair is valid under that rule?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "det = 0"
+        },
+        {
+          "key": "B",
+          "text": "det = −3·10⁻⁹"
+        },
+        {
+          "key": "C",
+          "text": "det = 4·10⁻⁹"
+        },
+        {
+          "key": "D",
+          "text": "det = −2·10⁻⁸"
+        }
+      ],
+      "answer": "D",
+      "solution": "Its magnitude is 2·10⁻⁸; a negative sign alone does not invalidate it.\n\n- A: Zero is below the threshold.\n- B: Its magnitude is below the threshold.\n- C: Its magnitude is below the threshold."
+    },
+    {
+      "id": 50015,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "An invalid pair is replaced with the identity. The replacement solution is [u, v] = [2, 0.5]. How should the pair contribute?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Count it because both parameters satisfy the bounds."
+        },
+        {
+          "key": "B",
+          "text": "Count it only when u is an integer."
+        },
+        {
+          "key": "C",
+          "text": "Exclude it using the original validity mask."
+        },
+        {
+          "key": "D",
+          "text": "Repeat the identity solve and count that answer."
+        }
+      ],
+      "answer": "C",
+      "solution": "Original validity remains false despite the plausible replacement answer.\n\n- A: The parameters solve the replacement, not the original geometry.\n- B: Integrality is unrelated to membership.\n- D: Repeating the artificial solve cannot recover the original geometry."
+    },
+    {
+      "id": 50016,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "A pair-hit table has rows = rays, columns = segments: [[False, True], [False, False], [True, False]]. Which output says whether each ray hits any segment?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[True, True]"
+        },
+        {
+          "key": "B",
+          "text": "[True, False, True]"
+        },
+        {
+          "key": "C",
+          "text": "[False, False, False]"
+        },
+        {
+          "key": "D",
+          "text": "[False, True]"
+        }
+      ],
+      "answer": "B",
+      "solution": "Reduce each row over segments; retain one Boolean per ray.\n\n- A: This reduces over rays, yielding one answer per segment.\n- C: Requiring all segments to hit is stronger than asking for any.\n- D: The result needs three entries, one per ray."
+    },
+    {
+      "id": 50017,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "Multiply both columns of a 2 × 2 matrix by 100. Its determinant was 10⁻¹⁰. What does this show about a fixed 10⁻⁸ cutoff?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The determinant stays 10⁻¹⁰; the cutoff is scale-invariant."
+        },
+        {
+          "key": "B",
+          "text": "The determinant becomes 10⁻⁸; only one column matters."
+        },
+        {
+          "key": "C",
+          "text": "The determinant becomes 10⁻⁶; classification can change although column dependence is unchanged."
+        },
+        {
+          "key": "D",
+          "text": "The columns become dependent."
+        }
+      ],
+      "answer": "C",
+      "solution": "100²·10⁻¹⁰ = 10⁻⁶. Scaling preserves dependence but changes the cutoff decision.\n\n- A: Each column scaling contributes a determinant factor.\n- B: The factor is 100 × 100.\n- D: Nonzero rescaling does not create dependence."
+    }
+  ]
+}

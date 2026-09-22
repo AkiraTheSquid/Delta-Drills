@@ -446,6 +446,8 @@ const LessonNotebookView = (() => {
     });
     body.appendChild(fragment);
     host.appendChild(body);
+    // A math lesson's notebook is markdown + LaTeX; same pass as the page.
+    window.DeltaMath?.render(body);
 
     /* Colour, ghost completion, Tab, undo and Ctrl+Enter — practice/
        notebook-code-edit.js, the same file the ARENA notebooks and the lesson

@@ -9,9 +9,9 @@ and grades every faded solution against the drill bank's test cases.
 
 ```markdown
 ---
-kc: numpy.broadcasting-rules        # must exist in kc_registry.json
+kc: torch.broadcasting-rules        # must exist in kc_registry.json
 title: Broadcasting rules
-supporting: [numpy.ndarray-model]   # KCs used but not taught here
+supporting: [torch.tensor-model]   # KCs used but not taught here
 new_syntax: []                      # symbols this page is the lesson for
 previews: []                        # symbols shown here but taught LATER, on purpose
 concepts: [repeat-elements]         # stable id per atomic segment, in order
@@ -161,7 +161,7 @@ Read his position rather than guessing it — his account is
 and the recipe for reading the `kc` he is on is in the repo's `CLAUDE.md` under
 "Content work: ONE concept at a time". That file also tracks which concepts have
 had the four-stage treatment and which have not — as of 2026-08-28 only
-`numpy.ndarray-model` has; PyTorch, `einsum` and `einops` have not, and are next.
+`torch.tensor-model` has; PyTorch, `einsum` and `einops` have not, and are next.
 
 ## Segments — ONE concept at a time (required)
 
@@ -279,7 +279,7 @@ Concretely:
 - Calibrate: different enough to trip slightly, close enough to be solvable
   from the lesson alone. Near-transfer, not a new concept.
 
-Example (numpy.ranges): the worked example shows `np.arange(0, 10, 2)`
+Example (torch.ranges): the worked example shows `np.arange(0, 10, 2)`
 (exclusive stop); the faded asks for an *inclusive* integer range, blanking
 `end + 1` — the learner must apply "stop is exclusive" themselves rather than
 copy the demo. See `numpy/kp-ranges.md` for the pattern to copy.
@@ -332,6 +332,86 @@ below is the part of that rubric that predates it.
   KP teaches that no existing item asks for, and vary the expected value
   across test cases so a constant-return answer cannot pass.
 - One KP introduces one target KC (research doc: one worked example ↔ one KC).
+
+## Math pages — read, solve on paper, pick a choice (2026-09-21)
+
+A `kind: math` page teaches with markdown + LaTeX and optional runnable
+demonstrations; its drills are multiple-choice problems worked on paper. Same four
+stages, same rungs, same graph — `math.*` KCs sit beside the coding ones so a
+coding KC can list a math prerequisite. Spec: `docs/spec-math-mc-backbone.md`;
+lane README: `lessons/mathematics/README.md`. Reference pages: the five
+`ma-01` pages in `lessons/mathematics/` (ARENA 0.1 math, 2026-09-21); the
+minimal fixture is in `scripts/test_validate_math.py`.
+
+**Two files per page**, both in `lessons/mathematics/`:
+
+- `kp-<slug>.md` — the frontmatter above plus `kind: math`. Sections are the
+  same (`## Concept`, `## Watch out`, `## Worked example`, `## Solo practice`,
+  `## Integrated practice`); every Concept and Worked example is prose with
+  `$…$` / `$$…$$` LaTeX. Optional ```python demonstrations reuse the lesson
+  runner and MUST pass `checks.run_checked`, including hidden assertions.
+  Use `python no-run` for illustration only. MCQ answers never execute code.
+  `faded:` / `independent:` / `integrated:` list PROBLEM
+  ids, and the `### q<id>` items under the practice sections must match them
+  exactly, like a code page. A page with 2+ segments still needs one
+  `## Faded practice` item per segment (the segment gate's carrier), even
+  though the faded rung is retired.
+- `kp-<slug>.problems.json` — `{"kc": "math.<slug>", "problems": [...]}`; the
+  problem schema is the docstring of `lessons/math_bank.py`. Ids are explicit
+  and `>= 50000` (never positional, never reused). `kind` is `compute`,
+  `derivation-step` or `statement`; the first two MUST carry
+  `verify.sympy.truth` and a SymPy `value` on every choice, `statement` must
+  not. 2–6 choices, keys `A`… in the order they are shown (never shuffled;
+  put the key wherever you like, but vary it across problems). `answer` is
+  the key. `solution` is markdown + LaTeX, shown after the verdict.
+
+**Prompt vs solution rendering.** The prompt goes through the DRILL
+renderer: plain text, `code` spans and LaTeX only — no markdown emphasis,
+lists or headings (they would show as literal `*`/`#`). The solution goes
+through the full markdown renderer, so lists and display math are fine there.
+
+**The proof is the gate.** `scripts/validate_math.py` (run by
+`validate_lessons.py --coverage` and by both `lessons/watch.py` and
+`lessons/mathematics/watch.py`) evaluates `truth` and every `value` in SymPy
+and requires `truth == value[answer]` and `truth != value[k]` for each
+distractor. A wrong key, a distractor equal to the answer, an unparseable
+expression or a missing `value` fails with the id named. Do not weaken the
+check to land a problem; fix the problem.
+
+**Checklist to land a math KC** (each row a coding KC also needs):
+
+1. Registry (`kc_registry.json`, indent 1 — keep the file's own indent): a
+   lesson with `"topic": "Mathematics"` (`ma-<n>`) and the KC row with its
+   `prereqs`. A coding KC that needs the math lists the `math.*` id in its
+   own `prereqs`.
+2. The two files above.
+3. Atom tags: one row per problem id in
+   `This-Directory-Only/backend/app/data/question_atom_tags.jsonl`, atoms
+   that are nodes of `concept_graphs/arena_drillable_v1.json` (add the node
+   and its edges if the graph has none for the idea). The audit gate blocks
+   a placed question without atoms.
+4. A clock: the KC's entry in `lessons/placement_time_caps.json` (the
+   validator only WARNs, but the default clock is a coding clock).
+5. Glossary: a `"<kc>": ["<lesson title>", "<kc title>"]` line in the
+   `kcLesson` map of `lessons/glossary.js` (`watch_jargon.py` checks it).
+6. Pipeline, in this order, all under
+   `This-Directory-Only/backend/.venv/bin/python3`:
+   `pipeline/export_questions_json.py` → `scripts/compile_lessons.py` →
+   `scripts/build_qmatrix.py` → `scripts/validate_lessons.py --coverage` →
+   `This-Directory-Only/scripts/export_kc_atom_crosswalk.py` →
+   `pipeline/audit_question_bank.py --gate` →
+   `scripts/generate_colab_notebooks.py` + `scripts/compile_web_notebooks.py`.
+   Then `mod watch` on `lessons/`, `lessons/notebooks/`, `content-mcp/` and
+   `scripts/`. A math problem appears in a notebook as a prose cell with its
+   choices (`dd-mc<id>`) and no key — the practice page grades it.
+
+What the learner sees: the page in the lesson viewer, then a problem with a
+radio list where the editor would be; Submit is inert until a choice is
+picked (the clock's expiry still submits, graded a miss); after the verdict
+the keyed choice goes green, a wrong pick red, and the solution renders
+below. Grading is a key compare on the server (`grading.grade_choice`) or,
+with no backend, in `practice/math-drill.js`. The key never reaches the
+browser before `/submit`.
 
 ## Notes — the metadata layer
 

@@ -2,6 +2,66 @@
  "version": 1,
  "nodes": [
   {
+   "id": "kc:math.vector-arithmetic",
+   "kind": "kc",
+   "title": "Vectors: components, displacement, and scaling",
+   "kc": "math.vector-arithmetic"
+  },
+  {
+   "id": "kc:math.dot-products-norms",
+   "kind": "kc",
+   "title": "Dot products, lengths, and unit vectors",
+   "kc": "math.dot-products-norms"
+  },
+  {
+   "id": "kc:math.linear-combinations",
+   "kind": "kc",
+   "title": "Linear combinations, span, and coordinates",
+   "kc": "math.linear-combinations"
+  },
+  {
+   "id": "kc:math.matrix-equations",
+   "kind": "kc",
+   "title": "Matrix–vector products and solving linear systems",
+   "kc": "math.matrix-equations"
+  },
+  {
+   "id": "kc:math.determinants-invertibility",
+   "kind": "kc",
+   "title": "Determinants, independence, and unique solutions",
+   "kc": "math.determinants-invertibility"
+  },
+  {
+   "id": "kc:math.ray-geometry",
+   "kind": "kc",
+   "title": "Points, directions, and finite segments",
+   "kc": "math.ray-geometry"
+  },
+  {
+   "id": "kc:math.intersection-systems",
+   "kind": "kc",
+   "title": "Turn an intersection into a linear system",
+   "kc": "math.intersection-systems"
+  },
+  {
+   "id": "kc:math.singular-systems",
+   "kind": "kc",
+   "title": "Unique crossings and batched validity",
+   "kc": "math.singular-systems"
+  },
+  {
+   "id": "kc:math.barycentric-coordinates",
+   "kind": "kc",
+   "title": "Triangle coordinates and ray–triangle systems",
+   "kc": "math.barycentric-coordinates"
+  },
+  {
+   "id": "kc:math.ray-distance",
+   "kind": "kc",
+   "title": "Nearest hit, depth, and actual distance",
+   "kc": "math.ray-distance"
+  },
+  {
    "id": "kc:python.values-and-names",
    "kind": "kc",
    "title": "Values and names: what = really does",
@@ -44,130 +104,130 @@
    "kc": "python.dots-and-imports"
   },
   {
-   "id": "kc:numpy.ndarray-model",
+   "id": "kc:torch.tensor-model",
    "kind": "kc",
-   "title": "What an ndarray is: data + shape + dtype",
-   "kc": "numpy.ndarray-model"
+   "title": "What a tensor is: data + shape + dtype",
+   "kc": "torch.tensor-model"
   },
   {
-   "id": "kc:numpy.transpose-axes",
+   "id": "kc:torch.transpose-axes",
    "kind": "kc",
    "title": "Transpose: swapping which axis is which",
-   "kc": "numpy.transpose-axes"
+   "kc": "torch.transpose-axes"
   },
   {
-   "id": "kc:numpy.views-and-copies",
+   "id": "kc:torch.views-and-copies",
    "kind": "kc",
    "title": "Views and copies: the same numbers, read a different way",
-   "kc": "numpy.views-and-copies"
+   "kc": "torch.views-and-copies"
   },
   {
-   "id": "kc:numpy.constructors",
+   "id": "kc:torch.constructors",
    "kind": "kc",
-   "title": "Array constructors: zeros, ones, full, empty, eye",
-   "kc": "numpy.constructors"
+   "title": "Tensor constructors: zeros, ones, full, eye, *_like",
+   "kc": "torch.constructors"
   },
   {
-   "id": "kc:numpy.slicing-views",
+   "id": "kc:torch.slicing-views",
    "kind": "kc",
-   "title": "Slicing, views, and slice assignment",
-   "kc": "numpy.slicing-views"
+   "title": "Selecting and changing parts of a tensor",
+   "kc": "torch.slicing-views"
   },
   {
-   "id": "kc:numpy.ranges",
+   "id": "kc:torch.ranges",
    "kind": "kc",
    "title": "Numeric ranges: arange and linspace",
-   "kc": "numpy.ranges"
+   "kc": "torch.ranges"
   },
   {
-   "id": "kc:numpy.dtype-astype",
+   "id": "kc:torch.dtype-astype",
    "kind": "kc",
-   "title": "Dtypes, astype, and memory size",
-   "kc": "numpy.dtype-astype"
+   "title": "Dtypes, .to(), and memory size",
+   "kc": "torch.dtype-astype"
   },
   {
-   "id": "kc:numpy.reshape-flatten",
+   "id": "kc:torch.reshape-flatten",
    "kind": "kc",
-   "title": "Reshape, ravel, and element order",
-   "kc": "numpy.reshape-flatten"
+   "title": "Reshape, flatten, and element order",
+   "kc": "torch.reshape-flatten"
   },
   {
-   "id": "kc:numpy.elementwise-ufuncs",
+   "id": "kc:torch.elementwise-ops",
    "kind": "kc",
-   "title": "Elementwise math (ufuncs)",
-   "kc": "numpy.elementwise-ufuncs"
+   "title": "Elementwise math",
+   "kc": "torch.elementwise-ops"
   },
   {
-   "id": "kc:numpy.aggregations",
+   "id": "kc:torch.aggregations",
    "kind": "kc",
-   "title": "Whole-array aggregations and Python scalars",
-   "kc": "numpy.aggregations"
+   "title": "Whole-tensor aggregations and Python scalars",
+   "kc": "torch.aggregations"
   },
   {
-   "id": "kc:numpy.sorting",
+   "id": "kc:torch.sorting",
    "kind": "kc",
-   "title": "Sorting arrays",
-   "kc": "numpy.sorting"
+   "title": "Sorting tensors",
+   "kc": "torch.sorting"
   },
   {
-   "id": "kc:numpy.random-samplers",
+   "id": "kc:torch.random-samplers",
    "kind": "kc",
    "title": "Drawing random numbers",
-   "kc": "numpy.random-samplers"
+   "kc": "torch.random-samplers"
   },
   {
-   "id": "kc:numpy.random-seeding",
+   "id": "kc:torch.random-seeding",
    "kind": "kc",
    "title": "Seeding your own reproducible stream",
-   "kc": "numpy.random-seeding"
+   "kc": "torch.random-seeding"
   },
   {
-   "id": "kc:numpy.random-threading",
+   "id": "kc:torch.random-threading",
    "kind": "kc",
    "title": "Using a stream you were handed",
-   "kc": "numpy.random-threading"
+   "kc": "torch.random-threading"
   },
   {
-   "id": "kc:numpy.linalg-basics",
+   "id": "kc:torch.linalg-basics",
    "kind": "kc",
-   "title": "Matrix multiply and np.linalg basics",
-   "kc": "numpy.linalg-basics"
+   "title": "Matrix multiply and t.linalg basics",
+   "kc": "torch.linalg-basics"
   },
   {
-   "id": "kc:numpy.boolean-masking",
+   "id": "kc:torch.boolean-masking",
    "kind": "kc",
    "title": "Boolean masks: compare, count, filter",
-   "kc": "numpy.boolean-masking"
+   "kc": "torch.boolean-masking"
   },
   {
-   "id": "kc:numpy.argmin-argmax",
+   "id": "kc:torch.argmin-argmax",
    "kind": "kc",
    "title": "Locating extremes: argmin and argmax",
-   "kc": "numpy.argmin-argmax"
+   "kc": "torch.argmin-argmax"
   },
   {
-   "id": "kc:numpy.broadcasting-rules",
+   "id": "kc:torch.broadcasting-rules",
    "kind": "kc",
    "title": "Broadcasting rules",
-   "kc": "numpy.broadcasting-rules"
+   "kc": "torch.broadcasting-rules"
   },
   {
-   "id": "kc:numpy.axis-reductions",
+   "id": "kc:torch.axis-reductions",
    "kind": "kc",
    "title": "Reductions along an axis and keepdims",
-   "kc": "numpy.axis-reductions"
+   "kc": "torch.axis-reductions"
   },
   {
-   "id": "kc:numpy.dot-matmul-patterns",
+   "id": "kc:torch.dot-matmul-patterns",
    "kind": "kc",
    "title": "Dot products and matrix-multiply patterns",
-   "kc": "numpy.dot-matmul-patterns"
+   "kc": "torch.dot-matmul-patterns"
   },
   {
-   "id": "kc:numpy.stack-concat-interleave",
+   "id": "kc:torch.stack-concat-interleave",
    "kind": "kc",
    "title": "Stacking, concatenating, interleaving",
-   "kc": "numpy.stack-concat-interleave"
+   "kc": "torch.stack-concat-interleave"
   },
   {
    "id": "kc:einops.pattern-language",
@@ -264,6 +324,12 @@
    "kind": "kc",
    "title": "einops.einsum: name the axes, drop the ones to sum",
    "kc": "einops.einsum"
+  },
+  {
+   "id": "kc:einops.attention-einsum",
+   "kind": "kc",
+   "title": "einsum at model rank: heads, positions and ...",
+   "kc": "einops.attention-einsum"
   },
   {
    "id": "kc:tensor.row-normalization",
@@ -16327,6 +16393,76 @@
  ],
  "edges": [
   {
+   "source": "kc:math.vector-arithmetic",
+   "target": "kc:math.dot-products-norms",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.vector-arithmetic",
+   "target": "kc:math.linear-combinations",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.linear-combinations",
+   "target": "kc:math.matrix-equations",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.matrix-equations",
+   "target": "kc:math.determinants-invertibility",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.vector-arithmetic",
+   "target": "kc:math.ray-geometry",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.ray-geometry",
+   "target": "kc:math.intersection-systems",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.matrix-equations",
+   "target": "kc:math.intersection-systems",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.intersection-systems",
+   "target": "kc:math.singular-systems",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.determinants-invertibility",
+   "target": "kc:math.singular-systems",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.intersection-systems",
+   "target": "kc:math.barycentric-coordinates",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.singular-systems",
+   "target": "kc:math.barycentric-coordinates",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.linear-combinations",
+   "target": "kc:math.barycentric-coordinates",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.barycentric-coordinates",
+   "target": "kc:math.ray-distance",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.dot-products-norms",
+   "target": "kc:math.ray-distance",
+   "relation": "prerequisite"
+  },
+  {
    "source": "kc:python.values-and-names",
    "target": "kc:python.types-and-conversion",
    "relation": "prerequisite"
@@ -16358,141 +16494,146 @@
   },
   {
    "source": "kc:python.indexing",
-   "target": "kc:numpy.ndarray-model",
+   "target": "kc:torch.tensor-model",
    "relation": "prerequisite"
   },
   {
    "source": "kc:python.defining-functions",
-   "target": "kc:numpy.ndarray-model",
+   "target": "kc:torch.tensor-model",
    "relation": "prerequisite"
   },
   {
    "source": "kc:python.dots-and-imports",
-   "target": "kc:numpy.ndarray-model",
+   "target": "kc:torch.tensor-model",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.transpose-axes",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.transpose-axes",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.transpose-axes",
-   "target": "kc:numpy.views-and-copies",
+   "source": "kc:torch.transpose-axes",
+   "target": "kc:torch.views-and-copies",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.constructors",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.constructors",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.views-and-copies",
-   "target": "kc:numpy.slicing-views",
+   "source": "kc:torch.views-and-copies",
+   "target": "kc:torch.slicing-views",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
-   "target": "kc:numpy.ranges",
+   "source": "kc:torch.constructors",
+   "target": "kc:torch.ranges",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.dtype-astype",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.dtype-astype",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.reshape-flatten",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.reshape-flatten",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.elementwise-ufuncs",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.elementwise-ops",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
-   "target": "kc:numpy.aggregations",
+   "source": "kc:torch.elementwise-ops",
+   "target": "kc:torch.aggregations",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
-   "target": "kc:numpy.sorting",
+   "source": "kc:torch.tensor-model",
+   "target": "kc:torch.sorting",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
-   "target": "kc:numpy.random-samplers",
+   "source": "kc:torch.constructors",
+   "target": "kc:torch.random-samplers",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.random-samplers",
-   "target": "kc:numpy.random-seeding",
+   "source": "kc:torch.random-samplers",
+   "target": "kc:torch.random-seeding",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.random-seeding",
-   "target": "kc:numpy.random-threading",
+   "source": "kc:torch.random-seeding",
+   "target": "kc:torch.random-threading",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.aggregations",
-   "target": "kc:numpy.linalg-basics",
+   "source": "kc:torch.aggregations",
+   "target": "kc:torch.linalg-basics",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.slicing-views",
-   "target": "kc:numpy.boolean-masking",
+   "source": "kc:torch.slicing-views",
+   "target": "kc:torch.boolean-masking",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
-   "target": "kc:numpy.boolean-masking",
+   "source": "kc:torch.elementwise-ops",
+   "target": "kc:torch.boolean-masking",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.aggregations",
-   "target": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.aggregations",
+   "target": "kc:torch.argmin-argmax",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
-   "target": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.elementwise-ops",
+   "target": "kc:torch.broadcasting-rules",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
-   "target": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.reshape-flatten",
+   "target": "kc:torch.broadcasting-rules",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.aggregations",
-   "target": "kc:numpy.axis-reductions",
+   "source": "kc:torch.aggregations",
+   "target": "kc:torch.axis-reductions",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
-   "target": "kc:numpy.axis-reductions",
+   "source": "kc:torch.broadcasting-rules",
+   "target": "kc:torch.axis-reductions",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.linalg-basics",
-   "target": "kc:numpy.dot-matmul-patterns",
+   "source": "kc:torch.linalg-basics",
+   "target": "kc:torch.dot-matmul-patterns",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
-   "target": "kc:numpy.dot-matmul-patterns",
+   "source": "kc:torch.axis-reductions",
+   "target": "kc:torch.dot-matmul-patterns",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
-   "target": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.transpose-axes",
+   "target": "kc:torch.dot-matmul-patterns",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
+   "source": "kc:torch.reshape-flatten",
+   "target": "kc:torch.stack-concat-interleave",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.reshape-flatten",
    "target": "kc:einops.pattern-language",
    "relation": "prerequisite"
   },
@@ -16527,7 +16668,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:einops.reduce-model",
    "relation": "prerequisite"
   },
@@ -16567,47 +16708,52 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.ranges",
    "target": "kc:torch.out-argument",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.slicing-views",
+   "source": "kc:torch.slicing-views",
    "target": "kc:torch.out-argument",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.slicing-views",
+   "source": "kc:torch.slicing-views",
    "target": "kc:torch.slice-assignment",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:torch.slice-assignment",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
+   "source": "kc:torch.constructors",
    "target": "kc:torch.slice-assignment",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.ranges",
    "target": "kc:torch.slice-assignment",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
+   "source": "kc:math.ray-geometry",
    "target": "kc:raytracing.ray-parametrisation",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.constructors",
    "target": "kc:raytracing.ray-parametrisation",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.broadcasting-rules",
+   "target": "kc:raytracing.ray-parametrisation",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.ranges",
    "target": "kc:raytracing.ray-parametrisation",
    "relation": "prerequisite"
   },
@@ -16627,7 +16773,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.ranges",
    "target": "kc:raytracing.make-rays-1d",
    "relation": "prerequisite"
   },
@@ -16637,27 +16783,37 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:einops.einsum",
+   "target": "kc:einops.attention-einsum",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:einops.dl-flatten-heads",
+   "target": "kc:einops.attention-einsum",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:torch.axis-reductions",
    "target": "kc:tensor.row-normalization",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:tensor.row-normalization",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.boolean-masking",
+   "source": "kc:torch.boolean-masking",
    "target": "kc:tensor.row-normalization",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:tensor.row-normalization",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
+   "source": "kc:torch.constructors",
    "target": "kc:tensor.row-normalization",
    "relation": "prerequisite"
   },
@@ -16667,57 +16823,57 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dot-matmul-patterns",
+   "source": "kc:torch.dot-matmul-patterns",
    "target": "kc:tensor.cosine-similarity",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.transpose-axes",
+   "source": "kc:torch.transpose-axes",
    "target": "kc:tensor.cosine-similarity",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:tensor.cosine-similarity",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.slicing-views",
+   "source": "kc:torch.slicing-views",
    "target": "kc:tensor.indexed-selection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.ranges",
    "target": "kc:tensor.indexed-selection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:tensor.indexed-selection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:tensor.indexed-selection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:tensor.stable-probabilities",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
+   "source": "kc:torch.elementwise-ops",
    "target": "kc:tensor.stable-probabilities",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:tensor.stable-probabilities",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ranges",
+   "source": "kc:torch.ranges",
    "target": "kc:tensor.stable-probabilities",
    "relation": "prerequisite"
   },
@@ -16732,32 +16888,32 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:tensor.classifier-evaluation",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.boolean-masking",
+   "source": "kc:torch.boolean-masking",
    "target": "kc:tensor.classifier-evaluation",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dtype-astype",
+   "source": "kc:torch.dtype-astype",
    "target": "kc:tensor.classifier-evaluation",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:tensor.inverse-cdf",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:tensor.inverse-cdf",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.random-threading",
+   "source": "kc:torch.random-threading",
    "target": "kc:tensor.inverse-cdf",
    "relation": "prerequisite"
   },
@@ -16767,18 +16923,23 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:tensor.inverse-cdf",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dtype-astype",
+   "source": "kc:torch.dtype-astype",
    "target": "kc:tensor.inverse-cdf",
    "relation": "prerequisite"
   },
   {
    "source": "kc:tensor.stable-probabilities",
    "target": "kc:tensor.inverse-cdf",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.intersection-systems",
+   "target": "kc:raytracing.segment-intersection",
    "relation": "prerequisite"
   },
   {
@@ -16787,22 +16948,22 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.linalg-basics",
+   "source": "kc:torch.linalg-basics",
    "target": "kc:raytracing.segment-intersection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.stack-concat-interleave",
    "target": "kc:raytracing.segment-intersection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
+   "source": "kc:torch.constructors",
    "target": "kc:raytracing.segment-intersection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.boolean-masking",
+   "source": "kc:torch.boolean-masking",
    "target": "kc:raytracing.segment-intersection",
    "relation": "prerequisite"
   },
@@ -16817,17 +16978,22 @@
    "relation": "prerequisite"
   },
   {
+   "source": "kc:math.singular-systems",
+   "target": "kc:raytracing.batched-segments",
+   "relation": "prerequisite"
+  },
+  {
    "source": "kc:raytracing.segment-intersection",
    "target": "kc:raytracing.batched-segments",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:raytracing.batched-segments",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:raytracing.batched-segments",
    "relation": "prerequisite"
   },
@@ -16837,12 +17003,12 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:raytracing.make-rays-2d",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
+   "source": "kc:torch.reshape-flatten",
    "target": "kc:raytracing.make-rays-2d",
    "relation": "prerequisite"
   },
@@ -16852,7 +17018,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.stack-concat-interleave",
    "target": "kc:raytracing.make-rays-2d",
    "relation": "prerequisite"
   },
@@ -16862,18 +17028,28 @@
    "relation": "prerequisite"
   },
   {
+   "source": "kc:math.barycentric-coordinates",
+   "target": "kc:raytracing.triangle-intersection",
+   "relation": "prerequisite"
+  },
+  {
    "source": "kc:raytracing.segment-intersection",
    "target": "kc:raytracing.triangle-intersection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.linalg-basics",
+   "source": "kc:torch.linalg-basics",
    "target": "kc:raytracing.triangle-intersection",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:raytracing.triangle-intersection",
+   "relation": "prerequisite"
+  },
+  {
+   "source": "kc:math.ray-distance",
+   "target": "kc:raytracing.mesh-visibility",
    "relation": "prerequisite"
   },
   {
@@ -16897,32 +17073,32 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dtype-astype",
+   "source": "kc:torch.dtype-astype",
    "target": "kc:raytracing.mesh-visibility",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.views-and-copies",
+   "source": "kc:torch.views-and-copies",
    "target": "kc:cnn.stride-views",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.slicing-views",
+   "source": "kc:torch.slicing-views",
    "target": "kc:cnn.stride-views",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:cnn.stride-views",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:cnn.stride-views",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dot-matmul-patterns",
+   "source": "kc:torch.dot-matmul-patterns",
    "target": "kc:cnn.stride-views",
    "relation": "prerequisite"
   },
@@ -16947,7 +17123,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.boolean-masking",
+   "source": "kc:torch.boolean-masking",
    "target": "kc:python.control-flow",
    "relation": "prerequisite"
   },
@@ -16962,12 +17138,12 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
+   "source": "kc:torch.elementwise-ops",
    "target": "kc:cnn.module-state",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.ndarray-model",
+   "source": "kc:torch.tensor-model",
    "target": "kc:cnn.module-state",
    "relation": "prerequisite"
   },
@@ -16982,7 +17158,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dtype-astype",
+   "source": "kc:torch.dtype-astype",
    "target": "kc:cnn.module-state",
    "relation": "prerequisite"
   },
@@ -16997,32 +17173,32 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.dot-matmul-patterns",
+   "source": "kc:torch.dot-matmul-patterns",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.transpose-axes",
+   "source": "kc:torch.transpose-axes",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.broadcasting-rules",
+   "source": "kc:torch.broadcasting-rules",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
+   "source": "kc:torch.reshape-flatten",
    "target": "kc:cnn.linear-layer",
    "relation": "prerequisite"
   },
@@ -17032,7 +17208,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.reshape-flatten",
+   "source": "kc:torch.reshape-flatten",
    "target": "kc:cnn.mlp",
    "relation": "prerequisite"
   },
@@ -17057,17 +17233,17 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.constructors",
+   "source": "kc:torch.constructors",
    "target": "kc:cnn.convolution-1d",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.sorting",
+   "source": "kc:torch.sorting",
    "target": "kc:cnn.convolution-1d",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.transpose-axes",
+   "source": "kc:torch.transpose-axes",
    "target": "kc:cnn.convolution-1d",
    "relation": "prerequisite"
   },
@@ -17077,7 +17253,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.stack-concat-interleave",
    "target": "kc:cnn.convolution-1d",
    "relation": "prerequisite"
   },
@@ -17097,12 +17273,12 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.stack-concat-interleave",
    "target": "kc:cnn.convolution-2d",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.sorting",
+   "source": "kc:torch.sorting",
    "target": "kc:cnn.convolution-2d",
    "relation": "prerequisite"
   },
@@ -17117,12 +17293,12 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:cnn.pooling",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.argmin-argmax",
+   "source": "kc:torch.argmin-argmax",
    "target": "kc:cnn.pooling",
    "relation": "prerequisite"
   },
@@ -17137,12 +17313,12 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.axis-reductions",
+   "source": "kc:torch.axis-reductions",
    "target": "kc:cnn.batch-normalization",
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.elementwise-ufuncs",
+   "source": "kc:torch.elementwise-ops",
    "target": "kc:cnn.batch-normalization",
    "relation": "prerequisite"
   },
@@ -17152,7 +17328,7 @@
    "relation": "prerequisite"
   },
   {
-   "source": "kc:numpy.stack-concat-interleave",
+   "source": "kc:torch.stack-concat-interleave",
    "target": "kc:cnn.batch-normalization",
    "relation": "prerequisite"
   },

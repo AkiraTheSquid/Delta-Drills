@@ -5,7 +5,7 @@ supporting: [einops.reduce-model, einops.split-axes]
 new_syntax: []
 faded: [324]
 guided: [363]
-independent: [368, 354, 336, 377]
+independent: [368, 354, 336, 377, 1638, 1639, 1640, 1641]
 integrated: [917, 918, 919, 920, 929, 930, 931]
 ---
 
@@ -150,6 +150,18 @@ not a pooling; recognize the difference).
 Also from the bank: q336 (max-pool AND tile the batch into a grid in ONE
 reduce), q377 (max-pool then flatten everything but the batch, also in one
 reduce).
+
+### q1638
+Split each axis into (kept × 3), reduce the 3s away.
+
+### q1639
+Pool one axis only: a length-2 window on width alone.
+
+### q1640
+Three factored axes: nothing new, one more group.
+
+### q1641
+Temporal pooling with a sum: the window is the fast factor of time.
 
 ## Integrated practice
 

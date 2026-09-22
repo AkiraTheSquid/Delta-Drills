@@ -88,6 +88,14 @@ body.lesson-mode #self-report-row {
   margin-top: 14px;
 }
 
+/* A page the learner read before, back because its drill never came. */
+.lesson-revisit-note {
+  color: var(--muted);
+  font-family: var(--ui-font);
+  font-size: 13px;
+  margin: -6px 0 16px;
+}
+
 .lesson-actions {
   border-top: 1px solid var(--border);
   display: flex;

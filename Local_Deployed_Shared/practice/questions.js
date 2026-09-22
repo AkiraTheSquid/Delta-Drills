@@ -352,6 +352,20 @@ function isPracticeQuestionAllowed(question) {
 // single-KC lesson ladder (lessons.js) must agree, or a faded item would grade
 // against different fields than the same question served by the queue.
 // `overrides` lets the faded tier swap in its blanked starter_code.
+/* The math (multiple-choice) fields of a bank row, or nothing for a coding
+   drill. `correct_choice` rides along here because the local grader
+   (api.js → DeltaMath.gradeLocal) has no server to ask; the backend never
+   sends it on the served question. */
+function mathFieldsFromBank(q) {
+  if (!q || q.submission_mode !== "mc") return {};
+  return {
+    choices: Array.isArray(q.choices) ? q.choices : [],
+    correct_choice: q.correct_choice || "",
+    math_kind: q.math_kind || null,
+    solution_md: q.solution_md || "",
+  };
+}
+
 function buildPracticeQuestionFromBank(q, overrides = {}) {
   if (!q) return null;
   const einopsSol = getEinopsSolution(q.id) || q.einops_solution || null;
@@ -376,6 +390,7 @@ function buildPracticeQuestionFromBank(q, overrides = {}) {
     // practice/question-examples.js. Empty for most bank questions.
     wrong_examples: Array.isArray(q.wrong_examples) ? q.wrong_examples : [],
     provenance: q.provenance || null,
+    ...mathFieldsFromBank(q),
     target_difficulty:
       (typeof getTargetDifficultyFromAdaptiveState === "function"
         ? getTargetDifficultyFromAdaptiveState(q.subtopic)
@@ -423,6 +438,7 @@ function hydrateSavedPracticeQuestionFromBank(savedQuestion) {
     submission_mode: bankQ.submission_mode || "stdout",
     wrong_examples: Array.isArray(bankQ.wrong_examples) ? bankQ.wrong_examples : [],
     provenance: bankQ.provenance || null,
+    ...mathFieldsFromBank(bankQ),
     _artifactChanged: artifactChanged,
   };
 }

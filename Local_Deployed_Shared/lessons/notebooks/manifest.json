@@ -1,12 +1,49 @@
 {
  "lessons": [
   {
+   "id": "ma-00",
+   "title": "Linear algebra for ARENA 0.1",
+   "topic": "Mathematics",
+   "subtopic_key": "Mathematics: Linear algebra",
+   "file": "ma-00.json",
+   "cells": 63,
+   "questions": [],
+   "kcs": [
+    "math.vector-arithmetic",
+    "math.dot-products-norms",
+    "math.linear-combinations",
+    "math.matrix-equations",
+    "math.determinants-invertibility"
+   ],
+   "segments": {}
+  },
+  {
+   "id": "ma-01",
+   "title": "Math for ARENA 0.1",
+   "topic": "Mathematics",
+   "subtopic_key": "Mathematics: ARENA 0.1",
+   "file": "ma-01.json",
+   "cells": 84,
+   "questions": [],
+   "kcs": [
+    "math.ray-geometry",
+    "math.intersection-systems",
+    "math.singular-systems",
+    "math.barycentric-coordinates",
+    "math.ray-distance"
+   ],
+   "segments": {
+    "math.barycentric-coordinates#weights": "dd-seg-math-barycentric-coordinates-0",
+    "math.barycentric-coordinates#three-unknowns": "dd-seg-math-barycentric-coordinates-1"
+   }
+  },
+  {
    "id": "py-0",
    "title": "Python you need first",
    "topic": "Python",
    "subtopic_key": "Python: Getting started",
    "file": "py-0.json",
-   "cells": 705,
+   "cells": 713,
    "questions": [
     568,
     569,
@@ -115,7 +152,9 @@
     792,
     793,
     794,
-    795
+    795,
+    1526,
+    1528
    ],
    "kcs": [
     "python.values-and-names",
@@ -130,11 +169,11 @@
   },
   {
    "id": "np-1",
-   "title": "Arrays from the ground up",
+   "title": "Tensors from the ground up",
    "topic": "Numpy",
    "subtopic_key": "Numpy: Core array literacy",
    "file": "np-1.json",
-   "cells": 1583,
+   "cells": 1751,
    "questions": [
     8,
     19,
@@ -362,7 +401,6 @@
     1350,
     1351,
     1352,
-    1353,
     1354,
     1355,
     1356,
@@ -377,64 +415,102 @@
     1491,
     1492,
     1493,
-    1494
+    1494,
+    1501,
+    1502,
+    1503,
+    1504,
+    1524,
+    1525,
+    1538,
+    1539,
+    1540,
+    1541,
+    1542,
+    1545,
+    1546,
+    1547,
+    1548,
+    1563,
+    1564,
+    1571,
+    1572,
+    1573,
+    1574,
+    1586,
+    1587,
+    1588,
+    1590,
+    1591,
+    1593,
+    1594,
+    1595,
+    1596,
+    1650,
+    1651,
+    1722,
+    1723,
+    1724,
+    1725,
+    1726,
+    1727
    ],
    "kcs": [
-    "numpy.ndarray-model",
-    "numpy.transpose-axes",
-    "numpy.views-and-copies",
-    "numpy.constructors",
-    "numpy.slicing-views",
-    "numpy.ranges",
-    "numpy.dtype-astype",
-    "numpy.reshape-flatten",
-    "numpy.elementwise-ufuncs",
-    "numpy.aggregations",
-    "numpy.sorting",
-    "numpy.random-samplers",
-    "numpy.random-seeding",
-    "numpy.random-threading",
-    "numpy.linalg-basics"
+    "torch.tensor-model",
+    "torch.transpose-axes",
+    "torch.views-and-copies",
+    "torch.constructors",
+    "torch.slicing-views",
+    "torch.ranges",
+    "torch.dtype-astype",
+    "torch.reshape-flatten",
+    "torch.elementwise-ops",
+    "torch.aggregations",
+    "torch.sorting",
+    "torch.random-samplers",
+    "torch.random-seeding",
+    "torch.random-threading",
+    "torch.linalg-basics"
    ],
    "segments": {
-    "numpy.ndarray-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-numpy-ndarray-model-0",
-    "numpy.ndarray-model#s1-nesting-becomes-axes-shape-ndim-numel": "dd-seg-numpy-ndarray-model-1",
-    "numpy.ndarray-model#s2-dtype-is-a-property-of-the-whole-block": "dd-seg-numpy-ndarray-model-2",
-    "numpy.transpose-axes#s0-transpose-turns-the-rows-into-the-columns": "dd-seg-numpy-transpose-axes-0",
-    "numpy.transpose-axes#s1-reading-the-transposed-numbers-back-out": "dd-seg-numpy-transpose-axes-1",
-    "numpy.views-and-copies#s0-one-strip-of-numbers-and-a-note-saying-how-to-re": "dd-seg-numpy-views-and-copies-0",
-    "numpy.views-and-copies#s1-sharing-a-strip-and-being-in-order-are-two-diffe": "dd-seg-numpy-views-and-copies-1",
-    "numpy.views-and-copies#s2-asking-for-a-strip-of-your-own-contiguous": "dd-seg-numpy-views-and-copies-2",
-    "numpy.constructors#s0-constructors-and-the-shape-argument": "dd-seg-numpy-constructors-0",
-    "numpy.constructors#s1-the-dtype-is-float32-unless-you-say-otherwise": "dd-seg-numpy-constructors-1",
-    "numpy.constructors#s2-like-copy-shape-and-dtype-from-an-existing-tenso": "dd-seg-numpy-constructors-2",
-    "numpy.constructors#s3-t-eye-the-identity-matrix": "dd-seg-numpy-constructors-3",
-    "numpy.slicing-views#slice-bounds": "dd-seg-numpy-slicing-views-0",
-    "numpy.slicing-views#rows-and-columns": "dd-seg-numpy-slicing-views-1",
-    "numpy.slicing-views#reversing": "dd-seg-numpy-slicing-views-2",
-    "numpy.slicing-views#quarter-turns": "dd-seg-numpy-slicing-views-3",
-    "numpy.slicing-views#writing-through-views": "dd-seg-numpy-slicing-views-4",
-    "numpy.slicing-views#copying-before-writing": "dd-seg-numpy-slicing-views-5",
-    "numpy.ranges#s0-t-arange-the-stop-is-exclusive": "dd-seg-numpy-ranges-0",
-    "numpy.ranges#s1-t-linspace-choose-the-number-of-points": "dd-seg-numpy-ranges-1",
-    "numpy.ranges#s2-count-first-then-scale": "dd-seg-numpy-ranges-2",
-    "numpy.dtype-astype#s0-to-converting-an-existing-tensor": "dd-seg-numpy-dtype-astype-0",
-    "numpy.dtype-astype#s1-dtypes-at-creation-and-dtype-names-as-strings": "dd-seg-numpy-dtype-astype-1",
-    "numpy.dtype-astype#s2-dtype-is-a-memory-choice-element-size-and-numel": "dd-seg-numpy-dtype-astype-2",
-    "numpy.reshape-flatten#s0-reshape-re-describes-the-same-run-of-numbers": "dd-seg-numpy-reshape-flatten-0",
-    "numpy.reshape-flatten#s1-flatten-and-the-order-the-numbers-come-out-in": "dd-seg-numpy-reshape-flatten-1",
-    "numpy.reshape-flatten#s2-reshape-is-a-view-of-the-same-memory": "dd-seg-numpy-reshape-flatten-2",
-    "numpy.elementwise-ufuncs#s0-write-the-formula-once-operators-are-elementwise": "dd-seg-numpy-elementwise-ufuncs-0",
-    "numpy.elementwise-ufuncs#s1-named-math-functions-and-the-rounding-family": "dd-seg-numpy-elementwise-ufuncs-1",
-    "numpy.elementwise-ufuncs#s2-elementwise-choosers-maximum-minimum-clamp": "dd-seg-numpy-elementwise-ufuncs-2",
-    "numpy.aggregations#s0-reductions-collapsing-a-tensor-to-one-number": "dd-seg-numpy-aggregations-0",
-    "numpy.aggregations#s1-0-dimensional-tensors-vs-plain-python-numbers": "dd-seg-numpy-aggregations-1",
-    "numpy.aggregations#s2-whole-tensor-yes-no-verdicts": "dd-seg-numpy-aggregations-2",
-    "numpy.sorting#s0-sort-returns-a-pair-not-a-tensor": "dd-seg-numpy-sorting-0",
-    "numpy.sorting#s1-argsort-the-positions-and-reordering-by-them": "dd-seg-numpy-sorting-1",
-    "numpy.sorting#s2-picking-an-axis-and-taking-only-the-top-k": "dd-seg-numpy-sorting-2",
-    "numpy.linalg-basics#s0-two-multiplications-vs": "dd-seg-numpy-linalg-basics-0",
-    "numpy.linalg-basics#s1-t-linalg-solve-never-build-the-inverse": "dd-seg-numpy-linalg-basics-1"
+    "torch.tensor-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-torch-tensor-model-0",
+    "torch.tensor-model#s1-nesting-becomes-axes-shape-ndim-numel": "dd-seg-torch-tensor-model-1",
+    "torch.tensor-model#s2-dtype-is-a-property-of-the-whole-block": "dd-seg-torch-tensor-model-2",
+    "torch.transpose-axes#s0-transpose-turns-the-rows-into-the-columns": "dd-seg-torch-transpose-axes-0",
+    "torch.transpose-axes#s1-reading-the-transposed-numbers-back-out": "dd-seg-torch-transpose-axes-1",
+    "torch.views-and-copies#s0-one-strip-of-numbers-and-a-note-saying-how-to-re": "dd-seg-torch-views-and-copies-0",
+    "torch.views-and-copies#s1-sharing-a-strip-and-being-in-order-are-two-diffe": "dd-seg-torch-views-and-copies-1",
+    "torch.views-and-copies#s2-asking-for-a-strip-of-your-own-contiguous": "dd-seg-torch-views-and-copies-2",
+    "torch.constructors#s0-constructors-and-the-shape-argument": "dd-seg-torch-constructors-0",
+    "torch.constructors#s1-the-dtype-is-float32-unless-you-say-otherwise": "dd-seg-torch-constructors-1",
+    "torch.constructors#s2-like-copy-shape-and-dtype-from-an-existing-tenso": "dd-seg-torch-constructors-2",
+    "torch.constructors#s3-t-eye-the-identity-matrix": "dd-seg-torch-constructors-3",
+    "torch.slicing-views#slice-bounds": "dd-seg-torch-slicing-views-0",
+    "torch.slicing-views#rows-and-columns": "dd-seg-torch-slicing-views-1",
+    "torch.slicing-views#reversing": "dd-seg-torch-slicing-views-2",
+    "torch.slicing-views#quarter-turns": "dd-seg-torch-slicing-views-3",
+    "torch.slicing-views#writing-through-views": "dd-seg-torch-slicing-views-4",
+    "torch.slicing-views#copying-before-writing": "dd-seg-torch-slicing-views-5",
+    "torch.ranges#s0-t-arange-the-stop-is-exclusive": "dd-seg-torch-ranges-0",
+    "torch.ranges#s1-t-linspace-choose-the-number-of-points": "dd-seg-torch-ranges-1",
+    "torch.ranges#s2-count-first-then-scale": "dd-seg-torch-ranges-2",
+    "torch.dtype-astype#s0-to-converting-an-existing-tensor": "dd-seg-torch-dtype-astype-0",
+    "torch.dtype-astype#s1-dtypes-at-creation-and-dtype-names-as-strings": "dd-seg-torch-dtype-astype-1",
+    "torch.dtype-astype#s2-dtype-is-a-memory-choice-element-size-and-numel": "dd-seg-torch-dtype-astype-2",
+    "torch.reshape-flatten#s0-reshape-re-describes-the-same-run-of-numbers": "dd-seg-torch-reshape-flatten-0",
+    "torch.reshape-flatten#s1-flatten-and-the-order-the-numbers-come-out-in": "dd-seg-torch-reshape-flatten-1",
+    "torch.reshape-flatten#s2-reshape-is-a-view-of-the-same-memory": "dd-seg-torch-reshape-flatten-2",
+    "torch.elementwise-ops#s0-write-the-formula-once-operators-are-elementwise": "dd-seg-torch-elementwise-ops-0",
+    "torch.elementwise-ops#s1-named-math-functions-and-the-rounding-family": "dd-seg-torch-elementwise-ops-1",
+    "torch.elementwise-ops#s2-elementwise-choosers-maximum-minimum-clamp": "dd-seg-torch-elementwise-ops-2",
+    "torch.aggregations#s0-reductions-collapsing-a-tensor-to-one-number": "dd-seg-torch-aggregations-0",
+    "torch.aggregations#s1-0-dimensional-tensors-vs-plain-python-numbers": "dd-seg-torch-aggregations-1",
+    "torch.aggregations#s2-whole-tensor-yes-no-verdicts": "dd-seg-torch-aggregations-2",
+    "torch.sorting#s0-sort-returns-a-pair-not-a-tensor": "dd-seg-torch-sorting-0",
+    "torch.sorting#s1-argsort-the-positions-and-reordering-by-them": "dd-seg-torch-sorting-1",
+    "torch.sorting#s2-picking-an-axis-and-taking-only-the-top-k": "dd-seg-torch-sorting-2",
+    "torch.linalg-basics#s0-two-multiplications-vs": "dd-seg-torch-linalg-basics-0",
+    "torch.linalg-basics#s1-t-linalg-solve-never-build-the-inverse": "dd-seg-torch-linalg-basics-1"
    }
   },
   {
@@ -443,7 +519,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Indexing and selection",
    "file": "np-2.json",
-   "cells": 89,
+   "cells": 129,
    "questions": [
     1,
     12,
@@ -458,19 +534,29 @@
     202,
     219,
     232,
-    236
+    236,
+    1508,
+    1509,
+    1512,
+    1513,
+    1514,
+    1567,
+    1568,
+    1576,
+    1577,
+    1578
    ],
    "kcs": [
-    "numpy.boolean-masking",
-    "numpy.argmin-argmax"
+    "torch.boolean-masking",
+    "torch.argmin-argmax"
    ],
    "segments": {
-    "numpy.boolean-masking#s0-the-comparison-is-the-mask": "dd-seg-numpy-boolean-masking-0",
-    "numpy.boolean-masking#s1-using-a-mask-count-and-filter": "dd-seg-numpy-boolean-masking-1",
-    "numpy.boolean-masking#s2-combining-masks-and-masked-assignment": "dd-seg-numpy-boolean-masking-2",
-    "numpy.argmin-argmax#s0-argmin-argmax-the-index-not-the-value": "dd-seg-numpy-argmin-argmax-0",
-    "numpy.argmin-argmax#s1-the-index-as-a-handle-for-surgery": "dd-seg-numpy-argmin-argmax-1",
-    "numpy.argmin-argmax#s2-closest-to-target-argmin-on-a-transformed-array": "dd-seg-numpy-argmin-argmax-2"
+    "torch.boolean-masking#s0-the-comparison-is-the-mask": "dd-seg-torch-boolean-masking-0",
+    "torch.boolean-masking#s1-using-a-mask-count-and-filter": "dd-seg-torch-boolean-masking-1",
+    "torch.boolean-masking#s2-combining-masks-and-masked-assignment": "dd-seg-torch-boolean-masking-2",
+    "torch.argmin-argmax#s0-argmin-argmax-the-index-not-the-value": "dd-seg-torch-argmin-argmax-0",
+    "torch.argmin-argmax#s1-the-index-as-a-handle-for-surgery": "dd-seg-torch-argmin-argmax-1",
+    "torch.argmin-argmax#s2-closest-to-target-argmin-on-a-transformed-array": "dd-seg-torch-argmin-argmax-2"
    }
   },
   {
@@ -479,7 +565,7 @@
    "topic": "Numpy",
    "subtopic_key": "Numpy: Vectorization and broadcasting",
    "file": "np-3.json",
-   "cells": 339,
+   "cells": 371,
    "questions": [
     37,
     84,
@@ -519,7 +605,6 @@
     976,
     977,
     978,
-    979,
     980,
     1363,
     1364,
@@ -532,33 +617,42 @@
     1471,
     1472,
     1473,
-    1474,
     1475,
-    1476,
     1477,
-    1478,
     1479,
     1480,
-    1481,
-    1482
+    1482,
+    1517,
+    1518,
+    1530,
+    1531,
+    1532,
+    1533,
+    1534,
+    1581,
+    1582,
+    1583,
+    1645,
+    1646,
+    1647
    ],
    "kcs": [
-    "numpy.broadcasting-rules",
-    "numpy.axis-reductions",
-    "numpy.dot-matmul-patterns",
-    "numpy.stack-concat-interleave"
+    "torch.broadcasting-rules",
+    "torch.axis-reductions",
+    "torch.dot-matmul-patterns",
+    "torch.stack-concat-interleave"
    ],
    "segments": {
-    "numpy.broadcasting-rules#s0-the-right-alignment-rule": "dd-seg-numpy-broadcasting-rules-0",
-    "numpy.broadcasting-rules#s1-placing-the-1s-yourself-with-none": "dd-seg-numpy-broadcasting-rules-1",
-    "numpy.axis-reductions#s0-axis-the-axis-you-name-disappears": "dd-seg-numpy-axis-reductions-0",
-    "numpy.axis-reductions#s1-tuples-of-axes-and-keepdims": "dd-seg-numpy-axis-reductions-1",
-    "numpy.dot-matmul-patterns#s0-the-dot-product-multiply-then-sum": "dd-seg-numpy-dot-matmul-patterns-0",
-    "numpy.dot-matmul-patterns#s1-matrix-vector-one-dot-per-row": "dd-seg-numpy-dot-matmul-patterns-1",
-    "numpy.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-numpy-dot-matmul-patterns-2",
-    "numpy.stack-concat-interleave#grow-existing-dimension": "dd-seg-numpy-stack-concat-interleave-0",
-    "numpy.stack-concat-interleave#create-new-axis": "dd-seg-numpy-stack-concat-interleave-1",
-    "numpy.stack-concat-interleave#interleave-streams": "dd-seg-numpy-stack-concat-interleave-2"
+    "torch.broadcasting-rules#s0-the-right-alignment-rule": "dd-seg-torch-broadcasting-rules-0",
+    "torch.broadcasting-rules#s1-placing-the-1s-yourself-with-none": "dd-seg-torch-broadcasting-rules-1",
+    "torch.axis-reductions#s0-axis-the-axis-you-name-disappears": "dd-seg-torch-axis-reductions-0",
+    "torch.axis-reductions#s1-tuples-of-axes-and-keepdims": "dd-seg-torch-axis-reductions-1",
+    "torch.dot-matmul-patterns#s0-the-dot-product-multiply-then-sum": "dd-seg-torch-dot-matmul-patterns-0",
+    "torch.dot-matmul-patterns#s1-matrix-vector-one-dot-per-row": "dd-seg-torch-dot-matmul-patterns-1",
+    "torch.dot-matmul-patterns#s2-when-doesn-t-fit-multiply-then-reduce-an-axis": "dd-seg-torch-dot-matmul-patterns-2",
+    "torch.stack-concat-interleave#grow-existing-dimension": "dd-seg-torch-stack-concat-interleave-0",
+    "torch.stack-concat-interleave#create-new-axis": "dd-seg-torch-stack-concat-interleave-1",
+    "torch.stack-concat-interleave#interleave-streams": "dd-seg-torch-stack-concat-interleave-2"
    }
   },
   {
@@ -567,7 +661,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Rearrange",
    "file": "eo-1.json",
-   "cells": 368,
+   "cells": 384,
    "questions": [
     313,
     314,
@@ -634,7 +728,11 @@
     941,
     942,
     943,
-    944
+    944,
+    1624,
+    1625,
+    1642,
+    1643
    ],
    "kcs": [
     "einops.pattern-language",
@@ -652,7 +750,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Reduce",
    "file": "eo-2.json",
-   "cells": 87,
+   "cells": 111,
    "questions": [
     324,
     325,
@@ -668,7 +766,13 @@
     370,
     377,
     399,
-    402
+    402,
+    1634,
+    1638,
+    1639,
+    1640,
+    1641,
+    1653
    ],
    "kcs": [
     "einops.reduce-model",
@@ -682,7 +786,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Deep Learning",
    "file": "eo-3.json",
-   "cells": 150,
+   "cells": 178,
    "questions": [
     316,
     317,
@@ -711,7 +815,14 @@
     894,
     896,
     901,
-    902
+    902,
+    1609,
+    1610,
+    1611,
+    1612,
+    1613,
+    1618,
+    1619
    ],
    "kcs": [
     "einops.repeat-model",
@@ -726,7 +837,7 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: Rays as tensors",
    "file": "tr-1.json",
-   "cells": 187,
+   "cells": 219,
    "questions": [
     798,
     799,
@@ -759,7 +870,15 @@
     835,
     836,
     837,
-    838
+    838,
+    1598,
+    1599,
+    1601,
+    1602,
+    1604,
+    1605,
+    1607,
+    1608
    ],
    "kcs": [
     "torch.out-argument",
@@ -775,7 +894,7 @@
    "topic": "Einops",
    "subtopic_key": "Einops: Einsum",
    "file": "es-1.json",
-   "cells": 137,
+   "cells": 180,
    "questions": [
     847,
     848,
@@ -796,16 +915,25 @@
     874,
     879,
     880,
-    884
+    884,
+    1555,
+    1556,
+    1557,
+    1558,
+    1559,
+    1560
    ],
    "kcs": [
-    "einops.einsum"
+    "einops.einsum",
+    "einops.attention-einsum"
    ],
    "segments": {
     "einops.einsum#one-operand": "dd-seg-einops-einsum-0",
     "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
     "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
-    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3"
+    "einops.einsum#batch-axes": "dd-seg-einops-einsum-3",
+    "einops.attention-einsum#named-axes-at-rank": "dd-seg-einops-attention-einsum-0",
+    "einops.attention-einsum#per-head-weights-and-ellipsis": "dd-seg-einops-attention-einsum-1"
    }
   },
   {
@@ -814,8 +942,9 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: ar-00",
    "file": "ar-00.json",
-   "cells": 542,
+   "cells": 562,
    "questions": [
+    103,
     993,
     994,
     995,
@@ -906,7 +1035,8 @@
     1290,
     1291,
     1292,
-    1293
+    1293,
+    1728
    ],
    "kcs": [
     "tensor.row-normalization",
@@ -942,7 +1072,7 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: ar-01",
    "file": "ar-01.json",
-   "cells": 383,
+   "cells": 399,
    "questions": [
     1089,
     1090,
@@ -1008,7 +1138,9 @@
     1162,
     1163,
     1164,
-    1165
+    1165,
+    1729,
+    1730
    ],
    "kcs": [
     "raytracing.segment-intersection",
@@ -1036,8 +1168,18 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: ar-02",
    "file": "ar-02.json",
-   "cells": 1116,
+   "cells": 1156,
    "questions": [
+    405,
+    406,
+    408,
+    409,
+    416,
+    418,
+    423,
+    425,
+    459,
+    460,
     1169,
     1170,
     1171,

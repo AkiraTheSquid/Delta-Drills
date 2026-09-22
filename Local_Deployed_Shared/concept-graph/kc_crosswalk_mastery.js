@@ -1,6 +1,6 @@
 /* Read a KC's mastery out of the backend's per-ATOM BKT posteriors.
  *
- * The graph names concepts with KC ids (`numpy.dtype-astype`, from
+ * The graph names concepts with KC ids (`torch.dtype-astype`, from
  * kc_registry.json) and the practice backend tracks belief per atom
  * (`argmax-prediction`, from question_atom_tags.jsonl). The two id spaces are
  * disjoint — measured overlap is zero — so `atom_mastery[kc]` never hits and

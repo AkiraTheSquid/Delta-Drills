@@ -1,13 +1,13 @@
 ---
 kc: torch.out-argument
 title: Filling a tensor in place with out=
-supporting: [numpy.ranges, numpy.slicing-views, numpy.constructors]
+supporting: [torch.ranges, torch.slicing-views, torch.constructors]
 new_syntax: [torch.arange#out, torch.linspace#out]
 previews: []
 faded: [798, 799]
 guided: []
-independent: [800, 801, 802, 803, 804, 805]
-integrated: [806, 807, 808]
+independent: [800, 801, 802, 803, 804, 805, 1598, 1599]
+integrated: [806, 807, 808, 1600, 1674, 1675, 1676, 1677]
 ---
 
 ## Concept: out= writes into storage you already own
@@ -157,6 +157,12 @@ arange(start, stop) into an integer canvas row.
 ### q805
 One column through a 3-D canvas, written with out=.
 
+### q1598
+out= targets a row this time — the last one.
+
+### q1599
+A column as the out= target, chosen from the right-hand end.
+
 ## Integrated practice
 
 ### q806
@@ -167,6 +173,21 @@ A column partitioned between two out= writes.
 
 ### q808
 A ones-column and a linspace-column, both via out=.
+
+### q1600
+Two out= writes into two rows of one canvas, then read one value back.
+
+### q1674
+Two ramps meeting at the middle: two writes into the canvas whose stretches share one cell.
+
+### q1675
+A two-row counting grid: one range written into each row, the second starting where the first stopped.
+
+### q1676
+A column ramp and a row count crossing: two writes into two views, the later one wins.
+
+### q1677
+A falling ramp into the tail of an existing tensor: the slice starts at n - k, the head survives.
 
 ## Misconceptions
 

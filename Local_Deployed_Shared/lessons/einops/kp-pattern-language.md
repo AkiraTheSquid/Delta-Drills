@@ -1,12 +1,12 @@
 ---
 kc: einops.pattern-language
 title: The einops pattern language — naming and permuting axes
-supporting: [numpy.reshape-flatten]
+supporting: [torch.reshape-flatten]
 new_syntax: [einops.rearrange]
 faded: [345, 941, 942, 943, 944]
 guided: [388]
 independent: [335, 330, 379, 319, 327, 344, 913, 914, 915, 916]
-integrated: [945, 946, 947]
+integrated: [945, 946, 947, 1644]
 ---
 
 ## Concept
@@ -265,6 +265,9 @@ The whole batch time-first, plus where one named element ended up.
 ### q947
 Two hops in a row: each pattern names the layout it is HANDED, not the one the
 data started in.
+
+### q1644
+A pure permutation of five named axes, then read the shape back.
 
 ## Misconceptions
 

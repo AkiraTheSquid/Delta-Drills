@@ -3,12 +3,12 @@ kc: raytracing.segment-intersection
 title: Ray–segment intersection
 new_syntax: ['torch.linalg.det']
 concepts: [two-descriptions, membership]
-supporting: ['raytracing.ray-parametrisation', 'numpy.linalg-basics', 'numpy.stack-concat-interleave', 'numpy.constructors', 'numpy.boolean-masking', 'tensor.row-normalization', 'tensor.indexed-selection']
+supporting: ['raytracing.ray-parametrisation', 'torch.linalg-basics', 'torch.stack-concat-interleave', 'torch.constructors', 'torch.boolean-masking', 'tensor.row-normalization', 'tensor.indexed-selection']
 previews: []
 faded: [1089, 1090, 1091, 1092]
 guided: []
 independent: [1093, 1094, 1095, 1096, 1097, 1098, 1099, 1100, 1101]
-integrated: [1102, 1103, 1104]
+integrated: [1102, 1103, 1104, 1702, 1703, 1704, 1705]
 ---
 
 ## Concept: Two descriptions of one point
@@ -214,6 +214,18 @@ Return the interpolation weights of the two segment endpoints at the hit, in end
 
 ### q1104
 Return whether the ray meets the segment strictly between its endpoints; exclude endpoint hits, as a scalar Boolean tensor. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1702
+Return the point where the ray meets the segment, shape (2,), or the ray's origin on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1703
+Return which endpoint of the segment the hit is nearer to, as an int64 scalar: 0 for the start, 1 for the end (a hit exactly halfway counts as the start), or −1 on a miss. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q1704
+Return whether the segment is hit going forward along the ray, and whether it would be hit going backward (the direction negated), as a (2,) Boolean tensor [forward, backward]. r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair misses both ways.
+
+### q1705
+Return the hit point when the ray meets the segment; otherwise the point of the segment nearest to the ray's origin (an endpoint when the perpendicular foot falls outside the segment), shape (2,). r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss, and a segment collapsed to one point has that point as its nearest point.
 
 ## Misconceptions
 

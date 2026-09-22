@@ -1,0 +1,206 @@
+{
+  "kc": "math.vector-arithmetic",
+  "problems": [
+    {
+      "id": 50032,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "For u = (2, −1, 3) and v = (−4, 5, 1), find u + v.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−2, 4, 4)",
+          "value": "Matrix([-2,4,4])"
+        },
+        {
+          "key": "B",
+          "text": "(6, −6, 2)",
+          "value": "Matrix([6,-6,2])"
+        },
+        {
+          "key": "C",
+          "text": "(−8, −5, 3)",
+          "value": "Matrix([-8,-5,3])"
+        },
+        {
+          "key": "D",
+          "text": "(−2, −4, 4)",
+          "value": "Matrix([-2,-4,4])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Add matching components. Subtraction, elementwise multiplication, and dropping the sign of 5 give the other options.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,-1,3])+Matrix([-4,5,1])"
+        }
+      }
+    },
+    {
+      "id": 50033,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "Find −2(1, −3, 2).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−2, −6, −4)",
+          "value": "Matrix([-2,-6,-4])"
+        },
+        {
+          "key": "B",
+          "text": "(−2, 6, −4)",
+          "value": "Matrix([-2,6,-4])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 6, 2)",
+          "value": "Matrix([1,6,2])"
+        },
+        {
+          "key": "D",
+          "text": "(2, −6, 4)",
+          "value": "Matrix([2,-6,4])"
+        }
+      ],
+      "answer": "B",
+      "solution": "Multiply every component by −2. In particular, a negative times a negative is positive.",
+      "verify": {
+        "sympy": {
+          "truth": "-2*Matrix([1,-3,2])"
+        }
+      }
+    },
+    {
+      "id": 50034,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "A = (−1, 2, 4), B = (3, −1, 6). Find the displacement from A to B.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 1, 10)",
+          "value": "Matrix([2,1,10])"
+        },
+        {
+          "key": "B",
+          "text": "(−4, 3, −2)",
+          "value": "Matrix([-4,3,-2])"
+        },
+        {
+          "key": "C",
+          "text": "(4, −3, 2)",
+          "value": "Matrix([4,-3,2])"
+        },
+        {
+          "key": "D",
+          "text": "(4, 3, 2)",
+          "value": "Matrix([4,3,2])"
+        }
+      ],
+      "answer": "C",
+      "solution": "Use B − A = (4, −3, 2). Adding positions is not a displacement; A − B points the other way.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([3,-1,6])-Matrix([-1,2,4])"
+        }
+      }
+    },
+    {
+      "id": 50035,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "Let p = (1, −2), u = (3, 1), v = (−1, 4). Find p + 2u − v.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(6, 4)",
+          "value": "Matrix([6,4])"
+        },
+        {
+          "key": "B",
+          "text": "(8, −6)",
+          "value": "Matrix([8,-6])"
+        },
+        {
+          "key": "C",
+          "text": "(5, −5)",
+          "value": "Matrix([5,-5])"
+        },
+        {
+          "key": "D",
+          "text": "(8, −4)",
+          "value": "Matrix([8,-4])"
+        }
+      ],
+      "answer": "D",
+      "solution": "First 2u = (6, 2). Subtracting v adds 1 to x and subtracts 4 from y: (8, −4).",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-2])+2*Matrix([3,1])-Matrix([-1,4])"
+        }
+      }
+    },
+    {
+      "id": 50036,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "Both points A and B are translated by T. Which expression still equals the original displacement B − A?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(B + T) − (A + T)"
+        },
+        {
+          "key": "B",
+          "text": "(B + T) − A"
+        },
+        {
+          "key": "C",
+          "text": "B − (A + T)"
+        },
+        {
+          "key": "D",
+          "text": "(A + T) − (B + T)"
+        }
+      ],
+      "answer": "A",
+      "solution": "Translation cancels when applied to both points. Translating only one adds or subtracts T; reversing the order negates the displacement."
+    },
+    {
+      "id": 50037,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A = (2, 0, −1), B = (6, 4, 3). Find A + (B − A)/4.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 1, 1)",
+          "value": "Matrix([1,1,1])"
+        },
+        {
+          "key": "B",
+          "text": "(3, 1, 0)",
+          "value": "Matrix([3,1,0])"
+        },
+        {
+          "key": "C",
+          "text": "(4, 2, 1)",
+          "value": "Matrix([4,2,1])"
+        },
+        {
+          "key": "D",
+          "text": "(8, 4, 2)",
+          "value": "Matrix([8,4,2])"
+        }
+      ],
+      "answer": "B",
+      "solution": "B − A = (4, 4, 4). A quarter is (1, 1, 1); add A to get (3, 1, 0). A displacement alone is not the resulting point.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,0,-1])+(Matrix([6,4,3])-Matrix([2,0,-1]))/4"
+        }
+      }
+    }
+  ]
+}

@@ -26,7 +26,7 @@ import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
 
-from delta_paths import CSV_DIR, REPO_DIR, SHARED_DIR, THIS_DIR_ONLY, get_chatgpt_runtime_dir
+from delta_paths import CSV_DIR, REPO_DIR, SHARED_DIR, THIS_DIR_ONLY, ensure_torch_python, get_chatgpt_runtime_dir
 
 CHATGPT_RUNTIME_DIR = get_chatgpt_runtime_dir()
 OUT_PATH = SHARED_DIR / "questions.json"
@@ -532,6 +532,17 @@ def load_function_overrides() -> dict[int, dict]:
     corrections = json.loads((Path(__file__).with_name("question_content_corrections.json")).read_text())
     for qid, fields in corrections.items():
         base[int(qid)] = {**base.get(int(qid), {}), **fields}
+    # TypeSafe (Jev) per-concept difficulty re-rate, the last word on
+    # difficulty_score. It carries ONLY that field, so it cannot clobber a
+    # reviewed prompt or case, but it must outrank the corrections layer too:
+    # that file holds the authored scores for q993+ and the re-rate replaces
+    # every score in the bank. Regenerate with scripts/typesafe_difficulty/
+    # (rate.py -> scale.py -> validate.py). Keep in sync with backend/app/questions.py::_load_function_overrides.
+    for qid, record in _read_jsonl_overrides(
+        CHATGPT_RUNTIME_DIR / "typesafe_difficulty_overrides.jsonl"
+    ).items():
+        if "difficulty_score" in record:
+            base[qid] = {**base.get(qid, {}), "difficulty_score": record["difficulty_score"]}
     return base
 
 
@@ -728,7 +739,31 @@ def load_questions() -> list[dict]:
                 }
             )
 
+    questions.extend(load_math_questions(questions))
     return questions
+
+
+def load_math_questions(csv_questions: list[dict]) -> list[dict]:
+    """The math (multiple-choice) bank, appended AFTER every CSV source.
+
+    Rows come from lessons/*/kp-*.problems.json through the one shared loader
+    (lessons/math_bank.py) and carry their own ids at or above
+    MATH_ID_FLOOR, so the CSV walk above can never renumber them. The two
+    ranges must not meet: a CSV that grew to 50,000 rows would be a different
+    problem, but a math file that copied a drill's id would silently shadow it
+    in every by-id map downstream, so refuse here.
+    """
+    sys.path.insert(0, str(SHARED_DIR / "lessons"))
+    import math_bank  # noqa: E402
+
+    rows = math_bank.load_math_rows(SHARED_DIR / "lessons")
+    csv_ids = {int(q["id"]) for q in csv_questions}
+    bad = sorted(r["id"] for r in rows if r["id"] < math_bank.MATH_ID_FLOOR or r["id"] in csv_ids)
+    if bad:
+        print(f"ERROR: math problem ids collide with the CSV bank or sit below "
+              f"{math_bank.MATH_ID_FLOOR}: {bad}", file=sys.stderr)
+        sys.exit(1)
+    return rows
 
 
 def build_structured_questions(flat_questions: list[dict]) -> list[dict]:
@@ -763,6 +798,13 @@ def build_structured_questions(flat_questions: list[dict]) -> list[dict]:
                     "expected_output": question["expected_output"],
                     "expected_artifact_type": question["expected_artifact_type"],
                     "supports_visual_output": question["supports_visual_output"],
+                    # Multiple-choice (math) rows only; absent on coding rows so
+                    # the structured file for the existing bank is unchanged.
+                    **{
+                        k: question[k]
+                        for k in ("math_kind", "math_kc", "choices", "correct_choice", "solution_md", "verify", "hint")
+                        if k in question
+                    },
                 },
             }
         )
@@ -829,6 +871,9 @@ def recompute_expected_outputs(questions: list) -> None:
 
 
 def main() -> None:
+    # Without torch the exporter keeps every torch question's stale
+    # expected_output instead of recomputing it — silently.
+    ensure_torch_python()
     questions = load_questions()
     if not questions:
         print("ERROR: no questions were exported", file=sys.stderr)

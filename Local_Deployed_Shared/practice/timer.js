@@ -184,7 +184,16 @@ const PracticeSession = (() => {
     }
   };
 
-  const _draft = () => window.DeltaNotebook?.serialize() || codeEditor.value;
+  /* The lesson gate borrows the drill editor to show the segment's worked
+     example (practice/lessons.js). While `body.lesson-mode` is on, the editor
+     holds LESSON text, not the learner's draft — persisting it under the
+     pending drill's questionId made the linspace drill (q961) come back from
+     a pause showing the lesson cell, hidden checks and all, instead of its
+     stub. No draft exists during a lesson, so snapshot none. */
+  const _draft = () => {
+    if (document.body.classList.contains("lesson-mode")) return "";
+    return window.DeltaNotebook?.serialize() || codeEditor.value;
+  };
   const _restoreDraft = (draft) => {
     if (!draft) return;
     if (window.DeltaNotebook) window.DeltaNotebook.restore(draft);

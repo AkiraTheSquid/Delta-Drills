@@ -5,13 +5,13 @@
   them: what `=` does, the everyday types, lists and tuples, indexing from
   zero, calling a function, writing one with `def`/`return`, and what a dot
   means (import, attribute, method).
-- It exists because `numpy.ndarray-model` — the first concept of the course —
+- It exists because `torch.tensor-model` — the first concept of the course —
   already assumed all of it. A beginner opening the app was handed a drill
   reading "write a function `solve(rows)`" with nothing behind it.
 
 ## Owns
 - The seven `python.*` KCs and their KP pages, and nothing above them.
-- The claim that `numpy.ndarray-model` has prerequisites at all: its
+- The claim that `torch.tensor-model` has prerequisites at all: its
   `prereqs` in `kc_registry.json` point here.
 - Drill ids 568–609 (42 of them), Topic `Python` / Subtopic `Getting started`.
 
@@ -51,7 +51,7 @@
 3. The backend serves the Lesson rung first (`kc_graph._stage_from` returns
    `worked` while `worked_seen == 0`), then the faded drills from this folder.
 4. Clearing `python.indexing`, `python.defining-functions` and
-   `python.dots-and-imports` unlocks `numpy.ndarray-model`.
+   `python.dots-and-imports` unlocks `torch.tensor-model`.
 
 ## Invariants & Constraints
 - 🔴 **Every construct a py-0 drill uses must be taught by one of the seven
@@ -66,7 +66,7 @@
   other KC in the registry is reachable from it.
 - **Nothing here imports a library.** Checked over the page bodies; a page that
   reaches for torch or numpy is teaching above its own level.
-- **`numpy.ndarray-model`'s prereqs are all `python.*`.** If a numpy concept
+- **`torch.tensor-model`'s prereqs are all `python.*`.** If a numpy concept
   ever appears there, the floor has stopped being the floor.
 - 🔴 **No python ATOM may gate the numpy course.** The concept-graph atoms in
   `arena_drillable_v1.json` are a separate mechanism from these registry
@@ -134,6 +134,7 @@
     production outage.
 
 ## Recent Changes
+- 2026-09-17: 4 drills (ids 1526–1529) — `defining-functions` Solo +1 (q1526, a default argument) / Integrated +1 (q1527, an inner helper with a default), `dots-and-imports` Solo +1 (q1528, `math.pi`) / Integrated +1 (q1529, list copy + `append` + `math.floor`). Expected values and near-miss outputs produced by running the code (scratch generator). 🔴 A wrong-example `why` may not name a call the answer makes (`append`) — `audit_question_bank.py` blocks it as `answer_leak_in_wrong_example`. Critic skipped: codex quota exhausted until 2026-09-19.
 - 2026-08-29: `watch.py` gained the two standing content guards. The three
   drills recorded ACTIVE below (q578, q585, q603) are now MECHANISED —
   they sit in the recorded baseline rather than being remembered in prose,
@@ -141,6 +142,6 @@
   Fixing those three should SHRINK the baseline; that is the intended
   direction and needs no re-record.
 - 2026-08-28: Folder created. Seven KPs, 42 drills (ids 568–609), the registry
-  rewire that gives `numpy.ndarray-model` prerequisites for the first time, and
+  rewire that gives `torch.tensor-model` prerequisites for the first time, and
   `watch.py`'s four invariants. `lessons.is_prelibrary` added on the backend so
   the dialect gate stops parking library-free drills.

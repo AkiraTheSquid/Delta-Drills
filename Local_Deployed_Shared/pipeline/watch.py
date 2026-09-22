@@ -111,6 +111,26 @@ def check_imports():
         ast.parse(_source(path), filename=name)
 
 
+def check_every_code_running_gate_relocates_to_torch():
+    """Each gate that EXECUTES drill code must call delta_paths.ensure_torch_python.
+
+    Bare python3 has no torch and the bank is all torch. Before 2026-09-17 a
+    gate run from bare python did not fail, it went quiet: the audit filed
+    1111 of 1243 questions as `torch_unavailable` ("unscanned") and the
+    exporter kept stale expected_output. The re-exec is what makes "the
+    check ran" mean the code ran. validate_function_bank.py is a gate too
+    but is listed here, not in _GATE_SCRIPTS, because the deploy does not
+    run it.
+    """
+    for name in ('audit_question_bank.py', 'export_questions_json.py',
+                 'test_torch_grading.py', 'mech_gate_candidate.py',
+                 'validate_function_bank.py'):
+        src = _source(os.path.join(_DIR, name))
+        assert 'ensure_torch_python()' in src, (
+            f'{name} no longer re-execs into the backend venv — run from bare '
+            'python3 it will skip every torch question without failing')
+
+
 # ── Public API checks ─────────────────────────
 def check_public_api():
     """The two duplicated loaders both exist and both merge at least one layer."""
@@ -246,7 +266,8 @@ def check_the_card_never_names_the_answer():
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants,
+    checks = [check_imports, check_every_code_running_gate_relocates_to_torch,
+              check_public_api, check_invariants,
               check_reviewed_corrections_ship_to_both_banks,
               check_the_card_never_names_the_answer]
     for fn in checks:

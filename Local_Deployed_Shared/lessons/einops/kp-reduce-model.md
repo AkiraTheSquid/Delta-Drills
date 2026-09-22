@@ -1,12 +1,12 @@
 ---
 kc: einops.reduce-model
 title: einops.reduce — dropping axes with an aggregation
-supporting: [einops.pattern-language, numpy.axis-reductions]
-new_syntax: [einops.reduce]
+supporting: [einops.pattern-language, torch.axis-reductions]
+new_syntax: [einops.reduce, torch.std]
 faded: [325]
 guided: [328]
-independent: [326, 367, 399, 402, 332, 340, 370]
-integrated: [932]
+independent: [326, 367, 399, 402, 332, 340, 370, 1634, 1653]
+integrated: [932, 1635, 1636, 1637]
 ---
 
 ## Concept
@@ -167,10 +167,25 @@ Also from the bank: q340 (centre each (batch, channel) map by its OWN mean
 — reduce to 'b c 1 1' so it broadcasts back), q370 (centre each channel
 across the WHOLE batch — '1 c 1 1', BatchNorm-style; contrast with q340).
 
+### q1634
+Drop the batch axis from the pattern; name the aggregation.
+
+### q1653
+A callable aggregation: drop the sample axis, hand reduce the function.
+
 ## Integrated practice
 
 ### q932
 day-of-week means
+
+### q1635
+Keep the singleton so the reduced result broadcasts back over the input.
+
+### q1636
+Two reductions; the first also permutes the survivors.
+
+### q1637
+The aggregation argument accepts a callable; the week is a factored axis.
 
 ## Misconceptions
 

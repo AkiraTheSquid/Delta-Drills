@@ -1,228 +1,1940 @@
 {
-  "224": {
-    "wrong_examples": [
-      {
-        "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
-        "output": "(True, 1, [1, 2, 3])",
-        "why": "`rows[0]` builds a tensor from ONE row \u2014 1 axis, not 2. The whole nested list has to become one block, not just its first row."
-      }
-    ]
-  },
-  "391": {
-    "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
-    "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run \u2014 the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
-  },
-  "485": {
-    "wrong_examples": [
-      {
-        "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
-        "output": "(3, (2, 2, 2), 2)",
-        "why": "`len()` is the first axis only \u2014 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
-      }
-    ]
-  },
-  "532": {
-    "wrong_examples": [
-      {
-        "call": "solve([[7, 8], [9, 10]])",
-        "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
-        "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
-      }
-    ]
-  },
-  "533": {
-    "wrong_examples": [
-      {
-        "call": "solve([7])",
-        "output": "tensor(7)",
-        "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
-      }
-    ]
-  },
-  "534": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
-        "output": "tensor([[True, True],\n        [True, True]])",
-        "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
-      }
-    ]
-  },
-  "540": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(2, 2)",
-        "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
-      }
-    ]
-  },
-  "549": {
-    "wrong_examples": [
-      {
-        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
-        "output": "((2, 2, 2), 3, False)",
-        "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that \u2014 it is not the number of axes."
-      }
-    ]
-  },
-  "550": {
-    "wrong_examples": [
-      {
-        "call": "solve([1, 2, 3])",
-        "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
-        "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, an input with more than one element raises instead of returning None."
-      }
-    ]
-  },
-  "551": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
-        "output": "(tensor([[True, True],\n        [True, True]]), True)",
-        "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
-      }
-    ]
-  },
-  "553": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(True, False, False)",
-        "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
-      }
-    ]
-  },
-  "560": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "((2, 3), 'torch.int64', 2)",
-        "why": "The last slot is the ELEMENT count, not the axis count."
-      }
-    ]
-  },
-  "564": {
-    "wrong_examples": [
-      {
-        "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
-        "output": "(3, (2, 2, 2), 2, 'torch.int64')",
-        "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
-      }
-    ]
-  },
-  "565": {
-    "wrong_examples": [
-      {
-        "call": "solve([[1, 2, 3], [4, 5, 6]])",
-        "output": "(False, False, True, False)",
-        "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves two of the four answers wrong."
-      }
-    ]
-  },
-  "566": {
-    "wrong_examples": [
-      {
-        "call": "solve([7])",
-        "output": "(1, tensor(7), 'torch.int64')",
-        "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
-      }
-    ]
-  },
-  "607": {
-    "wrong_examples": [
-      {
-        "output": "(3, 2)",
-        "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
-      }
-    ]
-  },
-  "608": {
-    "wrong_examples": [
-      {
-        "output": "('HI', 2, <built-in function sqrt>)",
-        "why": "The third slot hands back a function object instead of the number it computes \u2014 the parentheses are what make it a call."
-      }
-    ]
-  },
-  "623": {
-    "wrong_examples": [
-      {
-        "output": "(False, (3, 2))",
-        "why": "Cutting the same run to the TRANSPOSE's shape (axis lengths swapped) is neither a transpose nor x \u2014 the numbers keep their reading order, the grid is just a different shape. The round trip has to use x's own shape."
-      }
-    ]
-  },
-  "628": {
-    "wrong_examples": [
-      {
-        "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
-        "why": "The prompt fixes the COLUMN count, which is the last axis \u2014 so the -1 goes first. Putting the fixed count first fixes the row count instead."
-      }
-    ]
-  },
-  "648": {
-    "wrong_examples": [
-      {
-        "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
-        "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else \u2014 the identity, scaled by v."
-      }
-    ]
-  },
-  "668": {
-    "wrong_examples": [
-      {
-        "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
-        "why": "argsort answers WHERE the sorted values came from \u2014 indices, not values. The first two slots ask for the sorted values themselves."
-      }
-    ]
-  },
-  "675": {
-    "wrong_examples": [
-      {
-        "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
-        "why": "The first row asked for is the TRANSPOSE's \u2014 column 0 of a. Taking row 0 of a itself hands back a's own first row."
-      }
-    ]
-  },
-  "676": {
-    "wrong_examples": [
-      {
-        "output": "((3, 2), 'torch.float32', 2)",
-        "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
-      }
-    ]
-  },
-  "679": {
-    "wrong_examples": [
-      {
-        "output": "((4,), [1, 1, 2, 3])",
-        "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
-      }
-    ]
-  },
-  "696": {
-    "wrong_examples": [
-      {
-        "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
-        "why": "A generator that never had the seed applied starts from PyTorch's fixed default seed, so the seed argument is ignored and every call replays the same default sequence whatever seed was passed."
-      }
-    ]
-  },
-  "810": {
-    "wrong_examples": [
-      {
-        "output": "TypeError: can't assign a list to a torch.FloatTensor",
-        "why": "A Python list cannot be written into a tensor slice \u2014 TypeError. The row values have to become a tensor before they are copied in."
-      }
-    ]
-  },
-  "845": {
-    "wrong_examples": [
-      {
-        "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
-        "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
-      }
-    ]
-  }
+ "224": {
+  "wrong_examples": [
+   {
+    "call": "x = [[1, 2, 3], [4, 5, 6]]\n(isinstance(solve(x), t.Tensor), solve(x).ndim, solve(x).tolist())",
+    "output": "(True, 1, [1, 2, 3])",
+    "why": "`rows[0]` builds a tensor from ONE row — 1 axis, not 2. The whole nested list has to become one block, not just its first row."
+   }
+  ]
+ },
+ "391": {
+  "question_text": "Write a function solve(img) that takes a channels-first PyTorch image tensor with shape (c, h, w). Return a tensor with one row per channel and one column per pixel, shape (c, h*w). Within each channel, read each row from left to right, then move to the next row. Use einops.rearrange.",
+  "starter_code": "import torch as t\nimport einops\nfrom einops import rearrange, reduce, repeat\n\ndef solve(img):\n    \"\"\"Return one flattened pixel row per channel.\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several inputs.\nprint(solve(t.arange(8.0).reshape(2, 2, 2)))\n"
+ },
+ "485": {
+  "wrong_examples": [
+   {
+    "call": "x = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nsolve(x)",
+    "output": "(3, (2, 2, 2), 2)",
+    "why": "`len()` is the first axis only — 2 for a 2x2x2 cube. The last slot asks for the total number of elements, which is 8."
+   }
+  ]
+ },
+ "532": {
+  "wrong_examples": [
+   {
+    "call": "solve([[7, 8], [9, 10]])",
+    "output": "tensor([[ 7,  8],\n        [ 9, 10]])",
+    "why": "Returning the tensor hands back a tensor object, not a list. The block has to be converted back to plain Python before it is returned."
+   }
+  ]
+ },
+ "533": {
+  "wrong_examples": [
+   {
+    "call": "solve([7])",
+    "output": "tensor(7)",
+    "why": "Indexing gives a 0-d TENSOR, not a number. The question asks for the plain Python value stored inside it."
+   }
+  ]
+ },
+ "534": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+    "output": "tensor([[True, True],\n        [True, True]])",
+    "why": "`==` compares elementwise and returns a tensor of bools. The question asks for ONE verdict about the whole tensor, not a verdict per element."
+   }
+  ]
+ },
+ "540": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(2, 2)",
+    "why": "`len()` on a tensor is the first axis only. The first slot asks for the TOTAL element count across every axis."
+   }
+  ]
+ },
+ "549": {
+  "wrong_examples": [
+   {
+    "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+    "output": "((2, 2, 2), 3, False)",
+    "why": "The middle slot is the ELEMENT count, and the shape multiplies out to that — it is not the number of axes."
+   }
+  ]
+ },
+ "550": {
+  "wrong_examples": [
+   {
+    "call": "solve([1, 2, 3])",
+    "output": "RuntimeError: a Tensor with 3 elements cannot be converted to Scalar",
+    "why": "Pulling a Python number out of a tensor only works when it holds exactly one element. Without checking the element count first, an input with more than one element raises instead of returning None."
+   }
+  ]
+ },
+ "551": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2], [3, 4]], [[1, 2], [3, 4]])",
+    "output": "(tensor([[True, True],\n        [True, True]]), True)",
+    "why": "`==` is elementwise and returns a tensor of bools. The first slot asks for a single True/False verdict about the whole tensor."
+   }
+  ]
+ },
+ "553": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(True, False, False)",
+    "why": "The third answer is asked about the PACKED copy, not the view. Reusing the view means the third answer is still the view's."
+   }
+  ]
+ },
+ "560": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "((2, 3), 'torch.int64', 2)",
+    "why": "The last slot is the ELEMENT count, not the axis count."
+   }
+  ]
+ },
+ "564": {
+  "wrong_examples": [
+   {
+    "call": "solve([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])",
+    "output": "(3, (2, 2, 2), 2, 'torch.int64')",
+    "why": "`len()` is the first axis only. The third slot asks for the total number of elements."
+   }
+  ]
+ },
+ "565": {
+  "wrong_examples": [
+   {
+    "call": "solve([[1, 2, 3], [4, 5, 6]])",
+    "output": "(False, False, True, False)",
+    "why": "The packed copy is a NEW tensor with its own block, in reading order. Reusing the view instead of packing it leaves two of the four answers wrong."
+   }
+  ]
+ },
+ "566": {
+  "wrong_examples": [
+   {
+    "call": "solve([7])",
+    "output": "(1, tensor(7), 'torch.int64')",
+    "why": "Indexing gives a 0-d tensor. The middle slot asks for the plain Python number stored in it."
+   }
+  ]
+ },
+ "607": {
+  "wrong_examples": [
+   {
+    "output": "(3, 2)",
+    "why": "The first slot rounds DOWN and the second rounds UP; returning them in the other order reports each one in the wrong slot."
+   }
+  ]
+ },
+ "608": {
+  "wrong_examples": [
+   {
+    "output": "('HI', 2, <built-in function sqrt>)",
+    "why": "The third slot hands back a function object instead of the number it computes — the parentheses are what make it a call."
+   }
+  ]
+ },
+ "623": {
+  "wrong_examples": [
+   {
+    "output": "(False, (3, 2))",
+    "why": "Cutting the same run to the TRANSPOSE's shape (axis lengths swapped) is neither a transpose nor x — the numbers keep their reading order, the grid is just a different shape. The round trip has to use x's own shape."
+   }
+  ]
+ },
+ "628": {
+  "wrong_examples": [
+   {
+    "output": "([1, 2, 3, 4, 5, 6], [[1, 2, 3], [4, 5, 6]], 2)",
+    "why": "The prompt fixes the COLUMN count, which is the last axis — so the -1 goes first. Putting the fixed count first fixes the row count instead."
+   }
+  ]
+ },
+ "648": {
+  "wrong_examples": [
+   {
+    "output": "([[3.0, 3.0], [3.0, 3.0]], 'torch.bool', [0, 0])",
+    "why": "full puts v in every cell. The question asks for v on the diagonal ONLY, with zeros everywhere else — the identity, scaled by v."
+   }
+  ]
+ },
+ "668": {
+  "wrong_examples": [
+   {
+    "output": "([1, 0, 2], [0.75, 0.5, 0.25], [0.5, 0.25, 0.75])",
+    "why": "argsort answers WHERE the sorted values came from — indices, not values. The first two slots ask for the sorted values themselves."
+   }
+  ]
+ },
+ "675": {
+  "wrong_examples": [
+   {
+    "output": "([[1, 4], [2, 5], [3, 6]], (3, 2), [1, 2, 3], False)",
+    "why": "The first row asked for is the TRANSPOSE's — column 0 of a. Taking row 0 of a itself hands back a's own first row."
+   }
+  ]
+ },
+ "676": {
+  "wrong_examples": [
+   {
+    "output": "((3, 2), 'torch.float32', 2)",
+    "why": "The size arguments are read in order: the first is the number of rows, the second the number of columns. Swapping them transposes the shape you asked for."
+   }
+  ]
+ },
+ "679": {
+  "wrong_examples": [
+   {
+    "output": "((4,), [1, 1, 2, 3])",
+    "why": "Drawing random integers samples WITH replacement, so it repeats values and skips others. The question asks for a shuffling: every number 0..n-1 appears exactly once."
+   }
+  ]
+ },
+ "696": {
+  "wrong_examples": [
+   {
+    "output": "[0.267295241355896, 0.8725283145904541, 0.3352888226509094]",
+    "why": "A generator that never had the seed applied starts from PyTorch's fixed default seed, so the seed argument is ignored and every call replays the same default sequence whatever seed was passed."
+   }
+  ]
+ },
+ "810": {
+  "wrong_examples": [
+   {
+    "output": "TypeError: can't assign a list to a torch.FloatTensor",
+    "why": "A Python list cannot be written into a tensor slice — TypeError. The row values have to become a tensor before they are copied in."
+   }
+  ]
+ },
+ "845": {
+  "wrong_examples": [
+   {
+    "output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, -0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 0.3333333134651184, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+    "why": "Spacing the rays evenly from -y_limit to y_limit puts them on the pixel EDGES (including both ends of the screen); centres sit half a pixel in from each end."
+   }
+  ]
+ },
+ "954": {
+  "wrong_examples": [
+   {
+    "call": "x = t.ones(2, 3)\nrow_scale = t.tensor([1.0, 10.0])\ncol_bias = t.tensor([0.0, 1.0, 2.0])\nsolve(x, row_scale, col_bias).tolist()",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+    "why": "Both vectors were lined up on the wrong axis: row_scale must gain a trailing axis to run down the rows, and col_bias already lines up with the columns as it is."
+   }
+  ]
+ },
+ "955": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([10.0, 20.0, 30.0])\nc = t.tensor([100.0])\nsolve(a, b, c).tolist()",
+    "output": "[[1000.0, 2000.0, 3000.0], [2000.0, 4000.0, 6000.0]]",
+    "why": "Only two of the three were given their own axis; c was left flat, so it lands on the LAST axis together with b instead of on its own third axis."
+   }
+  ]
+ },
+ "956": {
+  "wrong_examples": [
+   {
+    "call": "imgs = t.ones(2, 1, 2, 3)\nmean = t.tensor([0.0, 1.0, 2.0])\ngain = t.tensor([1.0, 10.0])\nsolve(imgs, mean, gain).tolist()",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 3'",
+    "why": "gain has one entry per IMAGE, so it must be reshaped to (b, 1, 1, 1) to broadcast against the batch axis; left flat it lines up with the channel axis and fails or scales the wrong thing."
+   }
+  ]
+ },
+ "978": {
+  "wrong_examples": [
+   {
+    "call": "mats = [t.tensor([1, 5]), t.tensor([4, 2])]\nsolve(mats).tolist()",
+    "output": "5",
+    "why": "cat glues the tensors end to end and the max collapses everything to one number. stack adds a NEW axis so the max can run across the list, position by position."
+   }
+  ]
+ },
+ "980": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([[1, 2], [3, 4]])\npad = 0\nsolve(z, pad).tolist()",
+    "output": "[[0, 0], [1, 2], [3, 4], [0, 0]]",
+    "why": "Padding went on the top and bottom (dim=0), adding rows. A column runs down the rows, so the pad has shape (rows, 1) and joins along dim=1."
+   }
+  ]
+ },
+ "981": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([[1, 2]])\nb = t.tensor([[3, 4]])\nsolve(a, b)",
+    "output": "(([[1, 2, 3, 4]], (1, 4)), ([[1, 2], [3, 4]], (2, 2)))",
+    "why": "The two joins are swapped: the vertical join (rows underneath) must come first."
+   }
+  ]
+ },
+ "982": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1, 2, 3])\nnz = 2\nsolve(z, nz).tolist()",
+    "output": "[1, 0, 0, 2, 0, 0, 3, 0, 0]",
+    "why": "Every entry got nz zeros after it, including the LAST one. The trailing run of zeros has to be cut off: there are no zeros after the final entry."
+   }
+  ],
+  "answer_code": "import torch as t\n\n\ndef solve(z, nz):\n    \"\"\"z's entries in order with nz zeros between each consecutive pair.\"\"\"\n    n = z.shape[0]\n    piled = t.stack([z] + [z * 0] * nz, dim=1)\n    return piled.flatten()[: n * (nz + 1) - nz]\n\n\nprint(solve(t.tensor([1, 2, 3]), 2))\n"
+ },
+ "983": {
+  "wrong_examples": [
+   {
+    "call": "mats = [t.tensor([1.0, 3.0]), t.tensor([3.0, 5.0])]\n(lambda r: (r[0].tolist(), r[1].tolist(), r[2]))(solve(mats))",
+    "output": "([1.0, 3.0, 3.0, 5.0], 3.0, 2)",
+    "why": "cat runs the tensors end to end instead of piling them on a new axis, so the mean is one number instead of an elementwise mean across the pile."
+   }
+  ]
+ },
+ "987": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0])\nsolve(z).tolist()",
+    "output": "[-0.3333333432674408, 0.0, 0.3333333432674408]",
+    "why": "Divided by the largest entry instead of by the span (max minus min). The result is only right when the smallest entry is zero."
+   }
+  ]
+ },
+ "988": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1.0, 2.0])\nb = t.tensor([[3.0]])\nsolve(a, b)",
+    "output": "False",
+    "why": "allclose on the two tensors themselves needs matching shapes and asks a different question. Compare the two TOTALS within tolerance."
+   }
+  ]
+ },
+ "989": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([2.0, 2.0, 2.0])\nsolve(z)",
+    "output": "(tensor(2.), True)",
+    "why": "The first item is a 0-d tensor, not a plain Python float. Wrap it in float(...)."
+   }
+  ]
+ },
+ "990": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0, 4.0])\nsolve(z)",
+    "output": "(tensor(10.), tensor(2.5000), tensor(1.), tensor(4.))",
+    "why": "Four 0-d tensors, not four plain Python floats. Each needs float(...) or .item()."
+   }
+  ]
+ },
+ "991": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 2.0, 3.0])\n(lambda r: (r[0].tolist(), r[1], r[2]))(solve(z))",
+    "output": "([-1.0, 0.0, 1.0], tensor(2.), True)",
+    "why": "The second item is a 0-d tensor, not a Python float, and the verdict was never computed — assert nothing, measure it with allclose against zero."
+   }
+  ]
+ },
+ "992": {
+  "wrong_examples": [
+   {
+    "call": "z = t.tensor([1.0, 5.0])\nsolve(z)",
+    "output": "(5.0, 3.0, False)",
+    "why": "The first item is the largest entry, not the span. Span is max minus min."
+   }
+  ]
+ },
+ "1313": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-3., 4.])\nsolve(x)",
+    "output": "tensor(25.)",
+    "why": "A 0-d tensor came back, not a Python float. Convert it to a plain number."
+   }
+  ]
+ },
+ "1314": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[0, 2, 0], [3, 0, 4]])\nsolve(x)",
+    "output": "tensor(3)",
+    "why": "The count is still a tensor; the prompt asks for a Python int."
+   }
+  ]
+ },
+ "1315": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[1., 3.], [3., 5.]])\nthreshold = 3.0\nsolve(x, threshold)",
+    "output": "0.75",
+    "why": "Used >= instead of >. Entries exactly equal to the threshold are NOT strictly above it."
+   }
+  ]
+ },
+ "1316": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([0., 0., 10.])\nsolve(x)",
+    "output": "3.3333332538604736",
+    "why": "The mean is not the midpoint of the range. Halfway between the smallest and largest entries is (min + max) / 2."
+   }
+  ]
+ },
+ "1317": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 3.])\nsolve(x)",
+    "output": "2.0",
+    "why": "Summed the squared distances instead of averaging them. Variance is the MEAN squared distance from the mean."
+   }
+  ]
+ },
+ "1318": {
+  "wrong_examples": [
+   {
+    "call": "predicted = t.tensor([1., 4.])\nactual = t.tensor([2., 2.])\nsolve(predicted, actual)",
+    "output": "0.25",
+    "why": "Squared the mean error instead of averaging the squared errors. Positive and negative errors cancel before the square."
+   }
+  ]
+ },
+ "1319": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([[0., -2.], [3., 0.]])\nb = t.tensor([[-5., -1.], [1., 8.]])\nsolve(a, b)",
+    "output": "True",
+    "why": "Treats zero as positive, so a pair like (0, -1) counts as opposite signs. The prompt says a pair containing zero does not count."
+   }
+  ]
+ },
+ "1320": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([1., 2., 3.])\nb = t.tensor([[2., 2.]])\nsolve(a, b)",
+    "output": "'RuntimeError: The size of tensor a (3) must match the size of tensor b (2) at non-singleton dimension 1'",
+    "why": "Subtracting the tensors elementwise assumes they have the same shape. The prompt says they may not; subtract the two totals instead."
+   }
+  ]
+ },
+ "1321": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[0., 4., 4.], [4., 4., 8.]])\nsolve(x)",
+    "output": "5",
+    "why": "Used >= so entries EQUAL to the mean are counted. The prompt asks for strictly above."
+   }
+  ]
+ },
+ "1322": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([[3., 1.], [3., 0.]])\nsolve(x)",
+    "output": "2",
+    "why": "That is the count of ties, not the fraction. Divide by the number of entries."
+   }
+  ]
+ },
+ "1323": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-5., 2., 3.])\nsolve(x)",
+    "output": "tensor(5.)",
+    "why": "Boolean indexing works, but the answer is still a tensor, not a Python float."
+   }
+  ]
+ },
+ "1324": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([-3., 3.])\nsolve(x)",
+    "output": "tensor(3.)",
+    "why": "Right value, wrong type: a 0-d tensor instead of a Python float."
+   }
+  ]
+ },
+ "1325": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 5.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+    "output": "4.0",
+    "why": "Averaging the products ignores the weight total. A weighted average divides by the sum of the weights, not by the count."
+   }
+  ]
+ },
+ "1326": {
+  "wrong_examples": [
+   {
+    "call": "a = t.tensor([0.])\nb = t.tensor([4., 4., 4.])\nsolve(a, b)",
+    "output": "2.0",
+    "why": "Averaging the two means gives every TENSOR equal weight, not every entry. Pool the totals and divide by the combined count."
+   }
+  ]
+ },
+ "1327": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([2., 6.])\n_before = x.clone()\nsolve(x)",
+    "output": "(tensor([0.2500, 0.7500]), tensor(8.))",
+    "why": "The second item is a 0-d tensor; the prompt wants the total as a Python float."
+   }
+  ]
+ },
+ "1328": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([2., 4., 6.])\nlow = -1.0\nhigh = 1.0\n_before = x.clone()\nsolve(x, low, high)",
+    "output": "(tensor([0.0000, 0.5000, 1.0000]), 4.0)",
+    "why": "Only rescaled to [0, 1]; the prompt asks for [low, high]. Multiply by (high - low) and add low."
+   }
+  ]
+ },
+ "1329": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([1., 2.])\ntarget = t.tensor([2., 5.])\nsolve(x, target)",
+    "output": "2.3333332538604736",
+    "why": "Ratio of totals is not the least-squares scale. The scale minimising the squared error is sum(x*target) / sum(x*x)."
+   }
+  ]
+ },
+ "1330": {
+  "wrong_examples": [
+   {
+    "call": "measured = t.tensor([1., 2.])\ntarget = t.tensor([3., 6.])\nsolve(measured, target)",
+    "output": "(3.0, 10.0)",
+    "why": "The error must be measured AFTER the offset is applied, not on the raw measured tensor."
+   }
+  ]
+ },
+ "1331": {
+  "wrong_examples": [
+   {
+    "call": "x = t.tensor([0., 4.])\nweights = t.tensor([3., 1.])\nsolve(x, weights)",
+    "output": "4.0",
+    "why": "Distances were taken from the plain mean. A weighted variance measures distance from the WEIGHTED mean."
+   }
+  ]
+ },
+ "1332": {
+  "wrong_examples": [
+   {
+    "call": "predicted = t.tensor([0., 1., 3.])\nactual = t.tensor([0., 0., 0.])\ntolerance = 1.0\nsolve(predicted, actual, tolerance)",
+    "output": "(0.3333333333333333, 3.3333332538604736)",
+    "why": "Strict < instead of at-most: an entry exactly tolerance away IS within tolerance."
+   }
+  ]
+ },
+ "964": {
+  "wrong_examples": [
+   {
+    "call": "solve(1.0, 0.0, 5).tolist()",
+    "output": "[0.0, 0.25, 0.5, 0.75, 1.0]",
+    "why": "Runs upward from low to high. The prompt wants it running DOWN: high first, low last — swap the two endpoints."
+   }
+  ]
+ },
+ "965": {
+  "wrong_examples": [
+   {
+    "call": "solve(0, 10, 3)",
+    "output": "12",
+    "why": "Added one more step past the last value produced. arange stops BEFORE stop, and its final element is what was asked for."
+   }
+  ]
+ },
+ "966": {
+  "wrong_examples": [
+   {
+    "call": "solve(0.0, 1.0, 4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "n points give n-1 bins. Cutting into n bins needs n+1 edges."
+   }
+  ]
+ },
+ "967": {
+  "wrong_examples": [
+   {
+    "call": "solve(5).tolist()",
+    "output": "[5, 4, 3, 2]",
+    "why": "The stop is exclusive, so stopping at 1 leaves 1 out. Stop at 0 to include 1."
+   }
+  ]
+ },
+ "968": {
+  "wrong_examples": [
+   {
+    "call": "solve(0.0, 2.0, 0.5).tolist()",
+    "output": "[0.0, 0.5, 1.0, 1.5]",
+    "why": "arange stops BEFORE hi, so the final value is missing. Compute the count and build with an integer arange so rounding cannot drift either."
+   }
+  ],
+  "question_text": "Return the 1-D float tensor holding lo, then lo plus one step, and so on up to and INCLUDING hi. The distance from lo to hi is an exact whole number of steps. Work out how many values that is, then build them from an integer count scaled once, so no rounding error accumulates."
+ },
+ "969": {
+  "wrong_examples": [
+   {
+    "call": "solve(1.0, 4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "With n points the last one lands ON stop. Ask for n+1 and drop the last, or use arange(n) * (stop / n)."
+   }
+  ]
+ },
+ "970": {
+  "wrong_examples": [
+   {
+    "call": "solve(4).tolist()",
+    "output": "[0.0, 0.3333333432674408, 0.6666666269302368, 1.0]",
+    "why": "The last position is one whole turn, the same place as zero. n positions around a circle stop one step short of a full turn: an integer count divided by n."
+   }
+  ]
+ },
+ "972": {
+  "wrong_examples": [
+   {
+    "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 4))",
+    "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [0.0, 0.3333333432674408, 0.6666666269302368, 1.0])",
+    "why": "The centres are not n evenly spaced points from lo to hi; they sit halfway between consecutive edges."
+   }
+  ]
+ },
+ "973": {
+  "wrong_examples": [
+   {
+    "call": "(lambda r: (r[0].tolist(), r[1].tolist()))(solve(0.0, 1.0, 5))",
+    "output": "([0.0, 0.25, 0.5, 0.75, 1.0], [-0.25, -0.25, -0.25, -0.25])",
+    "why": "The gaps are negated: later minus earlier is grid[1:] - grid[:-1]. (And build the grid once, not three times.)"
+   }
+  ]
+ },
+ "949": {
+  "question_text": "Two shapes are given as plain tuples of ints, `s1` and `s2`. Return the shape that broadcasting them together produces, as a plain tuple of ints. PyTorch can answer this from the shapes alone, without allocating a tensor of either shape."
+ },
+ "957": {
+  "question_text": "Two PyTorch tensors `a` and `b` are given. Return a tuple `(shape, table)`: `shape` is the shape broadcasting them together produces, as a plain tuple of ints, and `table` is their elementwise sum as a nested list. The shape is decided by the broadcasting rules from the two input shapes alone."
+ },
+ "963": {
+  "question_text": "A signal is sampled n times at a rate of hz samples per second, with the first sample taken at time zero. Return the 1-D float tensor of the n sample times in seconds. Build it from an integer count scaled once, so no rounding error accumulates from one sample to the next."
+ },
+ "1342": {
+  "difficulty_score": 44
+ },
+ "1343": {
+  "difficulty_score": 46
+ },
+ "1344": {
+  "difficulty_score": 34
+ },
+ "1345": {
+  "difficulty_score": 36
+ },
+ "1346": {
+  "difficulty_score": 46
+ },
+ "1347": {
+  "difficulty_score": 38
+ },
+ "1348": {
+  "difficulty_score": 40
+ },
+ "1349": {
+  "difficulty_score": 36
+ },
+ "1350": {
+  "difficulty_score": 42
+ },
+ "1351": {
+  "difficulty_score": 48
+ },
+ "1352": {
+  "difficulty_score": 44
+ },
+ "1353": {
+  "difficulty_score": 44
+ },
+ "1354": {
+  "difficulty_score": 46
+ },
+ "1355": {
+  "difficulty_score": 40
+ },
+ "1356": {
+  "difficulty_score": 42
+ },
+ "1357": {
+  "difficulty_score": 56
+ },
+ "1358": {
+  "difficulty_score": 62
+ },
+ "1359": {
+  "difficulty_score": 58
+ },
+ "1360": {
+  "difficulty_score": 60
+ },
+ "1361": {
+  "difficulty_score": 64
+ },
+ "1362": {
+  "difficulty_score": 66
+ },
+ "1045": {
+  "difficulty_score": 22
+ },
+ "1046": {
+  "difficulty_score": 28
+ },
+ "1047": {
+  "difficulty_score": 38
+ },
+ "1048": {
+  "difficulty_score": 62
+ },
+ "1049": {
+  "difficulty_score": 30
+ },
+ "1050": {
+  "difficulty_score": 64
+ },
+ "1051": {
+  "difficulty_score": 60
+ },
+ "1052": {
+  "difficulty_score": 45
+ },
+ "1053": {
+  "difficulty_score": 42
+ },
+ "1054": {
+  "difficulty_score": 62
+ },
+ "1083": {
+  "difficulty_score": 52
+ },
+ "1084": {
+  "difficulty_score": 68
+ },
+ "1085": {
+  "difficulty_score": 68
+ },
+ "1055": {
+  "difficulty_score": 68
+ },
+ "1056": {
+  "difficulty_score": 75
+ },
+ "1057": {
+  "difficulty_score": 65
+ },
+ "1281": {
+  "difficulty_score": 12
+ },
+ "1282": {
+  "difficulty_score": 16
+ },
+ "1283": {
+  "difficulty_score": 12
+ },
+ "1284": {
+  "difficulty_score": 20
+ },
+ "1285": {
+  "difficulty_score": 16
+ },
+ "1286": {
+  "difficulty_score": 16
+ },
+ "1287": {
+  "difficulty_score": 22
+ },
+ "1288": {
+  "difficulty_score": 14
+ },
+ "1289": {
+  "difficulty_score": 20
+ },
+ "1290": {
+  "difficulty_score": 26
+ },
+ "1291": {
+  "difficulty_score": 30
+ },
+ "1292": {
+  "difficulty_score": 30
+ },
+ "1293": {
+  "difficulty_score": 38
+ },
+ "1294": {
+  "difficulty_score": 38
+ },
+ "1295": {
+  "difficulty_score": 44
+ },
+ "1296": {
+  "difficulty_score": 34
+ },
+ "1006": {
+  "difficulty_score": 24
+ },
+ "1007": {
+  "difficulty_score": 28
+ },
+ "1008": {
+  "difficulty_score": 40
+ },
+ "1009": {
+  "difficulty_score": 45
+ },
+ "1010": {
+  "difficulty_score": 42
+ },
+ "1011": {
+  "difficulty_score": 42
+ },
+ "1012": {
+  "difficulty_score": 48
+ },
+ "1013": {
+  "difficulty_score": 46
+ },
+ "1014": {
+  "difficulty_score": 44
+ },
+ "1015": {
+  "difficulty_score": 42
+ },
+ "1074": {
+  "difficulty_score": 52
+ },
+ "1075": {
+  "difficulty_score": 50
+ },
+ "1076": {
+  "difficulty_score": 60
+ },
+ "1016": {
+  "difficulty_score": 55
+ },
+ "1017": {
+  "difficulty_score": 62
+ },
+ "1018": {
+  "difficulty_score": 54
+ },
+ "1020": {
+  "difficulty_score": 40
+ },
+ "1022": {
+  "difficulty_score": 48
+ },
+ "1019": {
+  "difficulty_score": 38
+ },
+ "1021": {
+  "difficulty_score": 42
+ },
+ "1023": {
+  "difficulty_score": 42
+ },
+ "1024": {
+  "difficulty_score": 50
+ },
+ "1025": {
+  "difficulty_score": 52
+ },
+ "1026": {
+  "difficulty_score": 50
+ },
+ "1027": {
+  "difficulty_score": 52
+ },
+ "1028": {
+  "difficulty_score": 36
+ },
+ "1077": {
+  "difficulty_score": 44
+ },
+ "1078": {
+  "difficulty_score": 55
+ },
+ "1079": {
+  "difficulty_score": 50
+ },
+ "1029": {
+  "difficulty_score": 44
+ },
+ "1030": {
+  "difficulty_score": 55
+ },
+ "1031": {
+  "difficulty_score": 62
+ },
+ "1058": {
+  "difficulty_score": 20
+ },
+ "1059": {
+  "difficulty_score": 45
+ },
+ "1060": {
+  "difficulty_score": 55
+ },
+ "1061": {
+  "difficulty_score": 58
+ },
+ "1062": {
+  "difficulty_score": 58
+ },
+ "1063": {
+  "difficulty_score": 32
+ },
+ "1064": {
+  "difficulty_score": 60
+ },
+ "1065": {
+  "difficulty_score": 64
+ },
+ "1066": {
+  "difficulty_score": 68
+ },
+ "1067": {
+  "difficulty_score": 68
+ },
+ "1086": {
+  "difficulty_score": 64
+ },
+ "1087": {
+  "difficulty_score": 60
+ },
+ "1088": {
+  "difficulty_score": 66
+ },
+ "1068": {
+  "difficulty_score": 82
+ },
+ "1069": {
+  "difficulty_score": 70
+ },
+ "1070": {
+  "difficulty_score": 70
+ },
+ "993": {
+  "difficulty_score": 22
+ },
+ "994": {
+  "difficulty_score": 30
+ },
+ "995": {
+  "difficulty_score": 35
+ },
+ "996": {
+  "difficulty_score": 38
+ },
+ "997": {
+  "difficulty_score": 32
+ },
+ "998": {
+  "difficulty_score": 42
+ },
+ "999": {
+  "difficulty_score": 30
+ },
+ "1000": {
+  "difficulty_score": 38
+ },
+ "1001": {
+  "difficulty_score": 42
+ },
+ "1002": {
+  "difficulty_score": 36
+ },
+ "1071": {
+  "difficulty_score": 48
+ },
+ "1072": {
+  "difficulty_score": 50
+ },
+ "1073": {
+  "difficulty_score": 38
+ },
+ "1003": {
+  "difficulty_score": 58
+ },
+ "1004": {
+  "difficulty_score": 55
+ },
+ "1005": {
+  "difficulty_score": 48
+ },
+ "1032": {
+  "difficulty_score": 32
+ },
+ "1033": {
+  "difficulty_score": 36
+ },
+ "1034": {
+  "difficulty_score": 42
+ },
+ "1035": {
+  "difficulty_score": 55
+ },
+ "1036": {
+  "difficulty_score": 50
+ },
+ "1037": {
+  "difficulty_score": 58
+ },
+ "1038": {
+  "difficulty_score": 45
+ },
+ "1039": {
+  "difficulty_score": 44
+ },
+ "1040": {
+  "difficulty_score": 65
+ },
+ "1041": {
+  "difficulty_score": 58
+ },
+ "1080": {
+  "difficulty_score": 55
+ },
+ "1081": {
+  "difficulty_score": 56
+ },
+ "1082": {
+  "difficulty_score": 66
+ },
+ "1042": {
+  "difficulty_score": 55
+ },
+ "1043": {
+  "difficulty_score": 48
+ },
+ "1044": {
+  "difficulty_score": 60
+ },
+ "1105": {
+  "difficulty_score": 45
+ },
+ "1106": {
+  "difficulty_score": 58
+ },
+ "1107": {
+  "difficulty_score": 66
+ },
+ "1108": {
+  "difficulty_score": 68
+ },
+ "1109": {
+  "difficulty_score": 72
+ },
+ "1110": {
+  "difficulty_score": 72
+ },
+ "1111": {
+  "difficulty_score": 72
+ },
+ "1112": {
+  "difficulty_score": 72
+ },
+ "1113": {
+  "difficulty_score": 74
+ },
+ "1114": {
+  "difficulty_score": 72
+ },
+ "1115": {
+  "difficulty_score": 73
+ },
+ "1116": {
+  "difficulty_score": 73
+ },
+ "1117": {
+  "difficulty_score": 72
+ },
+ "1118": {
+  "difficulty_score": 78
+ },
+ "1119": {
+  "difficulty_score": 78
+ },
+ "1120": {
+  "difficulty_score": 82
+ },
+ "1121": {
+  "difficulty_score": 22
+ },
+ "1122": {
+  "difficulty_score": 50
+ },
+ "1123": {
+  "difficulty_score": 58
+ },
+ "1124": {
+  "difficulty_score": 56
+ },
+ "1125": {
+  "difficulty_score": 52
+ },
+ "1126": {
+  "difficulty_score": 62
+ },
+ "1127": {
+  "difficulty_score": 60
+ },
+ "1128": {
+  "difficulty_score": 62
+ },
+ "1129": {
+  "difficulty_score": 66
+ },
+ "1130": {
+  "difficulty_score": 60
+ },
+ "1131": {
+  "difficulty_score": 50
+ },
+ "1132": {
+  "difficulty_score": 52
+ },
+ "1133": {
+  "difficulty_score": 62
+ },
+ "1134": {
+  "difficulty_score": 66
+ },
+ "1135": {
+  "difficulty_score": 70
+ },
+ "1136": {
+  "difficulty_score": 72
+ },
+ "1153": {
+  "difficulty_score": 65
+ },
+ "1154": {
+  "difficulty_score": 68
+ },
+ "1155": {
+  "difficulty_score": 70
+ },
+ "1156": {
+  "difficulty_score": 68
+ },
+ "1157": {
+  "difficulty_score": 74
+ },
+ "1158": {
+  "difficulty_score": 80
+ },
+ "1159": {
+  "difficulty_score": 78
+ },
+ "1160": {
+  "difficulty_score": 76
+ },
+ "1161": {
+  "difficulty_score": 75
+ },
+ "1162": {
+  "difficulty_score": 76
+ },
+ "1163": {
+  "difficulty_score": 75
+ },
+ "1164": {
+  "difficulty_score": 74
+ },
+ "1165": {
+  "difficulty_score": 76
+ },
+ "1166": {
+  "difficulty_score": 84
+ },
+ "1167": {
+  "difficulty_score": 78
+ },
+ "1168": {
+  "difficulty_score": 84
+ },
+ "1089": {
+  "difficulty_score": 30
+ },
+ "1090": {
+  "difficulty_score": 26
+ },
+ "1091": {
+  "difficulty_score": 38
+ },
+ "1092": {
+  "difficulty_score": 52
+ },
+ "1093": {
+  "difficulty_score": 34
+ },
+ "1094": {
+  "difficulty_score": 50
+ },
+ "1095": {
+  "difficulty_score": 50
+ },
+ "1096": {
+  "difficulty_score": 50
+ },
+ "1097": {
+  "difficulty_score": 56
+ },
+ "1098": {
+  "difficulty_score": 58
+ },
+ "1099": {
+  "difficulty_score": 52
+ },
+ "1100": {
+  "difficulty_score": 58
+ },
+ "1101": {
+  "difficulty_score": 26
+ },
+ "1102": {
+  "difficulty_score": 58
+ },
+ "1103": {
+  "difficulty_score": 60
+ },
+ "1104": {
+  "difficulty_score": 56
+ },
+ "1137": {
+  "difficulty_score": 30
+ },
+ "1138": {
+  "difficulty_score": 42
+ },
+ "1139": {
+  "difficulty_score": 55
+ },
+ "1140": {
+  "difficulty_score": 52
+ },
+ "1141": {
+  "difficulty_score": 56
+ },
+ "1142": {
+  "difficulty_score": 54
+ },
+ "1143": {
+  "difficulty_score": 60
+ },
+ "1144": {
+  "difficulty_score": 62
+ },
+ "1145": {
+  "difficulty_score": 58
+ },
+ "1146": {
+  "difficulty_score": 58
+ },
+ "1147": {
+  "difficulty_score": 62
+ },
+ "1148": {
+  "difficulty_score": 64
+ },
+ "1149": {
+  "difficulty_score": 24
+ },
+ "1150": {
+  "difficulty_score": 60
+ },
+ "1151": {
+  "difficulty_score": 64
+ },
+ "1152": {
+  "difficulty_score": 64
+ },
+ "1297": {
+  "difficulty_score": 22
+ },
+ "1298": {
+  "difficulty_score": 55
+ },
+ "1299": {
+  "difficulty_score": 30
+ },
+ "1300": {
+  "difficulty_score": 50
+ },
+ "1301": {
+  "difficulty_score": 58
+ },
+ "1302": {
+  "difficulty_score": 52
+ },
+ "1303": {
+  "difficulty_score": 35
+ },
+ "1304": {
+  "difficulty_score": 42
+ },
+ "1305": {
+  "difficulty_score": 62
+ },
+ "1306": {
+  "difficulty_score": 40
+ },
+ "1307": {
+  "difficulty_score": 40
+ },
+ "1308": {
+  "difficulty_score": 50
+ },
+ "1309": {
+  "difficulty_score": 65
+ },
+ "1310": {
+  "difficulty_score": 78
+ },
+ "1311": {
+  "difficulty_score": 80
+ },
+ "1312": {
+  "difficulty_score": 80
+ },
+ "1402": {
+  "difficulty_score": 55
+ },
+ "1403": {
+  "difficulty_score": 28
+ },
+ "1404": {
+  "difficulty_score": 40
+ },
+ "1405": {
+  "difficulty_score": 35
+ },
+ "1406": {
+  "difficulty_score": 58
+ },
+ "1407": {
+  "difficulty_score": 50
+ },
+ "1408": {
+  "difficulty_score": 66
+ },
+ "1409": {
+  "difficulty_score": 58
+ },
+ "1410": {
+  "difficulty_score": 66
+ },
+ "1411": {
+  "difficulty_score": 70
+ },
+ "1412": {
+  "difficulty_score": 62
+ },
+ "1233": {
+  "difficulty_score": 48
+ },
+ "1234": {
+  "difficulty_score": 50
+ },
+ "1235": {
+  "difficulty_score": 32
+ },
+ "1236": {
+  "difficulty_score": 60
+ },
+ "1237": {
+  "difficulty_score": 58
+ },
+ "1238": {
+  "difficulty_score": 52
+ },
+ "1239": {
+  "difficulty_score": 55
+ },
+ "1240": {
+  "difficulty_score": 56
+ },
+ "1241": {
+  "difficulty_score": 30
+ },
+ "1242": {
+  "difficulty_score": 64
+ },
+ "1243": {
+  "difficulty_score": 62
+ },
+ "1244": {
+  "difficulty_score": 62
+ },
+ "1245": {
+  "difficulty_score": 66
+ },
+ "1246": {
+  "difficulty_score": 62
+ },
+ "1247": {
+  "difficulty_score": 70
+ },
+ "1248": {
+  "difficulty_score": 72
+ },
+ "1251": {
+  "difficulty_score": 34
+ },
+ "1249": {
+  "difficulty_score": 55
+ },
+ "1252": {
+  "difficulty_score": 22
+ },
+ "1250": {
+  "difficulty_score": 58
+ },
+ "1253": {
+  "difficulty_score": 32
+ },
+ "1254": {
+  "difficulty_score": 48
+ },
+ "1255": {
+  "difficulty_score": 54
+ },
+ "1256": {
+  "difficulty_score": 52
+ },
+ "1257": {
+  "difficulty_score": 50
+ },
+ "1258": {
+  "difficulty_score": 52
+ },
+ "1259": {
+  "difficulty_score": 55
+ },
+ "1260": {
+  "difficulty_score": 60
+ },
+ "1261": {
+  "difficulty_score": 66
+ },
+ "1262": {
+  "difficulty_score": 62
+ },
+ "1263": {
+  "difficulty_score": 55
+ },
+ "1264": {
+  "difficulty_score": 60
+ },
+ "1426": {
+  "difficulty_score": 30
+ },
+ "1427": {
+  "difficulty_score": 42
+ },
+ "1428": {
+  "difficulty_score": 50
+ },
+ "1429": {
+  "difficulty_score": 32
+ },
+ "1430": {
+  "difficulty_score": 60
+ },
+ "1431": {
+  "difficulty_score": 36
+ },
+ "1432": {
+  "difficulty_score": 45
+ },
+ "1433": {
+  "difficulty_score": 55
+ },
+ "1434": {
+  "difficulty_score": 48
+ },
+ "1435": {
+  "difficulty_score": 55
+ },
+ "1436": {
+  "difficulty_score": 45
+ },
+ "1437": {
+  "difficulty_score": 60
+ },
+ "1438": {
+  "difficulty_score": 72
+ },
+ "1439": {
+  "difficulty_score": 60
+ },
+ "1440": {
+  "difficulty_score": 68
+ },
+ "1458": {
+  "difficulty_score": 45
+ },
+ "1459": {
+  "difficulty_score": 40
+ },
+ "1460": {
+  "difficulty_score": 35
+ },
+ "1461": {
+  "difficulty_score": 48
+ },
+ "1462": {
+  "difficulty_score": 48
+ },
+ "1463": {
+  "difficulty_score": 50
+ },
+ "1464": {
+  "difficulty_score": 52
+ },
+ "1465": {
+  "difficulty_score": 50
+ },
+ "1466": {
+  "difficulty_score": 46
+ },
+ "1467": {
+  "difficulty_score": 36
+ },
+ "1468": {
+  "difficulty_score": 66
+ },
+ "1469": {
+  "difficulty_score": 58
+ },
+ "1470": {
+  "difficulty_score": 60
+ },
+ "1185": {
+  "difficulty_score": 20
+ },
+ "1186": {
+  "difficulty_score": 18
+ },
+ "1187": {
+  "difficulty_score": 26
+ },
+ "1188": {
+  "difficulty_score": 28
+ },
+ "1189": {
+  "difficulty_score": 38
+ },
+ "1190": {
+  "difficulty_score": 36
+ },
+ "1191": {
+  "difficulty_score": 34
+ },
+ "1192": {
+  "difficulty_score": 42
+ },
+ "1193": {
+  "difficulty_score": 45
+ },
+ "1194": {
+  "difficulty_score": 55
+ },
+ "1195": {
+  "difficulty_score": 40
+ },
+ "1196": {
+  "difficulty_score": 58
+ },
+ "1197": {
+  "difficulty_score": 38
+ },
+ "1198": {
+  "difficulty_score": 60
+ },
+ "1199": {
+  "difficulty_score": 62
+ },
+ "1200": {
+  "difficulty_score": 55
+ },
+ "1201": {
+  "difficulty_score": 18
+ },
+ "1202": {
+  "difficulty_score": 28
+ },
+ "1203": {
+  "difficulty_score": 32
+ },
+ "1204": {
+  "difficulty_score": 38
+ },
+ "1205": {
+  "difficulty_score": 42
+ },
+ "1206": {
+  "difficulty_score": 42
+ },
+ "1207": {
+  "difficulty_score": 36
+ },
+ "1208": {
+  "difficulty_score": 40
+ },
+ "1209": {
+  "difficulty_score": 48
+ },
+ "1210": {
+  "difficulty_score": 55
+ },
+ "1211": {
+  "difficulty_score": 52
+ },
+ "1212": {
+  "difficulty_score": 55
+ },
+ "1213": {
+  "difficulty_score": 45
+ },
+ "1214": {
+  "difficulty_score": 60
+ },
+ "1215": {
+  "difficulty_score": 66
+ },
+ "1216": {
+  "difficulty_score": 68
+ },
+ "1169": {
+  "difficulty_score": 24
+ },
+ "1170": {
+  "difficulty_score": 30
+ },
+ "1172": {
+  "difficulty_score": 42
+ },
+ "1171": {
+  "difficulty_score": 40
+ },
+ "1173": {
+  "difficulty_score": 30
+ },
+ "1174": {
+  "difficulty_score": 38
+ },
+ "1175": {
+  "difficulty_score": 36
+ },
+ "1176": {
+  "difficulty_score": 50
+ },
+ "1177": {
+  "difficulty_score": 52
+ },
+ "1178": {
+  "difficulty_score": 44
+ },
+ "1179": {
+  "difficulty_score": 48
+ },
+ "1180": {
+  "difficulty_score": 42
+ },
+ "1181": {
+  "difficulty_score": 50
+ },
+ "1182": {
+  "difficulty_score": 58
+ },
+ "1183": {
+  "difficulty_score": 62
+ },
+ "1184": {
+  "difficulty_score": 60
+ },
+ "1265": {
+  "difficulty_score": 20
+ },
+ "1268": {
+  "difficulty_score": 35
+ },
+ "1266": {
+  "difficulty_score": 60
+ },
+ "1267": {
+  "difficulty_score": 58
+ },
+ "1269": {
+  "difficulty_score": 40
+ },
+ "1270": {
+  "difficulty_score": 64
+ },
+ "1271": {
+  "difficulty_score": 40
+ },
+ "1272": {
+  "difficulty_score": 38
+ },
+ "1273": {
+  "difficulty_score": 42
+ },
+ "1274": {
+  "difficulty_score": 64
+ },
+ "1275": {
+  "difficulty_score": 52
+ },
+ "1276": {
+  "difficulty_score": 52
+ },
+ "1277": {
+  "difficulty_score": 36
+ },
+ "1278": {
+  "difficulty_score": 70
+ },
+ "1279": {
+  "difficulty_score": 66
+ },
+ "1280": {
+  "difficulty_score": 58
+ },
+ "1389": {
+  "difficulty_score": 45
+ },
+ "1390": {
+  "difficulty_score": 48
+ },
+ "1391": {
+  "difficulty_score": 45
+ },
+ "1392": {
+  "difficulty_score": 58
+ },
+ "1393": {
+  "difficulty_score": 35
+ },
+ "1394": {
+  "difficulty_score": 30
+ },
+ "1395": {
+  "difficulty_score": 42
+ },
+ "1396": {
+  "difficulty_score": 52
+ },
+ "1397": {
+  "difficulty_score": 55
+ },
+ "1398": {
+  "difficulty_score": 55
+ },
+ "1399": {
+  "difficulty_score": 65
+ },
+ "1400": {
+  "difficulty_score": 68
+ },
+ "1401": {
+  "difficulty_score": 72
+ },
+ "1413": {
+  "difficulty_score": 42
+ },
+ "1414": {
+  "difficulty_score": 38
+ },
+ "1415": {
+  "difficulty_score": 70
+ },
+ "1416": {
+  "difficulty_score": 38
+ },
+ "1417": {
+  "difficulty_score": 52
+ },
+ "1418": {
+  "difficulty_score": 35
+ },
+ "1419": {
+  "difficulty_score": 62
+ },
+ "1420": {
+  "difficulty_score": 40
+ },
+ "1421": {
+  "difficulty_score": 28
+ },
+ "1422": {
+  "difficulty_score": 40
+ },
+ "1423": {
+  "difficulty_score": 70
+ },
+ "1424": {
+  "difficulty_score": 74
+ },
+ "1425": {
+  "difficulty_score": 72
+ },
+ "1374": {
+  "difficulty_score": 48
+ },
+ "1375": {
+  "difficulty_score": 22
+ },
+ "1376": {
+  "difficulty_score": 40
+ },
+ "1377": {
+  "difficulty_score": 32
+ },
+ "1378": {
+  "difficulty_score": 40
+ },
+ "1379": {
+  "difficulty_score": 50
+ },
+ "1380": {
+  "difficulty_score": 42
+ },
+ "1381": {
+  "difficulty_score": 38
+ },
+ "1382": {
+  "difficulty_score": 35
+ },
+ "1383": {
+  "difficulty_score": 42
+ },
+ "1384": {
+  "difficulty_score": 36
+ },
+ "1385": {
+  "difficulty_score": 38
+ },
+ "1386": {
+  "difficulty_score": 64
+ },
+ "1387": {
+  "difficulty_score": 58
+ },
+ "1388": {
+  "difficulty_score": 58
+ },
+ "1217": {
+  "difficulty_score": 38
+ },
+ "1218": {
+  "difficulty_score": 48
+ },
+ "1219": {
+  "difficulty_score": 45
+ },
+ "1220": {
+  "difficulty_score": 50
+ },
+ "1221": {
+  "difficulty_score": 58
+ },
+ "1222": {
+  "difficulty_score": 58
+ },
+ "1223": {
+  "difficulty_score": 52
+ },
+ "1224": {
+  "difficulty_score": 52
+ },
+ "1225": {
+  "difficulty_score": 50
+ },
+ "1226": {
+  "difficulty_score": 68
+ },
+ "1227": {
+  "difficulty_score": 62
+ },
+ "1228": {
+  "difficulty_score": 68
+ },
+ "1229": {
+  "difficulty_score": 58
+ },
+ "1230": {
+  "difficulty_score": 76
+ },
+ "1231": {
+  "difficulty_score": 72
+ },
+ "1232": {
+  "difficulty_score": 72
+ },
+ "1441": {
+  "difficulty_score": 42
+ },
+ "1442": {
+  "difficulty_score": 32
+ },
+ "1443": {
+  "difficulty_score": 38
+ },
+ "1444": {
+  "difficulty_score": 42
+ },
+ "1445": {
+  "difficulty_score": 50
+ },
+ "1446": {
+  "difficulty_score": 44
+ },
+ "1447": {
+  "difficulty_score": 45
+ },
+ "1448": {
+  "difficulty_score": 62
+ },
+ "1449": {
+  "difficulty_score": 52
+ },
+ "1450": {
+  "difficulty_score": 50
+ },
+ "1451": {
+  "difficulty_score": 40
+ },
+ "1452": {
+  "difficulty_score": 44
+ },
+ "1453": {
+  "difficulty_score": 38
+ },
+ "1454": {
+  "difficulty_score": 32
+ },
+ "1455": {
+  "difficulty_score": 70
+ },
+ "1456": {
+  "difficulty_score": 66
+ },
+ "1457": {
+  "difficulty_score": 66
+ }
 }
