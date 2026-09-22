@@ -129,6 +129,22 @@ test('completing the lesson credits exposure once and renders the pending questi
   assert.equal(await page.evaluate(() => !!q.attempt_first), false);
 });
 
+/* The gate OWNS `#question-text` and has to give it back. Every caller but one
+   passes `renderQuestion` as `onDone`, which repaints that node and hid this;
+   timer.js's resume passes `_resumeCore`, which only restarts the clock. So
+   Continue took `lesson-mode` off — un-hiding the question's examples, Submit
+   and editor — and left the lesson itself in the column, clock running, on a
+   drill the learner could not see. Seth, 2026-09-22, on q512. */
+test('Continue hands the column back even when onDone does not repaint it', async t => {
+  const page = await lessonPage(t);
+  await page.locator('#lesson-continue-btn').waitFor();
+  await page.locator('#lesson-continue-btn').click();
+  await page.waitForFunction(() => calls.done === 1);
+  assert.doesNotMatch(await page.locator('#question-text').innerHTML(), /LESSON SECRET/);
+  assert.equal(await page.locator('#lesson-continue-btn').count(), 0);
+  assert.equal(await page.evaluate(() => document.body.classList.contains('lesson-mode')), false);
+});
+
 test('ARENA drills start a scoped ladder with valid independent clock options', async t => {
   const page = await browserPage(t);
   await page.evaluate(() => {

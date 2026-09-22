@@ -17,6 +17,9 @@ const LessonGate = (() => {
   let qmatrix = null;
   let loadFailed = false;
   let activeQuestion = null; // Truthy during lesson → Run uses local Pyodide.
+  // True once a lesson page has been drawn into #question-text — the node the
+  // gate borrows from the question screen and hands back in _cleanup.
+  let painted = false;
   // config.js owns the text; see DEFAULT_EDITOR_CODE there for why it is torch.
   const DEFAULT_EDITOR = DEFAULT_EDITOR_CODE;
 
@@ -733,6 +736,29 @@ const LessonGate = (() => {
 
   const _cleanup = () => {
     document.body.classList.remove("lesson-mode");
+    /* 🔴 THE GATE GIVES THE COLUMN BACK, and until 2026-09-22 it only gave
+       back the CSS. `lesson-mode` hides the question's examples, Submit area
+       and imports while a lesson is up; dropping the class un-hides all of
+       them, but the lesson page itself was left sitting in `#question-text`.
+       Every caller but one hides that by passing `renderQuestion` as `onDone`,
+       which replaces this node wholesale. The exception is timer.js's resume:
+       it renders the question BEFORE the gate (so the gate reads the right KC)
+       and hands `_resumeCore` over, which only restarts the clock. So Continue
+       left the lesson on screen — disabled Continue button and all — with the
+       drill's graded cases and editor back underneath it and the answer clock
+       counting down on a problem the learner could not see. Seth, 2026-09-22,
+       on q512: "it essentially ends up keeping the lesson displayed on the
+       left instead of displaying an actual exercise."
+
+       Cleared only when this gate actually drew the page. `_cleanup` also runs
+       on the error path out of `maybeShow`, which may not have painted
+       anything, and blanking a question screen the gate never touched would
+       turn a lesson-loading failure into a lost drill. */
+    if (painted) {
+      painted = false;
+      const text = _el("question-text");
+      if (text) text.innerHTML = "";
+    }
     // The dock is a flex child of .practice-left only while the lesson owns
     // that column; leaving `dd-lesson-feedback-open` set would lay the
     // question screen out as two columns.
@@ -850,6 +876,7 @@ const LessonGate = (() => {
         activeQuestion = _runtimeContext(page);
         if (questionNumber) questionNumber.textContent = "Lesson";
         questionText.innerHTML = _pageHtml(page);
+        painted = true;
         // The KaTeX pass: a math page (`kind: math`) is markdown + LaTeX.
         window.DeltaMath?.render(questionText);
         // Every runnable block on the page becomes a cell, explanation blocks
