@@ -164,7 +164,7 @@ One column through a 3-D canvas, written with out=.
 out= targets a row this time — the last one.
 
 ### q1599
-A column as the out= target, chosen from the right-hand end.
+Which slice of the canvas is its last column, and can the values land there directly?
 
 ## Integrated practice
 

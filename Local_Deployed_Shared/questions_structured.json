@@ -8436,39 +8436,48 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write a function solve(h, k, s, p) that computes a convolution's OUTPUT SIDE LENGTH from input side h, kernel size k, stride s, and padding p using the standard formula floor((h + 2p - k) / s) + 1, returned as a plain int.",
+      "question_text": "A Conv2d layer with `o` output channels, a square `k`×`k` kernel, stride `s` and padding `p` on every side is applied to a batch whose shape is the tuple `shape = (b, c, h, w)`. Write solve(shape, o, k, s, p) returning the output shape as a plain tuple of ints. The input need not be square.",
       "task_type": "stdout_prediction",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\ndef solve(h, k, s, p):\n    pass\n",
+      "starter_code": "import torch as t\n\n\ndef solve(shape, o, k, s, p):\n    \"\"\"Output shape (b, o, oh, ow) of the conv layer.\"\"\"\n    pass\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nh, k, s, p = 224, 7, 2, 3",
-          "call": "(lambda r: (isinstance(r, int), int(r)))(solve(h, k, s, p))",
-          "expected_expr": "(True, 112)"
+          "setup_code": "import torch as t",
+          "call": "solve((2, 1, 28, 20), 4, 5, 1, 0)",
+          "expected_expr": "(2, 4, 24, 16)"
         },
         {
-          "setup_code": "import torch as t\nh, k, s, p = 32, 3, 1, 1",
-          "call": "(lambda r: int(r))(solve(h, k, s, p))",
-          "expected_expr": "32"
+          "setup_code": "import torch as t",
+          "call": "solve((8, 3, 224, 224), 64, 7, 2, 3)",
+          "expected_expr": "(8, 64, 112, 112)"
         },
         {
-          "setup_code": "import torch as t\nh, k, s, p = 28, 5, 1, 0",
-          "call": "(lambda r: int(r))(solve(h, k, s, p))",
-          "expected_expr": "24"
+          "setup_code": "import torch as t",
+          "call": "solve((1, 3, 32, 32), 16, 3, 1, 1)",
+          "expected_expr": "(1, 16, 32, 32)"
         },
         {
-          "setup_code": "import torch as t\nh, k, s, p = 10, 2, 2, 0",
-          "call": "(lambda r: int(r))(solve(h, k, s, p))",
-          "expected_expr": "5"
+          "setup_code": "import torch as t",
+          "call": "solve((4, 6, 10, 9), 2, 2, 2, 0)",
+          "expected_expr": "(4, 2, 5, 4)"
         }
       ],
       "submission_mode": "function",
-      "wrong_examples": [],
+      "wrong_examples": [
+        {
+          "output": "(2, 4, 24, 24)",
+          "why": "The width goes through the formula with its OWN side. Reusing the height's answer only works when the input is square; a 28×20 input gives two different output sides."
+        },
+        {
+          "output": "(2, 1, 24, 16)",
+          "why": "The channel axis of the output is the layer's number of filters, not the input's channel count: each filter produces one output channel."
+        }
+      ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\ndef solve(h, k, s, p):\n    return int((h + 2 * p - k) // s + 1)\n\n\nprint(solve(224, 7, 2, 3))\n",
-      "expected_output": "112",
+      "canonical_solution": "import torch as t\n\n\ndef solve(shape, o, k, s, p):\n    \"\"\"Output shape (b, o, oh, ow) of the conv layer.\"\"\"\n    oh = (shape[2] + 2 * p - k) // s + 1\n    ow = (shape[3] + 2 * p - k) // s + 1\n    return (shape[0], o, oh, ow)\n\n\nprint(solve((2, 1, 28, 20), 4, 5, 1, 0))\n",
+      "expected_output": "(2, 4, 24, 16)",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -15575,40 +15584,44 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Write a function solve(values) that returns a tuple (inferred_name, forced_name, same) — the dtype name PyTorch infers from the FLAT list, the dtype name you get by forcing torch.float32 on the same list, and whether the two names are equal.",
+      "question_text": "`a_vals` and `b_vals` are FLAT Python lists of numbers. Return a tuple `(same, combined_name)`: whether the tensors built from each list separately get the same dtype, and str() of the dtype of the tensor built from the two lists joined into one (`a_vals + b_vals`).",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (inferred dtype name, forced float32 name, equal?).\"\"\"\n    return None\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = [1, 2, 3]\nprint(solve(example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(a_vals, b_vals):\n    \"\"\"(same dtype separately?, dtype name of the joined list)\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve([1, 2], [3.5]))\n",
       "test_cases": [
         {
           "setup_code": "import torch as t",
-          "call": "solve([1, 2, 3])",
-          "expected_expr": "('torch.int64', 'torch.float32', False)"
+          "call": "solve([1, 2], [3.5])",
+          "expected_expr": "(False, 'torch.float32')"
         },
         {
           "setup_code": "import torch as t",
-          "call": "solve([1.0, 2.0])",
-          "expected_expr": "('torch.float32', 'torch.float32', True)"
+          "call": "solve([1, 2], [3, 4])",
+          "expected_expr": "(True, 'torch.int64')"
         },
         {
           "setup_code": "import torch as t",
-          "call": "solve([0])",
-          "expected_expr": "('torch.int64', 'torch.float32', False)"
+          "call": "solve([0.5], [1.5, 2.5])",
+          "expected_expr": "(True, 'torch.float32')"
+        },
+        {
+          "setup_code": "import torch as t",
+          "call": "solve([7], [0.0])",
+          "expected_expr": "(False, 'torch.float32')"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "call": "solve([1, 2, 3])",
-          "output": "('torch.int64', 'torch.int64', True)",
-          "why": "The second tensor has to be BUILT with `dtype=t.float32`. Without it torch infers int64 again and the two agree."
+          "output": "(False, 'torch.int64')",
+          "why": "The joined list is ONE block, and one float anywhere in it makes the whole block float. The first list being all integers does not decide the type of the joined tensor."
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch\nimport torch as t\n\ndef solve(values):\n    \"\"\"Return (inferred dtype name, forced float32 name, equal?).\"\"\"\n    inferred = t.tensor(values)\n    forced = t.tensor(values, dtype=t.float32)\n    return (str(inferred.dtype), str(forced.dtype),\n            inferred.dtype == forced.dtype)\n\n\nexample = [1, 2, 3]\nprint(solve(example))\n",
-      "expected_output": "('torch.int64', 'torch.float32', False)",
+      "canonical_solution": "import torch as t\n\n\ndef solve(a_vals, b_vals):\n    \"\"\"(same dtype separately?, dtype name of the joined list)\"\"\"\n    a = t.tensor(a_vals)\n    b = t.tensor(b_vals)\n    both = t.tensor(a_vals + b_vals)\n    return (a.dtype == b.dtype, str(both.dtype))\n\n\nprint(solve([1, 2], [3.5]))\n",
+      "expected_output": "(False, 'torch.float32')",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
     }
@@ -69727,32 +69740,40 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "`n` and `k` are positive ints and `lo`, `hi` are floats. Build an n×k zero canvas and write `n` evenly spaced values from `lo` to `hi` into its LAST column with a single `out=` call. Return the canvas as a nested list.",
+      "question_text": "`n` and `k` are positive ints and `lo`, `hi` are floats. Return an n×k tensor, as a nested list, with `n` evenly spaced values from `lo` to `hi` in its LAST column and zeros everywhere else. The values must be written straight into that column: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"linspace(lo, hi) written into the last column of an n×k canvas.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 2, 0.0, 1.0))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"n evenly spaced values from lo to hi down the last column; zeros elsewhere.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 2, 0.0, 1.0))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nn, k, lo, hi = 3, 2, 0.0, 1.0",
+          "setup_code": "import torch as t\n_dd_original = getattr(t.linspace, '_dd_original', t.linspace)\n_dd_out_views = []\ndef _dd_linspace(*args, **kwargs):\n    out = kwargs.get('out')\n    if out is not None:\n        _dd_out_views.append((tuple(out.shape), tuple(out.stride())))\n    return _dd_original(*args, **kwargs)\n_dd_linspace._dd_original = _dd_original\nt.linspace = _dd_linspace\nn, k, lo, hi = 3, 2, 0.0, 1.0",
           "call": "solve(n, k, lo, hi)",
-          "expected_expr": "[[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]"
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]",
+          "expected_setup_code": "import torch as t\nt.linspace = getattr(t.linspace, '_dd_original', t.linspace)\nn, k, lo, hi = 3, 2, 0.0, 1.0",
+          "assert_code": "assert ((n,), (k,)) in _dd_out_views, 'the values were not written straight into the canvas column; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, k, lo, hi = 2, 3, -1.0, 1.0",
+          "setup_code": "import torch as t\n_dd_original = getattr(t.linspace, '_dd_original', t.linspace)\n_dd_out_views = []\ndef _dd_linspace(*args, **kwargs):\n    out = kwargs.get('out')\n    if out is not None:\n        _dd_out_views.append((tuple(out.shape), tuple(out.stride())))\n    return _dd_original(*args, **kwargs)\n_dd_linspace._dd_original = _dd_original\nt.linspace = _dd_linspace\nn, k, lo, hi = 2, 3, -1.0, 1.0",
           "call": "solve(n, k, lo, hi)",
-          "expected_expr": "[[0.0, 0.0, -1.0], [0.0, 0.0, 1.0]]"
+          "expected_expr": "[[0.0, 0.0, -1.0], [0.0, 0.0, 1.0]]",
+          "expected_setup_code": "import torch as t\nt.linspace = getattr(t.linspace, '_dd_original', t.linspace)\nn, k, lo, hi = 2, 3, -1.0, 1.0",
+          "assert_code": "assert ((n,), (k,)) in _dd_out_views, 'the values were not written straight into the canvas column; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, k, lo, hi = 1, 1, 5.0, 5.0",
+          "setup_code": "import torch as t\n_dd_original = getattr(t.linspace, '_dd_original', t.linspace)\n_dd_out_views = []\ndef _dd_linspace(*args, **kwargs):\n    out = kwargs.get('out')\n    if out is not None:\n        _dd_out_views.append((tuple(out.shape), tuple(out.stride())))\n    return _dd_original(*args, **kwargs)\n_dd_linspace._dd_original = _dd_original\nt.linspace = _dd_linspace\nn, k, lo, hi = 1, 1, 5.0, 5.0",
           "call": "solve(n, k, lo, hi)",
-          "expected_expr": "[[5.0]]"
+          "expected_expr": "[[5.0]]",
+          "expected_setup_code": "import torch as t\nt.linspace = getattr(t.linspace, '_dd_original', t.linspace)\nn, k, lo, hi = 1, 1, 5.0, 5.0",
+          "assert_code": "assert ((n,), (k,)) in _dd_out_views, 'the values were not written straight into the canvas column; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, k, lo, hi = 4, 2, 0.0, 3.0",
+          "setup_code": "import torch as t\n_dd_original = getattr(t.linspace, '_dd_original', t.linspace)\n_dd_out_views = []\ndef _dd_linspace(*args, **kwargs):\n    out = kwargs.get('out')\n    if out is not None:\n        _dd_out_views.append((tuple(out.shape), tuple(out.stride())))\n    return _dd_original(*args, **kwargs)\n_dd_linspace._dd_original = _dd_original\nt.linspace = _dd_linspace\nn, k, lo, hi = 4, 2, 0.0, 3.0",
           "call": "solve(n, k, lo, hi)",
-          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 2.0], [0.0, 3.0]]"
+          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 2.0], [0.0, 3.0]]",
+          "expected_setup_code": "import torch as t\nt.linspace = getattr(t.linspace, '_dd_original', t.linspace)\nn, k, lo, hi = 4, 2, 0.0, 3.0",
+          "assert_code": "assert ((n,), (k,)) in _dd_out_views, 'the values were not written straight into the canvas column; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -69763,7 +69784,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"linspace(lo, hi) written into the last column of an n×k canvas.\"\"\"\n    canvas = t.zeros((n, k))\n    t.linspace(lo, hi, n, out=canvas[:, -1])\n    return canvas.tolist()\n\n\nprint(solve(3, 2, 0.0, 1.0))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi):\n    \"\"\"n evenly spaced values from lo to hi down the last column; zeros elsewhere.\"\"\"\n    canvas = t.zeros((n, k))\n    t.linspace(lo, hi, n, out=canvas[:, -1])\n    return canvas.tolist()\n\n\nprint(solve(3, 2, 0.0, 1.0))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
