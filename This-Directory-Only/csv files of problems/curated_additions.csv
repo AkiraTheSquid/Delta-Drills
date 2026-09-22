@@ -10069,12 +10069,12 @@ Numpy,Vectorization and broadcasting,"`a` and `b` are 1-D float tensors of the s
 def solve(a, b):
     """"""a and b as the two rows of one tensor.""""""
     return t.stack([a, b], dim=0).tolist()",30,
-Numpy,Vectorization and broadcasting,"`a` and `b` are 1-D float tensors of the same length n. Return the length-2n tensor that ALTERNATES them — `a[0], b[0], a[1], b[1], …` — as a plain list.","import torch as t
+Numpy,Vectorization and broadcasting,"`a` and `b` are 2-D float tensors of the same shape `(n, d)`. Return the `(2n, d)` tensor whose ROWS alternate between them — row 0 of `a`, row 0 of `b`, row 1 of `a`, row 1 of `b`, … — as a nested list.","import torch as t
 
 
 def solve(a, b):
-    """"""a and b alternated, one entry from each in turn.""""""
-    return t.stack([a, b], dim=1).flatten().tolist()",40,
+    """"""The rows of a and b, one from each in turn.""""""
+    return t.stack([a, b], dim=1).reshape(-1, a.shape[1]).tolist()",50,
 Numpy,Vectorization and broadcasting,"`z` is a 2-D float tensor of shape `(r, c)` and `row` is a 1-D float tensor of length c. Return the `(r + 1, c)` tensor with `row` appended as the new LAST row, as a nested list.","import torch as t
 
 

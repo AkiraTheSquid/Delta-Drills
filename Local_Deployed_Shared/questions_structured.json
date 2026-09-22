@@ -68775,43 +68775,43 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "`a` and `b` are 1-D float tensors of the same length n. Return the length-2n tensor that ALTERNATES them — `a[0], b[0], a[1], b[1], …` — as a plain list.",
+      "question_text": "`a` and `b` are 2-D float tensors of the same shape `(n, d)`. Return the `(2n, d)` tensor whose ROWS alternate between them — row 0 of `a`, row 0 of `b`, row 1 of `a`, row 1 of `b`, … — as a nested list.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b alternated, one entry from each in turn.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The rows of a and b, one from each in turn.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[5.0, 6.0], [7.0, 8.0]])))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\na = t.tensor([1.0, 2.0, 3.0])\nb = t.tensor([4.0, 5.0, 6.0])",
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 2.0], [3.0, 4.0]])\nb = t.tensor([[5.0, 6.0], [7.0, 8.0]])",
           "call": "solve(a, b)",
-          "expected_expr": "[1.0, 4.0, 2.0, 5.0, 3.0, 6.0]"
+          "expected_expr": "[[1.0, 2.0], [5.0, 6.0], [3.0, 4.0], [7.0, 8.0]]"
         },
         {
-          "setup_code": "import torch as t\na = t.tensor([1.0])\nb = t.tensor([2.0])",
+          "setup_code": "import torch as t\na = t.tensor([[1.0, 2.0, 3.0]])\nb = t.tensor([[4.0, 5.0, 6.0]])",
           "call": "solve(a, b)",
-          "expected_expr": "[1.0, 2.0]"
+          "expected_expr": "[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]"
         },
         {
-          "setup_code": "import torch as t\na = t.tensor([0.0, 0.0])\nb = t.tensor([1.0, -1.0])",
+          "setup_code": "import torch as t\na = t.tensor([[1.0], [2.0], [3.0]])\nb = t.tensor([[0.0], [0.0], [0.0]])",
           "call": "solve(a, b)",
-          "expected_expr": "[0.0, 1.0, 0.0, -1.0]"
+          "expected_expr": "[[1.0], [0.0], [2.0], [0.0], [3.0], [0.0]]"
         },
         {
-          "setup_code": "import torch as t\na = t.tensor([5.0, 6.0, 7.0, 8.0])\nb = t.tensor([1.0, 1.0, 1.0, 1.0])",
+          "setup_code": "import torch as t\na = t.tensor([[-1.0, 0.5], [2.0, 2.0], [9.0, -9.0]])\nb = t.tensor([[4.0, 4.0], [0.0, -3.5], [1.0, 1.0]])",
           "call": "solve(a, b)",
-          "expected_expr": "[5.0, 1.0, 6.0, 1.0, 7.0, 1.0, 8.0, 1.0]"
+          "expected_expr": "[[-1.0, 0.5], [4.0, 4.0], [2.0, 2.0], [0.0, -3.5], [9.0, -9.0], [1.0, 1.0]]"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [
         {
-          "output": "[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]",
-          "why": "`cat` lays ALL of `a` down before ANY of `b`; alternating needs the two stacked as columns first, so that reading the rows in order takes one from each in turn."
+          "output": "[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]",
+          "why": "Joining along the existing row axis lays down EVERY row of `a` before ANY row of `b`. Alternating needs each row of `a` paired with its row of `b` on a new axis first, so that reading the pairs in order takes one row from each in turn."
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"a and b alternated, one entry from each in turn.\"\"\"\n    return t.stack([a, b], dim=1).flatten().tolist()\n\n\nprint(solve(t.tensor([1.0, 2.0, 3.0]), t.tensor([4.0, 5.0, 6.0])))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(a, b):\n    \"\"\"The rows of a and b, one from each in turn.\"\"\"\n    return t.stack([a, b], dim=1).reshape(-1, a.shape[1]).tolist()\n\n\nprint(solve(t.tensor([[1.0, 2.0], [3.0, 4.0]]), t.tensor([[5.0, 6.0], [7.0, 8.0]])))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false

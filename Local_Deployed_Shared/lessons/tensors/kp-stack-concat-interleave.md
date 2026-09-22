@@ -327,7 +327,7 @@ From the drill bank: q980 (one constant column added on each side of a matrix).
 Two vectors become two rows — a new axis, not a longer one.
 
 ### q1582
-Interleave two vectors: stack them as columns, then read the rows off in order.
+Interleave two matrices row by row: pair each row of `a` with its row of `b` on a new axis, then fold the pairs back into rows.
 
 ### q1583
 Append one row: the vector needs a row axis before it can join.
