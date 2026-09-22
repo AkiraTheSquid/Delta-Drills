@@ -3,6 +3,12 @@
  "description": "Knowledge-component registry for first-encounter course content (spec: docs/spec-first-encounter-course-content.md). KCs are a finer layer under existing subtopic_key values; subtopic_key mapping keeps BKT compatibility.",
  "lessons": [
   {
+   "id": "ma-00",
+   "topic": "Mathematics",
+   "title": "Linear algebra for ARENA 0.1",
+   "subtopic_key": "Mathematics: Linear algebra"
+  },
+  {
    "id": "ma-01",
    "topic": "Mathematics",
    "title": "Math for ARENA 0.1",
@@ -83,11 +89,56 @@
  ],
  "kcs": [
   {
+   "id": "math.vector-arithmetic",
+   "lesson": "ma-00",
+   "title": "Vectors: components, displacement, and scaling",
+   "syntax": false,
+   "prereqs": []
+  },
+  {
+   "id": "math.dot-products-norms",
+   "lesson": "ma-00",
+   "title": "Dot products, lengths, and unit vectors",
+   "syntax": false,
+   "prereqs": [
+    "math.vector-arithmetic"
+   ]
+  },
+  {
+   "id": "math.linear-combinations",
+   "lesson": "ma-00",
+   "title": "Linear combinations, span, and coordinates",
+   "syntax": false,
+   "prereqs": [
+    "math.vector-arithmetic"
+   ]
+  },
+  {
+   "id": "math.matrix-equations",
+   "lesson": "ma-00",
+   "title": "Matrix\u2013vector products and solving linear systems",
+   "syntax": false,
+   "prereqs": [
+    "math.linear-combinations"
+   ]
+  },
+  {
+   "id": "math.determinants-invertibility",
+   "lesson": "ma-00",
+   "title": "Determinants, independence, and unique solutions",
+   "syntax": false,
+   "prereqs": [
+    "math.matrix-equations"
+   ]
+  },
+  {
    "id": "math.ray-geometry",
    "lesson": "ma-01",
    "title": "Points, directions, and finite segments",
    "syntax": false,
-   "prereqs": []
+   "prereqs": [
+    "math.vector-arithmetic"
+   ]
   },
   {
    "id": "math.intersection-systems",
@@ -95,7 +146,8 @@
    "title": "Turn an intersection into a linear system",
    "syntax": false,
    "prereqs": [
-    "math.ray-geometry"
+    "math.ray-geometry",
+    "math.matrix-equations"
    ]
   },
   {
@@ -104,7 +156,8 @@
    "title": "Unique crossings and batched validity",
    "syntax": false,
    "prereqs": [
-    "math.intersection-systems"
+    "math.intersection-systems",
+    "math.determinants-invertibility"
    ]
   },
   {
@@ -114,7 +167,8 @@
    "syntax": false,
    "prereqs": [
     "math.intersection-systems",
-    "math.singular-systems"
+    "math.singular-systems",
+    "math.linear-combinations"
    ]
   },
   {
@@ -123,7 +177,8 @@
    "title": "Nearest hit, depth, and actual distance",
    "syntax": false,
    "prereqs": [
-    "math.barycentric-coordinates"
+    "math.barycentric-coordinates",
+    "math.dot-products-norms"
    ]
   },
   {

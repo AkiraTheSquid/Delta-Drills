@@ -1,6 +1,23 @@
 {
  "lessons": [
   {
+   "id": "ma-00",
+   "title": "Linear algebra for ARENA 0.1",
+   "topic": "Mathematics",
+   "subtopic_key": "Mathematics: Linear algebra",
+   "file": "ma-00.json",
+   "cells": 63,
+   "questions": [],
+   "kcs": [
+    "math.vector-arithmetic",
+    "math.dot-products-norms",
+    "math.linear-combinations",
+    "math.matrix-equations",
+    "math.determinants-invertibility"
+   ],
+   "segments": {}
+  },
+  {
    "id": "ma-01",
    "title": "Math for ARENA 0.1",
    "topic": "Mathematics",

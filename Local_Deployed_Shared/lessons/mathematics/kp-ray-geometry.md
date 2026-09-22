@@ -2,7 +2,7 @@
 kc: math.ray-geometry
 kind: math
 title: Points, directions, and finite segments
-supporting: []
+supporting: [math.vector-arithmetic]
 new_syntax: []
 previews: []
 concepts: [affine]
@@ -13,6 +13,8 @@ integrated: [50004, 50005]
 ---
 
 ## Concept: A position plus a displacement
+
+First master [vector arithmetic](?lesson=math.vector-arithmetic): components, displacement, and scalar multiplication. This lesson applies those skills to rays.
 
 A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from A to B, move by B − A. Adding a displacement to a point gives another point.
 

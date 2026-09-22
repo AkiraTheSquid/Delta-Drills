@@ -79020,5 +79020,1825 @@
       "verify": null,
       "hint": null
     }
+  },
+  {
+    "id": 50032,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "For u = (2, −1, 3) and v = (−4, 5, 1), find u + v.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−2, 4, 4)",
+          "value": "Matrix([-2,4,4])"
+        },
+        {
+          "key": "B",
+          "text": "(6, −6, 2)",
+          "value": "Matrix([6,-6,2])"
+        },
+        {
+          "key": "C",
+          "text": "(−8, −5, 3)",
+          "value": "Matrix([-8,-5,3])"
+        },
+        {
+          "key": "D",
+          "text": "(−2, −4, 4)",
+          "value": "Matrix([-2,-4,4])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Add matching components. Subtraction, elementwise multiplication, and dropping the sign of 5 give the other options.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,-1,3])+Matrix([-4,5,1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50033,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Find −2(1, −3, 2).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−2, −6, −4)",
+          "value": "Matrix([-2,-6,-4])"
+        },
+        {
+          "key": "B",
+          "text": "(−2, 6, −4)",
+          "value": "Matrix([-2,6,-4])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 6, 2)",
+          "value": "Matrix([1,6,2])"
+        },
+        {
+          "key": "D",
+          "text": "(2, −6, 4)",
+          "value": "Matrix([2,-6,4])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Multiply every component by −2. In particular, a negative times a negative is positive.",
+      "verify": {
+        "sympy": {
+          "truth": "-2*Matrix([1,-3,2])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50034,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (−1, 2, 4), B = (3, −1, 6). Find the displacement from A to B.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 1, 10)",
+          "value": "Matrix([2,1,10])"
+        },
+        {
+          "key": "B",
+          "text": "(−4, 3, −2)",
+          "value": "Matrix([-4,3,-2])"
+        },
+        {
+          "key": "C",
+          "text": "(4, −3, 2)",
+          "value": "Matrix([4,-3,2])"
+        },
+        {
+          "key": "D",
+          "text": "(4, 3, 2)",
+          "value": "Matrix([4,3,2])"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Use B − A = (4, −3, 2). Adding positions is not a displacement; A − B points the other way.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([3,-1,6])-Matrix([-1,2,4])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50035,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Let p = (1, −2), u = (3, 1), v = (−1, 4). Find p + 2u − v.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(6, 4)",
+          "value": "Matrix([6,4])"
+        },
+        {
+          "key": "B",
+          "text": "(8, −6)",
+          "value": "Matrix([8,-6])"
+        },
+        {
+          "key": "C",
+          "text": "(5, −5)",
+          "value": "Matrix([5,-5])"
+        },
+        {
+          "key": "D",
+          "text": "(8, −4)",
+          "value": "Matrix([8,-4])"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "First 2u = (6, 2). Subtracting v adds 1 to x and subtracts 4 from y: (8, −4).",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-2])+2*Matrix([3,1])-Matrix([-1,4])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50036,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Both points A and B are translated by T. Which expression still equals the original displacement B − A?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(B + T) − (A + T)",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "(B + T) − A",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "B − (A + T)",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "(A + T) − (B + T)",
+          "value": null
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Translation cancels when applied to both points. Translating only one adds or subtracts T; reversing the order negates the displacement.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50037,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (2, 0, −1), B = (6, 4, 3). Find A + (B − A)/4.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.vector-arithmetic",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 1, 1)",
+          "value": "Matrix([1,1,1])"
+        },
+        {
+          "key": "B",
+          "text": "(3, 1, 0)",
+          "value": "Matrix([3,1,0])"
+        },
+        {
+          "key": "C",
+          "text": "(4, 2, 1)",
+          "value": "Matrix([4,2,1])"
+        },
+        {
+          "key": "D",
+          "text": "(8, 4, 2)",
+          "value": "Matrix([8,4,2])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "B − A = (4, 4, 4). A quarter is (1, 1, 1); add A to get (3, 1, 0). A displacement alone is not the resulting point.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([2,0,-1])+(Matrix([6,4,3])-Matrix([2,0,-1]))/4"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50038,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Find (1, −2, 3) · (4, 1, −1).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "9",
+          "value": "9"
+        },
+        {
+          "key": "B",
+          "text": "(4, −2, −3)",
+          "value": "Matrix([4,-2,-3])"
+        },
+        {
+          "key": "C",
+          "text": "−1",
+          "value": "-1"
+        },
+        {
+          "key": "D",
+          "text": "1",
+          "value": "1"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Multiply pairs and add: 4 − 2 − 3 = −1. The tuple is the intermediate products, not their sum.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-2,3]).dot(Matrix([4,1,-1]))"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50039,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Find the Euclidean norm of (−3, 4).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "25",
+          "value": "25"
+        },
+        {
+          "key": "B",
+          "text": "7",
+          "value": "7"
+        },
+        {
+          "key": "C",
+          "text": "1",
+          "value": "1"
+        },
+        {
+          "key": "D",
+          "text": "5",
+          "value": "5"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "The squared norm is 9 + 16 = 25; take the square root. Adding absolute components gives a different norm.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt((-3)**2+4**2)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50040,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Which unit vector has the same direction as (0, −3, 4)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(0, −3/5, 4/5)",
+          "value": "Matrix([0,-Rational(3,5),Rational(4,5)])"
+        },
+        {
+          "key": "B",
+          "text": "(0, −3/25, 4/25)",
+          "value": "Matrix([0,-Rational(3,25),Rational(4,25)])"
+        },
+        {
+          "key": "C",
+          "text": "(0, 3/5, −4/5)",
+          "value": "Matrix([0,Rational(3,5),-Rational(4,5)])"
+        },
+        {
+          "key": "D",
+          "text": "(0, −1, 1)",
+          "value": "Matrix([0,-1,1])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Divide by length 5, not squared length 25. Negating reverses direction; dividing each coordinate by its own magnitude does not normalize Euclidean length.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([0,-3,4])/sqrt(9+16)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50041,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "u = (2, 1), v = (1, −2). What does u · v = 0 imply?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Both vectors have zero length.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "The two nonzero vectors are perpendicular.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "The two vectors are equal.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "They point in the same direction.",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "The dot product is 2 − 2 = 0. Nonzero perpendicular vectors have zero dot product; zero dot product does not mean either vector is zero.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50042,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (−1, 2, 0), B = (1, −1, 6). What is their Euclidean distance?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "41",
+          "value": "41"
+        },
+        {
+          "key": "B",
+          "text": "9",
+          "value": "9"
+        },
+        {
+          "key": "C",
+          "text": "7",
+          "value": "7"
+        },
+        {
+          "key": "D",
+          "text": "5",
+          "value": "5"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Subtract to get (2, −3, 6), then take sqrt(4 + 9 + 36) = 7. Distances use displacement, not either position alone.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt(2**2+(-3)**2+6**2)"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50043,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A nonzero vector D has norm 5. What is the norm of −2D?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.dot-products-norms",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−10",
+          "value": "-10"
+        },
+        {
+          "key": "B",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "C",
+          "text": "25",
+          "value": "25"
+        },
+        {
+          "key": "D",
+          "text": "10",
+          "value": "10"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "Norms are nonnegative: ||−2D|| = |−2| ||D|| = 10. Negative scaling changes direction, not the sign of length.",
+      "verify": {
+        "sympy": {
+          "truth": "Abs(-2)*5"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50044,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Find 2(1, 2) − (3, −1).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−1, 5)",
+          "value": "Matrix([-1,5])"
+        },
+        {
+          "key": "B",
+          "text": "(−1, 3)",
+          "value": "Matrix([-1,3])"
+        },
+        {
+          "key": "C",
+          "text": "(5, 3)",
+          "value": "Matrix([5,3])"
+        },
+        {
+          "key": "D",
+          "text": "(−4, 6)",
+          "value": "Matrix([-4,6])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Scale first: (2, 4) − (3, −1) = (−1, 5). Subtracting −1 adds 1.",
+      "verify": {
+        "sympy": {
+          "truth": "2*Matrix([1,2])-Matrix([3,-1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50045,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Which target is in the span of (1, 2) and (2, 4)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 0)",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "(3, 6)",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "(0, 1)",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "(2, 3)",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Both generators lie on y = 2x, so their span is exactly that line. Only (3, 6) satisfies the relation.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50046,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Let E1 = (2, 0), E2 = (1, 3). Which (u, v) gives uE1 + vE2 = (7, 3)?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(7, 3)",
+          "value": "Matrix([7,3])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 1)",
+          "value": "Matrix([2,1])"
+        },
+        {
+          "key": "C",
+          "text": "(3, 1)",
+          "value": "Matrix([3,1])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 3)",
+          "value": "Matrix([1,3])"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "The y-equation gives v = 1; then 2u + 1 = 7 gives u = 3. Standard components are not these basis coordinates.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,1],[0,3]]).inv()*Matrix([7,3])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50047,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "What is the span of (1, 0, 0) and (0, 1, 0) with unrestricted real weights?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "All of 3D space.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Only points with x ≥ 0 and y ≥ 0.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Only the line x = y, z = 0.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "The whole plane z = 0.",
+          "value": null
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "A combination is (u, v, 0), for any real u and v. No z component is available, and weights need not be positive.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50048,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "E1 = (1, 2), E2 = (2, 4). Target T = (3, 6) has which property?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "It has infinitely many coefficient pairs because E2 = 2E1.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "It has exactly one coefficient pair because there are two vectors.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "It is unreachable because the vectors are dependent.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Every coefficient pair produces T.",
+          "value": null
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Both (u, v) = (3, 0) and (1, 1) work; in general u + 2v = 3. Dependence removes uniqueness, not necessarily existence.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50049,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A = (1, −1, 2), E1 = (2, 0, 0), E2 = (0, 3, 0). Find A + E1/2 + E2/3.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.linear-combinations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 1, 0)",
+          "value": "Matrix([1,1,0])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 0, 2)",
+          "value": "Matrix([2,0,2])"
+        },
+        {
+          "key": "C",
+          "text": "(3, 2, 2)",
+          "value": "Matrix([3,2,2])"
+        },
+        {
+          "key": "D",
+          "text": "(2, 0, 0)",
+          "value": "Matrix([2,0,0])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "The weighted displacement is (1, 1, 0). Add the base point A to get (2, 0, 2); this is an affine point, not only the displacement.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-1,2])+Matrix([2,0,0])/2+Matrix([0,3,0])/3"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50050,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "M has rows (1, 2) and (−1, 3). Find M(2, −1).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(0, 1)",
+          "value": "Matrix([0,1])"
+        },
+        {
+          "key": "B",
+          "text": "(4, −5)",
+          "value": "Matrix([4,-5])"
+        },
+        {
+          "key": "C",
+          "text": "(0, −5)",
+          "value": "Matrix([0,-5])"
+        },
+        {
+          "key": "D",
+          "text": "(3, −1)",
+          "value": "Matrix([3,-1])"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Row 1 gives 2 − 2 = 0; row 2 gives −2 − 3 = −5. A matrix product combines rows with all input components.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,2],[-1,3]])*Matrix([2,-1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50051,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "For unknown order (u, v), which matrix encodes 3u − 2v = 7 and u + 4v = 5? Matrices are written as rows.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "((3, 1), (−2, 4))",
+          "value": "Matrix([[3,1],[-2,4]])"
+        },
+        {
+          "key": "B",
+          "text": "((3, 2), (1, 4))",
+          "value": "Matrix([[3,2],[1,4]])"
+        },
+        {
+          "key": "C",
+          "text": "((7, 5), (3, 4))",
+          "value": "Matrix([[7,5],[3,4]])"
+        },
+        {
+          "key": "D",
+          "text": "((3, −2), (1, 4))",
+          "value": "Matrix([[3,-2],[1,4]])"
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "Each row lists coefficients in order u, v. The first distractor transposes the matrix; the others lose a sign or mix in the right-hand side.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[3,-2],[1,4]])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50052,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Solve u + v = 5 and 2u − v = 1. Choose (u, v).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 3)",
+          "value": "Matrix([2,3])"
+        },
+        {
+          "key": "B",
+          "text": "(3, 2)",
+          "value": "Matrix([3,2])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 4)",
+          "value": "Matrix([1,4])"
+        },
+        {
+          "key": "D",
+          "text": "(2, −3)",
+          "value": "Matrix([2,-3])"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Add the equations: 3u = 6, so u = 2; then v = 3. Both equations must hold.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,1],[2,-1]]).inv()*Matrix([5,1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50053,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "For M with rows (2, 1), (1, −1), candidate x = (1, 2), and b = (5, 1), find the residual Mx − b.",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(0, 0)",
+          "value": "Matrix([0,0])"
+        },
+        {
+          "key": "B",
+          "text": "(−1, −2)",
+          "value": "Matrix([-1,-2])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 2)",
+          "value": "Matrix([1,2])"
+        },
+        {
+          "key": "D",
+          "text": "(4, −1)",
+          "value": "Matrix([4,-1])"
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Mx = (4, −1); subtract b to get (−1, −2). The candidate fails the equations. Mx alone is not the residual.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,1],[1,-1]])*Matrix([1,2])-Matrix([5,1])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50054,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Solve u + 2v = 7, v + w = 5, and w = 2. Choose (u, v, w).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(7, 5, 2)",
+          "value": "Matrix([7,5,2])"
+        },
+        {
+          "key": "B",
+          "text": "(3, 1, 2)",
+          "value": "Matrix([3,1,2])"
+        },
+        {
+          "key": "C",
+          "text": "(1, 3, 2)",
+          "value": "Matrix([1,3,2])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 2, 3)",
+          "value": "Matrix([1,2,3])"
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "Back-substitute from the last equation: w = 2, v = 3, u = 1. The right-hand sides are not the solution coefficients.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,2,0],[0,1,1],[0,0,1]]).inv()*Matrix([7,5,2])"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50055,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A 3-by-2 matrix has two independent columns. Which statement about Mx = b is correct?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.matrix-equations",
+      "choices": [
+        {
+          "key": "A",
+          "text": "x has three components and b has two.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Every 3D b has a solution.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Every reachable b has infinitely many solutions.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "x has two components; b has three; a solution exists only when b is in the column span, and is then unique.",
+          "value": null
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "Two independent columns span a plane in 3D. They give unique coefficients for reachable b, but cannot reach every 3D vector. A matrix need not be square to describe a linear map.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50056,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Find the determinant of the matrix with rows (3, 1), (2, 4).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "10",
+          "value": "10"
+        },
+        {
+          "key": "B",
+          "text": "14",
+          "value": "14"
+        },
+        {
+          "key": "C",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "D",
+          "text": "−10",
+          "value": "-10"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Compute ad − bc = 3·4 − 1·2 = 10. Adding the cross-products, summing a diagonal, or reversing subtraction gives the distractors.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[3,1],[2,4]]).det()"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50057,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 25,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "A real square matrix has determinant −2. What follows?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "It is singular because the determinant is negative.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Every right-hand side has exactly one solution.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Every right-hand side has two solutions.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Its columns are dependent.",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Nonzero, not positive, is the criterion for invertibility. The determinant sign records orientation, not the number of solutions.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50058,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "The matrix has rows (1, 2), (2, 4), and b = (3, 6). How many solutions does Mx = b have?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "None.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Exactly one.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Infinitely many.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Exactly two.",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "The second equation is twice the first, including its right-hand side. Any pair satisfying u + 2v = 3 works.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50059,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 40,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "The matrix has rows (1, 2), (2, 4), and b = (3, 7). How many solutions does Mx = b have?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "D",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Exactly one.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Infinitely many.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Exactly two.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "None.",
+          "value": null
+        }
+      ],
+      "correct_choice": "D",
+      "solution_md": "Doubling u + 2v = 3 gives 2u + 4v = 6, which contradicts the second equation's 7. Singularity can mean inconsistency or nonuniqueness, depending on b.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50060,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "Find the determinant of the matrix with rows (2, 1, 4), (0, −1, 3), (0, 0, 3).",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "compute",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−6",
+          "value": "-6"
+        },
+        {
+          "key": "B",
+          "text": "6",
+          "value": "6"
+        },
+        {
+          "key": "C",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "D",
+          "text": "0",
+          "value": "0"
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "A triangular matrix's determinant is the diagonal product: 2·(−1)·3 = −6. Off-diagonal entries do not change that product.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,1,4],[0,-1,3],[0,0,3]]).det()"
+        }
+      },
+      "hint": null
+    }
+  },
+  {
+    "id": 50061,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-determinants-invertibility.problems.json"
+    },
+    "curriculum": {
+      "topic": "Mathematics",
+      "subtopic": "Linear algebra",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "difficulty_score": 55,
+      "difficulty_label": "medium"
+    },
+    "exercise": {
+      "question_text": "A 3-by-3 matrix has columns c1 = (1, 0, 0), c2 = (0, 1, 0), c3 = (1, 1, 0). What follows?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "math.determinants-invertibility",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Its determinant is 1 because each column is nonzero.",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Its determinant is 0; b = (0, 0, 1) is unreachable.",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Its determinant is 0; every b still has one solution.",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Its determinant is negative; only positive b is reachable.",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "c3 = c1 + c2, so the columns are dependent and determinant is zero. Every output has z = 0, so (0, 0, 1) is outside the column span.",
+      "verify": null,
+      "hint": null
+    }
   }
 ]

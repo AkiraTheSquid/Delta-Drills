@@ -1,0 +1,179 @@
+{
+  "kc": "math.determinants-invertibility",
+  "problems": [
+    {
+      "id": 50056,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "Find the determinant of the matrix with rows (3, 1), (2, 4).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "10",
+          "value": "10"
+        },
+        {
+          "key": "B",
+          "text": "14",
+          "value": "14"
+        },
+        {
+          "key": "C",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "D",
+          "text": "−10",
+          "value": "-10"
+        }
+      ],
+      "answer": "A",
+      "solution": "Compute ad − bc = 3·4 − 1·2 = 10. Adding the cross-products, summing a diagonal, or reversing subtraction gives the distractors.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[3,1],[2,4]]).det()"
+        }
+      }
+    },
+    {
+      "id": 50057,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "A real square matrix has determinant −2. What follows?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "It is singular because the determinant is negative."
+        },
+        {
+          "key": "B",
+          "text": "Every right-hand side has exactly one solution."
+        },
+        {
+          "key": "C",
+          "text": "Every right-hand side has two solutions."
+        },
+        {
+          "key": "D",
+          "text": "Its columns are dependent."
+        }
+      ],
+      "answer": "B",
+      "solution": "Nonzero, not positive, is the criterion for invertibility. The determinant sign records orientation, not the number of solutions."
+    },
+    {
+      "id": 50058,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "The matrix has rows (1, 2), (2, 4), and b = (3, 6). How many solutions does Mx = b have?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "None."
+        },
+        {
+          "key": "B",
+          "text": "Exactly one."
+        },
+        {
+          "key": "C",
+          "text": "Infinitely many."
+        },
+        {
+          "key": "D",
+          "text": "Exactly two."
+        }
+      ],
+      "answer": "C",
+      "solution": "The second equation is twice the first, including its right-hand side. Any pair satisfying u + 2v = 3 works."
+    },
+    {
+      "id": 50059,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "The matrix has rows (1, 2), (2, 4), and b = (3, 7). How many solutions does Mx = b have?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Exactly one."
+        },
+        {
+          "key": "B",
+          "text": "Infinitely many."
+        },
+        {
+          "key": "C",
+          "text": "Exactly two."
+        },
+        {
+          "key": "D",
+          "text": "None."
+        }
+      ],
+      "answer": "D",
+      "solution": "Doubling u + 2v = 3 gives 2u + 4v = 6, which contradicts the second equation's 7. Singularity can mean inconsistency or nonuniqueness, depending on b."
+    },
+    {
+      "id": 50060,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "Find the determinant of the matrix with rows (2, 1, 4), (0, −1, 3), (0, 0, 3).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−6",
+          "value": "-6"
+        },
+        {
+          "key": "B",
+          "text": "6",
+          "value": "6"
+        },
+        {
+          "key": "C",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "D",
+          "text": "0",
+          "value": "0"
+        }
+      ],
+      "answer": "A",
+      "solution": "A triangular matrix's determinant is the diagonal product: 2·(−1)·3 = −6. Off-diagonal entries do not change that product.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,1,4],[0,-1,3],[0,0,3]]).det()"
+        }
+      }
+    },
+    {
+      "id": 50061,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "A 3-by-3 matrix has columns c1 = (1, 0, 0), c2 = (0, 1, 0), c3 = (1, 1, 0). What follows?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Its determinant is 1 because each column is nonzero."
+        },
+        {
+          "key": "B",
+          "text": "Its determinant is 0; b = (0, 0, 1) is unreachable."
+        },
+        {
+          "key": "C",
+          "text": "Its determinant is 0; every b still has one solution."
+        },
+        {
+          "key": "D",
+          "text": "Its determinant is negative; only positive b is reachable."
+        }
+      ],
+      "answer": "B",
+      "solution": "c3 = c1 + c2, so the columns are dependent and determinant is zero. Every output has z = 0, so (0, 0, 1) is outside the column span."
+    }
+  ]
+}

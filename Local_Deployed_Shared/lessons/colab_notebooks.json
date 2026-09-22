@@ -3,6 +3,14 @@
   "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
+      "id": "ma-00",
+      "title": "Linear algebra for ARENA 0.1",
+      "topic": "Mathematics",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "file": "ma-00-linear-algebra-for-arena-0-1.ipynb",
+      "problems": 0
+    },
+    {
       "id": "ma-01",
       "title": "Math for ARENA 0.1",
       "topic": "Mathematics",
@@ -1133,6 +1141,7 @@
     "1467": "ar-02"
   },
   "subtopics": {
+    "Mathematics: Linear algebra": "ma-00",
     "Mathematics: ARENA 0.1": "ma-01",
     "Python: Getting started": "py-0",
     "Numpy: Core array literacy": "np-1",
@@ -1148,6 +1157,11 @@
     "PyTorch: ar-02": "ar-02"
   },
   "kcs": {
+    "math.vector-arithmetic": "ma-00",
+    "math.dot-products-norms": "ma-00",
+    "math.linear-combinations": "ma-00",
+    "math.matrix-equations": "ma-00",
+    "math.determinants-invertibility": "ma-00",
     "math.ray-geometry": "ma-01",
     "math.intersection-systems": "ma-01",
     "math.singular-systems": "ma-01",
@@ -1227,6 +1241,11 @@
     "cnn.forward-hooks": "ar-02"
   },
   "kps": {
+    "math.vector-arithmetic": "dd-kp-math-vector-arithmetic",
+    "math.dot-products-norms": "dd-kp-math-dot-products-norms",
+    "math.linear-combinations": "dd-kp-math-linear-combinations",
+    "math.matrix-equations": "dd-kp-math-matrix-equations",
+    "math.determinants-invertibility": "dd-kp-math-determinants-invertibility",
     "math.ray-geometry": "dd-kp-math-ray-geometry",
     "math.intersection-systems": "dd-kp-math-intersection-systems",
     "math.singular-systems": "dd-kp-math-singular-systems",

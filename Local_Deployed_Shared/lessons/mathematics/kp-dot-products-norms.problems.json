@@ -1,0 +1,206 @@
+{
+  "kc": "math.dot-products-norms",
+  "problems": [
+    {
+      "id": 50038,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "Find (1, −2, 3) · (4, 1, −1).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "9",
+          "value": "9"
+        },
+        {
+          "key": "B",
+          "text": "(4, −2, −3)",
+          "value": "Matrix([4,-2,-3])"
+        },
+        {
+          "key": "C",
+          "text": "−1",
+          "value": "-1"
+        },
+        {
+          "key": "D",
+          "text": "1",
+          "value": "1"
+        }
+      ],
+      "answer": "C",
+      "solution": "Multiply pairs and add: 4 − 2 − 3 = −1. The tuple is the intermediate products, not their sum.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-2,3]).dot(Matrix([4,1,-1]))"
+        }
+      }
+    },
+    {
+      "id": 50039,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "Find the Euclidean norm of (−3, 4).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "25",
+          "value": "25"
+        },
+        {
+          "key": "B",
+          "text": "7",
+          "value": "7"
+        },
+        {
+          "key": "C",
+          "text": "1",
+          "value": "1"
+        },
+        {
+          "key": "D",
+          "text": "5",
+          "value": "5"
+        }
+      ],
+      "answer": "D",
+      "solution": "The squared norm is 9 + 16 = 25; take the square root. Adding absolute components gives a different norm.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt((-3)**2+4**2)"
+        }
+      }
+    },
+    {
+      "id": 50040,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "Which unit vector has the same direction as (0, −3, 4)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(0, −3/5, 4/5)",
+          "value": "Matrix([0,-Rational(3,5),Rational(4,5)])"
+        },
+        {
+          "key": "B",
+          "text": "(0, −3/25, 4/25)",
+          "value": "Matrix([0,-Rational(3,25),Rational(4,25)])"
+        },
+        {
+          "key": "C",
+          "text": "(0, 3/5, −4/5)",
+          "value": "Matrix([0,Rational(3,5),-Rational(4,5)])"
+        },
+        {
+          "key": "D",
+          "text": "(0, −1, 1)",
+          "value": "Matrix([0,-1,1])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Divide by length 5, not squared length 25. Negating reverses direction; dividing each coordinate by its own magnitude does not normalize Euclidean length.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([0,-3,4])/sqrt(9+16)"
+        }
+      }
+    },
+    {
+      "id": 50041,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "u = (2, 1), v = (1, −2). What does u · v = 0 imply?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Both vectors have zero length."
+        },
+        {
+          "key": "B",
+          "text": "The two nonzero vectors are perpendicular."
+        },
+        {
+          "key": "C",
+          "text": "The two vectors are equal."
+        },
+        {
+          "key": "D",
+          "text": "They point in the same direction."
+        }
+      ],
+      "answer": "B",
+      "solution": "The dot product is 2 − 2 = 0. Nonzero perpendicular vectors have zero dot product; zero dot product does not mean either vector is zero."
+    },
+    {
+      "id": 50042,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A = (−1, 2, 0), B = (1, −1, 6). What is their Euclidean distance?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "41",
+          "value": "41"
+        },
+        {
+          "key": "B",
+          "text": "9",
+          "value": "9"
+        },
+        {
+          "key": "C",
+          "text": "7",
+          "value": "7"
+        },
+        {
+          "key": "D",
+          "text": "5",
+          "value": "5"
+        }
+      ],
+      "answer": "C",
+      "solution": "Subtract to get (2, −3, 6), then take sqrt(4 + 9 + 36) = 7. Distances use displacement, not either position alone.",
+      "verify": {
+        "sympy": {
+          "truth": "sqrt(2**2+(-3)**2+6**2)"
+        }
+      }
+    },
+    {
+      "id": 50043,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A nonzero vector D has norm 5. What is the norm of −2D?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "−10",
+          "value": "-10"
+        },
+        {
+          "key": "B",
+          "text": "5",
+          "value": "5"
+        },
+        {
+          "key": "C",
+          "text": "25",
+          "value": "25"
+        },
+        {
+          "key": "D",
+          "text": "10",
+          "value": "10"
+        }
+      ],
+      "answer": "D",
+      "solution": "Norms are nonnegative: ||−2D|| = |−2| ||D|| = 10. Negative scaling changes direction, not the sign of length.",
+      "verify": {
+        "sympy": {
+          "truth": "Abs(-2)*5"
+        }
+      }
+    }
+  ]
+}

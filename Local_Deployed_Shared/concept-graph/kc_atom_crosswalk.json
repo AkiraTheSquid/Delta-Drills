@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1440,
-  "kcs_covered": 77,
-  "kcs_total": 77,
-  "kcs_measured": 59,
-  "atoms_used": 105,
-  "pairs": 212
+  "questions_joined": 1470,
+  "kcs_covered": 82,
+  "kcs_total": 82,
+  "kcs_measured": 64,
+  "atoms_used": 110,
+  "pairs": 217
  },
  "kcs": {
   "cnn.batch-normalization": {
@@ -1020,6 +1020,36 @@
     }
    ]
   },
+  "math.determinants-invertibility": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "la-determinants-invertibility",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
+  "math.dot-products-norms": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "la-dot-products-norms",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
   "math.intersection-systems": {
    "n": 6,
    "reliability": 1.0,
@@ -1028,6 +1058,36 @@
    "atoms": [
     {
      "a": "segment-line-intersect-2d",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
+  "math.linear-combinations": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "la-linear-combinations",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
+  "math.matrix-equations": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "la-matrix-equations",
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
@@ -1073,6 +1133,21 @@
    "atoms": [
     {
      "a": "determinant-singularity-test",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
+  "math.vector-arithmetic": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "la-vector-arithmetic",
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,

@@ -4,6 +4,14 @@ window.DD_NOTEBOOKS = {
   "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
+      "id": "ma-00",
+      "title": "Linear algebra for ARENA 0.1",
+      "topic": "Mathematics",
+      "subtopic_key": "Mathematics: Linear algebra",
+      "file": "ma-00-linear-algebra-for-arena-0-1.ipynb",
+      "problems": 0
+    },
+    {
       "id": "ma-01",
       "title": "Math for ARENA 0.1",
       "topic": "Mathematics",
@@ -109,6 +117,7 @@ window.DD_NOTEBOOKS = {
     }
   ],
   "subtopics": {
+    "Mathematics: Linear algebra": "ma-00",
     "Mathematics: ARENA 0.1": "ma-01",
     "Python: Getting started": "py-0",
     "Numpy: Core array literacy": "np-1",
