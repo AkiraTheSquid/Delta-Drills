@@ -72,6 +72,7 @@
   // when that export exists.
   const PREP_PYTHON = { id: "sm10", label: "Section −1.0 — Python", color: "#dfae74", order: 0 };
   const PREP_ARRAYS = { id: "sm11", label: "Section −1.1 — arrays, einops, tensors", color: "#b0b4c0", order: 1 };
+  const PREP_MATH = { id: "sm12", label: "Section −1.2 — the maths underneath", color: "#f0a3a3", order: 2 };
   const LATER = { id: "sNN", label: "Later ARENA sections", color: "#e0709a", order: 99 };
   const SLUG_COLORS = { "0-0": "#4f9fe0", "0-1": "#bb7de8", "0-2": "#e8a765" };
   const _slugSection = (slug) => {
@@ -107,6 +108,7 @@
     const slug = arenaSlugByKc[kc];
     if (slug) return _slugSection(slug);
     if (String(kc).startsWith("python.") || /^py-/.test(lessonId || "")) return PREP_PYTHON;
+    if (String(kc).startsWith("math.") || /^ma-/.test(lessonId || "")) return PREP_MATH;
     return PREP_ARRAYS;
   };
   const sectionOf = (kc) => {
