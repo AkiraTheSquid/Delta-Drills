@@ -2,6 +2,442 @@
  "version": 1,
  "lessons": [
   {
+   "id": "ma-01",
+   "topic": "Mathematics",
+   "title": "Math for ARENA 0.1",
+   "subtopic_key": "Mathematics: ARENA 0.1",
+   "kps": [
+    {
+     "kc": "math.ray-geometry",
+     "kind": "math",
+     "title": "Points, directions, and finite segments",
+     "supporting_kcs": [],
+     "new_syntax": [],
+     "concept_markdown": "A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from A to B, move by B \u2212 A. Adding a displacement to a point gives another point.\n\nA ray uses P(s) = O + sD, where O is its origin, D is a nonzero direction, and s \u2265 0. D is a displacement, even when ARENA stores it in the second row of a (2, 3) tensor. It is not an endpoint. Given an endpoint Q, first compute D = Q \u2212 O. At s = 0 you are at O; negative s lies behind the ray.\n\nA segment uses P(v) = (1 \u2212 v)A + vB = A + v(B \u2212 A), with 0 \u2264 v \u2264 1. The weights add to one. The supporting line allows any real v; the segment does not.\n\nFor n \u2265 2 camera pixels and y-limit L at x = 1, equally spaced direction-y values are \u2212L + i\u00b72L/(n\u22121). There are n\u22121 gaps between n endpoints. ARENA uses D\u2093 = 1, so s = x when O = 0.\n\n```python\norigin, direction, s = (2, -1), (3, 2), 2\npoint = tuple(origin[i] + s * direction[i] for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (8, 3)\nassert _delta_output == '(8, 3)\\n'\n```",
+     "worked_example_markdown": "Find the midpoint from A = (\u22122, 3) to B = (6, 7). Half the displacement is (4, 2); adding it to A gives (2, 5). This arithmetic becomes a tensor expression in intersect_ray_1d.\n\n```python\na, b, v = (-2, 3), (6, 7), 0.5\npoint = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (2.0, 5.0)\nassert _delta_output == '(2.0, 5.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.ray-parametrisation) to implement this reasoning. ARENA 0.1 transfer: `make_rays_1d`, `make_rays_2d`, `intersect_ray_1d`.",
+     "segments": [
+      {
+       "concept_id": "affine",
+       "title": "A position plus a displacement",
+       "concept_markdown": "A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from A to B, move by B \u2212 A. Adding a displacement to a point gives another point.\n\nA ray uses P(s) = O + sD, where O is its origin, D is a nonzero direction, and s \u2265 0. D is a displacement, even when ARENA stores it in the second row of a (2, 3) tensor. It is not an endpoint. Given an endpoint Q, first compute D = Q \u2212 O. At s = 0 you are at O; negative s lies behind the ray.\n\nA segment uses P(v) = (1 \u2212 v)A + vB = A + v(B \u2212 A), with 0 \u2264 v \u2264 1. The weights add to one. The supporting line allows any real v; the segment does not.\n\nFor n \u2265 2 camera pixels and y-limit L at x = 1, equally spaced direction-y values are \u2212L + i\u00b72L/(n\u22121). There are n\u22121 gaps between n endpoints. ARENA uses D\u2093 = 1, so s = x when O = 0.\n\n```python\norigin, direction, s = (2, -1), (3, 2), 2\npoint = tuple(origin[i] + s * direction[i] for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (8, 3)\nassert _delta_output == '(8, 3)\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Find the midpoint from A = (\u22122, 3) to B = (6, 7). Half the displacement is (4, 2); adding it to A gives (2, 5). This arithmetic becomes a tensor expression in intersect_ray_1d.\n\n```python\na, b, v = (-2, 3), (6, 7), 0.5\npoint = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (2.0, 5.0)\nassert _delta_output == '(2.0, 5.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.ray-parametrisation) to implement this reasoning. ARENA 0.1 transfer: `make_rays_1d`, `make_rays_2d`, `intersect_ray_1d`.",
+       "worked_example_code": "a, b, v = (-2, 3), (6, 7), 0.5\npoint = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (2.0, 5.0)\nassert _delta_output == '(2.0, 5.0)\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50000,
+         "prompt": "O = (3, \u22122), Q = (7, 4). A ray starts at O and passes through Q. Which D makes O + D = Q?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50001,
+         "prompt": "P(s) = (2, 1) + s(\u22121, 2), s \u2265 0. Does (3, \u22121) belong to this ray?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 50000,
+       "prompt": "O = (3, \u22122), Q = (7, 4). A ray starts at O and passes through Q. Which D makes O + D = Q?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50001,
+       "prompt": "P(s) = (2, 1) + s(\u22121, 2), s \u2265 0. Does (3, \u22121) belong to this ray?",
+       "starter_code": "",
+       "solution": ""
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50002,
+       "prompt": "A = (1, 2), B = (5, 6). What does v = 1.25 give in A + v(B \u2212 A)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50003,
+       "prompt": "A point is O + 6D. Replace D by D\u2032 = 3D, leaving O fixed. Which parameter reaches the same point?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 50004,
+       "prompt": "A five-pixel camera includes both y-limits \u22123 and 3 at x = 1. Which sequence contains the direction-y coordinates?"
+      },
+      {
+       "question_id": 50005,
+       "prompt": "A point has v = 0.2 from A to B. Swap the endpoints and write P = B + w(A \u2212 B). What is w?"
+      }
+     ],
+     "independent_items": [
+      50002,
+      50003
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "math.intersection-systems",
+     "kind": "math",
+     "title": "Turn an intersection into a linear system",
+     "supporting_kcs": [
+      "math.ray-geometry"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "A matrix\u2013vector product is a weighted sum of columns. If M has columns c\u2081 and c\u2082, then M[u, v] = u\u00b7c\u2081 + v\u00b7c\u2082. Each row is one coordinate equation; each column belongs to one unknown. Solving Mx = b finds weights x that produce b.\n\nFor a ray O + uD and segment A + v(B \u2212 A), an intersection has both descriptions. Subtract O, then move the segment displacement left:\nuD + v(A \u2212 B) = A \u2212 O.\nTherefore M = [D, A \u2212 B], x = [u, v], and b = A \u2212 O. The segment column changes sign because we moved that term across the equality.\n\nFirst solve the supporting lines. Then require u \u2265 0 and 0 \u2264 v \u2264 1. Solving alone does not enforce these inequalities. Substitute into both point formulas to check that their coordinates match. A small residual Mx \u2212 b checks the equations, but does not check membership.\n\n```python\ncolumn_1, column_2, u, v = (2, 1), (1, -3), 3, 2\nproduct = tuple(u * column_1[i] + v * column_2[i] for i in range(2))\nprint(product)\n# Hidden checks\nassert product == (8, -3)\nassert _delta_output == '(8, -3)\\n'\n```",
+     "worked_example_markdown": "Let O = (1, 0), D = (2, 1), A = (5, \u22121), B = (5, 5). The x-equation is 2u = 4, so u = 2. The y-equation is u \u2212 6v = \u22121, so v = 1/2. Both bounds hold. Both descriptions must reach (5, 2).\n\n```python\no, d, a, b = (1, 0), (2, 1), (5, -1), (5, 5)\nu, v = 2, 0.5\nray_point = tuple(o[i] + u * d[i] for i in range(2))\nsegment_point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(ray_point, segment_point)\n# Hidden checks\nassert ray_point == segment_point == (5, 2)\nassert _delta_output == '(5, 2) (5.0, 2.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.segment-intersection) to implement this reasoning. ARENA 0.1 transfer: `intersect_ray_1d`.",
+     "segments": [
+      {
+       "concept_id": "columns",
+       "title": "One coefficient per unknown",
+       "concept_markdown": "A matrix\u2013vector product is a weighted sum of columns. If M has columns c\u2081 and c\u2082, then M[u, v] = u\u00b7c\u2081 + v\u00b7c\u2082. Each row is one coordinate equation; each column belongs to one unknown. Solving Mx = b finds weights x that produce b.\n\nFor a ray O + uD and segment A + v(B \u2212 A), an intersection has both descriptions. Subtract O, then move the segment displacement left:\nuD + v(A \u2212 B) = A \u2212 O.\nTherefore M = [D, A \u2212 B], x = [u, v], and b = A \u2212 O. The segment column changes sign because we moved that term across the equality.\n\nFirst solve the supporting lines. Then require u \u2265 0 and 0 \u2264 v \u2264 1. Solving alone does not enforce these inequalities. Substitute into both point formulas to check that their coordinates match. A small residual Mx \u2212 b checks the equations, but does not check membership.\n\n```python\ncolumn_1, column_2, u, v = (2, 1), (1, -3), 3, 2\nproduct = tuple(u * column_1[i] + v * column_2[i] for i in range(2))\nprint(product)\n# Hidden checks\nassert product == (8, -3)\nassert _delta_output == '(8, -3)\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Let O = (1, 0), D = (2, 1), A = (5, \u22121), B = (5, 5). The x-equation is 2u = 4, so u = 2. The y-equation is u \u2212 6v = \u22121, so v = 1/2. Both bounds hold. Both descriptions must reach (5, 2).\n\n```python\no, d, a, b = (1, 0), (2, 1), (5, -1), (5, 5)\nu, v = 2, 0.5\nray_point = tuple(o[i] + u * d[i] for i in range(2))\nsegment_point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(ray_point, segment_point)\n# Hidden checks\nassert ray_point == segment_point == (5, 2)\nassert _delta_output == '(5, 2) (5.0, 2.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.segment-intersection) to implement this reasoning. ARENA 0.1 transfer: `intersect_ray_1d`.",
+       "worked_example_code": "o, d, a, b = (1, 0), (2, 1), (5, -1), (5, 5)\nu, v = 2, 0.5\nray_point = tuple(o[i] + u * d[i] for i in range(2))\nsegment_point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(ray_point, segment_point)\n# Hidden checks\nassert ray_point == segment_point == (5, 2)\nassert _delta_output == '(5, 2) (5.0, 2.0)\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50006,
+         "prompt": "O = (2, 1), D = (1, 2), A = (6, 0), B = (6, 4). For unknowns [u, v], choose M in M[u, v] = A \u2212 O. Matrices are written as rows.",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50007,
+         "prompt": "O = (\u22122, 3), A = (4, 1). What is b in [D, A \u2212 B][u, v] = b?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 50006,
+       "prompt": "O = (2, 1), D = (1, 2), A = (6, 0), B = (6, 4). For unknowns [u, v], choose M in M[u, v] = A \u2212 O. Matrices are written as rows.",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50007,
+       "prompt": "O = (\u22122, 3), A = (4, 1). What is b in [D, A \u2212 B][u, v] = b?",
+       "starter_code": "",
+       "solution": ""
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50008,
+       "prompt": "O = (0, 1), D = (2, 0), A = (6, \u22121), B = (6, 3). Which [u, v] describes the crossing of O + uD and A + v(B \u2212 A)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50009,
+       "prompt": "Three nonsingular pairs solve to [u, v] = [0, 1], [2, \u22120.1], [\u22121, 0.5]. Which are ray\u2013segment hits, with endpoints included?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 50010,
+       "prompt": "A nonsingular system solves to [u, v] = [2, 1.4], with residual M[u, v] \u2212 b = (0, 0). What follows?"
+      },
+      {
+       "question_id": 50011,
+       "prompt": "O = (1, 1), D = (2, \u22121), A = (5, \u22122), B = (5, 2). Does the ray hit the segment, and where?"
+      }
+     ],
+     "independent_items": [
+      50008,
+      50009
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "math.singular-systems",
+     "kind": "math",
+     "title": "Unique crossings and batched validity",
+     "supporting_kcs": [
+      "math.intersection-systems"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "For a 2 \u00d7 2 matrix with rows [a, b] and [c, d], det(M) = ad \u2212 bc. Its absolute value measures the area scaling of the column directions. A nonzero determinant means the columns are independent, so every right-hand side has one solution.\n\nA zero determinant means the columns collapse onto a line or point. The system can have no solution or infinitely many, depending on b. It does not mean geometric objects never overlap. ARENA's simplified contract treats singular pairs as misses, including coincident lines and degenerate objects.\n\nThe batched implementation declares a pair invalid when |det(M)| < 10\u207b\u2078. This is a course convention, not a scale-invariant accuracy test: rescaling columns rescales the determinant. Substitute an identity matrix for invalid pairs before solving so one singular pair cannot abort the batch. Keep the original validity mask: a solution of the replacement matrix is not evidence of a hit.\n\nFor each ray, combine validity with membership for every segment pair, then reduce over segments using \u201cany.\u201d Reducing over rays answers a different question.\n\n```python\na, b, c, d = 1, 2, 3, 6\ndeterminant = a * d - b * c\nprint(determinant)\n# Hidden checks\nassert determinant == 0\nassert _delta_output == '0\\n'\n```",
+     "worked_example_markdown": "Two rays each have three candidate crossings. A hit needs both solver validity and geometric membership. The first ray's only apparent hit came from a replaced matrix; the second has a real hit.\n\n```python\nvalid = [[False, True, True], [True, True, False]]\nwithin_bounds = [[True, False, False], [False, True, True]]\nhits = [any(v and h for v, h in zip(vrow, hrow))\n        for vrow, hrow in zip(valid, within_bounds)]\nprint(hits)\n# Hidden checks\nassert hits == [False, True]\nassert _delta_output == '[False, True]\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.batched-segments) to implement this reasoning. ARENA 0.1 transfer: `intersect_ray_1d`, `intersect_rays_1d`, `raytrace_triangle`, `raytrace_mesh`.",
+     "segments": [
+      {
+       "concept_id": "validity",
+       "title": "A solver result needs a validity mask",
+       "concept_markdown": "For a 2 \u00d7 2 matrix with rows [a, b] and [c, d], det(M) = ad \u2212 bc. Its absolute value measures the area scaling of the column directions. A nonzero determinant means the columns are independent, so every right-hand side has one solution.\n\nA zero determinant means the columns collapse onto a line or point. The system can have no solution or infinitely many, depending on b. It does not mean geometric objects never overlap. ARENA's simplified contract treats singular pairs as misses, including coincident lines and degenerate objects.\n\nThe batched implementation declares a pair invalid when |det(M)| < 10\u207b\u2078. This is a course convention, not a scale-invariant accuracy test: rescaling columns rescales the determinant. Substitute an identity matrix for invalid pairs before solving so one singular pair cannot abort the batch. Keep the original validity mask: a solution of the replacement matrix is not evidence of a hit.\n\nFor each ray, combine validity with membership for every segment pair, then reduce over segments using \u201cany.\u201d Reducing over rays answers a different question.\n\n```python\na, b, c, d = 1, 2, 3, 6\ndeterminant = a * d - b * c\nprint(determinant)\n# Hidden checks\nassert determinant == 0\nassert _delta_output == '0\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Two rays each have three candidate crossings. A hit needs both solver validity and geometric membership. The first ray's only apparent hit came from a replaced matrix; the second has a real hit.\n\n```python\nvalid = [[False, True, True], [True, True, False]]\nwithin_bounds = [[True, False, False], [False, True, True]]\nhits = [any(v and h for v, h in zip(vrow, hrow))\n        for vrow, hrow in zip(valid, within_bounds)]\nprint(hits)\n# Hidden checks\nassert hits == [False, True]\nassert _delta_output == '[False, True]\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.batched-segments) to implement this reasoning. ARENA 0.1 transfer: `intersect_ray_1d`, `intersect_rays_1d`, `raytrace_triangle`, `raytrace_mesh`.",
+       "worked_example_code": "valid = [[False, True, True], [True, True, False]]\nwithin_bounds = [[True, False, False], [False, True, True]]\nhits = [any(v and h for v, h in zip(vrow, hrow))\n        for vrow, hrow in zip(valid, within_bounds)]\nprint(hits)\n# Hidden checks\nassert hits == [False, True]\nassert _delta_output == '[False, True]\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50012,
+         "prompt": "A matrix has rows [[2, 4], [1, 2]]. Which statement is justified?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50013,
+         "prompt": "A ray and a segment overlap on the same line. Their matrix is singular. Under ARENA's singular-pair-as-miss contract, what should the function report?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 50012,
+       "prompt": "A matrix has rows [[2, 4], [1, 2]]. Which statement is justified?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50013,
+       "prompt": "A ray and a segment overlap on the same line. Their matrix is singular. Under ARENA's singular-pair-as-miss contract, what should the function report?",
+       "starter_code": "",
+       "solution": ""
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50014,
+       "prompt": "Invalid means |det(M)| < 10\u207b\u2078. Which listed pair is valid under that rule?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50015,
+       "prompt": "An invalid pair is replaced with the identity. The replacement solution is [u, v] = [2, 0.5]. How should the pair contribute?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 50016,
+       "prompt": "A pair-hit table has rows = rays, columns = segments: [[False, True], [False, False], [True, False]]. Which output says whether each ray hits any segment?"
+      },
+      {
+       "question_id": 50017,
+       "prompt": "Multiply both columns of a 2 \u00d7 2 matrix by 100. Its determinant was 10\u207b\u00b9\u2070. What does this show about a fixed 10\u207b\u2078 cutoff?"
+      }
+     ],
+     "independent_items": [
+      50014,
+      50015
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "math.barycentric-coordinates",
+     "kind": "math",
+     "title": "Triangle coordinates and ray\u2013triangle systems",
+     "supporting_kcs": [
+      "math.intersection-systems",
+      "math.singular-systems"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "For a nondegenerate triangle with vertices A, B, C, begin at A and combine two edges: P = A + u(B \u2212 A) + v(C \u2212 A). Expanding gives P = (1 \u2212 u \u2212 v)A + uB + vC. These three vertex weights are barycentric coordinates. They add to one.\n\nThe point belongs to the filled triangle exactly when all three weights are nonnegative: u \u2265 0, v \u2265 0, u + v \u2264 1. Independent bounds u \u2264 1 and v \u2264 1 admit the whole parallelogram. The sum bound cuts away the half beyond edge BC.\n\nBoundaries count: u = 0 is edge AC, v = 0 is edge AB, and u + v = 1 is edge BC, provided the other weights are nonnegative. Vertices are special boundary cases. In three dimensions these weights describe the triangle's plane, not every point in space.\n\n```python\nu, v = 0.6, 0.6\nweights = (1 - u - v, u, v)\ninside = all(weight >= 0 for weight in weights)\nprint(inside)\n# Hidden checks\nassert not inside\nassert _delta_output == 'False\\n'\n```\n\nSet O + sD equal to A + u(B \u2212 A) + v(C \u2212 A). Move the ray displacement to the triangle side, then move the fixed vertex to the other side:\n\u2212sD + u(B \u2212 A) + v(C \u2212 A) = O \u2212 A.\n\nWith unknowns ordered [s, u, v], the columns are [\u2212D, B \u2212 A, C \u2212 A]. Three spatial coordinates provide three equations. Changing only the first column's sign reverses s. Multiplying the entire equation by \u22121 is equivalent, provided both matrix and right-hand side change.\n\nA nonsingular solve finds the crossing with the triangle's plane. Then check s \u2265 0 and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; an extra batch axis introduces no extra geometric unknown. Retain the singularity mask as in the segment case.\n\n```python\nd, a, b, c = (1, 0, 0), (4, 0, 0), (4, 2, 0), (4, 0, 6)\nmatrix = [[-d[i], b[i]-a[i], c[i]-a[i]] for i in range(3)]\nprint(matrix)\n# Hidden checks\nassert matrix == [[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\nassert _delta_output == '[[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\\n'\n```",
+     "worked_example_markdown": "A = (2, 0, 0), B = (2, 6, 0), C = (2, 0, 3). With u = v = 1/3, each vertex has weight 1/3. The point is inside. Compute its coordinates from the edges.\n\n```python\na, b, c = (2, 0, 0), (2, 6, 0), (2, 0, 3)\nu, v = 1/3, 1/3\npoint = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i]) for i in range(3))\nprint(point)\n# Hidden checks\nassert point == (2.0, 2.0, 1.0)\nassert _delta_output == '(2.0, 2.0, 1.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.triangle-intersection) to implement this reasoning. ARENA 0.1 transfer: `triangle_ray_intersects`, `raytrace_triangle`.\n\nO = (0, 1, 1), D = (2, 0, 0), A = (6, 0, 0), B = (6, 4, 0), C = (6, 0, 4). The equations are \u22122s = \u22126, 4u = 1, 4v = 1. Thus s = 3, u = v = 1/4. The ray reaches (6, 1, 1) inside the triangle.\n\n```python\ns, u, v = 3, 0.25, 0.25\npoint = (0 + 2*s, 1, 1)\nhit = s >= 0 and u >= 0 and v >= 0 and u + v <= 1\nprint(point, hit)\n# Hidden checks\nassert point == (6, 1, 1) and hit\nassert _delta_output == '(6, 1, 1) True\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.triangle-intersection) to implement this reasoning. ARENA 0.1 transfer: `triangle_ray_intersects`, `raytrace_triangle`.",
+     "segments": [
+      {
+       "concept_id": "weights",
+       "title": "Three weights, one triangle",
+       "concept_markdown": "For a nondegenerate triangle with vertices A, B, C, begin at A and combine two edges: P = A + u(B \u2212 A) + v(C \u2212 A). Expanding gives P = (1 \u2212 u \u2212 v)A + uB + vC. These three vertex weights are barycentric coordinates. They add to one.\n\nThe point belongs to the filled triangle exactly when all three weights are nonnegative: u \u2265 0, v \u2265 0, u + v \u2264 1. Independent bounds u \u2264 1 and v \u2264 1 admit the whole parallelogram. The sum bound cuts away the half beyond edge BC.\n\nBoundaries count: u = 0 is edge AC, v = 0 is edge AB, and u + v = 1 is edge BC, provided the other weights are nonnegative. Vertices are special boundary cases. In three dimensions these weights describe the triangle's plane, not every point in space.\n\n```python\nu, v = 0.6, 0.6\nweights = (1 - u - v, u, v)\ninside = all(weight >= 0 for weight in weights)\nprint(inside)\n# Hidden checks\nassert not inside\nassert _delta_output == 'False\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "A = (2, 0, 0), B = (2, 6, 0), C = (2, 0, 3). With u = v = 1/3, each vertex has weight 1/3. The point is inside. Compute its coordinates from the edges.\n\n```python\na, b, c = (2, 0, 0), (2, 6, 0), (2, 0, 3)\nu, v = 1/3, 1/3\npoint = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i]) for i in range(3))\nprint(point)\n# Hidden checks\nassert point == (2.0, 2.0, 1.0)\nassert _delta_output == '(2.0, 2.0, 1.0)\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.triangle-intersection) to implement this reasoning. ARENA 0.1 transfer: `triangle_ray_intersects`, `raytrace_triangle`.",
+       "worked_example_code": "a, b, c = (2, 0, 0), (2, 6, 0), (2, 0, 3)\nu, v = 1/3, 1/3\npoint = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i]) for i in range(3))\nprint(point)\n# Hidden checks\nassert point == (2.0, 2.0, 1.0)\nassert _delta_output == '(2.0, 2.0, 1.0)\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50018,
+         "prompt": "P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A). What is the weight on A?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50019,
+         "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B \u2212 A) + v(C \u2212 A)?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      },
+      {
+       "concept_id": "three-unknowns",
+       "title": "Match a ray point to a triangle point",
+       "concept_markdown": "Set O + sD equal to A + u(B \u2212 A) + v(C \u2212 A). Move the ray displacement to the triangle side, then move the fixed vertex to the other side:\n\u2212sD + u(B \u2212 A) + v(C \u2212 A) = O \u2212 A.\n\nWith unknowns ordered [s, u, v], the columns are [\u2212D, B \u2212 A, C \u2212 A]. Three spatial coordinates provide three equations. Changing only the first column's sign reverses s. Multiplying the entire equation by \u22121 is equivalent, provided both matrix and right-hand side change.\n\nA nonsingular solve finds the crossing with the triangle's plane. Then check s \u2265 0 and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; an extra batch axis introduces no extra geometric unknown. Retain the singularity mask as in the segment case.\n\n```python\nd, a, b, c = (1, 0, 0), (4, 0, 0), (4, 2, 0), (4, 0, 6)\nmatrix = [[-d[i], b[i]-a[i], c[i]-a[i]] for i in range(3)]\nprint(matrix)\n# Hidden checks\nassert matrix == [[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\nassert _delta_output == '[[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "O = (0, 1, 1), D = (2, 0, 0), A = (6, 0, 0), B = (6, 4, 0), C = (6, 0, 4). The equations are \u22122s = \u22126, 4u = 1, 4v = 1. Thus s = 3, u = v = 1/4. The ray reaches (6, 1, 1) inside the triangle.\n\n```python\ns, u, v = 3, 0.25, 0.25\npoint = (0 + 2*s, 1, 1)\nhit = s >= 0 and u >= 0 and v >= 0 and u + v <= 1\nprint(point, hit)\n# Hidden checks\nassert point == (6, 1, 1) and hit\nassert _delta_output == '(6, 1, 1) True\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.triangle-intersection) to implement this reasoning. ARENA 0.1 transfer: `triangle_ray_intersects`, `raytrace_triangle`.",
+       "worked_example_code": "s, u, v = 3, 0.25, 0.25\npoint = (0 + 2*s, 1, 1)\nhit = s >= 0 and u >= 0 and v >= 0 and u + v <= 1\nprint(point, hit)\n# Hidden checks\nassert point == (6, 1, 1) and hit\nassert _delta_output == '(6, 1, 1) True\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50022,
+         "prompt": "With unknowns [s, u, v] and right-hand side O \u2212 A, which columns describe ray\u2013triangle equality?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50023,
+         "prompt": "A nonsingular ray\u2013triangle system gives [s, u, v] = [2, 0.7, 0.6]. Does it hit the filled triangle?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 50018,
+       "prompt": "P = A + 0.2(B \u2212 A) + 0.3(C \u2212 A). What is the weight on A?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50019,
+       "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B \u2212 A) + v(C \u2212 A)?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50022,
+       "prompt": "With unknowns [s, u, v] and right-hand side O \u2212 A, which columns describe ray\u2013triangle equality?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50023,
+       "prompt": "A nonsingular ray\u2013triangle system gives [s, u, v] = [2, 0.7, 0.6]. Does it hit the filled triangle?",
+       "starter_code": "",
+       "solution": ""
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50020,
+       "prompt": "Which triangle boundary contains u = 0.25, v = 0.75?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50024,
+       "prompt": "A nonsingular ray\u2013triangle system gives [s, u, v] = [0, 0, 1]. With boundaries included, what results?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 50021,
+       "prompt": "A = (1, 0, 0), B = (1, 8, 0), C = (1, 0, 4). Which point has u = 0.25, v = 0.5?"
+      },
+      {
+       "question_id": 50025,
+       "prompt": "O = (1, 1, 1), D = (2, 0, 0), A = (5, 0, 0), B = (5, 4, 0), C = (5, 0, 4). Which [s, u, v] is correct?"
+      }
+     ],
+     "independent_items": [
+      50020,
+      50024
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "math.ray-distance",
+     "kind": "math",
+     "title": "Nearest hit, depth, and actual distance",
+     "supporting_kcs": [
+      "math.barycentric-coordinates"
+     ],
+     "new_syntax": [],
+     "concept_markdown": "A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction D, a forward point O + sD is Euclidean distance s\u2016D\u2016 from O, where \u2016D\u2016 = \u221a(D\u2093\u00b2 + D\u1d67\u00b2 + D_z\u00b2). The factor \u2016D\u2016 is fixed along that ray, so minimizing valid s also minimizes distance.\n\nThe parameter s is not generally a distance: doubling D halves the s needed to reach the same point. Comparing raw s across differently scaled rays can mislead. The x displacement is sD\u2093; the world x-coordinate is O\u2093 + sD\u2093. Neither is generally Euclidean distance. For ARENA's camera O = 0 and D\u2093 = 1, s equals x-depth; off-axis rays still have \u2016D\u2016 > 1.\n\nBefore taking a minimum, replace every invalid or backward hit by +\u221e. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains +\u221e, an explicit no-hit result. This order also prevents a negative s behind the origin from hiding a valid surface in front.\n\n```python\ns = [4.0, -2.0, 1.0]\nvalid = [True, True, False]\ncandidates = [x if ok and x >= 0 else float('inf') for x, ok in zip(s, valid)]\nnearest = min(candidates)\nprint(nearest)\n# Hidden checks\nassert nearest == 4.0\nassert _delta_output == '4.0\\n'\n```",
+     "worked_example_markdown": "A ray has D = (1, 2, 2) and hits at s = 4. Its direction length is 3. Its x displacement is 4 and its Euclidean travel distance is 12: two measurements of the same hit.\n\n```python\nfrom math import sqrt\ndirection, s = (1, 2, 2), 4\nlength = sqrt(sum(component**2 for component in direction))\ndepth, distance = s * direction[0], s * length\nprint(depth, distance)\n# Hidden checks\nassert depth == 4 and distance == 12.0\nassert _delta_output == '4 12.0\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.mesh-visibility) to implement this reasoning. ARENA 0.1 transfer: `raytrace_mesh`.",
+     "segments": [
+      {
+       "concept_id": "distance",
+       "title": "Compare hits along the same ray",
+       "concept_markdown": "A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction D, a forward point O + sD is Euclidean distance s\u2016D\u2016 from O, where \u2016D\u2016 = \u221a(D\u2093\u00b2 + D\u1d67\u00b2 + D_z\u00b2). The factor \u2016D\u2016 is fixed along that ray, so minimizing valid s also minimizes distance.\n\nThe parameter s is not generally a distance: doubling D halves the s needed to reach the same point. Comparing raw s across differently scaled rays can mislead. The x displacement is sD\u2093; the world x-coordinate is O\u2093 + sD\u2093. Neither is generally Euclidean distance. For ARENA's camera O = 0 and D\u2093 = 1, s equals x-depth; off-axis rays still have \u2016D\u2016 > 1.\n\nBefore taking a minimum, replace every invalid or backward hit by +\u221e. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains +\u221e, an explicit no-hit result. This order also prevents a negative s behind the origin from hiding a valid surface in front.\n\n```python\ns = [4.0, -2.0, 1.0]\nvalid = [True, True, False]\ncandidates = [x if ok and x >= 0 else float('inf') for x, ok in zip(s, valid)]\nnearest = min(candidates)\nprint(nearest)\n# Hidden checks\nassert nearest == 4.0\nassert _delta_output == '4.0\\n'\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "A ray has D = (1, 2, 2) and hits at s = 4. Its direction length is 3. Its x displacement is 4 and its Euclidean travel distance is 12: two measurements of the same hit.\n\n```python\nfrom math import sqrt\ndirection, s = (1, 2, 2), 4\nlength = sqrt(sum(component**2 for component in direction))\ndepth, distance = s * direction[0], s * length\nprint(depth, distance)\n# Hidden checks\nassert depth == 4 and distance == 12.0\nassert _delta_output == '4 12.0\\n'\n```\n\nReturn to [the connected PyTorch lesson](?lesson=raytracing.mesh-visibility) to implement this reasoning. ARENA 0.1 transfer: `raytrace_mesh`.",
+       "worked_example_code": "from math import sqrt\ndirection, s = (1, 2, 2), 4\nlength = sqrt(sum(component**2 for component in direction))\ndepth, distance = s * direction[0], s * length\nprint(depth, distance)\n# Hidden checks\nassert depth == 4 and distance == 12.0\nassert _delta_output == '4 12.0\\n'\n",
+       "faded_items": [
+        {
+         "question_id": 50026,
+         "prompt": "One ray has candidate s = [\u22121, 5, 2, 0.5]. The first three pairs are nonsingular and inside their triangles; the last is outside its triangle. Which hit is visible?",
+         "starter_code": "",
+         "solution": ""
+        },
+        {
+         "question_id": 50027,
+         "prompt": "D = (2, 3, 6), s = 2. What is the Euclidean distance from O to O + sD?",
+         "starter_code": "",
+         "solution": ""
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 50026,
+       "prompt": "One ray has candidate s = [\u22121, 5, 2, 0.5]. The first three pairs are nonsingular and inside their triangles; the last is outside its triangle. Which hit is visible?",
+       "starter_code": "",
+       "solution": ""
+      },
+      {
+       "question_id": 50027,
+       "prompt": "D = (2, 3, 6), s = 2. What is the Euclidean distance from O to O + sD?",
+       "starter_code": "",
+       "solution": ""
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50028,
+       "prompt": "O = (3, 0, 0), D = (2, 0, 0), s = 4. Which pair is (x displacement, world x-coordinate)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50029,
+       "prompt": "A ray misses every triangle. Miss candidates become +\u221e before taking the minimum. What results?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 50030,
+       "prompt": "Ray A has \u2016D_A\u2016 = 10, s_A = 1. Ray B has \u2016D_B\u2016 = 1, s_B = 3. Which hit is closer to its own origin?"
+      },
+      {
+       "question_id": 50031,
+       "prompt": "D = (1, 0, 0) hits at s = 8. Replace D with D\u2032 = (4, 0, 0), keeping O and the surface fixed. What are the new parameter and distance?"
+      }
+     ],
+     "independent_items": [
+      50028,
+      50029
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    }
+   ]
+  },
+  {
    "id": "py-0",
    "topic": "Python",
    "title": "Python you need first",

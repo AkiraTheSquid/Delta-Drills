@@ -342,8 +342,23 @@ def check_math_kp(kp: dict, path: Path, bank: dict, errors: list[str]) -> None:
     if not problems_path.exists():
         errors.append(f"{name}: kind: math but no {problems_path.name} beside it")
     text = path.read_text(encoding="utf-8")
-    if _RUNNABLE_FENCE.search(text):
-        errors.append(f"{name}: a math page has no kernel — use ```python no-run for illustrative code")
+    # Optional demonstrations use the existing lesson runner, while answers
+    # remain MC selections. Apply the same executed-assertion contract as code KPs.
+    from checks import run_checked
+    import textwrap
+    for si, segment in enumerate(kp["segments"]):
+        namespace = {}
+        for part in ("concept", "worked"):
+            cells = re.findall(r"^[ \t]*```python[ \t]*\n(.*?)^[ \t]*```[ \t]*$",
+                               segment[part], re.M | re.S)
+            for ci, source in enumerate(cells):
+                try:
+                    source = textwrap.dedent(source)
+                    run_checked(source, namespace)
+                    if part == "worked":
+                        run_checked(source)  # Worked examples also stand alone.
+                except Exception as exc:
+                    errors.append(f"{name}: segment {si + 1} {part} cell {ci + 1}: {exc}")
     for si, seg in enumerate(kp["segments"]):
         seg_label = f"segment {si + 1}" + (f" ({seg['title']})" if seg["title"] else "")
         if not seg["concept"].strip():

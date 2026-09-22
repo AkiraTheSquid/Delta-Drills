@@ -1,0 +1,179 @@
+{
+  "kc": "math.ray-distance",
+  "problems": [
+    {
+      "id": 50026,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "One ray has candidate s = [−1, 5, 2, 0.5]. The first three pairs are nonsingular and inside their triangles; the last is outside its triangle. Which hit is visible?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "s = −1"
+        },
+        {
+          "key": "B",
+          "text": "s = 0.5"
+        },
+        {
+          "key": "C",
+          "text": "s = 5"
+        },
+        {
+          "key": "D",
+          "text": "s = 2"
+        }
+      ],
+      "answer": "D",
+      "solution": "Filter backward and outside crossings, then take the minimum.\n\n- A: The negative parameter is behind the origin.\n- B: This plane crossing is outside its triangle.\n- C: A closer valid forward hit exists at s = 2."
+    },
+    {
+      "id": 50027,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "D = (2, 3, 6), s = 2. What is the Euclidean distance from O to O + sD?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "2",
+          "value": "2"
+        },
+        {
+          "key": "B",
+          "text": "4",
+          "value": "4"
+        },
+        {
+          "key": "C",
+          "text": "14",
+          "value": "14"
+        },
+        {
+          "key": "D",
+          "text": "7",
+          "value": "7"
+        }
+      ],
+      "answer": "C",
+      "solution": "‖D‖ = √(4 + 9 + 36) = 7; distance = 2·7 = 14.\n\n- A: s is distance only for a unit direction.\n- B: 4 is x displacement sDₓ.\n- D: 7 is direction length; multiply by s.",
+      "verify": {
+        "sympy": {
+          "truth": "2*sqrt(2**2+3**2+6**2)"
+        }
+      }
+    },
+    {
+      "id": 50028,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "O = (3, 0, 0), D = (2, 0, 0), s = 4. Which pair is (x displacement, world x-coordinate)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(8, 11)",
+          "value": "Matrix([8,11])"
+        },
+        {
+          "key": "B",
+          "text": "(4, 7)",
+          "value": "Matrix([4,7])"
+        },
+        {
+          "key": "C",
+          "text": "(11, 8)",
+          "value": "Matrix([11,8])"
+        },
+        {
+          "key": "D",
+          "text": "(8, 8)",
+          "value": "Matrix([8,8])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Displacement is sDₓ = 8; position adds Oₓ = 3.\n\n- B: The x speed is 2, not 1.\n- C: This reverses displacement and position.\n- D: Position must include the nonzero origin.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([4*2,3+4*2])"
+        }
+      }
+    },
+    {
+      "id": 50029,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "A ray misses every triangle. Miss candidates become +∞ before taking the minimum. What results?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "−∞"
+        },
+        {
+          "key": "C",
+          "text": "+∞"
+        },
+        {
+          "key": "D",
+          "text": "Distance to the first triangle's plane"
+        }
+      ],
+      "answer": "C",
+      "solution": "The sentinel preserves that there is no visible hit.\n\n- A: Zero falsely reports a hit at the origin.\n- B: A minimum of positive infinities stays positive infinity.\n- D: A crossing outside its triangle remains a miss."
+    },
+    {
+      "id": 50030,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "Ray A has ‖D_A‖ = 10, s_A = 1. Ray B has ‖D_B‖ = 1, s_B = 3. Which hit is closer to its own origin?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "A, because 1 < 3."
+        },
+        {
+          "key": "B",
+          "text": "B, because its distance is 3 versus A's 10."
+        },
+        {
+          "key": "C",
+          "text": "Both are equally close."
+        },
+        {
+          "key": "D",
+          "text": "Only determinant signs determine this."
+        }
+      ],
+      "answer": "B",
+      "solution": "Multiply each parameter by its own direction length.\n\n- A: Parameters cannot be compared across differently scaled directions.\n- C: Their distances are 10 and 3.\n- D: Determinant signs do not measure distance."
+    },
+    {
+      "id": 50031,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "D = (1, 0, 0) hits at s = 8. Replace D with D′ = (4, 0, 0), keeping O and the surface fixed. What are the new parameter and distance?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "s′ = 8; distance = 32"
+        },
+        {
+          "key": "B",
+          "text": "s′ = 32; distance = 8"
+        },
+        {
+          "key": "C",
+          "text": "s′ = 2; distance = 2"
+        },
+        {
+          "key": "D",
+          "text": "s′ = 2; distance = 8"
+        }
+      ],
+      "answer": "D",
+      "solution": "s′D′ reaches the same point; s′‖D′‖ = 8.\n\n- A: The same surface requires a smaller parameter.\n- B: Parameter scales inversely with direction.\n- C: The parameter is not the distance."
+    }
+  ]
+}

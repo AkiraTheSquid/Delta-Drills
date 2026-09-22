@@ -4,6 +4,7 @@
  "version": "1.1.0",
  "description": "Re-extracted 2026-06-02: prereq+encompassing edges over the 207 DRILLABLE atoms only (atoms with a problem_link). 5-agent fan-out, dependent-owned edges, strict encompassing prior (is-a/part-of/refines only). Replaces the disjoint-vocabulary iter-5 graph for mastery propagation. [2026-07-08: +57 question-bank atoms wired in with prereq edges; untrainable gating prereqs rewritten/demoted; intentional_root_atoms added.] [2026-08-30: the content cut retired every question that trained as-strided-windowing and inf-masking, so both are NON_GATING now; conv-output-shape and stride-zero-broadcast had no other prerequisite and are declared intentional roots rather than left silently ungated.] [2026-09-14: +7 ARENA 0.2 atoms (sequential-chain, resnet34-assembly, copy-weights-by-position, freeze-and-replace-head, forward-hook-register, nan-hook-check, training-loop-epoch) with prereq/encompassing edges for q1374-1470.]",
  "concepts": [
+  {"id": "ray-distance-depth", "title": "Ray parameter, depth, and Euclidean distance", "topic": "Mathematics", "subtopic": "ARENA 0.1", "node_type": "concept", "kind": "skill", "tier": "core", "description": "Use s times the direction norm for distance; mask invalid hits before choosing the minimum forward parameter.", "tags": ["drill-atom", "part1"]},
   {
    "id": "1x1-conv-channel-reshape",
    "title": "prove 1x1 Conv2d equals per-pixel Linear",
@@ -3704,6 +3705,7 @@
   }
  ],
  "prerequisite_edges": [
+  {"prerequisite_id": "ray-parametric-form", "dependent_id": "ray-distance-depth", "weight": 1.0, "confidence": 1.0, "is_hard_gate": true, "is_encompassing": false, "propagation_weight": 0.0, "rationale": "Distance is derived from the displacement sD; reading a distance does not demonstrate every ray construction skill."},
   {
    "prerequisite_id": "einops-reduce",
    "dependent_id": "any-reduce-axis",

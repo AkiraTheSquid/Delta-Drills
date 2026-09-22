@@ -3,6 +3,14 @@
   "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
+      "id": "ma-01",
+      "title": "Math for ARENA 0.1",
+      "topic": "Mathematics",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "file": "ma-01-math-for-arena-0-1.ipynb",
+      "problems": 0
+    },
+    {
       "id": "py-0",
       "title": "Python you need first",
       "topic": "Python",
@@ -16,7 +24,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-tensors-from-the-ground-up.ipynb",
-      "problems": 247
+      "problems": 279
     },
     {
       "id": "np-2",
@@ -24,7 +32,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Indexing and selection",
       "file": "np-2-indexing-and-selection.ipynb",
-      "problems": 19
+      "problems": 24
     },
     {
       "id": "np-3",
@@ -32,7 +40,7 @@
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 57
+      "problems": 68
     },
     {
       "id": "eo-1",
@@ -40,7 +48,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 66
+      "problems": 70
     },
     {
       "id": "eo-2",
@@ -48,7 +56,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Reduce",
       "file": "eo-2-reduce.ipynb",
-      "problems": 15
+      "problems": 21
     },
     {
       "id": "eo-3",
@@ -56,7 +64,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
-      "problems": 28
+      "problems": 35
     },
     {
       "id": "tr-1",
@@ -64,7 +72,7 @@
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: Rays as tensors",
       "file": "tr-1-rays-as-tensors--arena-0-1.ipynb",
-      "problems": 32
+      "problems": 40
     },
     {
       "id": "es-1",
@@ -72,7 +80,7 @@
       "topic": "Einops",
       "subtopic_key": "Einops: Einsum",
       "file": "es-1-einsum.ipynb",
-      "problems": 20
+      "problems": 26
     },
     {
       "id": "ar-00",
@@ -80,7 +88,7 @@
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-00",
       "file": "ar-00-arena-0-0---tensor-reasoning.ipynb",
-      "problems": 92
+      "problems": 93
     },
     {
       "id": "ar-01",
@@ -88,7 +96,7 @@
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-01",
       "file": "ar-01-arena-0-1---geometry-and-rendering.ipynb",
-      "problems": 65
+      "problems": 67
     },
     {
       "id": "ar-02",
@@ -457,6 +465,38 @@
     "1504": "np-1",
     "1524": "np-1",
     "1525": "np-1",
+    "1538": "np-1",
+    "1539": "np-1",
+    "1540": "np-1",
+    "1541": "np-1",
+    "1542": "np-1",
+    "1545": "np-1",
+    "1546": "np-1",
+    "1547": "np-1",
+    "1548": "np-1",
+    "1563": "np-1",
+    "1564": "np-1",
+    "1571": "np-1",
+    "1572": "np-1",
+    "1573": "np-1",
+    "1574": "np-1",
+    "1586": "np-1",
+    "1587": "np-1",
+    "1588": "np-1",
+    "1590": "np-1",
+    "1591": "np-1",
+    "1593": "np-1",
+    "1594": "np-1",
+    "1595": "np-1",
+    "1596": "np-1",
+    "1650": "np-1",
+    "1651": "np-1",
+    "1722": "np-1",
+    "1723": "np-1",
+    "1724": "np-1",
+    "1725": "np-1",
+    "1726": "np-1",
+    "1727": "np-1",
     "1": "np-2",
     "12": "np-2",
     "24": "np-2",
@@ -476,6 +516,11 @@
     "1512": "np-2",
     "1513": "np-2",
     "1514": "np-2",
+    "1567": "np-2",
+    "1568": "np-2",
+    "1576": "np-2",
+    "1577": "np-2",
+    "1578": "np-2",
     "37": "np-3",
     "84": "np-3",
     "89": "np-3",
@@ -533,6 +578,17 @@
     "1482": "np-3",
     "1517": "np-3",
     "1518": "np-3",
+    "1530": "np-3",
+    "1531": "np-3",
+    "1532": "np-3",
+    "1533": "np-3",
+    "1534": "np-3",
+    "1581": "np-3",
+    "1582": "np-3",
+    "1583": "np-3",
+    "1645": "np-3",
+    "1646": "np-3",
+    "1647": "np-3",
     "313": "eo-1",
     "314": "eo-1",
     "315": "eo-1",
@@ -599,6 +655,10 @@
     "942": "eo-1",
     "943": "eo-1",
     "944": "eo-1",
+    "1624": "eo-1",
+    "1625": "eo-1",
+    "1642": "eo-1",
+    "1643": "eo-1",
     "324": "eo-2",
     "325": "eo-2",
     "326": "eo-2",
@@ -614,6 +674,12 @@
     "377": "eo-2",
     "399": "eo-2",
     "402": "eo-2",
+    "1634": "eo-2",
+    "1638": "eo-2",
+    "1639": "eo-2",
+    "1640": "eo-2",
+    "1641": "eo-2",
+    "1653": "eo-2",
     "316": "eo-3",
     "317": "eo-3",
     "338": "eo-3",
@@ -642,6 +708,13 @@
     "896": "eo-3",
     "901": "eo-3",
     "902": "eo-3",
+    "1609": "eo-3",
+    "1610": "eo-3",
+    "1611": "eo-3",
+    "1612": "eo-3",
+    "1613": "eo-3",
+    "1618": "eo-3",
+    "1619": "eo-3",
     "798": "tr-1",
     "799": "tr-1",
     "800": "tr-1",
@@ -674,6 +747,14 @@
     "836": "tr-1",
     "837": "tr-1",
     "838": "tr-1",
+    "1598": "tr-1",
+    "1599": "tr-1",
+    "1601": "tr-1",
+    "1602": "tr-1",
+    "1604": "tr-1",
+    "1605": "tr-1",
+    "1607": "tr-1",
+    "1608": "tr-1",
     "847": "es-1",
     "848": "es-1",
     "849": "es-1",
@@ -694,6 +775,12 @@
     "879": "es-1",
     "880": "es-1",
     "884": "es-1",
+    "1555": "es-1",
+    "1556": "es-1",
+    "1557": "es-1",
+    "1558": "es-1",
+    "1559": "es-1",
+    "1560": "es-1",
     "103": "ar-00",
     "993": "ar-00",
     "994": "ar-00",
@@ -786,6 +873,7 @@
     "1291": "ar-00",
     "1292": "ar-00",
     "1293": "ar-00",
+    "1728": "ar-00",
     "1089": "ar-01",
     "1090": "ar-01",
     "1091": "ar-01",
@@ -851,6 +939,8 @@
     "1163": "ar-01",
     "1164": "ar-01",
     "1165": "ar-01",
+    "1729": "ar-01",
+    "1730": "ar-01",
     "405": "ar-02",
     "406": "ar-02",
     "408": "ar-02",
@@ -1043,6 +1133,7 @@
     "1467": "ar-02"
   },
   "subtopics": {
+    "Mathematics: ARENA 0.1": "ma-01",
     "Python: Getting started": "py-0",
     "Numpy: Core array literacy": "np-1",
     "Numpy: Indexing and selection": "np-2",
@@ -1057,6 +1148,11 @@
     "PyTorch: ar-02": "ar-02"
   },
   "kcs": {
+    "math.ray-geometry": "ma-01",
+    "math.intersection-systems": "ma-01",
+    "math.singular-systems": "ma-01",
+    "math.barycentric-coordinates": "ma-01",
+    "math.ray-distance": "ma-01",
     "python.values-and-names": "py-0",
     "python.types-and-conversion": "py-0",
     "python.lists-and-tuples": "py-0",
@@ -1101,6 +1197,7 @@
     "raytracing.ray-parametrisation": "tr-1",
     "raytracing.make-rays-1d": "tr-1",
     "einops.einsum": "es-1",
+    "einops.attention-einsum": "es-1",
     "tensor.row-normalization": "ar-00",
     "tensor.cosine-similarity": "ar-00",
     "tensor.indexed-selection": "ar-00",
@@ -1130,6 +1227,11 @@
     "cnn.forward-hooks": "ar-02"
   },
   "kps": {
+    "math.ray-geometry": "dd-kp-math-ray-geometry",
+    "math.intersection-systems": "dd-kp-math-intersection-systems",
+    "math.singular-systems": "dd-kp-math-singular-systems",
+    "math.barycentric-coordinates": "dd-kp-math-barycentric-coordinates",
+    "math.ray-distance": "dd-kp-math-ray-distance",
     "python.values-and-names": "dd-kp-python-values-and-names",
     "python.types-and-conversion": "dd-kp-python-types-and-conversion",
     "python.lists-and-tuples": "dd-kp-python-lists-and-tuples",
@@ -1174,6 +1276,7 @@
     "raytracing.ray-parametrisation": "dd-kp-raytracing-ray-parametrisation",
     "raytracing.make-rays-1d": "dd-kp-raytracing-make-rays-1d",
     "einops.einsum": "dd-kp-einops-einsum",
+    "einops.attention-einsum": "dd-kp-einops-attention-einsum",
     "tensor.row-normalization": "dd-kp-tensor-row-normalization",
     "tensor.cosine-similarity": "dd-kp-tensor-cosine-similarity",
     "tensor.indexed-selection": "dd-kp-tensor-indexed-selection",
@@ -1203,6 +1306,8 @@
     "cnn.forward-hooks": "dd-kp-cnn-forward-hooks"
   },
   "segments": {
+    "math.barycentric-coordinates#weights": "dd-seg-math-barycentric-coordinates-0",
+    "math.barycentric-coordinates#three-unknowns": "dd-seg-math-barycentric-coordinates-1",
     "torch.tensor-model#s0-a-tensor-is-one-block-of-one-type": "dd-seg-torch-tensor-model-0",
     "torch.tensor-model#s1-nesting-becomes-axes-shape-ndim-numel": "dd-seg-torch-tensor-model-1",
     "torch.tensor-model#s2-dtype-is-a-property-of-the-whole-block": "dd-seg-torch-tensor-model-2",
@@ -1261,6 +1366,8 @@
     "einops.einsum#two-operands": "dd-seg-einops-einsum-1",
     "einops.einsum#repeated-names": "dd-seg-einops-einsum-2",
     "einops.einsum#batch-axes": "dd-seg-einops-einsum-3",
+    "einops.attention-einsum#named-axes-at-rank": "dd-seg-einops-attention-einsum-0",
+    "einops.attention-einsum#per-head-weights-and-ellipsis": "dd-seg-einops-attention-einsum-1",
     "tensor.row-normalization#row-length": "dd-seg-tensor-row-normalization-0",
     "tensor.row-normalization#unit-rows": "dd-seg-tensor-row-normalization-1",
     "tensor.cosine-similarity#alignment": "dd-seg-tensor-cosine-similarity-0",

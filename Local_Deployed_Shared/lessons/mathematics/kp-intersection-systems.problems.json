@@ -1,0 +1,188 @@
+{
+  "kc": "math.intersection-systems",
+  "problems": [
+    {
+      "id": 50006,
+      "kind": "derivation-step",
+      "difficulty": 25,
+      "prompt": "O = (2, 1), D = (1, 2), A = (6, 0), B = (6, 4). For unknowns [u, v], choose M in M[u, v] = A − O. Matrices are written as rows.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[[1, 0], [2, −4]]",
+          "value": "Matrix([[1,0],[2,-4]])"
+        },
+        {
+          "key": "B",
+          "text": "[[1, 2], [0, −4]]",
+          "value": "Matrix([[1,2],[0,-4]])"
+        },
+        {
+          "key": "C",
+          "text": "[[1, 0], [2, 4]]",
+          "value": "Matrix([[1,0],[2,4]])"
+        },
+        {
+          "key": "D",
+          "text": "[[−1, 0], [−2, −4]]",
+          "value": "Matrix([[-1,0],[-2,-4]])"
+        }
+      ],
+      "answer": "A",
+      "solution": "The columns are D = (1, 2) and A − B = (0, −4).\n\n- B: This puts direction vectors into rows.\n- C: The segment term changes sign when moved left.\n- D: Negating only the ray column changes the meaning of u.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix.hstack(Matrix([1,2]),Matrix([6,0])-Matrix([6,4]))"
+        }
+      }
+    },
+    {
+      "id": 50007,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "O = (−2, 3), A = (4, 1). What is b in [D, A − B][u, v] = b?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(4, 1)",
+          "value": "Matrix([4,1])"
+        },
+        {
+          "key": "B",
+          "text": "(−6, 2)",
+          "value": "Matrix([-6,2])"
+        },
+        {
+          "key": "C",
+          "text": "(2, 4)",
+          "value": "Matrix([2,4])"
+        },
+        {
+          "key": "D",
+          "text": "(6, −2)",
+          "value": "Matrix([6,-2])"
+        }
+      ],
+      "answer": "D",
+      "solution": "A − O = (6, −2).\n\n- A: Using A alone assumes O = 0.\n- B: This is O − A; these columns require A − O.\n- C: This adds the points.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([4,1])-Matrix([-2,3])"
+        }
+      }
+    },
+    {
+      "id": 50008,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "O = (0, 1), D = (2, 0), A = (6, −1), B = (6, 3). Which [u, v] describes the crossing of O + uD and A + v(B − A)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "[6, 0.5]",
+          "value": "Matrix([6,Rational(1,2)])"
+        },
+        {
+          "key": "B",
+          "text": "[3, 0.5]",
+          "value": "Matrix([3,Rational(1,2)])"
+        },
+        {
+          "key": "C",
+          "text": "[3, 2]",
+          "value": "Matrix([3,2])"
+        },
+        {
+          "key": "D",
+          "text": "[−3, 0.5]",
+          "value": "Matrix([-3,Rational(1,2)])"
+        }
+      ],
+      "answer": "B",
+      "solution": "2u = 6 and −1 + 4v = 1 give [3, 0.5].\n\n- A: The ray moves two x-units per unit u.\n- C: v = 2 overshoots the segment.\n- D: The forward crossing requires positive u.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,0],[0,-4]]).inv()*(Matrix([6,-1])-Matrix([0,1]))"
+        }
+      }
+    },
+    {
+      "id": 50009,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "Three nonsingular pairs solve to [u, v] = [0, 1], [2, −0.1], [−1, 0.5]. Which are ray–segment hits, with endpoints included?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Only the second"
+        },
+        {
+          "key": "B",
+          "text": "First and third"
+        },
+        {
+          "key": "C",
+          "text": "Only the first"
+        },
+        {
+          "key": "D",
+          "text": "All three"
+        }
+      ],
+      "answer": "C",
+      "solution": "u = 0 and v = 1 are valid boundaries; the others violate a bound.\n\n- A: The second has v < 0.\n- B: The third is behind the ray origin.\n- D: Unique line crossings need not belong to both objects."
+    },
+    {
+      "id": 50010,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "A nonsingular system solves to [u, v] = [2, 1.4], with residual M[u, v] − b = (0, 0). What follows?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The ray hits the segment."
+        },
+        {
+          "key": "B",
+          "text": "The supporting lines meet, but the crossing is beyond B."
+        },
+        {
+          "key": "C",
+          "text": "The matrix must be singular."
+        },
+        {
+          "key": "D",
+          "text": "The ray points backward."
+        }
+      ],
+      "answer": "B",
+      "solution": "Zero residual verifies the equations; v = 1.4 excludes segment membership.\n\n- A: The segment bound v ≤ 1 fails.\n- C: A nonsingular solution can lie outside the bounds.\n- D: u = 2 is forward; the segment bound failed."
+    },
+    {
+      "id": 50011,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "O = (1, 1), D = (2, −1), A = (5, −2), B = (5, 2). Does the ray hit the segment, and where?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "No; the direction has a negative component."
+        },
+        {
+          "key": "B",
+          "text": "Yes, at (5, 1)."
+        },
+        {
+          "key": "C",
+          "text": "No; it crosses behind the origin."
+        },
+        {
+          "key": "D",
+          "text": "Yes, at (5, −1)."
+        }
+      ],
+      "answer": "D",
+      "solution": "u = 2 gives (5, −1); v = 1/4 lies in [0, 1].\n\n- A: Negative direction components are allowed.\n- B: At x = 5, u = 2 changes y to −1.\n- C: u = 2 is nonnegative."
+    }
+  ]
+}

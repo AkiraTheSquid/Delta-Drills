@@ -4,6 +4,14 @@ window.DD_NOTEBOOKS = {
   "dir": "arena-book-colab/ARENA_5.0/ch-1-foundations",
   "lessons": [
     {
+      "id": "ma-01",
+      "title": "Math for ARENA 0.1",
+      "topic": "Mathematics",
+      "subtopic_key": "Mathematics: ARENA 0.1",
+      "file": "ma-01-math-for-arena-0-1.ipynb",
+      "problems": 0
+    },
+    {
       "id": "py-0",
       "title": "Python you need first",
       "topic": "Python",
@@ -17,7 +25,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Core array literacy",
       "file": "np-1-tensors-from-the-ground-up.ipynb",
-      "problems": 247
+      "problems": 279
     },
     {
       "id": "np-2",
@@ -25,7 +33,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Indexing and selection",
       "file": "np-2-indexing-and-selection.ipynb",
-      "problems": 19
+      "problems": 24
     },
     {
       "id": "np-3",
@@ -33,7 +41,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Numpy",
       "subtopic_key": "Numpy: Vectorization and broadcasting",
       "file": "np-3-vectorization-and-broadcasting.ipynb",
-      "problems": 57
+      "problems": 68
     },
     {
       "id": "eo-1",
@@ -41,7 +49,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Rearrange",
       "file": "eo-1-rearrange.ipynb",
-      "problems": 66
+      "problems": 70
     },
     {
       "id": "eo-2",
@@ -49,7 +57,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Reduce",
       "file": "eo-2-reduce.ipynb",
-      "problems": 15
+      "problems": 21
     },
     {
       "id": "eo-3",
@@ -57,7 +65,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Deep Learning",
       "file": "eo-3-repeat-and-deep-learning-patterns.ipynb",
-      "problems": 28
+      "problems": 35
     },
     {
       "id": "tr-1",
@@ -65,7 +73,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: Rays as tensors",
       "file": "tr-1-rays-as-tensors--arena-0-1.ipynb",
-      "problems": 32
+      "problems": 40
     },
     {
       "id": "es-1",
@@ -73,7 +81,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Einsum",
       "file": "es-1-einsum.ipynb",
-      "problems": 20
+      "problems": 26
     },
     {
       "id": "ar-00",
@@ -81,7 +89,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-00",
       "file": "ar-00-arena-0-0---tensor-reasoning.ipynb",
-      "problems": 92
+      "problems": 93
     },
     {
       "id": "ar-01",
@@ -89,7 +97,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-01",
       "file": "ar-01-arena-0-1---geometry-and-rendering.ipynb",
-      "problems": 65
+      "problems": 67
     },
     {
       "id": "ar-02",
@@ -101,6 +109,7 @@ window.DD_NOTEBOOKS = {
     }
   ],
   "subtopics": {
+    "Mathematics: ARENA 0.1": "ma-01",
     "Python: Getting started": "py-0",
     "Numpy: Core array literacy": "np-1",
     "Numpy: Indexing and selection": "np-2",

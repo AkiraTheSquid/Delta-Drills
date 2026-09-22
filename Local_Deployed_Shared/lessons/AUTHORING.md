@@ -335,21 +335,23 @@ below is the part of that rubric that predates it.
 
 ## Math pages — read, solve on paper, pick a choice (2026-09-21)
 
-A `kind: math` page is a lesson the learner READS (markdown + LaTeX, no
-kernel) whose drills are multiple-choice problems worked on paper. Same four
+A `kind: math` page teaches with markdown + LaTeX and optional runnable
+demonstrations; its drills are multiple-choice problems worked on paper. Same four
 stages, same rungs, same graph — `math.*` KCs sit beside the coding ones so a
 coding KC can list a math prerequisite. Spec: `docs/spec-math-mc-backbone.md`;
-lane README: `lessons/mathematics/README.md`. Software only so far: there is
-no page yet, and the reference shape is the fixture in
-`scripts/test_validate_math.py`.
+lane README: `lessons/mathematics/README.md`. Reference pages: the five
+`ma-01` pages in `lessons/mathematics/` (ARENA 0.1 math, 2026-09-21); the
+minimal fixture is in `scripts/test_validate_math.py`.
 
 **Two files per page**, both in `lessons/mathematics/`:
 
 - `kp-<slug>.md` — the frontmatter above plus `kind: math`. Sections are the
   same (`## Concept`, `## Watch out`, `## Worked example`, `## Solo practice`,
   `## Integrated practice`); every Concept and Worked example is prose with
-  `$…$` / `$$…$$` LaTeX, and any ```python fence is `no-run` (there is no
-  kernel to run it). `faded:` / `independent:` / `integrated:` list PROBLEM
+  `$…$` / `$$…$$` LaTeX. Optional ```python demonstrations reuse the lesson
+  runner and MUST pass `checks.run_checked`, including hidden assertions.
+  Use `python no-run` for illustration only. MCQ answers never execute code.
+  `faded:` / `independent:` / `integrated:` list PROBLEM
   ids, and the `### q<id>` items under the practice sections must match them
   exactly, like a code page. A page with 2+ segments still needs one
   `## Faded practice` item per segment (the segment gate's carrier), even
