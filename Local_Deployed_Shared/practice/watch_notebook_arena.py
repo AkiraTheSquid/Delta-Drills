@@ -2,9 +2,9 @@
 
 The contents tree is a plain Colab-style list (Seth, 2026-09-03) — the
 proportional LessWrong rail with its dots and progress line is gone, and
-these checks are what keep it gone. The reveal-zone check is here because
-that surface is invisible: it is a transparent strip that takes the mouse,
-so when it is measured wrong nothing LOOKS wrong.
+these checks are what keep it gone. Since 2026-09-22 it is also a DOCKED
+pane with a draggable divider, and the notebook fills everything to its
+right; the hover overlay and the transparent strip that revealed it are gone.
 """
 
 import os
@@ -42,17 +42,15 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
             f"the retired LessWrong rail primitive {retired!r} returned"
         )
 
-    # Whole left gutter reveals one ordinary tree panel. JS measures the prose
-    # edge because a hard-coded strip fails as viewport width changes.
-    assert 'getBoundingClientRect().left' in nav and '--anb-gutter' in nav, (
-        "the contents reveal zone no longer reaches the prose column's live left edge"
-    )
-    assert ".anb-toc-hit" in css and "inset: 0" in css, (
-        "the hover target no longer fills the whole gutter"
-    )
-    assert ".anb-toc.is-hover .anb-toc-panel" in css, (
-        "hovering the left gutter no longer reveals the contents tree"
-    )
+    # 🪦 The hover overlay is gone (Seth, 2026-09-22: "it won't have the
+    # hover effect anymore where it hides itself until you hover your cursor
+    # over it"). Its transparent reveal strip is the thing that once sat over
+    # every Run button, so it must not come back by accident.
+    for retired in ("anb-toc-hit", "is-hover", "--anb-gutter", "anb-toc-toggle"):
+        assert retired not in nav and retired not in css, (
+            f"the hover-to-reveal contents overlay is back ({retired!r}) — the "
+            "pane is docked and always shown"
+        )
     assert "overflow-y: auto" in css, "long notebook trees no longer scroll"
 
     # Current location: blue wash, blue label, bold. Completed sections: green
@@ -166,122 +164,95 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
         "the same zoom the reading column uses"
     )
 
-    # 🔴 EQUAL MARGINS. The column is centred and the tree lives INSIDE the
-    # left one — Seth, 2026-09-03: "the left sidebar is part of what I counted
-    # as the margin". Reserving the tree's width as page padding is what broke
-    # this the first time: it shoved the reading against the right edge, ~440px
-    # of margin on one side and ~90px on the other. The panel takes the margin
-    # centring leaves (`clamp(320px, 100%, ...)`) rather than the page holding
-    # a strip open for it.
-    assert "padding-left: calc(20px + var(--anb-toc-w))" not in column, (
-        "the ARENA page reserves the contents tree's width as left padding "
-        "again — that un-centres the reading column, which is the one thing "
-        "about this layout Seth asked for by name"
-    )
-    # The panel is sized from that margin, minus the gap the column was nudged
-    # over by. Whitespace-insensitive because the declaration is multi-line.
-    # 🔑 `(?<!-)` or this matches the tail of `max-width:`, which is declared
-    # first in the same block — the check then read a value it was not about.
-    panel_w = re.search(
-        r"\.anb-toc-panel\s*\{[^}]*?(?<![-\w])width:\s*([^;]+);", css, re.S
-    )
-    assert panel_w, ".anb-toc-panel no longer declares a width"
-    flat = re.sub(r"\s+", "", panel_w.group(1))
-    assert flat == "clamp(320px,calc(100%-var(--anb-nudge,100px)),var(--anb-toc-w,340px))", (
-        "the contents panel no longer takes the centred column's margin less "
-        f"the nudge (found {flat!r}). `min()` there obeyed a 162px gap and "
-        "rendered a column of ellipses; taking the gutter WHOLE put the tree's "
-        "right edge on the same pixel as the prose's left edge"
-    )
-
-    # 🔴 BOTH HALVES OF THE GAP, OR NEITHER. The column moving right without
-    # the panel giving the space back just feeds the nudge to the tree.
-    assert "--anb-nudge:" in column and "padding-left: calc(2 * var(--anb-nudge))" in column, (
-        "the reading column no longer clears the contents tree by --anb-nudge "
-        "— the two edges met on the same pixel before this"
+    # 🪦 EQUAL MARGINS, `--anb-nudge` and the panel sized from the centred
+    # column's margin are all SUPERSEDED (Seth, 2026-09-22: "go with the collab
+    # format where the code and text take up all the space on the right").
+    # What replaced them is pinned in check_the_docked_contents_pane_never_
+    # covers_the_notebook below.
+    assert "--anb-nudge" not in column and "--anb-nudge" not in css, (
+        "the centred-column nudge is back — the notebook is the whole pane "
+        "right of the contents now, so there is nothing to nudge away from"
     )
 
 
-def check_the_contents_reveal_zone_never_covers_a_run_button():
-    """🔴 THE HOVER STRIP IS MEASURED TO THE LEFTMOST CELL, NOT THE COLUMN.
+def check_the_docked_contents_pane_never_covers_the_notebook():
+    """🔴 ONE WIDTH TOKEN, READ ON BOTH SIDES OF THE DIVIDER.
 
-    This is a real bug that shipped in the working tree and was caught only by
-    measuring the rendered page (Chrome, 2026-09-03, 1600px): `.anb-toc-hit`
-    was sized from `.nbv-cells`, whose left edge is 454px — but a code cell
-    BREAKS OUT to 880px and starts at 355px, so the strip lay on top of every
-    Run button on the page. `document.elementFromPoint` over a Run button
-    answered `.anb-toc-hit` and not one cell in the notebook could be run.
-
-    Nothing about that is visible: the strip is transparent, the buttons are
-    still painted, and the only symptom is that clicking does nothing. So the
-    shape of the measurement is pinned here rather than trusted.
+    Seth, 2026-09-22: the contents is a docked Colab pane, "you should be able
+    to drag the divider between the table of contents on the left and the code
+    on the right". The pane is `position: fixed`, so nothing in layout keeps
+    the notebook out from under it — only the container's margin does. Both
+    read `--anb-pane-w`, which the nav writes onto the PAGE (0px when folded
+    or narrow). If either side stops reading it, the pane lies over the first
+    few hundred pixels of every cell, Run buttons included, and nothing LOOKS
+    broken until you try to click one.
     """
     nav = _live(read(os.path.join(HERE, "arena-notebook-nav.js")))
-
-    body = nav[nav.index("const _measure = ()"):]
-    body = body[: body.index("\n  };")]
-
-    assert ".nbv-cell" in body and "Math.min(" in body, (
-        "_measure no longer walks the cells for the leftmost painted edge — a "
-        "gutter measured from `.nbv-cells` alone covers every breakout code "
-        "cell, and with it every Run button"
-    )
-    assert "getClientRects().length" in body, (
-        "_measure counts cells inside a closed <details>, which have no box and "
-        "measure 0 — that collapses the gutter to nothing"
-    )
-    # 🔴 A FLOOR IS THE SAME BUG AT A NARROWER WINDOW: it claims gutter the
-    # content is already using. Below 1180px the stylesheet drops the strip
-    # for the toggle button instead, which is the only correct answer there.
-    assert "Math.max(220" not in body, (
-        "_measure floors the gutter width again — a floor wider than the "
-        "content edge puts the strip back over the cells"
-    )
-
     css = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook-nav.css")), css=True)
-    # 🔴 THE FALLBACK BREAKPOINT IS WHERE THE PANEL STOPS FITTING IN THE
-    # MARGIN, not where it stops fitting on screen. At 1180px the 320px floor
-    # was wider than the margin below ~1410px, so the panel lay over the prose
-    # — and a Run button inside an open hover panel is unreachable, because
-    # moving toward it never fires mouseleave.
-    fallback = re.search(
-        r"@media \(max-width:\s*([\d.]+)px\)\s*\{(.*?)\n\}", css, re.S
+    column = _live(read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True)
+
+    toc = css[css.index(".anb-toc {"):]
+    toc = toc[: toc.index("}")]
+    assert "position: fixed" in toc and "var(--anb-pane-w" in toc, (
+        "the contents pane no longer takes its width from --anb-pane-w"
     )
-    assert fallback, "the narrow-window fallback media block is gone"
-    # 🔑 Scoped to the block. Searching the whole sheet for the rule passes
-    # even after the rule is moved OUT of the media query, which is the one
-    # way this fallback silently stops being a fallback.
-    assert ".anb-toc-hit { display: none; }" in fallback.group(2), (
-        "the hover strip is no longer dropped inside the narrow-window "
-        "fallback — with no room for a safe gutter it has to give way to the "
-        "toggle button"
+    container = column[column.index(".arena-notebooks-container {"):]
+    container = container[: container.index("}")]
+    assert "margin-left: var(--anb-pane-w" in container, (
+        "the notebook no longer steps right of the docked contents pane — the "
+        "pane now covers the start of every cell"
     )
-    # 🔴 THE TWO BREAKPOINTS ARE ONE BREAKPOINT. `max-width: 1499px` beside
-    # `min-width: 1500px` leaves 1499.5px matching NEITHER, and a viewport
-    # lands there under display scaling — hover panel live, column not moved,
-    # which is the overlap the fallback exists to prevent.
-    column = _live(
-        read(os.path.join(SHARED, "styles", "practice", "arena-notebook.css")), css=True
+    assert 'mountedPage.style.setProperty("--anb-pane-w"' in nav, (
+        "the nav no longer writes the pane width onto the page, so the "
+        "container's margin and the pane's width can disagree"
     )
-    nudge_at = re.search(r"@media \(min-width:\s*([\d.]+)px\)", column)
-    assert nudge_at, "the column's nudge is no longer bounded by a media query"
-    assert float(fallback.group(1)) < float(nudge_at.group(1)) <= float(fallback.group(1)) + 0.02, (
-        f"the contents fallback (max-width: {fallback.group(1)}px) and the "
-        f"column nudge (min-width: {nudge_at.group(1)}px) are not complements "
-        "— a fractional viewport between them matches neither, and there the "
-        "panel lies over the prose with the Run button underneath it"
+    assert 'removeProperty("--anb-pane-w")' in nav, (
+        "destroy() leaves the pane width on the page — a notebook with no "
+        "contents pane would keep a blank strip where it was"
+    )
+
+    # The divider drags, and the drag cannot be lost off the element.
+    assert "anb-toc-split" in nav and "cursor: col-resize" in css, (
+        "the contents pane lost its draggable divider"
+    )
+    assert "setPointerCapture" in nav and "pointercancel" in nav, (
+        "the divider drag no longer captures the pointer — a drag released "
+        "over the notebook leaves the pane stuck mid-resize"
+    )
+
+    # Frozen head: the notebook's name, the ⇕ chapter switch, the book.
+    for needle in ("anb-toc-name", "anb-toc-switch", "anb-toc-fold", "anb-toc-reopen"):
+        assert needle in nav, f"the contents pane's frozen head lost {needle!r}"
+    for needle in ("anb-toc-name", "anb-toc-switch", "anb-toc-reopen", ".is-folded"):
+        assert needle in css, f"the contents pane's head is no longer styled: {needle!r}"
+    assert "ArenaNotebook" in nav and ".sections()" in nav and "canOpen" in nav, (
+        "the ⇕ chapter list no longer reads the compiled ARENA index, or no "
+        "longer dims the sections the app cannot open"
+    )
+
+    # 🔴 NARROW = OVERLAY, and the two numbers are one number.
+    m = re.search(r"const NARROW = (\d+);", nav)
+    assert m, "the nav lost its NARROW breakpoint"
+    fallback = re.search(r"@media \(max-width:\s*([\d.]+)px\)", css)
+    assert fallback and int(m.group(1)) - 0.02 <= float(fallback.group(1)) < int(m.group(1)), (
+        "the stylesheet's narrow breakpoint no longer matches NARROW in "
+        "arena-notebook-nav.js — between them the pane docks with no room, "
+        "or overlays with the notebook still stepped aside for it"
+    )
+
+    # Focus mode hides the pane; the notebook must take its room back.
+    assert ".dd-nb-focus .arena-notebooks-container" in column, (
+        "focus mode hides the contents pane but leaves its empty strip"
     )
 
 
 def check_a_contents_row_can_actually_be_clicked():
-    """🔴 THE PANEL MUST OUT-PAINT THE STRIP THAT REVEALS IT.
+    """🔴 A ROW IS A BUTTON THAT SCROLLS THE DOCUMENT.
 
-    `.anb-toc-hit` is `position: absolute; inset: 0` and fills the whole
-    gutter. The panel it reveals is its SIBLING, so if the panel is left
-    `position: static` it paints BELOW the strip — source order does not save
-    it — and the strip eats every click on a row. Seth, 2026-09-03: "it's not
-    clickable such that when you click on one of the headings it takes you to
-    that part of the page."
+    Seth, 2026-09-03: "it's not clickable such that when you click on one of
+    the headings it takes you to that part of the page." Then it was a static
+    panel painting under the hover strip; the strip is gone (2026-09-22), but
+    the panel stays positioned — the divider is placed against it.
 
     Nothing about that is visible either: the tree renders, highlights and
     scrolls correctly, and only the jump is dead. So the stacking is pinned,
@@ -293,8 +264,8 @@ def check_a_contents_row_can_actually_be_clicked():
     panel = css[css.index(".anb-toc-panel {"):]
     panel = panel[: panel.index("}")]
     assert "position: relative" in panel or "position: absolute" in panel, (
-        ".anb-toc-panel is position: static again — it paints under "
-        ".anb-toc-hit, which swallows every click on a heading"
+        ".anb-toc-panel is position: static again — the divider is "
+        "absolutely placed against its right edge"
     )
 
     # The other half: a row is a real button that scrolls the document.

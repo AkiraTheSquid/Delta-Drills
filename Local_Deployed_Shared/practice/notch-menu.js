@@ -72,9 +72,33 @@
      controls. */
   function _pauseTarget() {
     if (_placementOnClock()) return _placementPauseBtn();
+    if (_lessonOnClock()) return _lessonPauseBtn();
     if (_sessionOpen()) return _pauseBtn();
     return _notebookOnClock() ? _notebookPauseBtn() : null;
   }
+
+  /* THE FOURTH CLOCK: a lesson page, on its own fifteen minutes
+     (practice/lesson-timer.js). Seth, 2026-09-22: "whenever you're on a
+     lesson, you need to have the ability to pause … the block button at the
+     top". It could not be done through `#session-pause-btn`, which is greyed
+     for the whole of a lesson — the gate runs between questions, so the
+     session is in its `loading` phase — and the square went grey with it.
+
+     It OUTRANKS the session, unlike the notebook's clock, because during a
+     lesson both are true at once: the session row is unhidden and its
+     countdown reads `--:--`, so ranking the session first showed a blank
+     clock over a page that very much has one running. The lesson's clock is
+     the one on screen, so it is the one the tab shows and the one the square
+     puts down.
+
+     `isLive`, not `isRunning`: a paused lesson keeps its time on the tab
+     rather than falling back to the session's blank, and the square then
+     offers to start it again — the button it proxies to has relabelled itself
+     "Resume reading". */
+  function _lessonOnClock() {
+    return window.LessonTimer?.isLive?.() === true;
+  }
+  const _lessonPauseBtn = () => document.getElementById("lesson-pause-btn");
 
   /* THE THIRD CLOCK: an ARENA notebook exercise on its own clock
      (practice/exercise-timer.js). Seth, 2026-09-11: "it should display the
@@ -157,6 +181,31 @@
       return;
     }
     clock.classList.remove("hidden");
+    if (_lessonOnClock()) {
+      /* The lesson's clock, copied — `dd-lesson-timer:tick` is what brings us
+         here, once a repaint, so the two cannot disagree. No review tint: a
+         lesson page has one phase. A PAUSED lesson keeps its number on the
+         tab and says so in words, because a frozen clock with no explanation
+         reads as a broken one. */
+      const L = window.LessonTimer;
+      const text = L.clockText();
+      if (clock.textContent !== text) clock.textContent = text;
+      clock.classList.remove("practice-notch-clock--review");
+      clock.classList.remove("practice-notch-clock--idle");
+      clock.classList.toggle("practice-notch-clock--low", L.isLow());
+      const lesson = L.activeLesson?.();
+      const name = lesson?.title || lesson?.kc || "this lesson";
+      const phaseText = L.isPaused()
+        ? `Paused — ${name}`
+        : `Reading ${name}`;
+      if (tab) {
+        tab.title = L.isPaused()
+          ? `${phaseText}. The rest of this page's fifteen minutes is kept.`
+          : `${phaseText}. At 0:00 this page moves you on, the same as pressing Continue.`;
+      }
+      if (srPhase && srPhase.textContent !== phaseText) srPhase.textContent = phaseText;
+      return;
+    }
     const notebook = !open && _notebookOnClock();
     clock.classList.toggle("practice-notch-clock--idle", !open && !notebook);
     if (notebook) {
@@ -221,7 +270,8 @@
   function _syncItems() {
     const open = _sessionOpen();
     const placement = _placementOnClock();
-    const notebook = !open && !placement && _notebookOnClock();
+    const lesson = !placement && _lessonOnClock();
+    const notebook = !open && !placement && !lesson && _notebookOnClock();
     const target = _pauseTarget();
     /* Refused for one of two reasons, and they are not the same: nothing to
        pause at all, or a question that is mid-grade. timer.js owns the second
@@ -258,6 +308,12 @@
         ? probeHeldBack
           ? "Pause becomes available when this placement question finishes."
           : "Nothing to pause — load the next placement question to carry on."
+      : lesson
+        ? window.LessonTimer?.isPaused?.()
+          ? "Start this lesson page's clock again where you left it."
+          : open
+            ? "Pause and save. You come back to this lesson page, on the time it has left."
+            : "Stop this lesson page's clock. Nothing else changes; the lesson stays open."
         : open && target
           ? target.title || ""
           : notebook
@@ -278,8 +334,11 @@
       stopBtn.disabled = refused;
       stopBtn.title = why;
     }
-    /* The note explains the idle clock; a placement or a notebook clock is not idle. */
-    if (note) note.classList.toggle("hidden", open || placement || notebook);
+    /* The note explains the idle clock; a placement, a lesson or a notebook
+       clock is not idle. The lesson is the one of the three that can be live
+       with no session behind it (`?lesson=<kc>`), so without it here the menu
+       said "No session running." under a lesson clock that was counting. */
+    if (note) note.classList.toggle("hidden", open || placement || lesson || notebook);
   }
 
   function _open() {
@@ -389,6 +448,17 @@
      #session-status-row, so the observer above never sees them. */
   document.addEventListener("dd-exercise-timer:tick", _syncClock);
   document.addEventListener("dd-exercise-timer:change", () => {
+    _syncClock();
+    _syncItems();
+  });
+
+  /* The lesson clock's announcements, same contract as the notebook's above:
+     `:tick` once a repaint (the mirror's only source of the text), `:change`
+     at start / pause / resume / stop (the square's tooltip, and whether there
+     is a lesson clock to show at all). A lesson opens and closes without
+     touching #session-status-row, so the observer never sees it. */
+  document.addEventListener("dd-lesson-timer:tick", _syncClock);
+  document.addEventListener("dd-lesson-timer:change", () => {
     _syncClock();
     _syncItems();
   });

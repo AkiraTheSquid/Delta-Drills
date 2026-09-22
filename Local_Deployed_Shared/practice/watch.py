@@ -44,7 +44,7 @@ from watch_example_gate import check_no_worked_example_is_attached_to_a_drill
 from watch_notebook_arena import (
     check_the_arena_contents_tree_is_a_plain_colab_tree,
     check_arena_setup_recovers_without_replaying_answers,
-    check_the_contents_reveal_zone_never_covers_a_run_button,
+    check_the_docked_contents_pane_never_covers_the_notebook,
     check_a_contents_row_can_actually_be_clicked,
     check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
     check_code_on_the_arena_page_is_set_at_the_prose_size,
@@ -66,6 +66,7 @@ from watch_notebook import (
     check_the_verdict_line_is_read_the_same_way_everywhere,
 )
 from watch_lessons import (
+    check_a_lesson_page_is_on_a_clock_you_can_pause,
     check_a_resumed_clock_matches_the_break,
     check_colab_lesson_goes_to_the_notebook,
     check_lesson_code_can_actually_run,
@@ -646,6 +647,7 @@ if __name__ == '__main__':
               check_a_resumed_clock_matches_the_break,
               check_the_clock_is_the_problems_own,
               check_the_gate_teaches_one_concept_then_drills_it,
+              check_a_lesson_page_is_on_a_clock_you_can_pause,
               check_the_fifth_rung_is_shown_not_stored,
               check_the_notebook_kernel_has_a_fallback,
               check_no_cell_asks_for_more_time_than_the_kernel_allows,
@@ -653,7 +655,7 @@ if __name__ == '__main__':
               check_the_arena_notebook_keeps_its_rail_and_its_place,
               check_the_notebook_remembers_what_you_ran_and_where_you_were,
               check_the_arena_contents_tree_is_a_plain_colab_tree,
-              check_the_contents_reveal_zone_never_covers_a_run_button,
+              check_the_docked_contents_pane_never_covers_the_notebook,
               check_a_contents_row_can_actually_be_clicked,
               check_the_notebook_editor_never_writes_text_the_learner_did_not_type,
               check_code_on_the_arena_page_is_set_at_the_prose_size,
