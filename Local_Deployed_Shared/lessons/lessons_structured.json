@@ -442,6 +442,36 @@
        "question_id": 50053,
        "prompt": "For M with rows (2, 1), (1, \u22121), candidate x = (1, 2), and b = (5, 1), find the residual Mx \u2212 b.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50104,
+       "prompt": "M has rows (2, \u22121, 0) and (1, 3, 2). Find Mx for x = (1, 2, \u22121).",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50105,
+       "prompt": "Rewrite 2u = 3v + 4 and v \u2212 u = 1 as M(u, v) = (4, 1). Which M? Matrices are written as rows.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50106,
+       "prompt": "M has shape (4, 3). For M @ x to work, what shape must x have, and what shape is the result?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50107,
+       "prompt": "Solve 3u + 2v = 12 and u \u2212 2v = \u22124. Choose (u, v).",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50108,
+       "prompt": "M = t.tensor([[1., 2.], [3., 4.]]), x = t.tensor([1., -1.]). What is M @ x?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50109,
+       "prompt": "M has rows (1, 2) and (3, \u22121), b = (3, 3). Candidate x = (1, 1). What is the residual Mx \u2212 b?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -452,11 +482,25 @@
       {
        "question_id": 50055,
        "prompt": "A 3-by-2 matrix has two independent columns. Which statement about Mx = b is correct?"
+      },
+      {
+       "question_id": 50110,
+       "prompt": "Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 \u2212 L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 \u2212 L2](u, v) = L1 \u2212 O. Which (u, v) solves it?"
+      },
+      {
+       "question_id": 50111,
+       "prompt": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?"
       }
      ],
      "independent_items": [
       50052,
-      50053
+      50053,
+      50104,
+      50105,
+      50106,
+      50107,
+      50108,
+      50109
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""
