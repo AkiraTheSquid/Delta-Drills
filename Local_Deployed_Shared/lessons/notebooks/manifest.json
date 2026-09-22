@@ -6,7 +6,7 @@
    "topic": "Mathematics",
    "subtopic_key": "Mathematics: Linear algebra",
    "file": "ma-00.json",
-   "cells": 65,
+   "cells": 71,
    "questions": [],
    "kcs": [
     "math.vector-arithmetic",

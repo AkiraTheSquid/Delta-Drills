@@ -23123,5 +23123,85 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50088": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50089": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50090": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50091": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50092": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50093": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50094": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50095": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

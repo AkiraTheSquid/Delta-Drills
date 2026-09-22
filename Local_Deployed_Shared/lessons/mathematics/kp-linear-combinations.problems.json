@@ -183,6 +183,268 @@
           "truth": "Matrix([1,-1,2])+Matrix([2,0,0])/2+Matrix([0,3,0])/3"
         }
       }
+    },
+    {
+      "id": 50088,
+      "kind": "compute",
+      "difficulty": 45,
+      "prompt": "E1 = (1, 1), E2 = (1, −1). Which weights (u, v) give uE1 + vE2 = (5, 1)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(3, 2)",
+          "value": "Matrix([3,2])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 3)",
+          "value": "Matrix([2,3])"
+        },
+        {
+          "key": "C",
+          "text": "(5, 1)",
+          "value": "Matrix([5,1])"
+        },
+        {
+          "key": "D",
+          "text": "(6, 4)",
+          "value": "Matrix([6,4])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Match components: $u + v = 5$ and $u - v = 1$. Adding gives $2u = 6$, so $u = 3$ and $v = 2$. Check: $3(1, 1) + 2(1, -1) = (5, 1)$.\n\n- B: swaps the weights; $2E_1 + 3E_2 = (5, -1)$.\n- C: copies the target; the weights are coordinates in $E_1, E_2$, not in the standard axes.\n- D: $u + v$ and $u - v$ added without halving.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,1],[1,-1]]).solve(Matrix([5,1]))"
+        }
+      }
+    },
+    {
+      "id": 50089,
+      "kind": "compute",
+      "difficulty": 50,
+      "prompt": "E1 = (1, 0, 1), E2 = (0, 2, 1). Which weights (u, v) give uE1 + vE2 = (2, 4, 4)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 4)",
+          "value": "Matrix([2,4])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 2)",
+          "value": "Matrix([2,2])"
+        },
+        {
+          "key": "C",
+          "text": "(4, 2)",
+          "value": "Matrix([4,2])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 2)",
+          "value": "Matrix([1,2])"
+        }
+      ],
+      "answer": "B",
+      "solution": "The x-component gives $u = 2$; the y-component gives $2v = 4$, so $v = 2$. The z-component must then agree: $u + v = 4$. It does, so $(u, v) = (2, 2)$.\n\n- A: reads $v$ off the y-component without dividing by 2.\n- C: swaps the weights.\n- D: halves $u$ as well as $v$.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[1,0],[0,2],[1,1]]).pinv()*Matrix([2,4,4])"
+        }
+      }
+    },
+    {
+      "id": 50090,
+      "kind": "statement",
+      "difficulty": 50,
+      "prompt": "E1 = (1, 0, 1), E2 = (0, 2, 1). Can uE1 + vE2 equal (1, 2, 4)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Yes, with u = 1 and v = 1."
+        },
+        {
+          "key": "B",
+          "text": "Yes: any 3D target is reachable from two nonzero vectors."
+        },
+        {
+          "key": "C",
+          "text": "No: E1 and E2 are dependent."
+        },
+        {
+          "key": "D",
+          "text": "No: x and y force u = 1, v = 1, which makes z = 2, not 4."
+        }
+      ],
+      "answer": "D",
+      "solution": "The x- and y-components fix $u = 1$ and $v = 1$. Then the z-component is $u + v = 2$, but the target needs 4. Two vectors in 3D span only a plane, and $(1, 2, 4)$ is off it.\n\n- A: those weights give $(1, 2, 2)$.\n- B: two vectors can't fill 3D space.\n- C: neither vector is a multiple of the other, so they are independent."
+    },
+    {
+      "id": 50091,
+      "kind": "compute",
+      "difficulty": 50,
+      "prompt": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([2., 5.])",
+          "value": "Matrix([2,5])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([-1., -1.])",
+          "value": "Matrix([-1,-1])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([4., 1.])",
+          "value": "Matrix([4,1])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([-1., 1.])",
+          "value": "Matrix([-1,1])"
+        }
+      ],
+      "answer": "B",
+      "solution": "A row vector times a matrix combines the matrix's rows: $2E_1 - E_2 = 2(1, 0) - (3, 1) = (-1, -1)$.\n\n- A: `E @ w`, which combines the columns $(1, 3)$ and $(0, 1)$ instead.\n- C: $E_1 + E_2$, ignoring the weights.\n- D: a sign slip in the second component.",
+      "verify": {
+        "sympy": {
+          "truth": "(Matrix([[2,-1]])*Matrix([[1,0],[3,1]])).T"
+        }
+      }
+    },
+    {
+      "id": 50092,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "E1 = (2, 1), E2 = (4, 2), E3 = (0, 1). Which pair does NOT span the whole plane?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "E1 and E2"
+        },
+        {
+          "key": "B",
+          "text": "E1 and E3"
+        },
+        {
+          "key": "C",
+          "text": "E2 and E3"
+        },
+        {
+          "key": "D",
+          "text": "Every pair spans the plane."
+        }
+      ],
+      "answer": "A",
+      "solution": "$E_2 = 2E_1$, so every combination of $E_1$ and $E_2$ lies on the line through $(2, 1)$. The other pairs are independent: $\\det\\begin{pmatrix}2 & 0\\\\ 1 & 1\\end{pmatrix} = 2$ and $\\det\\begin{pmatrix}4 & 0\\\\ 2 & 1\\end{pmatrix} = 4$, both nonzero.\n\n- B, C: nonzero determinants, so these pairs span the plane.\n- D: $E_1$ and $E_2$ are parallel."
+    },
+    {
+      "id": 50093,
+      "kind": "compute",
+      "difficulty": 50,
+      "prompt": "A = (0, 4), B = (8, 0). Which point is 0.25A + 0.75B?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 3)",
+          "value": "Matrix([2,3])"
+        },
+        {
+          "key": "B",
+          "text": "(4, 2)",
+          "value": "Matrix([4,2])"
+        },
+        {
+          "key": "C",
+          "text": "(6, 1)",
+          "value": "Matrix([6,1])"
+        },
+        {
+          "key": "D",
+          "text": "(8, 4)",
+          "value": "Matrix([8,4])"
+        }
+      ],
+      "answer": "C",
+      "solution": "$0.25(0, 4) + 0.75(8, 0) = (0, 1) + (6, 0) = (6, 1)$. The weights add to 1, so the point is on segment $AB$, three quarters of the way from $A$ to $B$.\n\n- A: swaps the weights ($0.75A + 0.25B$).\n- B: the midpoint, weights $0.5$ and $0.5$.\n- D: $A + B$, weights 1 and 1.",
+      "verify": {
+        "sympy": {
+          "truth": "Rational(1,4)*Matrix([0,4]) + Rational(3,4)*Matrix([8,0])"
+        }
+      }
+    },
+    {
+      "id": 50094,
+      "kind": "compute",
+      "difficulty": 60,
+      "prompt": "A = (1, 1), B = (5, 1), C = (1, 4). Which (u, v) gives A + u(B − A) + v(C − A) = (3, 2.5)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2, 1.5)",
+          "value": "Matrix([2,Rational(3,2)])"
+        },
+        {
+          "key": "B",
+          "text": "(3, 2.5)",
+          "value": "Matrix([3,Rational(5,2)])"
+        },
+        {
+          "key": "C",
+          "text": "(1/2, 1/3)",
+          "value": "Matrix([Rational(1,2),Rational(1,3)])"
+        },
+        {
+          "key": "D",
+          "text": "(1/2, 1/2)",
+          "value": "Matrix([Rational(1,2),Rational(1,2)])"
+        }
+      ],
+      "answer": "D",
+      "solution": "Subtract $A$: $u(4, 0) + v(0, 3) = (2, 1.5)$. So $4u = 2$ and $3v = 1.5$, giving $u = v = 1/2$.\n\n- A: the displacement from $A$, not the weights.\n- B: the target itself.\n- C: divides $1.5$ by $4.5$ instead of 3.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[4,0],[0,3]]).solve(Matrix([2,Rational(3,2)]))"
+        }
+      }
+    },
+    {
+      "id": 50095,
+      "kind": "compute",
+      "difficulty": 65,
+      "prompt": "E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([1., 1.])",
+          "value": "Matrix([1,1])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([3., -1.])",
+          "value": "Matrix([3,-1])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([5., 5.])",
+          "value": "Matrix([5,5])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([2.5, 1.25])",
+          "value": "Matrix([Rational(5,2),Rational(5,4)])"
+        }
+      ],
+      "answer": "A",
+      "solution": "`dim=1` stacks $E_1$ and $E_2$ as columns, so the system is $uE_1 + vE_2 = T$:\n\n$$\\begin{pmatrix}2 & 3\\\\ 1 & 4\\end{pmatrix}\\begin{pmatrix}u\\\\ v\\end{pmatrix} = \\begin{pmatrix}5\\\\ 5\\end{pmatrix}$$\n\n$u = v = 1$ works: $(2, 1) + (3, 4) = (5, 5)$.\n\n- B: `dim=0` stacks them as rows, which solves a different system.\n- C: the target, not the weights.\n- D: divides each component of $T$ by the diagonal entries.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,3],[1,4]]).solve(Matrix([5,5]))"
+        }
+      }
     }
   ]
 }

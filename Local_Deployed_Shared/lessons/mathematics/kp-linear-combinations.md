@@ -8,8 +8,8 @@ previews: []
 concepts: []
 faded: [50044, 50045]
 guided: []
-independent: [50046, 50047]
-integrated: [50048, 50049]
+independent: [50046, 50047, 50088, 50089, 50090, 50091, 50092, 50093]
+integrated: [50048, 50049, 50094, 50095]
 ---
 
 ## Concept
@@ -76,6 +76,24 @@ Let E1 = (2, 0), E2 = (1, 3). Which (u, v) gives uE1 + vE2 = (7, 3)?
 ### q50047
 What is the span of (1, 0, 0) and (0, 1, 0) with unrestricted real weights?
 
+### q50088
+E1 = (1, 1), E2 = (1, −1). Which weights (u, v) give uE1 + vE2 = (5, 1)?
+
+### q50089
+E1 = (1, 0, 1), E2 = (0, 2, 1). Which weights (u, v) give uE1 + vE2 = (2, 4, 4)?
+
+### q50090
+E1 = (1, 0, 1), E2 = (0, 2, 1). Can uE1 + vE2 equal (1, 2, 4)?
+
+### q50091
+w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?
+
+### q50092
+E1 = (2, 1), E2 = (4, 2), E3 = (0, 1). Which pair does NOT span the whole plane?
+
+### q50093
+A = (0, 4), B = (8, 0). Which point is 0.25A + 0.75B?
+
 ## Integrated practice
 
 ### q50048
@@ -83,3 +101,9 @@ E1 = (1, 2), E2 = (2, 4). Target T = (3, 6) has which property?
 
 ### q50049
 A = (1, −1, 2), E1 = (2, 0, 0), E2 = (0, 3, 0). Find A + E1/2 + E2/3.
+
+### q50094
+A = (1, 1), B = (5, 1), C = (1, 4). Which (u, v) gives A + u(B − A) + v(C − A) = (3, 2.5)?
+
+### q50095
+E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?

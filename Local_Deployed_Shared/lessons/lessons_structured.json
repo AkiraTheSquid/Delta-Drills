@@ -319,6 +319,36 @@
        "question_id": 50047,
        "prompt": "What is the span of (1, 0, 0) and (0, 1, 0) with unrestricted real weights?",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50088,
+       "prompt": "E1 = (1, 1), E2 = (1, \u22121). Which weights (u, v) give uE1 + vE2 = (5, 1)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50089,
+       "prompt": "E1 = (1, 0, 1), E2 = (0, 2, 1). Which weights (u, v) give uE1 + vE2 = (2, 4, 4)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50090,
+       "prompt": "E1 = (1, 0, 1), E2 = (0, 2, 1). Can uE1 + vE2 equal (1, 2, 4)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50091,
+       "prompt": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50092,
+       "prompt": "E1 = (2, 1), E2 = (4, 2), E3 = (0, 1). Which pair does NOT span the whole plane?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50093,
+       "prompt": "A = (0, 4), B = (8, 0). Which point is 0.25A + 0.75B?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -329,11 +359,25 @@
       {
        "question_id": 50049,
        "prompt": "A = (1, \u22121, 2), E1 = (2, 0, 0), E2 = (0, 3, 0). Find A + E1/2 + E2/3."
+      },
+      {
+       "question_id": 50094,
+       "prompt": "A = (1, 1), B = (5, 1), C = (1, 4). Which (u, v) gives A + u(B \u2212 A) + v(C \u2212 A) = (3, 2.5)?"
+      },
+      {
+       "question_id": 50095,
+       "prompt": "E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?"
       }
      ],
      "independent_items": [
       50046,
-      50047
+      50047,
+      50088,
+      50089,
+      50090,
+      50091,
+      50092,
+      50093
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""
