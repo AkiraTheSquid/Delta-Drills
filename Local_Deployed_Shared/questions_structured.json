@@ -77330,7 +77330,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A point is O + 6D. Replace D by D′ = 3D, leaving O fixed. Which parameter reaches the same point?",
+      "question_text": "A ray is written O + cD, where the scalar c is its parameter. The point P = O + 6D sits at c = 6. Rewrite the same ray as O + sD′ with a longer direction D′ = 3D (same O). For which value of s is O + sD′ = O + 6D?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -77369,7 +77369,7 @@
         }
       ],
       "correct_choice": "D",
-      "solution_md": "2D′ = 2·3D = 6D.\n\n- A: Multiplying both quantities changes the displacement by nine.\n- B: The new direction is three times as long.\n- C: Negative parameters reverse the displacement.",
+      "solution_md": "Set the two points equal: O + sD′ = O + 6D. Substitute D′ = 3D: s·3D = 6D, so 3s = 6 and s = 2. Check: 2D′ = 2·3D = 6D.\n\n- A: 18 multiplies instead of dividing: 18D′ = 54D, nine times too far.\n- B: 6 keeps the old parameter, but each step along D′ is three times as long, so 6D′ = 18D.\n- C: A negative s points the ray backwards from O.",
       "verify": {
         "sympy": {
           "truth": "6/3"

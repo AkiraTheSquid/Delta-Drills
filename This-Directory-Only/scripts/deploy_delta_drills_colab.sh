@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# DEPRECATED 2026-09-22: the Colab edition (delta-drills-colab.vercel.app) is
+# disconnected from the main deploy and no longer published.
+echo "deploy_delta_drills_colab.sh: the Colab edition is deprecated (2026-09-22); not deploying." >&2
+exit 1
 set -euo pipefail
 
 # ============================================================

@@ -102,30 +102,18 @@ def check_invariants():
         'arena-book deploys will silently skip the rebuild.'
     )
 
-    # 2b. The main deploy still republishes the Colab edition.
-    # delta-drills-colab.vercel.app is the same frontend under a second
-    # project; when only the main deploy runs, the fork keeps serving the
-    # previous build and looks like a broken app rather than a stale one.
-    #
-    # Assert the CALL, over non-comment lines only. A substring test for the
-    # script's name passes on the comment that explains it and on the variable
-    # that holds its path, so deleting the one line that runs it would leave
-    # this check green — the failure mode the check exists to catch.
+    # 2b. The main deploy no longer touches the Colab edition.
+    # delta-drills-colab.vercel.app was deprecated 2026-09-22 (Seth): the sync
+    # failed on every deploy. Assert over non-comment lines that nothing calls
+    # the colab deploy script, so it can't be re-wired by accident.
     deploy_code = [
         line for line in deploy_text.splitlines()
         if line.strip() and not line.lstrip().startswith('#')
     ]
-    assigns_colab = any(
-        'COLAB_DEPLOY_SCRIPT=' in line and 'deploy_delta_drills_colab.sh' in line
-        for line in deploy_code
-    )
-    runs_colab = any(
-        'bash "$COLAB_DEPLOY_SCRIPT"' in line for line in deploy_code
-    )
-    assert assigns_colab and runs_colab, (
-        'deploy_delta_drills.sh no longer runs deploy_delta_drills_colab.sh '
-        '(assigns={}, runs={}) — the Colab edition will silently drift behind '
-        'the main deploy.'.format(assigns_colab, runs_colab)
+    calls_colab = [l for l in deploy_code if 'deploy_delta_drills_colab' in l]
+    assert not calls_colab, (
+        'deploy_delta_drills.sh calls the deprecated Colab edition deploy: '
+        '{}'.format(calls_colab)
     )
 
     # 3. Build script writes to the expected staging dir under Local_Deployed_Shared.

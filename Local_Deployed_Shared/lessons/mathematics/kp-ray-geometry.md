@@ -87,7 +87,7 @@ P(s) = (2, 1) + s(−1, 2), s ≥ 0. Does (3, −1) belong to this ray?
 A = (1, 2), B = (5, 6). What does v = 1.25 give in A + v(B − A)?
 
 ### q50003
-A point is O + 6D. Replace D by D′ = 3D, leaving O fixed. Which parameter reaches the same point?
+A ray is written O + cD, where the scalar c is its parameter. The point P = O + 6D sits at c = 6. Rewrite the same ray as O + sD′ with a longer direction D′ = 3D (same O). For which value of s is O + sD′ = O + 6D?
 
 ## Integrated practice
 
