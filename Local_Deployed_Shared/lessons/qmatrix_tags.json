@@ -22883,5 +22883,85 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50062": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50063": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50064": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50065": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50066": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50067": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50068": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50069": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50070": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50071": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
  }
 }

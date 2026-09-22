@@ -65,6 +65,36 @@
        "question_id": 50035,
        "prompt": "Let p = (1, \u22122), u = (3, 1), v = (\u22121, 4). Find p + 2u \u2212 v.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50062,
+       "prompt": "A = (4, \u22122, 7), B = (\u22121, 3, 2). Which point P satisfies P \u2212 A = 3(B \u2212 A)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50063,
+       "prompt": "Which scalar c makes c(\u22122, 3, \u22121) = (6, \u22129, 3)?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50064,
+       "prompt": "Are u = (2, \u22124, 6) and w = (\u22123, 6, \u22129) parallel?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50065,
+       "prompt": "u = (1, 2, \u22121), v = (3, 0, 2). Solve 2x + u = v for the vector x.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50066,
+       "prompt": "A = (0, 3, \u22123), B = (6, 0, 3). Which point is one third of the way from A to B?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50067,
+       "prompt": "A ray has origin O = (1, 1, 1) and direction D = (2, \u22121, 0). Which point does it reach at s = 0.5?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -75,11 +105,33 @@
       {
        "question_id": 50037,
        "prompt": "A = (2, 0, \u22121), B = (6, 4, 3). Find A + (B \u2212 A)/4."
+      },
+      {
+       "question_id": 50068,
+       "prompt": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, \u22120.5, 2]]. Which point on this ray has x = 3?"
+      },
+      {
+       "question_id": 50069,
+       "prompt": "A segment is stored as [[1, 2, 0], [5, \u22122, 4]]: row 0 is A, row 1 is B. Which point is three quarters of the way from A to B?"
+      },
+      {
+       "question_id": 50070,
+       "prompt": "ABCD is a parallelogram with its vertices in that order. A = (1, 0, 2), B = (4, 1, 2), D = (0, 3, 1). Find C."
+      },
+      {
+       "question_id": 50071,
+       "prompt": "Two rays share origin O = (2, 1, 0), with directions D\u2081 = (1, 2, 0) and D\u2082 = (3, 6, 0). Compare the points O + 3D\u2081 and O + D\u2082."
       }
      ],
      "independent_items": [
       50034,
-      50035
+      50035,
+      50062,
+      50063,
+      50064,
+      50065,
+      50066,
+      50067
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""

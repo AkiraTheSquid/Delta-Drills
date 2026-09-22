@@ -8,8 +8,8 @@ previews: []
 concepts: []
 faded: [50032, 50033]
 guided: []
-independent: [50034, 50035]
-integrated: [50036, 50037]
+independent: [50034, 50035, 50062, 50063, 50064, 50065, 50066, 50067]
+integrated: [50036, 50037, 50068, 50069, 50070, 50071]
 ---
 
 ## Concept
@@ -58,6 +58,24 @@ A = (−1, 2, 4), B = (3, −1, 6). Find the displacement from A to B.
 ### q50035
 Let p = (1, −2), u = (3, 1), v = (−1, 4). Find p + 2u − v.
 
+### q50062
+A = (4, −2, 7), B = (−1, 3, 2). Which point P satisfies P − A = 3(B − A)?
+
+### q50063
+Which scalar c makes c(−2, 3, −1) = (6, −9, 3)?
+
+### q50064
+Are u = (2, −4, 6) and w = (−3, 6, −9) parallel?
+
+### q50065
+u = (1, 2, −1), v = (3, 0, 2). Solve 2x + u = v for the vector x.
+
+### q50066
+A = (0, 3, −3), B = (6, 0, 3). Which point is one third of the way from A to B?
+
+### q50067
+A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?
+
 ## Integrated practice
 
 ### q50036
@@ -65,3 +83,15 @@ Both points A and B are translated by T. Which expression still equals the origi
 
 ### q50037
 A = (2, 0, −1), B = (6, 4, 3). Find A + (B − A)/4.
+
+### q50068
+ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?
+
+### q50069
+A segment is stored as [[1, 2, 0], [5, −2, 4]]: row 0 is A, row 1 is B. Which point is three quarters of the way from A to B?
+
+### q50070
+ABCD is a parallelogram with its vertices in that order. A = (1, 0, 2), B = (4, 1, 2), D = (0, 3, 1). Find C.
+
+### q50071
+Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.
