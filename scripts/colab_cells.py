@@ -295,6 +295,26 @@ def example_cells(qid: int, example: dict, bank: dict, mint: IdMinter) -> list[d
     return cells
 
 
+def mc_problem_cell(qid: int, rung: str, ex: dict, mint: IdMinter) -> dict:
+    """A math (multiple-choice) problem in a notebook: the prompt and its
+    choices, as reading. Not a `dd-q<n>` anchor on purpose — that id grammar
+    promises an editor, a `dd_check` cell and a hidden solution, and the
+    notebook can grade none of a radio pick. The graded surface for these is
+    the practice page (docs/spec-math-mc-backbone.md); the key is not printed
+    here so a read-through cannot memorise the letters.
+    """
+    text = ex.get("question_text") or f"Question {qid}"
+    lines = [
+        f"<!-- dd:dd-mc{qid} -->\n",
+        f"### Problem {qid} · {rung} — multiple choice\n",
+        f"{text.strip()}\n",
+    ]
+    for choice in ex.get("choices") or []:
+        lines.append(f"- **{choice.get('key', '')}.** {str(choice.get('text', '')).strip()}")
+    lines.append("\n*Answer on the practice page — it grades the pick and shows the solution.*")
+    return md_cell("\n".join(lines), mint(f"dd-mc{qid}"))
+
+
 def problem_cells(
     qid: int,
     rung: str,
@@ -327,6 +347,8 @@ def problem_cells(
     """
     q = bank.get(qid, {})
     ex = q.get("exercise", {})
+    if ex.get("submission_mode") == "mc":
+        return [mc_problem_cell(qid, rung, ex, mint)]
     text = prompt or ex.get("question_text") or f"Question {qid}"
     code = starter if starter is not None else (ex.get("starter_code") or "")
 

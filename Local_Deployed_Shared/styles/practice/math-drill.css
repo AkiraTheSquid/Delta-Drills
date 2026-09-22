@@ -1,0 +1,162 @@
+/* Practice tab — a MATH (multiple-choice, non-code) question.
+   practice/math-drill.js toggles `html.dd-math-mc` per rendered question and
+   owns `#math-choices` (under #question-text) and `#math-solution` (in the
+   solution section, beside the code <pre>). Spec: docs/spec-math-mc-backbone.md.
+
+   🔴 Same trap styles/practice/README.md records for #practice-submit-area:
+   a rule that sets `display` on an element JS also hides with `.hidden` needs
+   its own `.hidden` guard at the same specificity or the element can never
+   hide. Both owned elements carry one below. */
+
+/* The editor column is a code thing. body.lesson-mode (notebook.css) does the
+   same swap for a lesson page; this is the question-level version of it. */
+html.dd-math-mc .practice-right {
+  display: none;
+}
+
+html.dd-math-mc .practice-left {
+  border-right: none;
+  flex: 1;
+}
+
+/* Run / test-check aids and the code answer under the verdict are code-only. */
+html.dd-math-mc #practice-aids,
+html.dd-math-mc #solution-code {
+  display: none;
+}
+
+/* 🔴 The choice list is a SIBLING of #question-text, so a lesson page that
+   takes the screen by rewriting #question-text alone (practice/lessons.js)
+   leaves it standing under the lesson — the same trap lessons.css records
+   for #question-examples. The gate hides the drill's siblings by
+   body.lesson-mode; this one joins that list here, where it is owned. */
+body.lesson-mode #math-choices {
+  display: none;
+}
+
+/* Submit before a pick: inert-looking, still clickable (the clock's
+   force-submit goes through a click — practice/math-drill.js). */
+html.dd-math-mc #practice-submit-btn.needs-pick {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes math-choices-nudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.math-choices.is-nudged {
+  animation: math-choices-nudge 0.3s ease;
+}
+
+.math-choices.is-nudged .math-choice {
+  border-color: var(--warn);
+}
+
+/* Choice list */
+.math-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 20px;
+  /* A reading width: a choice list across a 1400px editor-less column is
+     a row of radios a screen apart from their text. */
+  max-width: 820px;
+}
+
+.math-choices.hidden {
+  display: none;
+}
+
+.math-choice {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  cursor: pointer;
+  font-family: var(--prose-font);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.math-choice:hover {
+  border-color: var(--accent);
+}
+
+.math-choice:has(input:checked) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+.math-choice input[type="radio"] {
+  accent-color: var(--accent);
+  margin: 0;
+  align-self: center;
+}
+
+.math-choice-key {
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 1.2em;
+}
+
+.math-choice-text {
+  flex: 1;
+}
+
+/* After the verdict: the keyed choice goes green, a wrong pick goes red, and
+   the list freezes (inputs disabled by JS). 🔴 `:has(input:checked)` above
+   weighs (0,2,1) — the picked-and-correct row stayed accent red under a
+   (0,2,0) verdict rule. The extra class here is the specificity, not scope. */
+.math-choices .math-choice.is-correct {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 1px var(--ok) inset;
+}
+
+.math-choices .math-choice.is-wrong {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger) inset;
+}
+
+.math-choice:has(input:disabled) {
+  cursor: default;
+}
+
+/* Solution: markdown + KaTeX where the code answer would sit. */
+.math-solution {
+  max-width: 820px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: var(--prose-font);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.math-solution.hidden {
+  display: none;
+}
+
+.math-solution p:first-child {
+  margin-top: 0;
+}
+
+.math-solution p:last-child {
+  margin-bottom: 0;
+}
+
+.math-solution .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+.math-solution-empty {
+  color: var(--muted);
+}

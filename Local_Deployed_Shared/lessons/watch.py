@@ -319,9 +319,28 @@ def check_the_placement_clock_covers_every_concept():
     assert caps.get('default_secs') == 1200, 'default_secs must be the 1200 s ceiling'
 
 
+def check_every_math_problem_is_verified():
+    """Every `kp-*.problems.json` (the multiple-choice math lane) passes
+    scripts/validate_math.py: keyed choice proven with SymPy, every
+    distractor different, every problem on a rung and carrying atom tags.
+    Runs under the backend venv (sympy lives there); with no math files it
+    passes on an empty set. Spec: docs/spec-math-mc-backbone.md."""
+    repo = os.path.abspath(os.path.join(_DIR, '..', '..'))
+    venv_python = os.path.join(repo, 'This-Directory-Only', 'backend', '.venv', 'bin', 'python')
+    python = venv_python if os.path.exists(venv_python) else sys.executable
+    result = subprocess.run(
+        [python, os.path.join(repo, 'scripts', 'validate_math.py')],
+        capture_output=True, text=True, cwd=os.path.join(repo, 'scripts'),
+    )
+    assert result.returncode == 0, (
+        result.stdout.strip() or result.stderr.strip() or 'validate_math.py failed without output'
+    )
+
+
 if __name__ == '__main__':
     checks = [check_imports, check_public_api, check_invariants,
               check_every_runnable_example_is_asserted,
+              check_every_math_problem_is_verified,
               check_the_exercise_map_is_servable,
               check_the_glossary_points_at_live_kcs,
               check_every_lesson_has_a_notebook,

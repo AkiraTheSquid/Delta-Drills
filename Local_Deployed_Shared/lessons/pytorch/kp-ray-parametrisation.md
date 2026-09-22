@@ -67,8 +67,6 @@ A family of rays all leaving the origin then differs only in the direction
 row — which is exactly why `make_rays_1d` builds a stack of `(2, 3)` slabs and
 only writes into row 1.
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=rays).
-
 ## Worked example
 
 Where is the ray `O = (0, 0, 0)`, `D = (1, 2, 0)` when its x-coordinate is 3?

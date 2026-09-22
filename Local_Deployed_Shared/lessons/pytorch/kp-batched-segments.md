@@ -27,8 +27,6 @@ print(displacement)
 assert displacement.shape==(2,3,2) and displacement[1,2].tolist()==[3.,3.]
 ```
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=singularity).
-
 ## Worked example
 
 We build a pair table for two "rays" and three "segments" reduced to single numbers, so the shape rule is visible on its own. Row `i` belongs to ray `i`; column `j` to segment `j`.

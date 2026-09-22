@@ -48,8 +48,6 @@ The habit to take from this: **allocate the final shape once, then write the
 parts that vary**. Building rows in a loop and stacking them gives the same
 numbers and is the thing you will unlearn in the next chapter.
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=rays).
-
 ## Worked example
 
 The same construction with y spread over `[-2, 2]` in 5 steps, checked

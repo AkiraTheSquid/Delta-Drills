@@ -506,6 +506,30 @@ const PracticeAPI = {
       }
     }
 
+    /* A math (multiple-choice) question without a backend: the answer is
+       the picked key and the bank row carries `correct_choice`, so the grade
+       is a string compare (the same one grading.grade_choice does) — no
+       Pyodide, no torch refusal, no AI judge. The adaptive engine still
+       records the attempt when it is loaded, like every other local grade. */
+    if (this.currentQuestion?.submission_mode === "mc" && window.DeltaMath) {
+      const result = window.DeltaMath.gradeLocal(this.currentQuestion, userCode);
+      if (practiceEngineLoaded && adaptiveStateJson) {
+        const pyodideForRecord = await initPyodide();
+        const api = pyodideForRecord?.globals.get("engine_api");
+        if (api) {
+          adaptiveStateJson = api.submit_answer(
+            adaptiveStateJson,
+            this.currentQuestion.question_id,
+            this.currentQuestion.subtopic,
+            this.currentQuestion.difficulty || 50,
+            result.correct
+          );
+          await saveAdaptiveState();
+        }
+      }
+      return result;
+    }
+
     /* Everything below grades on Pyodide, which cannot import torch. Refuse
        before touching it, the same way runSnippet does for the Run button.
 

@@ -397,6 +397,11 @@ function renderQuestion(q, count) {
   // Torch drills swap the submit flow for the Colab-routing notice (must run
   // AFTER the submit area is un-hidden above so it can re-hide it for torch).
   applyTorchRouting(q);
+  // A math (multiple-choice) question swaps the editor for a choice list and
+  // holds Submit until a pick; a coding one gets its editor back. Runs for
+  // EVERY question, after the submit area is reset, so the toggle is per
+  // question and never inherited (practice/math-drill.js).
+  window.DeltaMath?.mount(q);
 
   /* Subtopic EWMA before this answer. It is no longer shown as understanding —
      KC BKT + coverage owns that readout — but this number is not

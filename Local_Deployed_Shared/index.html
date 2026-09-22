@@ -88,7 +88,6 @@
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
   <link rel="stylesheet" href="styles/practice/lessons.css?v=12" />
-  <link rel="stylesheet" href="styles/practice/math-practice.css?v=1" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=6" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
@@ -147,6 +146,9 @@
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
   <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=6" />
+  <!-- A math (multiple-choice) question: choice list in, editor column out.
+       practice/math-drill.js toggles `html.dd-math-mc` per question. -->
+  <link rel="stylesheet" href="styles/practice/math-drill.css?v=1" />
   <link rel="stylesheet" href="practice/bars.css?v=11" />
   <link rel="stylesheet" href="practice/arena-unlock.css?v=7" />
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
@@ -2289,7 +2291,7 @@ t.manual_seed(0)
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
   <script src="practice/mode.js?v=11"></script>
-  <script src="practice/questions.js?v=26"></script>
+  <script src="practice/questions.js?v=27"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=7"></script>
@@ -2312,6 +2314,9 @@ t.manual_seed(0)
   <script src="practice/dom.js?v=20"></script>
   <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
+  <!-- Math (multiple-choice) questions: `window.DeltaMath`. Before ui.js
+       (renderQuestion mounts it) and lessons.js (the KaTeX pass). -->
+  <script src="practice/math-drill.js?v=1"></script>
   <script src="practice/visuals.js?v=18"></script>
   <script src="practice/graph-jump.js?v=2"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
@@ -2329,7 +2334,7 @@ t.manual_seed(0)
        graded). ui.js, stage-ladder.js and concept-pill.js read it; loaded
        first so the heading's first write is already masked. -->
   <script src="practice/concept-mask.js?v=1"></script>
-  <script src="practice/ui.js?v=44"></script>
+  <script src="practice/ui.js?v=45"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
   <script src="practice/test-check.js?v=3"></script>
@@ -2338,7 +2343,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=31"></script>
+  <script src="practice/api.js?v=32"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=35"></script>
   <script src="practice/kernel.js?v=8"></script>
@@ -2392,11 +2397,10 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
-  <script src="practice/lessons.js?v=43"></script>
-  <script src="practice/math-practice.js?v=1"></script>
+  <script src="practice/lessons.js?v=44"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
-  <script src="practice/notebook-view.js?v=7"></script>
+  <script src="practice/notebook-view.js?v=8"></script>
   <!-- The ARENA sections, opened in the app rather than in Colab. Same two
        dependencies as the view above (LessonGate.renderMarkdown for prose,
        LessonNotebook.runSource for a cell) plus app.js's `switchTab`, which is
@@ -2441,7 +2445,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=50"></script>
+  <script src="practice/events.js?v=51"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own

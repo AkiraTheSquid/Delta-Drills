@@ -14,9 +14,21 @@ const TOPBAR_SETTLE_MS = 700;
 
 practiceSubmitBtn.addEventListener("click", async () => {
   const q = PracticeAPI.currentQuestion;
-  const userCode = window.DeltaNotebook?.submissionCode() || codeEditor.value;
+  // A math (multiple-choice) question's answer IS the picked key — the same
+  // `user_code` slot, graded by key compare (grading.grade_choice). Empty
+  // only on a clock expiry: mount() holds Submit until a pick.
+  const userCode = window.DeltaMath?.active()
+    ? window.DeltaMath.selectedKey()
+    : window.DeltaNotebook?.submissionCode() || codeEditor.value;
   // Read BEFORE pauseForGrading: one read, and it must belong to this submit.
   const timedOut = PracticeSession.consumeTimedOut?.() === true;
+  // A math question with nothing picked: the learner's own click goes
+  // nowhere (the button only looks inert — math-drill.js says why); the
+  // clock's click carries on and grades the empty key as a timeout miss.
+  if (!timedOut && window.DeltaMath?.active() && !window.DeltaMath.hasPick()) {
+    window.DeltaMath.nudge();
+    return;
+  }
   PracticeSession.pauseForGrading();
   // Same contract for a placement probe's fixed clock: once the grade is in
   // flight the learner is no longer answering, so the countdown stops instead
@@ -88,7 +100,11 @@ practiceSubmitBtn.addEventListener("click", async () => {
      answer, and it was being deleted at the exact moment it became useful.
      showSolution re-renders in place, so a resubmit swaps the cell's source
      instead of leaving a stale one. */
-  if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
+  if (window.DeltaMath?.showSolution?.(q, result)) {
+    /* Math: the keyed choice is marked in the list and the authored
+       solution (markdown + LaTeX) renders in the solution section. There is
+       no code cell to append, so nothing to scroll to. */
+  } else if (window.DeltaNotebook?.showSolution?.(solCode, einopsSol)) {
     /* Appended is not seen: the answer lands under cells as tall as whatever
        the learner just wrote, i.e. below the fold of the notebook pane. Scroll
        it into view in the next frame — the cell was appended and auto-sized in
@@ -501,6 +517,10 @@ const _loadNextPracticeQuestion = async () => {
   _resetProblemFeedbackRow();
   if (typeof hideFailedTests === "function") hideFailedTests();
   window.DeltaTestCheck?.hide?.();
+  // The math switch comes off HERE, not only in renderQuestion: a lesson
+  // gate renders a page instead of the next drill, and a math question's
+  // choice list and `html.dd-math-mc` would otherwise outlive it.
+  window.DeltaMath?.mount(null);
   questionMetaTop.classList.add("hidden");
 
   // Reset code editor

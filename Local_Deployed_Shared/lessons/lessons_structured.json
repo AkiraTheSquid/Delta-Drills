@@ -9,6 +9,7 @@
    "kps": [
     {
      "kc": "python.values-and-names",
+     "kind": "code",
      "title": "Values and names \u2014 what = really does",
      "supporting_kcs": [],
      "new_syntax": [
@@ -243,6 +244,7 @@
     },
     {
      "kc": "python.types-and-conversion",
+     "kind": "code",
      "title": "The everyday types, and converting between them",
      "supporting_kcs": [
       "python.values-and-names"
@@ -481,6 +483,7 @@
     },
     {
      "kc": "python.lists-and-tuples",
+     "kind": "code",
      "title": "Lists and tuples \u2014 holding more than one value",
      "supporting_kcs": [
       "python.values-and-names",
@@ -718,6 +721,7 @@
     },
     {
      "kc": "python.indexing",
+     "kind": "code",
      "title": "Indexing \u2014 pulling one item out, counting from zero",
      "supporting_kcs": [
       "python.lists-and-tuples"
@@ -952,6 +956,7 @@
     },
     {
      "kc": "python.calling-functions",
+     "kind": "code",
      "title": "Calling a function \u2014 arguments in, one value out",
      "supporting_kcs": [
       "python.types-and-conversion",
@@ -1191,6 +1196,7 @@
     },
     {
      "kc": "python.defining-functions",
+     "kind": "code",
      "title": "Writing your own function \u2014 def and return",
      "supporting_kcs": [
       "python.calling-functions"
@@ -1284,6 +1290,7 @@
     },
     {
      "kc": "python.dots-and-imports",
+     "kind": "code",
      "title": "Dots \u2014 importing a library, attributes, and methods",
      "supporting_kcs": [
       "python.calling-functions",
@@ -1391,6 +1398,7 @@
    "kps": [
     {
      "kc": "torch.tensor-model",
+     "kind": "code",
      "title": "What a tensor is \u2014 data + shape + dtype",
      "supporting_kcs": [],
      "new_syntax": [
@@ -1777,6 +1785,7 @@
     },
     {
      "kc": "torch.transpose-axes",
+     "kind": "code",
      "title": "Transpose \u2014 swapping which axis is which",
      "supporting_kcs": [],
      "new_syntax": [
@@ -1957,6 +1966,7 @@
     },
     {
      "kc": "torch.views-and-copies",
+     "kind": "code",
      "title": "Views and copies \u2014 the same numbers, read a different way",
      "supporting_kcs": [],
      "new_syntax": [
@@ -2125,6 +2135,7 @@
     },
     {
      "kc": "torch.constructors",
+     "kind": "code",
      "title": "Tensor constructors \u2014 zeros, ones, full, eye, *_like",
      "supporting_kcs": [
       "torch.tensor-model"
@@ -2391,6 +2402,7 @@
     },
     {
      "kc": "torch.slicing-views",
+     "kind": "code",
      "title": "Selecting and changing parts of a tensor",
      "supporting_kcs": [
       "torch.tensor-model"
@@ -2641,6 +2653,7 @@
     },
     {
      "kc": "torch.ranges",
+     "kind": "code",
      "title": "Numeric ranges \u2014 arange and linspace",
      "supporting_kcs": [
       "torch.constructors",
@@ -2837,6 +2850,7 @@
     },
     {
      "kc": "torch.dtype-astype",
+     "kind": "code",
      "title": "Dtypes, .to(), and memory size",
      "supporting_kcs": [
       "torch.tensor-model"
@@ -3098,6 +3112,7 @@
     },
     {
      "kc": "torch.reshape-flatten",
+     "kind": "code",
      "title": "Reshape, flatten, and element order",
      "supporting_kcs": [
       "torch.tensor-model",
@@ -3534,6 +3549,7 @@
     },
     {
      "kc": "torch.elementwise-ops",
+     "kind": "code",
      "title": "Elementwise math",
      "supporting_kcs": [
       "torch.tensor-model"
@@ -3764,6 +3780,7 @@
     },
     {
      "kc": "torch.aggregations",
+     "kind": "code",
      "title": "Whole-tensor aggregations and Python scalars",
      "supporting_kcs": [
       "torch.elementwise-ops"
@@ -3973,6 +3990,7 @@
     },
     {
      "kc": "torch.sorting",
+     "kind": "code",
      "title": "Sorting tensors",
      "supporting_kcs": [
       "torch.tensor-model",
@@ -4187,6 +4205,7 @@
     },
     {
      "kc": "torch.random-samplers",
+     "kind": "code",
      "title": "Drawing random numbers",
      "supporting_kcs": [
       "torch.constructors",
@@ -4311,6 +4330,7 @@
     },
     {
      "kc": "torch.random-seeding",
+     "kind": "code",
      "title": "Seeding your own reproducible stream",
      "supporting_kcs": [
       "torch.random-samplers",
@@ -4432,6 +4452,7 @@
     },
     {
      "kc": "torch.random-threading",
+     "kind": "code",
      "title": "Using a stream you were handed",
      "supporting_kcs": [
       "torch.random-seeding",
@@ -4540,6 +4561,7 @@
     },
     {
      "kc": "torch.linalg-basics",
+     "kind": "code",
      "title": "Matrix multiply and t.linalg basics",
      "supporting_kcs": [
       "torch.aggregations",
@@ -4786,6 +4808,7 @@
    "kps": [
     {
      "kc": "torch.boolean-masking",
+     "kind": "code",
      "title": "Boolean masks \u2014 compare, count, filter",
      "supporting_kcs": [
       "torch.slicing-views",
@@ -4968,6 +4991,7 @@
     },
     {
      "kc": "torch.argmin-argmax",
+     "kind": "code",
      "title": "Locating extremes \u2014 argmin and argmax",
      "supporting_kcs": [
       "torch.aggregations",
@@ -5159,6 +5183,7 @@
    "kps": [
     {
      "kc": "torch.broadcasting-rules",
+     "kind": "code",
      "title": "Broadcasting rules",
      "supporting_kcs": [
       "torch.elementwise-ops",
@@ -5383,6 +5408,7 @@
     },
     {
      "kc": "torch.axis-reductions",
+     "kind": "code",
      "title": "Reductions along an axis \u2014 and keepdims",
      "supporting_kcs": [
       "torch.aggregations",
@@ -5624,6 +5650,7 @@
     },
     {
      "kc": "torch.dot-matmul-patterns",
+     "kind": "code",
      "title": "Dot products and matrix-multiply patterns",
      "supporting_kcs": [
       "torch.linalg-basics",
@@ -5789,6 +5816,7 @@
     },
     {
      "kc": "torch.stack-concat-interleave",
+     "kind": "code",
      "title": "Stacking, concatenating, interleaving",
      "supporting_kcs": [
       "torch.reshape-flatten",
@@ -5963,6 +5991,7 @@
    "kps": [
     {
      "kc": "einops.pattern-language",
+     "kind": "code",
      "title": "The einops pattern language \u2014 naming and permuting axes",
      "supporting_kcs": [
       "torch.reshape-flatten"
@@ -6091,6 +6120,7 @@
     },
     {
      "kc": "einops.merge-axes",
+     "kind": "code",
      "title": "Merging axes with (parentheses)",
      "supporting_kcs": [
       "einops.pattern-language",
@@ -6189,6 +6219,7 @@
     },
     {
      "kc": "einops.split-axes",
+     "kind": "code",
      "title": "Splitting axes with named factors",
      "supporting_kcs": [
       "einops.merge-axes"
@@ -6265,6 +6296,7 @@
     },
     {
      "kc": "einops.singleton-and-lists",
+     "kind": "code",
      "title": "Singleton axes and lists as an axis",
      "supporting_kcs": [
       "einops.pattern-language"
@@ -6341,6 +6373,7 @@
     },
     {
      "kc": "einops.grids-montage",
+     "kind": "code",
      "title": "Laying batches out as grids",
      "supporting_kcs": [
       "einops.split-axes",
@@ -6418,6 +6451,7 @@
     },
     {
      "kc": "einops.patches-space-depth",
+     "kind": "code",
      "title": "Patches, space-to-depth, depth-to-space",
      "supporting_kcs": [
       "einops.split-axes",
@@ -6503,6 +6537,7 @@
    "kps": [
     {
      "kc": "einops.reduce-model",
+     "kind": "code",
      "title": "einops.reduce \u2014 dropping axes with an aggregation",
      "supporting_kcs": [
       "einops.pattern-language",
@@ -6584,6 +6619,7 @@
     },
     {
      "kc": "einops.pooling",
+     "kind": "code",
      "title": "Pooling with factored axes",
      "supporting_kcs": [
       "einops.reduce-model",
@@ -6681,6 +6717,7 @@
    "kps": [
     {
      "kc": "einops.repeat-model",
+     "kind": "code",
      "title": "einops.repeat \u2014 new axes and stretched axes",
      "supporting_kcs": [
       "einops.split-axes",
@@ -6809,6 +6846,7 @@
     },
     {
      "kc": "einops.dl-flatten-heads",
+     "kind": "code",
      "title": "Deep-learning shapes \u2014 flattening and attention heads",
      "supporting_kcs": [
       "einops.merge-axes",
@@ -6886,6 +6924,7 @@
     },
     {
      "kc": "einops.channel-groups-temporal",
+     "kind": "code",
      "title": "Channel groups and temporal windows",
      "supporting_kcs": [
       "einops.dl-flatten-heads",
@@ -6971,6 +7010,7 @@
    "kps": [
     {
      "kc": "torch.out-argument",
+     "kind": "code",
      "title": "Filling a tensor in place with out=",
      "supporting_kcs": [
       "torch.ranges",
@@ -7114,6 +7154,7 @@
     },
     {
      "kc": "torch.slice-assignment",
+     "kind": "code",
      "title": "Writing tensors into slices: broadcasting on the left",
      "supporting_kcs": [
       "torch.slicing-views",
@@ -7257,6 +7298,7 @@
     },
     {
      "kc": "raytracing.ray-parametrisation",
+     "kind": "code",
      "title": "A ray is an origin and a direction",
      "supporting_kcs": [
       "torch.constructors",
@@ -7384,6 +7426,7 @@
     },
     {
      "kc": "raytracing.make-rays-1d",
+     "kind": "code",
      "title": "make_rays_1d: a fan of rays as one (n, 2, 3) tensor",
      "supporting_kcs": [
       "torch.out-argument",
@@ -7534,6 +7577,7 @@
    "kps": [
     {
      "kc": "einops.einsum",
+     "kind": "code",
      "title": "einops.einsum: name the axes, drop the ones to sum",
      "supporting_kcs": [
       "einops.pattern-language",
@@ -7857,6 +7901,7 @@
     },
     {
      "kc": "einops.attention-einsum",
+     "kind": "code",
      "title": "einsum at model rank \u2014 heads, positions and `...`",
      "supporting_kcs": [
       "einops.einsum",
@@ -7972,6 +8017,7 @@
    "kps": [
     {
      "kc": "tensor.row-normalization",
+     "kind": "code",
      "title": "Row lengths and unit rows",
      "supporting_kcs": [
       "torch.axis-reductions",
@@ -8155,6 +8201,7 @@
     },
     {
      "kc": "tensor.cosine-similarity",
+     "kind": "code",
      "title": "Cosine similarity",
      "supporting_kcs": [
       "tensor.row-normalization",
@@ -8332,6 +8379,7 @@
     },
     {
      "kc": "tensor.indexed-selection",
+     "kind": "code",
      "title": "Selecting one entry per row",
      "supporting_kcs": [
       "torch.slicing-views",
@@ -8343,7 +8391,7 @@
       "Tensor.gather",
       "Tensor.abs"
      ],
-     "concept_markdown": "An integer tensor used as an index is a list of requests: `prices[items]` returns the entries at those positions, in request order, repeats included. Indexing is not sorting and not de-duplication; it answers exactly the questions asked. With two index tensors, one per axis, the requests are paired up position by position: `x[rows, cols]` returns `x[rows[0], cols[0]]`, then `x[rows[1], cols[1]]`, and so on, so the result has the shape of the index tensors, not of `x`.\n\nThe common need is \"the value at column `ids[i]` of row `i`\" \u2014 the score a classifier gave the true class, the chosen action's reward. The row index is then just `0, 1, 2, \u2026`, which is `t.arange(b)`, and the column index is `ids` itself: `x[t.arange(b), ids]` has shape `(b,)`. The reason to build the row index explicitly is that `x[:, ids]` would mean something else \u2014 every row at every requested column, shape `(b, b)` \u2014 because a slice on the row axis is not paired with the column requests, it is crossed with them.\n\n```python\nimport torch as t\nx=t.tensor([[10.,20.,30.],[40.,50.,60.]])\nids=t.tensor([2,0])\nchosen=x[t.arange(2),ids]\nprint(chosen)\n# Hidden checks\nassert chosen.tolist()==[30.,40.]\n```\n\n`x.gather(dim, index)` is the same one-entry-per-row selection written as one call. Along `dim`, `index` says which position to read; every other axis is walked in lockstep. So for a `(b, c)` matrix, `x.gather(1, index)` with `index` of shape `(b, 1)` reads `x[i, index[i, 0]]` for every row `i` and returns a `(b, 1)` tensor \u2014 the output always has the shape of `index`. When the contract asks for `(b,)`, either squeeze that last axis or use the paired-index form.\n\nThe reason `index` must have the same rank as `x` is that gather is defined per output position: for each coordinate of `index` it reads one value, and it needs a coordinate on every axis of `x` to know where. Turning a `(b,)` vector of column ids into the required `(b, 1)` is `ids[:, None]`. Gather earns its keep when the selection has to broadcast back against the rows \u2014 subtract each row's chosen value from the whole row \u2014 because a `(b, 1)` result already lines up with `(b, c)`.\n\nA companion when the selected values are compared by size is `x.abs()`, which drops the sign of every entry: a chosen logit of `-3` and one of `3` are equally far from zero.\n\n```python\nimport torch as t\nx=t.tensor([[2.,-7.,5.],[8.,4.,-9.]])\ncols=t.tensor([[1],[2]])\npicked=x.gather(1,cols)\nprint(picked, picked.abs())\n# Hidden checks\nassert picked.tolist()==[[-7.],[-9.]] and picked.abs().tolist()==[[7.],[9.]]\n```",
+     "concept_markdown": "An integer tensor used as an index is a list of requests: `prices[items]` returns the entries at those positions, in request order, repeats included. Indexing is not sorting and not de-duplication; it answers exactly the questions asked. With two index tensors, one per axis, the requests are paired up position by position: `x[rows, cols]` returns `x[rows[0], cols[0]]`, then `x[rows[1], cols[1]]`, and so on, so the result has the shape of the index tensors, not of `x`.\n\nThe common need is \"the value at column `ids[i]` of row `i`\" \u2014 the score a classifier gave the true class, the chosen action's reward. The row index is then just `0, 1, 2, \u2026`, which is `t.arange(b)`, and the column index is `ids` itself: `x[t.arange(b), ids]` has shape `(b,)`. The reason to build the row index explicitly is that `x[:, ids]` would mean something else \u2014 every row at every requested column, shape `(b, b)` \u2014 because a slice on the row axis is not paired with the column requests, it is crossed with them.\n\n```python\nimport torch as t\nx=t.tensor([[10.,20.,30.],[40.,50.,60.]])\nids=t.tensor([2,0])\nchosen=x[t.arange(2),ids]\nprint(chosen)\n# Hidden checks\nassert chosen.tolist()==[30.,40.]\n```\n\n`x.gather(dim, index)` does the same job as the paired-index trick above: pick one entry from each row. The difference is how you hand over the column numbers. Instead of a flat list, `index` is a tensor with the same number of axes as `x`, and the answer comes back in the shape of `index`.\n\nStart with the smallest case. Two rows, one column number per row, written as a `(2, 1)` column:\n\n```python\nimport torch as t\nx=t.tensor([[2.,-7.,5.],[8.,4.,-9.]])\ncols=t.tensor([[1],[2]])\npicked=x.gather(1,cols)\nprint(picked)\n# Hidden checks\nassert picked.tolist()==[[-7.],[-9.]]\n```\n\nRow 0 read its column 1, row 1 read its column 2. The `1` in `gather(1, cols)` says the numbers inside `cols` are column positions; the row each number applies to is simply the row of `cols` it sits in. That is why `index` needs a full set of axes: gather fills the output one cell at a time, and every cell of `index` has to say where on each axis of `x` to look.\n\nNotice the result is `(2, 1)`, not `(2,)`. Gather always returns the shape of `index`. When a contract asks for `(b,)`, either squeeze that last axis or use the paired-index form from the previous segment.\n\n```python\nprint(picked.shape, picked.squeeze(1).shape)\n# Hidden checks\nassert picked.shape==(2,1) and picked.squeeze(1).shape==(2,)\n```\n\nUsually the column numbers arrive as a flat `(b,)` vector. `ids[:, None]` adds the missing axis and turns it into the `(b, 1)` gather wants:\n\n```python\nids=t.tensor([1,2])\nprint(ids.shape, ids[:,None].shape)\nprint(x.gather(1,ids[:,None]))\n# Hidden checks\nassert ids[:,None].shape==(2,1) and x.gather(1,ids[:,None]).tolist()==[[-7.],[-9.]]\n```\n\nSo when is gather worth reaching for instead of `x[t.arange(b), ids]`? When the picked value has to go back against its own row. A `(b, 1)` result lines up with a `(b, c)` matrix, so one subtraction removes each row's chosen entry from the whole row:\n\n```python\nprint(x-x.gather(1,ids[:,None]))\n# Hidden checks\nassert (x-x.gather(1,ids[:,None])).tolist()==[[9.,0.,12.],[17.,13.,0.]]\n```\n\nOne more tool this segment uses: `x.abs()` drops the sign of every entry. It answers \"how far from zero\" questions, where a chosen logit of `-3` and one of `3` count the same:\n\n```python\nprint(picked.abs())\n# Hidden checks\nassert picked.abs().tolist()==[[7.],[9.]]\n```",
      "worked_example_markdown": "A batch of three examples has logits for four classes, and `y` holds the true class of each example. We want each example's score for its own true class. The pairs are `(0, y[0])`, `(1, y[1])`, `(2, y[2])`, so the row index is `arange(3)`.\n\n```python\nimport torch as t\nlogits=t.tensor([[1.,5.,2.,0.],[3.,1.,4.,1.],[0.,0.,2.,9.]])\ny=t.tensor([1,2,3])\ntrue_scores=logits[t.arange(3),y]\nprint(true_scores)\n# Hidden checks\nassert true_scores.tolist()==[5.,4.,9.]\n```\n\nCompare with the crossed form. `logits[:, y]` takes columns 1, 2 and 3 of every row: a `(3, 3)` matrix whose diagonal is the paired answer and whose off-diagonal entries are scores for other examples' classes.\n\n```python\ncrossed=logits[:,y]\nprint(crossed.shape, crossed)\n# Hidden checks\nassert crossed.shape==(3,3) and crossed[1,1].item()==4.\n```\n\nEach row is a set of readings and `ids` names the sensor to report per row. We gather with a `(b, 1)` index built from `ids`, then use the `(b, 1)` shape directly to centre every row on its reported sensor.\n\n```python\nimport torch as t\nreadings=t.tensor([[3.,-1.,6.],[0.,5.,-2.]])\nids=t.tensor([2,1])\npicked=readings.gather(1,ids[:,None])\nprint(picked.shape, picked)\n# Hidden checks\nassert picked.shape==(2,1) and picked.tolist()==[[6.],[5.]]\n```\n\nBecause `picked` is `(2, 1)`, subtracting it from the `(2, 3)` readings broadcasts one value across each row. The reported sensor reads zero in every row, and `abs` then gives each other sensor's distance from it.\n\n```python\ncentred=readings-picked\nprint(centred.abs())\n# Hidden checks\nassert centred.abs().tolist()==[[3.,7.,0.],[5.,0.,7.]]\n```",
      "segments": [
       {
@@ -8370,8 +8418,8 @@
       },
       {
        "concept_id": "gather",
-       "title": "Gather takes an index tensor with the same rank as the input",
-       "concept_markdown": "`x.gather(dim, index)` is the same one-entry-per-row selection written as one call. Along `dim`, `index` says which position to read; every other axis is walked in lockstep. So for a `(b, c)` matrix, `x.gather(1, index)` with `index` of shape `(b, 1)` reads `x[i, index[i, 0]]` for every row `i` and returns a `(b, 1)` tensor \u2014 the output always has the shape of `index`. When the contract asks for `(b,)`, either squeeze that last axis or use the paired-index form.\n\nThe reason `index` must have the same rank as `x` is that gather is defined per output position: for each coordinate of `index` it reads one value, and it needs a coordinate on every axis of `x` to know where. Turning a `(b,)` vector of column ids into the required `(b, 1)` is `ids[:, None]`. Gather earns its keep when the selection has to broadcast back against the rows \u2014 subtract each row's chosen value from the whole row \u2014 because a `(b, 1)` result already lines up with `(b, c)`.\n\nA companion when the selected values are compared by size is `x.abs()`, which drops the sign of every entry: a chosen logit of `-3` and one of `3` are equally far from zero.\n\n```python\nimport torch as t\nx=t.tensor([[2.,-7.,5.],[8.,4.,-9.]])\ncols=t.tensor([[1],[2]])\npicked=x.gather(1,cols)\nprint(picked, picked.abs())\n# Hidden checks\nassert picked.tolist()==[[-7.],[-9.]] and picked.abs().tolist()==[[7.],[9.]]\n```",
+       "title": "Gather picks one entry per row from an index with as many axes as the input",
+       "concept_markdown": "`x.gather(dim, index)` does the same job as the paired-index trick above: pick one entry from each row. The difference is how you hand over the column numbers. Instead of a flat list, `index` is a tensor with the same number of axes as `x`, and the answer comes back in the shape of `index`.\n\nStart with the smallest case. Two rows, one column number per row, written as a `(2, 1)` column:\n\n```python\nimport torch as t\nx=t.tensor([[2.,-7.,5.],[8.,4.,-9.]])\ncols=t.tensor([[1],[2]])\npicked=x.gather(1,cols)\nprint(picked)\n# Hidden checks\nassert picked.tolist()==[[-7.],[-9.]]\n```\n\nRow 0 read its column 1, row 1 read its column 2. The `1` in `gather(1, cols)` says the numbers inside `cols` are column positions; the row each number applies to is simply the row of `cols` it sits in. That is why `index` needs a full set of axes: gather fills the output one cell at a time, and every cell of `index` has to say where on each axis of `x` to look.\n\nNotice the result is `(2, 1)`, not `(2,)`. Gather always returns the shape of `index`. When a contract asks for `(b,)`, either squeeze that last axis or use the paired-index form from the previous segment.\n\n```python\nprint(picked.shape, picked.squeeze(1).shape)\n# Hidden checks\nassert picked.shape==(2,1) and picked.squeeze(1).shape==(2,)\n```\n\nUsually the column numbers arrive as a flat `(b,)` vector. `ids[:, None]` adds the missing axis and turns it into the `(b, 1)` gather wants:\n\n```python\nids=t.tensor([1,2])\nprint(ids.shape, ids[:,None].shape)\nprint(x.gather(1,ids[:,None]))\n# Hidden checks\nassert ids[:,None].shape==(2,1) and x.gather(1,ids[:,None]).tolist()==[[-7.],[-9.]]\n```\n\nSo when is gather worth reaching for instead of `x[t.arange(b), ids]`? When the picked value has to go back against its own row. A `(b, 1)` result lines up with a `(b, c)` matrix, so one subtraction removes each row's chosen entry from the whole row:\n\n```python\nprint(x-x.gather(1,ids[:,None]))\n# Hidden checks\nassert (x-x.gather(1,ids[:,None])).tolist()==[[9.,0.,12.],[17.,13.,0.]]\n```\n\nOne more tool this segment uses: `x.abs()` drops the sign of every entry. It answers \"how far from zero\" questions, where a chosen logit of `-3` and one of `3` count the same:\n\n```python\nprint(picked.abs())\n# Hidden checks\nassert picked.abs().tolist()==[[7.],[9.]]\n```",
        "watch_out_markdown": "",
        "worked_example_markdown": "Each row is a set of readings and `ids` names the sensor to report per row. We gather with a `(b, 1)` index built from `ids`, then use the `(b, 1)` shape directly to centre every row on its reported sensor.\n\n```python\nimport torch as t\nreadings=t.tensor([[3.,-1.,6.],[0.,5.,-2.]])\nids=t.tensor([2,1])\npicked=readings.gather(1,ids[:,None])\nprint(picked.shape, picked)\n# Hidden checks\nassert picked.shape==(2,1) and picked.tolist()==[[6.],[5.]]\n```\n\nBecause `picked` is `(2, 1)`, subtracting it from the `(2, 3)` readings broadcasts one value across each row. The reported sensor reads zero in every row, and `abs` then gives each other sensor's distance from it.\n\n```python\ncentred=readings-picked\nprint(centred.abs())\n# Hidden checks\nassert centred.abs().tolist()==[[3.,7.,0.],[5.,0.,7.]]\n```",
        "worked_example_code": "import torch as t\nreadings=t.tensor([[3.,-1.,6.],[0.,5.,-2.]])\nids=t.tensor([2,1])\npicked=readings.gather(1,ids[:,None])\nprint(picked.shape, picked)\n# Hidden checks\nassert picked.shape==(2,1) and picked.tolist()==[[6.],[5.]]\n",
@@ -8512,6 +8560,7 @@
     },
     {
      "kc": "tensor.stable-probabilities",
+     "kind": "code",
      "title": "Stable softmax and log-softmax",
      "supporting_kcs": [
       "torch.axis-reductions",
@@ -8710,6 +8759,7 @@
     },
     {
      "kc": "tensor.classifier-evaluation",
+     "kind": "code",
      "title": "Accuracy and cross-entropy",
      "supporting_kcs": [
       "tensor.stable-probabilities",
@@ -8888,6 +8938,7 @@
     },
     {
      "kc": "tensor.inverse-cdf",
+     "kind": "code",
      "title": "Sampling by inverse CDF",
      "supporting_kcs": [
       "torch.axis-reductions",
@@ -9054,6 +9105,7 @@
     },
     {
      "kc": "python.control-flow",
+     "kind": "code",
      "title": "Decisions and repeated work",
      "supporting_kcs": [
       "python.defining-functions",
@@ -9252,6 +9304,7 @@
    "kps": [
     {
      "kc": "raytracing.segment-intersection",
+     "kind": "code",
      "title": "Ray\u2013segment intersection",
      "supporting_kcs": [
       "raytracing.ray-parametrisation",
@@ -9434,6 +9487,7 @@
     },
     {
      "kc": "raytracing.batched-segments",
+     "kind": "code",
      "title": "Every ray against every segment",
      "supporting_kcs": [
       "raytracing.segment-intersection",
@@ -9634,6 +9688,7 @@
     },
     {
      "kc": "raytracing.make-rays-2d",
+     "kind": "code",
      "title": "A 2-D fan of camera rays",
      "supporting_kcs": [
       "raytracing.make-rays-1d",
@@ -9813,6 +9868,7 @@
     },
     {
      "kc": "raytracing.triangle-intersection",
+     "kind": "code",
      "title": "Ray\u2013triangle intersection",
      "supporting_kcs": [
       "raytracing.segment-intersection",
@@ -9989,6 +10045,7 @@
     },
     {
      "kc": "raytracing.mesh-visibility",
+     "kind": "code",
      "title": "Nearest hit in a mesh",
      "supporting_kcs": [
       "raytracing.triangle-intersection",
@@ -10175,6 +10232,7 @@
    "kps": [
     {
      "kc": "cnn.stride-views",
+     "kind": "code",
      "title": "Strides and as_strided views",
      "supporting_kcs": [
       "torch.views-and-copies",
@@ -10341,6 +10399,7 @@
     },
     {
      "kc": "cnn.module-state",
+     "kind": "code",
      "title": "Modules, parameters and buffers",
      "supporting_kcs": [
       "python.defining-functions",
@@ -10522,6 +10581,7 @@
     },
     {
      "kc": "cnn.linear-layer",
+     "kind": "code",
      "title": "The linear layer",
      "supporting_kcs": [
       "cnn.module-state",
@@ -10686,6 +10746,7 @@
     },
     {
      "kc": "cnn.mlp",
+     "kind": "code",
      "title": "A two-layer MLP for images",
      "supporting_kcs": [
       "cnn.linear-layer",
@@ -10846,6 +10907,7 @@
     },
     {
      "kc": "cnn.convolution-1d",
+     "kind": "code",
      "title": "1-D convolution from strided windows",
      "supporting_kcs": [
       "cnn.stride-views",
@@ -11012,6 +11074,7 @@
     },
     {
      "kc": "cnn.convolution-2d",
+     "kind": "code",
      "title": "2-D convolution",
      "supporting_kcs": [
       "cnn.convolution-1d",
@@ -11206,6 +11269,7 @@
     },
     {
      "kc": "cnn.pooling",
+     "kind": "code",
      "title": "Pooling",
      "supporting_kcs": [
       "cnn.convolution-2d",
@@ -11373,6 +11437,7 @@
     },
     {
      "kc": "cnn.batch-normalization",
+     "kind": "code",
      "title": "Batch normalization",
      "supporting_kcs": [
       "cnn.module-state",
@@ -11561,6 +11626,7 @@
     },
     {
      "kc": "cnn.sequential",
+     "kind": "code",
      "title": "Chaining modules in order",
      "supporting_kcs": [
       "cnn.module-state",
@@ -11751,6 +11817,7 @@
     },
     {
      "kc": "cnn.residual-block",
+     "kind": "code",
      "title": "The residual block",
      "supporting_kcs": [
       "cnn.sequential",
@@ -11898,6 +11965,7 @@
     },
     {
      "kc": "cnn.block-group",
+     "kind": "code",
      "title": "A group of residual blocks",
      "supporting_kcs": [
       "cnn.residual-block",
@@ -12006,6 +12074,7 @@
     },
     {
      "kc": "cnn.resnet34",
+     "kind": "code",
      "title": "Assembling ResNet34",
      "supporting_kcs": [
       "cnn.block-group",
@@ -12151,6 +12220,7 @@
     },
     {
      "kc": "cnn.feature-extraction",
+     "kind": "code",
      "title": "Pretrained weights and feature extraction",
      "supporting_kcs": [
       "cnn.resnet34",
@@ -12335,6 +12405,7 @@
     },
     {
      "kc": "cnn.training-loop",
+     "kind": "code",
      "title": "The training loop",
      "supporting_kcs": [
       "cnn.mlp",
@@ -12562,6 +12633,7 @@
     },
     {
      "kc": "cnn.forward-hooks",
+     "kind": "code",
      "title": "Forward hooks",
      "supporting_kcs": [
       "cnn.sequential",

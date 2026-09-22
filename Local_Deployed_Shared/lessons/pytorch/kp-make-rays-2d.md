@@ -27,8 +27,6 @@ print(t.stack((yy,zz),dim=-1).reshape(-1,2))
 assert t.stack((yy,zz),dim=-1).reshape(-1,2).tolist()==[[-3.,-1.],[-3.,0.],[-3.,1.],[3.,-1.],[3.,0.],[3.,1.]]
 ```
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=rays).
-
 ## Worked example
 
 We look at how a flat index maps back to a pixel. A `2 × 3` grid numbered in flat order shows `z` changing fastest: the first row holds `0, 1, 2`, the second `3, 4, 5`.

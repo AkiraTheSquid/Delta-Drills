@@ -27,8 +27,6 @@ print(depth.min(dim=1)[0])
 assert depth.min(dim=1)[0].tolist()==[2.,float("inf")]
 ```
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=visibility).
-
 ## Worked example
 
 We find the visible triangle per ray from a depth table in which the second ray hits nothing. `min(dim=1)` returns both the value and the index; the index is meaningless where the value is infinite.

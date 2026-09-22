@@ -27,8 +27,6 @@ print(uv)
 assert uv.tolist()==[3.,.5]
 ```
 
-[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=systems).
-
 ## Worked example
 
 We set up the system for a ray from `(1, 1)` heading along `(1, 1)` and a vertical segment on `x = 4`. The first column is the ray direction; the second is `A − B`, pointing down the segment. Predict which entries are negative before running.

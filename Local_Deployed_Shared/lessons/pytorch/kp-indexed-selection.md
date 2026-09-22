@@ -86,22 +86,56 @@ def solve(x,ids):
     return x[t.arange(len(ids)),ids]-x.mean(dim=1)
 ```
 
-## Concept: Gather takes an index tensor with the same rank as the input
+## Concept: Gather picks one entry per row from an index with as many axes as the input
 
-`x.gather(dim, index)` is the same one-entry-per-row selection written as one call. Along `dim`, `index` says which position to read; every other axis is walked in lockstep. So for a `(b, c)` matrix, `x.gather(1, index)` with `index` of shape `(b, 1)` reads `x[i, index[i, 0]]` for every row `i` and returns a `(b, 1)` tensor — the output always has the shape of `index`. When the contract asks for `(b,)`, either squeeze that last axis or use the paired-index form.
+`x.gather(dim, index)` does the same job as the paired-index trick above: pick one entry from each row. The difference is how you hand over the column numbers. Instead of a flat list, `index` is a tensor with the same number of axes as `x`, and the answer comes back in the shape of `index`.
 
-The reason `index` must have the same rank as `x` is that gather is defined per output position: for each coordinate of `index` it reads one value, and it needs a coordinate on every axis of `x` to know where. Turning a `(b,)` vector of column ids into the required `(b, 1)` is `ids[:, None]`. Gather earns its keep when the selection has to broadcast back against the rows — subtract each row's chosen value from the whole row — because a `(b, 1)` result already lines up with `(b, c)`.
-
-A companion when the selected values are compared by size is `x.abs()`, which drops the sign of every entry: a chosen logit of `-3` and one of `3` are equally far from zero.
+Start with the smallest case. Two rows, one column number per row, written as a `(2, 1)` column:
 
 ```python
 import torch as t
 x=t.tensor([[2.,-7.,5.],[8.,4.,-9.]])
 cols=t.tensor([[1],[2]])
 picked=x.gather(1,cols)
-print(picked, picked.abs())
+print(picked)
 # Hidden checks
-assert picked.tolist()==[[-7.],[-9.]] and picked.abs().tolist()==[[7.],[9.]]
+assert picked.tolist()==[[-7.],[-9.]]
+```
+
+Row 0 read its column 1, row 1 read its column 2. The `1` in `gather(1, cols)` says the numbers inside `cols` are column positions; the row each number applies to is simply the row of `cols` it sits in. That is why `index` needs a full set of axes: gather fills the output one cell at a time, and every cell of `index` has to say where on each axis of `x` to look.
+
+Notice the result is `(2, 1)`, not `(2,)`. Gather always returns the shape of `index`. When a contract asks for `(b,)`, either squeeze that last axis or use the paired-index form from the previous segment.
+
+```python
+print(picked.shape, picked.squeeze(1).shape)
+# Hidden checks
+assert picked.shape==(2,1) and picked.squeeze(1).shape==(2,)
+```
+
+Usually the column numbers arrive as a flat `(b,)` vector. `ids[:, None]` adds the missing axis and turns it into the `(b, 1)` gather wants:
+
+```python
+ids=t.tensor([1,2])
+print(ids.shape, ids[:,None].shape)
+print(x.gather(1,ids[:,None]))
+# Hidden checks
+assert ids[:,None].shape==(2,1) and x.gather(1,ids[:,None]).tolist()==[[-7.],[-9.]]
+```
+
+So when is gather worth reaching for instead of `x[t.arange(b), ids]`? When the picked value has to go back against its own row. A `(b, 1)` result lines up with a `(b, c)` matrix, so one subtraction removes each row's chosen entry from the whole row:
+
+```python
+print(x-x.gather(1,ids[:,None]))
+# Hidden checks
+assert (x-x.gather(1,ids[:,None])).tolist()==[[9.,0.,12.],[17.,13.,0.]]
+```
+
+One more tool this segment uses: `x.abs()` drops the sign of every entry. It answers "how far from zero" questions, where a chosen logit of `-3` and one of `3` count the same:
+
+```python
+print(picked.abs())
+# Hidden checks
+assert picked.abs().tolist()==[[7.],[9.]]
 ```
 
 ## Worked example

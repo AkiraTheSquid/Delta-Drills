@@ -40,7 +40,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from app import feedback_ai_layer, lessons
+from app import feedback_ai_layer, lessons, math_questions
 
 logger = logging.getLogger(__name__)
 
@@ -350,6 +350,15 @@ class Question:
     # Repo-relative PROBLEM Colab (starter, no answer) for torch questions that
     # route to Colab instead of the in-app runner. None for in-app questions.
     problem_notebook_path: str | None = None
+    # Multiple-choice (math) rows — `submission_mode == "mc"`. The learner
+    # solves on paper and picks a key; grading is a key compare, no code runs
+    # (practice/grading.py). Empty on every coding row. Loaded from
+    # lessons/*/kp-*.problems.json via lessons/math_bank.py, see
+    # docs/spec-math-mc-backbone.md.
+    choices: List[dict] = field(default_factory=list)
+    correct_choice: str | None = None
+    math_kind: str | None = None
+    solution_md: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -722,6 +731,7 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             CURATED_ADDITIONS_CSV_PATH, questions, start_id=next_id, skip_rows=0,
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
+        math_questions.load_math_into(questions, Question)
 
     _apply_atom_tags(questions)
     _apply_solution_aids(questions)
@@ -746,6 +756,8 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             # The py-0 floor is library-free BY DESIGN, not un-converted; see
             # lessons.is_prelibrary for what parking it costs.
             or lessons.is_prelibrary(q.id)
+            # A multiple-choice math problem has no code in either dialect.
+            or q.submission_mode == "mc"
         ]
     parked = len(questions) - len(servable)
     _questions = servable
