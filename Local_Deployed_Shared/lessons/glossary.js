@@ -330,6 +330,39 @@ window.DD_GLOSSARY = {
       kc: "torch.slice-assignment",
       def: "x[sel] = value where value is a whole tensor: it is broadcast to the slice's shape and written through the view into x. The in-place method spelling is copy_.",
     },
+    /* ---- Linear algebra for ARENA 0.1 (math pages) ---------------
+       Each math page opens with "This lesson builds on <X>"; these make X
+       the underline + "Take me to the lesson" instead of a bare link. */
+    {
+      term: "vector arithmetic",
+      aliases: ["vector addition", "scalar multiplication"],
+      kc: "math.vector-arithmetic",
+      def: "Adding, subtracting and scaling vectors one component at a time, and the difference between a point and a displacement: from A to B you move by B − A.",
+    },
+    {
+      term: "vector norm",
+      aliases: ["vector norms", "unit vector", "unit vectors"],
+      kc: "math.dot-products-norms",
+      def: "A vector's Euclidean length, the square root of the sum of squared components. Dividing a nonzero vector by its norm gives the unit vector: same direction, length one.",
+    },
+    {
+      term: "linear combination",
+      aliases: ["linear combinations"],
+      kc: "math.linear-combinations",
+      def: "Scale some vectors and add them: a·u + b·v. Every vector you can reach that way is their span; when the vectors are independent, the weights are unique and are the result's coordinates in them.",
+    },
+    {
+      term: "matrix equation",
+      aliases: ["matrix equations", "linear system", "linear systems"],
+      kc: "math.matrix-equations",
+      def: "M x = b: one row per equation, one column per unknown. M x is a weighted sum of M's columns, and solving finds the weights that produce b.",
+    },
+    {
+      term: "determinant",
+      aliases: ["determinants", "invertibility", "invertible"],
+      kc: "math.determinants-invertibility",
+      def: "A single number from a square matrix; for 2×2 it is ad − bc. Nonzero means every right-hand side has exactly one solution; zero means none or infinitely many.",
+    },
   ],
 };
 

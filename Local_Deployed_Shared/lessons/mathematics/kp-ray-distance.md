@@ -14,43 +14,64 @@ integrated: [50030, 50031]
 
 ## Concept: Compare hits along the same ray
 
-First master [dot products, norms, and unit vectors](?lesson=math.dot-products-norms). Here those lengths distinguish geometric distance from a ray parameter.
+This lesson builds on vector norms and unit vectors. Here those lengths distinguish geometric distance from a ray parameter.
 
-A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction D, a forward point O + sD is Euclidean distance s‖D‖ from O, where ‖D‖ = √(Dₓ² + Dᵧ² + D_z²). The factor ‖D‖ is fixed along that ray, so minimizing valid s also minimizes distance.
+A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction $D$, a forward point $O+sD$ is at Euclidean distance
+$$\|(O+sD)-O\|=s\,\|D\|=s\sqrt{D_x^2+D_y^2+D_z^2}$$
+from $O$. The factor $\|D\|$ is fixed along that ray, so minimizing valid $s$ also minimizes distance.
 
-The parameter s is not generally a distance: doubling D halves the s needed to reach the same point. Comparing raw s across differently scaled rays can mislead. The x displacement is sDₓ; the world x-coordinate is Oₓ + sDₓ. Neither is generally Euclidean distance. For ARENA's camera O = 0 and Dₓ = 1, s equals x-depth; off-axis rays still have ‖D‖ > 1.
+The parameter $s$ is not generally a distance: doubling $D$ halves the $s$ needed to reach the same point. Comparing raw $s$ across differently scaled rays can mislead. The x displacement is $sD_x$; the world x-coordinate is $O_x+sD_x$. Neither is generally Euclidean distance. For ARENA's camera $O=0$ and $D_x=1$, $s$ equals x-depth; off-axis rays still have $\|D\|>1$.
 
-Before taking a minimum, replace every invalid or backward hit by +∞. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains +∞, an explicit no-hit result. This order also prevents a negative s behind the origin from hiding a valid surface in front.
+Before taking a minimum, replace every invalid or backward hit by $+\infty$. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains $+\infty$, an explicit no-hit result. This order also prevents a negative $s$ behind the origin from hiding a valid surface in front.
+
+Three candidate hits, one backward and one invalid:
 
 ```python
-s = [4.0, -2.0, 1.0]
-valid = [True, True, False]
-candidates = [x if ok and x >= 0 else float('inf')
-              for x, ok in zip(s, valid)]
-nearest = min(candidates)
+import torch as t
+
+s = t.tensor([4.0, -2.0, 1.0])
+valid = t.tensor([True, True, False])
+
+forward = valid & (s >= 0)
+candidates = t.where(forward, s, t.inf)
+nearest = candidates.min()
+print(candidates)
 print(nearest)
 # Hidden checks
-assert nearest == 4.0
-assert _delta_output == '4.0\n'
+assert nearest.item() == 4.0
+assert _delta_output == 'tensor([4., inf, inf])\ntensor(4.)\n'
 ```
 
 ## Worked example
 
-A ray has D = (1, 2, 2) and hits at s = 4. Its direction length is 3. Its x displacement is 4 and its Euclidean travel distance is 12: two measurements of the same hit.
+A ray with direction $D=(1,2,2)$ hits a surface at $s=4$. How deep is the hit in $x$, and how far has the ray travelled?
+
+**On paper.** The direction's length:
+$$\|D\|=\sqrt{1^2+2^2+2^2}=\sqrt9=3.$$
+The displacement to the hit and its length:
+$$sD=4\begin{pmatrix}1\\2\\2\end{pmatrix}=\begin{pmatrix}4\\8\\8\end{pmatrix},\qquad \|sD\|=\sqrt{16+64+64}=\sqrt{144}=12=s\,\|D\|.$$
+The x displacement is $4$ and the Euclidean travel distance is $12$: two measurements of the same hit.
+
+**In code.** Depth and distance from $s$ and $D$.
 
 ```python
-from math import sqrt
-direction, s = (1, 2, 2), 4
-length = sqrt(sum(component**2
-                  for component in direction))
-depth, distance = s * direction[0], s * length
-print(depth, distance)
-# Hidden checks
-assert depth == 4 and distance == 12.0
-assert _delta_output == '4 12.0\n'
-```
+import torch as t
 
-Return to [the connected PyTorch lesson](?lesson=raytracing.mesh-visibility) to implement this reasoning. ARENA 0.1 transfer: `raytrace_mesh`.
+direction = t.tensor([1.0, 2.0, 2.0])
+s = 4
+
+length = t.linalg.norm(direction)
+depth = s * direction[0]
+distance = s * length
+print(length)
+print(depth)
+print(distance)
+# Hidden checks
+assert length.item() == 3.0
+assert depth.item() == 4.0
+assert distance.item() == 12.0
+assert _delta_output == 'tensor(3.)\ntensor(4.)\ntensor(12.)\n'
+```
 
 ## Faded practice
 
