@@ -518,7 +518,7 @@
       },
       {
        "question_id": 50003,
-       "prompt": "A point is O + 6D. Replace D by D\u2032 = 3D, leaving O fixed. Which parameter reaches the same point?",
+       "prompt": "A ray is written O + cD, where the scalar c is its parameter. The point P = O + 6D sits at c = 6. Rewrite the same ray as O + sD\u2032 with a longer direction D\u2032 = 3D (same O). For which value of s is O + sD\u2032 = O + 6D?",
        "worked_example_code": ""
       }
      ],
