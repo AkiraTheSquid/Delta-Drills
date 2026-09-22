@@ -1,38 +1,26 @@
 /* ARENA notebook contents — plain Colab-like tree.
    Markup and state: practice/arena-notebook-nav.js. */
 
+/* 🔴 A DOCKED PANE, NOT A HOVER OVERLAY (Seth, 2026-09-22: "it won't have
+   the hover effect anymore where it hides itself until you hover your cursor
+   over it"). The page reserves exactly `--anb-pane-w` for it — see
+   `.arena-notebooks-container` in arena-notebook.css — so it covers nothing
+   and nothing covers it. 🪦 `.anb-toc-hit`, the transparent strip that
+   revealed the old overlay, is DELETED, and with it the whole class of bug
+   where that strip sat on top of the Run buttons. */
 .anb-toc {
-  --anb-gutter: 300px;
   bottom: 0;
   box-sizing: border-box;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   left: 0;
-  pointer-events: none;
   position: fixed;
   top: var(--dd-topbar-h);
-  width: var(--anb-gutter);
+  width: var(--anb-pane-w, 320px);
   z-index: 40;
 }
 
-/* Whole empty margin opens tree. Learner need not find panel itself. */
-.anb-toc-hit {
-  inset: 0;
-  pointer-events: auto;
-  position: absolute;
-}
-
-/* 🔴 `position` IS LOAD-BEARING, NOT COSMETIC. The panel was static, and a
-   static element paints BELOW a positioned sibling regardless of source order —
-   so `.anb-toc-hit` (position: absolute, inset: 0) covered the open panel and
-   swallowed every click on a row. The tree looked perfect and no heading was
-   reachable; Seth, 2026-09-03: "it's not clickable such that when you click on
-   one of the headings it takes you to that part of the page". Positioning the
-   panel puts it back on top of the strip that reveals it. */
-/* 🔴 THE ROW METRICS ARE LESSWRONG'S, MEASURED, TIMES --anb-zoom. Read off
-   their live post 2026-09-03: labels 15.08px on a 15.08px line, 27px rows,
-   #757575 until you are on one. `--anb-zoom` is declared in
-   arena-notebook.css on :root[data-arena-notebook] — the same token the
-   reading column uses, so the tree and the prose can never scale apart. */
+/* 🔴 `position: relative` IS LOAD-BEARING: the divider is absolutely placed
+   against the pane's right edge. */
 .anb-toc-panel {
   background: var(--bg);
   border-right: 1px solid var(--border);
@@ -40,47 +28,174 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: var(--anb-toc-w, 340px);
-  opacity: 0;
-  padding: 16px 12px 20px 20px;
-  pointer-events: none;
+  padding: 10px 8px 20px 14px;
   position: relative;
-  transform: translateX(-8px);
-  transition: opacity 100ms ease, transform 100ms ease;
-  /* 🔴 THE GUTTER IS A PREFERENCE, NOT A CEILING. `100%` here is `.anb-toc`,
-     which is exactly the gap the reading column leaves (`_measure`). Taking
-     that gap is right while it is wide enough to read a tree in — the panel
-     then sits in the margin and covers no prose at all. But it was `min()`,
-     so at 1280px it obeyed a 162px gap and rendered a column of ellipses.
-     `clamp` keeps the same behaviour where it worked and stops shrinking at
-     320px, letting the panel overlay the text instead. Nothing is lost by
-     that: it is revealed on hover, it is opaque, and it leaves when you do.
-
-     🔴 AND IT STOPS SHORT OF THE PROSE BY `--anb-nudge`. Taking the gutter
-     whole put the tree's right edge on the same pixel as the text's left
-     edge. Subtracting the nudge here is the half of that fix that actually
-     opens the gap — the column moving right without this just hands the extra
-     space to the tree. See the token in arena-notebook.css. */
-  width: clamp(
-    320px,
-    calc(100% - var(--anb-nudge, 100px)),
-    var(--anb-toc-w, 340px)
-  );
+  width: 100%;
   z-index: 1;
 }
 
-.anb-toc.is-hover .anb-toc-panel,
-.anb-toc.is-open .anb-toc-panel {
-  opacity: 1;
-  pointer-events: auto;
-  transform: none;
+/* ---- the frozen head: name, ⇕ chapters, book -------------------------- */
+
+.anb-toc-head {
+  align-items: center;
+  display: flex;
+  flex: none;
+  gap: 2px;
+  margin: 0 0 8px;
+  min-height: 36px;
 }
 
-/* 🪦 `.anb-toc-title` — the notebook's name across the top of the panel —
-   is DELETED (Seth, 2026-09-22). It repeated the h1 the reading column already
-   shows, and it was the only thing in the tree that was not a destination. The
-   name lives on as the rail's aria-label; see practice/arena-notebook-nav.js.
-   The panel's own top padding is what holds the first row off the topbar. */
+.anb-toc-name {
+  color: var(--text);
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.anb-toc-icon,
+.anb-toc-reopen {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: none;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  width: 32px;
+}
+
+.anb-toc-icon:hover,
+.anb-toc-reopen:hover,
+.anb-toc-switch[aria-expanded="true"] {
+  background: rgb(var(--info-rgb) / 0.12);
+  color: var(--text);
+}
+
+/* The book on its own, when the pane is folded away: the one control left on
+   screen that brings it back. */
+.anb-toc-reopen {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: none;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+}
+
+.anb-toc.is-folded {
+  bottom: auto;
+  width: auto;
+}
+
+.anb-toc.is-folded .anb-toc-panel,
+.anb-toc.is-folded .anb-toc-split {
+  display: none;
+}
+
+.anb-toc.is-folded .anb-toc-reopen {
+  display: inline-flex;
+}
+
+/* ---- the divider ------------------------------------------------------- */
+
+/* 8px to grab, 1px to see — the panel's own border is the line; this only
+   thickens and colours it while it is being pointed at or dragged. */
+.anb-toc-split {
+  bottom: 0;
+  cursor: col-resize;
+  position: absolute;
+  right: -4px;
+  top: 0;
+  touch-action: none;
+  width: 8px;
+  z-index: 2;
+}
+
+.anb-toc-split::after {
+  background: transparent;
+  bottom: 0;
+  content: "";
+  left: 3px;
+  position: absolute;
+  top: 0;
+  transition: background 80ms ease;
+  width: 2px;
+}
+
+.anb-toc-split:hover::after,
+.anb-toc-split:focus-visible::after,
+.anb-toc.is-dragging .anb-toc-split::after {
+  background: var(--info);
+}
+
+.anb-toc-split:focus-visible {
+  outline: none;
+}
+
+/* Text selection chasing the pointer across the notebook mid-drag. */
+.anb-toc.is-dragging,
+:root:has(.anb-toc.is-dragging) body {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* ---- the ⇕ chapter list ------------------------------------------------ */
+
+.anb-toc-chapters {
+  display: none;
+  list-style: none;
+  margin: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+  scrollbar-width: thin;
+}
+
+.anb-toc.is-chapters .anb-toc-chapters {
+  display: block;
+}
+
+.anb-toc.is-chapters .anb-toc-rows {
+  display: none;
+}
+
+.anb-toc-chapter > ol {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+.anb-toc-chapter-name {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 6px 4px;
+}
+
+.anb-toc-label:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.anb-toc-label:disabled:hover {
+  background: transparent;
+  color: var(--muted-dim);
+}
+
+/* The notebook's name is `.anb-toc-name` in the frozen head above (Seth,
+   2026-09-22, the second time that day: "[0.0] - Prerequisites (exercises)
+   frozen to the top"). It is still also the rail's aria-label. */
 
 .anb-toc-rows {
   list-style: none;
@@ -160,52 +275,16 @@
 .anb-toc-row[data-level="3"] .anb-toc-label { padding-left: calc(30px * var(--anb-zoom, 1)); }
 .anb-toc-row[data-level="4"] .anb-toc-label { padding-left: calc(42px * var(--anb-zoom, 1)); }
 
-.anb-toc-toggle {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  bottom: 22px;
-  color: var(--muted);
-  cursor: pointer;
-  display: none;
-  font-size: 15px;
-  height: 34px;
-  left: 12px;
-  line-height: 1;
-  pointer-events: auto;
-  position: absolute;
-  width: 34px;
-}
-
-/* 🔴 THE HOVER PANEL EXISTS ONLY WHERE THE MARGIN CAN HOLD IT. This was
-   1180px, which is where the panel stops FITTING ON SCREEN — but the number
-   that matters is where it stops fitting IN THE MARGIN. Below about 1410px
-   the 320px floor is wider than the margin, so the panel lay over the prose,
-   and because the Run button then sits INSIDE the open panel you cannot reach
-   it: moving toward it never fires mouseleave. That is the same bug the
-   `_measure` comment in arena-notebook-nav.js is about, arriving from the
-   other side, and measured at 1280px it covered the prose by 72px.
-
-   1500px leaves ~45px of gap at the breakpoint itself. Below it the ☰ toggle
-   takes over, which overlays too — but on a deliberate click with a visible
-   way back out, not on a mouse passing through.
-
-   🔴 `.98`, AND IT IS NOT DECORATION. This has to be the exact complement of
-   `min-width: 1500px` in arena-notebook.css, which is what moves the column
-   out of the way. Written `max-width: 1499px` the two leave a hole: at
-   1499.5px — an ordinary width under display scaling or browser zoom —
-   NEITHER matches, so the hover panel is live while the column has not moved,
-   which is precisely the overlap this breakpoint exists to prevent. Found by
-   codex, 2026-09-03. Change one of the two numbers and you must change the
-   other. */
-@media (max-width: 1499.98px) {
-  .anb-toc { width: min(86vw, 360px); }
-  .anb-toc-hit { display: none; }
-  .anb-toc-toggle { display: block; }
-  .anb-toc-panel { display: none; width: 100%; }
-  .anb-toc.is-open .anb-toc-panel { display: flex; }
+/* 🔴 NARROW: THE PANE OVERLAYS INSTEAD OF DOCKING. Under 900px a docked
+   pane leaves the notebook too little to read in, so practice/arena-notebook-
+   nav.js writes 0px to the page's `--anb-pane-w` there, starts the pane
+   folded, and folds it again after a jump. Same number as `NARROW` in that
+   file — change one, change both. */
+@media (max-width: 899.98px) {
+  .anb-toc-panel { box-shadow: 0 8px 28px rgb(0 0 0 / 0.28); }
+  .anb-toc-split { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .anb-toc-panel { transition: none; }
+  .anb-toc-split::after { transition: none; }
 }

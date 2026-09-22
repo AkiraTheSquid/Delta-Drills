@@ -116,3 +116,66 @@ body.lesson-mode #self-report-row {
     width: 100%;
   }
 }
+
+/* ── the lesson's own clock (practice/lesson-timer.js) ───────────── */
+
+/* Left of Continue, in the same row, because that is where the decision to
+   move on is made. The readout and the button are rendered by lesson-timer.js
+   into the empty `#lesson-clock-row` the page leaves for them — this file only
+   says what they look like. */
+.lesson-clock-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-right: auto;
+}
+
+.lesson-clock {
+  color: var(--muted);
+  font-family: var(--code-font, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* The last minute. Same signal the session countdown and the exercise block
+   use, so a learner reads one colour across three clocks. */
+.lesson-clock--low {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Put down on purpose. Dimmed rather than hidden: the time that is left is
+   the thing the learner came back to check. */
+.lesson-clock--paused {
+  opacity: 0.55;
+}
+
+.lesson-pause-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--ui-font);
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.lesson-pause-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+@media (max-width: 700px) {
+  /* `.lesson-actions button { width: 100% }` above is about Continue. The
+     clock row is a pair, not a button, and stacking it full-width would put
+     three full-width blocks where there are two decisions. */
+  .lesson-clock-row {
+    margin-right: 0;
+    width: 100%;
+  }
+  .lesson-actions .lesson-pause-btn {
+    width: auto;
+  }
+}

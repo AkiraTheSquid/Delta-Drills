@@ -614,6 +614,15 @@ const LessonGate = (() => {
      the concept off the lesson step. "I've read it" is a claim about the
      learner, and it is the same claim the full page's button was already
      making. */
+  /* The actions row, with the clock's host on the left of it.
+     `#lesson-clock-row` is left EMPTY here: practice/lesson-timer.js renders
+     the readout and the Pause button into it, because what that button says
+     depends on whether a session is running and this file has no business
+     knowing that. Both page shapes open their row through this constant so
+     the Colab edition cannot quietly lose the clock. */
+  const _ACTIONS_OPEN =
+    '<div class="lesson-actions"><div class="lesson-clock-row" id="lesson-clock-row"></div>';
+
   const _colabPageHtml = (page, href, isLast) =>
     `<h2 class="lesson-kp-title" id="lesson-title" tabindex="-1">` +
     `${esc(page.seg.title || page.kp.title)}</h2>` +
@@ -625,8 +634,8 @@ const LessonGate = (() => {
     `<a class="lesson-colab-open" href="${esc(href)}" target="_blank" ` +
     'rel="noopener">Open the lesson in Colab ↗</a>' +
     "</div>" +
-    '<div class="lesson-actions"><button type="button" class="primary" ' +
-    'id="lesson-continue-btn">' +
+    _ACTIONS_OPEN +
+    '<button type="button" class="primary" id="lesson-continue-btn">' +
     (isLast ? "I've read it — give me the problem →" : "I've read it — next concept →") +
     "</button></div>";
 
@@ -681,7 +690,8 @@ const LessonGate = (() => {
       md(seg.worked_example_markdown) +
       '<p class="lesson-example-note">Run any block to see it execute. A block runs ' +
       "everything above it too, so the variables it needs already exist.</p></div>";
-    html += '<div class="lesson-actions"><button type="button" class="primary" id="lesson-continue-btn">' +
+    html += _ACTIONS_OPEN +
+      '<button type="button" class="primary" id="lesson-continue-btn">' +
       (isLast ? "Continue to the question →" : "Next concept →") +
       "</button></div>";
     return html;
@@ -736,6 +746,15 @@ const LessonGate = (() => {
 
   const _cleanup = () => {
     document.body.classList.remove("lesson-mode");
+    /* The column is going back to the question, so the lesson clock stops and
+       its record goes with it — this runs when the gate has HANDED OVER
+       (finishAll) or failed, and in both cases there is no page left to come
+       back to the remaining time of. A pause is the other shape and never
+       comes through here: practice/lesson-timer.js `pause()` keeps the record
+       and the session snapshot carries it. */
+    window.LessonTimer?.stop?.();
+    // The notch's graph row belongs to whatever renderQuestion draws next.
+    window.clearGraphJumpKc?.();
     /* 🔴 THE GATE GIVES THE COLUMN BACK, and until 2026-09-22 it only gave
        back the CSS. `lesson-mode` hides the question's examples, Submit area
        and imports while a lesson is up; dropping the class un-hides all of
@@ -936,8 +955,33 @@ const LessonGate = (() => {
         // slow connection look like a broken lesson.
         _showTopbar(page);
 
+        /* THE NOTCH'S "See in knowledge graph", pointed at the LESSON.
+           practice/graph-jump.js normally derives the concept from the
+           question on screen (`updateGraphJump`, called from renderQuestion) —
+           and renderQuestion does not run while a lesson is up, so on a lesson
+           that row was either hidden or still naming the previous question's
+           concept. The lesson knows its own KC without a lookup; hand it over
+           directly. Cleared in `_cleanup`, so the next question's own mapping
+           is what comes back. */
+        window.setGraphJumpKc?.(page.kp.kc, page.seg.title || page.kp.title);
+
         const button = _el("lesson-continue-btn");
         let advancing = false;
+
+        /* FIFTEEN MINUTES ON THIS PAGE (practice/lesson-timer.js). Keyed the
+           same way the notebook kernel's session is, so each concept page gets
+           its own budget and re-entering one resumes what it had left.
+
+           At 0:00 it presses the button below. That is deliberately the whole
+           of what expiry does: one path for "I have read this", whether the
+           learner said so or the clock did. */
+        window.LessonTimer?.start?.({
+          key: `${page.kp.kc}#${page.segIndex}`,
+          kc: page.kp.kc,
+          title: page.seg.title || page.kp.title,
+          onExpire: () => button.click(),
+        });
+
         button.onclick = () => {
           if (advancing || finished) return;
           advancing = true;

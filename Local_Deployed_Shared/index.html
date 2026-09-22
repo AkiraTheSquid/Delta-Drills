@@ -87,18 +87,18 @@
   <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
   <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=12" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=13" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=7" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
        sheet only adds the section header, the read-only Colab setup cell and
        image sizing. Linked first it would lose every tie it needs to win. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=9" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook.css?v=10" />
   <!-- The contents rail down the left edge of an ARENA notebook. Its own sheet
        rather than more of arena-notebook.css: nothing in it is a `.nbv-*`
        override, it is a fixed-position surface that happens to sit beside the
        notebook. -->
-  <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=4" />
+  <link rel="stylesheet" href="styles/practice/arena-notebook-nav.css?v=5" />
   <!-- The section the reader is scrolled to, its heading tinted by how ready
        they are for its concept. practice/arena-notebook-focus.js. -->
   <link rel="stylesheet" href="styles/practice/arena-notebook-focus.css?v=1" />
@@ -2318,7 +2318,7 @@ t.manual_seed(0)
        (renderQuestion mounts it) and lessons.js (the KaTeX pass). -->
   <script src="practice/math-drill.js?v=1"></script>
   <script src="practice/visuals.js?v=18"></script>
-  <script src="practice/graph-jump.js?v=2"></script>
+  <script src="practice/graph-jump.js?v=3"></script>
   <!-- The Colab edition switch (delta-drills-colab.vercel.app, or ?mode=colab)
        and the question → lesson-notebook resolver. MUST load before ui.js,
        which asks window.DDColab at load time whether to re-route on index
@@ -2345,7 +2345,7 @@ t.manual_seed(0)
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=32"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=36"></script>
+  <script src="practice/timer.js?v=37"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2386,7 +2386,7 @@ t.manual_seed(0)
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
   <script src="concept-pill.js?v=6"></script>
-  <script src="practice/notch-menu.js?v=12"></script>
+  <script src="practice/notch-menu.js?v=13"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -2397,7 +2397,14 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
-  <script src="practice/lessons.js?v=45"></script>
+  <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
+       BEFORE lessons.js only for reading order — `showPage` calls
+       `LessonTimer.start` at click/render time, and the notch mirrors it
+       through events, so nothing here depends on load order. It resolves
+       `PracticeSession` through the shared classic-script scope (timer.js
+       above), which is why it is not a module. -->
+  <script src="practice/lesson-timer.js?v=1"></script>
+  <script src="practice/lessons.js?v=46"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=8"></script>
@@ -2413,7 +2420,7 @@ t.manual_seed(0)
        in the notebook you were when you switched tabs. Neither is required for
        the notebook to render — a missing file costs the rail or the memory,
        which is why they are separate scripts and not more of the view. -->
-  <script src="practice/arena-notebook-nav.js?v=3"></script>
+  <script src="practice/arena-notebook-nav.js?v=4"></script>
   <script src="practice/arena-notebook-state.js?v=1"></script>
   <!-- The other two halves of "leave it where I left it" (Seth, 2026-09-06:
        "it remembers which notebook you were on and it also has like the saving
@@ -2427,7 +2434,7 @@ t.manual_seed(0)
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
   <script src="practice/arena-notebook-resume.js?v=1"></script>
   <script src="practice/arena-notebook-session.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=9"></script>
+  <script src="practice/arena-notebook.js?v=10"></script>
   <script src="practice/ladder.js?v=13"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->

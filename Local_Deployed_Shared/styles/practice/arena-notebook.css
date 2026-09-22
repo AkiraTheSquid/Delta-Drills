@@ -55,61 +55,37 @@
   src: url("fonts/et-book-display-italic-old-style-figures.woff") format("woff");
 }
 
+/* 🔴 THE NOTEBOOK TAKES EVERYTHING RIGHT OF THE CONTENTS PANE. Seth,
+   2026-09-22: "go with the collab format where the code and text take up all
+   the space on the right for the notebooks for the full width on the right".
+
+   `--anb-pane-w` is written onto #page-arena-notebook by practice/arena-
+   notebook-nav.js — the pane's width while it is docked, 0px when it is
+   folded or overlaying a narrow window, unset when there is no pane at all.
+   The pane reads the same token for its own width, so the two edges are one
+   number and cannot overlap or open a gap.
+
+   🪦 What this replaces: a 682px column centred in the window, `--anb-nudge`
+   pushing it 100px right, and a hover overlay living in the margin that
+   centring left. Every one of those was a way of keeping a floating tree off
+   the prose; a docked pane beside it needs none of them. */
 .arena-notebooks-container {
-  margin: 0 auto;
-  max-width: calc(682px * var(--anb-zoom, 1) + 32px);
-  padding: 0 16px;
+  box-sizing: border-box;
+  margin-left: var(--anb-pane-w, 0px);
+  max-width: none;
+  padding: 0 clamp(4px, 2vw, 24px);
 }
 
-/* 🔴 THE READING COLUMN IS CENTRED IN THE WINDOW. EQUAL MARGINS, BOTH SIDES.
-   `.arena-notebooks-container` above is the whole of how — `margin: 0 auto`
-   and nothing offsetting it.
+/* 🔴 THE PAGE KEEPS ITS OWN SIDE PADDING (`.page`, 20px). A code block grows
+   rightward up to the PAGE's padding edge — practice/notebook-cells.js reads
+   `paddingRight` off it — so zeroing it here let every wide fence run to the
+   window's edge and under the scrollbar, and the page scrolled sideways. The
+   container adds the rest of the gutter on top of it. */
 
-   This page used to hold `padding-left: calc(20px + var(--anb-toc-w))` here,
-   reserving the tree's width unconditionally. That was wrong, and visibly so:
-   the tree is a HOVER OVERLAY, not a docked pane, so reserving room for it
-   permanently bought nothing and shoved the column hard against the right
-   edge — about 440px of margin on the left and 90px on the right. Seth,
-   2026-09-03, with LessWrong beside it: "the alignment is off ... make the
-   left margin 340 px ... and the right margin about the same amount".
-
-   The tree still has somewhere to go, because the margin centring creates IS
-   the gutter. See `.anb-toc-panel` in arena-notebook-nav.css for what happens
-   when that gap is too narrow — the panel stops shrinking and overlays
-   instead, which is what an overlay is for. 🔴 Do not reintroduce a reserve
-   the size of the tree; that is the bug above, and it un-centres the column
-   entirely rather than nudging it. */
-
-/* 🔴 THE COLUMN CLEARS THE TREE BY THIS MUCH, AND THE TREE GIVES IT BACK.
-   Centred and with the panel taking the whole gutter, the tree's right edge
-   and the prose's left edge were the SAME pixel — 434 both, at 1833px. Seth,
-   2026-09-03: "move the text body slightly to the right so that it isn't
-   nudged up against the left sidebar. maybe about 100 px to the right".
-
-   🔴 MOVING THE COLUMN IS ONLY HALF OF IT. The panel is sized from the gutter
-   the column leaves, so on its own this nudge just fed the extra 100px
-   straight to the tree and the two edges met again 100px further right. The
-   other half is `calc(100% - var(--anb-nudge))` on `.anb-toc-panel`, which is
-   what actually holds the gap open. Change this token and the gap follows on
-   both sides; change it in one place only and the gap does not move at all.
-
-   The page pays TWICE what the column moves: `.arena-notebooks-container` is
-   `margin: 0 auto`, so it re-centres in whatever is left and takes half the
-   padding straight back. */
-:root[data-arena-notebook] {
-  --anb-nudge: 100px;
-}
-
-/* 🔴 ONLY WHERE THE TREE IS ACTUALLY IN THE MARGIN. Below 1500px the panel
-   is `display: none` and the ☰ toggle takes over (arena-notebook-nav.css), so
-   there is nothing for the column to clear — and the nudge, which costs the
-   page twice what it moves, was spending 200px to push a 1280px window's
-   reading down to 78px of right margin against 248 on the left. Same
-   breakpoint as the toggle, and it has to stay the same one. */
-@media (min-width: 1500px) {
-  #page-arena-notebook {
-    padding-left: calc(2 * var(--anb-nudge));
-  }
+/* Focus mode hides the pane (practice/exercise-timer.js), so the notebook
+   takes its room back rather than leaving a blank strip where it was. */
+#page-arena-notebook.dd-nb-focus .arena-notebooks-container {
+  margin-left: 0;
 }
 
 /* ---- the section header -------------------------------------------------- */
@@ -117,7 +93,6 @@
 .arena-nb-head {
   border-bottom: 1px solid var(--border);
   margin: 0 auto 18px;
-  max-width: calc(682px * var(--anb-zoom, 1));
   padding-bottom: 16px;
 }
 
@@ -199,6 +174,15 @@
    rather than push the whole column sideways on a phone. */
 .nbv-md a {
   overflow-wrap: anywhere;
+}
+
+/* Same for any unbroken run in a paragraph. 0.0's Linear Algebra cell carries
+   upstream's `<img src = "https://lh3.googleusercontent.com/…">` as escaped
+   TEXT, one 1500px word, and it gave the whole page a horizontal scrollbar
+   once the column went full width (2026-09-22). `break-word` only breaks a
+   word that cannot fit, so ordinary prose wraps exactly as before. */
+#page-arena-notebook .nbv-md p {
+  overflow-wrap: break-word;
 }
 
 /* Text cells render normally until double-clicked, then become plain Markdown
@@ -309,9 +293,13 @@
    scoped to `#page-arena-notebook` — the lesson notebooks share `.nbv-*` and
    are not this document. */
 
+/* 🔴 SUPERSEDED FOR THIS PAGE, 2026-09-22: the column is the whole right
+   pane now (see `.arena-notebooks-container` above). The 682px measure is
+   still the lesson notebooks' — it lives in notebook-view.css and is theirs;
+   this only lifts it here. */
 #page-arena-notebook .nbv-cells,
 #page-arena-notebook .arena-nb-head {
-  max-width: calc(682px * var(--anb-zoom, 1));
+  max-width: none;
 }
 
 /* 🔴 CODE IS IN THE COLUMN, NOT BESIDE IT. It used to break out by 99px each
@@ -393,22 +381,6 @@
      the surfaces that set a different one silently keep the root's number. The
      measurements are written out at each point of use instead. See the note at
      the top of that file. This page still sets the zoom and nothing else. */
-
-  /* 🔴 THE TREE'S CEILING, NOT ITS WIDTH. The width it actually takes is the
-     margin the centred column leaves — `clamp(320px, 100%, var(--anb-toc-w))`
-     in arena-notebook-nav.css, where `100%` is that margin. Seth counts the
-     tree as PART of the left margin, not as something beside it: "the left
-     sidebar is part of what I counted as the margin". So the panel fills the
-     margin and stops, and this number only stops it running away on a very
-     wide screen.
-
-     It was `calc(340px * var(--anb-zoom))` = 476px, which is WIDER than the
-     margin centring leaves at 1833px (439px) — so the tree hung 37px over the
-     prose it was supposed to sit beside. The zoom does not belong on this
-     value at all: --anb-zoom scales what you READ, and the tree's own rows
-     already carry it. Still capped in vw so a narrow window cannot hand the
-     panel a third of itself. */
-  --anb-toc-w: min(440px, 32vw);
 
   /* 🪦 --lw-serif / --lw-header WERE DECLARED HERE. They are
      --prose-font / --prose-heading in styles/variables.css now, because this
@@ -495,11 +467,10 @@
    left-aligned — a centred paragraph is a poster.
 
    Scoped to this page: notebook-view.css's scale is shared with the lesson
-   notebooks, and this is the ARENA page's alignment, not theirs. At 1500px
-   and up the reading column itself sits `--anb-nudge` right of centre (see
-   the top of this sheet), so a centred heading is centred in the COLUMN, a
-   hundred pixels right of the tab strip — the nudge was Seth's call too, and
-   moving the headings off the column they head would be the worse trade. */
+   notebooks, and this is the ARENA page's alignment, not theirs. With the
+   contents pane docked the column starts right of it, so a centred heading
+   is centred in the COLUMN rather than under the tab strip — moving the
+   headings off the column they head would be the worse trade. */
 #page-arena-notebook .arena-nb-head,
 #page-arena-notebook .nbv-md h1,
 #page-arena-notebook .nbv-md h2,

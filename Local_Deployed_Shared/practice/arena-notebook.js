@@ -863,9 +863,14 @@ const ArenaNotebookView = (() => {
      `?arena=<slug>` deep link. Returns false when there is nothing to open, so
      the caller can decide what to do instead of assuming a page appeared. */
   let openRequest = 0;
+  /* The sections this view will open. The contents pane's ⇕ chapter list
+     asks, so it can dim the rest rather than offer a click that does nothing. */
+  const IN_APP = ["0-0", "0-1", "0-2"];
+  const canOpen = (slug) => IN_APP.includes(slug);
+  const currentId = () => (current ? current.id : null);
   const open = async (slug, exercise = null) => {
     const host = _host();
-    if (!host || !["0-0", "0-1", "0-2"].includes(slug)) return false;
+    if (!host || !canOpen(slug)) return false;
     const request = ++openRequest;
 
     /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,
@@ -942,7 +947,7 @@ const ArenaNotebookView = (() => {
     return index;
   };
 
-  return { open, sections };
+  return { open, sections, canOpen, currentId };
 })();
 
 window.ArenaNotebook = ArenaNotebookView;
