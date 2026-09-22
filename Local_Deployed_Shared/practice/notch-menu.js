@@ -309,11 +309,10 @@
           ? "Pause becomes available when this placement question finishes."
           : "Nothing to pause — load the next placement question to carry on."
       : lesson
-        ? window.LessonTimer?.isPaused?.()
-          ? "Start this lesson page's clock again where you left it."
-          : open
-            ? "Pause and save. You come back to this lesson page, on the time it has left."
-            : "Stop this lesson page's clock. Nothing else changes; the lesson stays open."
+        ? /* The lesson's own button labels itself for what a click does right
+             now (practice/lesson-timer.js `_paintControl`); copying its title
+             keeps the square from describing a different behaviour. */
+          target?.title || ""
         : open && target
           ? target.title || ""
           : notebook

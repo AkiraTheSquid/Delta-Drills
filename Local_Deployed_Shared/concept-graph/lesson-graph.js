@@ -424,11 +424,22 @@
   /* ---------------- tiny markdown renderer ----------------------------- */
   const esc = (v) =>
     String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  const inline = (v) =>
+  /* A `$…$` / `$$…$$` span is LaTeX, not prose: only escaped here, so `*`
+     and backticks inside it stay maths. typesetMath() below runs KaTeX over
+     the painted pane. Same split as practice/lessons.js MATH_SPAN. */
+  const MATH_SPAN = /(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g;
+  const inlineProse = (v) =>
     esc(v)
       .replace(/`([^`]+)`/g, "<code>$1</code>")
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
       .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  const inline = (v) =>
+    String(v ?? "")
+      .split(MATH_SPAN)
+      .map((part, i) => (i % 2 ? esc(part) : inlineProse(part)))
+      .join("");
+  // KaTeX lives in practice/math-drill.js (DeltaMath.render); absent → raw text.
+  const typesetMath = (root) => { if (window.DeltaMath) window.DeltaMath.render(root); };
 
   const md = (text, { renderCode = true } = {}) => {
     if (!text) return "";
@@ -1355,6 +1366,7 @@
     if (paneTab !== "lesson") {
       const body = $("kg-info-body");
       body.innerHTML = paneTab === "settings" ? renderSettings(id) : renderMetadata(id);
+      typesetMath(body);
       body.scrollTop = 0;
       if (paneTab === "settings") wireSettings(id);
       return;
@@ -1376,6 +1388,7 @@
 
     const body = $("kg-info-body");
     body.innerHTML = html;
+    typesetMath(body);
     body.scrollTop = 0;
     body.querySelectorAll("[data-goto]").forEach((b) =>
       b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
