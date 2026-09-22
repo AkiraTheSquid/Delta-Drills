@@ -46,9 +46,11 @@ import torch as t
 
 a = t.tensor([[1, 2, 3], [4, 5, 6]])
 
-print("a starts at:", type(a.data_ptr()).__name__, "- an address, not a value")
+print("a starts at:", type(a.data_ptr()).__name__,
+      "- an address, not a value")
 print("a is in reading order:", a.is_contiguous())
-print("a compared with itself:", a.data_ptr() == a.data_ptr())
+print("a compared with itself:",
+      a.data_ptr() == a.data_ptr())
 # Hidden checks
 assert _delta_output == 'a starts at: int - an address, not a value\na is in reading order: True\na compared with itself: True\n'
 ```
@@ -58,10 +60,13 @@ a *new note*: *"treat this as 3 rows by 2 columns; to step one place right,
 move forward 3; to step one place down, move forward 1."* Same strip, new note.
 
 ```python
-view = a.T   # same cell as above — `a` is still the 2x3 tensor
+# same cell as above — `a` is still the 2x3 tensor
+view = a.T
 
-print("a.T starts at the same address:", view.data_ptr() == a.data_ptr())
-print("a.T is in reading order:", view.is_contiguous())
+print("a.T starts at the same address:",
+      view.data_ptr() == a.data_ptr())
+print("a.T is in reading order:",
+      view.is_contiguous())
 print("a.T reads as:", view.tolist())
 # Hidden checks
 assert _delta_output == 'a.T starts at the same address: True\na.T is in reading order: False\na.T reads as: [[1, 4], [2, 5], [3, 6]]\n'
@@ -86,10 +91,13 @@ import torch as t
 a = t.tensor([[1, 2], [3, 4], [5, 6]])
 view = a.T
 
-print("strip order of a  :", a.tolist(), "-> reads 1 2 3 4 5 6")
-print("grid order of a.T :", view.tolist(), "-> reads 1 3 5 2 4 6")
+print("strip order of a  :", a.tolist(),
+      "-> reads 1 2 3 4 5 6")
+print("grid order of a.T :", view.tolist(),
+      "-> reads 1 3 5 2 4 6")
 
-print("same strip?      ", view.data_ptr() == a.data_ptr())
+print("same strip?      ",
+      view.data_ptr() == a.data_ptr())
 print("in reading order?", view.is_contiguous())
 # Hidden checks
 assert _delta_output == 'strip order of a  : [[1, 2], [3, 4], [5, 6]] -> reads 1 2 3 4 5 6\ngrid order of a.T : [[1, 3, 5], [2, 4, 6]] -> reads 1 3 5 2 4 6\nsame strip?       True\nin reading order? False\n'
@@ -142,12 +150,16 @@ import torch as t
 
 a = t.tensor([[1, 2, 3], [4, 5, 6]])
 
-print("a.T      shares:", a.T.data_ptr() == a.data_ptr(),
-      " in order:", a.T.is_contiguous())          # shares, out of order
+print("a.T      shares:",
+      a.T.data_ptr() == a.data_ptr(),
+      # shares, out of order
+      " in order:", a.T.is_contiguous())
 
 fresh = t.tensor([[1, 2, 3], [4, 5, 6]])
-print("a rebuild shares:", fresh.data_ptr() == a.data_ptr(),
-      " in order:", fresh.is_contiguous())        # own strip, in order
+print("a rebuild shares:",
+      fresh.data_ptr() == a.data_ptr(),
+      # own strip, in order
+      " in order:", fresh.is_contiguous())
 # Hidden checks
 assert _delta_output == 'a.T      shares: True  in order: False\na rebuild shares: False  in order: True\n'
 ```
@@ -161,7 +173,8 @@ order.
 ```python
 strip_like = t.tensor([[1, 2, 3, 4]])
 print("one row, transposed:", strip_like.T.tolist())
-print("still in reading order:", strip_like.T.is_contiguous())
+print("still in reading order:",
+      strip_like.T.is_contiguous())
 # Hidden checks
 assert _delta_output == 'one row, transposed: [[1], [2], [3], [4]]\nstill in reading order: True\n'
 ```
@@ -173,9 +186,11 @@ still reading `a`'s strip while answering a different starting address:
 
 ```python
 later = a[1:]
-print("a[1:] starts where a does:", later.data_ptr() == a.data_ptr())
+print("a[1:] starts where a does:",
+      later.data_ptr() == a.data_ptr())
 print("...but it is the same strip:",
-      later.untyped_storage().data_ptr() == a.untyped_storage().data_ptr())
+      later.untyped_storage().data_ptr(
+    ) == a.untyped_storage().data_ptr())
 # Hidden checks
 assert _delta_output == 'a[1:] starts where a does: False\n...but it is the same strip: True\n'
 ```
@@ -255,9 +270,12 @@ a = t.tensor([[1, 2, 3], [4, 5, 6]])
 view = a.T
 packed = view.contiguous()
 
-print("same numbers as the view:", t.equal(packed, view))
-print("in reading order now    :", packed.is_contiguous())
-print("still a's block         :", packed.data_ptr() == a.data_ptr())
+print("same numbers as the view:",
+      t.equal(packed, view))
+print("in reading order now    :",
+      packed.is_contiguous())
+print("still a's block         :",
+      packed.data_ptr() == a.data_ptr())
 # Hidden checks
 assert _delta_output == "same numbers as the view: True\nin reading order now    : True\nstill a's block         : False\n"
 ```
@@ -270,12 +288,15 @@ the thing you packed was actually out of order.
 
 ```python
 print("a is already in order:", a.is_contiguous())
-print("so a.contiguous() is a itself:", a.contiguous().data_ptr() == a.data_ptr())
+print("so a.contiguous() is a itself:",
+      a.contiguous().data_ptr() == a.data_ptr())
 
 one_row = t.tensor([[1, 2, 3, 4]])
-print("a one-row transpose is in order too:", one_row.T.is_contiguous())
+print("a one-row transpose is in order too:",
+      one_row.T.is_contiguous())
 print("so ITS packed copy shares:",
-      one_row.T.contiguous().data_ptr() == one_row.data_ptr())
+      one_row.T.contiguous().data_ptr(
+    ) == one_row.data_ptr())
 # Hidden checks
 assert _delta_output == 'a is already in order: True\nso a.contiguous() is a itself: True\na one-row transpose is in order too: True\nso ITS packed copy shares: True\n'
 ```
@@ -293,14 +314,19 @@ import torch as t
 
 a = t.tensor([[1, 2], [3, 4], [5, 6]])
 
-view = a.T                  # borrows a's strip, out of order
-packed = view.contiguous()  # writes its own strip, in order
+# borrows a's strip, out of order
+view = a.T
+# writes its own strip, in order
+packed = view.contiguous()
 
-print("view   shares:", view.data_ptr() == a.data_ptr(),
-      " in order:", view.is_contiguous())
-print("packed shares:", packed.data_ptr() == a.data_ptr(),
-      " in order:", packed.is_contiguous())
-print("same values either way:", t.equal(packed, view))
+print("view   shares:",
+      view.data_ptr() == a.data_ptr(), " in order:",
+      view.is_contiguous())
+print("packed shares:",
+      packed.data_ptr() == a.data_ptr(), " in order:",
+      packed.is_contiguous())
+print("same values either way:",
+      t.equal(packed, view))
 # Hidden checks
 assert _delta_output == 'view   shares: True  in order: False\npacked shares: False  in order: True\nsame values either way: True\n'
 ```

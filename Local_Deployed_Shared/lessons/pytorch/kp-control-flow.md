@@ -200,7 +200,8 @@ The filter runs before the expression, so the expression only ever sees items th
 
 ```python
 xs=[2,-1,4]
-positive_squares=[value*value for value in xs if value>0]
+positive_squares=[value*value for value in xs
+                  if value>0]
 print(positive_squares)
 # Hidden checks
 assert positive_squares==[4,16]

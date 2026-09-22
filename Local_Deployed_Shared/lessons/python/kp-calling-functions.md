@@ -287,7 +287,8 @@ numbers = [8, 3, 5]
 print("sum:", sum(numbers))
 print("max:", max(numbers))
 print("min:", min(numbers))
-print("as one answer:", (sum(numbers), max(numbers), min(numbers)))
+print("as one answer:",
+      (sum(numbers), max(numbers), min(numbers)))
 # Hidden checks
 assert _delta_output == 'sum: 16\nmax: 8\nmin: 3\nas one answer: (16, 8, 3)\n'
 ```

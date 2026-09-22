@@ -105,7 +105,8 @@ We pool a `4×4` image with `2×2` windows at stride `2`, which tiles it into fo
 import torch as t
 x=t.arange(16.).reshape(1,1,4,4)
 bs,cs,hs,ws=x.stride()
-win=x.as_strided((1,1,2,2,2,2),(bs,cs,2*hs,2*ws,hs,ws))
+win=x.as_strided((1,1,2,2,2,2),
+                 (bs,cs,2*hs,2*ws,hs,ws))
 print(win[0,0,0,1])
 # Hidden checks
 assert win[0,0,0,1].tolist()==[[2.,3.],[6.,7.]]

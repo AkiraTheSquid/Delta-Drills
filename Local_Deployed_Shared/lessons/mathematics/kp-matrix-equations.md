@@ -31,8 +31,11 @@ With unknown order $(u,v)$, the matrix is $\begin{pmatrix}2&1\\1&-1\end{pmatrix}
 For a 3D triangular system, solve the last row first: $w=2$, $v+w=5$, $u+2v=7$ gives $w=2$, $v=3$, $u=1$. The principle is unchanged; there is one more coordinate equation.
 
 ```python
-matrix, solution, rhs = ((2, 1), (1, -1)), (2, 1), (5, 1)
-product = tuple(sum(a * x for a, x in zip(row, solution)) for row in matrix)
+matrix, solution, rhs = ((2, 1), (1, -1)), (2, 1), (5,
+    1)
+product = tuple(sum(a * x for a,
+                    x in zip(row, solution))
+    for row in matrix)
 residual = tuple(a - b for a, b in zip(product, rhs))
 print(product, residual)
 # Hidden checks

@@ -23,7 +23,8 @@ import einops
 x=t.arange(1.,10.).reshape(1,1,3,3)
 windows=x.as_strided((1,1,2,2,2,2),(9,9,3,1,3,1))
 w=t.ones(1,1,2,2)
-y=einops.einsum(windows,w,"b c h w i j, o c i j -> b o h w")
+y=einops.einsum(windows,w,
+                "b c h w i j, o c i j -> b o h w")
 print(y)
 # Hidden checks
 assert y.tolist()==[[[[12.,16.],[24.,28.]]]]
@@ -47,7 +48,8 @@ Window `(1, 2)` is the bottom-right patch, and a kernel of ones sums it. The ful
 
 ```python
 import einops
-y=einops.einsum(win,t.ones(1,1,2,3),"b c h w i j, o c i j -> b o h w")
+y=einops.einsum(win,t.ones(1,1,2,3),
+                "b c h w i j, o c i j -> b o h w")
 print(y)
 # Hidden checks
 assert y.tolist()==[[[[27.,33.,39.],[57.,63.,69.]]]]

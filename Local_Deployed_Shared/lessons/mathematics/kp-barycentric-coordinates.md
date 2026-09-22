@@ -39,7 +39,8 @@ A = (2, 0, 0), B = (2, 6, 0), C = (2, 0, 3). With u = v = 1/3, each vertex has w
 ```python
 a, b, c = (2, 0, 0), (2, 6, 0), (2, 0, 3)
 u, v = 1/3, 1/3
-point = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i]) for i in range(3))
+point = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i])
+              for i in range(3))
 print(point)
 # Hidden checks
 assert point == (2.0, 2.0, 1.0)
@@ -66,8 +67,10 @@ With unknowns ordered [s, u, v], the columns are [−D, B − A, C − A]. Three
 A nonsingular solve finds the crossing with the triangle's plane. Then check s ≥ 0 and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; an extra batch axis introduces no extra geometric unknown. Retain the singularity mask as in the segment case.
 
 ```python
-d, a, b, c = (1, 0, 0), (4, 0, 0), (4, 2, 0), (4, 0, 6)
-matrix = [[-d[i], b[i]-a[i], c[i]-a[i]] for i in range(3)]
+d, a, b, c = (1, 0, 0), (4, 0, 0), (4, 2, 0), (4, 0,
+    6)
+matrix = [[-d[i], b[i]-a[i], c[i]-a[i]]
+          for i in range(3)]
 print(matrix)
 # Hidden checks
 assert matrix == [[-1, 0, 0], [0, 2, 0], [0, 0, 6]]

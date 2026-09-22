@@ -31,7 +31,8 @@ Predict the printed displacement before running this optional check.
 ```python
 a, b = (2, -1, 3), (5, 3, 1)
 displacement = tuple(y - x for x, y in zip(a, b))
-midpoint = tuple(x + 0.5 * d for x, d in zip(a, displacement))
+midpoint = tuple(x + 0.5 * d for x,
+                 d in zip(a, displacement))
 print(displacement, midpoint)
 # Hidden checks
 assert displacement == (3, 4, -2)

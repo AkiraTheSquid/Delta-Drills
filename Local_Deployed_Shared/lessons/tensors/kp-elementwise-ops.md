@@ -67,10 +67,12 @@ import torch as t
 
 z = t.tensor([1.0, 2.0, 3.0])
 
-# The per-element rule "x**2 - 1", written once for the whole tensor:
+# The per-element rule "x**2 - 1", written once for
+# the whole tensor:
 out = z**2 - 1
 
-# The input is untouched — the expression built a new tensor.
+# The input is untouched — the expression built a new
+# tensor.
 print("z  ", z)
 print("out", out)
 # Hidden checks
@@ -155,8 +157,9 @@ exactly where a grader will look:
 ```python
 print("at -0.3: floor ->", t.floor(v)[1].item(),
       "but trunc ->", t.trunc(v)[1].item())
-print("trunc == .to(t.int64):", bool(t.equal(t.trunc(v).to(t.int64),
-                                             v.to(t.int64))))
+print("trunc == .to(t.int64):",
+      bool(t.equal(t.trunc(v).to(t.int64),
+                    v.to(t.int64))))
 # Hidden checks
 assert t.floor(v).tolist() == [1.0, -1.0, 2.0, -3.0]
 assert t.trunc(v).tolist() == [1.0, -0.0, 2.0, -2.0]
@@ -172,7 +175,8 @@ v = t.tensor([1.7, -0.3, 2.5])
 
 print("input", v)
 print("floor", t.floor(v))
-print("trunc", t.trunc(v), "  <- differs only at the negative")
+print("trunc", t.trunc(v),
+      "  <- differs only at the negative")
 # Hidden checks
 assert t.floor(v).tolist() == [1.0, -1.0, 2.0]   # floor moves DOWN
 assert t.trunc(v).tolist() == [1.0, -0.0, 2.0]   # trunc moves toward zero
@@ -235,8 +239,10 @@ import torch as t
 
 a = t.tensor([1.0, 5.0, 2.0])
 b = t.tensor([3.0, 4.0, 2.5])
-print("maximum:", t.maximum(a, b))     # one answer per position
-print("a.max():", a.max())             # one answer, full stop
+# one answer per position
+print("maximum:", t.maximum(a, b))
+# one answer, full stop
+print("a.max():", a.max())
 # Hidden checks
 assert _delta_output == 'maximum: tensor([3.0000, 5.0000, 2.5000])\na.max(): tensor(5.)\n'
 ```
@@ -249,9 +255,11 @@ living on a GPU.
 
 ```python
 readings = t.tensor([-2.0, 0.5, 7.0, 12.0])
-print("clamp(min=0):     ", readings.clamp(min=0.0))       # ReLU
+# ReLU
+print("clamp(min=0):     ", readings.clamp(min=0.0))
 print("clamp(max=10):    ", readings.clamp(max=10.0))
-print("clamp(0, 10):     ", readings.clamp(min=0.0, max=10.0))
+print("clamp(0, 10):     ",
+      readings.clamp(min=0.0, max=10.0))
 # Hidden checks
 assert t.equal(readings.clamp(max=10.0), t.minimum(readings, t.tensor(10.0)))
 ```
@@ -261,21 +269,25 @@ assert t.equal(readings.clamp(max=10.0), t.minimum(readings, t.tensor(10.0)))
 ```python
 import torch as t
 
-# Elementwise chooser between TWO tensors: keep the larger at each slot.
+# Elementwise chooser between TWO tensors: keep the
+# larger at each slot.
 a = t.tensor([1.0, 5.0, 2.0])
 b = t.tensor([3.0, 4.0, 2.5])
 
-# Pipeline: curve exam scores — add 5, cap at 100, floor to whole points.
+# Pipeline: curve exam scores — add 5, cap at 100,
+# floor to whole points.
 scores = t.tensor([71.5, 88.25, 97.0, 99.5])
 curved = t.floor((scores + 5).clamp(max=100.0))
 print("raw   ", scores)
 print("curved", curved)
 
-# The other bound. `min=` sets a FLOOR, `max=` sets a CEILING — and the two
-# read backwards from how they sound: min= raises everything below it.
+# The other bound. `min=` sets a FLOOR, `max=` sets a
+# CEILING — and the two read backwards from how they
+# sound: min= raises everything below it.
 readings = t.tensor([-2.0, 0.5, 7.0])
 print("readings   ", readings)
-print("clamp(min=0)", readings.clamp(min=0.0), " <- this is ReLU")
+print("clamp(min=0)", readings.clamp(min=0.0),
+      " <- this is ReLU")
 # Hidden checks
 assert t.maximum(a, b).tolist() == [3.0, 5.0, 2.5]
 assert curved.tolist() == [76.0, 93.0, 100.0, 100.0]

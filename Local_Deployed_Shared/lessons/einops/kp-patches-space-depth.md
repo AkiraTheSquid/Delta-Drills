@@ -54,14 +54,21 @@ space-to-depth.
 import torch as t
 import einops
 
-img = t.arange(16.0).reshape(4, 4, 1)     # (H, W, c=1), values = positions
+# (H, W, c=1), values = positions
+img = t.arange(16.0).reshape(4, 4, 1)
 
-# PATCHES: split H into 2 blocks of 2, W likewise; block coords -> patch axis.
-patches = einops.rearrange(img, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=2, p2=2)
+# PATCHES: split H into 2 blocks of 2, W likewise;
+# block coords -> patch axis.
+patches = einops.rearrange(
+    img, '(h p1) (w p2) c -> (h w) p1 p2 c', p1=2,
+    p2=2)
 # Patch 0 = top-left 2x2 block, row-major patch order:
 
-print("image", tuple(img.shape), "-> patches", tuple(patches.shape))
-print("patch 0 =", patches[0, :, :, 0].tolist(), "| patch 1 starts at", patches[1, 0, 0, 0].item())
+print("image", tuple(img.shape), "-> patches",
+      tuple(patches.shape))
+print("patch 0 =", patches[0, :, :, 0].tolist(),
+      "| patch 1 starts at",
+      patches[1, 0, 0, 0].item())
 # Hidden checks
 assert patches.shape == (4, 2, 2, 1)
 assert patches[0, :, :, 0].tolist() == [[0.0, 1.0], [4.0, 5.0]]
@@ -74,10 +81,13 @@ Reassembly is the extraction pattern with its sides swapped; the keyword moves t
 import torch as t
 import einops
 
-# REASSEMBLE: the same pattern, sides swapped (this is q323's shape).
-back = einops.rearrange(patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=2)
+# REASSEMBLE: the same pattern, sides swapped (this is
+# q323's shape).
+back = einops.rearrange(
+    patches, '(h w) p1 p2 c -> (h p1) (w p2) c', h=2)
 
-print("reassembled to the original:", bool(t.equal(back, img)))
+print("reassembled to the original:",
+      bool(t.equal(back, img)))
 # Hidden checks
 assert t.equal(back, img)
 ```
@@ -88,12 +98,16 @@ Space-to-depth keeps the block's grid position on the spatial axes and folds the
 import torch as t
 import einops
 
-# SPACE-TO-DEPTH on a batch: blocks fold into channels; H, W halve.
-x = t.arange(32.0).reshape(1, 2, 4, 4)    # (b, c=2, H, W)
-s2d = einops.rearrange(x, 'b c (h p) (w q) -> b (c p q) h w', p=2, q=2)
-# The new channel block for output pixel (0,0) holds input block [0:2, 0:2]:
-print("space-to-depth", tuple(x.shape), "->", tuple(s2d.shape),
-      "(channels x4, spatial /2)")
+# SPACE-TO-DEPTH on a batch: blocks fold into
+# channels; H, W halve.
+# (b, c=2, H, W)
+x = t.arange(32.0).reshape(1, 2, 4, 4)
+s2d = einops.rearrange(
+    x, 'b c (h p) (w q) -> b (c p q) h w', p=2, q=2)
+# The new channel block for output pixel (0,0) holds
+# input block [0:2, 0:2]:
+print("space-to-depth", tuple(x.shape), "->",
+      tuple(s2d.shape), "(channels x4, spatial /2)")
 print("pixel (0,0)'s new channels:", s2d[0, :4, 0, 0])
 # Hidden checks
 assert s2d.shape == (1, 8, 2, 2)           # channels x4, spatial /2

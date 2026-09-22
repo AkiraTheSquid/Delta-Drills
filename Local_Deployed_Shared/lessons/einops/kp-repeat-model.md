@@ -50,12 +50,15 @@ the three moves, distinguished.
 import torch as t
 import einops
 
-# 1. NEW AXIS: (b, d) -> (b, t, d), each embedding copied t times.
+# 1. NEW AXIS: (b, d) -> (b, t, d), each embedding
+# copied t times.
 cls = t.tensor([[1.0, 2.0],
-                [3.0, 4.0]])                # (b=2, d=2)
+                # (b=2, d=2)
+                [3.0, 4.0]])
 seq = einops.repeat(cls, 'b d -> b t d', t=3)
 
-print("new axis:", tuple(cls.shape), "->", tuple(seq.shape), "| item 0 =", seq[0].tolist())
+print("new axis:", tuple(cls.shape), "->",
+      tuple(seq.shape), "| item 0 =", seq[0].tolist())
 # Hidden checks
 assert seq.shape == (2, 3, 2)
 assert seq[0].tolist() == [[1.0, 2.0]] * 3   # identical copies down t
@@ -67,12 +70,15 @@ That was a brand-new axis. The second move stretches an axis that already exists
 import torch as t
 import einops
 
-# 2. STRETCH, factor fast: each ROW repeats consecutively.
+# 2. STRETCH, factor fast: each ROW repeats
+# consecutively.
 img = t.tensor([[1, 2],
-                [3, 4]])                     # (h, w) for clarity
+                # (h, w) for clarity
+                [3, 4]])
 rows3 = einops.repeat(img, 'h w -> (h r) w', r=2)
 
-print("'(h r)' factor FAST — each row repeats:\n", rows3)
+print("'(h r)' factor FAST — each row repeats:\n",
+      rows3)
 # Hidden checks
 assert rows3.tolist() == [[1, 2],
                           [1, 2],
@@ -89,7 +95,8 @@ import einops
 # 3. STRETCH, factor slow: the WHOLE block repeats.
 whole = einops.repeat(img, 'h w -> (r h) w', r=2)
 
-print("'(r h)' factor SLOW — the block repeats:\n", whole)
+print("'(r h)' factor SLOW — the block repeats:\n",
+      whole)
 # Hidden checks
 assert whole.tolist() == [[1, 2],
                           [3, 4],
@@ -103,8 +110,10 @@ Put the fast factor on both spatial axes at once and every pixel becomes a block
 import torch as t
 import einops
 
-# Nearest-neighbor 2x upscale: both axes, factor fast on each.
-up = einops.repeat(img, 'h w -> (h a) (w b)', a=2, b=2)
+# Nearest-neighbor 2x upscale: both axes, factor fast
+# on each.
+up = einops.repeat(img, 'h w -> (h a) (w b)', a=2,
+                   b=2)
 print("2x nearest-neighbor upscale:\n", up)
 # Hidden checks
 assert up.tolist() == [[1, 1, 2, 2],

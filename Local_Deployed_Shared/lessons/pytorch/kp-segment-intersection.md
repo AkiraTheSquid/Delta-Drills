@@ -19,7 +19,9 @@ The reason each column is one unknown's direction is what a matrix–vector prod
 
 ```python
 import torch as t
-d=t.tensor([1.,0.]); a=t.tensor([3.,-1.]); b=t.tensor([3.,1.])
+d=t.tensor([1.,0.]); a=t.tensor([3.,
+                                 -1.]); b=t.tensor([
+    3.,1.])
 m=t.stack((d,a-b),dim=1)
 uv=t.linalg.solve(m,a)
 print(uv)

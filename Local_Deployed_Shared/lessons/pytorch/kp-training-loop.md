@@ -205,7 +205,8 @@ Logits `[1, 2, 3]` with true class `2`: the loss is `log(e¹ + e² + e³) - 3 �
 ```python
 logits=t.tensor([[1.,2.,3.],[1.,2.,3.]])
 y=t.tensor([2,0])
-print(t.nn.functional.cross_entropy(logits[:1],y[:1]).item())
+print(t.nn.functional.cross_entropy(logits[:1],
+                                    y[:1]).item())
 print(t.nn.functional.cross_entropy(logits,y).item())
 # Hidden checks
 assert abs(t.nn.functional.cross_entropy(logits[:1],y[:1]).item()-0.4076)<1e-3
@@ -276,18 +277,23 @@ A module has a mode flag. In *train* mode a batch norm normalises with the curre
 
 ```python
 import torch as t
-net=t.nn.Sequential(t.nn.Conv2d(1,2,kernel_size=3,padding=1,bias=False),t.nn.BatchNorm2d(2),t.nn.ReLU(),t.nn.Flatten(),t.nn.Linear(32,3))
+net=t.nn.Sequential(
+    t.nn.Conv2d(1,2,kernel_size=3,padding=1,
+                bias=False),t.nn.BatchNorm2d(2),
+    t.nn.ReLU(),t.nn.Flatten(),t.nn.Linear(32,3))
 def evaluate(m,test_batches):
     m.eval()
     correct=0
     total=0
     with t.no_grad():
         for x,y in test_batches:
-            correct+=(m(x).argmax(dim=1)==y).sum().item()
+            correct+=(m(x).argmax(dim=1)==y).sum(
+                ).item()
             total+=len(y)
     return correct/total
 x=t.linspace(-1.,1.,2*16).reshape(2,1,4,4)
-print(net.training, net.train()(x).sum().item(), net.eval()(x).sum().item(), net.training)
+print(net.training, net.train()(x).sum().item(),
+      net.eval()(x).sum().item(), net.training)
 # Hidden checks
 assert net.training is False
 ```
@@ -299,8 +305,7 @@ The full loop, one epoch at a time: train mode, then for every training batch co
 ```python
 def train(m,train_batches,test_batches,lr,epochs):
     opt=t.optim.Adam(m.parameters(),lr=lr)
-    loss_list=[]
-    acc_list=[]
+    loss_list,acc_list=[],[]
     for epoch in [0]*epochs:
         m.train()
         for x,y in train_batches:
@@ -311,7 +316,8 @@ def train(m,train_batches,test_batches,lr,epochs):
             loss_list.append(loss.item())
         acc_list.append(evaluate(m,test_batches))
     return loss_list,acc_list
-te=[(t.linspace(0.,1.,4*16).reshape(4,1,4,4),t.tensor([0,1,2,0]))]
+te=[(t.linspace(0.,1.,4*16).reshape(4,1,4,4),
+     t.tensor([0,1,2,0]))]
 print(evaluate(net,te))
 # Hidden checks
 assert 0<=evaluate(net,te)<=1
@@ -320,7 +326,8 @@ assert 0<=evaluate(net,te)<=1
 The untrained accuracy is whatever the random head happens to guess. Now three training batches, two epochs:
 
 ```python
-tr=[(t.linspace(-1.,1.,4*16).reshape(4,1,4,4)*(k+1)/3,(t.arange(4)+k)%3) for k in [0,1,2]]
+tr=[(t.linspace(-1.,1.,4*16).reshape(4,1,4,4)*(k+1)/3,
+     (t.arange(4)+k)%3) for k in [0,1,2]]
 losses,accs=train(net,tr,te,0.05,2)
 print(len(losses), len(accs), accs)
 # Hidden checks

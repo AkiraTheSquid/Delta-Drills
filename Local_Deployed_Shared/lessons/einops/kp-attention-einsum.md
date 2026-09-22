@@ -45,8 +45,10 @@ We project a batch of sequences with a small weight, then use per-head weights t
 import torch as t
 import einops
 
-x = t.arange(12.0).reshape(1, 3, 4)          # (b, s, d): one sequence of 3 vectors
-w = t.eye(4)[:, :2]                          # (d, n): keep the first two features
+# (b, s, d): one sequence of 3 vectors
+x = t.arange(12.0).reshape(1, 3, 4)
+# (d, n): keep the first two features
+w = t.eye(4)[:, :2]
 
 proj = einops.einsum(x, w, "b s d, d n -> b s n")
 print("proj", tuple(proj.shape), proj[0].tolist())
@@ -61,8 +63,12 @@ The same shapes, now with a head axis: `attn` holds one weight per position for 
 import torch as t
 import einops
 
-attn = t.tensor([[[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]])   # (b, s, n): head 0 looks at position 0, head 1 at 1
-v = t.arange(12.0).reshape(1, 3, 4)                     # (b, s, d)
+# (b, s, n): head 0 looks at position 0, head 1 at 1
+attn = t.tensor([[[1.0, 0.0],
+                  [0.0, 1.0],
+                  [0.0, 0.0]]])
+# (b, s, d)
+v = t.arange(12.0).reshape(1, 3, 4)
 
 z = einops.einsum(attn, v, "b s n, b s d -> b n d")
 print("z", tuple(z.shape), z[0].tolist())
@@ -157,10 +163,15 @@ Two heads, each with its own 3x2 matrix, project a single position. Then a weigh
 import torch as t
 import einops
 
-x = t.ones(1, 1, 3)                                    # (batch, posn, d_model)
-W = t.stack([t.eye(3)[:, :2], 2 * t.eye(3)[:, :2]])    # (nheads=2, d_model=3, d_head=2)
+# (batch, posn, d_model)
+x = t.ones(1, 1, 3)
+# (nheads=2, d_model=3, d_head=2)
+W = t.stack([t.eye(3)[:, :2], 2 * t.eye(3)[:, :2]])
 
-q = einops.einsum(x, W, "batch posn d_model, nheads d_model d_head -> batch posn nheads d_head")
+q = einops.einsum(
+    x, W,
+    "batch posn d_model, nheads d_model d_head"
+    " -> batch posn nheads d_head")
 print("q", tuple(q.shape), q[0, 0].tolist())
 # Hidden checks
 assert q.shape == (1, 1, 2, 2)
@@ -173,12 +184,17 @@ assert q[0, 0, 1].tolist() == [2.0, 2.0]               # head 1 used its own dou
 import torch as t
 import einops
 
-W = t.ones(3, 4, 2)                                    # (inst, hidden, feats)
-big = t.ones(2, 5, 3, 2)                               # (..., inst, feats) with two leading axes
-small = t.ones(3, 2)                                   # no leading axes at all
+# (inst, hidden, feats)
+W = t.ones(3, 4, 2)
+# (..., inst, feats) with two leading axes
+big = t.ones(2, 5, 3, 2)
+# no leading axes at all
+small = t.ones(3, 2)
 
-h_big = einops.einsum(big, W, "... inst feats, inst hidden feats -> ... inst hidden")
-h_small = einops.einsum(small, W, "... inst feats, inst hidden feats -> ... inst hidden")
+pattern = ("... inst feats, inst hidden feats"
+           " -> ... inst hidden")
+h_big = einops.einsum(big, W, pattern)
+h_small = einops.einsum(small, W, pattern)
 print(tuple(h_big.shape), tuple(h_small.shape))
 # Hidden checks
 assert h_big.shape == (2, 5, 3, 4)

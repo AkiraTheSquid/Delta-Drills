@@ -139,6 +139,7 @@ const DeltaNotebookCells = (() => {
       '<p class="nbv-status" aria-live="polite"></p>' +
       '<pre class="nbv-out hidden"></pre>' +
       "</div>";
+    scheduleGrow();
     return el;
   };
 
@@ -151,6 +152,7 @@ const DeltaNotebookCells = (() => {
     if (id) el.id = `${idPrefix}${id}`;
     if (q != null) el.dataset.q = String(q);
     el.innerHTML = String(html == null ? "" : html);
+    scheduleGrow();
     return el;
   };
 
@@ -175,6 +177,7 @@ const DeltaNotebookCells = (() => {
     head.textContent = summary;
     el.appendChild(head);
     el.appendChild(body);
+    scheduleGrow();
     return el;
   };
 
@@ -283,6 +286,126 @@ const DeltaNotebookCells = (() => {
     if (p.status) p.status.textContent = "";
   };
 
+  /* ---------- growing right ---------------------------------------------
+     🔴 A CELL IS NARROWER THAN ITS COLUMN, AND THE COLUMN IS A PROSE MEASURE.
+     The lesson column is LessWrong's 682px at this page's zoom; take off the
+     52px run gutter, the borders and `.nbv-src`'s padding and 54 characters of
+     code fit. Authored lesson code is held to that by scripts/lesson_quality.py
+     (the WIDTH rule), but a LEARNER typing into a cell is held to nothing — and
+     the 55th character used to disappear behind `overflow-x: auto`, which is a
+     scrollbar the learner has to find before they can read what they just
+     wrote. Seth, 2026-09-22, with a screenshot of a clipped worked example:
+     "the code cell expands ... so that they don't have it such that the code is
+     hidden from them ... expand to the right instead of also expanding to the
+     left. That way the left alignment stays fine."
+
+     So the growth is RIGHTWARD ONLY. The rules in
+     styles/practice/notebook-view.css do the live part with no JS at all —
+     `width: max-content; min-width: 100%` sizes a cell to its longest line and
+     never below the column, so a keystroke re-sizes it the moment it lands.
+     What JS owns is the CEILING: how far right there is to grow before the
+     cell would leave the panel and put a horizontal scrollbar on the page.
+
+     🔴 THE CEILING IS PER PARENT, NOT PER PAGE. A lesson has one column but
+     several cell parents (`.lesson-body` and `.lesson-worked`, each its own
+     `.nb-scope`), and a cell inside a `<details>` solution starts further in
+     than one directly in the column. Measuring once and setting the property
+     on a shared ancestor left every other parent's cells clipped — that is
+     what the first version of this did. The property inherits, so setting it
+     on every distinct parent lets the innermost value win. */
+  const GROW_PROP = "--nbv-grow-max";
+  /* Kept clear between a grown cell and the panel edge, so the cell reads as a
+     cell rather than as something jammed against the window. */
+  const GROW_GAP = 16;
+  // Exactly the selector styles/practice/notebook-view.css grows, `:not
+  // (.nbv-src)` included: a bare `.nbv-md pre` also matches the pre INSIDE
+  // every cell, whose parent is the cell body rather than a column, so the
+  // pass would measure a ceiling for a box that never uses one — and custom
+  // properties INHERIT, so that stray value is one nested growable away from
+  // being the ceiling something actually reads (codex, via S, 2026-09-22).
+  const GROWABLE =
+    ".nbv-code, .nbv-hints, .nbv-solution, .nbv-md pre:not(.nbv-src)";
+
+  /* The element whose right edge the growth must not cross: the nearest
+     ancestor that is WIDER than the column, which is where the slack the cell
+     grows into actually lives (`.practice-left` on a lesson, the page wrapper
+     on the Notebooks and ARENA surfaces). Found by measurement rather than by
+     naming the three surfaces, because a fourth would silently get no ceiling
+     at all and grow until the page scrolled sideways. */
+  const growBound = (col) => {
+    const colW = col.getBoundingClientRect().width;
+    let host = col.parentElement;
+    while (host && host !== document.documentElement) {
+      const cs = getComputedStyle(host);
+      const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+      if (host.clientWidth - pad > colW + 1) return host;
+      host = host.parentElement;
+    }
+    return document.documentElement;
+  };
+
+  /* A surface with furniture pinned over its right side — the ARENA page's
+     fixed rail — reserves that width by setting `--nbv-grow-reserve` on any
+     ancestor of its cells. Nothing to undo in JS if the rail changes size. */
+  const growReserve = (el) =>
+    parseFloat(getComputedStyle(el).getPropertyValue("--nbv-grow-reserve")) || 0;
+
+  let growQueued = false;
+  const growObserver =
+    typeof ResizeObserver === "function" ? new ResizeObserver(() => scheduleGrow()) : null;
+  const growSeen = new WeakSet();
+
+  const measureGrow = () => {
+    growQueued = false;
+    const parents = new Set();
+    document.querySelectorAll(GROWABLE).forEach((el) => {
+      if (el.parentElement) parents.add(el.parentElement);
+    });
+    parents.forEach((col) => {
+      const bound = growBound(col);
+      // 🔴 OBSERVE BEFORE MEASURING, not after.
+      //
+      // A cell built on a HIDDEN tab measures zero, and a ceiling of "no
+      // growth at all" would stick after the tab is shown. So the measurement
+      // below bails on a zero width and leaves the property unset — which is
+      // `max-width: 100%`, the old behaviour — and the ResizeObserver is what
+      // brings the pass back when the tab appears and the column takes a real
+      // width. Registering it only on the measuring path meant a cell that was
+      // hidden the first time round was never observed and so never grew at
+      // all (codex, via S, 2026-09-22).
+      if (growObserver && !growSeen.has(col)) {
+        growSeen.add(col);
+        growObserver.observe(col);
+      }
+      if (growObserver && !growSeen.has(bound)) {
+        growSeen.add(bound);
+        growObserver.observe(bound);
+      }
+      const rect = col.getBoundingClientRect();
+      if (!rect.width) return;
+      const bcs = getComputedStyle(bound);
+      const bRect = bound.getBoundingClientRect();
+      const right = bRect.right - (parseFloat(bcs.paddingRight) || 0) - growReserve(col);
+      // Never NARROWER than the column: `min-width: 100%` already holds that
+      // floor, and a ceiling below it would fight with it every frame.
+      const cap = Math.max(rect.width, right - rect.left - GROW_GAP);
+      col.style.setProperty(GROW_PROP, `${Math.round(cap)}px`);
+    });
+  };
+
+  /* Coalesced to one pass per frame: every surface builds its cells in a loop,
+     and the ceiling only has to be right once the loop has finished. */
+  function scheduleGrow() {
+    if (growQueued) return;
+    growQueued = true;
+    requestAnimationFrame(measureGrow);
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("resize", scheduleGrow);
+    window.addEventListener("load", scheduleGrow);
+  }
+
   return {
     esc,
     splitChecks,
@@ -294,6 +417,7 @@ const DeltaNotebookCells = (() => {
     finish,
     refuse,
     setStatus,
+    scheduleGrow,
   };
 })();
 

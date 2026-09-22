@@ -88,7 +88,8 @@ import torch as t
 a = t.Generator().manual_seed(42)
 first = t.rand(3, generator=a)
 second = t.rand(3, generator=a)
-fresh = t.rand(3, generator=t.Generator().manual_seed(42))
+fresh = t.rand(
+    3, generator=t.Generator().manual_seed(42))
 
 print("first :", first)
 print("second:", second)
@@ -109,7 +110,8 @@ import torch as t
 
 rng = t.Generator().manual_seed(5)
 before = t.rand(2, generator=rng)
-rng.manual_seed(5)                      # back to the beginning of the stream
+# back to the beginning of the stream
+rng.manual_seed(5)
 after = t.rand(2, generator=rng)
 print("before:", before)
 print("after :", after)
@@ -152,27 +154,33 @@ show that consuming the stream moves you along it.
 ```python
 import torch as t
 
-# One expression: build the stream, then fix where it starts.
+# One expression: build the stream, then fix where it
+# starts.
 rng = t.Generator().manual_seed(42)
 
 first = t.rand(3, generator=rng)
 print("first draw :", first)
 
-# The SAME generator again: the stream has advanced past the first three.
+# The SAME generator again: the stream has advanced
+# past the first three.
 second = t.rand(3, generator=rng)
 print("second draw:", second)
 
-# A NEW generator on the same seed starts the same sequence over.
-replay = t.rand(3, generator=t.Generator().manual_seed(42))
+# A NEW generator on the same seed starts the same
+# sequence over.
+replay = t.rand(
+    3, generator=t.Generator().manual_seed(42))
 print("replayed   :", replay)
 
-# Reseeding in place does the same thing to a generator you own.
+# Reseeding in place does the same thing to a
+# generator you own.
 rng.manual_seed(42)
 rewound = t.rand(3, generator=rng)
 print("rewound    :", rewound)
 
 # A different seed is a different sequence entirely.
-other = t.rand(3, generator=t.Generator().manual_seed(43))
+other = t.rand(
+    3, generator=t.Generator().manual_seed(43))
 print("seed 43    :", other)
 # Hidden checks
 assert first.tolist() != second.tolist()

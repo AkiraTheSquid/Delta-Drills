@@ -104,7 +104,8 @@ print("rows:", n_rows)
 print("columns:", n_cols)
 
 shape = (n_rows, n_cols)
-print("as one finished answer:", shape, type(shape).__name__)
+print("as one finished answer:", shape,
+      type(shape).__name__)
 # Hidden checks
 assert _delta_output == 'rows: 2\ncolumns: 3\nas one finished answer: (2, 3) tuple\n'
 ```

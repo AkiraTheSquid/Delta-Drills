@@ -21,7 +21,8 @@ letters = ["a", "b", "c"]
 print(letters[0])
 print(letters[1])
 print(letters[2])
-print("length is", len(letters), "so the last position is", len(letters) - 1)
+print("length is", len(letters),
+      "so the last position is", len(letters) - 1)
 # Hidden checks
 assert _delta_output == 'a\nb\nc\nlength is 3 so the last position is 2\n'
 ```

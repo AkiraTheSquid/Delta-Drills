@@ -53,7 +53,8 @@ import einops
 
 img = t.arange(12).reshape(3, 2, 2)      # (c, h, w)
 
-# Merge h and w, h varying slowest: each channel flattens in reading order.
+# Merge h and w, h varying slowest: each channel
+# flattens in reading order.
 flat = einops.rearrange(img, 'c h w -> c (h w)')
 
 print("'(h w)' reads across rows:", flat[0])
@@ -68,7 +69,8 @@ Same merge, other order inside the parens: the walk changes, the length does not
 import torch as t
 import einops
 
-# Paren order matters: (w h) reads DOWN the columns instead.
+# Paren order matters: (w h) reads DOWN the columns
+# instead.
 flat_cols = einops.rearrange(img, 'c h w -> c (w h)')
 
 print("'(w h)' reads down columns:", flat_cols[0])
@@ -82,12 +84,15 @@ To put whole images side by side, the batch index must vary SLOWER than the colu
 import torch as t
 import einops
 
-# Merge NON-adjacent axes: batch into width -> images side by side.
-batch = t.arange(16).reshape(2, 2, 2, 2)  # (b, h, w, c)
+# Merge NON-adjacent axes: batch into width -> images
+# side by side.
+# (b, h, w, c)
+batch = t.arange(16).reshape(2, 2, 2, 2)
 wide = einops.rearrange(batch, 'b h w c -> h (b w) c')
-# Row 0: image 0's two columns, THEN image 1's two columns (b is slow).
-print("batch merged into width", tuple(wide.shape), "-> row 0:",
-      wide[0, :, 0])
+# Row 0: image 0's two columns, THEN image 1's two
+# columns (b is slow).
+print("batch merged into width", tuple(wide.shape),
+      "-> row 0:", wide[0, :, 0])
 # Hidden checks
 assert wide.shape == (2, 4, 2)
 assert wide[0, :, 0].tolist() == [0, 2, 8, 10]

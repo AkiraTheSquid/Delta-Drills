@@ -35,6 +35,7 @@ import validate_math
 from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_question, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
+import lesson_width as width
 sys.path.insert(0, str(LESSONS_DIR))
 from checks import run_checked
 # append, not insert(0): Local_Deployed_Shared carries its own watch.py and
@@ -223,6 +224,13 @@ def check_kp(path, registry, bank, errors):
                 continue
             for fail in grade_against_bank(solutions[0], bank[qid]):
                 errors.append(f"{name}: faded q{qid} solution FAILED {fail}")
+
+    # 4b0. WIDTH (scripts/lesson_width.py). NOT gated by `strict_for`, unlike
+    # everything below it: this one is about what the reader can physically
+    # see, so a legacy page that overflows its cell is as broken as a new one,
+    # and the whole backlog was cleared in the pass that added the rule
+    # (2026-09-22) rather than being left visible and unfixed.
+    errors.extend(width.check_page_width(kp, name))
 
     # 4b. Quality rules (scripts/lesson_quality.py). Errors only for KPs that
     # have been through the pass — see `strict_for`. `audit_ladder_pairing.py`

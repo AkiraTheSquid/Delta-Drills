@@ -63,7 +63,8 @@ import torch as t
 board = t.zeros((3, 4))
 same = t.zeros(3, 4)
 print(board)
-print("both spellings give", tuple(board.shape), "and", tuple(same.shape))
+print("both spellings give", tuple(board.shape),
+      "and", tuple(same.shape))
 # Hidden checks
 assert board.shape == (3, 4) == same.shape
 ```
@@ -151,12 +152,15 @@ An all-`True` boolean mask — ones, with the dtype said out loud:
 ```python
 import torch as t
 
-# ones gives every entry the value 1 — and 1 as a boolean is True.
+# ones gives every entry the value 1 — and 1 as a
+# boolean is True.
 mask = t.ones((3, 4), dtype=t.bool)
 print(mask)
 
-# The default, for contrast — float32, not float64 and not int.
-print("asked for bool:", mask.dtype, "| default:", t.ones(3).dtype)
+# The default, for contrast — float32, not float64 and
+# not int.
+print("asked for bool:", mask.dtype, "| default:",
+      t.ones(3).dtype)
 # Hidden checks
 assert bool(mask.all()) and mask.dtype == t.bool
 assert t.ones(3).dtype == t.float32
@@ -241,12 +245,14 @@ assert t.full_like(x, 7).dtype == x.dtype == t.int32
 ```python
 import torch as t
 
-# "Blank tensor shaped like x" — zeros_like copies shape AND dtype,
-# so an int32 input yields an int32 result, not the float default.
+# "Blank tensor shaped like x" — zeros_like copies
+# shape AND dtype, so an int32 input yields an int32
+# result, not the float default.
 x = t.tensor([[3, -1, 4], [1, 5, -9]], dtype=t.int32)
 blank = t.zeros_like(x)
 print(blank)
-print("copied dtype:", blank.dtype, "| t.zeros(x.shape) would give:",
+print("copied dtype:", blank.dtype,
+      "| t.zeros(x.shape) would give:",
       t.zeros(x.shape).dtype)
 # Hidden checks
 assert blank.shape == x.shape

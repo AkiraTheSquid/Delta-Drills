@@ -62,8 +62,10 @@ assert _delta_output == 'True\ntensor([0., 0., 1., 0.])\n'
 import torch as t
 
 canvas = t.zeros((5, 3))
-t.linspace(0, 1, 4, out=canvas[:, 1])   # 4 values into a 5-slot column
-print(canvas)                            # the values sit across row 0..1, not down column 1
+# 4 values into a 5-slot column
+t.linspace(0, 1, 4, out=canvas[:, 1])
+# the values sit across row 0..1, not down column 1
+print(canvas)
 # Hidden checks
 assert canvas.shape == (5, 3)
 assert t.allclose(canvas.flatten()[1:5], t.tensor([0., 1/3, 2/3, 1.]))
@@ -83,7 +85,8 @@ Build five y-coordinates as one column of a zero canvas, in one call:
 import torch as t
 
 points = t.zeros((5, 3))
-t.linspace(-1.0, 1.0, 5, out=points[:, 1])   # column 1 = y
+# column 1 = y
+t.linspace(-1.0, 1.0, 5, out=points[:, 1])
 print(points)
 # Hidden checks
 assert points[0, 1] == -1.0 and points[-1, 1] == 1.0
