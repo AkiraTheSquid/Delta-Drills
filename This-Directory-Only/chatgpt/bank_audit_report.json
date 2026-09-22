@@ -480,58 +480,10 @@
     "detail": "prompt names solution call(s) in code form: ['append']"
    }
   ],
-  "799": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['arange']"
-   }
-  ],
   "801": [
    {
     "check": "answer_symbol_in_prompt",
     "detail": "prompt names solution call(s) in code form: ['linspace']"
-   }
-  ],
-  "802": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
-   }
-  ],
-  "803": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['linspace']"
-   }
-  ],
-  "804": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['arange', 'zeros']"
-   }
-  ],
-  "805": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['linspace']"
-   }
-  ],
-  "806": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['linspace']"
-   }
-  ],
-  "807": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['arange', 'linspace']"
-   }
-  ],
-  "808": [
-   {
-    "check": "answer_symbol_in_prompt",
-    "detail": "prompt names solution call(s) in code form: ['linspace', 'ones']"
    }
   ],
   "810": [
@@ -913,7 +865,7 @@
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 138,
+  "answer_symbol_in_prompt": 130,
   "precompute_leak": 10,
   "starter_passes_some_cases": 2
  }

@@ -3378,7 +3378,7 @@ def solve(n, lo, hi, col):
 example = (3, 0.0, 1.0, 1)
 print(solve(*example))
 ",22,"[[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 1.0, 0.0]]"
-PyTorch,Rays as tensors,"Write `0, 1, …, n-1` into row `row` of a 2×n zero canvas using `arange` with `out=`. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, whose column 0 holds 0, 1, …, n-1 and whose column 1 holds `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, row):
@@ -3395,7 +3395,7 @@ PyTorch,Rays as tensors,Return an n×2 tensor as a nested list whose column 0 is
 
 
 def solve(n, lo, hi):
-    """"""Column 0 = arange, column 1 = linspace(lo, hi), one canvas.""""""
+    """"""Column 0 counts up; column 1 ramps from lo to hi.""""""
     canvas = t.zeros((n, 2))
     t.arange(n, out=canvas[:, 0])
     t.linspace(lo, hi, n, out=canvas[:, 1])
@@ -3418,11 +3418,11 @@ def solve(n):
 example = (3,)
 print(solve(*example))
 ",36,"([0.0, 0.5, 1.0], [[0.0, 0.0], [0.0, 0.5], [0.0, 1.0]])"
-PyTorch,Rays as tensors,"Fill every column of an n×3 zero canvas: column 0 with `arange`, column 1 with `linspace(lo, hi)`, column 2 with `linspace(hi, lo)` (reversed). Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int and `lo`, `hi` are floats. Return an n×3 tensor, as a nested list: column 0 holds 0, 1, …, n-1, column 1 holds `n` evenly spaced values from `lo` to `hi`, and column 2 holds the same values in reverse (from `hi` down to `lo`). The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, lo, hi):
-    """"""Three out= writes, three columns.""""""
+    """"""A count, a ramp, and the ramp reversed, one per column.""""""
     canvas = t.zeros((n, 3))
     t.arange(n, out=canvas[:, 0])
     t.linspace(lo, hi, n, out=canvas[:, 1])
@@ -3433,11 +3433,11 @@ def solve(n, lo, hi):
 example = (3, 0.0, 1.0)
 print(solve(*example))
 ",38,"[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]"
-PyTorch,Rays as tensors,"Given a canvas as a nested list, write `linspace(lo, hi, k)` into its first `k` rows of column `col` using `out=` on a slice, and return the whole canvas as a nested list. Rows after `k` stay as they were.","import torch as t
+PyTorch,Rays as tensors,"`canvas` is a nested list of floats, `k` and `col` are ints, and `lo`, `hi` are floats. Put `k` evenly spaced values from `lo` to `hi` into the first `k` rows of column `col`, leave every other entry as it was, and return the whole canvas as a nested list. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(canvas, k, lo, hi, col):
-    """"""linspace into the first k rows of one column of an existing canvas.""""""
+    """"""An even ramp into the top k entries of one column.""""""
     canvas = t.tensor(canvas, dtype=t.float32)
     t.linspace(lo, hi, k, out=canvas[:k, col])
     return canvas.tolist()
@@ -3446,11 +3446,11 @@ def solve(canvas, k, lo, hi, col):
 example = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)
 print(solve(*example))
 ",40,"[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]"
-PyTorch,Rays as tensors,"Return the integers `start..stop-1` written into row `row` of an m×(stop-start) canvas of zeros with dtype int64 (`t.zeros(..., dtype=t.int64)`), using `arange(start, stop, out=...)`. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`m`, `start`, `stop` and `row` are ints with start less than stop and `row` a valid row index. Return an integer tensor with `m` rows and `stop - start` columns, as a nested list, that is zero everywhere except row `row`, which holds start, start+1, …, stop-1. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(m, start, stop, row):
-    """"""arange(start, stop) into an integer canvas row.""""""
+    """"""An integer grid; one row holds a run of consecutive integers.""""""
     canvas = t.zeros((m, stop - start), dtype=t.int64)
     t.arange(start, stop, out=canvas[row])
     return canvas.tolist()
@@ -3459,11 +3459,11 @@ def solve(m, start, stop, row):
 example = (2, 3, 6, 1)
 print(solve(*example))
 ",40,"[[0, 0, 0], [3, 4, 5]]"
-PyTorch,Rays as tensors,"A 3-D canvas of zeros shaped (n, 2, 3). Fill `canvas[:, 1, 1]` (the y of the second row of every slab) with `linspace(lo, hi, n)` via `out=`. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int and `lo`, `hi` are floats. Return a tensor of shape (n, 2, 3), as a nested list, that is zero except entry [i, 1, 1] of every slab i, which holds the i-th of `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, lo, hi):
-    """"""One column through a 3-D canvas, written with out=.""""""
+    """"""An even ramp through one position of every slab.""""""
     canvas = t.zeros((n, 2, 3))
     t.linspace(lo, hi, n, out=canvas[:, 1, 1])
     return canvas.tolist()
@@ -3472,11 +3472,11 @@ def solve(n, lo, hi):
 example = (2, -1.0, 1.0)
 print(solve(*example))
 ",42,"[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]"
-PyTorch,Rays as tensors,"Fill only the EVEN rows of column 0 of an n×2 zero canvas with `linspace(lo, hi)` — a stepped slice as the `out=` target. `n` may be odd; the number of values is the number of even rows. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int (possibly odd) and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, that is zero except the EVEN rows (0, 2, 4, …) of column 0, which hold evenly spaced values from `lo` to `hi`, one per even row. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, lo, hi):
-    """"""linspace written into a stepped slice.""""""
+    """"""An even ramp down every other row of one column.""""""
     canvas = t.zeros((n, 2))
     target = canvas[::2, 0]
     t.linspace(lo, hi, target.shape[0], out=target)
@@ -3486,11 +3486,11 @@ def solve(n, lo, hi):
 example = (5, 0.0, 1.0)
 print(solve(*example))
 ",50,"[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]"
-PyTorch,Rays as tensors,"One column, two targets: in an n×2 zero canvas write `arange(k)` into the FIRST k rows of column `col` and `linspace(lo, hi, n - k)` into the remaining rows of the same column, both with `out=`. Return the canvas as a nested list. (`n - k` may be 0; then the second write is skipped.)","import torch as t
+PyTorch,Rays as tensors,"`n`, `k` and `col` are ints with 1 ≤ k ≤ n, and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, that is zero except column `col`: its first `k` rows hold 0, 1, …, k-1 and its remaining `n - k` rows hold `n - k` evenly spaced values from `lo` to `hi` (none when k = n). The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(n, k, lo, hi, col):
-    """"""A column partitioned between two out= writes.""""""
+    """"""One column split between a count and a ramp.""""""
     canvas = t.zeros((n, 2))
     t.arange(k, out=canvas[:k, col])
     if n - k > 0:
@@ -3501,11 +3501,11 @@ def solve(n, k, lo, hi, col):
 example = (5, 2, 0.0, 1.0, 1)
 print(solve(*example))
 ",52,"[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]"
-PyTorch,Rays as tensors,"Two writes into one (n, 2, 3) canvas: `linspace(y0, y1, n)` into `[:, 1, 1]` and the constant 1.0 into `[:, 1, 0]` using `t.ones(n, out=...)`. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int and `y0`, `y1` are floats. Return a tensor of shape (n, 2, 3), as a nested list, that is zero except in every slab i: entry [i, 1, 0] is 1.0 and entry [i, 1, 1] holds the i-th of `n` evenly spaced values from `y0` to `y1`. The ramp must be written straight into the canvas: building it as a separate tensor and copying it in is graded wrong.","import torch as t
 
 
 def solve(n, y0, y1):
-    """"""A ones-column and a linspace-column, both via out=.""""""
+    """"""A constant and a ramp through two positions of every slab.""""""
     canvas = t.zeros((n, 2, 3))
     t.ones(n, out=canvas[:, 1, 0])
     t.linspace(y0, y1, n, out=canvas[:, 1, 1])
@@ -10183,11 +10183,11 @@ def solve(rows):
     view = a.T
     packed = view.contiguous()
     return (packed.tolist(), view.is_contiguous(), packed.is_contiguous(), t.equal(packed.T, a))",56,
-PyTorch,Rays as tensors,"`m` and `n` are positive ints. Build an m×n zero canvas and write the values 0, 1, …, n-1 into its LAST row with a single `out=` call. Return the canvas as a nested list.","import torch as t
+PyTorch,Rays as tensors,"`m` and `n` are positive ints. Return an m×n tensor, as a nested list, that is zero except its LAST row, which holds 0, 1, …, n-1. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.","import torch as t
 
 
 def solve(m, n):
-    """"""arange written into the bottom row of a zero canvas.""""""
+    """"""A count along the bottom row; zeros elsewhere.""""""
     canvas = t.zeros((m, n))
     t.arange(n, out=canvas[-1])
     return canvas.tolist()",32,
@@ -10199,11 +10199,11 @@ def solve(n, k, lo, hi):
     canvas = t.zeros((n, k))
     t.linspace(lo, hi, n, out=canvas[:, -1])
     return canvas.tolist()",36,
-PyTorch,Rays as tensors,"`n` is a positive int and `lo`, `hi` are floats. Build a 2×n zero canvas; write the values 0, 1, …, n-1 into row 0 and `n` evenly spaced values from `lo` to `hi` into row 1, each with one `out=` call. Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at row 1's last position as a float.","import torch as t
+PyTorch,Rays as tensors,"`n` is a positive int and `lo`, `hi` are floats. Build a 2×n canvas whose row 0 holds 0, 1, …, n-1 and whose row 1 holds `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong. Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at row 1's last position as a float.","import torch as t
 
 
 def solve(n, lo, hi):
-    """"""arange in row 0, linspace in row 1, and the last value written.""""""
+    """"""A count in row 0, a ramp in row 1, and the ramp's last value.""""""
     canvas = t.zeros((2, n))
     t.arange(n, out=canvas[0])
     t.linspace(lo, hi, n, out=canvas[1])
