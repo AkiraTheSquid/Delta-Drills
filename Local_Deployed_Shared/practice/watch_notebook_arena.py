@@ -81,6 +81,24 @@ def check_the_arena_contents_tree_is_a_plain_colab_tree():
         "completed tree rows lost their green check"
     )
 
+    # 🪦 The panel's title row is DELETED (Seth, 2026-09-22: "not have
+    # that thing at the top left"). It restated the notebook's h1, which the
+    # reading column is already showing, so the first line of a tree revealed
+    # by a passing mouse was the one line in it you could not go anywhere
+    # from. The name is not dropped, it MOVES: it is the rail's accessible
+    # name, which is why both halves are asserted together — putting the div
+    # back would read the name out twice, and dropping the label leaves a
+    # screen reader with "Notebook contents" and no idea which notebook.
+    assert "anb-toc-title" not in nav and "anb-toc-title" not in css, (
+        "the contents panel has a visible title row again — it repeats the "
+        "notebook heading two inches to its right"
+    )
+    assert re.search(r'setAttribute\(\s*"aria-label",\s*\n?\s*titleText', nav), (
+        "the contents rail no longer names its notebook to a screen reader — "
+        "the visible title is gone, so the aria-label is the only place left "
+        "that says WHICH notebook these contents belong to"
+    )
+
     # Editing uses source state, not KaTeX-mutated rendered text. Cell changes
     # persist by notebook id and every structural edit rebuilds the heading tree.
     assert "arena-nb-md-editor" in view and "_ddMarkdown" in view, (
