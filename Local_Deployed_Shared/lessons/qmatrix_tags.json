@@ -22246,7 +22246,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-faded"
  },
@@ -22254,7 +22256,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-faded"
  },
@@ -22262,7 +22266,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-independent"
  },
@@ -22270,7 +22276,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-independent"
  },
@@ -22278,7 +22286,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-integrated"
  },
@@ -22286,7 +22296,9 @@
   "target_kcs": [
    "math.ray-geometry"
   ],
-  "supporting_kcs": [],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
   "new_syntax": [],
   "source": "kp-integrated"
  },
@@ -22295,7 +22307,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22305,7 +22318,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22315,7 +22329,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22325,7 +22340,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22335,7 +22351,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22345,7 +22362,8 @@
    "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.ray-geometry"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22355,7 +22373,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22365,7 +22384,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22375,7 +22395,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22385,7 +22406,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22395,7 +22417,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22405,7 +22428,8 @@
    "math.singular-systems"
   ],
   "supporting_kcs": [
-   "math.intersection-systems"
+   "math.intersection-systems",
+   "math.determinants-invertibility"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22416,7 +22440,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22427,7 +22452,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22438,7 +22464,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22449,7 +22476,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22460,7 +22488,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22471,7 +22500,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22482,7 +22512,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22493,7 +22524,8 @@
   ],
   "supporting_kcs": [
    "math.intersection-systems",
-   "math.singular-systems"
+   "math.singular-systems",
+   "math.linear-combinations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22503,7 +22535,8 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22513,7 +22546,8 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
   ],
   "new_syntax": [],
   "source": "kp-faded"
@@ -22523,7 +22557,8 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22533,7 +22568,8 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -22543,7 +22579,8 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -22553,7 +22590,296 @@
    "math.ray-distance"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates"
+   "math.barycentric-coordinates",
+   "math.dot-products-norms"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50032": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50033": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50034": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50035": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50036": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50037": {
+  "target_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50038": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50039": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50040": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50041": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50042": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50043": {
+  "target_kcs": [
+   "math.dot-products-norms"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50044": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50045": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50046": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50047": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50048": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50049": {
+  "target_kcs": [
+   "math.linear-combinations"
+  ],
+  "supporting_kcs": [
+   "math.vector-arithmetic"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50050": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50051": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50052": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50053": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50054": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50055": {
+  "target_kcs": [
+   "math.matrix-equations"
+  ],
+  "supporting_kcs": [
+   "math.linear-combinations"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50056": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50057": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
+  ],
+  "new_syntax": [],
+  "source": "kp-faded"
+ },
+ "50058": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50059": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
+  ],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50060": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
+  ],
+  "new_syntax": [],
+  "source": "kp-integrated"
+ },
+ "50061": {
+  "target_kcs": [
+   "math.determinants-invertibility"
+  ],
+  "supporting_kcs": [
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"

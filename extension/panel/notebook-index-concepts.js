@@ -2,6 +2,11 @@
    Regenerate after changing lessons; the panel navigates by this map. */
 Object.assign(window.DD_NOTEBOOKS, {
   "kcs": {
+    "math.vector-arithmetic": "ma-00",
+    "math.dot-products-norms": "ma-00",
+    "math.linear-combinations": "ma-00",
+    "math.matrix-equations": "ma-00",
+    "math.determinants-invertibility": "ma-00",
     "math.ray-geometry": "ma-01",
     "math.intersection-systems": "ma-01",
     "math.singular-systems": "ma-01",
@@ -81,6 +86,11 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.forward-hooks": "ar-02"
   },
   "kps": {
+    "math.vector-arithmetic": "dd-kp-math-vector-arithmetic",
+    "math.dot-products-norms": "dd-kp-math-dot-products-norms",
+    "math.linear-combinations": "dd-kp-math-linear-combinations",
+    "math.matrix-equations": "dd-kp-math-matrix-equations",
+    "math.determinants-invertibility": "dd-kp-math-determinants-invertibility",
     "math.ray-geometry": "dd-kp-math-ray-geometry",
     "math.intersection-systems": "dd-kp-math-intersection-systems",
     "math.singular-systems": "dd-kp-math-singular-systems",

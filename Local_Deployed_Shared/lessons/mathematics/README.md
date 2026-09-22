@@ -85,6 +85,29 @@
     prose (`dd-mc<n>`, choices listed, no key); the practice page grades.
 
 ## Recent Changes
+- 2026-09-22: Added `ma-00`, **standalone linear algebra for ARENA 0.1**,
+  before the existing application lesson `ma-01`. Five new math KCs,
+  30 MCQs (50032–50061), five checked demonstration cells. No new app
+  software. The foundations have no coding prerequisites; coding content
+  remains available as a separate implementation pathway.
+
+  | Standalone foundation | Transfer into existing 0.1 prep |
+  | --- | --- |
+  | `math.vector-arithmetic` — components, displacement, scaling | `math.ray-geometry` → rays and finite segments |
+  | `math.dot-products-norms` — dot products, length, normalization | `math.ray-distance` → parameter versus Euclidean distance |
+  | `math.linear-combinations` — span, independence, basis coordinates | `math.barycentric-coordinates` → triangle edge coordinates |
+  | `math.matrix-equations` — row/column interpretation, elimination, residuals | `math.intersection-systems` → ray–segment and ray–triangle equations |
+  | `math.determinants-invertibility` — 2D/3D determinants, unique/no/infinite solutions | `math.singular-systems` → valid solves and singular-pair handling |
+
+  Study vector arithmetic first, then linear combinations → matrix
+  equations → determinants. Dot products/norms branch from vector
+  arithmetic and feed the distance lesson. Each foundation has a distinct
+  `la-*` mastery atom, six tagged MCQs, registry prerequisites and explicit
+  atom-graph transfer edges. No automatic encompassing/mastery propagation
+  is claimed from an application answer back to its foundations.
+  Ten of 82 KCs (12.2%) are now mathematics, with 62 math MCQs total.
+  Information theory, eigenvalues/SVD, cross products and rotations remain
+  outside this focused core-0.1 prerequisite pass.
 - 2026-09-22: Landed the 0.1 set: registry rows re-indented to the file's
   own `indent=1` (one-line rows broke `content-mcp`'s byte-identical
   load→save check), full pipeline run (export 1505 rows, compile, qmatrix,

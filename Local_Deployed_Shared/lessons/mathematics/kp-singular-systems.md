@@ -2,7 +2,7 @@
 kc: math.singular-systems
 kind: math
 title: Unique crossings and batched validity
-supporting: [math.intersection-systems]
+supporting: [math.intersection-systems, math.determinants-invertibility]
 new_syntax: []
 previews: []
 concepts: [validity]
@@ -13,6 +13,8 @@ integrated: [50016, 50017]
 ---
 
 ## Concept: A solver result needs a validity mask
+
+First master [determinants and invertibility](?lesson=math.determinants-invertibility), including the difference between no solutions and infinitely many. Here we apply that distinction to intersection handling.
 
 For a 2 × 2 matrix with rows [a, b] and [c, d], det(M) = ad − bc. Its absolute value measures the area scaling of the column directions. A nonzero determinant means the columns are independent, so every right-hand side has one solution.
 

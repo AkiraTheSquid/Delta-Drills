@@ -2,7 +2,7 @@
 kc: math.barycentric-coordinates
 kind: math
 title: Triangle coordinates and ray–triangle systems
-supporting: [math.intersection-systems, math.singular-systems]
+supporting: [math.intersection-systems, math.singular-systems, math.linear-combinations]
 new_syntax: []
 previews: []
 concepts: [weights, three-unknowns]
@@ -13,6 +13,8 @@ integrated: [50021, 50025]
 ---
 
 ## Concept: Three weights, one triangle
+
+First master [linear combinations and coordinates](?lesson=math.linear-combinations). Here the vectors are triangle edges, and extra bounds restrict their coefficients.
 
 For a nondegenerate triangle with vertices A, B, C, begin at A and combine two edges: P = A + u(B − A) + v(C − A). Expanding gives P = (1 − u − v)A + uB + vC. These three vertex weights are barycentric coordinates. They add to one.
 

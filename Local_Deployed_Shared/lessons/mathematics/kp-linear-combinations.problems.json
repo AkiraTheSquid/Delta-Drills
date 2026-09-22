@@ -1,0 +1,188 @@
+{
+  "kc": "math.linear-combinations",
+  "problems": [
+    {
+      "id": 50044,
+      "kind": "compute",
+      "difficulty": 25,
+      "prompt": "Find 2(1, 2) − (3, −1).",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(−1, 5)",
+          "value": "Matrix([-1,5])"
+        },
+        {
+          "key": "B",
+          "text": "(−1, 3)",
+          "value": "Matrix([-1,3])"
+        },
+        {
+          "key": "C",
+          "text": "(5, 3)",
+          "value": "Matrix([5,3])"
+        },
+        {
+          "key": "D",
+          "text": "(−4, 6)",
+          "value": "Matrix([-4,6])"
+        }
+      ],
+      "answer": "A",
+      "solution": "Scale first: (2, 4) − (3, −1) = (−1, 5). Subtracting −1 adds 1.",
+      "verify": {
+        "sympy": {
+          "truth": "2*Matrix([1,2])-Matrix([3,-1])"
+        }
+      }
+    },
+    {
+      "id": 50045,
+      "kind": "statement",
+      "difficulty": 25,
+      "prompt": "Which target is in the span of (1, 2) and (2, 4)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 0)"
+        },
+        {
+          "key": "B",
+          "text": "(3, 6)"
+        },
+        {
+          "key": "C",
+          "text": "(0, 1)"
+        },
+        {
+          "key": "D",
+          "text": "(2, 3)"
+        }
+      ],
+      "answer": "B",
+      "solution": "Both generators lie on y = 2x, so their span is exactly that line. Only (3, 6) satisfies the relation."
+    },
+    {
+      "id": 50046,
+      "kind": "compute",
+      "difficulty": 40,
+      "prompt": "Let E1 = (2, 0), E2 = (1, 3). Which (u, v) gives uE1 + vE2 = (7, 3)?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(7, 3)",
+          "value": "Matrix([7,3])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 1)",
+          "value": "Matrix([2,1])"
+        },
+        {
+          "key": "C",
+          "text": "(3, 1)",
+          "value": "Matrix([3,1])"
+        },
+        {
+          "key": "D",
+          "text": "(1, 3)",
+          "value": "Matrix([1,3])"
+        }
+      ],
+      "answer": "C",
+      "solution": "The y-equation gives v = 1; then 2u + 1 = 7 gives u = 3. Standard components are not these basis coordinates.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([[2,1],[0,3]]).inv()*Matrix([7,3])"
+        }
+      }
+    },
+    {
+      "id": 50047,
+      "kind": "statement",
+      "difficulty": 40,
+      "prompt": "What is the span of (1, 0, 0) and (0, 1, 0) with unrestricted real weights?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "All of 3D space."
+        },
+        {
+          "key": "B",
+          "text": "Only points with x ≥ 0 and y ≥ 0."
+        },
+        {
+          "key": "C",
+          "text": "Only the line x = y, z = 0."
+        },
+        {
+          "key": "D",
+          "text": "The whole plane z = 0."
+        }
+      ],
+      "answer": "D",
+      "solution": "A combination is (u, v, 0), for any real u and v. No z component is available, and weights need not be positive."
+    },
+    {
+      "id": 50048,
+      "kind": "statement",
+      "difficulty": 55,
+      "prompt": "E1 = (1, 2), E2 = (2, 4). Target T = (3, 6) has which property?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "It has infinitely many coefficient pairs because E2 = 2E1."
+        },
+        {
+          "key": "B",
+          "text": "It has exactly one coefficient pair because there are two vectors."
+        },
+        {
+          "key": "C",
+          "text": "It is unreachable because the vectors are dependent."
+        },
+        {
+          "key": "D",
+          "text": "Every coefficient pair produces T."
+        }
+      ],
+      "answer": "A",
+      "solution": "Both (u, v) = (3, 0) and (1, 1) work; in general u + 2v = 3. Dependence removes uniqueness, not necessarily existence."
+    },
+    {
+      "id": 50049,
+      "kind": "compute",
+      "difficulty": 55,
+      "prompt": "A = (1, −1, 2), E1 = (2, 0, 0), E2 = (0, 3, 0). Find A + E1/2 + E2/3.",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(1, 1, 0)",
+          "value": "Matrix([1,1,0])"
+        },
+        {
+          "key": "B",
+          "text": "(2, 0, 2)",
+          "value": "Matrix([2,0,2])"
+        },
+        {
+          "key": "C",
+          "text": "(3, 2, 2)",
+          "value": "Matrix([3,2,2])"
+        },
+        {
+          "key": "D",
+          "text": "(2, 0, 0)",
+          "value": "Matrix([2,0,0])"
+        }
+      ],
+      "answer": "B",
+      "solution": "The weighted displacement is (1, 1, 0). Add the base point A to get (2, 0, 2); this is an affine point, not only the displacement.",
+      "verify": {
+        "sympy": {
+          "truth": "Matrix([1,-1,2])+Matrix([2,0,0])/2+Matrix([0,3,0])/3"
+        }
+      }
+    }
+  ]
+}

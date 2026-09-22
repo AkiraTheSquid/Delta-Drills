@@ -2,7 +2,7 @@
 kc: math.ray-distance
 kind: math
 title: Nearest hit, depth, and actual distance
-supporting: [math.barycentric-coordinates]
+supporting: [math.barycentric-coordinates, math.dot-products-norms]
 new_syntax: []
 previews: []
 concepts: [distance]
@@ -13,6 +13,8 @@ integrated: [50030, 50031]
 ---
 
 ## Concept: Compare hits along the same ray
+
+First master [dot products, norms, and unit vectors](?lesson=math.dot-products-norms). Here those lengths distinguish geometric distance from a ray parameter.
 
 A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction D, a forward point O + sD is Euclidean distance s‖D‖ from O, where ‖D‖ = √(Dₓ² + Dᵧ² + D_z²). The factor ‖D‖ is fixed along that ray, so minimizing valid s also minimizes distance.
 

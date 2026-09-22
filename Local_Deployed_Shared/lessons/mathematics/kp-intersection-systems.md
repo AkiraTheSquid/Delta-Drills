@@ -2,7 +2,7 @@
 kc: math.intersection-systems
 kind: math
 title: Turn an intersection into a linear system
-supporting: [math.ray-geometry]
+supporting: [math.ray-geometry, math.matrix-equations]
 new_syntax: []
 previews: []
 concepts: [columns]
@@ -13,6 +13,8 @@ integrated: [50010, 50011]
 ---
 
 ## Concept: One coefficient per unknown
+
+First master [matrix equations](?lesson=math.matrix-equations): products, coefficient order, elimination, and residuals. Here we turn geometry into those equations.
 
 A matrix–vector product is a weighted sum of columns. If M has columns c₁ and c₂, then M[u, v] = u·c₁ + v·c₂. Each row is one coordinate equation; each column belongs to one unknown. Solving Mx = b finds weights x that produce b.
 
