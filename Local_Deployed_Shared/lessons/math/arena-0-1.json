@@ -1,0 +1,681 @@
+{
+  "version": 1,
+  "title": "Math for ARENA 0.1",
+  "scope": "Five short topics for the core ray-tracing exercises. Lesson → worked example → multiple-choice practice. Python cells expose the arithmetic; linked coding lessons transfer it into PyTorch.",
+  "topics": [
+    {
+      "id": "rays",
+      "title": "Points, directions, and finite segments",
+      "kc": "raytracing.ray-parametrisation",
+      "prereqs": [],
+      "exercises": [
+        "make_rays_1d",
+        "make_rays_2d",
+        "intersect_ray_1d"
+      ],
+      "sections": [
+        {
+          "id": "affine",
+          "title": "A position plus a displacement",
+          "concept": "A point names a location; a vector names a change in location. Subtracting two points gives a displacement: from A to B, move by B − A. Adding a displacement to a point gives another point.\n\nA ray uses P(s) = O + sD, where O is its origin, D is a nonzero direction, and s ≥ 0. D is a displacement, even when ARENA stores it in the second row of a (2, 3) tensor. It is not an endpoint. Given an endpoint Q, first compute D = Q − O. At s = 0 you are at O; negative s lies behind the ray.\n\nA segment uses P(v) = (1 − v)A + vB = A + v(B − A), with 0 ≤ v ≤ 1. The weights add to one. The supporting line allows any real v; the segment does not.\n\nFor n ≥ 2 camera pixels and y-limit L at x = 1, equally spaced direction-y values are −L + i·2L/(n−1). There are n−1 gaps between n endpoints. ARENA uses Dₓ = 1, so s = x when O = 0.",
+          "code": "origin, direction, s = (2, -1), (3, 2), 2\npoint = tuple(origin[i] + s * direction[i] for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (8, 3)\nassert _delta_output == '(8, 3)\\n'",
+          "worked": "Find the midpoint from A = (−2, 3) to B = (6, 7). Half the displacement is (4, 2); adding it to A gives (2, 5). This arithmetic becomes a tensor expression in intersect_ray_1d.",
+          "worked_code": "a, b, v = (-2, 3), (6, 7), 0.5\npoint = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(point)\n# Hidden checks\nassert point == (2.0, 5.0)\nassert _delta_output == '(2.0, 5.0)\\n'",
+          "questions": [
+            {
+              "id": "rays-endpoint",
+              "prompt": "O = (3, −2), Q = (7, 4). A ray starts at O and passes through Q. Which D makes O + D = Q?",
+              "choices": [
+                "(7, 4)",
+                "(4, 6)",
+                "(−4, −6)",
+                "(10, 2)"
+              ],
+              "answer": 1,
+              "feedback": [
+                "Q is a point; subtract O.",
+                "D = Q − O = (4, 6). Adding O recovers Q.",
+                "This points from Q back to O.",
+                "Adding the points does not give their displacement."
+              ]
+            },
+            {
+              "id": "rays-forward",
+              "prompt": "P(s) = (2, 1) + s(−1, 2), s ≥ 0. Does (3, −1) belong to this ray?",
+              "choices": [
+                "Yes, because it lies on the line.",
+                "No; the required parameter is s = −1.",
+                "No; directions cannot have negative coordinates.",
+                "Yes; its x-coordinate is positive."
+              ],
+              "answer": 1,
+              "feedback": [
+                "Line membership is insufficient: s must be nonnegative.",
+                "Both coordinates require s = −1, behind the origin.",
+                "Direction coordinates may be negative; the restriction is on s.",
+                "Coordinate signs do not determine whether a point is ahead of O."
+              ]
+            },
+            {
+              "id": "rays-segment",
+              "prompt": "A = (1, 2), B = (5, 6). What does v = 1.25 give in A + v(B − A)?",
+              "choices": [
+                "(5, 6), the endpoint",
+                "(6, 7), inside the segment",
+                "(6, 7), beyond B",
+                "(5, 7), beyond B"
+              ],
+              "answer": 2,
+              "feedback": [
+                "v = 1 reaches B; 1.25 goes farther.",
+                "The point is correct, but v > 1 puts it outside.",
+                "A + 1.25(4, 4) = (6, 7), outside the segment.",
+                "Both coordinates receive a displacement of 5."
+              ]
+            },
+            {
+              "id": "rays-rescale",
+              "prompt": "A point is O + 6D. Replace D by D′ = 3D, leaving O fixed. Which parameter reaches the same point?",
+              "choices": [
+                "18",
+                "6",
+                "−2",
+                "2"
+              ],
+              "answer": 3,
+              "feedback": [
+                "Multiplying both quantities changes the displacement by nine.",
+                "The new direction is three times as long.",
+                "Negative parameters reverse the displacement.",
+                "2D′ = 2·3D = 6D."
+              ]
+            },
+            {
+              "id": "rays-fan",
+              "prompt": "A five-pixel camera includes both y-limits −3 and 3 at x = 1. Which sequence contains the direction-y coordinates?",
+              "choices": [
+                "[−3, −1.5, 0, 1.5, 3]",
+                "[−3, −1.8, −0.6, 0.6, 1.8]",
+                "[−3, 0, 3]",
+                "[0, 0.75, 1.5, 2.25, 3]"
+              ],
+              "answer": 0,
+              "feedback": [
+                "Four gaps share a span of six: each is 1.5.",
+                "Dividing by five omits the positive endpoint.",
+                "This has three pixels, not five.",
+                "The negative endpoint is missing."
+              ]
+            },
+            {
+              "id": "rays-reverse",
+              "prompt": "A point has v = 0.2 from A to B. Swap the endpoints and write P = B + w(A − B). What is w?",
+              "choices": [
+                "−0.2",
+                "0.2",
+                "0.8",
+                "1.2"
+              ],
+              "answer": 2,
+              "feedback": [
+                "Negating v does not account for changing the starting point.",
+                "The fraction is now measured from the other endpoint.",
+                "w = 1 − v = 0.8; both expressions give 0.8A + 0.2B.",
+                "w > 1 would put the point beyond A."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "systems",
+      "title": "Turn an intersection into a linear system",
+      "kc": "raytracing.segment-intersection",
+      "prereqs": [
+        "rays"
+      ],
+      "exercises": [
+        "intersect_ray_1d"
+      ],
+      "sections": [
+        {
+          "id": "columns",
+          "title": "One coefficient per unknown",
+          "concept": "A matrix–vector product is a weighted sum of columns. If M has columns c₁ and c₂, then M[u, v] = u·c₁ + v·c₂. Each row is one coordinate equation; each column belongs to one unknown. Solving Mx = b finds weights x that produce b.\n\nFor a ray O + uD and segment A + v(B − A), an intersection has both descriptions. Subtract O, then move the segment displacement left:\nuD + v(A − B) = A − O.\nTherefore M = [D, A − B], x = [u, v], and b = A − O. The segment column changes sign because we moved that term across the equality.\n\nFirst solve the supporting lines. Then require u ≥ 0 and 0 ≤ v ≤ 1. Solving alone does not enforce these inequalities. Substitute into both point formulas to check that their coordinates match. A small residual Mx − b checks the equations, but does not check membership.",
+          "code": "column_1, column_2, u, v = (2, 1), (1, -3), 3, 2\nproduct = tuple(u * column_1[i] + v * column_2[i] for i in range(2))\nprint(product)\n# Hidden checks\nassert product == (8, -3)\nassert _delta_output == '(8, -3)\\n'",
+          "worked": "Let O = (1, 0), D = (2, 1), A = (5, −1), B = (5, 5). The x-equation is 2u = 4, so u = 2. The y-equation is u − 6v = −1, so v = 1/2. Both bounds hold. Both descriptions must reach (5, 2).",
+          "worked_code": "o, d, a, b = (1, 0), (2, 1), (5, -1), (5, 5)\nu, v = 2, 0.5\nray_point = tuple(o[i] + u * d[i] for i in range(2))\nsegment_point = tuple(a[i] + v * (b[i] - a[i]) for i in range(2))\nprint(ray_point, segment_point)\n# Hidden checks\nassert ray_point == segment_point == (5, 2)\nassert _delta_output == '(5, 2) (5.0, 2.0)\\n'",
+          "questions": [
+            {
+              "id": "systems-matrix",
+              "prompt": "O = (2, 1), D = (1, 2), A = (6, 0), B = (6, 4). For unknowns [u, v], choose M in M[u, v] = A − O. Matrices are written as rows.",
+              "choices": [
+                "[[1, 0], [2, −4]]",
+                "[[1, 2], [0, −4]]",
+                "[[1, 0], [2, 4]]",
+                "[[−1, 0], [−2, −4]]"
+              ],
+              "answer": 0,
+              "feedback": [
+                "The columns are D = (1, 2) and A − B = (0, −4).",
+                "This puts direction vectors into rows.",
+                "The segment term changes sign when moved left.",
+                "Negating only the ray column changes the meaning of u."
+              ]
+            },
+            {
+              "id": "systems-rhs",
+              "prompt": "O = (−2, 3), A = (4, 1). What is b in [D, A − B][u, v] = b?",
+              "choices": [
+                "(4, 1)",
+                "(−6, 2)",
+                "(2, 4)",
+                "(6, −2)"
+              ],
+              "answer": 3,
+              "feedback": [
+                "Using A alone assumes O = 0.",
+                "This is O − A; these columns require A − O.",
+                "This adds the points.",
+                "A − O = (6, −2)."
+              ]
+            },
+            {
+              "id": "systems-solve",
+              "prompt": "O = (0, 1), D = (2, 0), A = (6, −1), B = (6, 3). Which [u, v] describes the crossing of O + uD and A + v(B − A)?",
+              "choices": [
+                "[6, 0.5]",
+                "[3, 0.5]",
+                "[3, 2]",
+                "[−3, 0.5]"
+              ],
+              "answer": 1,
+              "feedback": [
+                "The ray moves two x-units per unit u.",
+                "2u = 6 and −1 + 4v = 1 give [3, 0.5].",
+                "v = 2 overshoots the segment.",
+                "The forward crossing requires positive u."
+              ]
+            },
+            {
+              "id": "systems-bounds",
+              "prompt": "Three nonsingular pairs solve to [u, v] = [0, 1], [2, −0.1], [−1, 0.5]. Which are ray–segment hits, with endpoints included?",
+              "choices": [
+                "Only the second",
+                "First and third",
+                "Only the first",
+                "All three"
+              ],
+              "answer": 2,
+              "feedback": [
+                "The second has v < 0.",
+                "The third is behind the ray origin.",
+                "u = 0 and v = 1 are valid boundaries; the others violate a bound.",
+                "Unique line crossings need not belong to both objects."
+              ]
+            },
+            {
+              "id": "systems-residual",
+              "prompt": "A nonsingular system solves to [u, v] = [2, 1.4], with residual M[u, v] − b = (0, 0). What follows?",
+              "choices": [
+                "The ray hits the segment.",
+                "The supporting lines meet, but the crossing is beyond B.",
+                "The matrix must be singular.",
+                "The ray points backward."
+              ],
+              "answer": 1,
+              "feedback": [
+                "The segment bound v ≤ 1 fails.",
+                "Zero residual verifies the equations; v = 1.4 excludes segment membership.",
+                "A nonsingular solution can lie outside the bounds.",
+                "u = 2 is forward; the segment bound failed."
+              ]
+            },
+            {
+              "id": "systems-integrate",
+              "prompt": "O = (1, 1), D = (2, −1), A = (5, −2), B = (5, 2). Does the ray hit the segment, and where?",
+              "choices": [
+                "No; the direction has a negative component.",
+                "Yes, at (5, 1).",
+                "No; it crosses behind the origin.",
+                "Yes, at (5, −1)."
+              ],
+              "answer": 3,
+              "feedback": [
+                "Negative direction components are allowed.",
+                "At x = 5, u = 2 changes y to −1.",
+                "u = 2 is nonnegative.",
+                "u = 2 gives (5, −1); v = 1/4 lies in [0, 1]."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "singularity",
+      "title": "Unique crossings and batched validity",
+      "kc": "raytracing.batched-segments",
+      "prereqs": [
+        "systems"
+      ],
+      "exercises": [
+        "intersect_ray_1d",
+        "intersect_rays_1d",
+        "raytrace_triangle",
+        "raytrace_mesh"
+      ],
+      "sections": [
+        {
+          "id": "validity",
+          "title": "A solver result needs a validity mask",
+          "questions": [
+            {
+              "id": "singularity-det",
+              "prompt": "A matrix has rows [[2, 4], [1, 2]]. Which statement is justified?",
+              "choices": [
+                "det = 8; there is one solution.",
+                "det = 0; the right-hand side determines whether there are zero or infinitely many solutions.",
+                "det = 0; every right-hand side has no solution.",
+                "det = −2; the solution is behind the ray."
+              ],
+              "answer": 1,
+              "feedback": [
+                "ad − bc = 4 − 4, not a sum.",
+                "The second column is twice the first; no unique solution exists.",
+                "A compatible right-hand side such as (2, 1) has infinitely many solutions.",
+                "The determinant is zero; its sign would not determine the ray parameter anyway."
+              ]
+            },
+            {
+              "id": "singularity-coincident",
+              "prompt": "A ray and a segment overlap on the same line. Their matrix is singular. Under ARENA's singular-pair-as-miss contract, what should the function report?",
+              "choices": [
+                "A miss, although the objects geometrically overlap.",
+                "A hit because every singular system has one solution.",
+                "A hit because the determinant is negative.",
+                "A miss because coincident objects cannot overlap."
+              ],
+              "answer": 0,
+              "feedback": [
+                "The course convention excludes singular pairs; full geometric intersection needs additional handling.",
+                "A singular system does not have exactly one solution.",
+                "Coincident directions give zero determinant.",
+                "The miss is a convention, not a claim that overlap is impossible."
+              ]
+            },
+            {
+              "id": "singularity-threshold",
+              "prompt": "Invalid means |det(M)| < 10⁻⁸. Which listed pair is valid under that rule?",
+              "choices": [
+                "det = 0",
+                "det = −3·10⁻⁹",
+                "det = 4·10⁻⁹",
+                "det = −2·10⁻⁸"
+              ],
+              "answer": 3,
+              "feedback": [
+                "Zero is below the threshold.",
+                "Its magnitude is below the threshold.",
+                "Its magnitude is below the threshold.",
+                "Its magnitude is 2·10⁻⁸; a negative sign alone does not invalidate it."
+              ]
+            },
+            {
+              "id": "singularity-replacement",
+              "prompt": "An invalid pair is replaced with the identity. The replacement solution is [u, v] = [2, 0.5]. How should the pair contribute?",
+              "choices": [
+                "Count it because both parameters satisfy the bounds.",
+                "Count it only when u is an integer.",
+                "Exclude it using the original validity mask.",
+                "Repeat the identity solve and count that answer."
+              ],
+              "answer": 2,
+              "feedback": [
+                "The parameters solve the replacement, not the original geometry.",
+                "Integrality is unrelated to membership.",
+                "Original validity remains false despite the plausible replacement answer.",
+                "Repeating the artificial solve cannot recover the original geometry."
+              ]
+            },
+            {
+              "id": "singularity-axis",
+              "prompt": "A pair-hit table has rows = rays, columns = segments: [[False, True], [False, False], [True, False]]. Which output says whether each ray hits any segment?",
+              "choices": [
+                "[True, True]",
+                "[True, False, True]",
+                "[False, False, False]",
+                "[False, True]"
+              ],
+              "answer": 1,
+              "feedback": [
+                "This reduces over rays, yielding one answer per segment.",
+                "Reduce each row over segments; retain one Boolean per ray.",
+                "Requiring all segments to hit is stronger than asking for any.",
+                "The result needs three entries, one per ray."
+              ]
+            },
+            {
+              "id": "singularity-scale",
+              "prompt": "Multiply both columns of a 2 × 2 matrix by 100. Its determinant was 10⁻¹⁰. What does this show about a fixed 10⁻⁸ cutoff?",
+              "choices": [
+                "The determinant stays 10⁻¹⁰; the cutoff is scale-invariant.",
+                "The determinant becomes 10⁻⁸; only one column matters.",
+                "The determinant becomes 10⁻⁶; classification can change although column dependence is unchanged.",
+                "The columns become dependent."
+              ],
+              "answer": 2,
+              "feedback": [
+                "Each column scaling contributes a determinant factor.",
+                "The factor is 100 × 100.",
+                "100²·10⁻¹⁰ = 10⁻⁶. Scaling preserves dependence but changes the cutoff decision.",
+                "Nonzero rescaling does not create dependence."
+              ]
+            }
+          ],
+          "concept": "For a 2 × 2 matrix with rows [a, b] and [c, d], det(M) = ad − bc. Its absolute value measures the area scaling of the column directions. A nonzero determinant means the columns are independent, so every right-hand side has one solution.\n\nA zero determinant means the columns collapse onto a line or point. The system can have no solution or infinitely many, depending on b. It does not mean geometric objects never overlap. ARENA's simplified contract treats singular pairs as misses, including coincident lines and degenerate objects.\n\nThe batched implementation declares a pair invalid when |det(M)| < 10⁻⁸. This is a course convention, not a scale-invariant accuracy test: rescaling columns rescales the determinant. Substitute an identity matrix for invalid pairs before solving so one singular pair cannot abort the batch. Keep the original validity mask: a solution of the replacement matrix is not evidence of a hit.\n\nFor each ray, combine validity with membership for every segment pair, then reduce over segments using “any.” Reducing over rays answers a different question.",
+          "code": "a, b, c, d = 1, 2, 3, 6\ndeterminant = a * d - b * c\nprint(determinant)\n# Hidden checks\nassert determinant == 0\nassert _delta_output == '0\\n'",
+          "worked": "Two rays each have three candidate crossings. A hit needs both solver validity and geometric membership. The first ray's only apparent hit came from a replaced matrix; the second has a real hit.",
+          "worked_code": "valid = [[False, True, True], [True, True, False]]\nwithin_bounds = [[True, False, False], [False, True, True]]\nhits = [any(v and h for v, h in zip(vrow, hrow))\n        for vrow, hrow in zip(valid, within_bounds)]\nprint(hits)\n# Hidden checks\nassert hits == [False, True]\nassert _delta_output == '[False, True]\\n'"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "title": "Triangle coordinates and ray–triangle systems",
+      "kc": "raytracing.triangle-intersection",
+      "prereqs": [
+        "systems",
+        "singularity"
+      ],
+      "exercises": [
+        "triangle_ray_intersects",
+        "raytrace_triangle"
+      ],
+      "sections": [
+        {
+          "id": "weights",
+          "title": "Three weights, one triangle",
+          "questions": [
+            {
+              "id": "triangles-weight-a",
+              "prompt": "P = A + 0.2(B − A) + 0.3(C − A). What is the weight on A?",
+              "choices": [
+                "0.2",
+                "0.3",
+                "0.5",
+                "1"
+              ],
+              "answer": 2,
+              "feedback": [
+                "0.2 weights B.",
+                "0.3 weights C.",
+                "The remaining weight is 1 − 0.2 − 0.3 = 0.5.",
+                "All weights sum to one; A alone does not have weight one."
+              ]
+            },
+            {
+              "id": "triangles-outside",
+              "prompt": "For a nondegenerate triangle, u = 0.8, v = 0.4. Where is A + u(B − A) + v(C − A)?",
+              "choices": [
+                "Inside, since each parameter is below one.",
+                "Outside, beyond BC.",
+                "On AB.",
+                "At C."
+              ],
+              "answer": 1,
+              "feedback": [
+                "Separate upper bounds describe a parallelogram.",
+                "u + v = 1.2 makes the weight on A negative.",
+                "AB requires v = 0.",
+                "C requires u = 0, v = 1."
+              ]
+            },
+            {
+              "id": "triangles-edge",
+              "prompt": "Which triangle boundary contains u = 0.25, v = 0.75?",
+              "choices": [
+                "AB",
+                "AC",
+                "Vertex A",
+                "BC"
+              ],
+              "answer": 3,
+              "feedback": [
+                "AB requires v = 0.",
+                "AC requires u = 0.",
+                "A requires u = v = 0.",
+                "u + v = 1 leaves zero weight on A, placing the point on BC."
+              ]
+            },
+            {
+              "id": "triangles-coordinate",
+              "prompt": "A = (1, 0, 0), B = (1, 8, 0), C = (1, 0, 4). Which point has u = 0.25, v = 0.5?",
+              "choices": [
+                "(1, 2, 2)",
+                "(0.75, 2, 2)",
+                "(1, 4, 1)",
+                "(1, 0.25, 0.5)"
+              ],
+              "answer": 0,
+              "feedback": [
+                "The edge displacements are (0, 2, 0) and (0, 0, 2), added to A.",
+                "Every vertex has x = 1; the weights sum to one.",
+                "This swaps the weights on B and C.",
+                "Parameters scale edges; they are not raw spatial coordinates."
+              ]
+            }
+          ],
+          "concept": "For a nondegenerate triangle with vertices A, B, C, begin at A and combine two edges: P = A + u(B − A) + v(C − A). Expanding gives P = (1 − u − v)A + uB + vC. These three vertex weights are barycentric coordinates. They add to one.\n\nThe point belongs to the filled triangle exactly when all three weights are nonnegative: u ≥ 0, v ≥ 0, u + v ≤ 1. Independent bounds u ≤ 1 and v ≤ 1 admit the whole parallelogram. The sum bound cuts away the half beyond edge BC.\n\nBoundaries count: u = 0 is edge AC, v = 0 is edge AB, and u + v = 1 is edge BC, provided the other weights are nonnegative. Vertices are special boundary cases. In three dimensions these weights describe the triangle's plane, not every point in space.",
+          "code": "u, v = 0.6, 0.6\nweights = (1 - u - v, u, v)\ninside = all(weight >= 0 for weight in weights)\nprint(inside)\n# Hidden checks\nassert not inside\nassert _delta_output == 'False\\n'",
+          "worked": "A = (2, 0, 0), B = (2, 6, 0), C = (2, 0, 3). With u = v = 1/3, each vertex has weight 1/3. The point is inside. Compute its coordinates from the edges.",
+          "worked_code": "a, b, c = (2, 0, 0), (2, 6, 0), (2, 0, 3)\nu, v = 1/3, 1/3\npoint = tuple(a[i] + u*(b[i]-a[i]) + v*(c[i]-a[i]) for i in range(3))\nprint(point)\n# Hidden checks\nassert point == (2.0, 2.0, 1.0)\nassert _delta_output == '(2.0, 2.0, 1.0)\\n'"
+        },
+        {
+          "id": "three-unknowns",
+          "title": "Match a ray point to a triangle point",
+          "questions": [
+            {
+              "id": "triangles-columns",
+              "prompt": "With unknowns [s, u, v] and right-hand side O − A, which columns describe ray–triangle equality?",
+              "choices": [
+                "[D, B − A, C − A]",
+                "[−D, A − B, A − C]",
+                "[−D, B − A, C − A]",
+                "[B − A, C − A, −D]"
+              ],
+              "answer": 2,
+              "feedback": [
+                "Changing only the ray column negates the returned s.",
+                "The edge terms remain positive with this right-hand side.",
+                "−sD + u(B−A) + v(C−A) = O−A determines these columns.",
+                "This would require unknown order [u, v, s]."
+              ]
+            },
+            {
+              "id": "triangles-plane",
+              "prompt": "A nonsingular ray–triangle system gives [s, u, v] = [2, 0.7, 0.6]. Does it hit the filled triangle?",
+              "choices": [
+                "No; the plane crossing is outside the triangle.",
+                "Yes; all parameters are positive.",
+                "No; s must be at most one.",
+                "Yes; u and v are each at most one."
+              ],
+              "answer": 0,
+              "feedback": [
+                "u + v = 1.3 makes the weight on A negative.",
+                "Positivity alone omits the third triangle weight.",
+                "A ray has no upper parameter bound.",
+                "These separate bounds admit the parallelogram."
+              ]
+            },
+            {
+              "id": "triangles-origin-hit",
+              "prompt": "A nonsingular ray–triangle system gives [s, u, v] = [0, 0, 1]. With boundaries included, what results?",
+              "choices": [
+                "A miss because s is zero.",
+                "A hit at C, also the ray origin.",
+                "A hit at A.",
+                "A singularity because two parameters are zero."
+              ],
+              "answer": 1,
+              "feedback": [
+                "s ≥ 0 includes the origin.",
+                "Weights are (0, 0, 1), and s = 0 places the point at O.",
+                "A requires u = v = 0.",
+                "Zero solution entries do not imply matrix singularity."
+              ]
+            },
+            {
+              "id": "triangles-translated",
+              "prompt": "O = (1, 1, 1), D = (2, 0, 0), A = (5, 0, 0), B = (5, 4, 0), C = (5, 0, 4). Which [s, u, v] is correct?",
+              "choices": [
+                "[2.5, 0.25, 0.25]",
+                "[2, 0.5, 0.5]",
+                "[−2, 0.25, 0.25]",
+                "[2, 0.25, 0.25]"
+              ],
+              "answer": 3,
+              "feedback": [
+                "Subtract Oₓ = 1 before dividing by 2.",
+                "The edges have length 4; the weights are 1/4.",
+                "The plane is ahead along D.",
+                "1 + 2s = 5; 4u = 1; 4v = 1. All bounds hold."
+              ]
+            }
+          ],
+          "concept": "Set O + sD equal to A + u(B − A) + v(C − A). Move the ray displacement to the triangle side, then move the fixed vertex to the other side:\n−sD + u(B − A) + v(C − A) = O − A.\n\nWith unknowns ordered [s, u, v], the columns are [−D, B − A, C − A]. Three spatial coordinates provide three equations. Changing only the first column's sign reverses s. Multiplying the entire equation by −1 is equivalent, provided both matrix and right-hand side change.\n\nA nonsingular solve finds the crossing with the triangle's plane. Then check s ≥ 0 and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; an extra batch axis introduces no extra geometric unknown. Retain the singularity mask as in the segment case.",
+          "code": "d, a, b, c = (1, 0, 0), (4, 0, 0), (4, 2, 0), (4, 0, 6)\nmatrix = [[-d[i], b[i]-a[i], c[i]-a[i]] for i in range(3)]\nprint(matrix)\n# Hidden checks\nassert matrix == [[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\nassert _delta_output == '[[-1, 0, 0], [0, 2, 0], [0, 0, 6]]\\n'",
+          "worked": "O = (0, 1, 1), D = (2, 0, 0), A = (6, 0, 0), B = (6, 4, 0), C = (6, 0, 4). The equations are −2s = −6, 4u = 1, 4v = 1. Thus s = 3, u = v = 1/4. The ray reaches (6, 1, 1) inside the triangle.",
+          "worked_code": "s, u, v = 3, 0.25, 0.25\npoint = (0 + 2*s, 1, 1)\nhit = s >= 0 and u >= 0 and v >= 0 and u + v <= 1\nprint(point, hit)\n# Hidden checks\nassert point == (6, 1, 1) and hit\nassert _delta_output == '(6, 1, 1) True\\n'"
+        }
+      ]
+    },
+    {
+      "id": "visibility",
+      "title": "Nearest hit, depth, and actual distance",
+      "kc": "raytracing.mesh-visibility",
+      "prereqs": [
+        "triangles"
+      ],
+      "exercises": [
+        "raytrace_mesh"
+      ],
+      "sections": [
+        {
+          "id": "distance",
+          "title": "Compare hits along the same ray",
+          "questions": [
+            {
+              "id": "visibility-nearest",
+              "prompt": "One ray has candidate s = [−1, 5, 2, 0.5]. The first three pairs are nonsingular and inside their triangles; the last is outside its triangle. Which hit is visible?",
+              "choices": [
+                "s = −1",
+                "s = 0.5",
+                "s = 5",
+                "s = 2"
+              ],
+              "answer": 3,
+              "feedback": [
+                "The negative parameter is behind the origin.",
+                "This plane crossing is outside its triangle.",
+                "A closer valid forward hit exists at s = 2.",
+                "Filter backward and outside crossings, then take the minimum."
+              ]
+            },
+            {
+              "id": "visibility-norm",
+              "prompt": "D = (2, 3, 6), s = 2. What is the Euclidean distance from O to O + sD?",
+              "choices": [
+                "2",
+                "4",
+                "14",
+                "7"
+              ],
+              "answer": 2,
+              "feedback": [
+                "s is distance only for a unit direction.",
+                "4 is x displacement sDₓ.",
+                "‖D‖ = √(4 + 9 + 36) = 7; distance = 2·7 = 14.",
+                "7 is direction length; multiply by s."
+              ]
+            },
+            {
+              "id": "visibility-depth",
+              "prompt": "O = (3, 0, 0), D = (2, 0, 0), s = 4. Which pair is (x displacement, world x-coordinate)?",
+              "choices": [
+                "(8, 11)",
+                "(4, 7)",
+                "(11, 8)",
+                "(8, 8)"
+              ],
+              "answer": 0,
+              "feedback": [
+                "Displacement is sDₓ = 8; position adds Oₓ = 3.",
+                "The x speed is 2, not 1.",
+                "This reverses displacement and position.",
+                "Position must include the nonzero origin."
+              ]
+            },
+            {
+              "id": "visibility-misses",
+              "prompt": "A ray misses every triangle. Miss candidates become +∞ before taking the minimum. What results?",
+              "choices": [
+                "0",
+                "−∞",
+                "+∞",
+                "Distance to the first triangle's plane"
+              ],
+              "answer": 2,
+              "feedback": [
+                "Zero falsely reports a hit at the origin.",
+                "A minimum of positive infinities stays positive infinity.",
+                "The sentinel preserves that there is no visible hit.",
+                "A crossing outside its triangle remains a miss."
+              ]
+            },
+            {
+              "id": "visibility-cross-ray",
+              "prompt": "Ray A has ‖D_A‖ = 10, s_A = 1. Ray B has ‖D_B‖ = 1, s_B = 3. Which hit is closer to its own origin?",
+              "choices": [
+                "A, because 1 < 3.",
+                "B, because its distance is 3 versus A's 10.",
+                "Both are equally close.",
+                "Only determinant signs determine this."
+              ],
+              "answer": 1,
+              "feedback": [
+                "Parameters cannot be compared across differently scaled directions.",
+                "Multiply each parameter by its own direction length.",
+                "Their distances are 10 and 3.",
+                "Determinant signs do not measure distance."
+              ]
+            },
+            {
+              "id": "visibility-rescale-distance",
+              "prompt": "D = (1, 0, 0) hits at s = 8. Replace D with D′ = (4, 0, 0), keeping O and the surface fixed. What are the new parameter and distance?",
+              "choices": [
+                "s′ = 8; distance = 32",
+                "s′ = 32; distance = 8",
+                "s′ = 2; distance = 2",
+                "s′ = 2; distance = 8"
+              ],
+              "answer": 3,
+              "feedback": [
+                "The same surface requires a smaller parameter.",
+                "Parameter scales inversely with direction.",
+                "The parameter is not the distance.",
+                "s′D′ reaches the same point; s′‖D′‖ = 8."
+              ]
+            }
+          ],
+          "concept": "A mesh contains many triangles, so a ray may have several valid forward intersections. Visibility selects the nearest. For a fixed nonzero direction D, a forward point O + sD is Euclidean distance s‖D‖ from O, where ‖D‖ = √(Dₓ² + Dᵧ² + D_z²). The factor ‖D‖ is fixed along that ray, so minimizing valid s also minimizes distance.\n\nThe parameter s is not generally a distance: doubling D halves the s needed to reach the same point. Comparing raw s across differently scaled rays can mislead. The x displacement is sDₓ; the world x-coordinate is Oₓ + sDₓ. Neither is generally Euclidean distance. For ARENA's camera O = 0 and Dₓ = 1, s equals x-depth; off-axis rays still have ‖D‖ > 1.\n\nBefore taking a minimum, replace every invalid or backward hit by +∞. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains +∞, an explicit no-hit result. This order also prevents a negative s behind the origin from hiding a valid surface in front.",
+          "code": "s = [4.0, -2.0, 1.0]\nvalid = [True, True, False]\ncandidates = [x if ok and x >= 0 else float('inf') for x, ok in zip(s, valid)]\nnearest = min(candidates)\nprint(nearest)\n# Hidden checks\nassert nearest == 4.0\nassert _delta_output == '4.0\\n'",
+          "worked": "A ray has D = (1, 2, 2) and hits at s = 4. Its direction length is 3. Its x displacement is 4 and its Euclidean travel distance is 12: two measurements of the same hit.",
+          "worked_code": "from math import sqrt\ndirection, s = (1, 2, 2), 4\nlength = sqrt(sum(component**2 for component in direction))\ndepth, distance = s * direction[0], s * length\nprint(depth, distance)\n# Hidden checks\nassert depth == 4 and distance == 12.0\nassert _delta_output == '4 12.0\\n'"
+        }
+      ]
+    }
+  ]
+}

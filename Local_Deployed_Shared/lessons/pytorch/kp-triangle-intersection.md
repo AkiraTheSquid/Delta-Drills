@@ -26,6 +26,8 @@ print(p)
 assert p.tolist()==[2.,1.,2.]
 ```
 
+[Math companion: lesson, worked arithmetic, and multiple-choice practice](?math=triangles).
+
 ## Worked example
 
 We judge three `(u, v)` pairs. The first is well inside; the second has both coordinates below `1` but their sum exceeds `1`, so it lies in the parallelogram's far corner; the third sits exactly on vertex `C`.

@@ -1,0 +1,14 @@
+/* Shares the lesson notebook typography; only MCQ controls are new. */
+.math-nav { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 24px; font-size: 14px; }
+.math-nav [aria-current] { font-weight: 700; text-decoration-thickness: 3px; }
+.math-question { margin: 24px 0; }
+.math-question fieldset { border: 0; padding: 0; min-width: 0; }
+.math-question legend { font-size: 20px; line-height: 1.6; margin-bottom: 18px; }
+.math-question label { display: flex; align-items: baseline; gap: 12px; padding: 14px; margin: 10px 0; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; line-height: 1.5; }
+.math-question label:has(input:checked) { border-color: var(--accent); }
+.math-question input { flex: 0 0 auto; }
+.math-question button { margin-top: 12px; }
+.math-feedback { line-height: 1.6; }
+.math-transfer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); }
+body.math-mode #concept-topbar { display: none; }
+body.math-mode #question-text > button { margin: 12px 12px 12px 0; }
