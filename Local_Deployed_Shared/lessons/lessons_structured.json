@@ -8181,7 +8181,7 @@
      "solo_items": [
       {
        "question_id": 800,
-       "prompt": "Column 0 = arange, column 1 = linspace(lo, hi), one canvas.",
+       "prompt": "Two columns of one canvas, each filled where it lives.",
        "worked_example_code": ""
       },
       {
@@ -8196,17 +8196,17 @@
       },
       {
        "question_id": 803,
-       "prompt": "linspace into the first k rows of one column of an existing canvas.",
+       "prompt": "Only the top k entries of one column change.",
        "worked_example_code": ""
       },
       {
        "question_id": 804,
-       "prompt": "arange(start, stop) into an integer canvas row.",
+       "prompt": "An integer canvas; one row gets a run of consecutive integers.",
        "worked_example_code": ""
       },
       {
        "question_id": 805,
-       "prompt": "One column through a 3-D canvas, written with out=.",
+       "prompt": "One position of every slab, filled in a single write.",
        "worked_example_code": ""
       },
       {
@@ -8223,7 +8223,7 @@
      "integrated_items": [
       {
        "question_id": 806,
-       "prompt": "linspace written into a stepped slice."
+       "prompt": "Every other row of one column: count how many slots that is."
       },
       {
        "question_id": 807,

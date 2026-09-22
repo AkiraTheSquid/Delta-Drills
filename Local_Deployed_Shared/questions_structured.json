@@ -29083,7 +29083,7 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Write `0, 1, …, n-1` into row `row` of a 2×n zero canvas using `arange` with `out=`. Return the canvas as a nested list.",
+      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, whose column 0 holds 0, 1, …, n-1 and whose column 1 holds `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
@@ -29139,22 +29139,28 @@
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 = arange, column 1 = linspace(lo, hi), one canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 counts up; column 1 ramps from lo to hi.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 0.0, 1.0)",
-          "expected_expr": "[[0.0, 0.0], [1.0, 0.5], [2.0, 1.0]]"
+          "expected_expr": "[[0.0, 0.0], [1.0, 0.5], [2.0, 1.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (3,), (2,), 6), ('linspace', (3,), (2,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(2, -2.0, 2.0)",
-          "expected_expr": "[[0.0, -2.0], [1.0, 2.0]]"
+          "expected_expr": "[[0.0, -2.0], [1.0, 2.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (2,), (2,), 4), ('linspace', (2,), (2,), 4)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(4, 1.0, 4.0)",
-          "expected_expr": "[[0.0, 1.0], [1.0, 2.0], [2.0, 3.0], [3.0, 4.0]]"
+          "expected_expr": "[[0.0, 1.0], [1.0, 2.0], [2.0, 3.0], [3.0, 4.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (4,), (2,), 8), ('linspace', (4,), (2,), 8)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -29165,7 +29171,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 = arange, column 1 = linspace(lo, hi), one canvas.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Column 0 counts up; column 1 ramps from lo to hi.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
       "expected_output": "[[0.0, 0.0], [1.0, 0.5], [2.0, 1.0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29236,33 +29242,39 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Fill every column of an n×3 zero canvas: column 0 with `arange`, column 1 with `linspace(lo, hi)`, column 2 with `linspace(hi, lo)` (reversed). Return the canvas as a nested list.",
+      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Return an n×3 tensor, as a nested list: column 0 holds 0, 1, …, n-1, column 1 holds `n` evenly spaced values from `lo` to `hi`, and column 2 holds the same values in reverse (from `hi` down to `lo`). The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Three out= writes, three columns.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"A count, a ramp, and the ramp reversed, one per column.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 0.0, 1.0)",
-          "expected_expr": "[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (3,), (3,), 9), ('linspace', (3,), (3,), 9), ('linspace', (3,), (3,), 9)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(2, 0.0, 4.0)",
-          "expected_expr": "[[0.0, 0.0, 4.0], [1.0, 4.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0, 4.0], [1.0, 4.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (2,), (3,), 6), ('linspace', (2,), (3,), 6), ('linspace', (2,), (3,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(4, -1.0, 2.0)",
-          "expected_expr": "[[0.0, -1.0, 2.0], [1.0, 0.0, 1.0], [2.0, 1.0, 0.0], [3.0, 2.0, -1.0]]"
+          "expected_expr": "[[0.0, -1.0, 2.0], [1.0, 0.0, 1.0], [2.0, 1.0, 0.0], [3.0, 2.0, -1.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (4,), (3,), 12), ('linspace', (4,), (3,), 12), ('linspace', (4,), (3,), 12)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"Three out= writes, three columns.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    t.linspace(hi, lo, n, out=canvas[:, 2])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"A count, a ramp, and the ramp reversed, one per column.\"\"\"\n    canvas = t.zeros((n, 3))\n    t.arange(n, out=canvas[:, 0])\n    t.linspace(lo, hi, n, out=canvas[:, 1])\n    t.linspace(hi, lo, n, out=canvas[:, 2])\n    return canvas.tolist()\n\n\nexample = (3, 0.0, 1.0)\nprint(solve(*example))\n",
       "expected_output": "[[0.0, 0.0, 1.0], [1.0, 0.5, 0.5], [2.0, 1.0, 0.0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29282,27 +29294,33 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Given a canvas as a nested list, write `linspace(lo, hi, k)` into its first `k` rows of column `col` using `out=` on a slice, and return the whole canvas as a nested list. Rows after `k` stay as they were.",
+      "question_text": "`canvas` is a nested list of floats, `k` and `col` are ints, and `lo`, `hi` are floats. Put `k` evenly spaced values from `lo` to `hi` into the first `k` rows of column `col`, leave every other entry as it was, and return the whole canvas as a nested list. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"linspace into the first k rows of one column of an existing canvas.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"An even ramp into the top k entries of one column.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)",
-          "expected_expr": "[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]"
+          "expected_expr": "[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (2,), (2,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve([[1.0, 1.0, 1.0]], 1, 5.0, 5.0, 2)",
-          "expected_expr": "[[1.0, 1.0, 5.0]]"
+          "expected_expr": "[[1.0, 1.0, 5.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (1,), (3,), 3)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve([[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]], 3, 1.0, 3.0, 1)",
-          "expected_expr": "[[0.0, 1.0], [0.0, 2.0], [0.0, 3.0], [0.0, 0.0]]"
+          "expected_expr": "[[0.0, 1.0], [0.0, 2.0], [0.0, 3.0], [0.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (3,), (2,), 8)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -29313,7 +29331,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"linspace into the first k rows of one column of an existing canvas.\"\"\"\n    canvas = t.tensor(canvas, dtype=t.float32)\n    t.linspace(lo, hi, k, out=canvas[:k, col])\n    return canvas.tolist()\n\n\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(canvas, k, lo, hi, col):\n    \"\"\"An even ramp into the top k entries of one column.\"\"\"\n    canvas = t.tensor(canvas, dtype=t.float32)\n    t.linspace(lo, hi, k, out=canvas[:k, col])\n    return canvas.tolist()\n\n\nexample = ([[9.0, 9.0], [9.0, 9.0], [9.0, 9.0]], 2, 0.0, 1.0, 0)\nprint(solve(*example))\n",
       "expected_output": "[[0.0, 9.0], [1.0, 9.0], [9.0, 9.0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29333,33 +29351,39 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "Return the integers `start..stop-1` written into row `row` of an m×(stop-start) canvas of zeros with dtype int64 (`t.zeros(..., dtype=t.int64)`), using `arange(start, stop, out=...)`. Return the canvas as a nested list.",
+      "question_text": "`m`, `start`, `stop` and `row` are ints with start less than stop and `row` a valid row index. Return an integer tensor with `m` rows and `stop - start` columns, as a nested list, that is zero everywhere except row `row`, which holds start, start+1, …, stop-1. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"arange(start, stop) into an integer canvas row.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"An integer grid; one row holds a run of consecutive integers.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(2, 3, 6, 1)",
-          "expected_expr": "[[0, 0, 0], [3, 4, 5]]"
+          "expected_expr": "[[0, 0, 0], [3, 4, 5]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (3,), (1,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 0, 2, 0)",
-          "expected_expr": "[[0, 1], [0, 0], [0, 0]]"
+          "expected_expr": "[[0, 1], [0, 0], [0, 0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (2,), (1,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(1, 10, 11, 0)",
-          "expected_expr": "[[10]]"
+          "expected_expr": "[[10]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (1,), (1,), 1)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"arange(start, stop) into an integer canvas row.\"\"\"\n    canvas = t.zeros((m, stop - start), dtype=t.int64)\n    t.arange(start, stop, out=canvas[row])\n    return canvas.tolist()\n\n\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, start, stop, row):\n    \"\"\"An integer grid; one row holds a run of consecutive integers.\"\"\"\n    canvas = t.zeros((m, stop - start), dtype=t.int64)\n    t.arange(start, stop, out=canvas[row])\n    return canvas.tolist()\n\n\nexample = (2, 3, 6, 1)\nprint(solve(*example))\n",
       "expected_output": "[[0, 0, 0], [3, 4, 5]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29379,27 +29403,33 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A 3-D canvas of zeros shaped (n, 2, 3). Fill `canvas[:, 1, 1]` (the y of the second row of every slab) with `linspace(lo, hi, n)` via `out=`. Return the canvas as a nested list.",
+      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Return a tensor of shape (n, 2, 3), as a nested list, that is zero except entry [i, 1, 1] of every slab i, which holds the i-th of `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"One column through a 3-D canvas, written with out=.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"An even ramp through one position of every slab.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(2, -1.0, 1.0)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (2,), (6,), 12)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 0.0, 1.0)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (3,), (6,), 18)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(1, 4.0, 4.0)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 4.0, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [0.0, 4.0, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (1,), (6,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -29410,7 +29440,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"One column through a 3-D canvas, written with out=.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.linspace(lo, hi, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"An even ramp through one position of every slab.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.linspace(lo, hi, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
       "expected_output": "[[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29430,27 +29460,33 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Fill only the EVEN rows of column 0 of an n×2 zero canvas with `linspace(lo, hi)` — a stepped slice as the `out=` target. `n` may be odd; the number of values is the number of even rows. Return the canvas as a nested list.",
+      "question_text": "`n` is a positive int (possibly odd) and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, that is zero except the EVEN rows (0, 2, 4, …) of column 0, which hold evenly spaced values from `lo` to `hi`, one per even row. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"linspace written into a stepped slice.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"An even ramp down every other row of one column.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(5, 0.0, 1.0)",
-          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (3,), (4,), 10)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(4, 0.0, 1.0)",
-          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (2,), (4,), 8)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(1, 7.0, 7.0)",
-          "expected_expr": "[[7.0, 0.0]]"
+          "expected_expr": "[[7.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (1,), (4,), 2)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -29461,7 +29497,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"linspace written into a stepped slice.\"\"\"\n    canvas = t.zeros((n, 2))\n    target = canvas[::2, 0]\n    t.linspace(lo, hi, target.shape[0], out=target)\n    return canvas.tolist()\n\n\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"An even ramp down every other row of one column.\"\"\"\n    canvas = t.zeros((n, 2))\n    target = canvas[::2, 0]\n    t.linspace(lo, hi, target.shape[0], out=target)\n    return canvas.tolist()\n\n\nexample = (5, 0.0, 1.0)\nprint(solve(*example))\n",
       "expected_output": "[[0.0, 0.0], [0.0, 0.0], [0.5, 0.0], [0.0, 0.0], [1.0, 0.0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29481,27 +29517,33 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "One column, two targets: in an n×2 zero canvas write `arange(k)` into the FIRST k rows of column `col` and `linspace(lo, hi, n - k)` into the remaining rows of the same column, both with `out=`. Return the canvas as a nested list. (`n - k` may be 0; then the second write is skipped.)",
+      "question_text": "`n`, `k` and `col` are ints with 1 ≤ k ≤ n, and `lo`, `hi` are floats. Return an n×2 tensor, as a nested list, that is zero except column `col`: its first `k` rows hold 0, 1, …, k-1 and its remaining `n - k` rows hold `n - k` evenly spaced values from `lo` to `hi` (none when k = n). The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"A column partitioned between two out= writes.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"One column split between a count and a ramp.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(5, 2, 0.0, 1.0, 1)",
-          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]"
+          "expected_expr": "[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (2,), (2,), 10), ('linspace', (3,), (2,), 10)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 3, 0.0, 1.0, 0)",
-          "expected_expr": "[[0.0, 0.0], [1.0, 0.0], [2.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0], [1.0, 0.0], [2.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (3,), (2,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(4, 1, 10.0, 20.0, 0)",
-          "expected_expr": "[[0.0, 0.0], [10.0, 0.0], [15.0, 0.0], [20.0, 0.0]]"
+          "expected_expr": "[[0.0, 0.0], [10.0, 0.0], [15.0, 0.0], [20.0, 0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('arange', (1,), (2,), 8), ('linspace', (3,), (2,), 8)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -29512,7 +29554,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"A column partitioned between two out= writes.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(k, out=canvas[:k, col])\n    if n - k > 0:\n        t.linspace(lo, hi, n - k, out=canvas[k:, col])\n    return canvas.tolist()\n\n\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, k, lo, hi, col):\n    \"\"\"One column split between a count and a ramp.\"\"\"\n    canvas = t.zeros((n, 2))\n    t.arange(k, out=canvas[:k, col])\n    if n - k > 0:\n        t.linspace(lo, hi, n - k, out=canvas[k:, col])\n    return canvas.tolist()\n\n\nexample = (5, 2, 0.0, 1.0, 1)\nprint(solve(*example))\n",
       "expected_output": "[[0.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.5], [0.0, 1.0]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -29532,33 +29574,39 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "Two writes into one (n, 2, 3) canvas: `linspace(y0, y1, n)` into `[:, 1, 1]` and the constant 1.0 into `[:, 1, 0]` using `t.ones(n, out=...)`. Return the canvas as a nested list.",
+      "question_text": "`n` is a positive int and `y0`, `y1` are floats. Return a tensor of shape (n, 2, 3), as a nested list, that is zero except in every slab i: entry [i, 1, 0] is 1.0 and entry [i, 1, 1] holds the i-th of `n` evenly spaced values from `y0` to `y1`. The ramp must be written straight into the canvas: building it as a separate tensor and copying it in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A ones-column and a linspace-column, both via out=.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A constant and a ramp through two positions of every slab.\"\"\"\n    return None\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(2, -1.0, 1.0)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (2,), (6,), 12)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(3, 0.0, 2.0)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (3,), (6,), 18)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\n",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\n",
           "call": "solve(1, 0.5, 0.5)",
-          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]]"
+          "expected_expr": "[[[0.0, 0.0, 0.0], [1.0, 0.5, 0.0]]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\n",
+          "assert_code": "_dd_need = [('linspace', (1,), (6,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
       "wrong_examples": [],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A ones-column and a linspace-column, both via out=.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.ones(n, out=canvas[:, 1, 0])\n    t.linspace(y0, y1, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, y0, y1):\n    \"\"\"A constant and a ramp through two positions of every slab.\"\"\"\n    canvas = t.zeros((n, 2, 3))\n    t.ones(n, out=canvas[:, 1, 0])\n    t.linspace(y0, y1, n, out=canvas[:, 1, 1])\n    return canvas.tolist()\n\n\nexample = (2, -1.0, 1.0)\nprint(solve(*example))\n",
       "expected_output": "[[[0.0, 0.0, 0.0], [1.0, -1.0, 0.0]], [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]]]",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -69684,32 +69732,40 @@
       "difficulty_label": "easy"
     },
     "exercise": {
-      "question_text": "`m` and `n` are positive ints. Build an m×n zero canvas and write the values 0, 1, …, n-1 into its LAST row with a single `out=` call. Return the canvas as a nested list.",
+      "question_text": "`m` and `n` are positive ints. Return an m×n tensor, as a nested list, that is zero except its LAST row, which holds 0, 1, …, n-1. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"arange written into the bottom row of a zero canvas.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 4))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"A count along the bottom row; zeros elsewhere.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 4))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nm, n = 3, 4",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nm, n = 3, 4",
           "call": "solve(m, n)",
-          "expected_expr": "[[0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 2.0, 3.0]]"
+          "expected_expr": "[[0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 2.0, 3.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nm, n = 3, 4",
+          "assert_code": "_dd_need = [('arange', (4,), (1,), 12)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nm, n = 1, 2",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nm, n = 1, 2",
           "call": "solve(m, n)",
-          "expected_expr": "[[0.0, 1.0]]"
+          "expected_expr": "[[0.0, 1.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nm, n = 1, 2",
+          "assert_code": "_dd_need = [('arange', (2,), (1,), 2)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nm, n = 2, 1",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nm, n = 2, 1",
           "call": "solve(m, n)",
-          "expected_expr": "[[0.0], [0.0]]"
+          "expected_expr": "[[0.0], [0.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nm, n = 2, 1",
+          "assert_code": "_dd_need = [('arange', (1,), (1,), 2)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nm, n = 4, 3",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nm, n = 4, 3",
           "call": "solve(m, n)",
-          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 1.0, 2.0]]"
+          "expected_expr": "[[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 1.0, 2.0]]",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nm, n = 4, 3",
+          "assert_code": "_dd_need = [('arange', (3,), (1,), 12)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -69720,7 +69776,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"arange written into the bottom row of a zero canvas.\"\"\"\n    canvas = t.zeros((m, n))\n    t.arange(n, out=canvas[-1])\n    return canvas.tolist()\n\n\nprint(solve(3, 4))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(m, n):\n    \"\"\"A count along the bottom row; zeros elsewhere.\"\"\"\n    canvas = t.zeros((m, n))\n    t.arange(n, out=canvas[-1])\n    return canvas.tolist()\n\n\nprint(solve(3, 4))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false
@@ -69804,32 +69860,40 @@
       "difficulty_label": "hard"
     },
     "exercise": {
-      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Build a 2×n zero canvas; write the values 0, 1, …, n-1 into row 0 and `n` evenly spaced values from `lo` to `hi` into row 1, each with one `out=` call. Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at row 1's last position as a float.",
+      "question_text": "`n` is a positive int and `lo`, `hi` are floats. Build a 2×n canvas whose row 0 holds 0, 1, …, n-1 and whose row 1 holds `n` evenly spaced values from `lo` to `hi`. The values must be written straight into the canvas: building them as a separate tensor and copying them in is graded wrong. Return a tuple `(canvas, corner)`: the canvas as a nested list and the value at row 1's last position as a float.",
       "task_type": "function_impl",
       "language": "python",
       "primary_library": "torch",
       "function_name": "solve",
-      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"arange in row 0, linspace in row 1, and the last value written.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 0.0, 1.0))\n",
+      "starter_code": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"A count in row 0, a ramp in row 1, and the ramp's last value.\"\"\"\n    return  # your answer here\n\n\n# Example run — the grader calls solve() with several different inputs,\n# including edge cases. Your function must work for all of them.\nprint(solve(3, 0.0, 1.0))\n",
       "test_cases": [
         {
-          "setup_code": "import torch as t\nn, lo, hi = 3, 0.0, 1.0",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nn, lo, hi = 3, 0.0, 1.0",
           "call": "solve(n, lo, hi)",
-          "expected_expr": "([[0.0, 1.0, 2.0], [0.0, 0.5, 1.0]], 1.0)"
+          "expected_expr": "([[0.0, 1.0, 2.0], [0.0, 0.5, 1.0]], 1.0)",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nn, lo, hi = 3, 0.0, 1.0",
+          "assert_code": "_dd_need = [('arange', (3,), (1,), 6), ('linspace', (3,), (1,), 6)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, lo, hi = 1, 2.5, 2.5",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nn, lo, hi = 1, 2.5, 2.5",
           "call": "solve(n, lo, hi)",
-          "expected_expr": "([[0.0], [2.5]], 2.5)"
+          "expected_expr": "([[0.0], [2.5]], 2.5)",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nn, lo, hi = 1, 2.5, 2.5",
+          "assert_code": "_dd_need = [('arange', (1,), (1,), 2), ('linspace', (1,), (1,), 2)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, lo, hi = 4, 1.0, -2.0",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nn, lo, hi = 4, 1.0, -2.0",
           "call": "solve(n, lo, hi)",
-          "expected_expr": "([[0.0, 1.0, 2.0, 3.0], [1.0, 0.0, -1.0, -2.0]], -2.0)"
+          "expected_expr": "([[0.0, 1.0, 2.0, 3.0], [1.0, 0.0, -1.0, -2.0]], -2.0)",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nn, lo, hi = 4, 1.0, -2.0",
+          "assert_code": "_dd_need = [('arange', (4,), (1,), 8), ('linspace', (4,), (1,), 8)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         },
         {
-          "setup_code": "import torch as t\nn, lo, hi = 2, 0.0, 10.0",
+          "setup_code": "import torch as t\n_dd_out_views = []\ndef _dd_wrap(_name):\n    _orig = getattr(getattr(t, _name), '_dd_original', getattr(t, _name))\n    def _w(*a, **k):\n        o = k.get('out')\n        if o is not None:\n            _dd_out_views.append((_name, tuple(o.shape), tuple(o.stride()), o.untyped_storage().nbytes() // o.element_size()))\n        return _orig(*a, **k)\n    _w._dd_original = _orig\n    setattr(t, _name, _w)\nfor _dd_n in ('arange', 'linspace'):\n    _dd_wrap(_dd_n)\nn, lo, hi = 2, 0.0, 10.0",
           "call": "solve(n, lo, hi)",
-          "expected_expr": "([[0.0, 1.0], [0.0, 10.0]], 10.0)"
+          "expected_expr": "([[0.0, 1.0], [0.0, 10.0]], 10.0)",
+          "expected_setup_code": "import torch as t\nfor _dd_n in ('arange', 'linspace'):\n    setattr(t, _dd_n, getattr(getattr(t, _dd_n), '_dd_original', getattr(t, _dd_n)))\nn, lo, hi = 2, 0.0, 10.0",
+          "assert_code": "_dd_need = [('arange', (2,), (1,), 4), ('linspace', (2,), (1,), 4)]\nfor _dd_v in _dd_need:\n    assert _dd_out_views.count(_dd_v) >= _dd_need.count(_dd_v), 'the values were not written straight into the canvas; the call that makes them must write them there itself'"
         }
       ],
       "submission_mode": "function",
@@ -69840,7 +69904,7 @@
         }
       ],
       "provenance": null,
-      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"arange in row 0, linspace in row 1, and the last value written.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[0])\n    t.linspace(lo, hi, n, out=canvas[1])\n    return (canvas.tolist(), float(canvas[1, -1]))\n\n\nprint(solve(3, 0.0, 1.0))\n",
+      "canonical_solution": "import torch as t\n\n\ndef solve(n, lo, hi):\n    \"\"\"A count in row 0, a ramp in row 1, and the ramp's last value.\"\"\"\n    canvas = t.zeros((2, n))\n    t.arange(n, out=canvas[0])\n    t.linspace(lo, hi, n, out=canvas[1])\n    return (canvas.tolist(), float(canvas[1, -1]))\n\n\nprint(solve(3, 0.0, 1.0))\n",
       "expected_output": "",
       "expected_artifact_type": "stdout",
       "supports_visual_output": false

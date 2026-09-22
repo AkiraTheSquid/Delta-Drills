@@ -143,7 +143,7 @@ def solve(n, row):
 ## Solo practice
 
 ### q800
-Column 0 = arange, column 1 = linspace(lo, hi), one canvas.
+Two columns of one canvas, each filled where it lives.
 
 ### q801
 out= hands back the target view; the canvas shows the write.
@@ -152,13 +152,13 @@ out= hands back the target view; the canvas shows the write.
 Three out= writes, three columns.
 
 ### q803
-linspace into the first k rows of one column of an existing canvas.
+Only the top k entries of one column change.
 
 ### q804
-arange(start, stop) into an integer canvas row.
+An integer canvas; one row gets a run of consecutive integers.
 
 ### q805
-One column through a 3-D canvas, written with out=.
+One position of every slab, filled in a single write.
 
 ### q1598
 out= targets a row this time — the last one.
@@ -169,7 +169,7 @@ Which slice of the canvas is its last column, and can the values land there dire
 ## Integrated practice
 
 ### q806
-linspace written into a stepped slice.
+Every other row of one column: count how many slots that is.
 
 ### q807
 A column partitioned between two out= writes.
