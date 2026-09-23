@@ -177,8 +177,11 @@ def _learner(mean, var, n=1, exposure=None, attempts=None):
 # BKT approximation and any content edit (a new prerequisite, a difficulty
 # change) would flip. The fixture sits a little further inside the region
 # so the test is about the MECHANISM, and the replay of his state is in the
-# session notes for 2026-09-19.
-_SETH_MEAN = -1.6
+# session notes for 2026-09-19. Was -1.6 under logistic-v0.3; v0.4's recency
+# (FSRS: one first-ever miss leaves S = 0.21 d, R 0.64 at 3.9 d, where the old
+# 14-day curve said 0.83) costs ~0.1 logit more, which put lo_after 0.002
+# under the bar. -1.45 re-centres the fixture: lo_now 0.458, lo_after 0.585.
+_SETH_MEAN = -1.45
 _seth = _learner(_SETH_MEAN, 1.0)
 _v = R.readiness(_seth, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
 _lo_now, _ = _v["now"].interval(E.LADDER_Z)

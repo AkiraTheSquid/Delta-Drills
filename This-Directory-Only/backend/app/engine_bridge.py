@@ -55,7 +55,7 @@ import math
 from datetime import datetime, timezone
 from typing import Dict, Mapping, Optional
 
-from app import attempt_log, lessons
+from app import attempt_log, lessons, memory_model
 from app.engine_features import FeatureVector, bkt_mastery, kc_graph
 from app import logistic_engine as E
 
@@ -235,6 +235,8 @@ def feature_values(
     example: bool = False,
     posteriors: Optional[Mapping[str, E.Posterior]] = None,
     lesson_days: Optional[float] = None,
+    exclude_latest_attempt: bool = False,
+    now: Optional[datetime] = None,
 ) -> Dict[str, float]:
     """One row of the design matrix, for this learner on this item.
 
@@ -260,6 +262,12 @@ def feature_values(
     prereqs = _prereq_mastery(user_state, kc)
     encompassed = _encompassing_mastery(user_state, kc)
     days = _days_since(ability.last_seen if ability else None)
+    # Forgetting is 1 − R from the concept's own FSRS+FIRe memory
+    # (memory_model, logistic-v0.4), not one 14-day half-life for every
+    # concept. The scoring path passes `exclude_latest_attempt` because the
+    # ladder row for the answer being scored is already written.
+    recency, recall = memory_model.recency(
+        user_state, kc, now=now, exclude_latest=exclude_latest_attempt)
     values = {
         E.ABILITY.name: 1.0,
         E.DIFFICULTY.name: E.difficulty_to_logits(difficulty_score),
@@ -268,7 +276,7 @@ def feature_values(
         E.LESSON.name: E.lesson_value(lesson_days),
         E.PREREQ.name: E.centred_mastery(prereqs.values()),
         E.ENCOMPASSING.name: E.centred_mastery(encompassed.values()),
-        E.RECENCY.name: E.recency_value(days),
+        E.RECENCY.name: recency,
     }
     # The same carrier engine_features uses: a dict for the engine, with the
     # provenance riding on `.sources` for the log. Until 2026-09-01 this
@@ -281,6 +289,7 @@ def feature_values(
         "prereqs": prereqs,
         "encompassed": encompassed,
         "days_since_kc": days,
+        "memory_recall": recall,
         "days_since_read": lesson_days,
     })
 
@@ -293,12 +302,14 @@ def predict(
     stage: Optional[str],
     example: bool = False,
     lesson_days: Optional[float] = None,
+    now: Optional[datetime] = None,
 ) -> E.Prediction:
-    """P(correct) for an item this learner has not answered yet."""
+    """P(correct) for an item this learner has not answered yet. `now` is the
+    moment asked about (default: the clock) — memory recall is read then."""
     return E.predict(
         feature_values(
             user_state, kc, difficulty_score=difficulty_score, stage=stage,
-            example=example, lesson_days=lesson_days,
+            example=example, lesson_days=lesson_days, now=now,
         ),
         posteriors_for(user_state, kc),
     )
@@ -365,6 +376,7 @@ def record(
     values = feature_values(
         user_state, kc, difficulty_score=difficulty_score, stage=normalized,
         example=example, posteriors=posteriors, lesson_days=lesson_days,
+        exclude_latest_attempt=True,
     )
     ability = posteriors.get(E.ABILITY.name)
     now = _now_iso()
