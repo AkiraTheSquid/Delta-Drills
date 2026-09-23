@@ -65,6 +65,8 @@ from app import example_schedule
 from app import bkt_mastery
 from app import arena_mix, kc_prefs, solo_progress, practice_targets
 from app import kc_explore
+# Rung-ordering helpers, split out for size; re-exported for every caller.
+from app.kc_rung_order import with_example_first, lowest_rung  # noqa: F401
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -986,40 +988,6 @@ def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
         if at_rank:
             return at_rank
     return []
-
-
-def with_example_first(qids: Iterable[int]) -> List[int]:
-    """The rung's example-bearing drills, if it still has any unserved.
-
-    THE FADE FROM `partial` TO `solo`, and it needs no schedule and no counter.
-    A solo drill carries an example only when its KP authored one for it (six of
-    nineteen on `torch.tensor-model`), and the queue never repeats a served
-    question — so serving the example-bearing ones first means a learner meets
-    an example, then a few unaided problems, then another example introducing
-    the next move, and then none at all once they are spent. "It shows examples
-    less and less until it doesn't show any examples at all."
-
-    Returns the whole input when no example-bearing drill is left, which is the
-    far end of that fade rather than a failure.
-    """
-    pool = list(qids)
-    with_example = [q for q in pool if lessons.has_worked_example(q)]
-    return with_example or pool
-
-
-def lowest_rung(qids: Iterable[int]) -> List[int]:
-    """The questions on the least-scaffolded rung still available.
-
-    Called with the questions a learner can actually be served right now, so an
-    exhausted faded rung falls through to guided and then independent instead of
-    dead-ending. Returns [] for an empty input, which callers read as "this KC
-    has nothing left" rather than as an ordering result.
-    """
-    pool = list(qids)
-    if not pool:
-        return []
-    floor = min(ladder_rank(q) for q in pool)
-    return [q for q in pool if ladder_rank(q) == floor]
 
 
 def registry_node(kc: str) -> Optional[dict]:
