@@ -59,6 +59,14 @@ const KcPractice = (() => {
      result can be attributed to its concept and rung. Still ORDER ONLY. */
   let planner = null;
   let lastItem = null;
+  /* PRACTICE UNTIL READY (2026-09-23) — the exercise dialog's route. Like
+     `planner`, it chooses every next item, but the choice is the BACKEND's
+     (practice/ready-route.js → /api/practice/ready-route): attempt the
+     exercise, route backward to the prerequisite that is weak, drill it, come
+     back up — until the model says ready. `routeStep` is the step the current
+     question came from, so a grade can be read against it. */
+  let route = null;
+  let routeStep = null;
 
   /* This ladder's rung names, in the vocabulary the REST of the app already
      speaks. `item.kind` is this file's word for the authored bucket a drill
@@ -239,6 +247,8 @@ const KcPractice = (() => {
     scoped = null;
     // A plain start after a planned block must not inherit its plan.
     planner = null;
+    route = null;
+    routeStep = null;
     lastItem = null;
     active = queue.length > 0;
 
@@ -258,6 +268,39 @@ const KcPractice = (() => {
 
   /** Next ladder item, or null once the ladder is spent (queue takes over). */
   const nextQuestion = async () => {
+    if (route) {
+      for (;;) {
+        const step = await route.peek();
+        if (!step) { active = false; return null; }
+        const item = {
+          kind: step.rung === "drill" ? "independent" : "integrated",
+          questionId: step.question_id, starter: null,
+          kc: step.kc, kcTitle: step.kc_title || step.kc,
+        };
+        const q = _hydrate(item);
+        if (!q) {
+          console.warn("[kc-practice] routed item missing from bank:", step.question_id);
+          route.drop(step);
+          continue;
+        }
+        if (!(await _claim(q))) { route.drop(step); continue; }
+        route.commit(step);
+        routeStep = step;
+        lastItem = item;
+        q.ladder_kind = item.kind;
+        _stamp(q, item);
+        /* An attempt at the exercise and a probe are both asked COLD: no lesson
+           page first (practice/lessons.js stands down on `attempt_first`), no
+           support on the card — an answer given off the page measures the
+           page. A drill is ordinary practice and keeps the ordinary gates. */
+        if (step.mode === "attempt" || step.mode === "probe") {
+          q.attempt_first = true;
+          q.ladder_support = false;
+        }
+        if (window.CompetencyBar) window.CompetencyBar.setPhaseKind(item.kind);
+        return q;
+      }
+    }
     if (planner) {
       for (;;) {
         const d = planner.peek();
@@ -322,7 +365,7 @@ const KcPractice = (() => {
     return null;
   };
 
-  const isActive = () => active && (!!planner || !!queue.length);
+  const isActive = () => active && (!!route || !!planner || !!queue.length);
 
   /* ── exercise-scoped entry points (practice/exercise-session.js) ──── */
 
@@ -408,10 +451,35 @@ const KcPractice = (() => {
     return true;
   };
 
+  /** Start a PRACTICE-UNTIL-READY block on `kc` (the exercise dialog).
+      `exerciseIds` = the exercise's own bank ids (original + variants). Falls
+      back to the plain scoped ladder when there is no backend to route. */
+  const startRoute = async (kc, { exerciseIds = [], title = null } = {}) => {
+    const ok = await startScoped(kc);
+    if (!ok) return false;
+    const R = window.ReadyRoute;
+    if (!R || typeof practiceMode === "undefined" || practiceMode !== "backend") return true;
+    route = new R.Route({ kc, title: title || kcTitle, exerciseIds });
+    routeStep = null;
+    queue = [];
+    served = 0;
+    lastItem = null;
+    active = true;
+    return true;
+  };
+
+  /** Any look-ahead the route has in flight, landed (events.js awaits this
+      before asking whether the block is over). */
+  const settle = () => (route ? route.settle() : Promise.resolve(null));
+
   /* Every grade in an exercise block comes here (timer.js). Planned: the
      planner re-weighs and returns a note for the phase label. Unplanned: a
      miss pulls the prerequisites (onMiss) and the note says how many. */
   const onResult = async (kc, correct, questionId) => {
+    if (route) {
+      const step = routeStep && (!Number.isFinite(questionId) || routeStep.question_id === questionId) ? routeStep : null;
+      return route.observe(step, !!correct);
+    }
     if (planner) {
       // `questionId` is a guard: a stale lastItem must not be credited to a
       // question it was not hydrated from (a resume without its lastItem).
@@ -423,8 +491,11 @@ const KcPractice = (() => {
     return n ? `${n} prerequisite drill${n === 1 ? "" : "s"} queued` : "";
   };
 
-  const solved = () => !!(planner && planner.solved);
-  const outcome = () => (planner ? planner.outcome() : null);
+  const solved = () => !!((route && route.solved()) || (planner && planner.solved));
+  /* Is the block OVER — timer.js asks before every advance. A route also ends
+     NOT ready (out of drills, the fuse), which is over without being solved. */
+  const over = () => !!((route && route.over()) || solved());
+  const outcome = () => (route ? route.outcome() : planner ? planner.outcome() : null);
 
   /* A miss on `kc` (the ladder_kc of the question just graded wrong) queues
      that concept's direct prerequisites in front of whatever is left. Returns
@@ -470,7 +541,9 @@ const KcPractice = (() => {
       remaining: queue.slice(served),
       scoped: scoped ? { target: scoped.target, inserted: scoped.inserted.slice() } : null,
       plan: planner ? planner.serialize() : null,
-      lastItem: planner ? lastItem : null,
+      route: route ? route.serialize() : null,
+      routeStep: route ? routeStep : null,
+      lastItem: planner || route ? lastItem : null,
     };
   };
 
@@ -487,8 +560,10 @@ const KcPractice = (() => {
       ? { target: String(saved.scoped.target), inserted: Array.isArray(saved.scoped.inserted) ? saved.scoped.inserted.slice() : [] }
       : null;
     planner = saved.plan && window.ExercisePlanner ? window.ExercisePlanner.Planner.restore(saved.plan) : null;
-    lastItem = planner && saved.lastItem && Number.isFinite(saved.lastItem.questionId) ? saved.lastItem : null;
-    active = queue.length > 0 || !!planner;
+    route = saved.route && window.ReadyRoute ? window.ReadyRoute.Route.restore(saved.route) : null;
+    routeStep = route && saved.routeStep && Number.isFinite(saved.routeStep.question_id) ? saved.routeStep : null;
+    lastItem = (planner || route) && saved.lastItem && Number.isFinite(saved.lastItem.questionId) ? saved.lastItem : null;
+    active = queue.length > 0 || !!planner || !!route;
     window.__kcFocusId = kcId;
     window.__kcFocusSubtopics = subtopicKeys;
     window.__kcFocusSubtopic = _compositeKey();
@@ -510,6 +585,8 @@ const KcPractice = (() => {
     served = 0;
     scoped = null;
     planner = null;
+    route = null;
+    routeStep = null;
     lastItem = null;
     kcId = null;
     kcTitle = null;
@@ -519,15 +596,21 @@ const KcPractice = (() => {
     window.__kcFocusSubtopic = null;
   };
 
-  const remaining = () => (active ? (planner ? planner.quota - planner.used : queue.length - served) : 0);
+  // A route has no count: "remaining" is 1 while it is live, 0 once done.
+  const remaining = () => (active
+    ? (route ? (route.over() ? 0 : 1) : planner ? planner.quota - planner.used : queue.length - served)
+    : 0);
 
   return {
     start,
     startScoped,
     startPlanned,
+    startRoute,
+    settle,
     onMiss,
     onResult,
     solved,
+    over,
     outcome,
     serialize,
     restore,

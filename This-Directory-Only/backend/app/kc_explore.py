@@ -61,6 +61,16 @@ EXPLORE_PREFIXES = ("math.",)
 P_GUESS = 0.25
 P_SLIP = 0.10
 
+# Code drills (graded against hidden tests), used by the ready route
+# (app/ready_route.py) over the torch/einops/cnn/raytracing concepts. Passing
+# every test without the concept is rarer than guessing an MC option, but the
+# ▶ button shows the tests before Submit, so not negligible; a knower fails
+# more often than on MC (a shape slip, an off-by-one). Calibration choices, as
+# above. Each answer's Bayes factor is further TEMPERED by app/kc_evidence.py
+# (how close the item is to the ARENA problem, and how long ago it was).
+P_GUESS_CODE = 0.10
+P_SLIP_CODE = 0.15
+
 SETTLE_P = 0.90
 OUT_OF_STATE = 0.20
 INDIRECT_CLIP = 1.2
@@ -76,6 +86,19 @@ PRIOR_SHIFT_BY_LEVEL = {"beginner": -0.5, None: 0.0, "strong": 0.5}
 
 LOG_BF_CORRECT = math.log((1.0 - P_SLIP) / P_GUESS)
 LOG_BF_INCORRECT = math.log(P_SLIP / (1.0 - P_GUESS))
+LOG_BF_CORRECT_CODE = math.log((1.0 - P_SLIP_CODE) / P_GUESS_CODE)
+LOG_BF_INCORRECT_CODE = math.log(P_SLIP_CODE / (1.0 - P_GUESS_CODE))
+
+
+def likelihood(kc: str):
+    """(P_GUESS, P_SLIP) for answers on `kc`: MC for math, code otherwise."""
+    return (P_GUESS, P_SLIP) if kc.startswith("math.") else (P_GUESS_CODE, P_SLIP_CODE)
+
+
+def _log_bf(kc: str, correct: bool) -> float:
+    if kc.startswith("math."):
+        return LOG_BF_CORRECT if correct else LOG_BF_INCORRECT
+    return LOG_BF_CORRECT_CODE if correct else LOG_BF_INCORRECT_CODE
 
 
 def _logit(p: float) -> float:
@@ -98,8 +121,9 @@ def in_area(kc: str) -> bool:
 # --- graph ----------------------------------------------------------------------
 
 
-def _area_graph(registry: Dict[str, dict]):
-    """(kcs, encompassed, children) restricted to explore-area concepts.
+def _area_graph(registry: Dict[str, dict], area: Optional[Iterable[str]] = None):
+    """(kcs, encompassed, children) restricted to explore-area concepts, or to
+    `area` when given (the ready route passes a target's prerequisite closure).
 
     `encompassed[k]` = {ancestor: product of encompassing weights along the
     strongest chain}. Strongest chain, not a sum over chains: two routes to
@@ -109,7 +133,11 @@ def _area_graph(registry: Dict[str, dict]):
     reaches (codex, 2026-09-22). Entries that are not prerequisites, or whose
     weight is outside (0, 1], are ignored.
     `children[k]` = {descendant: hops}."""
-    kcs = [k for k in registry if in_area(k)]
+    if area is None:
+        kcs = [k for k in registry if in_area(k)]
+    else:
+        wanted = set(area)
+        kcs = [k for k in registry if k in wanted]
     keep = set(kcs)
     encompassed: Dict[str, Dict[str, float]] = {}
     for k in kcs:
@@ -151,32 +179,40 @@ def _area_graph(registry: Dict[str, dict]):
 # --- posterior -------------------------------------------------------------------
 
 
-def evidence(attempts_by_kc: Dict[str, List[dict]]) -> List[tuple]:
-    """[(kc, correct)] from the unaided ladder attempts, oldest first per KC."""
+def evidence(attempts_by_kc: Dict[str, List[dict]], weigh=None) -> List[tuple]:
+    """[(kc, correct, weight)] from the unaided ladder attempts, oldest first
+    per KC. `weigh(kc, attempt)` is app/kc_evidence.weigher (similarity to the
+    ARENA problem × retention since the answer); None = every answer in full."""
     out = []
     for kc, attempts in attempts_by_kc.items():
         for a in example_schedule.unaided(attempts or []):
-            out.append((kc, bool(a.get("correct"))))
+            w = 1.0 if weigh is None else float(weigh(kc, a))
+            out.append((kc, bool(a.get("correct")), w))
     return out
 
 
 def logodds(registry: Dict[str, dict], ev: Iterable[tuple], level: Optional[str] = None,
             graph=None) -> Dict[str, float]:
-    """Log-odds of "known" for every explore-area KC. Pure."""
+    """Log-odds of "known" for every KC of the graph (explore area by
+    default). Pure. `ev` rows are (kc, correct) or (kc, correct, weight); the
+    weight tempers that answer's Bayes factor (app/kc_evidence.py)."""
     kcs, encompassed, children = graph or _area_graph(registry)
     direct = {k: 0.0 for k in kcs}
     indirect = {k: PRIOR_SHIFT_BY_LEVEL.get(level, 0.0) for k in kcs}
-    for kc, correct in ev:
+    for row in ev:
+        kc, correct = row[0], row[1]
+        weight = row[2] if len(row) > 2 else 1.0
         if kc not in direct:
             continue
+        bf = _log_bf(kc, correct) * weight
         if correct:
-            direct[kc] += LOG_BF_CORRECT
+            direct[kc] += bf
             for p, w in encompassed[kc].items():
-                indirect[p] += LOG_BF_CORRECT * w
+                indirect[p] += bf * w
         else:
-            direct[kc] += LOG_BF_INCORRECT
+            direct[kc] += bf
             for c, hops in children[kc].items():
-                indirect[c] += LOG_BF_INCORRECT * INCORRECT_DOWN_SCALE * HOP_ATTENUATION_DOWN ** hops
+                indirect[c] += bf * INCORRECT_DOWN_SCALE * HOP_ATTENUATION_DOWN ** hops
     return {k: direct[k] + max(-INDIRECT_CLIP, min(INDIRECT_CLIP, indirect[k])) for k in kcs}
 
 
@@ -189,33 +225,49 @@ def _variance(L: Dict[str, float], value: Dict[str, float]) -> float:
 
 
 def rank(registry: Dict[str, dict], ev: List[tuple], candidates: Iterable[str],
-         value: Dict[str, float], level: Optional[str] = None) -> List[str]:
-    """Candidates by expected value-weighted variance reduction, best first."""
-    graph = _area_graph(registry)
+         value: Dict[str, float], level: Optional[str] = None,
+         area: Optional[Iterable[str]] = None,
+         item_weight: Optional[Dict[str, float]] = None) -> List[str]:
+    """Candidates by expected value-weighted variance reduction, best first.
+
+    `area` scopes the graph (default: the explore area). `item_weight[kc]` is
+    the tempering weight of the item a probe of `kc` would be served as (the
+    ready route probes a prerequisite with its integrated problem, 0.75)."""
+    return [kc for _, kc in scored_probes(registry, ev, candidates, value, level, area, item_weight)]
+
+
+def scored_probes(registry, ev, candidates, value, level=None, area=None, item_weight=None):
+    """[(expected variance reduction, kc)] best first — `rank` with its scores."""
+    graph = _area_graph(registry, area)
     L = logodds(registry, ev, level, graph)
     base = _variance(L, value)
+    ev = list(ev)
     scored = []
     for kc in candidates:
         if kc not in L:
             continue
+        w = (item_weight or {}).get(kc, 1.0)
+        guess, slip = likelihood(kc)
         p = _sigmoid(L[kc])
-        p_right = p * (1.0 - P_SLIP) + (1.0 - p) * P_GUESS
-        after = (p_right * _variance(logodds(registry, ev + [(kc, True)], level, graph), value)
-                 + (1.0 - p_right) * _variance(logodds(registry, ev + [(kc, False)], level, graph), value))
+        p_right = p * (1.0 - slip) + (1.0 - p) * guess
+        after = (p_right * _variance(logodds(registry, ev + [(kc, True, w)], level, graph), value)
+                 + (1.0 - p_right) * _variance(logodds(registry, ev + [(kc, False, w)], level, graph), value))
         scored.append((base - after, kc))
     scored.sort(key=lambda t: (-t[0], t[1]))
-    return [kc for _, kc in scored]
+    return scored
 
 
 # --- learner-facing (reads kc_graph lazily: kc_graph imports this module) ----------
 
 
 def _state_inputs(user_state):
-    from app import kc_graph
+    from app import kc_evidence, kc_graph
     reg = kc_graph._registry()
     attempts = {k: (kc_graph.ladder_view(user_state, k).get("attempts") or [])
                 for k in reg if in_area(k)}
-    return reg, evidence(attempts), getattr(user_state, "self_reported_level", None)
+    # Math items all weigh 1 by similarity; retention still discounts an answer
+    # from long ago, so a concept settled a month back reopens as a probe.
+    return reg, evidence(attempts, kc_evidence.weigher(user_state)), getattr(user_state, "self_reported_level", None)
 
 
 def beliefs(user_state) -> Dict[str, float]:

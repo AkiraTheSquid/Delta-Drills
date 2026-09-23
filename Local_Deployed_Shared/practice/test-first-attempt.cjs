@@ -145,23 +145,77 @@ test('Continue hands the column back even when onDone does not repaint it', asyn
   assert.equal(await page.evaluate(() => document.body.classList.contains('lesson-mode')), false);
 });
 
-test('ARENA drills start a scoped ladder with valid independent clock options', async t => {
+test('ARENA drills start a practice-until-ready route with valid independent clock options', async t => {
   const page = await browserPage(t);
   await page.evaluate(() => {
     window.getPracticeStorageKey = () => 'test';
     window.SessionClock = { answerSecs: () => 1200 };
     window.PracticeSession = { isActive: () => false, hasPausedSession: () => false, configure(cfg) { window.cfg = cfg; }, start() { window.started = true; } };
-    window.KcPractice = { startScoped: async kc => { window.scoped = kc; return true; }, startPlanned() { throw Error('obsolete planner'); } };
+    window.KcPractice = {
+      startRoute: async (kc, opts) => { window.scoped = kc; window.routeIds = opts.exerciseIds; return true; },
+      startScoped() { throw Error('obsolete scoped ladder'); },
+      startPlanned() { throw Error('obsolete planner'); },
+    };
   });
   await page.addScriptTag({ content: source('exercise-session.js') });
-  await page.evaluate(() => ExerciseSession.open({ kc: 'merge', title: 'Flatten', variants: [391] }));
+  await page.evaluate(() => ExerciseSession.open({ kc: 'merge', title: 'Flatten', variants: [391], original: 390 }));
   assert.equal(await page.locator('input[value="attempt"]').count(), 0);
+  assert.equal(await page.locator('input[name="quota"]').count(), 0);
+  assert.match(await page.locator('.dd-ex-steps').innerText(), /Flatten itself/);
   assert.equal(await page.locator('input[name="answer"][value="5m"]').isChecked(), true);
   await page.locator('.dd-ex-start-btn').click();
-  assert.deepEqual(await page.evaluate(() => [started, scoped, cfg.answer, cfg.review, cfg.quota]), [true, 'merge', 300, 120, 8]);
+  assert.deepEqual(await page.evaluate(() => [started, scoped, routeIds, cfg.answer, cfg.review, 'quota' in cfg, cfg.exercise.mode]),
+    [true, 'merge', [390, 391], 300, 120, false, 'ready']);
   await page.evaluate(() => ExerciseSession.open({ kc: 'other', title: 'No variants', variants: [] }));
   await page.locator('.dd-ex-advanced > summary').click();
   await page.locator('label').filter({ has: page.locator('input[name="answer"][value="off"]') }).click();
   await page.locator('.dd-ex-start-btn').click();
   assert.deepEqual(await page.evaluate(() => [scoped, cfg.answer]), ['other', null]);
+});
+
+test('practice until ready: routed items, look-ahead on a grade, ends on ready, survives a pause', async () => {
+  const steps = [
+    { done: false, question_id: 842, kc: 'target', kc_title: 'Target', rung: 'arena', mode: 'attempt', attempt: true, p_target: 0.5 },
+    { done: false, question_id: 900, kc: 'pre', kc_title: 'Pre', rung: 'integrated', mode: 'probe', attempt: false, p_target: 0.14 },
+    { done: true, reason: 'ready', p_target: 0.93 },
+  ];
+  const bodies = [];
+  const ctx = vm.createContext({
+    window: {}, console,
+    practiceMode: 'backend',
+    apiFetch: async (url, opts) => { bodies.push(JSON.parse(opts.body)); return { ok: true, json: async () => steps.shift() }; },
+    loadQuestionsBank: async () => {},
+    getQuestionFromBank: id => ({ id }),
+    buildPracticeQuestionFromBank: bq => ({ question_id: bq.id }),
+  });
+  ctx.window.LessonGate = { getKpEntry: async kc => ({ kp: { title: kc, independent_items: [1] }, lesson: {} }) };
+  vm.runInContext(source('ready-route.js'), ctx);
+  ctx.ReadyRoute = ctx.window.ReadyRoute;
+  vm.runInContext(source('kc-practice.js'), ctx);
+  const K = ctx.window.KcPractice;
+  assert.equal(await K.startRoute('target', { exerciseIds: [831, 842], title: 'make_rays_1d' }), true);
+  const q1 = await K.nextQuestion();
+  assert.equal(q1.question_id, 842);
+  assert.equal(q1.attempt_first, true);
+  assert.equal(q1.ladder_stage, 'solo');
+  assert.deepEqual(bodies[0], { kc: 'target', exercise_ids: [831, 842], served: [], skip: [] });
+  const note = await K.onResult('target', false, 842);
+  assert.match(note, /Miss/);
+  assert.equal(bodies.length, 2, 'the grade looks ahead');
+  assert.deepEqual(bodies[1].served, [842]);
+  // A pause right here, and a restore into a fresh page.
+  const saved = JSON.parse(JSON.stringify(K.serialize()));
+  const q2 = await K.nextQuestion();
+  assert.equal(q2.question_id, 900);
+  assert.equal(bodies.length, 2, 'the looked-ahead step is served without a second request');
+  assert.equal(K.solved(), false);
+  assert.match(await K.onResult('pre', true, 900), /Ready for make_rays_1d/);
+  await K.settle();
+  assert.equal(K.solved(), true);
+  const out = K.outcome();
+  assert.equal(out.ready, true);
+  assert.match(out.text, /Ready for make_rays_1d after 2 questions/);
+  assert.equal(K.restore(saved), true);
+  assert.equal(K.solved(), false);
+  assert.deepEqual(K.serialize().route.served, [842]);
 });
