@@ -128,8 +128,25 @@ def ancestors() -> dict[str, set[str]]:
     return {kc: walk(kc) for kc in prereqs}
 
 
+_SYMBOLS_MEMO: dict[tuple, frozenset] = {}
+
+
 def question_symbols(q: dict, surface: str) -> set[str]:
-    """Symbols one surface of one question requires."""
+    """Symbols one surface of one question requires.
+
+    Memoised on the text it reads: the lessons watcher runs three guards that
+    each walk every question's AST, and the repeat parses put the watcher at
+    ~9.6 s against Modulario's 10 s limit (2026-09-23). Keyed by content, not
+    by question id, so an edited question is re-parsed."""
+    key = (surface, q.get("answer_code"), q.get("starter_code"), q.get("question_text"),
+           tuple((c or {}).get("setup_code") or "" for c in (q.get("test_cases") or [])))
+    hit = _SYMBOLS_MEMO.get(key)
+    if hit is None:
+        hit = _SYMBOLS_MEMO[key] = frozenset(_question_symbols(q, surface))
+    return set(hit)
+
+
+def _question_symbols(q: dict, surface: str) -> set[str]:
     known: set[str] = set()
     for case in q.get("test_cases") or []:
         known |= bound_names(case.get("setup_code") or "")
