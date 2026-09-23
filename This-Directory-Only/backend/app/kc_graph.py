@@ -66,7 +66,7 @@ from app import bkt_mastery
 from app import arena_mix, kc_prefs, solo_progress, practice_targets
 from app import kc_explore
 # Rung-ordering helpers, split out for size; re-exported for every caller.
-from app.kc_rung_order import with_example_first, lowest_rung  # noqa: F401
+from app.kc_rung_order import with_example_first, lowest_rung_by  # noqa: F401
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -988,6 +988,10 @@ def questions_at_stage(qids: Iterable[int], stage: str) -> List[int]:
         if at_rank:
             return at_rank
     return []
+
+
+def lowest_rung(qids: Iterable[int]) -> List[int]:
+    return lowest_rung_by(qids, ladder_rank)
 
 
 def registry_node(kc: str) -> Optional[dict]:

@@ -1,11 +1,12 @@
 """Rung-ordering helpers over a KC's question ids — split out of kc_graph.py
 (2026-09-22, Modulario size gate). kc_graph re-exports both names, so
-`kc_graph.with_example_first` / `kc_graph.lowest_rung` keep working.
+`kc_graph.with_example_first` / `kc_graph.lowest_rung` keep working;
+`lowest_rung_by` takes the rank function so this module never imports kc_graph.
 """
 
 from __future__ import annotations
 
-from typing import Iterable, List
+from typing import Callable, Iterable, List
 
 from app import lessons
 
@@ -29,7 +30,7 @@ def with_example_first(qids: Iterable[int]) -> List[int]:
     return with_example or pool
 
 
-def lowest_rung(qids: Iterable[int]) -> List[int]:
+def lowest_rung_by(qids: Iterable[int], rank: Callable[[int], int]) -> List[int]:
     """The questions on the least-scaffolded rung still available.
 
     Called with the questions a learner can actually be served right now, so an
@@ -40,6 +41,5 @@ def lowest_rung(qids: Iterable[int]) -> List[int]:
     pool = list(qids)
     if not pool:
         return []
-    from app.kc_graph import ladder_rank  # lazy: kc_graph imports this module
-    floor = min(ladder_rank(q) for q in pool)
-    return [q for q in pool if ladder_rank(q) == floor]
+    floor = min(rank(q) for q in pool)
+    return [q for q in pool if rank(q) == floor]
