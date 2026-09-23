@@ -63,18 +63,25 @@ test('timeout records the linked problem once; missing IDs and failed writes nev
   await page.waitForFunction(() => document.querySelector('.dd-ex-verdict').textContent.includes('No result recorded'));
 });
 
-test('leaving and returning restores a paused timer; another account cannot restore it', async t => {
+// The save is a map keyed per exercise (exercise-timer.js `_write`); the
+// fixture has one exercise, so its record is the map's only value. A paused
+// clock is NOT re-armed on return: it waits for the learner's "Resume timer".
+test('leaving keeps a paused timer for its own account to resume; another account cannot', async t => {
   const page = await fixture(t);
   await page.evaluate(() => ExerciseTimer.start(ex, document.querySelector('#block'), 100));
   await page.evaluate(() => document.querySelector('main').classList.add('hidden'));
   await page.waitForFunction(() => !ExerciseTimer.isRunning());
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('account_a_nb_timer')).paused), true);
+  assert.equal(await page.evaluate(() => Object.values(JSON.parse(localStorage.getItem('account_a_nb_timer')))[0].paused), true);
   await page.evaluate(() => { window.getPracticeStorageKey = () => 'account_b'; document.querySelector('main').classList.remove('hidden'); });
   assert.equal(await page.evaluate(() => ExerciseTimer.isRunning()), false);
+  assert.equal(await page.evaluate(() => ExerciseTimer.pausedFor(ex)), null);
   await page.evaluate(() => { window.getPracticeStorageKey = () => 'account_a'; document.querySelector('main').classList.add('hidden'); });
   await page.evaluate(() => document.querySelector('main').classList.remove('hidden'));
-  await page.waitForFunction(() => ExerciseTimer.isRunning());
-  assert.equal(await page.locator('.dd-nbt-pause').textContent(), 'Resume');
+  assert.equal(await page.evaluate(() => ExerciseTimer.isRunning()), false);
+  const left = await page.evaluate(() => ExerciseTimer.pausedFor(ex));
+  assert.ok(left > 0 && left <= 100, `paused clock keeps its remaining time, got ${left}`);
+  assert.equal(await page.evaluate(() => ExerciseTimer.resume(ex, document.querySelector('#block'))), true);
+  assert.equal(await page.evaluate(() => ExerciseTimer.isRunning()), true);
   await page.evaluate(() => ExerciseTimer.stop('left'));
 });
 
@@ -105,7 +112,7 @@ test('switching notebook sections suspends the old timer before its cells disapp
   });
   assert.equal(await page.evaluate(() => ExerciseTimer.isRunning()), false);
   assert.equal(await page.locator('.dd-nbt-bar').isVisible(), false);
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('account_a_nb_timer')).paused), true);
+  assert.equal(await page.evaluate(() => Object.values(JSON.parse(localStorage.getItem('account_a_nb_timer')))[0].paused), true);
   assert.deepEqual(await page.evaluate(() => recorded), []);
 });
 

@@ -254,7 +254,11 @@ const ArenaNotebookNav = (() => {
     if (!row) return;
     row.classList.add("is-current");
     if (list) {
-      const top = row.offsetTop;
+      // Measure against the list itself: offsetTop is relative to the row's
+      // offsetParent, which overstates the top and let upward scrolls lag.
+      const top =
+        row.getBoundingClientRect().top - list.getBoundingClientRect().top -
+        list.clientTop + list.scrollTop;
       const bottom = top + row.offsetHeight;
       if (top < list.scrollTop) list.scrollTop = top;
       else if (bottom > list.scrollTop + list.clientHeight) {

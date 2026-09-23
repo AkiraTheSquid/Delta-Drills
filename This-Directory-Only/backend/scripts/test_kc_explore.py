@@ -18,6 +18,7 @@ Run: .venv/bin/python scripts/test_kc_explore.py
 import os
 import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 os.environ["USER_DATA_DIR"] = tempfile.mkdtemp(prefix="kc_explore_test_")
@@ -42,7 +43,10 @@ def state():
 
 def answer(s, kc, ok, example=False):
     kc_graph.ladder_row(s, kc)["attempts"].append(
-        {"correct": ok, "stage": "partial", "ts": "2026-09-22T00:00:00+00:00",
+        # Stamped NOW: kc_evidence weighs each answer by its FSRS retention at
+        # wall-clock time, so a fixed date made these checks decay as the
+        # calendar moved (3 failed by 2026-09-23 23:00).
+        {"correct": ok, "stage": "partial", "ts": datetime.now(timezone.utc).isoformat(),
          "question_id": 0, "example": example})
 
 
