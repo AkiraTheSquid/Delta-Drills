@@ -14,7 +14,11 @@ Covers:
     answer;
   * due_reviews: nothing learned → nothing due; a learned concept whose recall
     fell below the target is due, and a fresh one is not;
-  * remediation.targets puts a due review first after a frontier answer.
+  * remediation.targets puts a due review first after a frontier answer;
+  * the 2026-09-23 research priors: implicit credit × fire_scale, aided
+    correct = a small step with D untouched, a miss scaled by p_skill (the
+    engine's pass probability without its memory term), a lapse keeps a
+    quarter-ish of S.
 
 Run: .venv/bin/python scripts/test_memory_model.py
 """
@@ -41,6 +45,7 @@ def check(name, cond, detail=""):
 
 
 T0 = datetime(2026, 1, 1, tzinfo=timezone.utc).timestamp() / 86400.0
+iso = lambda d: datetime.fromtimestamp((T0 + d) * 86400, timezone.utc).isoformat()
 
 
 def run(times, g=M.GOOD):
@@ -130,8 +135,71 @@ if chain:
     after = M.replay_events(seed + [(T0 + 1, {x2: M.AGAIN})])[p]
     check("a miss lapses an indirect ancestor", after.S < before.S, f"{x2} -> {p}")
 
+print("research-report priors (2026-09-23)")
+cfg = M.DEFAULT_CONFIG
+seed = [(T0, {c: M.GOOD}), (T0, {x: M.GOOD})]
+pre = M.replay_events(seed)
+t10 = T0 + 10
+got = M.replay_events(seed + [(t10, {x: M.GOOD})])[c]
+want = M.implicit_review(pre[c], t10, w * cfg.fire_scale)
+check("implicit credit is the registry weight times fire_scale",
+      abs(got.S - want.S) < 1e-9 and abs(got.t_last - want.t_last) < 1e-9)
+aided = M.replay_events(seed + [(t10, {x: M.AIDED})])
+full_x = M.review(pre[x], t10, M.GOOD)
+check("aided correct grows S less than a Good", pre[x].S < aided[x].S < full_x.S,
+      f"{pre[x].S:.2f} < {aided[x].S:.2f} < {full_x.S:.2f}")
+check("aided correct leaves D alone", aided[x].D == pre[x].D)
+check("aided correct credits no component", aided[c] == pre[c])
+check("aided-only concept has no memory", M.replay_events([(T0, {x: M.AIDED})]) == {})
+t20 = T0 + 20
+sure = M.replay_events(seed + [(t20, {x: M.AGAIN}, {x: 0.95})])
+unlikely = M.replay_events(seed + [(t20, {x: M.AGAIN}, {x: 0.3})])
+unstamped = M.replay_events(seed + [(t20, {x: M.AGAIN})])
+floor = M.replay_events(seed + [(t20, {x: M.AGAIN}, {x: 0.01})])
+at_floor = M.replay_events(seed + [(t20, {x: M.AGAIN}, {x: cfg.lapse_floor})])
+check("a miss on a problem expected to fail lapses less",
+      unlikely[x].S > sure[x].S, f"p=.3 S={unlikely[x].S:.2f}  p=.95 S={sure[x].S:.2f}")
+check("an unstamped miss counts in full", unstamped[x].S <= sure[x].S + 1e-9)
+check("p_skill below the floor counts as the floor", abs(floor[x].S - at_floor[x].S) < 1e-9)
+check("a discounted miss still lapses", unlikely[x].S < pre[x].S)
+m20 = M.review(M.review(None, T0, M.GOOD), T0 + 3, M.GOOD)
+while m20.S < 20:
+    m20 = M.review(m20, M.due_at(m20), M.GOOD)
+lap = M.review(m20, M.due_at(m20), M.AGAIN)
+check("a lapse keeps ~20-40% of S (was ~11% on flashcard defaults)",
+      0.15 < lap.S / m20.S < 0.5, f"{m20.S:.1f} -> {lap.S:.1f}")
+
+first_hard = M.replay_events([(T0, {x: M.AGAIN}, {x: 0.2})])[x]
+first_sure = M.replay_events([(T0, {x: M.AGAIN}, {x: 1.0})])[x]
+check("a first miss on an unlikely problem marks D less hard",
+      first_hard.D < first_sure.D and first_hard.S == first_sure.S,
+      f"D {first_hard.D:.2f} vs {first_sure.D:.2f}")
+check("an aided answer above c does not touch c",
+      not M._touches({x: M.AIDED}, c, closure, ancestors)
+      and M._touches({x: M.GOOD}, c, closure, ancestors)
+      and not M._touches({c: M.GOOD}, x, closure, ancestors)
+      and M._touches({c: M.AGAIN}, x, closure, ancestors))
+
+print("p_skill stamp (engine_bridge)")
+from app import engine_bridge, logistic_engine as E  # noqa: E402
+st = UserPracticeState(user_id="memory-model-stamp")
+kc_graph.ladder_row(st, x)["attempts"].append({"correct": False, "ts": iso(0), "question_id": 5, "example": False})
+pred = E.Prediction(p=0.1, p_mean=0.1, logit_mean=-1.0, logit_var=0.4,
+                    contributions={E.RECENCY.name: -1.5, E.ABILITY.name: 0.5})
+engine_bridge._stamp_skill_p(st, x, 5, pred)
+expect = E.sigmoid(0.5 * E.attenuation(0.4))
+check("p_skill = the prediction with the recency term removed",
+      abs(st.kc_ladder[x]["attempts"][-1]["p_skill"] - round(expect, 4)) < 1e-9,
+      f"{st.kc_ladder[x]['attempts'][-1]['p_skill']} vs full p {pred.p}")
+check("replay reads the stamp", M._events(st)[0][2] == {x: round(expect, 4)})
+engine_bridge._stamp_skill_p(st, c, 5, pred)
+check("stamping a concept with no row creates none", c not in st.kc_ladder)
+kc_graph.ladder_row(st, x)["attempts"].append({"correct": False, "ts": iso(1), "question_id": 6, "example": False})
+engine_bridge._stamp_skill_p(st, x, 5, pred)
+check("only the newest row, and only for its own question",
+      "p_skill" not in st.kc_ladder[x]["attempts"][-1])
+
 s = UserPracticeState(user_id="memory-model-test")
-iso = lambda d: datetime.fromtimestamp((T0 + d) * 86400, timezone.utc).isoformat()
 kc_graph.ladder_row(s, x)["attempts"].append({"correct": True, "ts": iso(0), "question_id": 7, "example": False})
 kc_graph.ladder_row(s, c)["attempts"].append({"correct": True, "ts": iso(0.5 / 86400), "question_id": 7, "example": False})
 evs = M._events(s)

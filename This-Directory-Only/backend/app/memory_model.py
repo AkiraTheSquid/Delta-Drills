@@ -21,19 +21,29 @@ THE MODEL
 Per concept, FSRS-6's state (S = stability in days, D = difficulty 1..10) and
 its power forgetting curve R(t) = (1 + F·t/S)^-w20. The update rules are a
 port of py-fsrs 6.3.2 (`fsrs/scheduler.py`) with its published default
-weights, fitted on real review histories — flashcards, not problem practice, so
-they are a starting point to be refit from `attempt_log`, not a finding. Seth
-has a deep-research pass out on concept-level priors
-(docs/research-question-fsrs-priors.md); its answer lands in `MemoryConfig`.
+weights moved toward concept-level practice by Seth's 2026-09-23 deep-research
+report (`CONCEPT_PRIOR_WEIGHTS`: slower first stability, smaller growth per
+success, more kept after a lapse, D able to recover). Extrapolations, not a
+fit — refit from pooled attempt logs.
 
-Grades: a correct unaided answer is Good, a correct answer made behind a worked
-example is Hard (it happened, but with help), a miss or a timeout is Again.
+Grades: a correct unaided answer is Good, a miss or a timeout is Again. A
+correct answer made behind a worked example is NOT Hard — Hard raises D and
+still grows S, and the report's reading is that it is restudy with the answer
+in view — so it moves S and R `aided_weight` of the way to a Good and leaves D.
+
+A miss is scaled by how much of it can be memory: `p_skill`, the logistic
+engine's pass probability for that problem with the memory term removed,
+stamped on the ladder row at scoring time. A miss on an instance the learner
+was unlikely to pass is mostly the instance. The memory term has to be out of
+it: a miss CAUSED by forgetting has low R, so a low full p, and discounting by
+that would stop FSRS learning from the misses it exists to catch.
 
 Implicit repetition (Math Academy's FIRe), over `kc_registry.json`'s
 `encompassing` weights, multiplied down paths:
 
   * a CORRECT answer on X is a fractional Good review of every concept X
-    encompasses, of weight w: stability moves w of the way to what a full
+    encompasses, of weight w × `fire_scale` (0.5 — implicit repetitions are
+    "often too early to count for full credit"): stability moves w of the way to what a full
     review would give (so the early-review discount in FSRS's own formula
     applies — credit arriving while a component is fresh buys almost nothing),
     and R moves w of the way to 1 through a VIRTUAL last-review time. The
@@ -69,9 +79,9 @@ from __future__ import annotations
 
 import math
 import weakref
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Dict, List, Mapping, NamedTuple, Optional, Tuple
 
 from app import kc_graph, kc_prefs, practice_targets
 
@@ -83,6 +93,9 @@ FSRS6_DEFAULT_WEIGHTS: Tuple[float, ...] = (
 )
 
 AGAIN, HARD, GOOD = 1, 2, 3
+# A correct answer made behind a worked example. Not an FSRS grade: it is
+# restudy with the answer model in view, not a retrieval (see `_apply`).
+AIDED = 0
 _EASY = 4
 _D_MIN, _D_MAX = 1.0, 10.0
 _S_MIN, _S_MAX = 0.001, 36500.0
@@ -91,11 +104,26 @@ _S_MIN, _S_MAX = 0.001, 36500.0
 # answer.
 _SAME_EVENT_DAYS = 5.0 / 86400.0
 
+# FSRS-6 defaults moved toward concept-level, varied-problem practice by the
+# 2026-09-23 deep-research report (Downloads/compass_artifact_wf-069d0d7a…,
+# question in docs/research-question-fsrs-priors.md). Every number is the
+# report's extrapolation from direction-level evidence, not a fit:
+#   w2  2.3065 → 1.5   first Good is one massed exposure (Rohrer & Taylor 2006)
+#   w7  0.001  → 0.02  binary grading makes D a lapse counter; let it recover
+#   w8  1.8722 → 1.45  e^w8 −34%: one instance is noisy evidence (Pan & Rickard 2018)
+#   w11 1.4835 → 1.9286 (×1.3) and w13 0.2629 → 0.37: a lapse keeps ~25% of
+#       S at S=20 d instead of ~11% — a failed procedure is mostly still there
+# Refit from pooled attempt logs once there are a few thousand reviews.
+_P = list(FSRS6_DEFAULT_WEIGHTS)
+_P[2], _P[7], _P[8], _P[11], _P[13] = 1.5, 0.02, 1.45, 1.9286, 0.37
+CONCEPT_PRIOR_WEIGHTS: Tuple[float, ...] = tuple(_P)
+del _P
+
 
 @dataclass(frozen=True)
 class MemoryConfig:
-    version: str = "fsrs6-fire-v1"
-    weights: Tuple[float, ...] = FSRS6_DEFAULT_WEIGHTS
+    version: str = "fsrs6-fire-v2"
+    weights: Tuple[float, ...] = CONCEPT_PRIOR_WEIGHTS
     # Review when predicted recall falls to this. Seth, 2026-09-23: 0.80 —
     # Math Academy's "about a 20% chance of getting it wrong". FSRS's own
     # default is 0.90. One number for now; per-concept importance is later.
@@ -104,6 +132,17 @@ class MemoryConfig:
     # edge weight. 0.5 is the simulation's choice, not a measurement.
     upward_lapse: float = 0.5
     fire: bool = True
+    # Registry `encompassing` weights are multiplied by this before they become
+    # implicit credit. Research report 2026-09-23: implicit repetitions are
+    # "often too early to count for full credit" (Math Academy), w ≈ 0.3–0.5
+    # for a component used in full. Practitioner-only evidence.
+    fire_scale: float = 0.5
+    # A correct answer behind a worked example moves S and R this far toward a
+    # Good review, and leaves D alone. Report: 0.0–0.3, "closer to restudy".
+    aided_weight: float = 0.2
+    # A miss counts as p_skill of a lapse — the engine's pass probability for
+    # that problem with the memory term left out — never less than this.
+    lapse_floor: float = 0.2
 
     @property
     def decay(self) -> float:
@@ -300,11 +339,25 @@ def _now_days(now: Optional[datetime]) -> float:
 def _grade(att: Mapping) -> int:
     if not att.get("correct"):
         return AGAIN
-    return HARD if att.get("example") else GOOD
+    return AIDED if att.get("example") else GOOD
 
 
-def _events(user_state) -> List[Tuple[float, Dict[str, int]]]:
-    """Every graded answer as (t, {kc: grade}), oldest first. One question
+def _skill_p(att: Mapping) -> Optional[float]:
+    p = att.get("p_skill")
+    return float(p) if isinstance(p, (int, float)) else None
+
+
+class Event(NamedTuple):
+    """One graded answer. `p_skill` holds only the tags the scoring path
+    stamped. A plain (t, grades) tuple is accepted wherever an Event is."""
+    t: float
+    grades: Dict[str, int]
+    p_skill: Optional[Dict[str, float]] = None
+
+
+def _events(user_state) -> List[Event]:
+    """Every graded answer as (t, {kc: grade}, {kc: p_skill}), oldest first.
+    p_skill is present only on rows the scoring path stamped. One question
     tagged with several concepts wrote one ladder row per concept; those rows
     are one event, so a concept tagged directly is never also credited
     implicitly by its sibling tag."""
@@ -319,23 +372,44 @@ def _events(user_state) -> List[Tuple[float, Dict[str, int]]]:
             t = _to_days(att.get("ts") or att.get("timestamp"))
             if t is None:
                 continue
-            rows.append((t, att.get("question_id"), kc, i, _grade(att)))
+            rows.append((t, att.get("question_id"), kc, i, _grade(att), _skill_p(att)))
     rows.sort(key=lambda r: (r[0], str(r[1]), r[2], r[3]))
-    events: List[Tuple[float, Optional[int], Dict[str, int]]] = []
-    for t, qid, kc, _i, g in rows:
+    events: List[Tuple[float, Optional[int], Dict[str, int], Dict[str, float]]] = []
+    for t, qid, kc, _i, g, p in rows:
         if events:
-            t0, q0, grades = events[-1]
+            t0, q0, grades, ps = events[-1]
             if (qid is not None and qid == q0 and t - t0 <= _SAME_EVENT_DAYS
                     and kc not in grades):
                 grades[kc] = g
+                if p is not None:
+                    ps[kc] = p
                 continue
-        events.append((t, qid, {kc: g}))
-    return [(t, grades) for t, _q, grades in events]
+        events.append((t, qid, {kc: g}, {} if p is None else {kc: p}))
+    return [Event(t, grades, ps) for t, _q, grades, ps in events]
+
+
+def _credits_below(g: int) -> bool:
+    """Does an answer with grade `g` give implicit credit to what it encompasses?"""
+    return g not in (AGAIN, AIDED)
+
+
+def _touches(grades: Mapping[str, int], kc: str, closure, ancestors) -> bool:
+    """Does this answer change `kc`'s memory in `_apply`? Directly tagged; below
+    a credited or missed tag (credit, blame); above a missed one (upward lapse)."""
+    for k, g in grades.items():
+        if k == kc:
+            return True
+        if g == AIDED:
+            continue
+        if kc in closure.get(k, {}) or (g == AGAIN and kc in ancestors.get(k, {})):
+            return True
+    return False
 
 
 def _apply(mems: Dict[str, Memory], t: float, grades: Dict[str, int],
-           cfg: MemoryConfig) -> None:
+           cfg: MemoryConfig, p_skill: Optional[Mapping[str, float]] = None) -> None:
     closure, ancestors = _graph() if cfg.fire else ({}, {})
+    p_skill = p_skill or {}
     tagged = set(grades)
     # Everything is judged on `pre`, the state the learner walked in with, and
     # each untagged concept takes ONE combined update per answer: two tags that
@@ -345,14 +419,26 @@ def _apply(mems: Dict[str, Memory], t: float, grades: Dict[str, int],
     credit: Dict[str, float] = {}
     lapse: Dict[str, float] = {}
     for x in sorted(tagged):
-        if grades[x] != AGAIN:
+        if grades[x] == AIDED:
+            # Restudy with the answer model in view, not a retrieval: a small
+            # step toward a Good review, D untouched, nothing credited below.
+            # A concept whose only answers are aided has no memory yet.
+            if x in pre:
+                mems[x] = replace(implicit_review(pre[x], t, cfg.aided_weight, cfg), D=pre[x].D)
+        elif _credits_below(grades[x]):
             mems[x] = review(pre.get(x), t, grades[x], cfg)
             for c, w in closure.get(x, {}).items():
                 if c not in tagged and c in pre:
-                    credit[c] = max(credit.get(c, 0.0), w)
+                    credit[c] = max(credit.get(c, 0.0), w * cfg.fire_scale)
     for x in sorted(tagged):
         if grades[x] != AGAIN:
             continue
+        # How much of this miss is memory at all: the engine's pass
+        # probability for the problem with the memory term left out
+        # (`engine_bridge._stamp_skill_p`). A miss on a problem the learner was
+        # unlikely to pass anyway is mostly the problem, not forgetting. Rows
+        # scored before the stamp existed count in full.
+        evidence = max(cfg.lapse_floor, min(1.0, p_skill.get(x, 1.0)))
         own = pre.get(x)
         # A component a correct sibling tag just exercised is not blamed.
         comps = {c: w for c, w in closure.get(x, {}).items()
@@ -363,11 +449,17 @@ def _apply(mems: Dict[str, Memory], t: float, grades: Dict[str, int],
         z = sum(blame.values())
         for c, b in blame.items():
             if c != x and z > 0:
-                lapse[c] = lapse.get(c, 0.0) + b / z
+                lapse[c] = lapse.get(c, 0.0) + evidence * b / z
         if own is None:
-            mems[x] = review(None, t, AGAIN, cfg)
+            # First answer, a miss: FSRS's Again start for S (there is no
+            # stability to preserve), but D only `evidence` of the way from
+            # Good's start to Again's — a first miss on a problem the learner
+            # was unlikely to pass must not mark the concept hard for life.
+            first = review(None, t, AGAIN, cfg)
+            d_good = _init_d(GOOD, cfg.weights)
+            mems[x] = replace(first, D=_clamp_d(d_good + evidence * (first.D - d_good)))
         else:
-            share = blame[x] / z if z > 0 else 1.0
+            share = evidence * (blame[x] / z if z > 0 else 1.0)
             s_f, d_f = _after(own, t, AGAIN, cfg)
             mems[x] = Memory(
                 _clamp_s(own.S + share * (s_f - own.S)),
@@ -376,7 +468,7 @@ def _apply(mems: Dict[str, Memory], t: float, grades: Dict[str, int],
             )
         for p, w in ancestors.get(x, {}).items():
             if p in pre and p not in tagged and p not in credit:
-                lapse[p] = lapse.get(p, 0.0) + w * cfg.upward_lapse
+                lapse[p] = lapse.get(p, 0.0) + evidence * w * cfg.upward_lapse
     for c, w in credit.items():
         mems[c] = implicit_review(pre[c], t, w, cfg)
     for c, share in lapse.items():
@@ -385,8 +477,9 @@ def _apply(mems: Dict[str, Memory], t: float, grades: Dict[str, int],
 
 def replay_events(events, cfg: MemoryConfig = DEFAULT_CONFIG) -> Dict[str, Memory]:
     mems: Dict[str, Memory] = {}
-    for t, grades in events:
-        _apply(mems, t, grades, cfg)
+    for ev in events:
+        ev = Event(*ev)
+        _apply(mems, ev.t, ev.grades, cfg, ev.p_skill)
     return mems
 
 
@@ -405,7 +498,8 @@ def _fingerprint(user_state) -> tuple:
         if atts:
             last = atts[-1] if isinstance(atts[-1], dict) else {}
             out.append((kc, len(atts), last.get("ts") or last.get("timestamp"),
-                        last.get("question_id"), last.get("correct"), last.get("example")))
+                        last.get("question_id"), last.get("correct"), last.get("example"),
+                        last.get("p_skill")))
     return tuple(out)
 
 
@@ -441,13 +535,9 @@ def kc_retrievability(user_state, kc: str, now: Optional[datetime] = None,
         mem = memories(user_state, cfg).get(kc)
     else:
         closure, ancestors = _graph() if cfg.fire else ({}, {})
-
-        def touches(grades) -> bool:
-            return any(k == kc or kc in closure.get(k, {}) or kc in ancestors.get(k, {})
-                       for k in grades)
-
         evs = _events(user_state)
-        last = max((i for i, (_t, g) in enumerate(evs) if touches(g)), default=None)
+        last = max((i for i, ev in enumerate(evs)
+                    if _touches(ev.grades, kc, closure, ancestors)), default=None)
         if last is None:
             return None
         mem = replay_events(evs[:last] + evs[last + 1:], cfg).get(kc)
@@ -503,7 +593,7 @@ def due_reviews(user_state, now: Optional[datetime] = None,
     closure = _graph()[0] if cfg.fire else {}
 
     def score(x: str) -> float:
-        return (1.0 if x in due else 0.0) + sum(
+        return (1.0 if x in due else 0.0) + cfg.fire_scale * sum(
             w for c, w in closure.get(x, {}).items() if c in due)
 
     ranked = [(score(x), x) for x in learned]

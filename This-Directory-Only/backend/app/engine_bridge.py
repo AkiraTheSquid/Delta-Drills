@@ -388,6 +388,7 @@ def record(
         timestamp=now,
     )
     _save_posteriors(user_state, kc, updated)
+    _stamp_skill_p(user_state, kc, question_id, prediction)
 
     try:
         attempt_log.record_attempt(
@@ -410,6 +411,32 @@ def record(
     except Exception:  # pragma: no cover — logging must never break scoring
         pass
     return prediction
+
+
+def _stamp_skill_p(user_state, kc: str, question_id: Optional[int],
+                   prediction: E.Prediction) -> None:
+    """Write `p_skill` onto this answer's ladder row: the pass probability the
+    engine gave the problem WITHOUT its memory term — ability, difficulty,
+    rung, aid, prerequisites, lesson, but not recency. `memory_model` scales a
+    miss by it, so a miss on a problem the learner was unlikely to pass does
+    not read as forgetting (the 2026-09-23 research report's first risk).
+
+    The recency term must be out of it. A miss caused BY forgetting has low R,
+    so low recency, so a low full p; discounting by that p would stop FSRS
+    from ever lapsing the concepts it exists to catch. Same attenuation as the
+    real prediction: recency is a FIXED feature and adds no variance, so the
+    two differ by the memory term and nothing else.
+
+    Only the NEWEST row, and only if it is this question: `record_ladder_outcome`
+    appended it a moment ago in this request. Anything else is left unstamped,
+    which replays as a full lapse — the safe direction."""
+    if question_id is None:
+        return
+    # ladder_view: the live row, never a freshly created one.
+    rows = kc_graph.ladder_view(user_state, kc).get("attempts") or []
+    if rows and rows[-1].get("question_id") == question_id and "p_skill" not in rows[-1]:
+        logit = prediction.logit_mean - prediction.contributions.get(E.RECENCY.name, 0.0)
+        rows[-1]["p_skill"] = round(E.sigmoid(logit * E.attenuation(prediction.logit_var)), 4)
 
 
 def served_stage(user_state, kc: str, question_id: int) -> Optional[str]:
