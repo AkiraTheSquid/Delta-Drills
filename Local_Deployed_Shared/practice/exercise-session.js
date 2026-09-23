@@ -13,11 +13,13 @@
      • the button under each exercise heading the notebook renders
        (arena-notebook.js announces `arena-notebook:rendered`; the heading →
        KC map is lessons/arena_exercise_kcs.json)
-     • the setup dialog: two pickers (the same presets as the idle clock,
-       practice/session-clock.js), a count, and the maximum-time line
-     • starting the block: kc-practice.js `startScoped(kc)` builds the
-       ladder, timer.js `configure({answer, review, quota, exercise})`
-       installs the numbers, then the normal `PracticeSession.start()`
+     • the setup dialog: PRACTICE UNTIL READY (2026-09-23) and the two
+       per-problem clocks (the same presets as the idle clock,
+       practice/session-clock.js). There is no count any more.
+     • starting the block: kc-practice.js `startRoute(kc)` sets up the route
+       (practice/ready-route.js → backend/app/ready_route.py), timer.js
+       `configure({answer, review, exercise})` installs the clocks, then the
+       normal `PracticeSession.start()`
      • resuming: a paused block for this notebook and exercise turns
        the button into "Resume", and pressing it is timer.js's own resume
 
@@ -26,19 +28,18 @@
    never told the ai to add that." The block is two buttons, nothing else.
 
    WHAT IT DOES NOT OWN — and must not grow into
-     Grading, mastery, the rung estimate, the clock itself. A miss inside the
-     block pulls the concept's prerequisites in front of the queue, but that
-     is kc-practice.js::onMiss called from timer.js::recordReviewResult; this
-     file only shows the learner that it happened (`onPrereqsQueued`).
+     Grading, mastery, the rung estimate, the clock itself, and the route.
+     What comes next inside the block — the exercise, a probe of what it rests
+     on, a drill on the weak spot — is the backend's call, read through
+     kc-practice.js::nextQuestion; this file only shows the learner the note
+     each grade produces (`onNote`).
    ================================================================ */
 
 (() => {
   "use strict";
 
   const MAP_URL = "lessons/arena_exercise_kcs.json";
-  const DEFAULTS = { answer: "5m", review: "2m", quota: 8 };
-  const QUOTA_MIN = 1;
-  const QUOTA_MAX = 40;
+  const DEFAULTS = { answer: "5m", review: "2m" };
   /* `### Exercise - implement `make_rays_1d`` and the variants ARENA uses. */
   const HEADING_RE = /Exercise\s*[-–—:]\s*(?:implement|write|fill in|complete)?\s*`?([A-Za-z_]\w*)`?/i;
 
@@ -90,14 +91,10 @@
       const raw = JSON.parse(localStorage.getItem(_cfgKey()) || "null");
       const answer = raw && _option(raw.answer) ? raw.answer : DEFAULTS.answer;
       const review = raw && _option(raw.review) ? raw.review : DEFAULTS.review;
-      const quota = raw && Number.isFinite(raw.quota)
-        ? Math.min(QUOTA_MAX, Math.max(QUOTA_MIN, Math.round(raw.quota)))
-        : DEFAULTS.quota;
-      // `attemptFirst` is deliberately NOT read back. It was the dialog's
-      // fourth question until 2026-09-09 and a stored `true` from before then
-      // must not resurrect a control the dialog no longer has — the notebook's
-      // own timed attempt replaced it (practice/exercise-timer.js).
-      return { answer, review, quota };
+      // Neither `attemptFirst` (the dialog's fourth question until 2026-09-09)
+      // nor `quota` (its count until 2026-09-23) is read back: a stored value
+      // must not resurrect a control the dialog no longer has.
+      return { answer, review };
     } catch (_) {
       return { ...DEFAULTS };
     }
@@ -114,71 +111,15 @@
     const s = secs % 60;
     return `${m}:${String(s).padStart(2, "0")}`;
   };
-  const _long = (secs) => {
-    const h = Math.floor(secs / 3600);
-    const m = Math.round((secs % 3600) / 60);
-    if (h && m) return `${h} h ${m} min`;
-    if (h) return `${h} h`;
-    return `${m} min`;
-  };
-  const _maxTimeText = (cfg) => {
-    const a = _option(cfg.answer);
-    const r = _option(cfg.review);
-    if (!a || !r) return "";
-    if (a.secs === null || r.secs === null) {
-      const per = a.secs === null && r.secs === null
-        ? "no time limit"
-        : a.secs === null
-          ? `no answer limit · ${_mmss(r.secs)} review`
-          : `${_mmss(a.secs)} answer · no review limit`;
-      return `open-ended (${per})`;
-    }
-    const per = a.secs + r.secs;
-    return _long(per * cfg.quota);
-  };
 
-  /* ── the two numbers over the slider ───────────────────────────────
-     Seth, 2026-09-09: "it should display both how long it expects that it will
-     take you and the maximum amount of time that it would take you if you used
-     up all the time."
-
-     They are two different KINDS of number and the labels have to keep them
-     apart, because a learner who reads the left one as a promise and then sits
-     through the right one will not trust either again:
-
-       EXPECTED is a description of THIS learner — the median seconds they
-       actually spend answering a problem (practice/answer-history.js), times
-       the count. It covers ANSWERING and says so. It is clamped to the answer
-       cap per problem, because a learner slower than the cap does not get to
-       be slower than the cap: the clock submits for them.
-
-       MAXIMUM is arithmetic on the caps they chose — every problem running its
-       answer clock and its review clock all the way down. Nothing about the
-       learner is in it.
-
-     🔴 NO ESTIMATE UNTIL THERE IS ONE. With fewer than a handful of answered
-     problems on record there is no median worth showing, and filling the gap
-     with a fraction of the cap would be inventing the learner's pace and
-     printing it as if it were measured. The line says what is missing and what
-     would fix it instead. */
-  const _expectedText = (cfg) => {
-    const H = window.AnswerHistory;
-    const a = _option(cfg.answer);
-    const per = H && typeof H.secondsPerProblem === "function" ? H.secondsPerProblem() : null;
-    if (!Number.isFinite(per)) {
-      const need = (H && H.MIN_SAMPLES) || 3;
-      const have = H && typeof H.samples === "function" ? H.samples() : 0;
-      return {
-        text: "no pace on record yet",
-        hint: `answer ${Math.max(1, need - have)} more problem${need - have === 1 ? "" : "s"} and this becomes your own median`,
-      };
-    }
-    const capped = a && a.secs !== null ? Math.min(per, a.secs) : per;
-    return {
-      text: _long(capped * cfg.quota),
-      hint: `${_mmss(Math.round(capped))} per problem — your median over your last ${H.samples()} answers`,
-    };
-  };
+  /* 🪦 THE COUNT, AND THE TWO TIMES OVER IT, WENT 2026-09-23. The dialog
+     asked "how many problems" (a slider, 1–40) and printed what that many
+     would cost — expected (the learner's median pace) and maximum (every
+     clock run out). Seth: "I want one of the options to be to practice
+     backward in the reverse order of the algorithm until ready as opposed to
+     practicing for a certain amount of time … I'm thinking of just completely
+     replacing the other one with this one." A block that ends when the model
+     says ready has no count to price, so both readouts went with it. */
 
   /* ── which paused block, if any, is this exercise's ────────────── */
   const _pausedFor = (exercise) => {
@@ -221,37 +162,20 @@
       '<button type="button" class="primary dd-ex-resume-btn">Resume session</button>' +
       '<button type="button" class="ghost dd-ex-discard-btn">Discard and set up a new one</button>' +
       "</div></div>" +
-      /* ONE QUESTION: how long do you want to work on this?
-
-         Seth, 2026-09-09: "instead of being greedy, it just asks you how long
-         do you want to work on the problem. You should have a slider … as you
-         increase the number of problems, it should automatically display above
-         it the expected amount of time to the left and the maximum amount of
-         time to the right."
-
-         The slider's unit is PROBLEMS, not minutes, and that is deliberate:
-         the block is a number of drills and always was — the two times over it
-         are what that number costs. Sliding by minutes would round to a count
-         behind the learner's back and then disagree with the count it ran.
-
-         The two clocks are still here, one `<details>` down, because they are
-         what the maximum is made of and a learner who wants 2:00 answers
-         should not have to accept 5:00 to use the slider. They are no longer
-         the first thing the dialog asks. */
+      /* PRACTICE UNTIL READY — the dialog's one mode (2026-09-23). No count:
+         the route (backend/app/ready_route.py) opens on the exercise itself,
+         works backward through what it rests on after a miss, drills the weak
+         spot, comes back up, and ends when the model says ready. The list
+         below says that in the learner's words; the two clocks stay one
+         `<details>` down. */
       '<form class="dd-ex-form">' +
-      '<div class="dd-ex-field dd-ex-count">' +
-      '<div class="dd-ex-readout">' +
-      '<span class="dd-ex-expected"><b class="dd-ex-expected-val"></b>' +
-      '<span class="dd-ex-readout-label">expected, answering</span>' +
-      '<span class="dd-ex-readout-hint"></span></span>' +
-      '<span class="dd-ex-max"><b class="dd-ex-max-val"></b>' +
-      '<span class="dd-ex-readout-label">maximum, if every clock runs out</span>' +
-      '<span class="dd-ex-readout-hint"></span></span>' +
-      "</div>" +
-      `<label class="dd-ex-slider-label" for="dd-ex-quota"><span class="dd-ex-quota-text"></span></label>` +
-      `<input type="range" id="dd-ex-quota" name="quota" min="${QUOTA_MIN}" max="${QUOTA_MAX}" step="1">` +
-      '<span class="dd-ex-hint">A maximum, not a target — the block ends early if you run out of drills on this concept. ' +
-      "Ordinary practice, narrowed to this exercise's concept: a miss pulls that concept's prerequisites in front of the queue.</span></div>" +
+      '<div class="dd-ex-field dd-ex-route">' +
+      '<ol class="dd-ex-steps">' +
+      '<li>First, a version of <b class="dd-ex-fn"></b> itself.</li>' +
+      "<li>Miss it, and it works backward through what it rests on to find the weak spot.</li>" +
+      "<li>It drills that spot, then brings you back to the problem.</li>" +
+      "<li>It stops when you're ready — no fixed number of questions.</li>" +
+      "</ol></div>" +
       '<details class="dd-ex-advanced"><summary>Per-problem clocks</summary>' +
       '<fieldset class="dd-ex-field"><legend>Answer time per problem</legend><div class="dd-ex-opts" data-for="answer"></div></fieldset>' +
       '<fieldset class="dd-ex-field"><legend>Review time per problem</legend><div class="dd-ex-opts" data-for="review"></div></fieldset>' +
@@ -265,24 +189,10 @@
 
     const form = modal.querySelector(".dd-ex-form");
     const paint = () => {
-      const cfg = _formCfg();
-      const a = _option(cfg.answer);
-      const r = _option(cfg.review);
-      const expected = _expectedText(cfg);
-      modal.querySelector(".dd-ex-expected-val").textContent = expected.text;
-      modal.querySelector(".dd-ex-expected .dd-ex-readout-hint").textContent = expected.hint;
-      modal.querySelector(".dd-ex-max-val").textContent = _maxTimeText(cfg);
-      modal.querySelector(".dd-ex-max .dd-ex-readout-hint").textContent =
-        a && r && a.secs !== null && r.secs !== null
-          ? `${cfg.quota} × (${_mmss(a.secs)} answer + ${_mmss(r.secs)} review)`
-          : "one of the two clocks is off";
-      modal.querySelector(".dd-ex-quota-text").textContent =
-        `${cfg.quota} drill${cfg.quota === 1 ? "" : "s"} on this concept`;
       modal.querySelectorAll(".dd-ex-opt").forEach((l) =>
         l.classList.toggle("is-on", l.querySelector("input").checked));
     };
     form.addEventListener("change", paint);
-    form.addEventListener("input", paint);
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       _start();
@@ -308,17 +218,15 @@
     const pick = (name) => form.querySelector(`input[name="${name}"]:checked`)?.value;
     const answer = _option(pick("answer")) ? pick("answer") : DEFAULTS.answer;
     const review = _option(pick("review")) ? pick("review") : DEFAULTS.review;
-    const raw = Number(form.querySelector('input[name="quota"]').value);
-    const quota = Number.isFinite(raw) ? Math.min(QUOTA_MAX, Math.max(QUOTA_MIN, Math.round(raw))) : DEFAULTS.quota;
-    return { answer, review, quota };
+    return { answer, review };
   };
 
   const _open = (ex) => {
     pending = ex;
     const m = _ensureModal();
-    m.querySelector(".dd-ex-title").textContent = `Drill ${ex.kcTitle || ex.title}`;
-    m.querySelector(".dd-ex-sub").textContent =
-      `Ordinary practice, narrowed to the concept behind ${ex.title}. Get one wrong and its prerequisite drills come next, on the same clock.`;
+    m.querySelector(".dd-ex-title").textContent = `Practice ${ex.title} until ready`;
+    m.querySelector(".dd-ex-sub").textContent = ex.kcTitle ? `Concept: ${ex.kcTitle}` : "";
+    m.querySelector(".dd-ex-fn").textContent = ex.title;
     const paused = _pausedFor(ex);
     const resumeBox = m.querySelector(".dd-ex-resume");
     const form = m.querySelector(".dd-ex-form");
@@ -329,12 +237,11 @@
       const a = c && "answer" in c ? (c.answer === null ? "no limit" : _mmss(c.answer)) : "picker";
       const r = c && "review" in c ? (c.review === null ? "no limit" : _mmss(c.review)) : "picker";
       m.querySelector(".dd-ex-resume-text").textContent =
-        `Paused at question ${paused.served}${c.quota ? ` of ${c.quota}` : ""} · ${a} answer · ${r} review. Your code, clock and place in the ladder are saved.`;
+        `Paused at question ${paused.served}${c.quota ? ` of ${c.quota}` : ""} · ${a} answer · ${r} review. Your code, clock and place in the route are saved.`;
     } else {
       const cfg = _readCfg();
       form.querySelector('[data-for="answer"]').innerHTML = _radios("answer", cfg.answer);
       form.querySelector('[data-for="review"]').innerHTML = _radios("review", cfg.review);
-      form.querySelector('input[name="quota"]').value = String(cfg.quota);
       m.querySelector(".dd-ex-error").classList.add("hidden");
       m._paint();
     }
@@ -384,30 +291,26 @@
     try {
       /* A paused block of ANOTHER exercise (or a plain one) is dropped here:
          one snapshot per account, and the learner just chose this one.
-         🔴 BEFORE `startScoped`, never after: `discard` calls
+         🔴 BEFORE `startRoute`, never after: `discard` calls
          `KcPractice.stop()`, which would clear the ladder just built.
          Codex, 2026-09-06. */
       if (s.hasPausedSession?.()) s.discard?.();
       const kp = window.KcPractice;
-      /* 🔴 `startScoped`, NOT `startPlanned` — the greedy planner is off this
-         path as of 2026-09-09. Seth: "instead of being greedy … I think I just
-         want it to do the normal practice, except that it's just practicing
-         the skills for that specific problem."
+      /* 🔴 `startRoute` (2026-09-23) — practice until ready. It replaced
+         `startScoped` + a count: the ordinary ladder narrowed to one concept,
+         with a miss pulling that concept's prerequisites in front of the
+         queue. The route does the same backward move, but asks the model
+         which prerequisite is the weak one instead of queueing all of them,
+         and stops on "ready" instead of on a count.
 
-         The planner existed to spend a small budget on whichever of {prep, an
-         attempt at a variant of the exercise} most raised the chance of
-         solving the exercise inside that budget. The attempt half of that
-         question now has a better answer than a variant on the Practice tab:
-         the exercise itself, in the notebook, on its own clock
-         (practice/exercise-timer.js). What is left for this button is prep —
-         which is the ordinary ladder, narrowed to one concept, and that is
-         exactly what `startScoped` builds.
-
-         practice/exercise-planner.js is NOT deleted and NOT dead: it is still
-         reached through `KcPractice.startPlanned`, and its `masteryFromEstimate`
-         / `READY` are what the timer's drill recommendation reads. Removing it
-         is a separate decision from removing it from this button. */
-      const ok = await kp?.startScoped?.(ex.kc);
+         Without a backend there is nothing to route with, and `startRoute`
+         leaves the plain scoped ladder in place — the old behaviour, minus
+         the count. practice/exercise-planner.js (the greedy budgeted plan)
+         is still reached through `KcPractice.startPlanned`, and its
+         `masteryFromEstimate` / `READY` are what the timer's drill
+         recommendation reads. */
+      const exerciseIds = [ex.original, ...(ex.variants || [])].filter(Number.isFinite);
+      const ok = await kp?.startRoute?.(ex.kc, { exerciseIds, title: ex.title });
       if (!ok) {
         rollback();
         _fail("No drills are attached to this exercise's concept yet.");
@@ -416,8 +319,7 @@
       s.configure({
         answer: _option(cfg.answer).secs,
         review: _option(cfg.review).secs,
-        quota: cfg.quota,
-        exercise: { kc: ex.kc, fn: ex.fn, title: ex.title, nb: ex.nb, cell: ex.cell },
+        exercise: { kc: ex.kc, fn: ex.fn, title: ex.title, nb: ex.nb, cell: ex.cell, mode: "ready" },
       });
       _close();
       document.getElementById("page-practice")?.classList.add("dd-exercise-session");
@@ -607,8 +509,8 @@
        the drill or start problem option"). Neither is `.primary`; both are the
        same box (styles/practice/exercise-session.css). */
     btn.textContent = paused
-      ? `Resume drills · question ${paused.served}${paused.config.quota ? ` of ${paused.config.quota}` : ""}`
-      : "Drill prerequisite concepts";
+      ? `Resume practice · question ${paused.served}${paused.config.quota ? ` of ${paused.config.quota}` : ""}`
+      : "Practice until ready";
     /* The button says the budget out loud, because the budget is the notebook's
        and the learner has no other way to know what they are agreeing to.
        ExerciseTimer reads it off the exercise's own "You should spend up to …"
@@ -734,7 +636,9 @@
     document.querySelectorAll(".dd-ex-block").forEach(_syncButton);
     const el = _summaryEl();
     if (!el || !config?.exercise) return;
-    if (reason === "complete" && outcome?.solved) {
+    if (reason === "complete" && outcome?.text) {
+      el.innerHTML = `<b>${_esc(config.exercise.title || "Exercise")}</b> — ${_esc(outcome.text)}` + _backLink(config);
+    } else if (reason === "complete" && outcome?.solved) {
       el.innerHTML =
         `<b>${_esc(config.exercise.title || "Exercise")}</b> — solved on attempt ${outcome.attempts}, ${served} of ${config.quota} questions used. Recorded answers are kept.` +
         _backLink(config);

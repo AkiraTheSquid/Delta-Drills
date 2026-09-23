@@ -14,7 +14,7 @@ place ("demotion → drill the weakest prerequisite atoms, with
 diversification", Rohrer 2012 / Math Academy ch. 32) — the ladder rungs were
 implemented in its place.
 
-Two rules live here, both read by `prioritization` on every pick:
+Three rules live here, all read by `prioritization` on every pick:
 
   * `redirect` — a concept the learner is STRUGGLING on (STRUGGLE_MISSES
     misses since their last unaided success on it) is served through its
@@ -31,6 +31,11 @@ Two rules live here, both read by `prioritization` on every pick:
     number is the starting heuristic the research doc suggested, not a
     finding.
 
+  * `targets` interleaves DUE REVIEWS with the frontier (2026-09-23): learned
+    concepts whose FSRS+FIRe predicted recall has fallen below the target
+    (`memory_model.due_reviews`). Before this nothing scheduled review; a
+    learned concept came back only as filler once the frontier ran dry.
+
 Stateless: everything is re-derived from the ladder rows and the attempt
 history, so a replay of a learner's state reaches the same decisions.
 """
@@ -38,7 +43,7 @@ from __future__ import annotations
 
 from typing import Callable, List, Optional, Set
 
-from app import arena_mix, attempt_history, kc_graph, kc_prefs
+from app import arena_mix, attempt_history, kc_graph, kc_prefs, memory_model
 
 # Misses on a concept, with no unaided correct answer among them, before the
 # picker turns to its prerequisites.
@@ -127,23 +132,58 @@ def capped(user_state) -> Set[str]:
     return set.intersection(*sets) if sets else set()
 
 
+def _last_was_review(user_state) -> bool:
+    """Was the newest answered drill on concepts the learner had already
+    learned (review), rather than on the frontier?
+
+    Read off the learned state NOW, not when the drill was served: the
+    frontier answer that completes a concept reads as a review, so the
+    frontier gets one extra turn before the reviews. Bounded — the next
+    frontier answer flips it back. Exact needs the pick's kind persisted
+    with the served id (not done; critic 2026-09-23)."""
+    recent = attempt_history.recent_question_sequence(user_state, 1)
+    if not recent:
+        return False
+    kcs = kc_graph.question_kcs(recent[-1])
+    return bool(kcs) and all(kc_graph.kc_is_learned(user_state, k) for k in kcs)
+
+
 def targets(user_state, skip: Optional[Set[str]] = None, cap: bool = True):
     """The frontier, in serving order, with both rules applied: each concept
     redirected (a struggling one to its prerequisite), and with `cap` a
     concept that has just had its run of consecutive answers left out.
     Yields the concept to SERVE. Callers make a second pass with `cap=False`
-    so the cap orders work and never withholds it."""
+    so the cap orders work and never withholds it.
+
+    Due REVIEWS (memory_model.due_reviews — learned concepts whose predicted
+    recall has fallen below the target, compression order) are interleaved
+    with the frontier: after a frontier answer the reviews go first, after a
+    review answer the frontier does, so neither starves the other while both
+    have work. With no frontier work left the reviews simply run."""
     blocked = capped(user_state) if cap else set()
     # `skip` is tested on the concept SERVED, not the frontier concept it
     # stands for: a concept the caller has excluded (dry, or the other half
     # of the ARENA mix) still sends its struggling learner to a prerequisite
     # that is not excluded. An ARENA concept on its own turn is served as
     # itself (arena_mix.holds), and the ARENA concepts are walked first.
-    for kc in arena_mix.order(user_state, kc_graph.frontier(user_state)):
-        target = kc if arena_mix.holds(user_state, kc) else redirect(user_state, kc)
-        if target in blocked or (skip and target in skip):
-            continue
-        yield target
+    def new_work():
+        for kc in arena_mix.order(user_state, kc_graph.frontier(user_state)):
+            yield kc if arena_mix.holds(user_state, kc) else redirect(user_state, kc)
+
+    reviews = memory_model.due_reviews(user_state)
+    if not reviews:
+        streams = (new_work(),)
+    elif _last_was_review(user_state):
+        streams = (new_work(), iter(reviews))
+    else:
+        streams = (iter(reviews), new_work())
+    seen: Set[str] = set()
+    for stream in streams:
+        for target in stream:
+            if target in seen or target in blocked or (skip and target in skip):
+                continue
+            seen.add(target)
+            yield target
 
 
 def select_next_kc(

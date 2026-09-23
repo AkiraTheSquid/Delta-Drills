@@ -22,6 +22,7 @@ from app import bkt_mastery
 from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
+from app import kc_explore
 from app import practice_targets
 from app import symbol_gate
 # Re-exported: every caller reads these off this module (question_pick, the
@@ -550,6 +551,9 @@ def ladder_fields(user_state: UserPracticeState, qid: int) -> dict:
 def example_plan(user_state: UserPracticeState, kc: str) -> dict:
     """The worked-example decision for the NEXT drill on `kc`, from its record."""
     row = kc_graph.ladder_view(user_state, kc)
+    # A diagnostic probe is answered unaided or it measures the example.
+    if kc_explore.probing(user_state, kc):
+        return {"show": False, "why": "probe", "position": 0}
     return example_schedule.plan(
         row.get("attempts") or [], kc_graph.kc_stage(user_state, kc)
     )

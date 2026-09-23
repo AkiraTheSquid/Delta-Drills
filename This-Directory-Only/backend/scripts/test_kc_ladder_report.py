@@ -197,8 +197,13 @@ check("every row carries a stage",
       all(r.get("ladder_stage") in kc_graph.LADDER_STAGES for r in rows.values()))
 check("every row carries an estimate",
       all(isinstance(r.get("ladder_estimate"), dict) for r in rows.values()))
+# Explore-area concepts (kc_explore) open as diagnostic probes at the Solo
+# rung, not on their lesson page; everywhere else a cold learner starts there.
+from app import kc_explore  # noqa: E402
 check("a cold learner is on the first rung everywhere",
-      all(r["ladder_stage"] == "worked" for r in rows.values()))
+      all(r["ladder_stage"] == "worked" for k, r in rows.items() if not kc_explore.in_area(k)))
+check("a cold learner meets explore-area concepts as probes",
+      all(r["ladder_stage"] == kc_graph.DRILL_FLOOR for k, r in rows.items() if kc_explore.in_area(k)))
 check("building the report wrote nothing to kc_ladder",
       st.kc_ladder == {}, f"{len(st.kc_ladder)} rows written")
 

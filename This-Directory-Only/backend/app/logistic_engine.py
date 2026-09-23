@@ -89,7 +89,11 @@ from typing import Dict, Iterable, Mapping, Optional, Tuple
 # tuple or the default weights change, so a later refit can tell which rows were
 # produced by which model instead of silently mixing them.
 # ---------------------------------------------------------------------------
-MODEL_VERSION = "logistic-v0.3"  # v0.3 (2026-09-19): + the `lesson` feature
+MODEL_VERSION = "logistic-v0.4"
+# v0.3 (2026-09-19): + the `lesson` feature.
+# v0.4 (2026-09-23): `recency` = 1 − R from memory_model (FSRS-6 + FIRe, per
+# concept) instead of 1 − 0.5^(days/14). Same [0,1] range and weight; a row
+# logged under v0.3 carries the old quantity.
 
 
 # ---------------------------------------------------------------------------
@@ -277,7 +281,7 @@ RECENCY = Feature(
                               # visible here so it can be fitted (Settles &
                               # Meeder's half-life regression is the model to
                               # fit it against) instead of asserted.
-    description="Elapsed-time forgetting term in [0,1]; 0 = just practised.",
+    description="Forgetting term 1 − R in [0,1] from memory_model (FSRS+FIRe); 0 = just practised.",
 )
 
 DEFAULT_FEATURES: Tuple[Feature, ...] = (
@@ -393,8 +397,9 @@ class EngineConfig:
     # difficulty-50 one, i.e. roughly 0.5 -> 0.12 P(correct) for a median
     # learner. Sets the *slope* of the whole difficulty scale.
     difficulty_scale: float = 25.0
-    # Half-life for the recency feature. Matches bkt_mastery.HALF_LIFE_DAYS so
-    # the two modules do not disagree about forgetting while both are live.
+    # Half-life for `recency_value`, the v0.3 recency feature. Since v0.4 the
+    # live feature is 1 − R from memory_model; this remains for rows and
+    # callers still on the old quantity.
     recency_half_life_days: float = 14.0
 
     def feature(self, name: str) -> Optional[Feature]:

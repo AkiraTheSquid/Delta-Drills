@@ -95,10 +95,12 @@ def readiness(
     days = lessons.page_age_days(page, now)
     stage = stage or kc_graph.kc_stage(user_state, kc)
     current = engine_bridge.predict(
-        user_state, kc, difficulty_score=difficulty_score, stage=stage, lesson_days=days
+        user_state, kc, difficulty_score=difficulty_score, stage=stage, lesson_days=days,
+        now=now,
     )
     after_read = engine_bridge.predict(
-        user_state, kc, difficulty_score=difficulty_score, stage=stage, lesson_days=0.0
+        user_state, kc, difficulty_score=difficulty_score, stage=stage, lesson_days=0.0,
+        now=now,
     )
     ready_now = is_ready(current)
     ready_after = is_ready(after_read)

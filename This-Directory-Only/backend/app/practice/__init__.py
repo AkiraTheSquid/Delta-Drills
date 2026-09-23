@@ -55,6 +55,7 @@ from app.practice.kernel_router import router as kernel_router
 from app.practice.lessons_router import router as lessons_router
 from app.practice.problem_feedback_router import router as problem_feedback_router
 from app.practice.questions_router import router as questions_router
+from app.practice.ready_route_router import router as ready_route_router
 from app.practice.stats_router import router as stats_router
 from app.practice.subtopic_router import router as subtopic_router
 
@@ -74,5 +75,6 @@ router.include_router(kernel_router)
 router.include_router(activity_router)
 router.include_router(groups_router)
 router.include_router(kc_prefs_router)
+router.include_router(ready_route_router)
 
 __all__ = ["router"]

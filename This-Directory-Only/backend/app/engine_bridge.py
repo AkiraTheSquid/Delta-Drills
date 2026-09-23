@@ -55,7 +55,7 @@ import math
 from datetime import datetime, timezone
 from typing import Dict, Mapping, Optional
 
-from app import attempt_log, lessons
+from app import attempt_log, lessons, memory_model
 from app.engine_features import FeatureVector, bkt_mastery, kc_graph
 from app import logistic_engine as E
 
@@ -235,6 +235,8 @@ def feature_values(
     example: bool = False,
     posteriors: Optional[Mapping[str, E.Posterior]] = None,
     lesson_days: Optional[float] = None,
+    exclude_latest_attempt: bool = False,
+    now: Optional[datetime] = None,
 ) -> Dict[str, float]:
     """One row of the design matrix, for this learner on this item.
 
@@ -260,6 +262,12 @@ def feature_values(
     prereqs = _prereq_mastery(user_state, kc)
     encompassed = _encompassing_mastery(user_state, kc)
     days = _days_since(ability.last_seen if ability else None)
+    # Forgetting is 1 − R from the concept's own FSRS+FIRe memory
+    # (memory_model, logistic-v0.4), not one 14-day half-life for every
+    # concept. The scoring path passes `exclude_latest_attempt` because the
+    # ladder row for the answer being scored is already written.
+    recency, recall = memory_model.recency(
+        user_state, kc, now=now, exclude_latest=exclude_latest_attempt)
     values = {
         E.ABILITY.name: 1.0,
         E.DIFFICULTY.name: E.difficulty_to_logits(difficulty_score),
@@ -268,7 +276,7 @@ def feature_values(
         E.LESSON.name: E.lesson_value(lesson_days),
         E.PREREQ.name: E.centred_mastery(prereqs.values()),
         E.ENCOMPASSING.name: E.centred_mastery(encompassed.values()),
-        E.RECENCY.name: E.recency_value(days),
+        E.RECENCY.name: recency,
     }
     # The same carrier engine_features uses: a dict for the engine, with the
     # provenance riding on `.sources` for the log. Until 2026-09-01 this
@@ -281,6 +289,7 @@ def feature_values(
         "prereqs": prereqs,
         "encompassed": encompassed,
         "days_since_kc": days,
+        "memory_recall": recall,
         "days_since_read": lesson_days,
     })
 
@@ -293,12 +302,14 @@ def predict(
     stage: Optional[str],
     example: bool = False,
     lesson_days: Optional[float] = None,
+    now: Optional[datetime] = None,
 ) -> E.Prediction:
-    """P(correct) for an item this learner has not answered yet."""
+    """P(correct) for an item this learner has not answered yet. `now` is the
+    moment asked about (default: the clock) — memory recall is read then."""
     return E.predict(
         feature_values(
             user_state, kc, difficulty_score=difficulty_score, stage=stage,
-            example=example, lesson_days=lesson_days,
+            example=example, lesson_days=lesson_days, now=now,
         ),
         posteriors_for(user_state, kc),
     )
@@ -365,6 +376,7 @@ def record(
     values = feature_values(
         user_state, kc, difficulty_score=difficulty_score, stage=normalized,
         example=example, posteriors=posteriors, lesson_days=lesson_days,
+        exclude_latest_attempt=True,
     )
     ability = posteriors.get(E.ABILITY.name)
     now = _now_iso()
@@ -376,6 +388,7 @@ def record(
         timestamp=now,
     )
     _save_posteriors(user_state, kc, updated)
+    _stamp_skill_p(user_state, kc, question_id, prediction)
 
     try:
         attempt_log.record_attempt(
@@ -398,6 +411,32 @@ def record(
     except Exception:  # pragma: no cover — logging must never break scoring
         pass
     return prediction
+
+
+def _stamp_skill_p(user_state, kc: str, question_id: Optional[int],
+                   prediction: E.Prediction) -> None:
+    """Write `p_skill` onto this answer's ladder row: the pass probability the
+    engine gave the problem WITHOUT its memory term — ability, difficulty,
+    rung, aid, prerequisites, lesson, but not recency. `memory_model` scales a
+    miss by it, so a miss on a problem the learner was unlikely to pass does
+    not read as forgetting (the 2026-09-23 research report's first risk).
+
+    The recency term must be out of it. A miss caused BY forgetting has low R,
+    so low recency, so a low full p; discounting by that p would stop FSRS
+    from ever lapsing the concepts it exists to catch. Same attenuation as the
+    real prediction: recency is a FIXED feature and adds no variance, so the
+    two differ by the memory term and nothing else.
+
+    Only the NEWEST row, and only if it is this question: `record_ladder_outcome`
+    appended it a moment ago in this request. Anything else is left unstamped,
+    which replays as a full lapse — the safe direction."""
+    if question_id is None:
+        return
+    # ladder_view: the live row, never a freshly created one.
+    rows = kc_graph.ladder_view(user_state, kc).get("attempts") or []
+    if rows and rows[-1].get("question_id") == question_id and "p_skill" not in rows[-1]:
+        logit = prediction.logit_mean - prediction.contributions.get(E.RECENCY.name, 0.0)
+        rows[-1]["p_skill"] = round(E.sigmoid(logit * E.attenuation(prediction.logit_var)), 4)
 
 
 def served_stage(user_state, kc: str, question_id: int) -> Optional[str]:

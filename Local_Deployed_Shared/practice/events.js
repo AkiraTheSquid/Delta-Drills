@@ -494,6 +494,9 @@ const _loadNextPracticeQuestion = async () => {
   // Session quota reached — every advance path (Next, Skip, torch self-rate,
   // "I don't know yet", forced advance) funnels through here, so this is the
   // single place the session can end.
+  // A practice-until-ready block learns it is over from a look-ahead fired by
+  // the last grade (practice/ready-route.js); let it land before asking.
+  await window.KcPractice?.settle?.();
   if (PracticeSession.shouldFinishInsteadOfAdvance()) {
     PracticeSession.finish("complete");
     return;

@@ -79,7 +79,52 @@ const ArenaNotebookView = (() => {
   const md = (text) => {
     const render = window.LessonGate && window.LessonGate.renderMarkdown;
     if (!render) return `<pre>${esc(text)}</pre>`;
-    return render(text, { headingLevels: true });
+    return render(_unhtmlQuotes(text), { headingLevels: true });
+  };
+
+  /* Raw `<blockquote>` that reaches the view — the compiler turns upstream's
+     into `>` lines, but a cell saved to localStorage by an older build, or one
+     the learner typed, still carries the tags, and the renderer escapes them
+     onto the page as text. Same rule as the compiler: a quote runs to its
+     close OR to the end of the cell (upstream's quotes are cut in half at
+     every `<details>`), and an unmatched close is dropped. Only tags that sit
+     at a line's edge count, and never inside a fence — a tag in code is code —
+     but a fence INSIDE a quote is quoted with it, as upstream's yaml
+     difficulty boxes are. */
+  const _OPEN_QUOTE = /^[ \t]*<blockquote\b[^>]*>[ \t]*/i;
+  const _CLOSE_QUOTE = /[ \t]*<\/blockquote\s*>[ \t]*$/i;
+  const _unhtmlQuotes = (text) => {
+    const src = String(text || "");
+    if (!/<\/?blockquote\b/i.test(src)) return src;
+    const out = [];
+    let depth = 0;
+    // The opening run (``` or ~~~, 3+) while inside a fence: only the same
+    // character, at least as long, closes it — a ~~~ inside a ``` block is code.
+    let fence = null;
+    for (let line of src.split("\n")) {
+      const run = /^[ \t]*(`{3,}|~{3,})/.exec(line);
+      if (run && (!fence || (run[1][0] === fence[0] && run[1].length >= fence.length))) {
+        fence = fence ? null : run[1];
+      } else if (!fence) {
+        while (_OPEN_QUOTE.test(line)) {
+          line = line.replace(_OPEN_QUOTE, "");
+          depth += 1;
+        }
+        let closes = 0;
+        while (_CLOSE_QUOTE.test(line)) {
+          line = line.replace(_CLOSE_QUOTE, "");
+          closes += 1;
+        }
+        // `&nbsp;` alone on a line is upstream's spacer between quotes.
+        if (/^[ \t]*&nbsp;[ \t]*$/.test(line)) line = "";
+        out.push(depth ? "> ".repeat(depth) + line : line);
+        depth = Math.max(0, depth - closes);
+        if (closes && !depth) out.push("");
+        continue;
+      }
+      out.push(depth ? "> ".repeat(depth) + line : line);
+    }
+    return out.join("\n");
   };
 
   const _renderMath = (root) => {

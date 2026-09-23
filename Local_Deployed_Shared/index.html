@@ -131,7 +131,7 @@
   <link rel="stylesheet" href="styles/practice/difficulty-dock.css?v=3" />
   <!-- "Practice make_rays_1d" on an ARENA page: the setup dialog and the
        related-drills list. practice/exercise-session.js. -->
-  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/exercise-session.css?v=4" />
   <link rel="stylesheet" href="styles/practice/exercise-timer.css?v=2" />
   <!-- THE CONCEPT PILL — the concept under test, drawn as a chip in the topbar
        that fills as the learner works (Seth, 2026-08-27). 🔴 IT MUST BE LINKED
@@ -2345,7 +2345,7 @@ t.manual_seed(0)
   <script src="practice/feedback-queue.js?v=1"></script>
   <script src="practice/api.js?v=32"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=37"></script>
+  <script src="practice/timer.js?v=38"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2439,12 +2439,15 @@ t.manual_seed(0)
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
   <script src="practice/exercise-planner.js?v=2"></script>
-  <script src="practice/kc-practice.js?v=9"></script>
+  <!-- The exercise dialog's practice-until-ready route; kc-practice.js
+       (startRoute) drives it. -->
+  <script src="practice/ready-route.js?v=1"></script>
+  <script src="practice/kc-practice.js?v=10"></script>
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
   <script src="practice/exercise-timer.js?v=4"></script>
-  <script src="practice/exercise-session.js?v=9"></script>
+  <script src="practice/exercise-session.js?v=10"></script>
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
        concept pill which section the reader is in. -->
@@ -2452,7 +2455,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=51"></script>
+  <script src="practice/events.js?v=52"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=2"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own

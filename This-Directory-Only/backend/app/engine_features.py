@@ -48,7 +48,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
-from app import bkt_mastery, kc_graph
+from app import bkt_mastery, kc_graph, memory_model
 from app import logistic_engine as E
 from app.attempt_log import parse_ts
 
@@ -232,8 +232,11 @@ def build(
         # One clock read, used for both the feature and its provenance. Reading
         # twice let the logged explanation disagree with the number it explains.
         days = _last_practised_days(user_state, kc, now)
-        values["recency"] = E.recency_value(days, config)
+        # 1 − R from the concept's FSRS+FIRe memory (memory_model,
+        # logistic-v0.4); `days` stays as provenance only.
+        values["recency"], recall = memory_model.recency(user_state, kc, now=now)
         sources["days_since_kc"] = days
+        sources["memory_recall"] = recall
     else:
         values["encompassing"] = 0.0
         values["recency"] = 0.0

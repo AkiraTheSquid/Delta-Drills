@@ -1052,7 +1052,8 @@ const PracticeSession = (() => {
     ((Number.isFinite(sessionConfig?.quota) && state.served >= sessionConfig.quota) ||
       /* A planned exercise block ends the moment a variant is solved — the
          count was a maximum (practice/exercise-planner.js). */
-      (!!sessionConfig?.exercise && !!window.KcPractice?.solved?.()));
+      (!!sessionConfig?.exercise &&
+        !!(window.KcPractice?.over?.() ?? window.KcPractice?.solved?.())));
 
   const hasSavedQuestion = (questionId) =>
     !!pausedState && String(questionId ?? "") === pausedState.questionId;
@@ -1102,6 +1103,8 @@ const PracticeSession = (() => {
         ? "Could not load a question — check the connection and try again."
         : reason === "placement"
           ? "Placement test started — its questions are timed on their own clock, one at a time."
+          : reason === "complete" && outcome?.text
+            ? outcome.text
           : reason === "complete" && outcome?.solved
             ? `Solved on attempt ${outcome.attempts} — ${served} of ${config.quota} questions used. Recorded answers are kept.`
           : reason === "complete" && config?.quota
