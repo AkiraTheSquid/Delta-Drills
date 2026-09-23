@@ -64,6 +64,7 @@ from app import example_schedule
 
 from app import bkt_mastery
 from app import arena_mix, kc_prefs, solo_progress, practice_targets
+from app import kc_explore
 # Ladder arithmetic lives in kc_ladder_math; re-exported here so callers keep
 # reading them off kc_graph (engine_bridge, prioritization, the test scripts).
 from app.kc_ladder_math import (  # noqa: F401
@@ -128,6 +129,9 @@ def _registry() -> Dict[str, dict]:
             # Only prereqs that name a real KC — a typo in the registry must not
             # silently lock a node forever with an unsatisfiable dependency.
             "prereqs": [p for p in (kc.get("prereqs") or []) if isinstance(p, str)],
+            # {prereq: propagation weight} — the subset of prereqs a correct
+            # answer here also exercises (kc_explore reads it).
+            "encompassing": dict(kc.get("encompassing") or {}),
         }
     for kc in out.values():
         kc["prereqs"] = [p for p in kc["prereqs"] if p in out]
@@ -380,6 +384,10 @@ def _served_question_ids(user_state) -> set:
 def kc_is_learned(user_state, kc: str) -> bool:
     if kc_mastery(user_state, kc, decay=False)[0] >= LEARNED_THRESHOLD:
         return True
+    # Explore areas: the concept's posterior (own answers + encompassing
+    # credit from harder ones) cleared kc_explore.SETTLE_P.
+    if kc_explore.settled(user_state, kc):
+        return True
     return kc_evidence_exhausted(user_state, kc)
 
 
@@ -413,7 +421,9 @@ def kc_is_unlocked(user_state, kc: str) -> bool:
     # A prerequisite the learner disabled is skipped, not blocking: "turn this
     # off" must not lock everything downstream out of reach. An ARENA exercise
     # concept under a set share is served early (arena_mix.unlocks).
-    return arena_mix.unlocks(user_state, kc) or all(
+    # Explore areas: an unrefuted concept may be probed before its
+    # prerequisites are learned (kc_explore.explorable).
+    return arena_mix.unlocks(user_state, kc) or kc_explore.explorable(user_state, kc) or all(
         kc_prefs.is_disabled(user_state, p) or kc_is_learned(user_state, p)
         or p in practice_targets.readiness(user_state)
         or (by_lesson and lessons.kc_lesson_read(p, exposure))
@@ -487,7 +497,7 @@ def frontier(user_state, require_questions: bool = True) -> List[str]:
     out.sort(key=lambda k: (
         -(descendants.get(k, 0) + 1) * kc_prefs.weight_for(user_state, k),
         depth.get(k, 0), k))
-    return out
+    return kc_explore.reorder(user_state, out)
 
 
 def select_next_kc(user_state, eligible=None, skip=None) -> Optional[str]:
@@ -820,6 +830,9 @@ def solo_rung_cleared(user_state, kc: str) -> bool:
 
 def kc_stage(user_state, kc: str) -> str:
     """Which rung to serve for this concept right now."""
+    # A diagnostic probe skips the lesson page (kc_explore.probing).
+    if kc_explore.probing(user_state, kc):
+        return DRILL_FLOOR
     stage = _stage_from(_kc_estimate_core(user_state, kc), ladder_view(user_state, kc))
     if stage == DRILL_FLOOR and solo_rung_cleared(user_state, kc):
         stage = "solo"
