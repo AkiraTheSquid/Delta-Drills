@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ARENA Delta Drills v1.0.15</title>
+  <!-- delta-drills.vercel.app → deltadrills.com, carrying localStorage across.
+       FIRST and SYNCHRONOUS: it may stop the page before anything else reads
+       storage on the wrong origin. See domain-move.js. -->
+  <script src="domain-move.js?v=1"></script>
   <!-- Stamp deep links before first paint. solo-route.js confirms known paths
        after app.js has selected the requested page; unknown paths remove it. -->
   <script>
