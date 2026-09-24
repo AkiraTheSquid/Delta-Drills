@@ -17,11 +17,11 @@
 - `common.js`: `window.AISC` — `css()` token reader (reads `#aisc-root`),
   `rgb01`, `onTheme` (fires on `delta:theme-changed`), `whenVisible`, `graph`
   (fetch of `aisc/data/kc_graph.json`), `lessonColor`; reveal + section nav.
-- `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (CindyJS) ·
+- `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
   `fig-graphs.js` Figs. 2, 3, 5, 6 (Cytoscape + dagre) · `fig-seth.js` Fig. 7.
 
 ## Data & External Dependencies
-- `../data/*.json`; globals `cytoscape` (app vendor/graph) and `CindyJS`.
+- `../data/*.json`; global `cytoscape` (app vendor/graph).
 
 ## How It Works (Flow)
 1. `common.js` builds `AISC`; each `fig-*.js` wires its controls and starts on
@@ -30,8 +30,10 @@
 ## Invariants & Constraints
 - Look up elements only by `aisc-`-prefixed ids.
 - Fetch paths are relative to the app root: `aisc/data/…`.
-- Globals are `AISC`, `DeltaEngine`, `AISCForget`, `AISCForgetReport` — the
-  last is called from CindyScript by name.
+- Globals are `AISC` and `DeltaEngine` only.
+- SVG figures redraw from scratch; anything that must survive a redraw
+  (pointer capture, keyboard focus) hangs off the `<svg>` itself — see
+  `fig-forget.js`.
 
 ## Extension Points
 - New figure → new `fig-*.js` + entry in `../boot.js` SCRIPTS.
@@ -42,3 +44,5 @@
 ## Recent Changes
 - 2026-09-24: Ported from delta-drills-aisc; ids prefixed, `DD` → `AISC`,
   theme via app event, nav scroll without hash.
+- 2026-09-24: `fig-forget.js` rewritten from CindyScript to SVG; same model,
+  same readout numbers; handles keyboard-operable (←/→, Home, End).

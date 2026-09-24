@@ -9,8 +9,7 @@
 
 ## Owns
 - Styles for the write-up (`aisc.css`), its lazy script loader (`boot.js`),
-  the figure scripts (`js/`), their data snapshots (`data/`), and CindyJS
-  (`vendor/Cindy.js`, used only by Fig. 4).
+  the figure scripts (`js/`) and their data snapshots (`data/`).
 
 ## Does NOT own
 - The markup: it lives inline in `../index.html` inside `#about-page-content`
@@ -23,9 +22,9 @@
 ## Key Files
 - `aisc.css`: the site's stylesheet, every rule nested under `#aisc-root`; theme
   tokens mapped to the app's `html[data-theme]` light | dark | blue.
-- `boot.js`: waits for `DDAboutContentReady`, then loads CindyJS + `js/*` in order
+- `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
-- `js/`, `data/`, `vendor/`: see those folders.
+- `js/`, `data/`: see those folders.
 
 ## Data & External Dependencies
 - `data/kc_graph.json` (82 KCs / 211 edges snapshot), `data/seth_progress.json`
@@ -47,7 +46,8 @@
 - Every id in the write-up is `aisc-` prefixed; every in-page `href="#…"` names
   one (checked in `../watch_front_door.py`). Links scroll via JS, never set
   `location.hash`.
-- Tokens must stay `#rrggbb` hex: CindyJS colours go through `AISC.rgb01`.
+- Tokens must stay `#rrggbb` hex: `AISC.rgb01` parses them for colour mixing
+  (Fig. 5 nodes, lesson colours).
 - Never un-nest a rule out of `#aisc-root`: the site's `.card`/`.btn`/`.note`/
   `.status` would restyle the rest of the app.
 - Dropped from the standalone site on purpose: its theme toggle (app owns theme),
@@ -70,3 +70,5 @@
 
 ## Recent Changes
 - 2026-09-24: Created — AISC write-up ported onto #page-learn-about-app.
+- 2026-09-24: Fig. 4 moved off CindyJS onto plain SVG (`js/fig-forget.js`);
+  `vendor/` removed, ~550 KB less on first open.
