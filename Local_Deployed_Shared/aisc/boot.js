@@ -1,26 +1,24 @@
 /* Loads the AISC write-up's scripts the first time its page is on screen.
 
-   The write-up (#aisc-root, on #page-learn-about-app) carries seven figures
-   and CindyJS alone is ~550 KB. Most visits to the app never open this page,
-   so nothing here is fetched until #aisc-root first intersects the viewport,
-   which a `display: none` page never does.
+   The write-up (#aisc-root, on #page-learn-about-app) carries seven figures.
+   Most visits to the app never open this page, so nothing here is fetched
+   until #aisc-root first intersects the viewport, which a `display: none`
+   page never does.
 
    🔴 ORDER IS LOAD-BEARING. about-page-editor.js may swap the page's HTML for
    the saved server copy; every figure script grabs its elements by id at run
    time, so they must start only after `window.DDAboutContentReady` settles,
    exactly like concept-graph/why-graph.js. Scripts then run one at a time:
-   common.js defines `AISC`, which every fig-*.js reads at load, and
-   fig-forget.js needs `CindyJS`. Cytoscape and the dagre layout come from the
+   common.js defines `AISC`, which every fig-*.js reads at load. Cytoscape and the dagre layout come from the
    app's own vendor/graph/ tags (deferred, so they have run by DOMContentLoaded). */
 (function () {
   "use strict";
 
   var SCRIPTS = [
-    "aisc/vendor/Cindy.js",
     "aisc/js/engine.js?v=1",
     "aisc/js/common.js?v=1",
     "aisc/js/fig-effort.js?v=1",
-    "aisc/js/fig-forget.js?v=1",
+    "aisc/js/fig-forget.js?v=7",
     "aisc/js/fig-graphs.js?v=2",
     "aisc/js/fig-seth.js?v=1",
   ];
@@ -46,10 +44,6 @@
     var root = document.getElementById("aisc-root");
     if (!root) return;
     started = true;
-    // 🔴 CindyJS defers every instance until DOMContentLoaded unless told not
-    // to. Loaded here, long after that event, it would wait forever: Fig. 4
-    // stays blank and each control throws in evokeCS. Must precede Cindy.js.
-    window.cindyDontWait = true;
     var io = new IntersectionObserver(function (ents) {
       if (!ents.some(function (e) { return e.isIntersecting; })) return;
       io.disconnect();

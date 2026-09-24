@@ -15,7 +15,7 @@
   const discard = document.getElementById("about-editor-discard");
   if (!content || !controls || !status || !start || !save || !discard) return;
 
-  // Live figures own their DOM once they start (Cytoscape, CindyJS, SVG
+  // Live figures own their DOM once they start (Cytoscape, SVG
   // charts, sliders). They are never editable and never serialized from their
   // live state: the static shell from index.html is what gets saved, and it is
   // put back when a saved copy is shown, because the server's sanitizer strips

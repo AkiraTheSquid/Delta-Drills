@@ -76,7 +76,7 @@ def check_front_door():
         "aisc/boot.js must wait for about-page-editor.js to swap in any saved "
         "copy, or the figures bind to nodes that are about to be replaced"
     )
-    for rel in ("aisc/vendor/Cindy.js", "aisc/data/kc_graph.json",
+    for rel in ("aisc/data/kc_graph.json",
                 "aisc/data/seth_progress.json"):
         assert os.path.exists(os.path.join(HERE, rel)), f"{rel} is missing"
 

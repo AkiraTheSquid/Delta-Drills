@@ -20,7 +20,7 @@
   function css(name) {
     return getComputedStyle(host).getPropertyValue(name).trim();
   }
-  // "#rrggbb" → [r,g,b] in 0..1 (CindyScript colour form).
+  // "#rrggbb" → [r,g,b] in 0..1, for colour mixing and light/dark tests.
   function rgb01(hex) {
     var h = hex.replace("#", "");
     if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");

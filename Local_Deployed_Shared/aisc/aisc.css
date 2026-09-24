@@ -265,6 +265,11 @@ html[data-theme="light"] #aisc-root {
 
   /* Fig. 1 — one chart */
   #aisc-effort-svg { display: block; width: 100%; }
+  #aisc-forget-svg { display: block; width: 100%; touch-action: pan-y; user-select: none; }
+  .aisc-forget-handle { cursor: grab; touch-action: none; }
+  .aisc-forget-handle:active { cursor: grabbing; }
+  .aisc-forget-handle:focus { outline: none; }
+  .aisc-forget-handle:focus-visible { stroke: var(--ink); stroke-width: 3; }
   .oversight-chain { margin: 4px 18px 16px; font: 13px/1.5 var(--mono); color: var(--ink-2); }
   .oversight-chain span { color: var(--green); }
   .mech { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); display: grid; gap: 6px; }
