@@ -9,7 +9,8 @@
      that element. The site's own theme toggle is gone; the app's theme.js owns
      `html[data-theme]` (light | dark | blue) and aisc.css maps it, so a theme
      switch arrives as `delta:theme-changed`.
-   - Section nav links scroll inside the app instead of setting location.hash.
+   - Section nav links scroll inside the app instead of setting location.hash,
+     and the nav itself is #aisc-toc in the app's topbar, not a rail of its own.
    - The global is `AISC`, not `DD`, and every id carries an `aisc-` prefix. */
 (function (root) {
   "use strict";
@@ -41,14 +42,18 @@
 
   // Section nav: highlight the section in view, and scroll on click without
   // touching location.hash (the app routes on its own state, not the hash).
+  // The nav is #aisc-toc in the app's topbar (index.html), outside `host`, so
+  // clicks are caught on the document and filtered to the two places links
+  // live.
+  var toc = document.getElementById("aisc-toc");
   var links = {};
-  host.querySelectorAll(".rail nav a").forEach(function (a) {
+  if (toc) toc.querySelectorAll("a").forEach(function (a) {
     var id = a.getAttribute("href").slice(1);
     links[id] = a;
   });
-  host.addEventListener("click", function (e) {
+  document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest('a[href^="#aisc-"]');
-    if (!a) return;
+    if (!a || !(host.contains(a) || (toc && toc.contains(a)))) return;
     var target = document.getElementById(a.getAttribute("href").slice(1));
     if (!target) return;
     e.preventDefault();

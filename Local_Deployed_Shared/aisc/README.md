@@ -21,7 +21,9 @@
 
 ## Key Files
 - `aisc.css`: the site's stylesheet, every rule nested under `#aisc-root`; theme
-  tokens mapped to the app's `html[data-theme]` light | dark | blue.
+  tokens mapped to the app's `html[data-theme]` light | dark | blue. Also the
+  page layout vars (`--aisc-col` / `--aisc-wide` / `--aisc-clear` /
+  `--aisc-fade` on `#page-learn-about-app`), the field's mask, and `#aisc-toc`.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
 - `js/`, `data/`: see those folders.
@@ -51,8 +53,15 @@
 - Never un-nest a rule out of `#aisc-root`: the site's `.card`/`.btn`/`.note`/
   `.status` would restyle the rest of the app.
 - Dropped from the standalone site on purpose: its theme toggle (app owns theme),
-  presentation mode (`present.js`, global keydown), and the floating background
-  canvas (`bg-field.js`, would sit behind every page).
+  and presentation mode (`present.js`, global keydown). Its `bg-field.js` came
+  back as `js/field.js`, scoped to this page and masked out of the column.
+- Layout (Seth, 2026-09-24, after uchicagoaisafety.com/about-us): ONE column of
+  paragraphs, no floating cards. Figures (and the five-step `.chain`) break out
+  to `--aisc-wide`; nothing else does. Don't reintroduce opaque tiles to hide
+  the field: the mask keeps it out of the column.
+- The contents nav is `#aisc-toc` in the app topbar (`../index.html`,
+  `.topbar-mid`), shown by a `body:has(#page-learn-about-app:not(.hidden))`
+  rule; on a phone it scrolls sideways in the narrow middle cell. Not inside `#about-page-content`, so never saved.
 
 ## Extension Points
 - Copy change: edit the aisc repo first, then re-port the section into
@@ -72,3 +81,7 @@
 - 2026-09-24: Created — AISC write-up ported onto #page-learn-about-app.
 - 2026-09-24: Fig. 4 moved off CindyJS onto plain SVG (`js/fig-forget.js`);
   `vendor/` removed, ~550 KB less on first open.
+- 2026-09-24: XLab-style layout — one 720px column of paragraphs, cards and
+  tiles unboxed, figures wider (1080px); node field in the gutters
+  (`js/field.js`) with an eased mask; contents moved from the in-page sticky
+  rail into the app topbar (`#aisc-toc`); hero ornament retired.

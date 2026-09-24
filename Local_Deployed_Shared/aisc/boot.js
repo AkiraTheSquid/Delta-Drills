@@ -9,14 +9,15 @@
    the saved server copy; every figure script grabs its elements by id at run
    time, so they must start only after `window.DDAboutContentReady` settles,
    exactly like concept-graph/why-graph.js. Scripts then run one at a time:
-   common.js defines `AISC`, which every fig-*.js reads at load. Cytoscape and the dagre layout come from the
+   common.js defines `AISC`, which field.js and every fig-*.js read at load. Cytoscape and the dagre layout come from the
    app's own vendor/graph/ tags (deferred, so they have run by DOMContentLoaded). */
 (function () {
   "use strict";
 
   var SCRIPTS = [
     "aisc/js/engine.js?v=1",
-    "aisc/js/common.js?v=1",
+    "aisc/js/common.js?v=2",
+    "aisc/js/field.js?v=1",
     "aisc/js/fig-effort.js?v=1",
     "aisc/js/fig-forget.js?v=7",
     "aisc/js/fig-graphs.js?v=2",

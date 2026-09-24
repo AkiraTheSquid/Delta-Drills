@@ -48,7 +48,10 @@ def check_invariants():
         if ch == "{":
             if depth == 0:
                 s = sel.strip()
+                # #aisc-toc is the page's contents nav in the app topbar
+                # (index.html); an id, so it restyles nothing else.
                 assert ("#aisc-root" in s or "#page-learn-about-app" in s
+                        or s == "#aisc-toc"
                         or s.startswith("@keyframes")), f"unscoped top-level rule: {s!r}"
             depth += 1
             sel = ""
