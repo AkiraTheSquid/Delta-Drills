@@ -67,23 +67,29 @@ WHAT READS IT
 
 STATELESS
 ---------
-Replayed from `kc_ladder[kc]["attempts"]` every time, like `remediation`, so a
-replay of a learner's state reaches the same decisions and a change of weights
-takes effect on the next request with no migration. The ladder keeps the last
-20 attempts per concept (`kc_ladder_math._LADDER_WINDOW`); for a concept with
-more, the replay starts at the 21st-newest, which UNDERSTATES its stability —
-reviews come early, never late. `attempt_log` is the full record to move to
-once every learner has one.
+Replayed every time, like `remediation`, so a replay of a learner's state
+reaches the same decisions and a change of weights takes effect on the next
+request with no migration. The record is `kc_ladder[kc]["attempts"]` plus every
+scored answer in `attempt_log` the ladder no longer holds. The ladder alone is
+not the whole record: it keeps the last 20 rows per concept
+(`kc_ladder_math._LADDER_WINDOW`), and rows have gone missing from it — Seth's
+prod state on 2026-09-24 had 35 scored answers in the log and not on the
+ladder, which left `torch.elementwise-ops` at S 30 d instead of 67 d and
+`torch.broadcasting-rules` at R 0.78 instead of 0.61. The ladder row still
+wins where both exist: it carries `p_skill` and the example flag the learner
+actually saw.
 """
 from __future__ import annotations
 
 import math
 import weakref
+from collections import OrderedDict
 from dataclasses import dataclass, replace
+from functools import lru_cache
 from datetime import datetime, timezone
 from typing import Dict, List, Mapping, NamedTuple, Optional, Tuple
 
-from app import kc_graph, kc_prefs, practice_targets
+from app import attempt_log, kc_graph, kc_prefs, kc_renames, practice_targets
 
 # py-fsrs 6.3.2 DEFAULT_PARAMETERS, w0..w20 (w20 = the curve's decay).
 FSRS6_DEFAULT_WEIGHTS: Tuple[float, ...] = (
@@ -347,6 +353,59 @@ def _skill_p(att: Mapping) -> Optional[float]:
     return float(p) if isinstance(p, (int, float)) else None
 
 
+# A log row and a ladder row for the same answer are written a few
+# milliseconds apart (ladder first, then the engine's log row); anything this
+# close on the same concept and question is the same answer.
+_SAME_ANSWER_DAYS = 60.0 / 86400.0
+
+# {user_id: ((path, size, mtime_ns), rows)} — the log is append-only, so its
+# size and mtime say whether the parsed rows are still current. Bounded: the
+# least recently read learner is dropped past _LOG_CACHE_MAX.
+_log_cache: "OrderedDict[str, tuple]" = OrderedDict()
+_LOG_CACHE_MAX = 64
+
+
+def _log_answers(user_state) -> List[Tuple[str, float, Optional[int], bool, bool]]:
+    """Every scored answer in the learner's attempt_log, as
+    (kc, t, question_id, correct, example). Backfilled rows are copies of
+    ladder rows and are skipped; so is anything without a verdict."""
+    uid = getattr(user_state, "user_id", None)
+    if not isinstance(uid, str) or not uid:
+        return []
+    path = attempt_log.log_path(uid)
+    try:
+        st = path.stat()
+    except OSError:
+        return []
+    key = (str(path), st.st_size, st.st_mtime_ns)
+    hit = _log_cache.get(uid)
+    if hit is not None and hit[0] == key:
+        _log_cache.move_to_end(uid)
+        return hit[1]
+    out = []
+    for r in attempt_log.iter_rows(uid):
+        if r.kind != attempt_log.KIND_ATTEMPT or not r.kc or not isinstance(r.correct, bool):
+            continue
+        if r.note and str(r.note).startswith("backfill"):
+            continue
+        t = _to_days(r.ts)
+        if t is None:
+            continue
+        out.append((kc_renames.canon(r.kc), t, r.question_id, r.correct,
+                    bool((r.features or {}).get("example"))))
+    _log_cache[uid] = (key, out)
+    _log_cache.move_to_end(uid)
+    while len(_log_cache) > _LOG_CACHE_MAX:
+        _log_cache.popitem(last=False)
+    return out
+
+
+def _log_key(user_state):
+    uid = getattr(user_state, "user_id", None)
+    hit = _log_cache.get(uid) if isinstance(uid, str) else None
+    return hit[0] if hit else None
+
+
 class Event(NamedTuple):
     """One graded answer. `p_skill` holds only the tags the scoring path
     stamped. A plain (t, grades) tuple is accepted wherever an Event is."""
@@ -373,6 +432,20 @@ def _events(user_state) -> List[Event]:
             if t is None:
                 continue
             rows.append((t, att.get("question_id"), kc, i, _grade(att), _skill_p(att)))
+    # Each ladder row accounts for at most ONE log row (the nearest within the
+    # window), so a quick retry of a question cannot hide an older answer the
+    # ladder has since dropped.
+    unmatched: Dict[Tuple[str, Optional[int]], List[float]] = {}
+    for t, qid, kc, _i, _g, _p in rows:
+        unmatched.setdefault((kc, qid), []).append(t)
+    for kc, t, qid, correct, example in _log_answers(user_state):
+        pool = unmatched.get((kc, qid)) or []
+        near = min(pool, key=lambda s: abs(t - s), default=None)
+        if near is not None and abs(t - near) <= _SAME_ANSWER_DAYS:
+            pool.remove(near)
+            continue
+        g = _grade({"correct": correct, "example": example})
+        rows.append((t, qid, kc, -1, g, None))
     rows.sort(key=lambda r: (r[0], str(r[1]), r[2], r[3]))
     events: List[Tuple[float, Optional[int], Dict[str, int], Dict[str, float]]] = []
     for t, qid, kc, _i, g, p in rows:
@@ -483,10 +556,13 @@ def replay_events(events, cfg: MemoryConfig = DEFAULT_CONFIG) -> Dict[str, Memor
     return mems
 
 
-# Per-state memo: the picker asks several times per request. Keyed weakly on
-# the state object and checked against a fingerprint of every ladder row's
-# length and newest row, so an appended answer invalidates it.
-_memo: "weakref.WeakKeyDictionary" = weakref.WeakKeyDictionary()
+# Per-state memo: the picker asks several times per request. Checked against
+# a fingerprint of every ladder row's length and newest row plus the log's
+# size, so an appended answer invalidates it. Keyed by id() with a weakref
+# that drops the entry when the state dies: UserPracticeState is a dataclass,
+# so unhashable, and the WeakKeyDictionary this used to be raised TypeError on
+# it — the memo never hit for a real learner until 2026-09-24.
+_memo: Dict[int, tuple] = {}
 
 
 def _fingerprint(user_state) -> tuple:
@@ -500,29 +576,60 @@ def _fingerprint(user_state) -> tuple:
             out.append((kc, len(atts), last.get("ts") or last.get("timestamp"),
                         last.get("question_id"), last.get("correct"), last.get("example"),
                         last.get("p_skill")))
-    return tuple(out)
+    _log_answers(user_state)  # refreshes the cache entry _log_key reads
+    return (tuple(out), _log_key(user_state))
 
 
 def memories(user_state, cfg: MemoryConfig = DEFAULT_CONFIG) -> Dict[str, Memory]:
     """{kc: Memory} for every concept with a graded answer, replayed."""
     fp = (cfg, _fingerprint(user_state))
-    try:
-        hit = _memo.get(user_state)
-    except TypeError:  # not weak-referenceable (a plain dict in a test)
-        hit = None
-    if hit is not None and hit[0] == fp:
-        return hit[1]
+    key = id(user_state)
+    hit = _memo.get(key)
+    if hit is not None and hit[0]() is user_state and hit[1] == fp:
+        return hit[2]
     mems = replay_events(_events(user_state), cfg)
     try:
-        _memo[user_state] = (fp, mems)
-    except TypeError:
-        pass
+        ref = weakref.ref(user_state, lambda _r, k=key: _memo.pop(k, None))
+    except TypeError:  # not weak-referenceable (a plain dict in a test)
+        return mems
+    _memo[key] = (ref, fp, mems)
+    return mems
+
+
+_memo_before: Dict[int, tuple] = {}
+
+
+def _memories_before_latest(user_state, kc: str,
+                            cfg: MemoryConfig = DEFAULT_CONFIG) -> Optional[Dict[str, Memory]]:
+    """The whole record replayed WITHOUT the newest answer touching `kc`
+    (directly, or implicitly through the encompassing graph); None when no
+    answer touches it. Memoised per state like `memories`: the scoring path
+    asks once per atom and prerequisite of the answer being scored."""
+    fp = (cfg, _fingerprint(user_state))
+    key = id(user_state)
+    hit = _memo_before.get(key)
+    if hit is not None and hit[0]() is user_state and hit[1] == fp and kc in hit[2]:
+        return hit[2][kc]
+    closure, ancestors = _graph() if cfg.fire else ({}, {})
+    evs = _events(user_state)
+    last = max((i for i, ev in enumerate(evs)
+                if _touches(ev.grades, kc, closure, ancestors)), default=None)
+    mems = None if last is None else replay_events(evs[:last] + evs[last + 1:], cfg)
+    if hit is not None and hit[0]() is user_state and hit[1] == fp:
+        hit[2][kc] = mems
+    else:
+        try:
+            ref = weakref.ref(user_state, lambda _r, k=key: _memo_before.pop(k, None))
+        except TypeError:
+            return mems
+        _memo_before[key] = (ref, fp, {kc: mems})
     return mems
 
 
 def kc_retrievability(user_state, kc: str, now: Optional[datetime] = None,
                       cfg: MemoryConfig = DEFAULT_CONFIG,
-                      exclude_latest: bool = False) -> Optional[float]:
+                      exclude_latest: bool = False,
+                      exclude_latest_of: Optional[str] = None) -> Optional[float]:
     """Predicted recall of `kc` now, or None if it has never been answered.
 
     `exclude_latest`: replay WITHOUT the newest answer touching `kc` —
@@ -530,18 +637,53 @@ def kc_retrievability(user_state, kc: str, now: Optional[datetime] = None,
     needs it — the ladder row for the answer being scored is written before
     the engine scores it, and a prediction that has seen its own outcome is
     not a prediction (same rule as engine_bridge.posteriors_for's
-    `exclude_latest_attempt`)."""
-    if not exclude_latest:
+    `exclude_latest_attempt`).
+
+    `exclude_latest_of`: the same, for a concept other than `kc` — the one
+    being scored. A prerequisite's or a shared atom's recall must not include
+    the credit or blame the scored answer handed it, but must keep every
+    earlier answer, including other concepts' newest ones."""
+    if exclude_latest:
+        exclude_latest_of = kc
+    if exclude_latest_of is None:
         mem = memories(user_state, cfg).get(kc)
     else:
-        closure, ancestors = _graph() if cfg.fire else ({}, {})
-        evs = _events(user_state)
-        last = max((i for i, ev in enumerate(evs)
-                    if _touches(ev.grades, kc, closure, ancestors)), default=None)
-        if last is None:
-            return None
-        mem = replay_events(evs[:last] + evs[last + 1:], cfg).get(kc)
+        mems = _memories_before_latest(user_state, exclude_latest_of, cfg)
+        if mems is None:
+            return None if exclude_latest_of == kc else kc_retrievability(
+                user_state, kc, now=now, cfg=cfg)
+        mem = mems.get(kc)
     return None if mem is None else retrievability(mem, _now_days(now), cfg)
+
+
+@lru_cache(maxsize=1)
+def _atom_kcs_index() -> Dict[str, Tuple[str, ...]]:
+    """atom -> the concepts whose crosswalk exercises it (weight > 0)."""
+    inv: Dict[str, List[str]] = {}
+    for kc, row in kc_graph._crosswalk().items():
+        for a in row.get("atoms") or []:
+            if a.get("a") and float(a.get("w") or 0.0) > 0:
+                inv.setdefault(a["a"], []).append(kc)
+    return {a: tuple(sorted(k)) for a, k in inv.items()}
+
+
+def atom_recall(user_state, atom: str, now: Optional[datetime] = None,
+                exclude_latest_of: Optional[str] = None) -> Optional[float]:
+    """Predicted recall of a BKT atom: the best R among the answered concepts
+    that exercise it — an atom is as fresh as its most recent exercise,
+    whichever concept that came through. None when no answered concept covers
+    it; `bkt_mastery.current_mastery` then reads the atom as learned.
+    `exclude_latest_of`: the concept being scored (see `kc_retrievability`)."""
+    kcs = _atom_kcs_index().get(atom, ())
+    if not kcs:
+        return None
+    mems = None
+    if exclude_latest_of is not None:
+        mems = _memories_before_latest(user_state, exclude_latest_of)
+    if mems is None:
+        mems = memories(user_state)
+    t = _now_days(now)
+    return max((retrievability(mems[kc], t) for kc in kcs if kc in mems), default=None)
 
 
 def recency(user_state, kc: str, now: Optional[datetime] = None,

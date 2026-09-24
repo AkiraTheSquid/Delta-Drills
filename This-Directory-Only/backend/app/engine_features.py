@@ -104,7 +104,9 @@ def prereq_mastery(user_state, kc: str) -> Dict[str, float]:
     return out
 
 
-def encompassed_mastery(user_state, kc: str) -> Dict[str, float]:
+def encompassed_mastery(
+    user_state, kc: str, now: Optional[datetime] = None
+) -> Dict[str, float]:
     """Mastery of the simpler atoms this KC's atoms encompass.
 
     Direction matters and is easy to get backwards: `encompassed_by(advanced)`
@@ -122,8 +124,11 @@ def encompassed_mastery(user_state, kc: str) -> Dict[str, float]:
         for simple_atom, _w in bkt_mastery.encompassed_by(atom):
             if simple_atom in simpler:
                 continue
+            # Forgetting is FSRS recall of whichever answered concept last
+            # exercised the atom (memory_model), not a clock on the atom.
             simpler[simple_atom] = bkt_mastery.current_mastery(
-                user_state.atom_mastery, user_state.atom_last_ts, simple_atom, params=params
+                user_state.atom_mastery, user_state.atom_last_ts, simple_atom, params=params,
+                recall=memory_model.atom_recall(user_state, simple_atom, now=now),
             )
     return simpler
 
@@ -225,7 +230,7 @@ def build(
     if kc:
         prereqs.update(prereq_mastery(user_state, kc))
 
-        encompassed = encompassed_mastery(user_state, kc)
+        encompassed = encompassed_mastery(user_state, kc, now=now)
         values["encompassing"] = E.centred_mastery(encompassed.values())
         sources["encompassed"] = encompassed
 

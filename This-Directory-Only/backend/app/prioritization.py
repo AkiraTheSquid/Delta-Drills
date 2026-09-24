@@ -23,6 +23,7 @@ from app import example_schedule
 from app import engine_bridge
 from app import kc_graph
 from app import kc_explore
+from app import memory_model
 from app import practice_targets
 from app import symbol_gate
 # Re-exported: every caller reads these off this module (question_pick, the
@@ -593,7 +594,8 @@ def record_ladder_outcome(
 
 
 def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
-    """Mean decay-adjusted BKT posterior over the atoms this subtopic exercises.
+    """Mean BKT posterior over the atoms this subtopic exercises, each pulled
+    toward the prior by its FSRS forgetting (`memory_model.atom_recall`).
     Falls back to the learner's prior (self-reported level, else the BKT
     default) when the subtopic has no tagged atoms / no practice yet — so a
     self-reported beginner starts at the floor and a self-reported strong
@@ -604,7 +606,8 @@ def subtopic_mastery(user_state: UserPracticeState, subtopic: str) -> float:
         return params.p_init
     vals = [
         bkt_mastery.current_mastery(
-            user_state.atom_mastery, user_state.atom_last_ts, a, params=params
+            user_state.atom_mastery, user_state.atom_last_ts, a, params=params,
+            recall=memory_model.atom_recall(user_state, a),
         )
         for a in atoms
     ]

@@ -19,9 +19,15 @@ Each atom (concept-graph node) carries a BKT posterior  L = P(skill known):
                  evidence is shared between atoms** — vanilla BKT treats every
                  skill independently, so this is the necessary completion, not a
                  redundancy.
-  * decay()    — vanilla BKT never forgets; the 2026-05-24 audit (Yudelson &
-                 Pavlik 2013) flags monotonic mastery as an anti-pattern, so we
-                 keep the production half-life regression toward L0 (p_init).
+  * forgetting — NOT here. L is what the evidence says was LEARNED; whether
+                 it is still retrievable is `memory_model`'s FSRS recall R for
+                 the concept, applied at read time by callers that have the
+                 learner (`current_mastery(..., recall=R)`,
+                 `kc_graph.kc_mastery`). Until 2026-09-24 this module ran its
+                 own 14-day half-life toward p_init, both at read time and
+                 BEFORE every update, so each update baked the decay into the
+                 stored L. Seth's prod state that day: `torch.elementwise-ops`
+                 read 0.55 here while FSRS put its recall at 0.98 (S = 67 d).
 
 Calibration: every numeric constant here is a v0 default, NOT literature-derived
 (mirrors the learner_sim.py model validated 2026-05-28). Re-fit once real
@@ -64,7 +70,8 @@ P_SLIP = 0.10            # S: P(incorrect | known)
 MASTERY_THRESHOLD = 0.95  # belief at/above which an atom counts as "mastered"
 UNLOCK_THRESHOLD = 0.85   # belief at/above which an atom is "cleared" for gating
 
-# Forgetting: half-life regression of L toward p_init (mirrors adaptive.py).
+# The retired forgetting clock. Nothing here decays by it any more (see the
+# module docstring); `diagnostic` still reads it as its "recent enough" window.
 HALF_LIFE_DAYS = 14.0
 
 GRAPH_PATH = (
@@ -235,7 +242,7 @@ def gate_sets(
 ) -> Tuple[List[str], List[str]]:
     """(ready_atoms, mastered_atoms) over every graph atom, for the unified gate.
 
-    - mastered: decayed posterior >= threshold (the atom itself is learned).
+    - mastered: posterior >= threshold (the atom itself is learned).
     - ready:    all gating prerequisites of the atom are mastered (ready to LEARN
                 it) — root atoms are always ready.
     A single-atom teaching item (bank Q, single drill) unlocks iff its atom is in
@@ -306,32 +313,6 @@ def implicit_transit(prior: float, gain: float) -> float:
     return L + (1 - L) * _clamp(gain)
 
 
-def _parse_ts(ts: Optional[str]) -> Optional[datetime]:
-    if not ts:
-        return None
-    try:
-        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-
-
-def decay(
-    L: float,
-    last_ts: Optional[str],
-    now: Optional[datetime] = None,
-    params: BKTParams = DEFAULT_PARAMS,
-    half_life_days: float = HALF_LIFE_DAYS,
-) -> float:
-    """Regress L toward p_init by elapsed-time half-life (forgetting)."""
-    now = now or datetime.now(timezone.utc)
-    prev = _parse_ts(last_ts)
-    if prev is None or half_life_days <= 0:
-        return L
-    elapsed = max(0.0, (now - prev).total_seconds() / 86400.0)
-    factor = 0.5 ** (elapsed / half_life_days)
-    return params.p_init + (L - params.p_init) * factor
-
-
 # --- entry point -------------------------------------------------------------
 
 def apply_attempt(
@@ -348,8 +329,8 @@ def apply_attempt(
     encompasses. Mutates `mastery`/`last_ts` in place; returns {atom: new_L}
     for every atom changed (for logging / frontend sync).
 
-    Each touched atom is decayed to `now` first, so updates blend against a
-    forgetting-adjusted prior (matches adaptive.py's decay-before-update order).
+    Updates start from the stored L as it is: forgetting belongs to
+    `memory_model`, and decaying the prior here would write it into L for good.
 
     `confidence` ∈ [0,1] is how sure we are this attempt exercises `atom_id`
     (a question→atom tag may be uncertain; an authored drill is ~1.0). It
@@ -377,7 +358,7 @@ def apply_attempt(
     if c <= 0.0:
         return changed
 
-    prior = decay(mastery.get(atom_id, params.p_init), last_ts.get(atom_id), now, params)
+    prior = mastery.get(atom_id, params.p_init)
     full = observe(prior, correct, params, aided=aided)
     new = prior + (full - prior) * c       # soft-apply evidence by confidence
     mastery[atom_id] = new
@@ -387,7 +368,7 @@ def apply_attempt(
     if correct:
         gain = params.p_transit * c        # implicit-rep magnitude, conf-scaled
         for simpler, w in encompassed_by(atom_id):
-            b_prior = decay(mastery.get(simpler, params.p_init), last_ts.get(simpler), now, params)
+            b_prior = mastery.get(simpler, params.p_init)
             b_new = implicit_transit(b_prior, gain * w)
             mastery[simpler] = b_new
             last_ts[simpler] = ts
@@ -403,15 +384,22 @@ def current_mastery(
     now: Optional[datetime] = None,
     params: BKTParams = DEFAULT_PARAMS,
     apply_decay: bool = True,
+    recall: Optional[float] = None,
 ) -> float:
-    """Decay-adjusted P(known) for an atom right now (read without mutating).
+    """P(known) for an atom right now (read without mutating).
 
+    `recall` is FSRS's predicted recall for this atom's concept
+    (`memory_model.atom_recall`); with it, L is pulled toward p_init by the
+    share forgotten. Without it — a caller holding only the dicts, or an atom
+    no answered concept covers — L is returned as learned. There is no clock
+    here any more (module docstring). `apply_decay=False` ignores `recall`.
     Atoms never practiced (and never FIRe-credited) sit at p_init.
-    When apply_decay=False, returns the un-decayed posterior from evidence.
     """
-    if not apply_decay:
-        return (mastery or {}).get(atom_id, params.p_init)
-    return decay(mastery.get(atom_id, params.p_init), last_ts.get(atom_id), now, params)
+    L = (mastery or {}).get(atom_id, params.p_init)
+    if not apply_decay or recall is None:
+        return L
+    r = min(1.0, max(0.0, float(recall)))
+    return params.p_init + (L - params.p_init) * r
 
 
 def is_mastered(
@@ -434,7 +422,7 @@ def item_is_unlocked(
 ) -> bool:
     """Canonical UNIFIED unlock gate for any practice item — a bank question, a
     Colab drill, or an ARENA curriculum exercise. An item is unlocked iff EVERY
-    atom it requires is mastered to >= `threshold` (decay-adjusted).
+    atom it requires is mastered to >= `threshold`.
 
     `required_atom_ids` is the set of atoms the item is tagged with: for a
     single-atom drill that is its one atom; for a composite/ARENA exercise it is
@@ -463,7 +451,7 @@ def area_scores(
     now: Optional[datetime] = None,
     params: BKTParams = DEFAULT_PARAMS,
 ) -> Dict[str, float]:
-    """Mean decay-adjusted mastery per graph topic — a derived view for the
+    """Mean mastery per graph topic — a derived view for the
     learner's "area score". Replaces the parallel per-subtopic EWMA readout so
     there is a single source of truth. Areas with no practiced atoms are omitted.
     """
