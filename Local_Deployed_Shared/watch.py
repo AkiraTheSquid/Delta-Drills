@@ -290,11 +290,15 @@ def check_invariants():
         "an account-menu row is missing its icon — Seth asked for one on each. "
         f"{_rows} rows, {menu.count('account-menu-icon')} icons"
     )
-    # The two explainer rows open a DISCLOSURE on the shared page, not a page
-    # each. account-menu.js reads this attribute.
-    for lab in ("lab-why", "lab-how"):
+    # The two explainer rows land on a SECTION of the shared page, not a page
+    # each: the AISC write-up since 2026-09-24. account-menu.js reads this
+    # attribute; each value must name an element that exists.
+    for lab in ("aisc-root", "aisc-how"):
         assert f'data-lab-open="{lab}"' in menu, (
-            f"the account menu no longer opens the {lab} disclosure"
+            f"the account menu no longer lands on #{lab}"
+        )
+        assert f'id="{lab}"' in index_html, (
+            f"data-lab-open names #{lab}, which is not on the page"
         )
     menu_js = _read(os.path.join(HERE, "account-menu.js"))
     assert "data-lab-open" in menu_js or "labOpen" in menu_js, (

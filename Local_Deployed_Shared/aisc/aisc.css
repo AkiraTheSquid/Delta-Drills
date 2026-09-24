@@ -1,0 +1,310 @@
+/* The AISC write-up, ported onto the app's "Learn about the app" page
+   (#page-learn-about-app) from the standalone delta-drills-aisc site,
+   2026-09-24 (Seth: replace "Why this app exists" and "How this app works"
+   with the whole site).
+
+   🔴 EVERYTHING IS NESTED UNDER #aisc-root. The site's stylesheet was written
+   for a page of its own — bare `body`, `main`, `section`, `h1`, `a`, `.card`,
+   `.btn`, `.note`, `.status` — and the app uses several of those class names
+   elsewhere. Native CSS nesting under an id keeps every rule inside the
+   write-up and lets it out-rank the page's older `#page-learn-about-app a`
+   rule in how-it-works.css (id + element, same specificity, later wins).
+
+   THEME. The figures read colours out of these tokens (js/common.js `css()`
+   reads #aisc-root, not :root), so every token must stay a #rrggbb hex. The
+   app's theme.js puts light | dark | blue on <html>; the surfaces below borrow
+   the app's own --bg/--surface/--border for each, so the write-up sits on the
+   app rather than in a box of a different colour. Default (no attribute) is
+   the app's default, blue. */
+#aisc-root {
+  --paper: #1a1a2e; --paper-2: #16213e; --card: #15203c; --rule: #2a2a4a; --grey-node: #2a3150;
+  --ink: #e5e9f1; --ink-2: #a8b1c1; --ink-3: #737d90; --coral: #9d8fff; --slate: #6fb0d2;
+  --olive: #a8ad86; --green: #5fc48a; --green-soft: #1f4a33; --amber: #e2a92e; --red: #e06a5c;
+  --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 32px -18px rgba(0,0,0,.85);
+  color-scheme: dark;
+  --field-node: 150, 165, 200; --field-edge: 157, 143, 255;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --display: "Instrument Serif", "Newsreader", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --measure: 68ch;
+}
+html[data-theme="dark"] #aisc-root {
+  --paper: #202124; --paper-2: #26282b; --card: #282a2e; --rule: #3c4043; --grey-node: #3a3d42;
+  --ink: #e5e9f1; --ink-2: #a8b1c1; --ink-3: #737d90; --coral: #9d8fff; --slate: #6fb0d2;
+  --olive: #a8ad86; --green: #5fc48a; --green-soft: #1f4a33; --amber: #e2a92e; --red: #e06a5c;
+  --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 32px -18px rgba(0,0,0,.85);
+  color-scheme: dark;
+}
+html[data-theme="light"] #aisc-root {
+  --paper: #f5f6f8; --paper-2: #e8ecf3; --card: #ffffff; --ink: #161a23; --ink-2: #4a5263;
+  --ink-3: #7b8496; --rule: #d7dbe2; --coral: #6d5dfc; --slate: #2f7fb0; --olive: #6f7a55;
+  --green: #2f8a57; --green-soft: #b4dcc4; --amber: #e2a92e; --red: #c9453f; --grey-node: #e2e6ee;
+  --shadow: 0 1px 0 rgba(22, 26, 35, .05), 0 12px 32px -18px rgba(22, 26, 35, .32);
+  color-scheme: light;
+}
+
+/* Full-bleed: the write-up brings its own 1180px measure (.aisc-main), so the
+   page's 985px .container and its 60px top padding step aside for it. */
+#page-learn-about-app.page { padding: 0 0 40px; }
+#page-learn-about-app .container { max-width: none; }
+/* The "Why this app exists" menu row scrolls to #aisc-root itself; land it
+   under the app's sticky topbar, not beneath it. */
+#aisc-root { scroll-margin-top: var(--dd-topbar-h, 44px); }
+/* The app's own "try it" note and CTA, kept after the write-up on its old
+   985px measure. */
+#page-learn-about-app .lab-after { max-width: 985px; margin: 0 auto; padding: 0 20px; }
+
+@keyframes aisc-dash { to { stroke-dashoffset: -400; } }
+
+#aisc-root {
+  &, & * { box-sizing: border-box; }
+  & {
+    background: var(--paper); color: var(--ink);
+    font: 19px/1.6 var(--serif); font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--slate); text-underline-offset: 3px; }
+  /* how-it-works.css styles every link on this page as a borderless accent
+     with a white hover; undo both here (same id specificity, later file). */
+  a:not(.rail a):not(.mark) { border-bottom: 0; }
+  a:not(.rail a):not(.mark):hover { color: var(--ink); }
+  ::selection { background: var(--amber); color: #161a23; }
+
+  /* ---------- top rail ---------- */
+  .rail {
+    position: sticky; top: var(--dd-topbar-h, 44px); z-index: 20; display: flex; gap: 18px; align-items: center;
+    /* 36px on top, not 10: the app's practice-timer notch hangs 25px
+       below the topbar at top-centre, over whatever sits there. */
+    padding: 36px 24px 10px; background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule);
+    font: 500 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  }
+  .rail .mark { font: 400 22px/1 var(--display); letter-spacing: 0; text-transform: none; color: var(--ink); text-decoration: none; }
+  .rail .mark b { color: var(--coral); font-weight: 400; }
+  .rail nav { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+  .rail nav a { color: var(--ink-2); text-decoration: none; white-space: nowrap; padding: 4px 0; border-bottom: 2px solid transparent; }
+  .rail nav a:hover, .rail nav a.on { color: var(--ink); border-color: var(--coral); }
+  .rail button { font: inherit; background: none; border: 1px solid var(--rule); color: var(--ink-2); border-radius: 99px; padding: 6px 10px; cursor: pointer; }
+
+  /* ---------- layout ---------- */
+  .aisc-main { max-width: 1180px; margin: 0 auto; padding: 0 24px 120px; }
+  section { scroll-margin-top: calc(var(--dd-topbar-h, 44px) + 76px); padding: 88px 0 24px; border-top: 1px solid var(--rule); }
+  section:first-of-type { border-top: 0; }
+  .prose { max-width: var(--measure); }
+  .prose p { margin: 0 0 1em; }
+  .kicker { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--coral); margin: 0 0 14px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0 0 .4em; letter-spacing: -.01em; }
+  h2 { font-size: clamp(40px, 5.2vw, 64px); }
+  h3 { font-size: 30px; margin-top: 1.4em; }
+  h2 em, h1 em { color: var(--coral); }
+  .lede { font-size: 23px; line-height: 1.45; color: var(--ink-2); max-width: 60ch; }
+  .num { font-family: var(--mono); font-size: .86em; }
+  .muted { color: var(--ink-3); }
+  .small { font-size: 15px; line-height: 1.5; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 40px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 56px; align-items: end; }
+  .hero h1 { font-size: clamp(56px, 8.6vw, 116px); line-height: .92; margin: 0 0 24px; }
+  .hero h1 .delta { color: var(--coral); font-style: italic; }
+  .hero .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; font: 13px/1.5 var(--mono); color: var(--ink-2); border-top: 1px solid var(--ink); padding-top: 14px; }
+  .hero .meta dt { color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; padding-top: 2px; }
+  .hero .meta dd { margin: 0; }
+  .hero-fig { position: relative; aspect-ratio: 1 / 1; }
+  .hero-fig svg { width: 100%; height: 100%; overflow: visible; }
+  .hero-fig .h-edge { stroke: var(--ink-3); stroke-width: 1.2; fill: none; stroke-dasharray: 3 4; animation: aisc-dash 30s linear infinite; }
+  .hero-fig .h-node { fill: var(--card); stroke: var(--ink); stroke-width: 1.2; }
+  .hero-fig .h-node.k { fill: var(--green-soft); stroke: var(--green); }
+  .hero-fig .h-node.f { fill: var(--amber); stroke: var(--ink); }
+  .hero-fig text { font: 11px var(--mono); fill: var(--ink-2); }
+
+  /* ---------- status strip (Mom Test honesty) ---------- */
+  .status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 36px 0 0; }
+  .status > div { background: var(--card); padding: 18px 20px; }
+  .status b { display: block; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+  .status .built b { color: var(--green); }
+  .status .testing b { color: var(--amber); }
+  .status .unknown b { color: var(--red); }
+  .status p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--ink-2); }
+
+  /* ---------- figures ---------- */
+  figure.fig { margin: 36px 0; background: var(--card); border: 1px solid var(--rule); box-shadow: var(--shadow); border-radius: 4px; overflow: hidden; }
+  .fig-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+  .fig-head .fig-no { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .fig-head .fig-title { font: 400 24px/1.1 var(--display); }
+  .fig-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; min-height: 420px; }
+  .fig-body.wide { grid-template-columns: 1fr; }
+  .fig-stage { position: relative; min-height: 420px; min-width: 0; overflow: hidden; }
+  .fig-stage canvas { display: block; }
+  .cy { position: absolute; inset: 0; }
+  .fig-side { border-left: 1px solid var(--rule); padding: 18px 20px; font-size: 15px; line-height: 1.5; display: flex; flex-direction: column; gap: 14px; }
+  .fig-side h4 { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
+  figcaption { padding: 12px 20px 16px; border-top: 1px solid var(--rule); font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* controls */
+  .ctl { display: grid; gap: 6px; }
+  .ctl label { display: flex; justify-content: space-between; font: 12px/1.2 var(--mono); color: var(--ink-2); }
+  .ctl label output { color: var(--ink); font-weight: 600; }
+  input[type=range] { width: 100%; accent-color: var(--coral); }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn { font: 500 12px/1 var(--mono); padding: 9px 11px; border-radius: 3px; border: 1px solid var(--ink); background: var(--card); color: var(--ink); cursor: pointer; transition: transform .08s, background .15s; }
+  .btn:hover { background: var(--paper-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ok { background: var(--green); border-color: var(--green); color: #fff; }
+  .btn.no { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn.dk { background: var(--ink-2); border-color: var(--ink-2); color: var(--paper); }
+  .btn.ghost { border-color: var(--rule); color: var(--ink-2); }
+  .btn.on { background: var(--ink); color: var(--paper); }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+  .seg button { font: 500 12px/1 var(--mono); padding: 8px 10px; border: 0; background: var(--card); color: var(--ink-2); cursor: pointer; }
+  .seg button.on { background: var(--ink); color: var(--paper); }
+  .readout { font: 13px/1.5 var(--mono); color: var(--ink-2); background: var(--paper-2); border-radius: 3px; padding: 10px 12px; }
+  .readout b { color: var(--ink); }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font: 12px/1 var(--mono); color: var(--ink-2); }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--ink-3); }
+  .probe-card { border: 1px solid var(--ink); border-radius: 3px; padding: 12px; background: var(--paper); }
+  .probe-card .t { font: 400 20px/1.15 var(--display); margin: 4px 0 10px; }
+  .probe-card .id { font: 11px var(--mono); color: var(--ink-3); }
+
+  /* ---------- misc blocks ---------- */
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin: 28px 0; }
+  .card { background: var(--card); border: 1px solid var(--rule); padding: 20px 22px; border-radius: 4px; }
+  .card h4 { font: 400 24px/1.1 var(--display); margin: 0 0 8px; }
+  .card p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+  .card .tag { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--coral); display: block; margin-bottom: 10px; }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 16px; margin: 24px 0; }
+  table.cmp th, table.cmp td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.cmp th { font: 500 11px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+  table.cmp td:first-child { font-weight: 600; width: 22%; }
+  .table-wrap { overflow-x: auto; }
+  .chain { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 32px 0; counter-reset: c; }
+  .chain > div { position: relative; padding: 18px 18px 18px 0; border-top: 2px solid var(--ink); counter-increment: c; }
+  .chain > div::before { content: counter(c, decimal-leading-zero); font: 500 11px var(--mono); color: var(--coral); display: block; margin: 8px 0 8px; }
+  .chain > div b { display: block; font: 400 21px/1.15 var(--display); font-weight: 400; margin-bottom: 6px; }
+  .chain > div span { font-size: 15px; line-height: 1.45; color: var(--ink-2); display: block; }
+  .chain > div .assume { font: 12px/1.4 var(--mono); color: var(--ink-3); margin-top: 8px; }
+  .timeline { display: grid; grid-template-columns: 120px 1fr; gap: 0; margin: 24px 0; }
+  .timeline > div { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  .timeline .when { font: 500 12px/1.4 var(--mono); color: var(--coral); padding-right: 18px; }
+  .timeline .what b { font-family: var(--display); font-weight: 400; font-size: 22px; display: block; line-height: 1.1; margin-bottom: 4px; }
+  .timeline .what { font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+  .ladder { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 6px; }
+  .ladder li { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 14px; background: var(--card); border-left: 4px solid var(--rule); font-size: 16px; }
+  .ladder li b { font: 500 11px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .ladder li.w { border-color: var(--rule); } .ladder li.m { border-color: var(--amber); } .ladder li.s { border-color: var(--green); }
+  .note { border-left: 3px solid var(--amber); padding: 6px 0 6px 16px; color: var(--ink-2); font-size: 16px; margin: 20px 0; max-width: var(--measure); }
+  .todo { background: repeating-linear-gradient(-45deg, transparent 0 8px, rgba(231,178,58,.12) 8px 16px); outline: 1px dashed var(--amber); }
+  .aisc-footer { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; border-top: 1px solid var(--rule); font: 13px/1.6 var(--mono); color: var(--ink-3); }
+
+  /* reveal */
+  .rv { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .hero-fig .h-edge { animation: none; } }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    & { font-size: 17px; }
+    .hero { grid-template-columns: 1fr; gap: 20px; }
+    .hero-fig { max-width: 360px; }
+    .fig-body { grid-template-columns: 1fr; }
+    .fig-side { border-left: 0; border-top: 1px solid var(--rule); }
+    .status { grid-template-columns: 1fr; }
+    .chain { grid-template-columns: 1fr; }
+    .timeline { grid-template-columns: 1fr; }
+    .timeline .when { padding-bottom: 0; border-bottom: 0; }
+  }
+  @media (max-width: 600px) {
+    .aisc-main { padding: 0 16px 80px; }
+    .rail { padding: 36px 16px 10px; }
+    section { padding-top: 56px; }
+    .fig-stage { min-height: 340px; }
+    .ladder li { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  /* built-vs-planned toggle greys the controls that don't apply */
+  .seg.off { opacity: .4; pointer-events: none; }
+  #aisc-model-seg { margin-bottom: 14px; }
+
+  /* closing questions */
+  .qs { counter-reset: q; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; max-width: var(--measure); }
+  .qs li { counter-increment: q; display: grid; grid-template-columns: 34px 1fr; padding: 12px 14px; background: var(--card); border: 1px solid var(--rule); font-size: 17px; }
+  .qs li::before { content: counter(q); font: 400 24px/1 "Instrument Serif", serif; color: var(--coral); }
+
+  /* two modes: linear notebooks + adaptive layer */
+  .modes { display: grid; grid-template-columns: 1fr 120px 1fr; align-items: center; gap: 0; margin: 24px 0 36px; }
+  .modes .lane { background: var(--card); border: 1px solid var(--rule); padding: 16px 18px; }
+  .modes .lane.ada { border-color: var(--coral); }
+  .modes ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; counter-reset: m; }
+  .modes li { padding: 8px 12px; border-left: 3px solid var(--rule); font-size: 16px; background: var(--paper); }
+  .modes li small { display: block; font: 400 12px/1.5 var(--mono); color: var(--ink-3); }
+  .modes .lin li.done { border-color: var(--green); }
+  .modes .lin li.stuck { border-color: var(--coral); background: color-mix(in srgb, var(--coral) 10%, var(--paper)); }
+  .modes .lin li.more { color: var(--ink-3); }
+  .modes .ada li { border-color: var(--coral); }
+  .modes .hand { display: grid; gap: 40px; text-align: center; font: 500 12px/1.3 var(--mono); padding: 0 8px; }
+  .modes .hand .out { color: var(--coral); } .modes .hand .back { color: var(--green); }
+
+  /* runway into AISC */
+  .runway { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 24px 0; border-top: 3px solid var(--rule); }
+  .runway > div { padding: 12px 14px 0 0; font-size: 15px; color: var(--ink-2); position: relative; }
+  .runway > div::before { content: ""; position: absolute; top: -9px; left: 0; width: 13px; height: 13px; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink-3); }
+  .runway > div.aisc::before { background: var(--coral); border-color: var(--coral); }
+  .runway .when { display: block; font: 500 12px/1.4 var(--mono); color: var(--coral); margin-top: 6px; }
+  .runway b { display: block; font: 400 21px/1.15 var(--display); color: var(--ink); margin: 2px 0 4px; }
+  @media (max-width: 900px) {
+    .modes { grid-template-columns: 1fr; gap: 10px; }
+    .modes .hand { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .runway { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+  }
+  .modes .hand .out::after { content: " →"; } .modes .hand .back::before { content: "← "; }
+  @media (max-width: 900px) { .modes .hand .out::after { content: " ↓"; } .modes .hand .back::before { content: "↑ "; } }
+  .modes .hand span { white-space: nowrap; }
+  .plain { margin: 8px 0 0; padding-left: 18px; font-size: 16px; line-height: 1.55; } .plain li { margin: 4px 0; }
+  .stat { font: 400 21px/1.4 var(--display); color: var(--ink); max-width: var(--measure); margin: 18px 0 8px; } .stat b { color: var(--coral); font-weight: 400; }
+
+
+  /* Fig. 1 — one chart */
+  #aisc-effort-svg { display: block; width: 100%; }
+  .oversight-chain { margin: 4px 18px 16px; font: 13px/1.5 var(--mono); color: var(--ink-2); }
+  .oversight-chain span { color: var(--green); }
+  .mech { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); display: grid; gap: 6px; }
+  .mech b { color: var(--ink); }
+  #aisc-effort-play { align-self: flex-start; }
+  .assume summary { font: 500 12px/1 var(--mono); color: var(--ink-2); cursor: pointer; }
+  .assume label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 12px/1.3 var(--mono); color: var(--ink-2); margin-top: 8px; }
+  .assume input { width: 64px; font: 12px var(--mono); padding: 3px 5px; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; }
+
+  /* ---- solid tiles ----
+     Every block of running text sits on an opaque card so the background field
+     (js/background field.js) never runs under it; the field shows in the gaps between
+     tiles and in the side gutters. Kept last so it wins over the block rules. */
+  .tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap, .note, .stat, .modes .hand {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow);
+  }
+  .tile { width: fit-content; max-width: min(100%, calc(var(--measure) + 62px)); padding: 26px 30px; margin: 0 0 28px; }
+  .tile > :first-child { margin-top: 0; }
+  .tile > :last-child, .tile > .prose > :last-child { margin-bottom: 0; }
+  .hero > div:first-child { padding: 30px 34px; }
+  /* the card's padding narrows the title column: without these the h1 wraps
+     to 6 lines and the figure (align end) drops to the bottom of a tall card */
+  .hero { align-items: center; }
+  @media (min-width: 901px) { .hero { grid-template-columns: 1.5fr 1fr; gap: 48px; } }
+  .hero h1 { font-size: clamp(56px, 6.2vw, 96px); }
+  .chain { padding: 0 24px 10px; gap: 0 20px; }
+  .chain > div { padding-right: 0; }
+  .timeline { padding: 4px 26px; }
+  .timeline > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .runway { padding: 0 24px 18px; }
+  .table-wrap { padding: 0 10px; }
+  .table-wrap table.cmp { margin: 6px 0; }
+  .table-wrap tr:last-child td { border-bottom: 0; }
+  .note { padding: 14px 22px 14px 20px; border-left: 3px solid var(--amber); }
+  .stat { padding: 14px 22px; }
+  .tile .note { background: none; border: 0; border-left: 3px solid var(--amber); box-shadow: none; padding: 6px 0 6px 16px; }
+  .modes .hand { padding: 18px 8px; }
+  /* .qs li was a 34px/1fr grid, so its bare text node fell into the 34px number
+     column one word per line; number is now absolutely placed in the gutter */
+  .qs li { display: block; position: relative; padding-left: 48px; }
+  .qs li::before { position: absolute; left: 14px; top: 12px; }
+  .aisc-footer { width: calc(100% - 48px); max-width: 1132px; background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow); padding: 24px 30px; margin-bottom: 60px; }
+}
