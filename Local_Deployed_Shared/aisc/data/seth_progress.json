@@ -1,0 +1,826 @@
+{
+ "sections": {
+  "0.0": {
+   "label": "0.0 \u00b7 Prerequisites",
+   "n": 13
+  },
+  "0.1": {
+   "label": "0.1 \u00b7 Ray tracing",
+   "n": 6
+  },
+  "0.2": {
+   "label": "0.2 \u00b7 CNNs & ResNets",
+   "n": 15
+  },
+  "prep-arrays": {
+   "label": "Arrays & tensors prep",
+   "n": 40
+  },
+  "prep-python": {
+   "label": "Python prep",
+   "n": 8
+  },
+  "aggregate": {
+   "label": "All prerequisites",
+   "n": 82
+  }
+ },
+ "series": [
+  {
+   "date": "2026-09-01",
+   "app": {
+    "0.0": 2.0,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.86,
+    "prep-python": 2.0,
+    "aggregate": 2.91
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "cal": null,
+   "min": {
+    "lesson": 20.0,
+    "drill": 25.9
+   }
+  },
+  {
+   "date": "2026-09-02",
+   "app": {
+    "0.0": 2.0,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.77,
+    "prep-python": 2.0,
+    "aggregate": 2.86
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "cal": null,
+   "min": {}
+  },
+  {
+   "date": "2026-09-03",
+   "app": {
+    "0.0": 2.0,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.69,
+    "prep-python": 2.0,
+    "aggregate": 2.82
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "cal": null,
+   "min": {}
+  },
+  {
+   "date": "2026-09-04",
+   "app": {
+    "0.0": 2.0,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.6,
+    "prep-python": 2.0,
+    "aggregate": 2.78
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "cal": null,
+   "min": {}
+  },
+  {
+   "date": "2026-09-05",
+   "app": {
+    "0.0": 2.0,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.53,
+    "prep-python": 2.0,
+    "aggregate": 2.74
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "cal": null,
+   "min": {}
+  },
+  {
+   "date": "2026-09-06",
+   "app": {
+    "0.0": 4.08,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 4.13,
+    "prep-python": 2.0,
+    "aggregate": 3.37
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 3.7
+   },
+   "tried": {
+    "0.0": 7.7,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 4.9
+   },
+   "cal": null,
+   "min": {
+    "drill": 40.0
+   }
+  },
+  {
+   "date": "2026-09-07",
+   "app": {
+    "0.0": 3.98,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 4.03,
+    "prep-python": 2.0,
+    "aggregate": 3.3
+   },
+   "demo": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 5.0,
+    "prep-python": 0.0,
+    "aggregate": 2.4
+   },
+   "tried": {
+    "0.0": 7.7,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 7.5,
+    "prep-python": 0.0,
+    "aggregate": 4.9
+   },
+   "cal": null,
+   "min": {
+    "placement": 58.3
+   }
+  },
+  {
+   "date": "2026-09-08",
+   "app": {
+    "0.0": 3.88,
+    "0.1": null,
+    "0.2": 2.0,
+    "prep-arrays": 3.93,
+    "prep-python": 2.0,
+    "aggregate": 3.24
+   },
+   "demo": {
+    "0.0": 7.7,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 10.0,
+    "prep-python": 0.0,
+    "aggregate": 6.1
+   },
+   "tried": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 12.5,
+    "prep-python": 0.0,
+    "aggregate": 8.5
+   },
+   "cal": null,
+   "min": {
+    "placement": 36.5
+   }
+  },
+  {
+   "date": "2026-09-09",
+   "app": {
+    "0.0": 15.01,
+    "0.1": 2.2,
+    "0.2": 2.46,
+    "prep-arrays": 13.01,
+    "prep-python": 2.0,
+    "aggregate": 9.53
+   },
+   "demo": {
+    "0.0": 7.7,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 20.0,
+    "prep-python": 0.0,
+    "aggregate": 11.0
+   },
+   "tried": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 25.0,
+    "prep-python": 0.0,
+    "aggregate": 14.6
+   },
+   "cal": {
+    "n": 8,
+    "actual": 0.75,
+    "predicted": 0.663
+   },
+   "min": {
+    "placement": 60.2,
+    "drill": 57.1,
+    "lesson": 69.3
+   }
+  },
+  {
+   "date": "2026-09-10",
+   "app": {
+    "0.0": 37.69,
+    "0.1": 2.4,
+    "0.2": 2.44,
+    "prep-arrays": 24.22,
+    "prep-python": 2.0,
+    "aggregate": 18.61
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 20.0,
+    "prep-python": 0.0,
+    "aggregate": 12.2
+   },
+   "tried": {
+    "0.0": 23.1,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 25.0,
+    "prep-python": 0.0,
+    "aggregate": 15.9
+   },
+   "cal": {
+    "n": 17,
+    "actual": 0.824,
+    "predicted": 0.698
+   },
+   "min": {
+    "drill": 64.6,
+    "lesson": 54.6
+   }
+  },
+  {
+   "date": "2026-09-11",
+   "app": {
+    "0.0": 36.11,
+    "0.1": 3.19,
+    "0.2": 2.42,
+    "prep-arrays": 34.46,
+    "prep-python": 2.0,
+    "aggregate": 23.41
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 17.5,
+    "prep-python": 0.0,
+    "aggregate": 11.0
+   },
+   "tried": {
+    "0.0": 23.1,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 27.5,
+    "prep-python": 0.0,
+    "aggregate": 17.1
+   },
+   "cal": {
+    "n": 28,
+    "actual": 0.786,
+    "predicted": 0.642
+   },
+   "min": {
+    "drill": 65.6
+   }
+  },
+  {
+   "date": "2026-09-12",
+   "app": {
+    "0.0": 39.97,
+    "0.1": 3.16,
+    "0.2": 2.87,
+    "prep-arrays": 33.79,
+    "prep-python": 2.0,
+    "aggregate": 23.77
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 17.5,
+    "prep-python": 0.0,
+    "aggregate": 11.0
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 33.3,
+    "0.2": 0.0,
+    "prep-arrays": 32.5,
+    "prep-python": 0.0,
+    "aggregate": 23.2
+   },
+   "cal": {
+    "n": 35,
+    "actual": 0.8,
+    "predicted": 0.666
+   },
+   "min": {
+    "drill": 89.6,
+    "placement": 25.0,
+    "lesson": 6.7
+   }
+  },
+  {
+   "date": "2026-09-13",
+   "app": {
+    "0.0": 42.61,
+    "0.1": 3.2,
+    "0.2": 2.83,
+    "prep-arrays": 34.49,
+    "prep-python": 2.0,
+    "aggregate": 24.53
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 22.5,
+    "prep-python": 0.0,
+    "aggregate": 13.4
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 33.3,
+    "0.2": 0.0,
+    "prep-arrays": 32.5,
+    "prep-python": 0.0,
+    "aggregate": 23.2
+   },
+   "cal": {
+    "n": 43,
+    "actual": 0.86,
+    "predicted": 0.662
+   },
+   "min": {
+    "drill": 108.5,
+    "lesson": 8.7
+   }
+  },
+  {
+   "date": "2026-09-14",
+   "app": {
+    "0.0": 47.45,
+    "0.1": 3.18,
+    "0.2": 2.87,
+    "prep-arrays": 36.54,
+    "prep-python": 2.0,
+    "aggregate": 26.3
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 22.5,
+    "prep-python": 0.0,
+    "aggregate": 13.4
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 33.3,
+    "0.2": 0.0,
+    "prep-arrays": 32.5,
+    "prep-python": 0.0,
+    "aggregate": 23.2
+   },
+   "cal": {
+    "n": 54,
+    "actual": 0.87,
+    "predicted": 0.683
+   },
+   "min": {
+    "drill": 173.4
+   }
+  },
+  {
+   "date": "2026-09-15",
+   "app": {
+    "0.0": 45.25,
+    "0.1": 3.13,
+    "0.2": 2.83,
+    "prep-arrays": 37.58,
+    "prep-python": 2.0,
+    "aggregate": 26.45
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 25.0,
+    "prep-python": 0.0,
+    "aggregate": 14.6
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 33.3,
+    "0.2": 0.0,
+    "prep-arrays": 37.5,
+    "prep-python": 0.0,
+    "aggregate": 25.6
+   },
+   "cal": {
+    "n": 58,
+    "actual": 0.862,
+    "predicted": 0.688
+   },
+   "min": {
+    "lesson": 20.0,
+    "drill": 43.2
+   }
+  },
+  {
+   "date": "2026-09-16",
+   "app": {
+    "0.0": 43.16,
+    "0.1": 3.23,
+    "0.2": 2.79,
+    "prep-arrays": 35.86,
+    "prep-python": 2.0,
+    "aggregate": 25.28
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 25.0,
+    "prep-python": 0.0,
+    "aggregate": 14.6
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 37.5,
+    "prep-python": 0.0,
+    "aggregate": 26.8
+   },
+   "cal": {
+    "n": 53,
+    "actual": 0.849,
+    "predicted": 0.689
+   },
+   "min": {
+    "lesson": 20.0,
+    "drill": 0.4
+   }
+  },
+  {
+   "date": "2026-09-17",
+   "app": {
+    "0.0": 42.36,
+    "0.1": 3.17,
+    "0.2": 2.75,
+    "prep-arrays": 37.12,
+    "prep-python": 2.0,
+    "aggregate": 25.75
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 27.5,
+    "prep-python": 0.0,
+    "aggregate": 15.9
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 40.0,
+    "prep-python": 0.0,
+    "aggregate": 28.0
+   },
+   "cal": {
+    "n": 55,
+    "actual": 0.873,
+    "predicted": 0.692
+   },
+   "min": {
+    "drill": 82.3,
+    "lesson": 23.4
+   }
+  },
+  {
+   "date": "2026-09-18",
+   "app": {
+    "0.0": 40.41,
+    "0.1": 3.11,
+    "0.2": 2.72,
+    "prep-arrays": 35.43,
+    "prep-python": 2.0,
+    "aggregate": 24.61
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 27.5,
+    "prep-python": 0.0,
+    "aggregate": 15.9
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 40.0,
+    "prep-python": 0.0,
+    "aggregate": 28.0
+   },
+   "cal": {
+    "n": 44,
+    "actual": 0.909,
+    "predicted": 0.726
+   },
+   "min": {}
+  },
+  {
+   "date": "2026-09-19",
+   "app": {
+    "0.0": 41.81,
+    "0.1": 3.12,
+    "0.2": 2.68,
+    "prep-arrays": 36.83,
+    "prep-python": 2.0,
+    "aggregate": 25.51
+   },
+   "demo": {
+    "0.0": 15.4,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 30.0,
+    "prep-python": 0.0,
+    "aggregate": 17.1
+   },
+   "tried": {
+    "0.0": 30.8,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 42.5,
+    "prep-python": 0.0,
+    "aggregate": 29.3
+   },
+   "cal": {
+    "n": 51,
+    "actual": 0.882,
+    "predicted": 0.726
+   },
+   "min": {
+    "drill": 132.9,
+    "lesson": 11.3
+   }
+  },
+  {
+   "date": "2026-09-20",
+   "app": {
+    "0.0": 43.94,
+    "0.1": 3.55,
+    "0.2": 2.65,
+    "prep-arrays": 36.6,
+    "prep-python": 2.0,
+    "aggregate": 25.76
+   },
+   "demo": {
+    "0.0": 23.1,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 32.5,
+    "prep-python": 0.0,
+    "aggregate": 19.5
+   },
+   "tried": {
+    "0.0": 38.5,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 45.0,
+    "prep-python": 0.0,
+    "aggregate": 31.7
+   },
+   "cal": {
+    "n": 46,
+    "actual": 0.848,
+    "predicted": 0.746
+   },
+   "min": {
+    "drill": 40.5,
+    "lesson": 67.7
+   }
+  },
+  {
+   "date": "2026-09-21",
+   "app": {
+    "0.0": 45.26,
+    "0.1": 3.47,
+    "0.2": 2.62,
+    "prep-arrays": 39.56,
+    "prep-python": 2.0,
+    "aggregate": 27.4
+   },
+   "demo": {
+    "0.0": 30.8,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 35.0,
+    "prep-python": 0.0,
+    "aggregate": 22.0
+   },
+   "tried": {
+    "0.0": 46.2,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 45.0,
+    "prep-python": 0.0,
+    "aggregate": 32.9
+   },
+   "cal": {
+    "n": 50,
+    "actual": 0.82,
+    "predicted": 0.729
+   },
+   "min": {
+    "drill": 125.5,
+    "lesson": 54.8
+   }
+  },
+  {
+   "date": "2026-09-22",
+   "app": {
+    "0.0": 44.5,
+    "0.1": 21.32,
+    "0.2": 2.59,
+    "prep-arrays": 49.12,
+    "prep-python": 2.0,
+    "aggregate": 33.24
+   },
+   "demo": {
+    "0.0": 30.8,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 42.5,
+    "prep-python": 0.0,
+    "aggregate": 25.6
+   },
+   "tried": {
+    "0.0": 46.2,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 57.5,
+    "prep-python": 0.0,
+    "aggregate": 39.0
+   },
+   "cal": {
+    "n": 69,
+    "actual": 0.797,
+    "predicted": 0.693
+   },
+   "min": {
+    "drill": 121.2,
+    "lesson": 62.9
+   }
+  },
+  {
+   "date": "2026-09-23",
+   "app": {
+    "0.0": 43.63,
+    "0.1": 20.92,
+    "0.2": 2.58,
+    "prep-arrays": 48.16,
+    "prep-python": 2.0,
+    "aggregate": 32.61
+   },
+   "demo": {
+    "0.0": 30.8,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "prep-arrays": 42.5,
+    "prep-python": 0.0,
+    "aggregate": 25.6
+   },
+   "tried": {
+    "0.0": 46.2,
+    "0.1": 50.0,
+    "0.2": 0.0,
+    "prep-arrays": 57.5,
+    "prep-python": 0.0,
+    "aggregate": 39.0
+   },
+   "cal": {
+    "n": 68,
+    "actual": 0.809,
+    "predicted": 0.694
+   },
+   "min": {}
+  }
+ ],
+ "summary": {
+  "attempts": 130,
+  "actual": 0.823,
+  "predicted": 0.687,
+  "hours": 29.5,
+  "study_days": 17,
+  "all_time": {
+   "since": "2026-07-21",
+   "hours": 48.5,
+   "by_kind_hours": {
+    "drill": 37.0,
+    "lesson": 8.5,
+    "placement": 3.0
+   },
+   "study_days": 31,
+   "drills_answered": 150,
+   "drills_timed_out": 105,
+   "placement_problems": 23,
+   "placement_hours_measured": 3.0
+  }
+ }
+}

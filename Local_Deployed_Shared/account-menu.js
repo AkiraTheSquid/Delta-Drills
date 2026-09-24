@@ -28,8 +28,8 @@
    🔴 THE ROUTING IS app.js's, NOT A SECOND COPY
      Every item carries `data-goto-tab`, which app.js already binds at load. This
      file does not re-implement the jump — it only closes the menu, and handles
-     the one thing app.js cannot know about: `data-lab-open`, which names a
-     <details> on #page-learn-about-app to open after the switch. That is how one
+     the one thing app.js cannot know about: `data-lab-open`, which names the
+     section of #page-learn-about-app to scroll to after the switch. That is how one
      page serves two menu rows ("Why this app exists" / "How this app works")
      without becoming two pages again.
    ================================================================ */
@@ -72,12 +72,11 @@
   };
 
   /* THE TWO EXPLAINER ROWS. Both route to #page-learn-about-app; what tells
-     them apart is which disclosure is open when the learner arrives.
-
-     Deliberately EXCLUSIVE: opening one closes the other. The page is long
-     enough that two open disclosures push the second summary a screen and a
-     half below the fold, and a learner who asked for "how this app works" and
-     landed on the middle of "the three markers" reads it as the wrong page.
+     them apart is WHERE on it the learner lands. Since 2026-09-24 that page is
+     the AISC write-up (aisc/), one long article with no disclosures, so
+     `data-lab-open` names a section id: #aisc-root for "Why this app exists",
+     #aisc-how for "How this app works". A <details> target is still opened
+     (exclusively, as before) so an old-shaped id cannot land on a closed box.
 
      🔴 `scrollIntoView` runs on the NEXT frame, not now. `switchTab` un-hides
      the page in this same task; the element has no layout box until the style
@@ -86,9 +85,11 @@
   const openDisclosure = (id) => {
     const wanted = document.getElementById(id);
     if (!wanted) return;
-    document.querySelectorAll("#page-learn-about-app details.lab-disclosure").forEach((d) => {
-      d.open = d === wanted;
-    });
+    if (wanted.tagName === "DETAILS") {
+      document.querySelectorAll("#page-learn-about-app details").forEach((d) => {
+        d.open = d === wanted;
+      });
+    }
     requestAnimationFrame(() => {
       wanted.scrollIntoView({ block: "start", behavior: "smooth" });
     });

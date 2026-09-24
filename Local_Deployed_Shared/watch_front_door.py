@@ -28,7 +28,6 @@ def check_front_door():
     index_html = _read(os.path.join(HERE, "index.html"))
     app_js = _read(os.path.join(HERE, "app.js"))
     learn_css = _read(os.path.join(HERE, "styles", "learn-about.css"))
-    why_graph = _read(os.path.join(HERE, "concept-graph", "why-graph.js"))
     diagnostic = _read(os.path.join(HERE, "practice", "diagnostic-page.js"))
 
     # ONE tab, and the two it replaced are gone from the markup entirely.
@@ -40,35 +39,46 @@ def check_front_door():
                  'id="page-why-this-app"', 'id="page-how-to-use"'):
         assert dead not in index_html, f"{dead} came back; the merge is one page"
 
-    # The disclosures. The lead paragraph stays OUTSIDE them on purpose: what
-    # is unconditionally on screen is what the app is.
-    assert index_html.count('class="lab-disclosure"') == 2, (
-        "Learn about the App is two disclosures: the three markers, and How "
-        "the app works"
-    )
-    hero = index_html.split('id="page-learn-about-app"')[1].split("<details")[0]
-    assert "<h1>Why this app exists</h1>" in hero and 'class="hiw-lead"' in hero, (
-        "the heading and the lead paragraph must sit ABOVE the first "
-        "disclosure — everything else on the page is opt-in reading"
-    )
-    # Comment-stripped: this file's own comments narrate the merge and name
-    # the old tab, and an assertion that a phrase is gone must not be fooled
-    # by prose that is explaining why it is gone.
+    # Since 2026-09-24 the page body is the AISC write-up (Seth: replace "Why
+    # this app exists" and "How this app works" with the delta-drills-aisc
+    # site). Each assertion is a way it fails SILENTLY.
     markup = re.sub(r"<!--.*?-->", "", index_html, flags=re.S)
-    assert "How the app works" in markup and "How to use it" not in markup, (
-        'the second disclosure is titled "How the app works" (Seth), not '
-        '"How to use it"'
+    page = markup.split('id="page-learn-about-app"')[1].split("\n  </main>")[0]
+    assert 'id="aisc-root"' in page and 'id="aisc-how"' in page, (
+        "the AISC write-up (#aisc-root, with its #aisc-how section) must be "
+        "the body of #page-learn-about-app"
     )
-    # The map moved under "How the app works" and must have stayed there.
-    how_block = index_html.split('id="lab-how"')[1].split("</details>")[0]
-    assert 'id="wta-graph-cy"' in how_block, (
-        "the concept map belongs inside the How-the-app-works disclosure"
+    assert 'class="lab-disclosure"' not in page and 'id="wta-graph-cy"' not in page, (
+        "the old disclosures / concept map came back beside the write-up"
     )
-    assert 'container.closest("details")' in why_graph and '"toggle"' in why_graph, (
-        "why-graph.js must draw on the <details> toggle as well as on the "
-        "page's class: inside a closed disclosure offsetParent is null, so "
-        "the page-class observer alone leaves the map on 'Loading the map...'"
+    # Every id is prefixed, and every in-page link names a prefixed id: an
+    # unprefixed `href="#how"` sets location.hash and scrolls nowhere.
+    aisc = page.split('id="aisc-root"')[1]
+    for bad in re.findall(r'\bid="([^"]+)"', aisc):
+        assert bad.startswith("aisc-") or bad.startswith("about-"), (
+            f"#{bad} inside the write-up is not aisc- prefixed"
+        )
+    for ref in re.findall(r'href="#([^"]+)"', aisc):
+        assert ref.startswith("aisc-") and f'id="{ref}"' in aisc, (
+            f'href="#{ref}" in the write-up points at no aisc- section'
+        )
+    # The styles are scoped and loaded after the app's own, and the figures are
+    # booted lazily AFTER cytoscape + dagre (vendor/graph/, deferred).
+    assert 'href="aisc/aisc.css' in index_html, "aisc/aisc.css is not linked"
+    boot = index_html.find('src="aisc/boot.js')
+    dagre = index_html.find('src="vendor/graph/cytoscape-dagre.min.js')
+    assert boot > dagre >= 0, (
+        "aisc/boot.js must load after vendor/graph/cytoscape-dagre.min.js: its "
+        "graph figures use the app's cytoscape with the dagre layout"
     )
+    boot_js = _read(os.path.join(HERE, "aisc", "boot.js"))
+    assert "DDAboutContentReady" in boot_js, (
+        "aisc/boot.js must wait for about-page-editor.js to swap in any saved "
+        "copy, or the figures bind to nodes that are about to be replaced"
+    )
+    for rel in ("aisc/vendor/Cindy.js", "aisc/data/kc_graph.json",
+                "aisc/data/seth_progress.json"):
+        assert os.path.exists(os.path.join(HERE, rel)), f"{rel} is missing"
 
     # The fork. Two learner arms plus the quiet instructor arm below them
     # (Seth, 2026-08-24: the expert's workflow parts from the learner's here),

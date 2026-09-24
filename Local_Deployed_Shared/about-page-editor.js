@@ -15,9 +15,27 @@
   const discard = document.getElementById("about-editor-discard");
   if (!content || !controls || !status || !start || !save || !discard) return;
 
-  // Cytoscape owns this DOM after it starts. It is intentionally not editable
-  // or serialized from its live state; the initial static shell is saved back.
-  const mapShells = [...content.querySelectorAll(".wta-graph")].map((node) => node.innerHTML);
+  // Live figures own their DOM once they start (Cytoscape, CindyJS, SVG
+  // charts, sliders). They are never editable and never serialized from their
+  // live state: the static shell from index.html is what gets saved, and it is
+  // put back when a saved copy is shown, because the server's sanitizer strips
+  // <svg>, <input>, <label>, <output> and inline styles out of them.
+  // `[data-about-runtime]` (keyed by id) marks them; `.wta-graph` is the old
+  // page's concept map, kept so an older saved copy still round-trips.
+  const RUNTIME = "[data-about-runtime][id], .wta-graph";
+  const runtimeKey = (node, index) => node.id || `#${index}`;
+  const shellsFrom = (root) => {
+    const map = new Map();
+    root.querySelectorAll(RUNTIME).forEach((node, index) => map.set(runtimeKey(node, index), node.innerHTML));
+    return map;
+  };
+  const shells = shellsFrom(content);
+  const restoreShells = (root) => {
+    root.querySelectorAll(RUNTIME).forEach((node, index) => {
+      const shell = shells.get(runtimeKey(node, index));
+      if (shell !== undefined) node.innerHTML = shell;
+    });
+  };
   let editing = false;
 
   const ownsEditor = () =>
@@ -25,16 +43,14 @@
     String(window.DDIdentity?.email?.() || "").trim().toLowerCase() === EDITOR_EMAIL;
 
   const protectRuntime = () => {
-    content.querySelectorAll(".wta-graph").forEach((node) => {
+    content.querySelectorAll(RUNTIME).forEach((node) => {
       node.contentEditable = "false";
     });
   };
 
   const serializedContent = () => {
     const clone = content.cloneNode(true);
-    clone.querySelectorAll(".wta-graph").forEach((node, index) => {
-      node.innerHTML = mapShells[index] || "";
-    });
+    restoreShells(clone);
     return clone.innerHTML;
   };
 
@@ -60,7 +76,13 @@
       const response = await window.apiFetch("/site-content/about");
       if (!response.ok) throw new Error(`Could not load saved content (${response.status}).`);
       const saved = await response.json();
-      if (saved?.html) content.innerHTML = saved.html;
+      // A copy saved before the AISC write-up replaced the page (no
+      // #aisc-root) would put the old page back; the shipped HTML wins until
+      // the page is saved again.
+      if (saved?.html && saved.html.includes('id="aisc-root"')) {
+        content.innerHTML = saved.html;
+        restoreShells(content);
+      }
     } catch (error) {
       // Static HTML remains fully usable if the API is offline.
       console.warn("[about-page]", error);

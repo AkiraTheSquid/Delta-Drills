@@ -30,11 +30,16 @@ MAX_HTML_LENGTH = 250_000
 
 # Keep the app's existing About-page structure working after an edit while
 # refusing scripts, inline event handlers, styles, and unsafe URL schemes.
+# The page has been the AISC write-up since 2026-09-24, which adds a section
+# nav (header/nav), a comparison table, a definition list and a footer. Its
+# live figures (svg, input, output) stay disallowed: the client restores those
+# from the static page instead of trusting saved markup for them.
 ALLOWED_TAGS = [
-    "a", "article", "b", "blockquote", "br", "button", "code", "details",
-    "div", "em", "figcaption", "figure", "h1", "h2", "h3", "h4", "hr",
-    "i", "img", "kbd", "li", "main", "mark", "ol", "p", "pre", "section",
-    "small", "span", "strong", "sub", "summary", "sup", "ul",
+    "a", "article", "b", "blockquote", "br", "button", "code", "dd", "details",
+    "div", "dl", "dt", "em", "figcaption", "figure", "footer", "h1", "h2", "h3",
+    "h4", "header", "hr", "i", "img", "kbd", "li", "main", "mark", "nav", "ol",
+    "p", "pre", "section", "small", "span", "strong", "sub", "summary", "sup",
+    "table", "tbody", "td", "th", "thead", "tr", "ul",
 ]
 
 
