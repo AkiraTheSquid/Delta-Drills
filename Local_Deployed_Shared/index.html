@@ -165,7 +165,7 @@
        typefaces come from Google Fonts, loaded NON-blocking (media swap): a
        dead fonts CDN must not hold up first paint of the whole app for one
        page most visits never open; the fallbacks are Georgia / monospace. -->
-  <link rel="stylesheet" href="aisc/aisc.css?v=3" />
+  <link rel="stylesheet" href="aisc/aisc.css?v=4" />
   <link rel="stylesheet" media="print" onload="this.media='all'"
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
@@ -258,6 +258,24 @@
          practice/timer.js, practice/placement-timer.js and
          practice/notch-menu.js all still find what they write. -->
     <div class="topbar-mid">
+    <!-- THE ABOUT PAGE'S CONTENTS (Seth, 2026-09-24: "puts the table of
+         contents in the actual real topbar, rather than the top bar that it
+         put below the existing top bar"). Shown only while
+         #page-learn-about-app is the page on screen (aisc/aisc.css, a `:has`
+         rule); aisc/js/common.js scrolls on click and marks the section in
+         view. It lives here, outside #about-page-content, so the About
+         editor never saves it. -->
+    <nav class="aisc-toc" id="aisc-toc" aria-label="On this page">
+      <a href="#aisc-problem">Problem</a>
+      <a href="#aisc-impact">Theory of change</a>
+      <a href="#aisc-how">How it works</a>
+      <a href="#aisc-different">What's new</a>
+      <a href="#aisc-plan">AISC plan</a>
+      <a href="#aisc-evidence">Evidence</a>
+      <a href="#aisc-risk">Risks</a>
+      <a href="#aisc-lead">Lead</a>
+      <a href="#aisc-questions">Questions</a>
+    </nav>
     <nav class="tabs">
       <!-- ONE tab where there were two. "Why This App Exists" and "How to use
            it" both answered "what is this thing" and sat side by side, so a
@@ -862,20 +880,6 @@
            saved copy is shown. The two account-menu rows land on #aisc-root
            (why) and #aisc-how (how). -->
       <div class="aisc" id="aisc-root">
-      <header class="rail">
-        <a class="mark" href="#aisc-top">Delta <b>Drills</b></a>
-        <nav>
-          <a href="#aisc-problem">Problem</a>
-          <a href="#aisc-impact">Theory of change</a>
-          <a href="#aisc-how">How it works</a>
-          <a href="#aisc-different">What's new</a>
-          <a href="#aisc-plan">AISC plan</a>
-          <a href="#aisc-evidence">Evidence</a>
-          <a href="#aisc-risk">Risks</a>
-          <a href="#aisc-lead">Lead</a>
-          <a href="#aisc-questions">Questions</a>
-        </nav>
-      </header>
 
       <div class="aisc-main" id="aisc-top">
 
@@ -2538,7 +2542,7 @@ t.manual_seed(0)
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/boot.js?v=4" defer></script>
+  <script src="aisc/boot.js?v=5" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
