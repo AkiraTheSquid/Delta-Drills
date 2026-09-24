@@ -246,14 +246,16 @@ def reload_caches() -> None:
 
 
 def kc_mastery(
-    user_state, kc: str, now: Optional[datetime] = None, decay: bool = True
+    user_state, kc: str, now: Optional[datetime] = None, decay: bool = True,
+    exclude_latest_of: Optional[str] = None,
 ) -> Tuple[float, float, str]:
     """(mastery, covered_weight, tier) for one KC.
 
     Mastery is the crosswalk-weighted mean of the learner's BKT posteriors
     over the atoms the KC's questions exercise. When `decay=True` (default),
-    applies time decay via `bkt_mastery.current_mastery` for display and spaced
-    review scheduling. When `decay=False`, reads un-decayed posteriors from
+    pulls it toward p_init by the concept's FSRS forgetting (1 − R from
+    `memory_model`; until 2026-09-24 a 14-day clock on each atom) for display
+    and the engine's prereq features. When `decay=False`, reads posteriors from
     evidence, so that time elapsed does not revoke curriculum milestones.
     Atoms with no attempts sit at the learner's prior, so a fresh account lands
     near the BKT prior everywhere — which is the honest answer and the one that
@@ -286,11 +288,23 @@ def kc_mastery(
             continue
         atom_id = a.get("a")
         acc += w * bkt_mastery.current_mastery(
-            atom_mastery, atom_last_ts, atom_id, now=now, params=params, apply_decay=decay
+            atom_mastery, atom_last_ts, atom_id, params=params, apply_decay=False
         )
         if atom_id in atom_mastery:
             covered += w
-    return acc / total_w, covered / total_w, row.get("tier") or "topic-proxy"
+    m = acc / total_w
+    if decay:
+        # Forgetting is the concept's own FSRS recall (memory_model), not a
+        # clock on the atoms. A concept never answered has no memory and reads
+        # as learned. Lazy import: memory_model imports this module.
+        from app import memory_model
+        # `exclude_latest_of`: the scoring path's concept, so a prerequisite's
+        # recall does not include the credit the scored answer handed it.
+        recall = memory_model.kc_retrievability(
+            user_state, kc, now=now, exclude_latest_of=exclude_latest_of)
+        if recall is not None:
+            m = params.p_init + (m - params.p_init) * min(1.0, max(0.0, recall))
+    return m, covered / total_w, row.get("tier") or "topic-proxy"
 
 
 def kc_evidence_exhausted(user_state, kc: str) -> bool:

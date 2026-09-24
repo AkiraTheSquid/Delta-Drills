@@ -169,9 +169,13 @@
          and "Load next placement question" is the live control, so pointing at
          the start button unconditionally would focus nothing exactly when the
          learner most needs the page to answer. */
-      const target = ["placement-start-btn", "diagnostic-practice-btn"]
+      /* A finished placement keeps its set-up questions closed behind
+         "Retake" (placement-wizard.js), and the start button sits inside
+         them — so ask what is actually on screen, not only `.hidden` on the
+         element itself: a start button in a hidden step is not a target. */
+      const target = ["placement-start-btn", "placement-retake-btn", "diagnostic-practice-btn"]
         .map((id) => document.getElementById(id))
-        .find((el) => el && !el.classList.contains("hidden"));
+        .find((el) => el && !el.classList.contains("hidden") && el.offsetParent !== null);
       if (!target) return;
       target.focus({ preventScroll: true });
       flash(target);

@@ -9,59 +9,25 @@
    gets 20:00 (placement-timer.js); the plan is the TOTAL, and it is a hard
    cap — the server will not serve past it.
 
-   This module owns three things and nothing else:
-     * the picker (#placement-plan): one button per plan length, each with the
-       server's point estimate of how long that plan will REALLY take and how
-       many problems it will hold. 20:00 is the cap per problem, not the
-       expectation, so "3 hours" is usually ~35 problems in ~2 hours;
-     * `selectedHours()`, which api.js reads when the start button fires — the
-       button in advance-events.js knows nothing about this module;
-     * the running readout on the placement card (#placement-length, the
-       progress count and the status line), time-based: "1h 12m left", not
-       "of at most 14".
+   This module owns the RUNNING READOUT on the placement card
+   (#placement-length, the progress count and the status line), time-based:
+   "1h 12m left", not "of at most 14".
+
+   The set-up before a run — areas, experience, length — moved to
+   practice/placement-wizard.js on 2026-09-24 (Seth: sequential questions
+   with Back / Next, and lengths cut from the areas picked). `render` hands
+   every status to it; `selectedScope` / `setScope` forward to it so callers
+   (api.js, practice-target.js) keep one name to ask.
 
    It never fetches status. api.js announces every status it receives as
    `delta-drills-diagnostic-status`, and diagnostic-page.js hands each render
    here too; both paths land in `render`.
 
    STATIC ANCHORS ONLY: #placement-plan must be in index.html. No anchor →
-   no picker and a failing watch (watch_placement.py), never a runtime one.
+   no set-up and a failing watch (watch_placement.py), never a runtime one.
    ================================================================ */
 const PlacementPlan = (() => {
   const byId = (id) => document.getElementById(id);
-
-  /* The picker's lengths. Mirrors PLAN_HOURS in app/diagnostic.py — the
-     server refuses any other value and falls back to its default, so a plan
-     offered here that the server does not know would silently become a
-     1-hour test. watch_placement.py parses both. */
-  const PLAN_HOURS = [1, 3, 6];
-  const DEFAULT_HOURS = 3;
-  const STORE_KEY = "delta_drills_placement_plan_hours";
-
-  let selected = null;
-  let options = null;      // from /diagnostic/plan, once
-  let loading = null;
-  let scope = "all";
-  const selectedScope = () => scope;
-
-  const _api = () => (typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI);
-
-  const _readSaved = () => {
-    try {
-      const h = Number(localStorage.getItem(STORE_KEY));
-      return PLAN_HOURS.includes(h) ? h : null;
-    } catch (_) {
-      return null;
-    }
-  };
-  const _save = (h) => {
-    try { localStorage.setItem(STORE_KEY, String(h)); } catch (_) {}
-  };
-
-  const selectedHours = () => {
-    if (selected == null) selected = _readSaved() ?? DEFAULT_HOURS;
-    return selected;
-  };
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -76,96 +42,6 @@ const PlacementPlan = (() => {
     const m = Math.floor((s % 3600) / 60);
     if (h > 0) return m > 0 ? `${h}h ${m}m` : `${h}h`;
     return m > 0 ? `${m}m` : s > 0 ? "<1m" : "0m";
-  };
-  const hours = (h) => (h === 1 ? "1 hour" : `${h} hours`);
-
-  /* ---- the picker ---------------------------------------------------- */
-
-  const _loadOptions = async () => {
-    if (options) return options;
-    if (loading) return loading;
-    loading = (async () => {
-      const plan = await _api()?.diagnosticPlan?.();
-      if (plan && !plan.unavailable && Array.isArray(plan.options)) {
-        options = plan.options;
-        options.assessed_kcs = plan.assessed_kcs;
-        options.arena_linked_kcs = plan.arena_linked_kcs;
-      }
-      loading = null;
-      return options;
-    })();
-    return loading;
-  };
-
-  const _paintPicker = (status) => {
-    const host = byId("placement-plan");
-    if (!host) return;
-    // The picker is for a test that has not started: mid-run the plan is
-    // fixed, and after one the retake button reopens it.
-    const show = !!status && !status.active && !status.unavailable;
-    host.classList.toggle("hidden", !show);
-    if (!show) return;
-    host.textContent = "";
-    const scopeLabel = el("label", "placement-plan-title", "Placement focus ");
-    const scopePicker = el("select", "placement-scope");
-    scopePicker.id = "placement-scope";
-    for (const [value, label] of [["all", "Whole curriculum"], ["raytracing-0.1", "Ray Tracing 0.1 · rapid"]]) {
-      const option = el("option", "", label);
-      option.value = value;
-      scopePicker.appendChild(option);
-    }
-    scopePicker.value = scope;
-    scopePicker.addEventListener("change", () => { scope = scopePicker.value; _paintPicker(status); });
-    scopeLabel.appendChild(scopePicker);
-    host.appendChild(scopeLabel);
-    if (scope === "raytracing-0.1") {
-      host.appendChild(el("p", "placement-plan-note", "Up to 8 unscaffolded problems · 25-minute cap. Starts with ray–segment intersections, jumps ahead after passes, checks prerequisites after misses. Finishing targets your practice toward 0.1; untested concepts remain uncertain."));
-      return;
-    }
-    const head = el("div", "placement-plan-head");
-    head.appendChild(el("span", "placement-plan-title", "How long do you have?"));
-    const n = Number(options?.assessed_kcs);
-    if (Number.isFinite(n) && n > 0) {
-      head.appendChild(el("span", "placement-chip", `${n} concepts to place`));
-    }
-    host.appendChild(head);
-
-    const row = el("div", "placement-plan-options");
-    row.setAttribute("role", "group");
-    row.setAttribute("aria-label", "Placement test length");
-    const current = selectedHours();
-    PLAN_HOURS.forEach((h) => {
-      const opt = (options || []).find((o) => Number(o.hours) === h) || null;
-      const btn = el("button", "placement-plan-option");
-      btn.type = "button";
-      // Toggle buttons, not a radio group: role=radio promises arrow-key
-      // navigation this module does not implement.
-      btn.setAttribute("aria-pressed", String(h === current));
-      btn.classList.toggle("is-selected", h === current);
-      btn.dataset.hours = String(h);
-      btn.appendChild(el("span", "placement-plan-hours", hours(h)));
-      btn.appendChild(el("span", "placement-plan-cap", "hard cap"));
-      /* The point estimate. `est_minutes` is what the difficulty heuristic
-         expects the plan to actually take; `est_probes` how many problems fit
-         in it. Both are estimates of the learner's time, so they are said as
-         "about". Without the server's numbers the button still works — it
-         just cannot say how long. */
-      if (opt) {
-        const est = Number(opt.est_minutes) * 60;
-        btn.appendChild(el("span", "placement-plan-est", `about ${hm(est)} · ~${Number(opt.est_probes) || 0} problems`));
-      } else {
-        btn.appendChild(el("span", "placement-plan-est", "estimating…"));
-      }
-      btn.addEventListener("click", () => {
-        selected = h;
-        _save(h);
-        _paintPicker(status);
-      });
-      row.appendChild(btn);
-    });
-    host.appendChild(row);
-    host.appendChild(el("p", "placement-plan-note",
-      `${perProblemText(status)}. The test stops early once every concept is settled, and never runs past the cap.`));
   };
 
   /* The clock is PER CONCEPT (lessons/placement_time_caps.json, enforced by
@@ -240,9 +116,14 @@ const PlacementPlan = (() => {
     const plan = status?.plan;
     if (!plan) return null;
     const done = Number(status.probes_done) || 0;
+    const focus = Array.isArray(status.focus_areas) && status.focus_areas.length
+      ? `${status.focus_areas.map((a) => window.PlacementWizard?.areaName?.(a) || a).join(", ")} · `
+      : "";
+    // The rapid check names itself first; a focus reads after the state.
     const prefix = status.scope === "raytracing-0.1" ? "Ray Tracing 0.1 · " : "";
-    if (status.active) return `${prefix}In progress · ${done} answered · ${hm(plan.remaining_secs)} left`;
-    if (status.completed_at) return `${prefix}Complete · ${done} problems in ${hm(plan.spent_secs)}`;
+    const what = status.scope === "raytracing-0.1" ? "" : focus;
+    if (status.active) return `${prefix}In progress · ${what}${done} answered · ${hm(plan.remaining_secs)} left`;
+    if (status.completed_at) return `${prefix}Complete · ${what}${done} problem${done === 1 ? "" : "s"} in ${hm(plan.spent_secs)}`;
     return "Not started";
   };
 
@@ -256,25 +137,19 @@ const PlacementPlan = (() => {
   let lastStatus = null;
   const render = (status) => {
     lastStatus = status || null;
-    _paintPicker(status);
+    window.PlacementWizard?.render(status);
     _paintLength(status);
     _paintProgress(status);
-    // The estimates arrive once; the picker repaints itself when they do.
-    if (status && !status.active && !options) {
-      _loadOptions().then(() => _paintPicker(lastStatus));
-    }
   };
 
   window.addEventListener("delta-drills-diagnostic-status", (e) => render(e.detail));
 
   return {
     render,
-    selectedHours,
-    selectedScope,
-    setScope: (value) => { scope = value === "raytracing-0.1" ? value : "all"; _paintPicker(lastStatus); },
+    selectedScope: () => window.PlacementWizard?.selectedScope?.() || "all",
+    setScope: (value) => window.PlacementWizard?.setScope?.(value),
     statusLine,
     progressLabel: () => progressLabel(lastStatus),
-    PLAN_HOURS: PLAN_HOURS.slice(),
   };
 })();
 window.PlacementPlan = PlacementPlan;

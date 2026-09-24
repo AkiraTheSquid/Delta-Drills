@@ -187,8 +187,10 @@ def _days_since(last_seen: Optional[str]) -> float:
     return max(0.0, (datetime.now(timezone.utc) - when).total_seconds() / 86400.0)
 
 
-def _prereq_mastery(user_state, kc: str) -> Dict[str, float]:
+def _prereq_mastery(user_state, kc: str, exclude_latest: bool = False) -> Dict[str, float]:
     """Per-prerequisite mastery, keyed by KC id — the ATTRIBUTION, not the mean.
+    The scoring path passes `exclude_latest`: prerequisite recall is read
+    without the implicit credit the answer being scored handed it.
 
     Returns the dict rather than the collapsed number so the caller can log
     which prerequisite carried the credit; `E.centred_mastery(d.values())` is
@@ -196,11 +198,16 @@ def _prereq_mastery(user_state, kc: str) -> Dict[str, float]:
     """
     node = kc_graph.registry_node(kc) or {}
     prereqs = node.get("prereqs") or ()
-    return {p: kc_graph.kc_mastery(user_state, p)[0] for p in prereqs}
+    return {p: kc_graph.kc_mastery(
+        user_state, p, exclude_latest_of=kc if exclude_latest else None)[0] for p in prereqs}
 
 
-def _encompassing_mastery(user_state, kc: str) -> Dict[str, float]:
-    """Per-atom BKT posterior for the atoms this concept exercises.
+def _encompassing_mastery(
+    user_state, kc: str, now: Optional[datetime] = None, exclude_latest: bool = False
+) -> Dict[str, float]:
+    """Per-atom BKT posterior for the atoms this concept exercises, pulled
+    toward the prior by each atom's FSRS forgetting (`memory_model.atom_recall`;
+    the scoring path excludes the answer being scored, as for `recency`).
 
     Keyed by atom id for the same reason as `_prereq_mastery`: the mean is the
     feature, the dict is the explanation, and the regression audit needs the
@@ -220,7 +227,10 @@ def _encompassing_mastery(user_state, kc: str) -> Dict[str, float]:
     params = bkt_mastery.params_for_level(getattr(user_state, "self_reported_level", None))
     return {
         atom: bkt_mastery.current_mastery(
-            user_state.atom_mastery, user_state.atom_last_ts, atom, params=params
+            user_state.atom_mastery, user_state.atom_last_ts, atom, params=params,
+            recall=memory_model.atom_recall(
+                user_state, atom, now=now,
+                exclude_latest_of=kc if exclude_latest else None),
         )
         for atom in atoms
     }
@@ -259,8 +269,9 @@ def feature_values(
     if posteriors is None:
         posteriors = posteriors_for(user_state, kc)
     ability = posteriors.get(E.ABILITY.name)
-    prereqs = _prereq_mastery(user_state, kc)
-    encompassed = _encompassing_mastery(user_state, kc)
+    prereqs = _prereq_mastery(user_state, kc, exclude_latest=exclude_latest_attempt)
+    encompassed = _encompassing_mastery(
+        user_state, kc, now=now, exclude_latest=exclude_latest_attempt)
     days = _days_since(ability.last_seen if ability else None)
     # Forgetting is 1 − R from the concept's own FSRS+FIRe memory
     # (memory_model, logistic-v0.4), not one 14-day half-life for every

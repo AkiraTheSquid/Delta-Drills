@@ -103,32 +103,244 @@
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
-/* The plan picker (practice/placement-plan.js): one radio-button per length,
-   the point estimate under each. Same chip language as the rest of the card. */
-.placement-plan { margin-top: 16px; }
+/* ---- The set-up: one question at a time --------------------------------
+   practice/placement-wizard.js. Seth, 2026-09-24: the card was every control
+   at once — status dot, two chip rows, a native <select>, three pills and a
+   plan row — and "looks ugly as hell". Now it is a stepper: a progress rail,
+   ONE question in a large type, big tap targets for the answers, and Back /
+   Next in the same place on every step. Selection is the placement's own
+   blue (--info, the status dot and progress bar), not the brand red: red on
+   a choice you just made reads as an error.
+
+   While the set-up is open the card's run-time furniture (status line,
+   length chips, action row) steps aside — it describes a run that does not
+   exist yet. */
+.placement-hero { align-items: flex-start; display: flex; gap: 16px; justify-content: space-between; }
+.placement-skip-btn {
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 4px;
+  padding: 6px 10px;
+}
+.placement-skip-btn:hover { background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k))); color: var(--text); }
+.placement-skip-btn.hidden { display: none; }
+
+.diagnostic-card.is-planning { padding: 26px 28px 22px; }
+.diagnostic-card.is-planning .diagnostic-status,
+.diagnostic-card.is-planning .diagnostic-timing,
+.diagnostic-card.is-planning .diagnostic-actions { display: none; }
+
 .placement-plan.hidden { display: none; }
-.placement-plan-head { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.placement-plan-title { color: var(--text); font-size: 13px; font-weight: 600; }
-.placement-plan-options { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+/* The rail: one segment per step, filled up to where you are. Done steps are
+   buttons (jump back); the current and later ones are not. */
+.placement-steps { display: flex; gap: 10px; list-style: none; margin: 0 0 26px; padding: 0; }
+.placement-steps-item { flex: 1 1 0; min-width: 0; }
+.placement-steps-btn {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-bottom: 3px solid rgb(var(--tint-rgb) / calc(0.1 * var(--tint-k)));
+  color: var(--muted-dim);
+  display: flex;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 8px;
+  letter-spacing: .04em;
+  padding: 0 0 10px;
+  text-align: left;
+  text-transform: uppercase;
+  width: 100%;
+}
+.placement-steps-btn:disabled { cursor: default; }
+.placement-steps-item.is-done .placement-steps-btn { border-bottom-color: rgb(var(--info-rgb) / 0.55); color: var(--muted); cursor: pointer; }
+.placement-steps-item.is-done .placement-steps-btn:hover { color: var(--text); }
+.placement-steps-item.is-current .placement-steps-btn { border-bottom-color: var(--info); color: var(--text); }
+.placement-steps-num {
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: inline-flex;
+  flex: none;
+  font-size: 11px;
+  height: 22px;
+  justify-content: center;
+  letter-spacing: 0;
+  width: 22px;
+}
+.placement-steps-item.is-current .placement-steps-num { background: var(--info); border-color: var(--info); color: var(--bg); }
+.placement-steps-item.is-done .placement-steps-num { background: rgb(var(--info-rgb) / 0.16); border-color: transparent; color: var(--info); }
+.placement-steps-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.placement-step.hidden { display: none; }
+.placement-step { animation: placement-step-in .18s ease-out; }
+@keyframes placement-step-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .placement-step { animation: none; } }
+.placement-step-q { color: var(--text); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; margin: 0 0 6px; outline: none; }
+.placement-step-hint { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 20px; max-width: 62ch; }
+.placement-step-loading { color: var(--muted); font-size: 13px; margin: 0; }
+
+/* Shared tile language: areas, the rapid-check alternative, experience and
+   length are all "a big button you pick". */
+.placement-focus-tile,
+.placement-focus-alt-btn,
+.placement-step .self-report-btn,
 .placement-plan-option {
   background: rgb(var(--well-rgb) / calc(0.14 * var(--well-k)));
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--text);
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
   font: inherit;
-  gap: 2px;
-  padding: 10px 12px;
   text-align: left;
+  transition: border-color .12s ease, background .12s ease, opacity .12s ease;
 }
-.placement-plan-option:hover { border-color: var(--accent-text); }
-.placement-plan-option.is-selected { border-color: var(--accent-text); box-shadow: inset 0 0 0 1px var(--accent-text); }
-.placement-plan-hours { font-size: 15px; font-weight: 700; }
-.placement-plan-cap { color: var(--muted-dim); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-.placement-plan-est { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 4px; }
-.placement-plan-note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+.placement-focus-tile:hover,
+.placement-focus-alt-btn:hover,
+.placement-step .self-report-btn:hover,
+.placement-plan-option:not(.is-static):hover { border-color: rgb(var(--info-rgb) / 0.6); }
+.placement-focus-tile.is-selected,
+.placement-focus-alt-btn.is-selected,
+.placement-step .self-report-btn.active,
+.placement-plan-option.is-selected {
+  background: rgb(var(--info-rgb) / 0.08);
+  border-color: var(--info);
+  box-shadow: inset 0 0 0 1px var(--info);
+}
+.placement-focus-tile:focus-visible,
+.placement-focus-alt-btn:focus-visible,
+.placement-plan-option:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+
+.placement-focus-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.placement-focus-tile,
+.placement-focus-alt-btn { align-items: flex-start; display: flex; gap: 12px; padding: 14px 16px; }
+.placement-focus-tile.is-muted { opacity: .45; }
+.placement-focus-check {
+  border: 1.5px solid var(--muted-dim);
+  border-radius: 6px;
+  flex: none;
+  height: 18px;
+  margin-top: 1px;
+  position: relative;
+  width: 18px;
+}
+.is-selected > .placement-focus-check { background: var(--info); border-color: var(--info); }
+.is-selected > .placement-focus-check::after {
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  content: "";
+  height: 9px;
+  left: 5px;
+  position: absolute;
+  top: 1.5px;
+  transform: rotate(45deg);
+  width: 4px;
+}
+.placement-focus-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.placement-focus-name { font-size: 15px; font-weight: 650; }
+.placement-focus-blurb { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+.placement-focus-meta { color: var(--muted-dim); font-size: 11.5px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+.placement-focus-tools { align-items: center; display: flex; gap: 12px; justify-content: space-between; margin-top: 12px; }
+.placement-textbtn { background: none; border: 0; color: var(--info); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; padding: 2px 0; }
+.placement-textbtn:hover { text-decoration: underline; }
+.placement-textbtn:disabled { color: var(--muted-dim); cursor: default; text-decoration: none; }
+.placement-focus-count { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.placement-focus-count.is-warning { color: rgb(var(--warn-rgb)); }
+
+.placement-focus-alt { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 18px; }
+.placement-focus-alt-btn { background: none; border-style: dashed; width: 100%; }
+.placement-focus-alt-btn.is-selected { border-style: solid; }
+.placement-focus-alt-btn .placement-focus-name { font-size: 14px; }
+
+/* Experience: the three self-report buttons, as tiles. Their label and its
+   infotip dot are the old inline row's heading — the step's question says it
+   now. adaptive.js still owns the buttons and the note. */
+.placement-step .self-report-row { display: block; margin: 0; }
+.placement-step .self-report-row.hidden { display: none; }
+.placement-step .self-report-label,
+.placement-step .self-report-label + .dd-info { display: none; }
+.placement-step .self-report-options { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.placement-step .self-report-btn { font-size: 15px; font-weight: 650; padding: 18px 16px; }
+.placement-step .self-report-note { display: block; margin-top: 12px; }
+.placement-step .self-report-note.hidden { display: none; }
+
+/* Length: one tile per tier, the budget large, what it buys underneath. */
+.placement-plan-options { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.placement-plan-option { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px 16px; }
+.placement-plan-option.is-static { cursor: default; }
+.placement-plan-option.is-loading { cursor: default; opacity: .55; }
+.placement-plan-tier { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.placement-plan-option.is-selected .placement-plan-tier { color: var(--info); }
+.placement-plan-hours { font-size: 26px; font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.placement-plan-est { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.placement-plan-meter { background: rgb(var(--well-rgb) / calc(0.22 * var(--well-k))); border-radius: 999px; display: block; height: 4px; margin-top: 10px; overflow: hidden; }
+.placement-plan-meter i { background: var(--info); border-radius: 999px; display: block; height: 100%; }
+.placement-plan-cov { color: var(--muted-dim); font-size: 11.5px; margin-top: 2px; }
+.placement-plan-note { color: var(--muted); font-size: 12.5px; margin: 12px 0 0; }
+
+/* Back on the left, forward on the right, on every step — the forward
+   control never moves, so the learner's pointer does not have to either. */
+.placement-wizard-nav {
+  align-items: center;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 26px;
+  padding-top: 18px;
+}
+.placement-back-btn {
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  flex: none;
+  padding: 10px 12px;
+  margin-left: -12px;
+  white-space: nowrap;
+}
+.placement-back-btn:hover { background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k))); color: var(--text); }
+.placement-back-btn.is-invisible { visibility: hidden; }
+.placement-forward-btn,
+.placement-wizard-nav .placement-start-btn {
+  background: var(--info);
+  border: 1px solid var(--info);
+  border-radius: 10px;
+  color: var(--bg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 22px;
+}
+.placement-forward-btn:hover:not(:disabled),
+.placement-wizard-nav .placement-start-btn:hover:not(:disabled) { background: rgb(var(--info-rgb) / 0.85); border-color: rgb(var(--info-rgb) / 0.85); }
+.placement-forward-btn:disabled { cursor: not-allowed; opacity: .4; }
+.placement-forward-btn.hidden,
+.placement-wizard-start.hidden { display: none; }
+
+@media (max-width: 620px) {
+  /* Skip rides the eyebrow line so the blurb gets the full width. */
+  .placement-hero { position: relative; }
+  .placement-skip-btn { position: absolute; right: 0; top: -6px; }
+  .diagnostic-card.is-planning { padding: 20px 18px 18px; }
+  .placement-step-q { font-size: 19px; }
+  .placement-steps-label { display: none; }
+  .placement-focus-grid { grid-template-columns: 1fr; }
+}
 
 /* Per-concept report inside the results card (placement-results.js renderKcs):
    the same row grid as the area bars, grouped by verdict. */

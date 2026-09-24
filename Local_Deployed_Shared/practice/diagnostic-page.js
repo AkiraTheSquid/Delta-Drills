@@ -225,9 +225,12 @@ const DiagnosticPage = (() => {
     // is labelled whether or not this card is in the document.
     syncMenuLabel(status);
     if (!el) return;
+    /* It sits at the END of the set-up questions now (placement-wizard.js),
+       so it says what the click does from there: start. "Take" / "Retake"
+       stay on the account-menu row, which is a route, not a start. */
     el.textContent = status?.completed_at
-      ? "Retake the placement test"
-      : "Take the placement test";
+      ? "Start the retake"
+      : "Start the placement test";
     el.disabled = false;
     const off = !!status?.active;
     el.classList.toggle("hidden", off);
@@ -405,6 +408,8 @@ const DiagnosticPage = (() => {
     const hasProbeOnScreen = !!_papi?.currentQuestion?.diagnostic_active;
     continueEl?.classList.toggle("hidden", !status.active || hasProbeOnScreen);
     skipEl?.classList.toggle("hidden", !showSkip);
+    // After a finished placement nothing is being skipped.
+    if (skipEl) skipEl.textContent = status.completed_at ? "Go to practice →" : "Skip for now →";
     /* Finish early: active, something answered, no probe on screen (the
        notch row covers mid-probe). Re-label on every status: the count moves. */
     const finishEl = byId("placement-finish-btn");

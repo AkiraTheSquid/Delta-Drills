@@ -245,6 +245,84 @@ try:
 finally:
     kc_graph.kc_is_learned = orig
 
+print("attempt_log answers the ladder lost (2026-09-24)")
+from app import attempt_log, bkt_mastery  # noqa: E402
+uid = "memory-model-log"
+st4 = UserPracticeState(user_id=uid)
+row = kc_graph.ladder_row(st4, x)
+row["attempts"].append({"correct": True, "ts": iso(10), "question_id": 7, "example": False})
+
+
+def logrow(d, q, correct, note=None, kind=attempt_log.KIND_ATTEMPT, k=x):
+    attempt_log.append(attempt_log.AttemptRow(
+        ts=iso(d), kind=kind, user_id=uid, kc=k, question_id=q, correct=correct,
+        stage="partial", features={"ability": 1.0}, note=note))
+
+
+logrow(10 + 1 / 86400, 7, True)          # the same answer as the ladder row
+check("a log row matching a ladder row is not a second answer",
+      [set(e.grades) for e in M._events(st4)] == [{x}])
+logrow(0, 3, True)                        # an answer the ladder no longer holds
+logrow(5, 4, None, kind=attempt_log.KIND_TIMEOUT)
+logrow(6, 5, True, note="backfill")
+evs = M._events(st4)
+check("the lost answer is replayed; timeout rows and backfill are not",
+      [round(e.t - T0, 3) for e in evs] == [0.0, 10.0], str([round(e.t - T0, 3) for e in evs]))
+with_log = M.memories(st4)[x]
+check("the older answer adds stability", with_log.S > M.review(None, T0 + 10, M.GOOD).S)
+
+print("kc_mastery forgets by FSRS recall, not a clock")
+atoms = [a["a"] for a in (kc_graph._crosswalk().get(x) or {}).get("atoms", []) if a.get("a")]
+if atoms:
+    st5 = UserPracticeState(user_id="memory-model-kcm")
+    for a in atoms:
+        st5.atom_mastery[a] = 0.9
+        st5.atom_last_ts[a] = iso(0)
+    learned, _c, _t = kc_graph.kc_mastery(st5, x, decay=False)
+    check("no answered concept: mastery is the learned value, whatever the date",
+          kc_graph.kc_mastery(st5, x, now=datetime.now(timezone.utc))[0] == learned)
+    kc_graph.ladder_row(st5, x)["attempts"].append(
+        {"correct": True, "ts": iso(0), "question_id": 1, "example": False})
+    later = datetime.fromtimestamp((T0 + 40) * 86400, timezone.utc)
+    r = M.kc_retrievability(st5, x, now=later)
+    p0 = bkt_mastery.params_for_level(None).p_init
+    got = kc_graph.kc_mastery(st5, x, now=later)[0]
+    check("answered concept: pulled toward p_init by 1 - R",
+          abs(got - (p0 + (learned - p0) * r)) < 1e-12, f"R={r:.3f} got={got:.3f}")
+    check("atom_recall is the best R of the concepts covering it",
+          M.atom_recall(st5, atoms[0], now=later) >= r - 1e-12)
+
+print("scoring-path exclusion is scoped to the scored concept (codex 2026-09-24)")
+shared = next(((a, ks) for a, ks in M._atom_kcs_index().items() if len(ks) >= 2), None)
+if shared:
+    atom, (ka, kb) = shared[0], shared[1][:2]
+    st6 = UserPracticeState(user_id="memory-model-shared")
+    kc_graph.ladder_row(st6, ka)["attempts"].append(
+        {"correct": True, "ts": iso(0), "question_id": 11, "example": False})
+    kc_graph.ladder_row(st6, kb)["attempts"].append(
+        {"correct": True, "ts": iso(5), "question_id": 12, "example": False})
+    at = datetime.fromtimestamp((T0 + 9) * 86400, timezone.utc)
+    before = M._memories_before_latest(st6, kb)
+    want = max((M.retrievability(before[k], T0 + 9) for k in shared[1] if k in before), default=None)
+    got = M.atom_recall(st6, atom, now=at, exclude_latest_of=kb)
+    check("the other concept's newest answer is kept", want is not None and got == want,
+          f"{ka} / {kb}: got={got} want={want}")
+    check("the scored concept's own answer is not",
+          M.kc_retrievability(st6, kb, now=at, exclude_latest_of=kb) is None
+          or kb not in before)
+
+print("log/ladder matching is one-to-one")
+uid7 = "memory-model-retry"
+st7 = UserPracticeState(user_id=uid7)
+kc_graph.ladder_row(st7, x)["attempts"].append(
+    {"correct": True, "ts": iso(20 + 30 / 86400), "question_id": 9, "example": False})
+for d in (20, 20 + 30 / 86400):   # an answer the ladder dropped, then a quick retry
+    attempt_log.append(attempt_log.AttemptRow(
+        ts=iso(d), kind=attempt_log.KIND_ATTEMPT, user_id=uid7, kc=x, question_id=9,
+        correct=True, stage="partial", features={"ability": 1.0}))
+check("a quick retry does not hide the older logged answer", len(M._events(st7)) == 2,
+      str(len(M._events(st7))))
+
 print()
 print("FAILED: " + ", ".join(fails) if fails else "ALL PASS")
 sys.exit(1 if fails else 0)

@@ -112,7 +112,7 @@
   <link rel="stylesheet" href="styles/practice/notch-menu.css?v=10" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=14" />
+  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=17" />
   <!-- THE GROUPS TAB. AFTER diagnostic.css, and it has to be: a member card's
        readiness rows carry that sheet's own `.placement-area*` classes (the
        Learner Home's bars, quoted rather than copied), and the one rule in
@@ -2039,10 +2039,29 @@ t.manual_seed(0)
        Practice mid-test lands here). -->
   <main class="page hidden" id="page-placement">
     <div class="container placement-page" id="diagnostic-overview">
-      <div class="diagnostic-eyebrow">ARENA placement</div>
-      <h1>Placement test</h1>
-      <p class="subtitle">Finds where to start you. It seeds practice; it never awards mastery.</p>
-      <section class="card diagnostic-card">
+      <div class="placement-hero">
+        <div>
+          <div class="diagnostic-eyebrow">ARENA placement</div>
+          <h1>Placement test</h1>
+          <p class="subtitle">Finds where to start you. It seeds practice; it never awards mastery.</p>
+        </div>
+        <!-- THE WAY OUT, on every state of this page. The placement is its
+             own page again, and a page with no tab in the strip needs a route
+             back that does not depend on the account menu being discovered:
+             someone who opened this from the welcome fork, decided not to sit
+             the test, and found no exit would be stranded on it. app.js owns
+             the jump ([data-goto-tab]); this is only the door. -->
+        <!-- 🔴 NO [data-goto-tab]. That binding routes through switchTab's
+             practice->placement redirect, and this button is on screen in
+             exactly the state the redirect fires in: a placement that is
+             ACTIVE but between probes (the card shows "Load next placement
+             question"). The advertised way out would have bounced straight
+             back to this page. app.js binds this id to a route that says it
+             is leaving on purpose. -->
+        <button type="button" class="placement-skip-btn" id="placement-skip-btn"
+                >Skip for now &rarr;</button>
+      </div>
+      <section class="card diagnostic-card" id="placement-card">
         <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
         <!-- HOW LONG THIS WILL TAKE, before you commit to it (Seth,
              2026-08-23: "it should also make it more clear to the user the
@@ -2068,49 +2087,79 @@ t.manual_seed(0)
           </div>
           <span class="placement-progress-count" id="placement-progress-count"></span>
         </div>
-        <div class="self-report-row hidden" id="self-report-row">
-          <span class="self-report-label" data-dd-info="self-report">Starting point</span>
-          <div class="self-report-options" role="group" aria-label="Self-reported starting point">
-            <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
-            <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
-            <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
+        <!-- THE SET-UP, AS A SHORT RUN OF QUESTIONS (Seth, 2026-09-24: "it
+             should essentially have sequential questions that it asks the
+             user, and they can go to the previous question or the next one").
+             One question on screen at a time, Back / Next underneath:
+               1. which areas do you want to improve   (#placement-step-areas)
+               2. how much have you done before         (#placement-step-level,
+                  only while a self-reported prior can still apply)
+               3. how long do you want to spend         (#placement-step-length)
+             The three lengths are cut from the areas picked in step 1, so a
+             narrower focus is offered shorter tests. practice/placement-plan.js
+             owns which step shows and fills the two dynamic grids; the steps,
+             the self-report buttons (bound by practice/adaptive.js) and the
+             start button (bound by practice/advance-events.js) are static so
+             their handlers survive every repaint. Hidden while a run is live,
+             and on a finished placement until "Retake" opens it. -->
+        <div class="placement-plan hidden" id="placement-plan">
+          <ol class="placement-steps" id="placement-steps" aria-label="Placement set-up"></ol>
+          <section class="placement-step" id="placement-step-areas" data-step="areas">
+            <h2 class="placement-step-q" tabindex="-1">Which areas do you want to improve?</h2>
+            <p class="placement-step-hint">Leave out anything you already know well &mdash; it won&rsquo;t be tested, and the test gets shorter.</p>
+            <div class="placement-focus-grid" id="placement-focus-areas" role="group" aria-label="Areas to place"></div>
+            <div class="placement-focus-tools">
+              <button type="button" class="placement-textbtn" id="placement-focus-all">Select all</button>
+              <span class="placement-focus-count" id="placement-focus-count"></span>
+            </div>
+            <div class="placement-focus-alt" id="placement-focus-alt"></div>
+          </section>
+          <section class="placement-step hidden" id="placement-step-level" data-step="level">
+            <h2 class="placement-step-q" tabindex="-1">How much of this have you done before?</h2>
+            <p class="placement-step-hint">Sets where the first problems start. Your answers take over from there.</p>
+            <div class="self-report-row hidden" id="self-report-row">
+              <span class="self-report-label" data-dd-info="self-report">Starting point</span>
+              <div class="self-report-options" role="group" aria-label="Self-reported starting point">
+                <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
+                <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
+                <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
+              </div>
+              <span class="self-report-note hidden" id="self-report-note"></span>
+            </div>
+          </section>
+          <section class="placement-step hidden" id="placement-step-length" data-step="length">
+            <h2 class="placement-step-q" tabindex="-1">How long do you want to spend?</h2>
+            <p class="placement-step-hint" id="placement-length-hint">Longer tests pin down more concepts. It stops early once every concept is settled, and never runs past the time you pick.</p>
+            <div class="placement-plan-options" id="placement-length-options" role="group" aria-label="Placement test length"></div>
+            <p class="placement-plan-note" id="placement-length-note"></p>
+          </section>
+          <div class="placement-wizard-nav">
+            <button type="button" class="placement-back-btn" id="placement-back-btn">&larr; Back</button>
+            <button type="button" class="placement-forward-btn" id="placement-forward-btn">Next &rarr;</button>
+            <!-- The CTA is wrapped because infotips.js FORCES place="after" for a
+                 <button> anchor (a button cannot nest a button) and inserts the
+                 dot into the anchor's parentNode. Unwrapped, that dot was a flex
+                 child of .diagnostic-actions sitting on its own line underneath a
+                 full-width button. The wrapper is what keeps the ⓘ tight against
+                 the button's right edge, as one control.
+                 NOTE the buttons no longer carry `.primary`: it sets width:100%
+                 and 12px/28px padding, and .placement-start-btn's own 4px/10px
+                 padding won on padding only — so the button rendered as a
+                 full-bleed 4px-tall strip. -->
+            <span class="placement-wizard-start hidden" id="placement-wizard-start">
+              <span class="placement-cta">
+                <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Start the placement test</button>
+              </span>
+            </span>
           </div>
-          <span class="self-report-note hidden" id="self-report-note"></span>
         </div>
-        <!-- The CTA is wrapped because infotips.js FORCES place="after" for a
-             <button> anchor (a button cannot nest a button) and inserts the
-             dot into the anchor's parentNode. Unwrapped, that dot was a flex
-             child of .diagnostic-actions sitting on its own line underneath a
-             full-width button. The wrapper is what keeps the ⓘ tight against
-             the button's right edge, as one control.
-             NOTE the buttons no longer carry `.primary`: it sets width:100%
-             and 12px/28px padding, and .placement-start-btn's own 4px/10px
-             padding won on padding only — so the button rendered as a
-             full-bleed 4px-tall strip. -->
-        <!-- The 1h / 3h / 6h picker, filled by practice/placement-plan.js
-             before a run; hidden while one is live. Static anchor on purpose
-             (see that file's header). -->
-        <div class="placement-plan hidden" id="placement-plan"></div>
-        <div class="diagnostic-actions">
-          <span class="placement-cta">
-            <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Take the placement test</button>
-          </span>
+        <div class="diagnostic-actions" id="placement-actions">
+          <!-- A finished placement shows its results; this opens the set-up
+               questions again. It never starts a run by itself — a retake
+               clears the probe log, so the start stays one deliberate click
+               at the end of the questions. practice/placement-plan.js. -->
+          <button type="button" class="placement-next-btn hidden" id="placement-retake-btn">Retake the placement test</button>
           <button type="button" class="placement-next-btn hidden" id="diagnostic-practice-btn">Load next placement question</button>
-          <!-- THE WAY OUT, on every state of this page. The placement is its
-               own page again, and a page with no tab in the strip needs a route
-               back that does not depend on the account menu being discovered:
-               someone who opened this from the welcome fork, decided not to sit
-               the test, and found no exit would be stranded on it. app.js owns
-               the jump ([data-goto-tab]); this is only the door. -->
-          <!-- 🔴 NO [data-goto-tab]. That binding routes through switchTab's
-               practice->placement redirect, and this button is on screen in
-               exactly the state the redirect fires in: a placement that is
-               ACTIVE but between probes (the card shows "Load next placement
-               question"). The advertised way out would have bounced straight
-               back to this page. app.js binds this id to a route that says it
-               is leaving on purpose. -->
-          <button type="button" class="ghost placement-skip-btn" id="placement-skip-btn"
-                  >Skip for now &mdash; go to practice</button>
           <!-- PAUSE THE PLACEMENT. Hidden here, and permanently so: the only
                moment pausing means anything is while a probe is on screen, and
                a probe on screen is exactly when this card is hidden
@@ -2245,7 +2294,7 @@ t.manual_seed(0)
        which is a top-level `const` in app.js and therefore NOT on `window`.
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
-  <script src="account-menu.js?v=4"></script>
+  <script src="account-menu.js?v=5"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
@@ -2347,7 +2396,7 @@ t.manual_seed(0)
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=32"></script>
+  <script src="practice/api.js?v=33"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=38"></script>
   <script src="practice/kernel.js?v=8"></script>
@@ -2473,11 +2522,12 @@ t.manual_seed(0)
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-plan.js?v=3"></script>
+  <script src="practice/placement-wizard.js?v=2"></script>
+  <script src="practice/placement-plan.js?v=5"></script>
   <script src="practice/placement-results.js?v=5"></script>
   <script src="practice/practice-target.js?v=1"></script>
   <script src="practice/arena-share.js?v=1"></script>
-  <script src="practice/diagnostic-page.js?v=25"></script>
+  <script src="practice/diagnostic-page.js?v=26"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
        into it. -->

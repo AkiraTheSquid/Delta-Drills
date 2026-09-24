@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
-from app import bkt_mastery, kc_graph, kc_prefs, placement_model, practice_targets
+from app import bkt_mastery, kc_graph, kc_prefs, placement_model, placement_scope, practice_targets
 from app.adaptive import UserPracticeState
 from app.questions import get_question_by_id, get_subtopics, get_topic_for_subtopic
 
@@ -201,26 +201,34 @@ def normalize_hours(hours) -> int:
     return h if h in PLAN_HOURS else DEFAULT_PLAN_HOURS
 
 
-def start(user_state: UserPracticeState, hours=None, scope="all") -> dict:
+def start(user_state: UserPracticeState, hours=None, scope="all", minutes=None, areas=None) -> dict:
     """Explicitly (re)start: clears the probe log and the clock, keeps BKT.
     The previous run's frozen estimates are dropped with it — a retake is a
-    new measurement, not an amendment."""
+    new measurement, not an amendment.
+
+    `areas` narrows the run to those registry topics (None = every area);
+    `minutes` is the learner's budget and wins over `hours` when both come."""
     d = get_diag(user_state)
     if d["active"]:
         return d
     if d.get("completed_at"):
         user_state.practice_placements[d.get("scope", "all")] = json.loads(json.dumps(d))
     d["scope"] = scope
+    # Areas BEFORE the priors below: assessed_kcs reads them. The rapid ray
+    # check has its own concept set, so a focus never narrows it further.
+    d["areas"] = None if scope == practice_targets.RAY else placement_scope.normalize_areas(areas)
     if scope == practice_targets.RAY:
         user_state.practice_target = scope
-    h = normalize_hours(hours)
+    m = placement_scope.normalize_minutes(minutes)
+    h = normalize_hours(hours) if m is None else round(m / 60.0, 2)
+    budget = m * 60 if m is not None else h * 3600
     d["active"] = True
     d["declined"] = False
     d["completed_at"] = None
     d["probes"] = []
     d["plan"] = {
         "hours": h,
-        "budget_secs": practice_targets.BUDGET_SECS if scope == practice_targets.RAY else h * 3600,
+        "budget_secs": practice_targets.BUDGET_SECS if scope == practice_targets.RAY else budget,
         "per_problem_secs": PER_PROBLEM_SECS,
         "started_at": _now().isoformat(),
     }
@@ -283,10 +291,10 @@ def reload_caches() -> None:
 
 
 def assessed_kcs(user_state: UserPracticeState) -> List[str]:
-    """Every registry concept the learner has not switched off."""
-    scope = practice_targets.scope_kcs(get_diag(user_state).get("scope", "all"))
-    return [k for k in kc_graph._registry() if not kc_prefs.is_disabled(user_state, k)
-            and (scope is None or k in scope)]
+    """Every registry concept the learner has not switched off, inside the
+    run's scope and chosen areas."""
+    d = get_diag(user_state)
+    return placement_scope.kcs_for(user_state, d.get("scope", "all"), d.get("areas"))
 
 
 def _graph(user_state: UserPracticeState) -> placement_model.Graph:
@@ -375,32 +383,6 @@ def remaining_secs(user_state: UserPracticeState) -> int:
     plan = d.get("plan") or {}
     budget = int(plan.get("budget_secs") or DEFAULT_PLAN_HOURS * 3600)
     return max(0, budget - int(d.get("spent_secs") or 0))
-
-
-def plan_options(user_state: UserPracticeState) -> List[dict]:
-    """The picker: for each allowed length, how many problems it is likely to
-    hold and how long the test will probably actually take. Point estimates
-    from the difficulty heuristic — 20 minutes is the CAP per problem, not the
-    expectation, so a 3h plan of ~9 capped problems is really ~35 problems."""
-    kcs = assessed_kcs(user_state)
-    mean_secs = _mean_est_secs(kcs)
-    # Roughly two direct probes settle a concept (STOP_GAIN), so this is the
-    # size of a test that finishes on evidence rather than on the clock.
-    probes_to_settle = max(1, 2 * len(kcs))
-    out = []
-    for h in PLAN_HOURS:
-        budget = h * 3600
-        fits = int(budget // mean_secs) if mean_secs > 0 else probes_to_settle
-        probes = max(1, min(fits, probes_to_settle))
-        out.append({
-            "hours": h,
-            "budget_secs": budget,
-            "per_problem_secs": PER_PROBLEM_SECS,
-            "est_probes": probes,
-            "est_minutes": int(round(min(budget, probes * mean_secs) / 60.0)),
-            "min_probes_at_cap": max(1, budget // PER_PROBLEM_SECS),
-        })
-    return out
 
 
 def effective_budget(user_state: UserPracticeState) -> int:

@@ -314,7 +314,7 @@ class DiagnosticKcEstimate(BaseModel):
 
 
 class DiagnosticPlan(BaseModel):
-    hours: int
+    hours: float            # 1 / 3 / 6 from old clients; minutes/60 from the tiered picker
     budget_secs: int
     per_problem_secs: int
     spent_secs: int = 0
@@ -326,12 +326,15 @@ class DiagnosticPlan(BaseModel):
 
 
 class DiagnosticPlanOption(BaseModel):
-    hours: int
+    key: str = ""            # quick / standard / full (app/placement_scope.py PLAN_TIERS)
+    hours: float
+    minutes: int = 0         # the budget the client sends back to /diagnostic/start
     budget_secs: int
     per_problem_secs: int
     est_probes: int          # problems the plan is likely to hold
     est_minutes: int         # point estimate of real time, not the cap
     min_probes_at_cap: int   # if every problem used its full 20:00
+    coverage: float = 1.0    # est_probes / probes_to_settle — how much of the settle-everything test fits
 
 
 class DiagnosticEdgeViolation(BaseModel):
@@ -361,6 +364,8 @@ class DiagnosticStatusResponse(BaseModel):
     self_reported_level: str | None = None
     # 2026-09-07 graph-wide placement: the time plan and the per-concept rows.
     plan: DiagnosticPlan | None = None
+    # The areas this run was narrowed to (registry topics); None = every area.
+    focus_areas: list[str] | None = None
     kcs: list[DiagnosticKcEstimate] = Field(default_factory=list)
     fast_track: list[str] = Field(default_factory=list)
     edge_violations: list[DiagnosticEdgeViolation] = Field(default_factory=list)
@@ -369,6 +374,11 @@ class DiagnosticStatusResponse(BaseModel):
 class DiagnosticStartRequest(BaseModel):
     # One of diagnostic.PLAN_HOURS; anything else falls back to the default.
     hours: int | None = None
+    # The tiered picker's budget (app/placement_scope.py); wins over `hours`.
+    minutes: int | None = None
+    # Registry topics to place (Python / Numpy / PyTorch / Einops /
+    # Mathematics). Absent, empty or all of them = the whole curriculum.
+    areas: list[str] | None = None
     scope: Literal["all", "raytracing-0.1"] = "all"
 
 
@@ -382,10 +392,20 @@ class ArenaShareRequest(BaseModel):
     share: float = Field(ge=0.0, le=1.0)
 
 
+class DiagnosticPlanArea(BaseModel):
+    key: str
+    kcs: int
+
+
 class DiagnosticPlanResponse(BaseModel):
     options: list[DiagnosticPlanOption] = Field(default_factory=list)
     assessed_kcs: int = 0
     arena_linked_kcs: int = 0
+    # Every area the learner could pick, and the concept count in each.
+    area_catalog: list[DiagnosticPlanArea] = Field(default_factory=list)
+    probes_to_settle: int = 0
+    per_problem_min_secs: int = 0
+    per_problem_max_secs: int = 0
 
 
 class DiagnosticAnswerRequest(BaseModel):

@@ -60,17 +60,21 @@ check("propagation is single-hop (children only, no grandchildren)",
       set(non_self) == {b for b, _ in children})
 check("all posteriors bounded in [0,1]", all(0.0 <= v <= 1.0 for v in m.values()))
 
-print("\nC. DECAY / FORGETTING")
+print("\nC. FORGETTING = FSRS recall, not a clock (2026-09-24)")
 m3, t3 = {}, {}
 B.apply_attempt(m3, t3, adv, True)
 L0 = m3[adv]
-future = datetime.now(timezone.utc) + timedelta(days=B.HALF_LIFE_DAYS)
-half = B.current_mastery(m3, t3, adv, now=future)
-check("one half-life halves the gap to p_init",
-      abs(half - (P.p_init + (L0 - P.p_init) * 0.5)) < 1e-6, f"L0={L0:.3f} half={half:.3f}")
 far = datetime.now(timezone.utc) + timedelta(days=B.HALF_LIFE_DAYS * 20)
-check("decays toward p_init, never below it",
-      P.p_init <= B.current_mastery(m3, t3, adv, now=far) < L0)
+check("no recall given: time alone changes nothing",
+      B.current_mastery(m3, t3, adv, now=far) == L0)
+check("recall 0.5 halves the gap to p_init",
+      abs(B.current_mastery(m3, t3, adv, recall=0.5) - (P.p_init + (L0 - P.p_init) * 0.5)) < 1e-12)
+check("recall 0 reads p_init, never below; apply_decay=False ignores recall",
+      B.current_mastery(m3, t3, adv, recall=0.0) == P.p_init
+      and B.current_mastery(m3, t3, adv, recall=0.0, apply_decay=False) == L0)
+B.apply_attempt(m3, t3, adv, True, now=far)
+check("an update weeks later starts from the stored L, not a decayed one",
+      abs(m3[adv] - B.observe(L0, True, P)) < 1e-12)
 
 print("\nD. INDEPENDENT — replay vs from-scratch recompute of a sequence")
 # Drive a deterministic sequence on an advanced atom; recompute the direct
