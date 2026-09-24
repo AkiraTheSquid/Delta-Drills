@@ -2,8 +2,8 @@
 
 Endpoints (mounted under /api/practice by the parent router):
   GET  /diagnostic/status
-  GET  /diagnostic/plan      — the 1h / 3h / 6h picker with time estimates
-  POST /diagnostic/start     — body {hours}
+  GET  /diagnostic/plan      — ?areas=A,B: the area catalogue + three lengths cut to that focus
+  POST /diagnostic/start     — body {minutes, areas, scope} (old clients: {hours})
   POST /diagnostic/answer    — "I don't know yet" / self-rated probe results
   POST /diagnostic/finish
   POST /diagnostic/decline
@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import arena_mix, diagnostic, practice_targets
+from app import arena_mix, diagnostic, placement_scope, practice_targets
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -55,6 +55,7 @@ def _status(user_state) -> DiagnosticStatusResponse:
         atoms_seeded=d.get("atoms_seeded"),
         can_set_prior=diagnostic.can_set_prior(user_state),
         self_reported_level=user_state.self_reported_level,
+        focus_areas=d.get("areas") or None,
         plan=(
             {
                 **plan,
@@ -79,14 +80,19 @@ def diagnostic_status(user: User = Depends(get_current_user)) -> DiagnosticStatu
 
 
 @router.get("/diagnostic/plan", response_model=DiagnosticPlanResponse)
-def diagnostic_plan(user: User = Depends(get_current_user)) -> DiagnosticPlanResponse:
+def diagnostic_plan(areas: str | None = None, user: User = Depends(get_current_user)) -> DiagnosticPlanResponse:
     user_state = get_user_state(str(user.id))
-    kcs = diagnostic.assessed_kcs(user_state)
+    plan = placement_scope.plan_options(user_state, areas)
+    kcs = plan["kcs"]
     links = diagnostic._arena_links()
     return DiagnosticPlanResponse(
-        options=diagnostic.plan_options(user_state),
+        options=plan["options"],
         assessed_kcs=len(kcs),
         arena_linked_kcs=sum(1 for k in kcs if links.get(k)),
+        area_catalog=placement_scope.area_catalog(user_state),
+        probes_to_settle=plan["probes_to_settle"],
+        per_problem_min_secs=plan["per_problem_min_secs"],
+        per_problem_max_secs=plan["per_problem_max_secs"],
     )
 
 
@@ -98,7 +104,13 @@ def diagnostic_start(
     user_state = get_user_state(str(user.id))
     if diagnostic.should_run(user_state) and diagnostic.get_diag(user_state).get("scope", "all") != (payload.scope if payload else "all"):
         raise HTTPException(status_code=409, detail="Finish the current placement before starting a different one.")
-    diagnostic.start(user_state, hours=payload.hours if payload else None, scope=payload.scope if payload else "all")
+    diagnostic.start(
+        user_state,
+        hours=payload.hours if payload else None,
+        scope=payload.scope if payload else "all",
+        minutes=payload.minutes if payload else None,
+        areas=payload.areas if payload else None,
+    )
     save_user_state(str(user.id))
     return _status(user_state)
 

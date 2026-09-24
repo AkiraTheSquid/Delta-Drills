@@ -82,14 +82,23 @@ def check_every_placement_question_gets_the_same_clock():
         assert "_elapsed_for(user_state, question.id, elapsed_secs, kc=kc)" in backend, (
             "record_probe must charge against the answered concept's own clock"
         )
-        m = re.search(r"^PLAN_HOURS: Tuple\[int, \.\.\.\] = \(([0-9, ]+)\)", backend, re.M)
-        plan_js = read(os.path.join(HERE, "placement-plan.js"))
-        m_js = re.search(r"const PLAN_HOURS = \[([0-9, ]+)\];", plan_js)
-        assert m and m_js, "PLAN_HOURS lost on one side (diagnostic.py / placement-plan.js)"
-        py_hours = [int(x) for x in m.group(1).split(",") if x.strip()]
-        js_hours = [int(x) for x in m_js.group(1).split(",") if x.strip()]
-        assert py_hours == js_hours, (
-            f"plan picker offers {js_hours} but the server accepts {py_hours}"
+        # The set-up's length step (placement-wizard.js, 2026-09-24) sends the
+        # budget the SERVER cut for the chosen areas back as `minutes`; the
+        # server must read it, or every run is silently its default hour.
+        scope_py = os.path.join(os.path.dirname(diag_py), "placement_scope.py")
+        schemas = read(os.path.join(os.path.dirname(diag_py), "practice_schemas.py"))
+        wizard = read(os.path.join(HERE, "placement-wizard.js"))
+        assert os.path.exists(scope_py) and "def plan_options" in read(scope_py), (
+            "app/placement_scope.py lost plan_options — the length step has nothing to offer"
+        )
+        assert "minutes: int | None" in schemas and "areas: list[str] | None" in schemas, (
+            "DiagnosticStartRequest no longer takes minutes/areas from the set-up"
+        )
+        assert "placement_scope.normalize_minutes(minutes)" in backend, (
+            "diagnostic.start ignores the chosen length"
+        )
+        assert "minutes: opt ? Number(opt.minutes)" in wizard, (
+            "placement-wizard.js no longer sends the chosen tier's minutes"
         )
     qrouter = os.path.join(
         HERE, "..", "..", "This-Directory-Only", "backend", "app", "practice", "questions_router.py")
@@ -370,8 +379,8 @@ def check_the_placement_result_is_the_number_the_backend_seeded():
     # picker is the only way a learner chooses 3h or 6h; without the anchor
     # every run is silently the server's default.
     assert 'id="placement-plan"' in index, "index.html lost the #placement-plan anchor"
-    assert re.search(r'practice/placement-plan\.js\?v=\d+"></script>\s*<script src="practice/placement-results\.js', index), (
-        "placement-plan.js must load before placement-results.js / diagnostic-page.js"
+    assert re.search(r'practice/placement-wizard\.js\?v=\d+"></script>\s*<script src="practice/placement-plan\.js\?v=\d+"></script>\s*<script src="practice/placement-results\.js', index), (
+        "placement-wizard.js, then placement-plan.js, must load before placement-results.js / diagnostic-page.js"
     )
     assert "window.PlacementPlan?.render(status)" in page, (
         "diagnostic-page.js must hand every status to placement-plan.js"

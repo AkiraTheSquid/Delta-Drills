@@ -400,6 +400,47 @@ check("an OLDER probe's id is refused once a newer one exists", _answer(ru, firs
 check("an id never served is refused between probes", _answer(ru, first.id + 100000, "dont_know")[1] in (404, 409))
 check("a finished run answers 400", (D.finish(route_state), _answer(ru, second.id, "dont_know")[1])[1] == 400)
 
+
+# --- AREAS + TIERED LENGTHS (2026-09-24) ---------------------------------------
+
+print("AREAS — the learner narrows the test; the lengths shrink with it")
+from app import placement_scope as PS
+
+cat = {row["key"]: row["kcs"] for row in PS.area_catalog(UserPracticeState(user_id="cat"))}
+check("the catalogue is the registry's topics", {"PyTorch", "Einops"} <= set(cat), cat)
+check("an empty, unknown or complete pick is the whole curriculum",
+      PS.normalize_areas([]) is None and PS.normalize_areas(["nope"]) is None
+      and PS.normalize_areas(list(cat)) is None)
+check("unknown names are dropped, known ones kept once",
+      PS.normalize_areas("Einops,nope,Einops") == ["Einops"])
+
+focus = UserPracticeState(user_id="focus")
+D.start(focus, minutes=100, areas=["Einops"])
+check("a focused run assesses only that area",
+      set(PS.kc_area(k) for k in D.assessed_kcs(focus)) == {"Einops"}
+      and len(D.assessed_kcs(focus)) == cat["Einops"])
+check("minutes snap to the 15-minute grid", D.get_diag(focus)["plan"]["budget_secs"] == 105 * 60)
+check("the focus is stored for the status payload", D.get_diag(focus)["areas"] == ["Einops"])
+q = D.select_probe(focus)
+check("its probes come from that area", q is not None and PS.kc_area(D.get_diag(focus)["pending"]["kc"]) == "Einops")
+D.finish(focus)
+D.start(focus)
+check("a retake with no areas is the whole curriculum again", D.get_diag(focus)["areas"] is None
+      and len(D.assessed_kcs(focus)) == sum(cat.values()))
+
+check("minutes clamp to 15 min .. 6 h", PS.normalize_minutes(1) == 15 and PS.normalize_minutes(9999) == 360
+      and PS.normalize_minutes("x") is None and PS.normalize_minutes(0) is None)
+whole = PS.plan_options(UserPracticeState(user_id="plan-all"))
+small = PS.plan_options(UserPracticeState(user_id="plan-einops"), "Einops")
+for label, plan in (("whole", whole), ("einops", small)):
+    mins = [o["minutes"] for o in plan["options"]]
+    check(f"{label}: three strictly increasing lengths on the grid",
+          len(mins) == 3 and mins == sorted(set(mins)) and all(m % 15 == 0 and 15 <= m <= 360 for m in mins), mins)
+check("a smaller focus offers a shorter full calibration",
+      small["options"][-1]["minutes"] < whole["options"][-1]["minutes"],
+      (small["options"][-1]["minutes"], whole["options"][-1]["minutes"]))
+check("the full tier of a small focus settles every concept", small["options"][-1]["coverage"] == 1.0)
+
 print()
 if fails:
     print(f"{len(fails)} FAILED: " + ", ".join(fails))

@@ -381,12 +381,16 @@ const PracticeAPI = {
     return this._keepDiagnosticStatus(await res.json());
   },
 
-  /* The 1h / 3h / 6h picker's numbers: for each length, how many problems it
-     is likely to hold and how long it will probably really take. */
-  async diagnosticPlan() {
+  /* The set-up's numbers (practice/placement-wizard.js): the area catalogue,
+     and three lengths cut to `areas` (null = the whole curriculum), each
+     with how many problems it is likely to hold. */
+  async diagnosticPlan(areas) {
     if (practiceMode !== "backend") return null;
+    const q = Array.isArray(areas) && areas.length
+      ? `?areas=${encodeURIComponent(areas.join(","))}`
+      : "";
     try {
-      const res = await apiFetch("/api/practice/diagnostic/plan");
+      const res = await apiFetch(`/api/practice/diagnostic/plan${q}`);
       if (res.ok) return await res.json();
       return { unavailable: true, httpStatus: res.status };
     } catch (_) {
@@ -394,20 +398,24 @@ const PracticeAPI = {
     }
   },
 
-  /* `hours` is the learner's pick from the plan picker (placement-plan.js);
-     read from it when the caller does not say, so the start button in
-     advance-events.js needs no knowledge of the picker. The server falls back
-     to its default plan for anything it does not recognise. */
+  /* What the learner answered in the set-up — scope, areas and the chosen
+     length in minutes — read from placement-wizard.js when the caller does
+     not say, so the start button in advance-events.js needs no knowledge of
+     it. `hours` is still honoured for a caller that passes one; the server
+     falls back to its default plan for anything it does not recognise. */
   async diagnosticStart(hours, scope) {
     if (practiceMode !== "backend") return null;
-    const h = Number.isFinite(Number(hours)) && Number(hours) > 0
-      ? Number(hours)
-      : window.PlacementPlan?.selectedHours?.();
+    const pick = window.PlacementWizard?.startPayload?.() || {};
+    const h = Number(hours);
     const res = await apiFetch("/api/practice/diagnostic/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hours: Number.isFinite(Number(h)) && Number(h) > 0 ? Number(h) : null,
-        scope: scope || window.PlacementPlan?.selectedScope?.() || "all" }),
+      body: JSON.stringify({
+        hours: Number.isFinite(h) && h > 0 ? h : null,
+        minutes: Number.isFinite(h) && h > 0 ? null : (pick.minutes ?? null),
+        areas: pick.areas ?? null,
+        scope: scope || pick.scope || window.PlacementPlan?.selectedScope?.() || "all",
+      }),
     });
     if (res.status === 401) {
       handleExpiredToken();
