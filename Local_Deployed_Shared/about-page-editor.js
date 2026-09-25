@@ -77,11 +77,13 @@
       if (!response.ok) throw new Error(`Could not load saved content (${response.status}).`);
       const saved = await response.json();
       // A copy saved before the page took its current shape would put the old
-      // one back: before the AISC write-up (no #aisc-root), or before it was
-      // split into articles on 2026-09-25 (no #aisc-articles index). The
-      // shipped HTML wins until the page is saved again.
-      if (saved?.html && saved.html.includes('id="aisc-articles"')) {
-        content.innerHTML = saved.html;
+      // one back: before the AISC write-up (no #aisc-root), before it was
+      // split into articles on 2026-09-25 (no #aisc-a-why), or while it still
+      // had the in-page index of article cards (#aisc-articles, removed the
+      // same day). The shipped HTML wins until the page is saved again.
+      const html = saved?.html || "";
+      if (html.includes('id="aisc-a-why"') && !html.includes('id="aisc-articles"')) {
+        content.innerHTML = html;
         restoreShells(content);
       }
     } catch (error) {

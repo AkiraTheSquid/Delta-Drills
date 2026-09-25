@@ -34,8 +34,8 @@
   must match `js/field.js` `CARDS`.
 - `articles.js` (loaded eagerly, defer): `window.AISCArticles` — `show(id)`,
   `openFor(el)`, `current()`. Hides every `article.aisc-article` but the open
-  one (`hidden` attribute), marks its link in the index (`#aisc-articles`)
-  and the topbar (`#aisc-toc`), and handles every `#aisc-…` link: opens the
+  one (`hidden` attribute), marks its link in the topbar (`#aisc-toc`),
+  and handles every `#aisc-…` link: opens the
   article holding the target, then scrolls. Fires a window `resize` after a
   switch so the SVG figures redraw at their real width.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
@@ -83,15 +83,16 @@
   only its topbar contents (`#aisc-toc`) stayed.
 - The cards are see-through wireframes (Seth, 2026-09-25: "an invisible card
   there"): no fill or shadow, a thin `--wire` outline. Readability comes from
-  `js/field.js`, which pushes its nodes out of every card and erases its
-  drawing inside them. A new kind of card goes in BOTH the wireframe rule
+  `js/field.js`, which erases its drawing inside every card box, so it reads
+  as running behind opaque cards. Since 2026-09-25 (Seth: "just a normal
+  background graph") the cards push and pull no nodes; the motion is the
+  original site's `bg-field.js`. A new kind of card goes in BOTH the wireframe rule
   (end of the `#aisc-root` block) and `field.js` `CARDS`; `watch.py` checks.
   Only a full-screen figure stays opaque (it covers the page).
 - Hover and title cards (Seth, 2026-09-25): the card under the cursor gets
   `.is-hot` from `js/field.js`, its outline turns the cursor's colour
-  (`--field-edge`) and it pulls the nodes in round it. A section's title card
-  (`.tile:has(> .kicker)`, the 01–09 openers) is centred, has a 2px outline
-  that is always lit, and always pulls, much harder. The title markup is not
+  (`--field-edge`). A section's title card (`.tile:has(> .kicker)`) has a
+  2px outline that is always lit. Every `.tile` is centred in the column. The title markup is not
   given a class: saved About copies carry the old markup.
   `.is-hot` has to out-rank every wireframe selector: `figure.fig`, `.qs li`,
   `.modes .hand` and `.hero > div:first-child` each carry their own
@@ -115,14 +116,15 @@
   rule; on a phone it scrolls sideways in the narrow middle cell. Not inside `#about-page-content`, so never saved.
   Since 2026-09-25 it lists the articles, not sections.
 - Articles (Seth, 2026-09-25): `<article class="aisc-article" id="aisc-a-…">`
-  directly in `.aisc-main`, after the `#aisc-articles` index of `.card`
-  links. Articles 2–5 ship `hidden` (no flash before `articles.js`). Order
+  directly in `.aisc-main`; the topbar is the only switcher (the in-page
+  `#aisc-articles` index of cards was removed the same day). Articles 2–5 ship `hidden` (no flash before `articles.js`). Order
   keeps figure numbers rising: why → case (Fig. 1) → how (Figs. 2–6) →
   evidence (Fig. 7) → AISC proposal (hero, status, plan, risks, lead,
   questions). Section kickers lost their 01–09 numbers. Each article ends
   in a `.art-next` link to the next.
-- The About editor applies a saved copy only if it has `id="aisc-articles"`:
-  a copy saved before the split would put the one long page back. Prod's
+- The About editor applies a saved copy only if it has `id="aisc-a-why"` and
+  no `id="aisc-articles"`: a copy saved before the split, or while the index
+  was up, would put that page back. Prod's
   saved copy (2026-09-25 14:32 UTC) predates it and is ignored; it held no
   prose edits (only runtime-written text).
 - `concept-graph/why-graph.js` draws Fig. 2 when it first has a box: it
@@ -184,3 +186,8 @@
   markers, the three steps, the loop, the map), in the write-up's tiles and
   cards. Account menu lands on `#aisc-a-why` / `#aisc-why-use`; the editor
   ignores copies saved before the split.
+- 2026-09-25: Article index cards removed (topbar switches articles); every
+  tile centred in the column; `js/field.js` back to the original site's plain
+  background motion (no card push-out, no hover/title pull, no cursor drag),
+  still erased inside cards. Editor guard now keys on `#aisc-a-why` without
+  `#aisc-articles`.

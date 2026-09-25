@@ -3,8 +3,9 @@
 
    #aisc-root holds five <article class="aisc-article">s. One is open at a
    time; this file shows it, hides the rest with the `hidden` attribute, and
-   marks its link in the page's index (#aisc-articles) and in the topbar
-   (#aisc-toc) with `.on` + aria-current.
+   marks its link in the topbar (#aisc-toc) with `.on` + aria-current. (An
+   in-page index of article cards went the same day; the topbar is the only
+   switcher.)
 
    Any `#aisc-…` link on the page or in the topbar lands here: an article id
    opens that article; any other id opens the article holding it, then scrolls
@@ -40,7 +41,7 @@
     var changed = want.hidden || want.id !== current;
     list.forEach(function (a) { a.hidden = a !== want; });
     current = want.id;
-    document.querySelectorAll("#aisc-toc a, #aisc-articles a").forEach(function (a) {
+    document.querySelectorAll("#aisc-toc a").forEach(function (a) {
       var on = a.getAttribute("href") === "#" + want.id;
       a.classList.toggle("on", on);
       if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
@@ -71,8 +72,7 @@
     var art = openFor(target);
     requestAnimationFrame(function () {
       if (art === target) {
-        // An article: scroll only if its top is off screen or far down it
-        // (a click in the index usually leaves it just below).
+        // An article: scroll only if its top is off screen or far down it.
         var top = target.getBoundingClientRect().top;
         if (top >= topbar() && top <= window.innerHeight * 0.5) return;
       }

@@ -22,15 +22,13 @@
 - `field.js`: the page's node field — a fixed canvas behind the write-up's
   cards, unmasked since 2026-09-25, animated only while `#aisc-root`
   intersects and the tab is visible; still frame under reduced motion.
-  The cards are see-through wireframes, so it keeps out of them itself:
-  nodes inside a card box (`CARDS`) are pushed out through the nearest side,
-  nodes near one are shoved off, and its drawing is erased inside every card.
-  Card boxes are measured on layout changes only (resize, ResizeObserver on
-  `#aisc-root`, reveal `transitionend`, once a second), shifted by scroll.
-  The cursor drags the nodes it links to, each by its link strength (the
-  share its line is drawn at). The card under the cursor gets `.is-hot`
-  (lit in `--field-edge`) and pulls nodes in round its outline; a section
-  title card (`.tile` opening on a `.kicker`) always pulls, harder.
+  Motion is the original site's `bg-field.js` (nodes drift and link; the
+  cursor links to and gently draws in the nodes near it). The cards are
+  see-through wireframes, so its drawing is erased inside every card box
+  (`CARDS`); nodes still drift behind them freely. Card boxes are measured
+  on layout changes only (resize, ResizeObserver on `#aisc-root`, reveal
+  `transitionend`, once a second), shifted by scroll. The card under the
+  cursor gets `.is-hot` (lit in `--field-edge`).
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles;
   implicit reps of `IMPLICIT_W` always on, tagged on the plot, keyed in the side) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
@@ -91,3 +89,6 @@
   `fig-forget.js` implicit reps always on with +w tags and a readout line.
 - 2026-09-25: `common.js` drops its section-nav click handler and in-view
   highlight; `../articles.js` owns both now that the page is articles.
+- 2026-09-25: `field.js` v5 back to a plain background (Seth: "doesn't have
+  the thing where it pulls nodes in"): card push-out, hover/title pulls and
+  cursor drag removed; erase-inside-cards and `.is-hot` kept.
