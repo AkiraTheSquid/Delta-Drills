@@ -43,7 +43,7 @@ from __future__ import annotations
 
 from typing import Callable, List, Optional, Set
 
-from app import arena_mix, attempt_history, kc_graph, kc_prefs, memory_model
+from app import arena_mix, attempt_history, kc_explore, kc_graph, kc_prefs, memory_model
 
 # Misses on a concept, with no unaided correct answer among them, before the
 # picker turns to its prerequisites.
@@ -170,7 +170,10 @@ def targets(user_state, skip: Optional[Set[str]] = None, cap: bool = True):
         for kc in arena_mix.order(user_state, kc_graph.frontier(user_state)):
             yield kc if arena_mix.holds(user_state, kc) else redirect(user_state, kc)
 
-    reviews = memory_model.due_reviews(user_state)
+    # Back from a break (kc_explore RETURN WINDOW): re-probe the most
+    # informative taught concepts ahead of the reviews — one answer on a deep
+    # concept re-settles what it encompasses, cheaper than reviewing each.
+    reviews = kc_explore.return_probes(user_state) + memory_model.due_reviews(user_state)
     if not reviews:
         streams = (new_work(),)
     elif _last_was_review(user_state):

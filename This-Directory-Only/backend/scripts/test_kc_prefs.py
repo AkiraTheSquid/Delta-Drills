@@ -20,6 +20,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app import kc_graph, kc_prefs  # noqa: E402
 from app import adaptive  # noqa: E402
 from app.adaptive import UserPracticeState  # noqa: E402
+from app import kc_explore  # noqa: E402
+
+# These checks are about the GREEDY frontier order (weighted coreness). Since
+# 2026-09-24 kc_explore reorders every open probe by information (weights
+# enter as value there); pin the explore area to math, as when these were
+# written. scripts/test_kc_explore.py covers the whole-graph behaviour.
+kc_explore.EXPLORE_PREFIXES = ("math.",)
 
 fails = []
 

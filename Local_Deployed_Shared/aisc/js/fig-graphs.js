@@ -45,6 +45,16 @@
       userPanningEnabled: true, userZoomingEnabled: false, autoungrabify: true,
     });
     cy.restyle = function () { cy.style(baseStyle().concat(extra())); };
+    // Full screen (fig-expand.js) and narrow layouts change the stage's box;
+    // refit to the new one rather than keep the old framing.
+    if (typeof ResizeObserver === "function") {
+      var last = el.clientWidth + "x" + el.clientHeight;
+      new ResizeObserver(function () {
+        var now = el.clientWidth + "x" + el.clientHeight;
+        if (now === last || !el.clientWidth) return;
+        last = now; cy.resize(); cy.fit(undefined, 16);
+      }).observe(el);
+    }
     return cy;
   }
   function dagreLayout(opts) {

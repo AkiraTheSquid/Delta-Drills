@@ -103,6 +103,9 @@
   function geometry() {
     var W = svg.parentNode.getBoundingClientRect().width || 800, narrow = W < 560;
     var H = narrow ? Math.max(320, Math.round(W * 0.95)) : Math.round(W / 1.6);
+    // Full screen (fig-expand.js): the stage is wide and short, so keep the
+    // plot inside its height rather than scroll.
+    if (svg.closest(".is-max")) H = Math.max(320, Math.min(H, Math.floor(svg.parentNode.clientHeight) - 4));
     var L = narrow ? 40 : Math.round(W * 0.09), R = Math.round(W * (narrow ? 0.8 : 0.84));
     var lane0 = R + (narrow ? 22 : 32), lane1 = W - (narrow ? 12 : 16);
     return {
@@ -118,7 +121,7 @@
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     svg.setAttribute("viewBox", "0 0 " + P.W + " " + P.H);
     svg.setAttribute("width", P.W); svg.setAttribute("height", P.H);
-    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), panel: AISC.css("--paper"),
+    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), panel: AISC.css("--paper-2"),
       red: AISC.css("--red"), amber: AISC.css("--amber"), curve: AISC.css("--green") };
     var mono = "IBM Plex Mono, monospace";
     function label(x, y, text, o) {

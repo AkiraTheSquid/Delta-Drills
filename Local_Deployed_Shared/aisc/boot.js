@@ -19,9 +19,10 @@
     "aisc/js/common.js?v=3",
     "aisc/js/field.js?v=1",
     "aisc/js/fig-effort.js?v=3",
-    "aisc/js/fig-forget.js?v=10",
-    "aisc/js/fig-graphs.js?v=4",
+    "aisc/js/fig-forget.js?v=11",
+    "aisc/js/fig-graphs.js?v=5",
     "aisc/js/fig-seth.js?v=2",
+    "aisc/js/fig-expand.js?v=1",
   ];
   var started = false;
 

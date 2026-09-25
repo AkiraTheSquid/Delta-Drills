@@ -37,6 +37,19 @@ def _settings_available():
         return False
 
 
+class _explore_off:
+    """kc_explore off for a check about the LADDER ROW. record_kc_outcome asks
+    kc_explore whether each concept was being probed (2026-09-24), and its
+    posterior reaches app.config, which the bare `mod watch` interpreter lacks."""
+    def __enter__(self):
+        from app import kc_explore
+        self._saved = kc_explore.EXPLORE_PREFIXES
+        kc_explore.EXPLORE_PREFIXES = ()
+    def __exit__(self, *exc):
+        from app import kc_explore
+        kc_explore.EXPLORE_PREFIXES = self._saved
+
+
 # ── Import checks ──────────────────────────────
 def check_imports():
     if not _fastapi_available():
@@ -400,9 +413,10 @@ def check_the_example_schedule_fades_and_then_tests():
     assert es.position([ok("solo")] * 3, "partial") == 0
 
     # The record carries the flag, and the small-pool finish reads it.
-    state = SimpleNamespace(kc_ladder={})
+    state = SimpleNamespace(kc_ladder={}, kc_exposure={})
     kc, qids = next(iter(kc_graph._questions_by_kc().items()))
-    kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
+    with _explore_off():
+        kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
     assert state.kc_ladder[kc]["attempts"][-1].get("example") is True, \
         "record_kc_outcome dropped the example flag — the schedule cannot see its own past"
     if not _settings_available():
@@ -543,8 +557,9 @@ def check_an_example_is_priced_into_the_model():
     # same question-id match `served_stage` uses.
     from app import kc_graph
     kc, qids = next(iter(kc_graph._questions_by_kc().items()))
-    state = SimpleNamespace(kc_ladder={})
-    kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
+    state = SimpleNamespace(kc_ladder={}, kc_exposure={})
+    with _explore_off():
+        kc_graph.record_kc_outcome(state, qids[0], True, stage="solo", example=True)
     assert engine_bridge.served_example(state, kc, qids[0]), \
         "served_example cannot see the example the ladder row recorded"
     assert not engine_bridge.served_example(state, kc, qids[0] + 10_000), \

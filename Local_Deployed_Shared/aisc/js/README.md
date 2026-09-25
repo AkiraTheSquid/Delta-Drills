@@ -25,6 +25,11 @@
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
   style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
+- `fig-expand.js`: the "Full screen" button under every figure's graphic;
+  toggles `figure.fig.is-max`, announces a window `resize` so the SVG figures
+  redraw (Fig. 4 caps its height to the stage while full screen) and
+  fig-graphs.js's ResizeObserver refits Cytoscape. Fig. 2's button clicks
+  why-graph's `.wta-graph-btn` instead.
 
 ## Data & External Dependencies
 - `../data/*.json`; global `cytoscape` (app vendor/graph).
@@ -60,3 +65,6 @@
   drops learner/expert sliders, Play, mechanism list, Fermi inputs;
   `fig-forget.js` drops speed/target/implicit controls (defaults kept in `S`).
   Readouts are one or two lines.
+- 2026-09-25: `fig-expand.js` added (full screen per figure, Escape, Tab wrap);
+  `fig-graphs.js` refits on stage resize; `fig-forget.js` plot panel back to
+  `--paper-2` (it sits in a card again).

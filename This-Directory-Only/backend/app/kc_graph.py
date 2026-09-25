@@ -846,14 +846,20 @@ def solo_rung_cleared(user_state, kc: str) -> bool:
 
 def kc_stage(user_state, kc: str) -> str:
     """Which rung to serve for this concept right now."""
-    # A diagnostic probe skips the lesson page (kc_explore.probing).
-    if kc_explore.probing(user_state, kc):
+    # A diagnostic probe skips the lesson page (kc_explore.probing). A cold
+    # probe (never taught) is served at the floor; a RETURN re-probe of a
+    # taught concept keeps its rung and is only lifted off the lesson page —
+    # a probe never demotes.
+    probe = kc_explore.probing(user_state, kc)
+    if probe and not kc_explore.taught(user_state, kc):
         return DRILL_FLOOR
     stage = _stage_from(_kc_estimate_core(user_state, kc), ladder_view(user_state, kc))
     if stage == DRILL_FLOOR and solo_rung_cleared(user_state, kc):
         stage = "solo"
     if practice_targets.solo_entry(user_state, kc) and LADDER_STAGES.index(stage) < LADDER_STAGES.index("partial"):
         return "partial"
+    if probe and LADDER_STAGES.index(stage) < LADDER_STAGES.index(DRILL_FLOOR):
+        return DRILL_FLOOR
     return stage
 
 
@@ -878,6 +884,13 @@ def record_kc_outcome(
     examples for concepts the probe was never trying to teach.
     """
     touched = question_kcs(qid)
+    # Read before any append: whether each concept was being PROBED when the
+    # question was served. kc_explore's area prior reads it back — a probe is
+    # answered with no lesson first, so it measures what the learner came with.
+    # Recomputed at answer time, like `stage` and `example` (record_ladder_
+    # outcome): a lesson read or a return window closing between serve and
+    # submit can mislabel one row (codex, 2026-09-24; accepted).
+    probes = {kc: kc_explore.probing(user_state, kc) for kc in touched}
     for kc in touched:
         row = ladder_row(user_state, kc)
         row["attempts"].append({
@@ -895,6 +908,7 @@ def record_kc_outcome(
             # attempt rather than scoring it at a rung it is guessing.
             "question_id": int(qid),
             "example": bool(example),
+            "probe": probes[kc],
         })
         del row["attempts"][:-_LADDER_WINDOW]
     return touched
