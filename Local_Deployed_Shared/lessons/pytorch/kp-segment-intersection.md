@@ -7,7 +7,7 @@ supporting: ['raytracing.ray-parametrisation', 'torch.linalg-basics', 'torch.sta
 previews: []
 faded: [1089, 1090, 1091, 1092]
 guided: []
-independent: [1093, 1094, 1095, 1096, 1097, 1098, 1099, 1100, 1101]
+independent: [1093, 1094, 1095, 1096, 1097, 1098, 1099, 1100, 1101, 50095]
 integrated: [1102, 1103, 1104, 1702, 1703, 1704, 1705]
 ---
 
@@ -205,6 +205,9 @@ Return distance from the first segment endpoint to the hit point, else -1, as a 
 
 ### q1101
 Return the segment midpoint relative to the ray origin, shape (2,). r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q50095
+E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?
 
 ## Integrated practice
 

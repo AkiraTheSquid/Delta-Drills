@@ -1,0 +1,40 @@
+{
+  "kc": "torch.linalg-basics",
+  "problems": [
+    {
+      "id": 50091,
+      "kind": "compute",
+      "difficulty": 50,
+      "prompt": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "tensor([2., 5.])",
+          "value": "Matrix([2,5])"
+        },
+        {
+          "key": "B",
+          "text": "tensor([-1., -1.])",
+          "value": "Matrix([-1,-1])"
+        },
+        {
+          "key": "C",
+          "text": "tensor([4., 1.])",
+          "value": "Matrix([4,1])"
+        },
+        {
+          "key": "D",
+          "text": "tensor([-1., 1.])",
+          "value": "Matrix([-1,1])"
+        }
+      ],
+      "answer": "B",
+      "solution": "A row vector times a matrix combines the matrix's rows: $2E_1 - E_2 = 2(1, 0) - (3, 1) = (-1, -1)$.\n\n- A: `E @ w`, which combines the columns $(1, 3)$ and $(0, 1)$ instead.\n- C: $E_1 + E_2$, ignoring the weights.\n- D: a sign slip in the second component.",
+      "verify": {
+        "sympy": {
+          "truth": "(Matrix([[2,-1]])*Matrix([[1,0],[3,1]])).T"
+        }
+      }
+    }
+  ]
+}

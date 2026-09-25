@@ -107,10 +107,6 @@
        "prompt": "A = (2, 0, \u22121), B = (6, 4, 3). Find A + (B \u2212 A)/4."
       },
       {
-       "question_id": 50068,
-       "prompt": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, \u22120.5, 2]]. Which point on this ray has x = 3?"
-      },
-      {
        "question_id": 50069,
        "prompt": "A segment is stored as [[1, 2, 0], [5, \u22122, 4]]: row 0 is A, row 1 is B. Which point is three quarters of the way from A to B?"
       },
@@ -221,11 +217,6 @@
        "question_id": 50084,
        "prompt": "\u2016u\u2016 = 3, \u2016v\u2016 = 4 and u \u00b7 v = 2. What is \u2016u \u2212 v\u2016\u00b2?",
        "worked_example_code": ""
-      },
-      {
-       "question_id": 50085,
-       "prompt": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
-       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -253,8 +244,7 @@
       50081,
       50082,
       50083,
-      50084,
-      50085
+      50084
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""
@@ -336,11 +326,6 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 50091,
-       "prompt": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 50092,
        "prompt": "E1 = (2, 1), E2 = (4, 2), E3 = (0, 1). Which pair does NOT span the whole plane?",
        "worked_example_code": ""
@@ -363,10 +348,6 @@
       {
        "question_id": 50094,
        "prompt": "A = (1, 1), B = (5, 1), C = (1, 4). Which (u, v) gives A + u(B \u2212 A) + v(C \u2212 A) = (3, 2.5)?"
-      },
-      {
-       "question_id": 50095,
-       "prompt": "E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?"
       }
      ],
      "independent_items": [
@@ -375,7 +356,6 @@
       50088,
       50089,
       50090,
-      50091,
       50092,
       50093
      ],
@@ -482,14 +462,6 @@
       {
        "question_id": 50055,
        "prompt": "A 3-by-2 matrix has two independent columns. Which statement about Mx = b is correct?"
-      },
-      {
-       "question_id": 50110,
-       "prompt": "Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 \u2212 L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 \u2212 L2](u, v) = L1 \u2212 O. Which (u, v) solves it?"
-      },
-      {
-       "question_id": 50111,
-       "prompt": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?"
       }
      ],
      "independent_items": [
@@ -786,6 +758,10 @@
       {
        "question_id": 50011,
        "prompt": "O = (1, 1), D = (2, \u22121), A = (5, \u22122), B = (5, 2). Does the ray hit the segment, and where?"
+      },
+      {
+       "question_id": 50110,
+       "prompt": "Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 \u2212 L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 \u2212 L2](u, v) = L1 \u2212 O. Which (u, v) solves it?"
       }
      ],
      "independent_items": [
@@ -1063,11 +1039,6 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 50098,
-       "prompt": "A kernel forgets the s \u2265 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 50099,
        "prompt": "A camera ray from O = (0, 0, 0) has direction D = (1, 0.6, 0.8) and hits at s = 5. How far is the hit point from O?",
        "worked_example_code": ""
@@ -1093,10 +1064,6 @@
        "prompt": "D = (1, 0, 0) hits at s = 8. Replace D with D\u2032 = (4, 0, 0), keeping O and the surface fixed. What are the new parameter and distance?"
       },
       {
-       "question_id": 50102,
-       "prompt": "Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?"
-      },
-      {
        "question_id": 50103,
        "prompt": "Three rays share O = (0, 0, 0). Ray A: D = (1, 0, 0), hit at s = 6. Ray B: D = (1, 1, 1), hit at s = 4. Ray C: D = (2, 0, 0), hit at s = 3.5. Order the hit points from nearest to farthest."
       }
@@ -1106,7 +1073,6 @@
       50029,
       50096,
       50097,
-      50098,
       50099,
       50100,
       50101
@@ -5864,6 +5830,11 @@
        "question_id": 1574,
        "prompt": "Solve a @ x = b \u2014 the system, not a product.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50091,
+       "prompt": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -5908,7 +5879,8 @@
       1571,
       1572,
       1573,
-      1574
+      1574,
+      50091
      ],
      "misconceptions_markdown": "- **\"`*` multiplies matrices.\"** \u2014 `*` is elementwise; `@` is the matrix\n  product. Mixing them up usually *doesn't* crash (broadcasting can make `*`\n  legal), it just silently computes the wrong thing \u2014 the worst kind of bug.\n- **\"To solve a @ x = b, compute inv(a) @ b.\"** \u2014 `t.linalg.solve(a, b)` is\n  more accurate and faster; explicit inverses amplify rounding error and cost\n  more. Reach for `inv` only when the inverse itself is the deliverable.\n- **\"If `@` runs, the shapes were right.\"** \u2014 `@` between wrong-but-compatible\n  shapes (e.g. transposed operands, square matrices) runs happily and returns\n  garbage. Predict `(m, k) @ (k, n) \u2192 (m, n)` on paper first.\n- **\"Integer tensors are fine for linalg.\"** \u2014 They are not; the solvers\n  require floating point and will raise. Convert with `.to(t.float32)` first.",
      "notes_markdown": ""
@@ -8494,6 +8466,11 @@
        "question_id": 1605,
        "prompt": "Read u back off a known point \u2014 one coordinate is enough.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50068,
+       "prompt": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, \u22120.5, 2]]. Which point on this ray has x = 3?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -8522,7 +8499,8 @@
       826,
       827,
       1604,
-      1605
+      1605,
+      50068
      ],
      "misconceptions_markdown": "- **\"The direction must be a unit vector.\"** No. `u` is measured in\n  direction-lengths; any nonzero `D` is fine, and ARENA's rays are not\n  normalised.\n- **\"Solving for the line is solving for the ray.\"** A line accepts any\n  `u`; a ray needs `u \u2265 0`. Every \"does this ray hit\" test in 0.1 ends with\n  that sign check.\n- **\"`rays[0]` is the origins.\"** For a stack of rays `rays[0]` is the whole\n  first ray. The origins of every ray are `rays[:, 0]`.",
      "notes_markdown": ""
@@ -9256,6 +9234,11 @@
        "question_id": 1073,
        "prompt": "Return the component of each unit row direction on the first coordinate axis, shape (m,). x: float (m,n), every row nonzero.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50085,
+       "prompt": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -9297,7 +9280,8 @@
       1002,
       1071,
       1072,
-      1073
+      1073,
+      50085
      ],
      "misconceptions_markdown": "- **`norm()` with no `dim` gives row lengths.** It gives one number for the whole matrix; the axis must be named.\n- **An `(m,)` length divides each row.** It lines up with the columns; use `keepdim=True` to get `(m, 1)`.\n- **Normalizing changes the direction.** Every coordinate is scaled by the same factor, so only the length changes.\n- **A zero row normalizes to zero on its own.** It divides by zero and becomes `nan`; guard the denominator with `where`.",
      "notes_markdown": ""
@@ -10542,6 +10526,11 @@
        "question_id": 1101,
        "prompt": "Return the segment midpoint relative to the ray origin, shape (2,). r: ray (2,3) as [origin, direction]; s: segment (2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50095,
+       "prompt": "E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10583,7 +10572,8 @@
       1098,
       1099,
       1100,
-      1101
+      1101,
+      50095
      ],
      "misconceptions_markdown": "- **The columns are `D` and `B \u2212 A`.** With `B \u2212 A` the sign of `v` flips and the `0 \u2264 v \u2264 1` test fails; the second column is `A \u2212 B`.\n- **A solution means a hit.** It means the infinite lines cross; the ray needs `u \u2265 0` and the segment needs `v` in `[0, 1]`.\n- **A singular pair can be skipped by catching the error.** In a batch the error aborts every pair; substitute the identity and mask afterwards.\n- **`det == 0` is the right test.** Floating-point parallel lines give a tiny nonzero determinant; compare against a tolerance.",
      "notes_markdown": ""
@@ -10743,6 +10733,11 @@
        "question_id": 1117,
        "prompt": "Return number of segment pairs whose line intersection is behind the ray origin, per ray, shape (nr,). r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50111,
+       "prompt": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -10784,7 +10779,8 @@
       1114,
       1115,
       1116,
-      1117
+      1117,
+      50111
      ],
      "misconceptions_markdown": "- **Equal counts let you skip the inserted axes.** Then `a \u2212 o` zips ray `i` with segment `i`; the product needs `[:, None]` and `[None, :]`.\n- **`stack` broadcasts its inputs.** It requires identical shapes; extending only the direction leaves the edge with an unmatched ray axis \u2014 both operands must be `(nr, ns, 2)` first.\n- **Reduce as soon as you can.** Every mask is per pair; reduce once, at the end, along the axis the question names.\n- **`any(dim=0)` asks about rays.** It removes the ray axis and answers per segment; per-ray questions reduce `dim=1`.",
      "notes_markdown": ""
@@ -11279,6 +11275,11 @@
        "question_id": 1165,
        "prompt": "Return the farthest valid travel parameter per ray, or -1 on a miss, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 50098,
+       "prompt": "A kernel forgets the s \u2265 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
@@ -11309,6 +11310,10 @@
       {
        "question_id": 1721,
        "prompt": "Return a shaded image: per ray, 1/(1 + distance) where distance is the physical Euclidean distance from the origin to the nearest hit (directions need not be unit length), and 0 for background, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses."
+      },
+      {
+       "question_id": 50102,
+       "prompt": "Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?"
       }
      ],
      "independent_items": [
@@ -11320,7 +11325,8 @@
       1162,
       1163,
       1164,
-      1165
+      1165,
+      50098
      ],
      "misconceptions_markdown": "- **Misses can be filled with zero.** Zero wins every minimum; a miss must be `inf`.\n- **`argmin` of an all-`inf` row is background.** It is a valid-looking index; check the minimum value first.\n- **`s` is a distance.** It is a multiple of `D`; distance is `s * |D|`, equal only for unit directions.\n- **Reduce over triangles before checking `s \u2265 0`.** A hit behind the camera would then be the nearest; mask per pair, then reduce.",
      "notes_markdown": ""

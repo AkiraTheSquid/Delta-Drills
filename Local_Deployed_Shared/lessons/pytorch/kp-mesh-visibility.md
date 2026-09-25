@@ -7,8 +7,8 @@ supporting: ['raytracing.triangle-intersection', 'raytracing.batched-segments', 
 previews: []
 faded: [1153, 1154, 1155, 1156]
 guided: []
-independent: [1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164, 1165]
-integrated: [1166, 1167, 1168, 1718, 1719, 1720, 1721]
+independent: [1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164, 1165, 50098]
+integrated: [1166, 1167, 1168, 1718, 1719, 1720, 1721, 50102]
 ---
 
 ## Concept: Visibility chooses the nearest of many hits
@@ -230,6 +230,9 @@ Return whether each ray crosses more than one triangle, shape (nr,). r: rays (nr
 ### q1165
 Return the farthest valid travel parameter per ray, or -1 on a miss, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
 
+### q50098
+A kernel forgets the s ≥ 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?
+
 ## Integrated practice
 
 ### q1166
@@ -252,6 +255,9 @@ Return the depth image restricted to the KEPT triangles: per ray, the smallest s
 
 ### q1721
 Return a shaded image: per ray, 1/(1 + distance) where distance is the physical Euclidean distance from the origin to the nearest hit (directions need not be unit length), and 0 for background, shape (nr,). r: rays (nr,2,3) as [origin, direction]; tr: triangles (nt,3,3), vertices A,B,C. Singular pairs and hits behind the origin are misses.
+
+### q50102
+Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?
 
 ## Misconceptions
 

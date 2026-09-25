@@ -404,41 +404,6 @@
       }
     },
     {
-      "id": 50068,
-      "kind": "compute",
-      "difficulty": 60,
-      "prompt": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?",
-      "choices": [
-        {
-          "key": "A",
-          "text": "(3, −0.5, 2)",
-          "value": "Matrix([3,Rational(-1,2),2])"
-        },
-        {
-          "key": "B",
-          "text": "(3, 0, 0)",
-          "value": "Matrix([3,0,0])"
-        },
-        {
-          "key": "C",
-          "text": "(1, −1.5, 6)",
-          "value": "Matrix([1,Rational(-3,2),6])"
-        },
-        {
-          "key": "D",
-          "text": "(3, −1.5, 6)",
-          "value": "Matrix([3,Rational(-3,2),6])"
-        }
-      ],
-      "answer": "D",
-      "solution": "The direction's $x$ component is 1, so $x = 3$ needs $s = 3$: $(0, 0, 0) + 3(1, -0.5, 2) = (3, -1.5, 6)$.\n\n- A: moves $x$ alone; every component moves with $s$.\n- B: the $y$ and $z$ of the direction still apply.\n- C: scales $y$ and $z$ but leaves $x$ at the direction's value.",
-      "verify": {
-        "sympy": {
-          "truth": "Matrix([0,0,0])+3*Matrix([1,Rational(-1,2),2])"
-        }
-      }
-    },
-    {
       "id": 50069,
       "kind": "compute",
       "difficulty": 60,

@@ -369,41 +369,6 @@
       }
     },
     {
-      "id": 50085,
-      "kind": "compute",
-      "difficulty": 55,
-      "prompt": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
-      "choices": [
-        {
-          "key": "A",
-          "text": "tensor([5., 7., 2.])",
-          "value": "Matrix([5,7,2])"
-        },
-        {
-          "key": "B",
-          "text": "tensor([9., 25., 4.])",
-          "value": "Matrix([9,25,4])"
-        },
-        {
-          "key": "C",
-          "text": "tensor([3., 5., 2.])",
-          "value": "Matrix([3,5,2])"
-        },
-        {
-          "key": "D",
-          "text": "tensor([2.2361, 3.6056, 4.4721])",
-          "value": "Matrix([sqrt(5),sqrt(13),sqrt(20)])"
-        }
-      ],
-      "answer": "C",
-      "solution": "`dim=1` reduces across each row, giving one length per ray: $\\sqrt{1+4+4} = 3$, $\\sqrt{0+9+16} = 5$, $\\sqrt{4} = 2$.\n\n- A: sums absolute values (the L1 norm).\n- B: squared lengths, before the square root.\n- D: `dim=0`, one length per column.",
-      "verify": {
-        "sympy": {
-          "truth": "Matrix([sqrt(1+4+4), sqrt(0+9+16), sqrt(4)])"
-        }
-      }
-    },
-    {
       "id": 50086,
       "kind": "compute",
       "difficulty": 60,

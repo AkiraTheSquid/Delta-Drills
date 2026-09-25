@@ -15,6 +15,11 @@
 - `kp-<slug>.problems.json` beside each page: the problems that page owns
   (`{"kc": ..., "problems": [...]}` — format in `../math_bank.py`'s
   docstring; ids `>= 50000`).
+- 🔑 NOT the MC format itself. Format belongs to the problem, ownership to
+  the concept: an MC problem whose prompt assumes torch (`t.linalg.norm`,
+  a `(2, 3)` ray tensor, `t.where`) lives in a problems file beside the CODE
+  page of the torch/raytracing KC that teaches what it assumes, keeping its
+  math atom as a second atom tag (since 2026-09-25; `validate_math.py`).
 
 ## Does NOT own
 - The loader (`../math_bank.py`, stdlib-only, shared by the exporter, the
@@ -85,6 +90,19 @@
     prose (`dd-mc<n>`, choices listed, no key); the practice page grades.
 
 ## Recent Changes
+- 2026-09-25: **MC format decoupled from the Mathematics topic.** A code KP
+  may carry `kp-<slug>.problems.json` (MC ids only on independent /
+  integrated; `validate_lessons.check_kp` exempts them from the code-only
+  leak checks and refuses MC ids with no problems file beside the page).
+  Eight torch-flavoured problems left these pages for the KC that teaches
+  what they assume: 50068 → `raytracing.ray-parametrisation`, 50085 →
+  `tensor.row-normalization`, 50091 → `torch.linalg-basics`, 50095 →
+  `raytracing.segment-intersection`, 50111 → `raytracing.batched-segments`,
+  50098/50102 → `raytracing.mesh-visibility`; 50110 (ray–segment system) →
+  `math.intersection-systems`. Ids, keys, SymPy proofs unchanged; each keeps
+  its `la-*` / `ray-distance-depth` atom plus the owner's atom. The pages'
+  optional torch demonstrations stay (the user asked for code cells,
+  2026-09-21); their PROSE no longer uses course terms taught later.
 - 2026-09-22: Added `ma-00`, **standalone linear algebra for ARENA 0.1**,
   before the existing application lesson `ma-01`. Five new math KCs,
   30 MCQs (50032–50061), five checked demonstration cells. No new app

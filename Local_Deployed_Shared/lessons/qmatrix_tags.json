@@ -22934,11 +22934,18 @@
  },
  "50068": {
   "target_kcs": [
-   "math.vector-arithmetic"
+   "raytracing.ray-parametrisation"
   ],
-  "supporting_kcs": [],
-  "new_syntax": [],
-  "source": "kp-integrated"
+  "supporting_kcs": [
+   "torch.constructors",
+   "torch.broadcasting-rules",
+   "torch.slicing-views",
+   "torch.ranges"
+  ],
+  "new_syntax": [
+   "syntax.unpack"
+  ],
+  "source": "kp-independent"
  },
  "50069": {
   "target_kcs": [
@@ -23096,12 +23103,21 @@
  },
  "50085": {
   "target_kcs": [
-   "math.dot-products-norms"
+   "tensor.row-normalization"
   ],
   "supporting_kcs": [
-   "math.vector-arithmetic"
+   "torch.axis-reductions",
+   "torch.broadcasting-rules",
+   "torch.boolean-masking",
+   "torch.argmin-argmax",
+   "torch.constructors"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "Tensor.norm",
+   "Tensor.norm#dim",
+   "Tensor.norm#keepdim",
+   "torch.where"
+  ],
   "source": "kp-independent"
  },
  "50086": {
@@ -23156,12 +23172,17 @@
  },
  "50091": {
   "target_kcs": [
-   "math.linear-combinations"
+   "torch.linalg-basics"
   ],
   "supporting_kcs": [
-   "math.vector-arithmetic"
+   "torch.aggregations",
+   "torch.elementwise-ops"
   ],
-  "new_syntax": [],
+  "new_syntax": [
+   "syntax.matmul",
+   "torch.linalg.inv",
+   "torch.linalg.solve"
+  ],
   "source": "kp-independent"
  },
  "50092": {
@@ -23196,13 +23217,21 @@
  },
  "50095": {
   "target_kcs": [
-   "math.linear-combinations"
+   "raytracing.segment-intersection"
   ],
   "supporting_kcs": [
-   "math.vector-arithmetic"
+   "raytracing.ray-parametrisation",
+   "torch.linalg-basics",
+   "torch.stack-concat-interleave",
+   "torch.constructors",
+   "torch.boolean-masking",
+   "tensor.row-normalization",
+   "tensor.indexed-selection"
   ],
-  "new_syntax": [],
-  "source": "kp-integrated"
+  "new_syntax": [
+   "torch.linalg.det"
+  ],
+  "source": "kp-independent"
  },
  "50096": {
   "target_kcs": [
@@ -23228,11 +23257,14 @@
  },
  "50098": {
   "target_kcs": [
-   "math.ray-distance"
+   "raytracing.mesh-visibility"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates",
-   "math.dot-products-norms"
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
   ],
   "new_syntax": [],
   "source": "kp-independent"
@@ -23272,11 +23304,14 @@
  },
  "50102": {
   "target_kcs": [
-   "math.ray-distance"
+   "raytracing.mesh-visibility"
   ],
   "supporting_kcs": [
-   "math.barycentric-coordinates",
-   "math.dot-products-norms"
+   "raytracing.triangle-intersection",
+   "raytracing.batched-segments",
+   "raytracing.make-rays-2d",
+   "tensor.indexed-selection",
+   "torch.dtype-astype"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
@@ -23354,23 +23389,26 @@
  },
  "50110": {
   "target_kcs": [
-   "math.matrix-equations"
+   "math.intersection-systems"
   ],
   "supporting_kcs": [
-   "math.linear-combinations"
+   "math.ray-geometry",
+   "math.matrix-equations"
   ],
   "new_syntax": [],
   "source": "kp-integrated"
  },
  "50111": {
   "target_kcs": [
-   "math.matrix-equations"
+   "raytracing.batched-segments"
   ],
   "supporting_kcs": [
-   "math.linear-combinations"
+   "raytracing.segment-intersection",
+   "torch.broadcasting-rules",
+   "torch.axis-reductions"
   ],
   "new_syntax": [],
-  "source": "kp-integrated"
+  "source": "kp-independent"
  },
  "50112": {
   "target_kcs": [

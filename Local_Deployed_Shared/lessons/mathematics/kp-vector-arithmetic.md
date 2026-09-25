@@ -9,7 +9,7 @@ concepts: []
 faded: [50032, 50033]
 guided: []
 independent: [50034, 50035, 50062, 50063, 50064, 50065, 50066, 50067]
-integrated: [50036, 50037, 50068, 50069, 50070, 50071]
+integrated: [50036, 50037, 50069, 50070, 50071]
 ---
 
 ## Concept
@@ -97,9 +97,6 @@ Both points A and B are translated by T. Which expression still equals the origi
 
 ### q50037
 A = (2, 0, −1), B = (6, 4, 3). Find A + (B − A)/4.
-
-### q50068
-ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?
 
 ### q50069
 A segment is stored as [[1, 2, 0], [5, −2, 4]]: row 0 is A, row 1 is B. Which point is three quarters of the way from A to B?
