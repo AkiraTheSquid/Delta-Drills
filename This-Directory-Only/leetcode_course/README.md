@@ -51,4 +51,7 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-09-25: Wired into the app (pass 2). `scripts/leetcode_course/export_app.py` turns
+  `bank.jsonl` into `Local_Deployed_Shared/lessons/leetcode/problems.json` (383 drills,
+  q60000+, 40 concepts; ordered-set left out with 0 drills); course toggle on the Courses tab.
 - 2026-09-25: Folder created: concept graph, tags, bank for the LeetCode Patterns course.

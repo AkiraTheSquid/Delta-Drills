@@ -1,4 +1,4 @@
-/* concept-graph/course-registry.js — the two courses the Courses tab
+/* concept-graph/course-registry.js — the courses the Courses tab
    (courses.js) and the Knowledge Graph view (graph-views.js) both read.
 
    Kept in lockstep BY HAND with the backend's
@@ -53,6 +53,40 @@
     return arenaLoading;
   };
 
+  // LeetCode Patterns: its concepts are whatever leetcode.* rows the exporter
+  // (This-Directory-Only/scripts/leetcode_course/export_app.py) wrote into
+  // lessons/kc_registry.json — the backend reads the same prefix, so the two
+  // registries cannot disagree on membership.
+  let leetcode = null;      // {kcs: Set, titles: {}}, once resolved successfully
+  let leetcodeLoading = null;
+  const loadLeetcode = () => {
+    if (leetcode) return Promise.resolve(leetcode);
+    if (leetcodeLoading) return leetcodeLoading;
+    leetcodeLoading = fetch("lessons/kc_registry.json", { cache: "no-cache" })
+      .then((r) => {
+        if (!r.ok) throw new Error("kc_registry.json " + r.status);
+        return r.json();
+      })
+      .then((raw) => {
+        const kcs = new Set();
+        const titles = {};
+        (raw?.kcs || []).forEach((kc) => {
+          if (kc && typeof kc.id === "string" && kc.id.startsWith("leetcode.")) {
+            kcs.add(kc.id);
+            titles[kc.id] = kc.title || kc.id;
+          }
+        });
+        leetcode = { kcs, titles };
+        leetcodeLoading = null;
+        return leetcode;
+      })
+      .catch((err) => {
+        leetcodeLoading = null;  // same as ARENA: never cache a failure
+        throw err;
+      });
+    return leetcodeLoading;
+  };
+
   const COURSES = [
     {
       id: "arena",
@@ -72,6 +106,17 @@
       toggleLabel: "Add to practice",
       milestoneKcs: () => Promise.resolve(new Set(DELTA_DRILLS_KCS)),
       kcTitle: (kc) => DELTA_DRILLS_TITLES[kc] || kc,
+    },
+    {
+      id: "leetcode",
+      label: "LeetCode Patterns",
+      eyebrow: "Coding-interview problems, by pattern",
+      detailKind: "lesson-list",
+      intro:
+        "The Grokking coding-interview patterns as a graph: two pointers, sliding window, trees, graphs, heaps, DP and more, each with real LeetCode problems you solve in Python against hidden test cases. Open a pattern to work it on the Knowledge Graph, scoped to just this course.",
+      toggleLabel: "Add to practice",
+      milestoneKcs: () => loadLeetcode().then((c) => c.kcs),
+      kcTitle: (kc) => (leetcode && leetcode.titles[kc]) || kc,
     },
   ];
 

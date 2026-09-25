@@ -1,4 +1,4 @@
-"""The two courses a learner can enable: which KCs each one's own share
+"""The courses a learner can enable: which KCs each one's own share
 (course_mix.py) treats as its pool. New courses are added here only —
 course_mix.py, the Courses tab and the KG view all read this list, never a
 hardcoded course id.
@@ -27,9 +27,22 @@ DELTA_DRILLS_KCS = [
 COURSES = (
     {"id": "arena", "label": "ARENA", "standalone": False},
     {"id": "delta-drills", "label": "Delta Drills", "standalone": True},
+    {"id": "leetcode", "label": "LeetCode Patterns", "standalone": True},
 )
 COURSE_IDS = tuple(c["id"] for c in COURSES)
 _STANDALONE_KCS = {kc: "delta-drills" for kc in DELTA_DRILLS_KCS}
+
+# LeetCode Patterns owns every `leetcode.*` KC in lessons/kc_registry.json —
+# the rows scripts/leetcode_course/export_app.py writes (a concept with no
+# drills is left out there). A prefix, not a list, so this file never goes
+# stale when the exporter adds a pattern; concept-graph/course-registry.js
+# reads the same prefix.
+LEETCODE_PREFIX = "leetcode."
+
+
+def _leetcode_kcs() -> List[str]:
+    from app import kc_graph
+    return [kc for kc in kc_graph._registry() if kc.startswith(LEETCODE_PREFIX)]
 
 
 def milestones(course_id: str) -> List[str]:
@@ -41,6 +54,8 @@ def milestones(course_id: str) -> List[str]:
         return list(diagnostic._arena_links().keys())
     if course_id == "delta-drills":
         return list(DELTA_DRILLS_KCS)
+    if course_id == "leetcode":
+        return _leetcode_kcs()
     return []
 
 
@@ -50,6 +65,8 @@ def course_off(user_state, kc: str) -> bool:
     disabled concept — frontier, drill servability, explore probes, reviews,
     placement — respects the course toggle too, with no second rule."""
     course_id = _STANDALONE_KCS.get(kc)
+    if course_id is None and kc.startswith(LEETCODE_PREFIX):
+        course_id = "leetcode"
     if course_id is None:
         return False
     from app import course_mix

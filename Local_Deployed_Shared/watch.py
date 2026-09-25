@@ -291,9 +291,10 @@ def check_invariants():
         f"{_rows} rows, {menu.count('account-menu-icon')} icons"
     )
     # The two explainer rows land on a SECTION of the shared page, not a page
-    # each: the AISC write-up since 2026-09-24. account-menu.js reads this
-    # attribute; each value must name an element that exists.
-    for lab in ("aisc-root", "aisc-how"):
+    # each: since 2026-09-25 a set of articles (aisc/articles.js opens the one
+    # holding the target). account-menu.js reads this attribute; each value
+    # must name an element that exists.
+    for lab in ("aisc-a-why", "aisc-why-use"):
         assert f'data-lab-open="{lab}"' in menu, (
             f"the account menu no longer lands on #{lab}"
         )

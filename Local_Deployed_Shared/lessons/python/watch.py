@@ -34,7 +34,7 @@ LESSON_ID = "py-0"
 ROOT_KC = "python.values-and-names"
 # Other chains' own floors — exact ids, so a SECOND root inside either chain
 # (a math concept that lost its prereqs) still fails the check below.
-OTHER_FLOORS = {"math.vector-arithmetic", "deltadrills.mastery"}
+OTHER_FLOORS = {"math.vector-arithmetic", "deltadrills.mastery", "leetcode.arrays-strings"}
 
 
 def _registry():
@@ -83,7 +83,8 @@ def check_the_floor_stays_under_the_numpy_course():
     """One root, and it is the python one; np-1's first concept still stands on py-0."""
     kcs = {kc["id"]: kc for kc in _registry()["kcs"]}
     # Chains with their own floor are not a second root of THIS course:
-    # deltadrills.mastery heads a standalone course (backend course_registry.py),
+    # deltadrills.mastery and leetcode.arrays-strings head standalone courses
+    # (backend course_registry.py),
     # and math.vector-arithmetic the standalone linear-algebra chain under
     # ARENA 0.1 (d18fff13), by design.
     roots = sorted(k for k, v in kcs.items() if not v["prereqs"] and k not in OTHER_FLOORS)

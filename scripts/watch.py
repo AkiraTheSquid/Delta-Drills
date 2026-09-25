@@ -274,6 +274,11 @@ def check_solution_symbol_coverage():
 
     bank = json.loads(A.QUESTIONS.read_text(encoding='utf-8'))
     questions = bank if isinstance(bank, list) else bank.get('questions', bank)
+    # The prerequisite audit skips a lesson-less course's drills outright
+    # (A.LESSONLESS_PREFIXES), so their constructs are not its to see.
+    qmatrix = json.loads(A.QMATRIX.read_text(encoding='utf-8'))
+    questions = [q for q in questions if not A.is_lessonless(
+        (qmatrix.get(str(q.get('id'))) or {}).get('target_kcs') or [])]
     sources = [q.get('answer_code') or '' for q in questions]
     sources += [q.get('starter_code') or '' for q in questions]
     missed = S.unhandled_node_types(sources)

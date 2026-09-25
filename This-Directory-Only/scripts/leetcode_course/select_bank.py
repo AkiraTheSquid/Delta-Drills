@@ -53,7 +53,9 @@ def problems() -> dict[str, dict]:
         if p["source"] == "leetcode" and p["id"] in ok:
             out[p["id"]] = {k: p[k] for k in ("id", "tier", "title", "url", "difficulty_label", "statement",
                                                 "starter_code", "entry_point", "preamble", "solution", "tests")}
-    for line in open(RAW_DIR / "generated.jsonl"):
+    # Absent until gen_missing.py has run: the bank then ships dataset rows only.
+    gen = RAW_DIR / "generated.jsonl"
+    for line in (open(gen) if gen.exists() else ()):
         g = json.loads(line)
         if g["ok"]:
             out[g["key"]] = {"id": g["key"], "tier": "core", "title": g["title"], "url": g["meta"]["url"],

@@ -76,10 +76,11 @@
       const response = await window.apiFetch("/site-content/about");
       if (!response.ok) throw new Error(`Could not load saved content (${response.status}).`);
       const saved = await response.json();
-      // A copy saved before the AISC write-up replaced the page (no
-      // #aisc-root) would put the old page back; the shipped HTML wins until
-      // the page is saved again.
-      if (saved?.html && saved.html.includes('id="aisc-root"')) {
+      // A copy saved before the page took its current shape would put the old
+      // one back: before the AISC write-up (no #aisc-root), or before it was
+      // split into articles on 2026-09-25 (no #aisc-articles index). The
+      // shipped HTML wins until the page is saved again.
+      if (saved?.html && saved.html.includes('id="aisc-articles"')) {
         content.innerHTML = saved.html;
         restoreShells(content);
       }

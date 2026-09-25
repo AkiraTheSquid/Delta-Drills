@@ -227,6 +227,12 @@ def check_the_glossary_points_at_live_kcs():
     assert not unknown, f'glossary.js references KCs missing from kc_registry.json: {unknown}'
 
 
+# Standalone courses shipped WITHOUT lesson pages (Seth, 2026-09-25: LeetCode
+# Patterns is drills only). No page means no notebook and no compiled KP; the
+# drills and the q-matrix are still checked like every other KC's.
+LESSONLESS_LESSONS = {"lc-1"}
+
+
 def check_every_lesson_has_a_notebook():
     """Every lesson in kc_registry.json must be in lessons/colab_notebooks.json
     and have its web notebook under lessons/notebooks/ — es-1 shipped without
@@ -237,6 +243,8 @@ def check_every_lesson_has_a_notebook():
     missing = []
     for lesson in registry['lessons']:
         lid = lesson['id']
+        if lid in LESSONLESS_LESSONS:
+            continue
         if lid not in published:
             missing.append(f'{lid}: not in colab_notebooks.json (run scripts/generate_colab_notebooks.py)')
         if not os.path.exists(os.path.join(_DIR, 'notebooks', f'{lid}.json')):
@@ -270,7 +278,7 @@ def check_every_kc_is_teachable():
         kid = kc['id']
         if kc.get('lesson') not in lessons:
             problems.append(f'{kid}: lesson {kc.get("lesson")!r} not in registry lessons[]')
-        if (kid, kc.get('lesson')) not in compiled:
+        if (kid, kc.get('lesson')) not in compiled and kc.get('lesson') not in LESSONLESS_LESSONS:
             problems.append(f'{kid}: no KP compiled under lesson {kc.get("lesson")!r} in lessons_structured.json')
         if not targeted.get(kid):
             problems.append(f'{kid}: no bank question targets it — unservable')

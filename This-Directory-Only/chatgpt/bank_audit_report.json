@@ -1,5 +1,5 @@
 {
- "total": 1591,
+ "total": 1974,
  "questions": {
   "64": [
    {
@@ -862,11 +862,360 @@
     "var": "ids",
     "detail": "post-setup var 'ids' already equals the expected value"
    }
+  ],
+  "60016": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60324": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60024": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60027": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60029": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60338": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60041": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60043": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60054": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60061": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60349": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 3/8 graded cases"
+   }
+  ],
+  "60350": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 3/8 graded cases"
+   }
+  ],
+  "60351": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/8 graded cases"
+   }
+  ],
+  "60352": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ListNode']"
+   }
+  ],
+  "60353": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ListNode']"
+   }
+  ],
+  "60354": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ListNode']"
+   },
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/8 graded cases"
+   }
+  ],
+  "60355": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ListNode']"
+   },
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60356": [
+   {
+    "check": "answer_symbol_in_prompt",
+    "detail": "prompt names solution call(s) in code form: ['ListNode']"
+   }
+  ],
+  "60357": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 3/8 graded cases"
+   }
+  ],
+  "60358": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60065": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60087": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60092": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 2/8 graded cases"
+   }
+  ],
+  "60121": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60122": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60129": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60132": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60163": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 1/8 graded cases"
+   }
+  ],
+  "60165": [
+   {
+    "check": "starter_passes_some_cases",
+    "detail": "starter as handed to the learner passes 4/8 graded cases"
+   }
+  ],
+  "60171": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60399": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60400": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60196": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60215": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60239": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60241": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60251": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60257": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60258": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60268": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60271": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60273": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60277": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60281": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60283": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60294": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60297": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60300": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60301": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60306": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
+  ],
+  "60309": [
+   {
+    "check": "precompute_leak_scalar",
+    "var": "TYPE_CHECKING",
+    "detail": "post-setup var 'TYPE_CHECKING' already equals the expected value"
+   }
   ]
  },
  "counts": {
-  "answer_symbol_in_prompt": 130,
+  "answer_symbol_in_prompt": 135,
   "precompute_leak": 10,
-  "starter_passes_some_cases": 2
+  "starter_passes_some_cases": 16,
+  "precompute_leak_scalar": 34
  }
 }

@@ -740,6 +740,7 @@ def load_questions() -> list[dict]:
             )
 
     questions.extend(load_math_questions(questions))
+    questions.extend(load_leetcode_questions(questions))
     return questions
 
 
@@ -762,6 +763,30 @@ def load_math_questions(csv_questions: list[dict]) -> list[dict]:
     if bad:
         print(f"ERROR: math problem ids collide with the CSV bank or sit below "
               f"{math_bank.MATH_ID_FLOOR}: {bad}", file=sys.stderr)
+        sys.exit(1)
+    return rows
+
+
+LEETCODE_ID_FLOOR = 60000
+
+
+def load_leetcode_questions(earlier: list[dict]) -> list[dict]:
+    """The LeetCode Patterns course's drills, appended last.
+
+    lessons/leetcode/problems.json is written whole by
+    This-Directory-Only/scripts/leetcode_course/export_app.py (every row already
+    graded by code_runner: reference passes, bare starter fails). Ids sit at or
+    above LEETCODE_ID_FLOOR; any collision with an earlier row is refused for
+    the same reason the math range is.
+    """
+    path = SHARED_DIR / "lessons" / "leetcode" / "problems.json"
+    if not path.exists():
+        return []
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    taken = {int(q["id"]) for q in earlier}
+    bad = sorted(r["id"] for r in rows if r["id"] < LEETCODE_ID_FLOOR or r["id"] in taken)
+    if bad:
+        print(f"ERROR: LeetCode problem ids collide or sit below {LEETCODE_ID_FLOOR}: {bad}", file=sys.stderr)
         sys.exit(1)
     return rows
 

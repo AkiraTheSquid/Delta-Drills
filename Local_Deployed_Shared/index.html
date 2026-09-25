@@ -167,7 +167,7 @@
        typefaces come from Google Fonts, loaded NON-blocking (media swap): a
        dead fonts CDN must not hold up first paint of the whole app for one
        page most visits never open; the fallbacks are Georgia / monospace. -->
-  <link rel="stylesheet" href="aisc/aisc.css?v=10" />
+  <link rel="stylesheet" href="aisc/aisc.css?v=11" />
   <link rel="stylesheet" media="print" onload="this.media='all'"
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
@@ -264,19 +264,16 @@
          contents in the actual real topbar, rather than the top bar that it
          put below the existing top bar"). Shown only while
          #page-learn-about-app is the page on screen (aisc/aisc.css, a `:has`
-         rule); aisc/js/common.js scrolls on click and marks the section in
-         view. It lives here, outside #about-page-content, so the About
+         rule). Since 2026-09-25 it lists the page's ARTICLES, not its
+         sections: aisc/articles.js opens the one clicked and marks the one
+         open. It lives here, outside #about-page-content, so the About
          editor never saves it. -->
-    <nav class="aisc-toc" id="aisc-toc" aria-label="On this page">
-      <a href="#aisc-problem">Problem</a>
-      <a href="#aisc-impact">Theory of change</a>
-      <a href="#aisc-how">How it works</a>
-      <a href="#aisc-different">What's new</a>
-      <a href="#aisc-plan">AISC plan</a>
-      <a href="#aisc-evidence">Evidence</a>
-      <a href="#aisc-risk">Risks</a>
-      <a href="#aisc-lead">Lead</a>
-      <a href="#aisc-questions">Questions</a>
+    <nav class="aisc-toc" id="aisc-toc" aria-label="Articles">
+      <a href="#aisc-a-why">Why it exists</a>
+      <a href="#aisc-a-case">The case</a>
+      <a href="#aisc-a-how">How it works</a>
+      <a href="#aisc-a-evidence">Evidence</a>
+      <a href="#aisc-a-aisc">AISC proposal</a>
     </nav>
     <nav class="tabs">
       <!-- ONE tab where there were two. "Why This App Exists" and "How to use
@@ -407,10 +404,11 @@
            relative to everything else"). The rest are the places you visit once.
 
            🔴 THE TWO EXPLAINER ITEMS LAND ON A SECTION, not a page of their own.
-           Both open #page-learn-about-app (the AISC write-up since 2026-09-24);
-           `data-lab-open` carries the section id — #aisc-root (why) or
-           #aisc-how (how) — and account-menu.js switches to the page and
-           scrolls it into view. Two menu rows for one page is the
+           Both open #page-learn-about-app (a set of articles since
+           2026-09-25); `data-lab-open` carries the target id — #aisc-a-why
+           (the "Why this app exists" article) or #aisc-why-use (its "How the
+           app works" part) — and account-menu.js switches to the page, opens
+           the article holding it and scrolls it into view. Two menu rows for one page is the
            point — the page's own summaries are what a first-time visitor reads,
            and this is the way back to either half by name. -->
       <div class="account-menu hidden" id="account-menu" role="menu"
@@ -520,7 +518,7 @@
           <span class="account-menu-label">Knowledge graph</span>
         </button>
         <button class="account-menu-item" type="button" role="menuitem"
-                data-goto-tab="learn-about-app" data-lab-open="aisc-root">
+                data-goto-tab="learn-about-app" data-lab-open="aisc-a-why">
           <span class="account-menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                  stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -532,7 +530,7 @@
           <span class="account-menu-label">Why this app exists</span>
         </button>
         <button class="account-menu-item" type="button" role="menuitem"
-                data-goto-tab="learn-about-app" data-lab-open="aisc-how">
+                data-goto-tab="learn-about-app" data-lab-open="aisc-why-use">
           <span class="account-menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                  stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -849,16 +847,19 @@
 
 
   <!-- LEARN ABOUT THE APP — one tab (merged 2026-08-23 from "Why This App
-       Exists" and "How to use it"), and since 2026-09-24 its whole body is the
-       AISC write-up (Seth: replace both halves with the delta-drills-aisc
-       site). The two account-menu rows still both land here; `data-lab-open`
-       now names the SECTION to scroll to — #aisc-root for "Why this app
-       exists", #aisc-how for "How this app works" — not a <details> to open.
+       Exists" and "How to use it"). Since 2026-09-24 its body is the AISC
+       write-up (Seth: replace both halves with the delta-drills-aisc site),
+       and since 2026-09-25 that write-up is split into five articles, one
+       open at a time (aisc/articles.js). Article 1 is the old page's text
+       again (lead paragraph, "three markers", "How the app works"). The two
+       account-menu rows still both land here; `data-lab-open` names the
+       element to scroll to — #aisc-a-why for "Why this app exists",
+       #aisc-why-use for "How this app works" — and the article holding it
+       is opened first.
 
-       The old page (lead paragraph, "three markers" and "How the app works"
-       disclosures) is gone. Its concept map, drawn by
-       concept-graph/why-graph.js, is now Fig. 2 of the write-up
-       (#aisc-fig-graph holds #wta-graph-cy).
+       The old page's concept map, drawn by concept-graph/why-graph.js, is
+       Fig. 2 of the write-up (#aisc-fig-graph holds #wta-graph-cy), in
+       article 3.
 
        Styling: aisc/aisc.css, nested under #aisc-root; it also lifts this
        page's 985px .container cap, since the write-up has its own measure. -->
@@ -880,37 +881,110 @@
            loaded lazily by aisc/boot.js the first time this page is on screen.
            `data-about-runtime` marks the live figures: about-page-editor.js
            never lets them be edited and restores them from this markup when a
-           saved copy is shown. The two account-menu rows land on #aisc-root
-           (why) and #aisc-how (how). -->
+           saved copy is shown. Since 2026-09-25 the sections are grouped
+           into five <article>s (see ARTICLES INDEX below); the two
+           account-menu rows land on #aisc-a-why and #aisc-why-use. -->
       <div class="aisc" id="aisc-root">
 
       <div class="aisc-main" id="aisc-top">
 
-      <!-- ============================================================ HERO -->
-      <section class="hero" data-slot="hero">
-        <div>
-          <p class="kicker">AI Safety Camp 12 · Project proposal · Virtual, Jan–Apr 2027</p>
-          <h1>Get researchers <span class="delta">ARENA-ready</span> in weeks, not months.</h1>
-          <p class="lede">Delta Drills is an adaptive tutor for the prerequisites of AI safety research engineering. It maps what a learner already knows onto a knowledge graph of the ARENA curriculum, teaches only what is missing, and keeps it from decaying.</p>
-          <dl class="meta">
-            <dt>Project lead</dt><dd>Seth Gibson</dd>
-            <dt>Live app</dt><dd><a href="https://deltadrills.com" rel="noopener">deltadrills.com</a></dd>
-            <dt>Status</dt><dd>Working product · user validation just starting (n=1 so far)</dd>
-          </dl>
+      <!-- ================================================ ARTICLES INDEX
+           The page is a set of articles since 2026-09-25 (Seth: "break up the
+           page for the different sections into different articles"). One is
+           open at a time; aisc/articles.js shows it, hides the rest, marks it
+           here and in the topbar (#aisc-toc), and opens the right one for any
+           #aisc- link on the page. Articles 2–5 ship `hidden` so nothing
+           flashes before the script runs. -->
+      <nav class="art-index" id="aisc-articles" aria-label="Articles">
+        <a class="card art-link" href="#aisc-a-why"><span class="tag">Article 1</span><h4>Why this app exists</h4><p>What Delta Drills is, the three things that set it apart, and how you use it.</p></a>
+        <a class="card art-link" href="#aisc-a-case"><span class="tag">Article 2</span><h4>The case for it</h4><p>Why the ramp into AI safety research is the bottleneck, and why shortening it is safety work.</p></a>
+        <a class="card art-link" href="#aisc-a-how"><span class="tag">Article 3</span><h4>How it works</h4><p>The knowledge graph, placement, spaced repetition and remediation, as live figures.</p></a>
+        <a class="card art-link" href="#aisc-a-evidence"><span class="tag">Article 4</span><h4>Evidence so far</h4><p>What counts as evidence, one learner's September in the app, and where things stand.</p></a>
+        <a class="card art-link" href="#aisc-a-aisc"><span class="tag">Article 5</span><h4>AI Safety Camp 12 proposal</h4><p>The plan for Jan–Apr 2027: streams, timeline, risks, the lead and the open questions.</p></a>
+      </nav>
+
+      <!-- ============================================ ARTICLE 1 · WHY
+           Seth's own text from before the AISC write-up replaced the page
+           (index.html at 43b78681, the "Why this app exists" and "How the app
+           works" disclosures), put back 2026-09-25 because "the writing is
+           much better". The words are his, verbatim; only the markup moved
+           into the write-up's tiles and cards. The old page's concept map is
+           Fig. 2 now, so its section links there instead of drawing a
+           second copy. -->
+      <article class="aisc-article" id="aisc-a-why">
+      <section id="aisc-why">
+        <div class="tile">
+          <p class="kicker">Article 1</p>
+          <h2>Why this app exists</h2>
+          <div class="prose">
+            <p>Delta Drills is an <strong>intelligent tutoring system</strong> that serves the learner LeetCode-style problems to train PyTorch prerequisites specifically for the AI-safety <strong>ARENA</strong> curriculum. Given that it is an intelligent tutoring system, there are three markers that distinguish it in value from something like LeetCode or Khan Academy (or simply prompting ChatGPT or Claude as a tutor).</p>
+          </div>
         </div>
-        <div class="hero-fig" data-about-runtime id="aisc-hero-fig" aria-hidden="true"><svg id="aisc-hero-svg" viewBox="0 0 400 400"></svg></div>
+        <div class="tile">
+          <h3>It is personalized, and AI-paced (as opposed to self-paced)</h3>
+          <div class="prose">
+            <p>The app maintains a student model that estimates a student's strengths and weaknesses as they work. It then serves them the right concept at the right level of difficulty and scaffolding. Students move on from a concept when they have mastered it, rather than after they run out of time in a course where time conditions dictate keeping up with everyone else in your cohort (as with any in-person program).</p>
+          </div>
+        </div>
+        <div class="tile">
+          <h3>It eliminates decision fatigue of choosing content, while preserving human connection</h3>
+          <div class="prose">
+            <p>For this MVP, I target PyTorch, but these principles apply just as well to all the other concepts necessary for ARENA prerequisites (and beyond, to ARENA itself). In order to prepare for ARENA, the learner is left with prioritizing learning linear algebra, calculus, information theory, and neural networks, all before even touching the curriculum. Self-diagnosing and practicing the right concepts with the right investment becomes irrelevant if one has a tool that does all of that automatically. There are no modules to click on like one has with Khan Academy.</p>
+            <p>For the ARENA curriculum itself, one may wonder how this would align with a linear 8-week program. It doesn't. Or rather, not without adjustment. My vision is to give the option to go through the ARENA curriculum with Delta Drills driving it all. Interacting with other humans is also valuable, however, which is why I designed a path that syncs well with the in-person program. The curriculum already serves up suggested time limits for working on problems. If a learner spends 15 minutes on a problem they struggled with, they should spend time later shoring up the concepts that made it hard. Delta Drills queues that practice for them, so they keep pace with the cohort and the gaps still get closed.</p>
+          </div>
+        </div>
+        <div class="tile">
+          <h3>It leverages the expertise reversal effect</h3>
+          <div class="prose">
+            <p>Instruction that helps a novice can actively hurt someone further along. A full worked example is exactly what you need the first time you meet a concept; once you are competent, that same example gets in your way. So the app picks more than the concept. It also picks the level of support: a lesson or worked example when a concept is new to you, a partially worked example as you improve, and a bare problem once you are strong. Same material, support matched to where you stand.</p>
+          </div>
+        </div>
       </section>
 
-      <div class="status rv" data-slot="status">
-        <div class="built"><b>● Built</b><p><span id="aisc-stat-kcs" class="num">82</span> concepts on a prerequisite graph, <span id="aisc-stat-q" class="num">1,585</span> executable drills, a graph-wide placement test, spaced review, and remediation that walks down the graph.</p></div>
-        <div class="testing"><b>● Being tested now</b><p>Do ARENA organizers discover prerequisite gaps only after a cohort starts? When learners stall mid-course, is the cause a missing prerequisite?</p></div>
-        <div class="unknown"><b>● Not yet known</b><p>Whether a shorter ramp translates into more safety research, and whether organizers will change their workflow to use it. The AISC project is designed to find out.</p></div>
-      </div>
+      <section id="aisc-why-use">
+        <div class="tile">
+          <p class="kicker">How the app works</p>
+          <h2>Three steps</h2>
+          <div class="prose"><p>You will spend nearly all of your time on the second one.</p></div>
+        </div>
+        <div class="cols">
+          <div class="card"><span class="tag">Step 1</span><h4>Take the placement test</h4><p>Start here. The placement test serves you at most six problems and takes twelve minutes at the outside, since each problem is capped at two minutes. Every answer updates the app's estimate of your understanding across every concept in the knowledge graph, not just the concept the question came from. That is why six problems are enough: when the test ends, Practice knows where to start you.</p></div>
+          <div class="card"><span class="tag">Step 2</span><h4>Live on the Practice tab</h4><p>Day to day, the Practice tab is the whole app. Open it and solve what it gives you. You do not pick topics or track what is due, and you do not decide when you are done with a concept; the app works that out from your answers. This is where you spend most of your time, and there is nothing else you need to manage.</p></div>
+          <div class="card"><span class="tag">Step 3</span><h4>Then ARENA itself</h4><p>Whenever you are ready, the app brings you over to the ARENA curriculum itself, landing you on the exact coding problem for the ARENA exercise you are ready for. That handoff is the point of everything before it.</p></div>
+        </div>
+      </section>
+
+      <section id="aisc-why-loop">
+        <div class="tile">
+          <p class="kicker">Under the hood</p>
+          <h2>One loop, run against your own frontier</h2>
+        </div>
+        <div class="cols three">
+          <div class="card"><span class="tag">1</span><h4>A placement test places you</h4><p>A short placement shows you where you actually stand against what ARENA will ask of you.</p></div>
+          <div class="card"><span class="tag">2</span><h4>It picks the concept</h4><p>The app chooses the next concept to teach you, matched to your current level of mastery.</p></div>
+          <div class="card"><span class="tag">3</span><h4>And picks how to teach it</h4><p>For that concept it serves one of three things: a lesson, a worked example, or practice problems.</p></div>
+          <div class="card"><span class="tag">4</span><h4>Your answer moves the model</h4><p>How you do updates the student model, so the next choice is made on newer evidence than the last one.</p></div>
+          <div class="card"><span class="tag">5</span><h4>The scaffolding fades</h4><p>As you solve problems the model tracks your learning frontier and pulls the support back to match it.</p></div>
+          <div class="card"><span class="tag">6</span><h4>Then the real thing</h4><p>Once you're ready for an ARENA problem, it gives you the ARENA problem.</p></div>
+        </div>
+        <div class="tile">
+          <h3>The map underneath: every concept, and what it needs first</h3>
+          <div class="prose">
+            <p>The app knows the curriculum as a graph: each box is one concept, and an arrow means you need the concept it comes from before the one it points to. That is what lets it tell "you have not learned this yet" apart from "you were never taught the thing underneath it".</p>
+            <p><a href="#aisc-fig-graph">See the whole map (Fig. 2, in How it works) →</a></p>
+          </div>
+        </div>
+      </section>
+      <p class="art-next"><a href="#aisc-a-case">Next · The case for it →</a></p>
+      </article>
+
+      <!-- ============================================ ARTICLE 2 · THE CASE -->
+      <article class="aisc-article" id="aisc-a-case" hidden>
 
       <!-- ============================================================ PROBLEM -->
       <section id="aisc-problem" data-slot="problem">
         <div class="tile">
-          <p class="kicker">01 · The bottleneck</p>
+          <p class="kicker">The bottleneck</p>
           <h2>The field is <em>ramp-limited</em>, and the ramp leaks.</h2>
           <div class="prose">
             <p>ARENA is the standard on-ramp from "motivated and numerate" to "can implement a transformer and run interpretability experiments." Its exercises assume fluency in PyTorch tensor manipulation, einops, einsum, linear algebra and probability. Cohorts arrive with very different amounts of that fluency.</p>
@@ -923,7 +997,7 @@
       <!-- ============================================================ IMPACT -->
       <section id="aisc-impact" data-slot="impact">
         <div class="tile">
-          <p class="kicker">02 · Theory of change</p>
+          <p class="kicker">Theory of change</p>
           <h2>We still need humans who <em>understand what the AI is doing</em>.</h2>
           <div class="prose"><p>Why this is safety work and not ed-tech, in three legs. None of them is shown by data yet; each names what would test it.</p></div>
         </div>
@@ -964,10 +1038,15 @@
         </div>
       </section>
 
+      <p class="art-next"><a href="#aisc-a-how">Next · How it works →</a></p>
+      </article>
+
+      <!-- ============================================ ARTICLE 3 · HOW IT WORKS -->
+      <article class="aisc-article" id="aisc-a-how" hidden>
       <!-- ============================================================ HOW -->
       <section id="aisc-how" data-slot="how">
         <div class="tile">
-          <p class="kicker">03 · How it works</p>
+          <p class="kicker">How it works</p>
           <h2>An expert tutor's decisions, <em>made by the graph</em>.</h2>
           <div class="prose">
             <p>The architecture follows Math Academy's published design — a knowledge graph, a student model, a diagnostic, and spaced repetition that understands how skills contain one another. We rebuilt it for a different domain: instead of multiple-choice mathematics, learners write PyTorch that is executed and graded, and the graph is the prerequisite structure of the ARENA curriculum. Every figure below runs the same update rules as the production backend.</p>
@@ -1113,7 +1192,7 @@
       <!-- ============================================================ DIFFERENT -->
       <section id="aisc-different" data-slot="different">
         <div class="tile">
-          <p class="kicker">04 · What is new here</p>
+          <p class="kicker">What is new here</p>
           <h2>Same backbone, <em>different animal</em>.</h2>
           <div class="prose"><p>We credit Math Academy for the architecture and borrow its best explanations. What we built on top is specific to research engineering, and several pieces are original.</p></div>
         </div>
@@ -1131,39 +1210,15 @@
         </div>
       </section>
 
-      <!-- ============================================================ PLAN -->
-      <section id="aisc-plan" data-slot="plan">
-        <div class="tile">
-          <p class="kicker">05 · Project plan &amp; fit for AISC</p>
-          <h2>Map all of ARENA, <em>learning it as we go</em>.</h2>
-          <div class="prose"><p>The software is mostly done; the remaining work is content. <b>Deliverable:</b> the whole ARENA curriculum mapped, as a knowledge graph plus verified drills, by the end of April.</p><p><b>The team is the first cohort.</b> Every teammate works through ARENA inside Delta Drills as a learner and reports where the content or the graph is wrong; the team revises both as it goes. Content is written just in time, one chapter ahead, because ARENA's material already exists and each later chapter gets authored with a stronger model. Teammates aren't neutral users, so an outside group still matters for evidence.</p></div>
-        </div>
-        <div class="runway rv" data-slot="runway">
-          <div><span class="when">Now</span><b>Author in the app</b>ARENA ch. 0 mapped; own learning logged.</div>
-          <div><span class="when">Sep 25</span><b>GEAR application</b>Online ARENA cohort.</div>
-          <div><span class="when">Oct–Dec</span><b>GEAR pilot, if accepted</b>The author and the first outside learner (both applying) do GEAR's ARENA inside Delta Drills: a 2-learner pilot, 13 weeks at 5 h/wk, plus cohort feedback.</div>
-          <div class="aisc"><span class="when">Jan–Apr 2027</span><b>AISC</b>The team maps the rest of ARENA.</div>
-        </div>
-        <div class="cols">
-          <div class="card"><span class="tag">Stream 1 · content</span><h4>The rest of ARENA</h4><p>Chapter by chapter, just in time: concepts, prerequisite edges, encompassing weights, and drills that pass the existing content gates. Seth is the main author; an ML-strong teammate reviews and cleans what he generates.</p></div>
-          <div class="card"><span class="tag">Stream 2 · learner model</span><h4>Learning theory, fitted</h4><p>Seth leads. Fit BKT and logistic-engine parameters to the team's own attempt logs; publish calibration (Brier score, reliability curves); replace the fixed half-life with fitted memory stability; log every lesson read.</p></div>
-          <div class="card"><span class="tag">Stream 3 · pilot &amp; evaluation</span><h4>Does the ramp get shorter?</h4><p>Teammates' learning as the first data, plus an outside group (GEAR cohort, local AI-safety group). A quantitative <b>A/B comparison of learning outcomes</b>: ARENA with Delta Drills vs. the usual way (notebooks in Colab), with the same checkpoint tests given to both arms during the course and at the end; observe, don't coach.</p></div>
-        </div>
-        <div class="timeline rv">
-          <div class="when">Jan 9–10</div><div class="what"><b>Opening weekend</b>Onboarding into the app, the codebase and the content gates; everyone starts ARENA in-app.</div>
-          <div class="when">Weeks 1–15</div><div class="what"><b>Learn</b>Teammates work through ARENA in Delta Drills as real learners.</div>
-          <div class="when">Weeks 2–15</div><div class="what"><b>Revise</b>Their feedback fixes drills and prerequisite links; the next chapter is mapped one step ahead of the team.</div>
-          <div class="when">Weeks 3–12</div><div class="what"><b>Learning theory</b>Knowledge graph, spacing and mastery model fitted to the team's attempt logs.</div>
-          <div class="when">Weeks 13–15</div><div class="what"><b>Write-up</b>What changed and what didn't, with open data and negative results, on LessWrong / Alignment Forum.</div>
-          <div class="when">Apr 23–26</div><div class="what"><b>Final presentations</b>The mapped curriculum, calibration and A/B results, and a decision: scale, pivot, or stop. <b>Stop condition:</b> Colab vs. Delta Drills, same checkpoint tests; stop if there is no learning gain. A learner going back to Colab is feedback, not failure.</div>
-        </div>
-        <div class="note"><b>Risk to the runway.</b> If GEAR rejects the application, the Oct–Dec cohort-feedback channel is gone; the fallback is the local AI-safety group and ARENA alumni recruited directly.</div>
-      </section>
+      <p class="art-next"><a href="#aisc-a-evidence">Next · Evidence so far →</a></p>
+      </article>
 
+      <!-- ============================================ ARTICLE 4 · EVIDENCE -->
+      <article class="aisc-article" id="aisc-a-evidence" hidden>
       <!-- ============================================================ EVIDENCE -->
       <section id="aisc-evidence" data-slot="evidence">
         <div class="tile">
-          <p class="kicker">06 · What counts as evidence</p>
+          <p class="kicker">What counts as evidence</p>
           <h2>Behaviour, <em>not compliments</em>.</h2>
           <div class="prose">
             <p>We are deliberately not collecting "would you use this?" answers. Interviews ask about the last cohort: how readiness was judged, the last participant who fell behind, and what the facilitator actually did about it. The product is shown only after the problem is understood, and conversations end with a request for a concrete next step.</p>
@@ -1218,10 +1273,65 @@
         </div>
       </section>
 
+      <p class="art-next"><a href="#aisc-a-aisc">Next · AI Safety Camp 12 proposal →</a></p>
+      </article>
+
+      <!-- ============================================ ARTICLE 5 · AISC PROPOSAL -->
+      <article class="aisc-article" id="aisc-a-aisc" hidden>
+      <!-- ============================================================ HERO -->
+      <section class="hero" data-slot="hero">
+        <div>
+          <p class="kicker">AI Safety Camp 12 · Project proposal · Virtual, Jan–Apr 2027</p>
+          <h1>Get researchers <span class="delta">ARENA-ready</span> in weeks, not months.</h1>
+          <p class="lede">Delta Drills is an adaptive tutor for the prerequisites of AI safety research engineering. It maps what a learner already knows onto a knowledge graph of the ARENA curriculum, teaches only what is missing, and keeps it from decaying.</p>
+          <dl class="meta">
+            <dt>Project lead</dt><dd>Seth Gibson</dd>
+            <dt>Live app</dt><dd><a href="https://deltadrills.com" rel="noopener">deltadrills.com</a></dd>
+            <dt>Status</dt><dd>Working product · user validation just starting (n=1 so far)</dd>
+          </dl>
+        </div>
+        <div class="hero-fig" data-about-runtime id="aisc-hero-fig" aria-hidden="true"><svg id="aisc-hero-svg" viewBox="0 0 400 400"></svg></div>
+      </section>
+
+      <div class="status rv" data-slot="status">
+        <div class="built"><b>● Built</b><p><span id="aisc-stat-kcs" class="num">82</span> concepts on a prerequisite graph, <span id="aisc-stat-q" class="num">1,585</span> executable drills, a graph-wide placement test, spaced review, and remediation that walks down the graph.</p></div>
+        <div class="testing"><b>● Being tested now</b><p>Do ARENA organizers discover prerequisite gaps only after a cohort starts? When learners stall mid-course, is the cause a missing prerequisite?</p></div>
+        <div class="unknown"><b>● Not yet known</b><p>Whether a shorter ramp translates into more safety research, and whether organizers will change their workflow to use it. The AISC project is designed to find out.</p></div>
+      </div>
+
+      <!-- ============================================================ PLAN -->
+      <section id="aisc-plan" data-slot="plan">
+        <div class="tile">
+          <p class="kicker">Project plan &amp; fit for AISC</p>
+          <h2>Map all of ARENA, <em>learning it as we go</em>.</h2>
+          <div class="prose"><p>The software is mostly done; the remaining work is content. <b>Deliverable:</b> the whole ARENA curriculum mapped, as a knowledge graph plus verified drills, by the end of April.</p><p><b>The team is the first cohort.</b> Every teammate works through ARENA inside Delta Drills as a learner and reports where the content or the graph is wrong; the team revises both as it goes. Content is written just in time, one chapter ahead, because ARENA's material already exists and each later chapter gets authored with a stronger model. Teammates aren't neutral users, so an outside group still matters for evidence.</p></div>
+        </div>
+        <div class="runway rv" data-slot="runway">
+          <div><span class="when">Now</span><b>Author in the app</b>ARENA ch. 0 mapped; own learning logged.</div>
+          <div><span class="when">Sep 25</span><b>GEAR application</b>Online ARENA cohort.</div>
+          <div><span class="when">Oct–Dec</span><b>GEAR pilot, if accepted</b>The author and the first outside learner (both applying) do GEAR's ARENA inside Delta Drills: a 2-learner pilot, 13 weeks at 5 h/wk, plus cohort feedback.</div>
+          <div class="aisc"><span class="when">Jan–Apr 2027</span><b>AISC</b>The team maps the rest of ARENA.</div>
+        </div>
+        <div class="cols">
+          <div class="card"><span class="tag">Stream 1 · content</span><h4>The rest of ARENA</h4><p>Chapter by chapter, just in time: concepts, prerequisite edges, encompassing weights, and drills that pass the existing content gates. Seth is the main author; an ML-strong teammate reviews and cleans what he generates.</p></div>
+          <div class="card"><span class="tag">Stream 2 · learner model</span><h4>Learning theory, fitted</h4><p>Seth leads. Fit BKT and logistic-engine parameters to the team's own attempt logs; publish calibration (Brier score, reliability curves); replace the fixed half-life with fitted memory stability; log every lesson read.</p></div>
+          <div class="card"><span class="tag">Stream 3 · pilot &amp; evaluation</span><h4>Does the ramp get shorter?</h4><p>Teammates' learning as the first data, plus an outside group (GEAR cohort, local AI-safety group). A quantitative <b>A/B comparison of learning outcomes</b>: ARENA with Delta Drills vs. the usual way (notebooks in Colab), with the same checkpoint tests given to both arms during the course and at the end; observe, don't coach.</p></div>
+        </div>
+        <div class="timeline rv">
+          <div class="when">Jan 9–10</div><div class="what"><b>Opening weekend</b>Onboarding into the app, the codebase and the content gates; everyone starts ARENA in-app.</div>
+          <div class="when">Weeks 1–15</div><div class="what"><b>Learn</b>Teammates work through ARENA in Delta Drills as real learners.</div>
+          <div class="when">Weeks 2–15</div><div class="what"><b>Revise</b>Their feedback fixes drills and prerequisite links; the next chapter is mapped one step ahead of the team.</div>
+          <div class="when">Weeks 3–12</div><div class="what"><b>Learning theory</b>Knowledge graph, spacing and mastery model fitted to the team's attempt logs.</div>
+          <div class="when">Weeks 13–15</div><div class="what"><b>Write-up</b>What changed and what didn't, with open data and negative results, on LessWrong / Alignment Forum.</div>
+          <div class="when">Apr 23–26</div><div class="what"><b>Final presentations</b>The mapped curriculum, calibration and A/B results, and a decision: scale, pivot, or stop. <b>Stop condition:</b> Colab vs. Delta Drills, same checkpoint tests; stop if there is no learning gain. A learner going back to Colab is feedback, not failure.</div>
+        </div>
+        <div class="note"><b>Risk to the runway.</b> If GEAR rejects the application, the Oct–Dec cohort-feedback channel is gone; the fallback is the local AI-safety group and ARENA alumni recruited directly.</div>
+      </section>
+
       <!-- ============================================================ RISK -->
       <section id="aisc-risk" data-slot="risk">
         <div class="tile">
-          <p class="kicker">07 · Uncertainties &amp; downside risk</p>
+          <p class="kicker">Uncertainties &amp; downside risk</p>
           <h2>What could go wrong, and <em>what we do about it</em>.</h2>
         </div>
         <div class="tile">
@@ -1246,7 +1356,7 @@
       <!-- ============================================================ LEAD -->
       <section id="aisc-lead" data-slot="lead">
         <div class="tile">
-          <p class="kicker">08 · Project lead</p>
+          <p class="kicker">Project lead</p>
           <h2>Seth Gibson</h2>
         </div>
         <div class="cols">
@@ -1265,7 +1375,7 @@
       <!-- ============================================================ QUESTIONS -->
       <section id="aisc-questions" data-slot="critique">
         <div class="tile">
-          <p class="kicker">09 · Open questions</p>
+          <p class="kicker">Open questions</p>
           <h2>Where is this <em>weakest</em>?</h2>
           <div class="prose"><p>This page is written to be critiqued. One question per AISC criterion:</p></div>
         </div>
@@ -1277,6 +1387,8 @@
           <li><b>Next month.</b> With one month before the Nov 1 deadline, where would you put it?</li>
         </ol>
       </section>
+      <p class="art-next"><a href="#aisc-a-why">Back to Article 1 · Why this app exists →</a></p>
+      </article>
 
       </div>
 
@@ -2473,7 +2585,7 @@ t.manual_seed(0)
   <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
   <script src="conceptual/conceptual_chat.js?v=1"></script>
   <script src="app.js?v=36"></script>
-  <script src="about-page-editor.js?v=3"></script>
+  <script src="about-page-editor.js?v=4"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -2494,7 +2606,7 @@ t.manual_seed(0)
        injected later is re-derived from the DOM by infotips.js's observer. -->
   <script src="infotips-registry.js?v=15"></script>
   <script src="infotips.js?v=2"></script>
-  <script src="lessons/glossary.js?v=2"></script>
+  <script src="lessons/glossary.js?v=3"></script>
   <script src="jargon.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -2506,7 +2618,7 @@ t.manual_seed(0)
        which is a top-level `const` in app.js and therefore NOT on `window`.
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
-  <script src="account-menu.js?v=5"></script>
+  <script src="account-menu.js?v=6"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
@@ -2551,11 +2663,12 @@ t.manual_seed(0)
        when maximised; and after cytoscape + cytoscape-dagre. `defer` keeps
        document order, so all of them have run by the time this does. Its only
        fetch is lessons/kc_registry.json. -->
-  <script src="concept-graph/why-graph.js?v=12" defer></script>
+  <script src="concept-graph/why-graph.js?v=13" defer></script>
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/boot.js?v=11" defer></script>
+  <script src="aisc/articles.js?v=1" defer></script>
+  <script src="aisc/boot.js?v=12" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
@@ -2763,12 +2876,12 @@ t.manual_seed(0)
   <!-- course-registry.js is the shared course list courses.js (catalog cards)
        and concept-graph/graph-views.js (KG course dropdown, deferred so it
        always runs later) both read off window.DeltaCourseRegistry. -->
-  <script src="concept-graph/course-registry.js?v=1"></script>
+  <script src="concept-graph/course-registry.js?v=2"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=5"></script>
+  <script src="courses.js?v=6"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
   <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->

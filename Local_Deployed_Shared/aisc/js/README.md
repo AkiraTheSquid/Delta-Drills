@@ -16,8 +16,9 @@
 - `engine.js`: `window.DeltaEngine` — placement/BKT/FIRe/remediation constants.
 - `common.js`: `window.AISC` — `css()` token reader (reads `#aisc-root`),
   `rgb01`, `onTheme` (fires on `delta:theme-changed`), `whenVisible`, `graph`
-  (fetch of `aisc/data/kc_graph.json`); reveal + section nav
-  (the nav is `#aisc-toc` in the app topbar).
+  (fetch of `aisc/data/kc_graph.json`); reveal on scroll. The topbar nav
+  (`#aisc-toc`) and `#aisc-` link clicks are `../articles.js`'s since
+  2026-09-25.
 - `field.js`: the page's node field — a fixed canvas behind the write-up's
   cards, unmasked since 2026-09-25, animated only while `#aisc-root`
   intersects and the tab is visible; still frame under reduced motion.
@@ -50,7 +51,8 @@
 ## Invariants & Constraints
 - Look up elements only by `aisc-`-prefixed ids.
 - Fetch paths are relative to the app root: `aisc/data/…`.
-- Globals are `AISC` and `DeltaEngine` only.
+- Globals are `AISC` and `DeltaEngine` only (`AISCArticles` is
+  `../articles.js`'s, loaded outside this folder).
 - SVG figures redraw from scratch; anything that must survive a redraw
   (pointer capture, keyboard focus) hangs off the `<svg>` itself — see
   `fig-forget.js`.
@@ -87,3 +89,5 @@
 - 2026-09-25: Readouts back to full detail (`fig-effort.js` mechanism list,
   `fig-graphs.js` probe id / practised id / 7-line remediation log);
   `fig-forget.js` implicit reps always on with +w tags and a readout line.
+- 2026-09-25: `common.js` drops its section-nav click handler and in-view
+  highlight; `../articles.js` owns both now that the page is articles.

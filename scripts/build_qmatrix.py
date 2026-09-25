@@ -113,6 +113,15 @@ def build():
             "source": "leftover-assignment",
         }
 
+    # LeetCode Patterns has no KP pages (drills only): each drill's one target
+    # comes from the file its exporter writes (scripts/leetcode_course/export_app.py).
+    lc_path = LESSONS_DIR / "leetcode" / "problems.json"
+    for row in (json.loads(lc_path.read_text()) if lc_path.exists() else []):
+        if row["id"] in tags:
+            raise SystemExit(f"q{row['id']} is both a KP drill and a LeetCode drill")
+        tags[row["id"]] = {"target_kcs": [row["leetcode_kc"]], "supporting_kcs": [], "new_syntax": [],
+                           "source": "kp-independent"}
+
     easy = {qid for qid, q in bank.items() if q["curriculum"]["topic"] in EASY_TOPICS}
     missing = easy - set(tags)
     # A KP may claim a drill from outside EASY_TOPICS (2026-09-17: the parked

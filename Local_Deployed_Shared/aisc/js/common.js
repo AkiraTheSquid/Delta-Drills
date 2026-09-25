@@ -1,7 +1,6 @@
 /* Shared page plumbing for the AISC write-up on the app's "Learn about the
-   app" page (#page-learn-about-app): theme, reveal-on-scroll, section-nav
-   highlight, colour tokens for canvas code, the KC graph fetch, and the hero
-   ornament.
+   app" page (#page-learn-about-app): theme, reveal-on-scroll, colour tokens
+   for canvas code, the KC graph fetch, and the hero ornament.
 
    Ported from the standalone delta-drills-aisc site on 2026-09-24. Differences
    from the original:
@@ -9,8 +8,8 @@
      that element. The site's own theme toggle is gone; the app's theme.js owns
      `html[data-theme]` (light | dark | blue) and aisc.css maps it, so a theme
      switch arrives as `delta:theme-changed`.
-   - Section nav links scroll inside the app instead of setting location.hash,
-     and the nav itself is #aisc-toc in the app's topbar, not a rail of its own.
+   - The site's section nav became #aisc-toc in the app's topbar, and since
+     2026-09-25 lists articles; ../articles.js owns it and every #aisc- link.
    - The global is `AISC`, not `DD`, and every id carries an `aisc-` prefix. */
 (function (root) {
   "use strict";
@@ -40,32 +39,9 @@
   }, { rootMargin: "0px 0px -8% 0px" });
   host.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });
 
-  // Section nav: highlight the section in view, and scroll on click without
-  // touching location.hash (the app routes on its own state, not the hash).
-  // The nav is #aisc-toc in the app's topbar (index.html), outside `host`, so
-  // clicks are caught on the document and filtered to the two places links
-  // live.
-  var toc = document.getElementById("aisc-toc");
-  var links = {};
-  if (toc) toc.querySelectorAll("a").forEach(function (a) {
-    var id = a.getAttribute("href").slice(1);
-    links[id] = a;
-  });
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest && e.target.closest('a[href^="#aisc-"]');
-    if (!a || !(host.contains(a) || (toc && toc.contains(a)))) return;
-    var target = document.getElementById(a.getAttribute("href").slice(1));
-    if (!target) return;
-    e.preventDefault();
-    target.scrollIntoView({ block: "start", behavior: "smooth" });
-  });
-  var navIo = new IntersectionObserver(function (ents) {
-    ents.forEach(function (e) {
-      if (!e.isIntersecting || !links[e.target.id]) return;
-      Object.keys(links).forEach(function (k) { links[k].classList.toggle("on", k === e.target.id); });
-    });
-  }, { rootMargin: "-45% 0px -50% 0px" });
-  host.querySelectorAll(".aisc-main > section[id]").forEach(function (s) { navIo.observe(s); });
+  // Links to `#aisc-…` ids and the topbar nav (#aisc-toc) are ../articles.js's
+  // since 2026-09-25: the nav lists articles, and a link may need to open the
+  // article holding its target before it can scroll there.
 
   // Run `fn` once the element is near the viewport (figures are heavy).
   function whenVisible(el, fn) {
