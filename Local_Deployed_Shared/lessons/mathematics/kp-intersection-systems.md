@@ -61,7 +61,7 @@ $$u\begin{pmatrix}2\\1\end{pmatrix}+v\begin{pmatrix}0\\-6\end{pmatrix}=\begin{pm
 The first row gives $u=2$; then $2-6v=-1$, so $v=\tfrac12$. Both bounds hold: $u\ge0$ and $0\le v\le1$. Check that both descriptions reach one point:
 $$O+2D=\begin{pmatrix}1\\0\end{pmatrix}+2\begin{pmatrix}2\\1\end{pmatrix}=\begin{pmatrix}5\\2\end{pmatrix},\qquad A+\tfrac12(B-A)=\begin{pmatrix}5\\-1\end{pmatrix}+\tfrac12\begin{pmatrix}0\\6\end{pmatrix}=\begin{pmatrix}5\\2\end{pmatrix}.$$
 
-**In code.** Stack the columns, solve, then evaluate both descriptions at the solved parameters.
+**In code.** Put the columns side by side, solve, then evaluate both descriptions at the solved parameters.
 
 ```python
 import torch as t

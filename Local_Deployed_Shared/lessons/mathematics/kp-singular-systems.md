@@ -12,7 +12,7 @@ independent: [50014, 50015]
 integrated: [50016, 50017]
 ---
 
-## Concept: A solver result needs a validity mask
+## Concept: A solver result needs a validity check
 
 This lesson builds on determinants and invertibility, including the difference between no solutions and infinitely many. Here we apply that distinction to intersection handling.
 
@@ -24,9 +24,9 @@ A zero determinant means the columns collapse onto a line or point. The system c
 
 The batched implementation declares a pair invalid when
 $$|\det M|<10^{-8}.$$
-This is a course convention, not a scale-invariant accuracy test: rescaling columns rescales the determinant. Substitute an identity matrix for invalid pairs before solving so one singular pair cannot abort the batch. Keep the original validity mask: a solution of the replacement matrix is not evidence of a hit.
+This is a course convention, not a scale-invariant accuracy test: rescaling columns rescales the determinant. Substitute an identity matrix for invalid pairs before solving so one singular pair cannot abort the batch. Keep the original validity flags: a solution of the replacement matrix is not evidence of a hit.
 
-For each ray, combine validity with membership for every segment pair, then reduce over segments using “any.” Reducing over rays answers a different question.
+For each ray, combine validity with membership for every segment pair, then ask, per ray, whether ANY segment qualifies. Asking per segment answers a different question.
 
 The determinant of rows $(1,2)$ and $(3,6)$:
 
@@ -55,9 +55,9 @@ One quantity cannot equal both $2$ and $0$. The pair is marked invalid, so it is
 
 Now two rays, three segments each. Rows are rays, columns are segments; a hit needs validity AND membership:
 $$\text{valid}=\begin{pmatrix}0&1&1\\1&1&0\end{pmatrix},\quad \text{inside}=\begin{pmatrix}1&0&0\\0&1&1\end{pmatrix},\quad \text{valid}\wedge\text{inside}=\begin{pmatrix}0&0&0\\0&1&0\end{pmatrix}.$$
-Reduce each row with "any": the first ray misses (its only in-bounds pair came from a replaced matrix), the second hits.
+Ask of each row whether any entry is true: the first ray misses (its only in-bounds pair came from a replaced matrix), the second hits.
 
-**In code.** `&` combines the masks; `.any(dim=1)` reduces over segments, one answer per ray.
+**In code.** `&` combines the two tables entry by entry; `.any(dim=1)` asks each row, one answer per ray.
 
 ```python
 import torch as t

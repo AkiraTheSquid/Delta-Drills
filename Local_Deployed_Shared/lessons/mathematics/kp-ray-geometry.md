@@ -20,7 +20,7 @@ A point names a location; a vector names a change in location. Subtracting two p
 
 A ray is every point
 $$P(s)=O+sD,\qquad s\ge0,$$
-where $O$ is its origin and $D$ a nonzero direction. $D$ is a displacement, even when ARENA stores it in the second row of a $(2,3)$ tensor. It is not an endpoint: given an endpoint $Q$, first compute $D=Q-O$. At $s=0$ you are at $O$; negative $s$ lies behind the ray.
+where $O$ is its origin and $D$ a nonzero direction. $D$ is a displacement, not an endpoint: given an endpoint $Q$, first compute $D=Q-O$. At $s=0$ you are at $O$; negative $s$ lies behind the ray.
 
 A segment from $A$ to $B$ is
 $$P(v)=(1-v)A+vB=A+v(B-A),\qquad 0\le v\le1.$$
@@ -30,7 +30,7 @@ A camera with $n\ge2$ pixels and y-limit $L$ at $x=1$ has equally spaced directi
 $$y_i=-L+i\cdot\frac{2L}{n-1},\qquad i=0,\dots,n-1.$$
 There are $n-1$ gaps between $n$ endpoints. ARENA uses $D_x=1$, so $s=x$ when $O=0$.
 
-The ray point $O+2D$ for $O=(2,-1)$, $D=(3,2)$. Tensor arithmetic acts on every component at once:
+The ray point $O+2D$ for $O=(2,-1)$, $D=(3,2)$. In code, the arithmetic acts on every component at once:
 
 ```python
 import torch as t
@@ -57,7 +57,7 @@ Check with the weighted form: $\tfrac12A+\tfrac12B=\tfrac12(4,10)=(2,5)$.
 For the ray, scale the direction and add it to the origin:
 $$O+2D=\begin{pmatrix}2\\-1\end{pmatrix}+2\begin{pmatrix}3\\2\end{pmatrix}=\begin{pmatrix}2+6\\-1+4\end{pmatrix}=\begin{pmatrix}8\\3\end{pmatrix}.$$
 
-**In code.** The midpoint, as one tensor expression.
+**In code.** The midpoint, as one expression.
 
 ```python
 import torch as t
@@ -116,7 +116,7 @@ A five-pixel camera includes both y-limits −3 and 3 at x = 1. Which sequence c
 A point has v = 0.2 from A to B. Swap the endpoints and write P = B + w(A − B). What is w?
 
 ### q50078
-make_rays_1d(num_pixels=5, y_limit=2) stores ray i as [[0, 0, 0], [1, y_i, 0]], with y_i from −2 to 2. Where does ray i = 3 reach x = 4?
+Five rays start at (0, 0, 0). Ray i has direction (1, y_i, 0), where y_0, …, y_4 are evenly spaced from −2 to 2. Where does ray i = 3 reach x = 4?
 
 ### q50079
 A camera stores ray i's direction as [1, y_i, 0]. A second version stores [2, 2y_i, 0] instead, same origins. What changes about where each ray hits a wall?

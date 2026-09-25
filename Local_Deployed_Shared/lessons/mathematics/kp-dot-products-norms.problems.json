@@ -276,11 +276,11 @@
       "id": 50082,
       "kind": "statement",
       "difficulty": 50,
-      "prompt": "A ray starts at O with direction D = (1, 2). A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?",
+      "prompt": "A point moves from O along D = (1, 2), as O + sD with s ≥ 0. A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?",
       "choices": [
         {
           "key": "A",
-          "text": "X lies on the ray."
+          "text": "X is reached, at some s ≥ 0."
         },
         {
           "key": "B",
@@ -296,7 +296,7 @@
         }
       ],
       "answer": "C",
-      "solution": "$(X - O) \\cdot D = -3 + 2 = -1 < 0$. A negative dot product means the angle is more than $90^\\circ$, so moving from $O$ toward $X$ goes partly backwards against $D$. Any parameter $s$ that gets near $X$ would be negative, which a ray ($s \\ge 0$) does not allow.\n\n- A: on the ray, $X - O$ would be a nonnegative multiple of $D$; $(-3, 1)$ is not.\n- B: perpendicular needs a dot product of exactly 0.\n- D: in front needs a positive dot product."
+      "solution": "$(X - O) \\cdot D = -3 + 2 = -1 < 0$. A negative dot product means the angle is more than $90^\\circ$, so moving from $O$ toward $X$ goes partly backwards against $D$. Any parameter $s$ that gets near $X$ would be negative, which $s \\ge 0$ does not allow.\n\n- A: to be reached, $X - O$ would be a nonnegative multiple of $D$; $(-3, 1)$ is not.\n- B: perpendicular needs a dot product of exactly 0.\n- D: in front needs a positive dot product."
     },
     {
       "id": 50083,
@@ -372,7 +372,7 @@
       "id": 50086,
       "kind": "compute",
       "difficulty": 60,
-      "prompt": "A ray starts at O = (0, 0) with direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to the ray's line?",
+      "prompt": "The line through O = (0, 0) has direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to that line?",
       "choices": [
         {
           "key": "A",
@@ -407,7 +407,7 @@
       "id": 50087,
       "kind": "compute",
       "difficulty": 60,
-      "prompt": "A camera ray from the origin has direction D = (1, 0.75, 0). It meets the wall x = 4 at s = 4 in P(s) = sD. How far from the origin is that hit point?",
+      "prompt": "A point moves as P(s) = sD with D = (1, 0.75, 0). At s = 4 it reaches x = 4. How far from the origin is P(4)?",
       "choices": [
         {
           "key": "A",

@@ -20,7 +20,7 @@ A mesh contains many triangles, so a ray may have several valid forward intersec
 $$\|(O+sD)-O\|=s\,\|D\|=s\sqrt{D_x^2+D_y^2+D_z^2}$$
 from $O$. The factor $\|D\|$ is fixed along that ray, so minimizing valid $s$ also minimizes distance.
 
-The parameter $s$ is not generally a distance: doubling $D$ halves the $s$ needed to reach the same point. Comparing raw $s$ across differently scaled rays can mislead. The x displacement is $sD_x$; the world x-coordinate is $O_x+sD_x$. Neither is generally Euclidean distance. For ARENA's camera $O=0$ and $D_x=1$, $s$ equals x-depth; off-axis rays still have $\|D\|>1$.
+The parameter $s$ is not generally a distance: doubling $D$ halves the $s$ needed to reach the same point. Comparing raw $s$ across differently scaled rays can mislead. The x displacement is $sD_x$; the world x-coordinate is $O_x+sD_x$. Neither is generally Euclidean distance. For ARENA's camera $O=0$ and $D_x=1$, $s$ equals x-depth; rays that point away from the x direction still have $\|D\|>1$.
 
 Before taking a minimum, replace every invalid or backward hit by $+\infty$. A miss must not become zero, which would beat every positive hit. If all pairs miss, the minimum remains $+\infty$, an explicit no-hit result. This order also prevents a negative $s$ behind the origin from hiding a valid surface in front.
 

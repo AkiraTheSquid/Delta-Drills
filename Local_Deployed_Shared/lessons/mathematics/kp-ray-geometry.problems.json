@@ -398,7 +398,7 @@
       "id": 50078,
       "kind": "compute",
       "difficulty": 60,
-      "prompt": "make_rays_1d(num_pixels=5, y_limit=2) stores ray i as [[0, 0, 0], [1, y_i, 0]], with y_i from −2 to 2. Where does ray i = 3 reach x = 4?",
+      "prompt": "Five rays start at (0, 0, 0). Ray i has direction (1, y_i, 0), where y_0, …, y_4 are evenly spaced from −2 to 2. Where does ray i = 3 reach x = 4?",
       "choices": [
         {
           "key": "A",

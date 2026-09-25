@@ -24,7 +24,7 @@ The point belongs to the filled triangle exactly when all three weights are nonn
 $$u\ge0,\qquad v\ge0,\qquad u+v\le1.$$
 Independent bounds $u\le1$ and $v\le1$ admit the whole parallelogram. The sum bound cuts away the half beyond edge $BC$.
 
-Boundaries count: $u=0$ is edge $AC$, $v=0$ is edge $AB$, and $u+v=1$ is edge $BC$, provided the other weights are nonnegative. Vertices are special boundary cases. In three dimensions these weights describe the triangle's plane, not every point in space.
+Boundaries count: $u=0$ is edge $AC$, $v=0$ is edge $AB$, and $u+v=1$ is edge $BC$, provided the other weights are nonnegative. Vertices are special boundary cases. For a triangle in 3D, the weights describe points of its plane, not every point in space.
 
 With $u=v=0.6$ the weight on $A$ is $1-1.2=-0.2$:
 
@@ -85,7 +85,7 @@ With unknowns ordered $(s,u,v)$ this is one $3\times3$ system:
 $$\begin{pmatrix}-D & B-A & C-A\end{pmatrix}\begin{pmatrix}s\\u\\v\end{pmatrix}=O-A.$$
 Three spatial coordinates provide three equations. Changing only the first column's sign reverses $s$. Multiplying the entire equation by $-1$ is equivalent, provided both matrix and right-hand side change.
 
-A nonsingular solve finds the crossing with the triangle's plane. Then check $s\ge0$ and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; an extra batch axis introduces no extra geometric unknown. Retain the singularity mask as in the segment case.
+A nonsingular solve finds the crossing with the triangle's plane. Then check $s\ge0$ and all three triangle weights nonnegative. A plane crossing can still lie outside the triangle. Batching repeats this small system for every pair; solving many pairs at once introduces no extra geometric unknown. Keep the singularity check as in the segment case.
 
 The columns for $D=(1,0,0)$, $A=(4,0,0)$, $B=(4,2,0)$, $C=(4,0,6)$. PyTorch prints a negated zero as `-0.`; it equals $0$:
 
@@ -115,7 +115,7 @@ $$\begin{pmatrix}-2&0&0\\0&4&0\\0&0&4\end{pmatrix}\begin{pmatrix}s\\u\\v\end{pma
 All checks pass: $s\ge0$, $u,v\ge0$, and $u+v=\tfrac12\le1$. The hit point is
 $$O+3D=\begin{pmatrix}0\\1\\1\end{pmatrix}+3\begin{pmatrix}2\\0\\0\end{pmatrix}=\begin{pmatrix}6\\1\\1\end{pmatrix}.$$
 
-**In code.** Stack the columns, solve for $(s,u,v)$, then the hit point and the four checks.
+**In code.** Put the columns side by side, solve for $(s,u,v)$, then the hit point and the four checks.
 
 ```python
 import torch as t
