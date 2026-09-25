@@ -167,7 +167,7 @@
        typefaces come from Google Fonts, loaded NON-blocking (media swap): a
        dead fonts CDN must not hold up first paint of the whole app for one
        page most visits never open; the fallbacks are Georgia / monospace. -->
-  <link rel="stylesheet" href="aisc/aisc.css?v=9" />
+  <link rel="stylesheet" href="aisc/aisc.css?v=10" />
   <link rel="stylesheet" media="print" onload="this.media='all'"
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
@@ -948,6 +948,7 @@
               <div class="seg" role="group" aria-label="Scale">
                 <button data-scale="lin" class="on" aria-pressed="true">Linear</button><button data-scale="log" aria-pressed="false">Log</button>
               </div>
+              <ul class="mech" id="aisc-effort-mech"></ul>
               <div class="readout" id="aisc-effort-readout"></div>
             </div>
           </div>
@@ -1046,7 +1047,7 @@
           <div class="fig-body">
             <div class="fig-stage"><div class="cy" id="aisc-cy-place"></div></div>
             <div class="fig-side">
-              <div class="probe-card"><span class="id">Next probe</span> <span class="t" id="aisc-probe-title">—</span></div>
+              <div class="probe-card"><span class="id">Next probe · max expected information</span> <span class="t" id="aisc-probe-title">—</span> <span class="id" id="aisc-probe-id">—</span></div>
               <div class="btns"><button class="btn ok" data-r="correct">Correct</button><button class="btn no" data-r="incorrect">Wrong</button><button class="btn dk" data-r="dont_know">Don't know</button><button class="btn ghost" id="aisc-place-auto">Simulate a learner</button><button class="btn ghost" id="aisc-place-reset">Reset</button></div>
               <div class="readout" id="aisc-place-readout"></div>
               <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:var(--amber)"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
@@ -1067,9 +1068,10 @@
               <div class="seg" id="aisc-model-seg" role="group" aria-label="Model"><button data-m="today" aria-pressed="false">Production today</button><button data-m="planned" class="on" aria-pressed="true">Planned (AISC)</button></div>
               <div class="btns"><button class="btn ghost" id="aisc-forget-auto">Schedule reviews</button></div>
               <div class="readout" id="aisc-forget-readout"></div>
+              <div class="legend"><span><i style="background:var(--amber);border-radius:0;width:12px"></i>review = 1 rep</span><span><i style="background:var(--amber);opacity:.55;border-radius:0;width:6px"></i>implicit = <span id="aisc-forget-w">0.3</span> rep</span></div>
             </div>
           </div>
-          <figcaption>Drag the review markers under the plot. Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty); the scheduler reviews when recall drops to 70%. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is Stream 2.</figcaption>
+          <figcaption>Drag the review markers under the plot. Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty); the scheduler reviews when recall drops to 70%. <b>Implicit reviews</b> (thin bars, +0.3 each) are the fractional repetitions a concept gets when a harder concept that encompasses it is practised — see Fig. 5. They count toward its repetitions and lengthen its half-life, so the scheduler waits longer before the next full review. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is Stream 2.</figcaption>
         </figure>
 
         <div class="tile">
@@ -2553,7 +2555,7 @@ t.manual_seed(0)
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/boot.js?v=10" defer></script>
+  <script src="aisc/boot.js?v=11" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>

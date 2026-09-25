@@ -18,9 +18,9 @@
     "aisc/js/engine.js?v=1",
     "aisc/js/common.js?v=3",
     "aisc/js/field.js?v=4",
-    "aisc/js/fig-effort.js?v=4",
-    "aisc/js/fig-forget.js?v=12",
-    "aisc/js/fig-graphs.js?v=5",
+    "aisc/js/fig-effort.js?v=5",
+    "aisc/js/fig-forget.js?v=13",
+    "aisc/js/fig-graphs.js?v=6",
     "aisc/js/fig-seth.js?v=2",
     "aisc/js/fig-expand.js?v=1",
   ];
