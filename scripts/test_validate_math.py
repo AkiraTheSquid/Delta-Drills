@@ -249,10 +249,41 @@ class ProblemFile(unittest.TestCase):
         errors = self.run_check()
         self.assertTrue(any("legacy rung" in e for e in errors), errors)
 
-    def test_kp_without_kind_math(self):
-        self.md.write_text(KP_MD.replace("kind: math\n", ""))
+    def code_page(self, md=KP_MD):
+        """The same problems, owned by a PyTorch KC's code page (no `kind`)."""
+        self.md.write_text(md.replace("kind: math\n", "").replace("kc: math.dot", "kc: torch.x"))
+        self.problems.write_text(json.dumps({"kc": "torch.x", "problems": [COMPUTE, DERIVATION, STATEMENT]}))
+
+    def test_code_page_may_own_mc_problems_on_any_topic(self):
+        # Format belongs to the problem, ownership to the concept: a torch KC
+        # keeps its MC questions on its own page, beside its code drills.
+        self.code_page(KP_MD.replace("independent: [50001, 50002]", "independent: [12, 50001, 50002]")
+                            .replace("faded: []", "faded: [7]"))
+        self.assertEqual(self.run_check(), [])
+
+    def test_math_page_still_needs_a_math_topic(self):
+        self.md.write_text(KP_MD.replace("kc: math.dot", "kc: torch.x"))
+        self.problems.write_text(json.dumps({"kc": "torch.x", "problems": [COMPUTE, DERIVATION, STATEMENT]}))
         errors = self.run_check()
-        self.assertTrue(any("kind: math" in e for e in errors), errors)
+        self.assertTrue(any("not one of" in e and "code page" in e for e in errors), errors)
+
+    def test_misspelt_kind_is_not_a_code_page(self):
+        self.md.write_text(KP_MD.replace("kind: math", "kind: maths").replace("kc: math.dot", "kc: torch.x"))
+        self.problems.write_text(json.dumps({"kc": "torch.x", "problems": [COMPUTE, DERIVATION, STATEMENT]}))
+        errors = self.run_check()
+        self.assertTrue(any("unknown `kind: maths`" in e for e in errors), errors)
+        self.assertTrue(any("not one of" in e for e in errors), errors)
+
+    def test_code_page_refuses_mc_on_faded(self):
+        self.code_page(KP_MD.replace("faded: []", "faded: [50001]").replace("independent: [50001, 50002]", "independent: [50002]"))
+        errors = self.run_check()
+        self.assertTrue(any("`faded` rung of a code page" in e and "50001" in e for e in errors), errors)
+
+    def test_code_page_rung_check_counts_only_mc_ids(self):
+        self.code_page(KP_MD.replace("independent: [50001, 50002]", "independent: [12, 50001]"))
+        errors = self.run_check()
+        self.assertTrue(any("on no rung" in e and "50002" in e for e in errors), errors)
+        self.assertFalse(any("12" in e and "no problem" in e for e in errors), errors)
 
 
 class MathKp(unittest.TestCase):
@@ -352,6 +383,29 @@ class SharedLoader(unittest.TestCase):
                 math_bank.load_math_rows(lessons)
             self.assertIn("50001", str(ctx.exception))
             self.assertIn("kp-a", str(ctx.exception))
+
+
+class CodePageMc(unittest.TestCase):
+    """validate_lessons.check_kp on a code page that lists MC problems."""
+
+    def check(self, with_problems_file):
+        import validate_lessons as L
+        with tempfile.TemporaryDirectory() as tmp:
+            md = Path(tmp) / "kp-x.md"
+            md.write_text(KP_MD.replace("kind: math\n", "").replace("kc: math.dot", "kc: torch.x"))
+            if with_problems_file:
+                (Path(tmp) / "kp-x.problems.json").write_text("{}")
+            bank = {q: {"exercise": {"submission_mode": "mc"}} for q in (50001, 50002, 50003)}
+            errors = []
+            L.check_kp(md, REGISTRY, bank, errors)
+            return [e for e in errors if "MC problems" in e]
+
+    def test_mc_ids_need_their_own_problems_file(self):
+        found = self.check(with_problems_file=False)
+        self.assertTrue(any("no kp-x.problems.json beside it" in e for e in found), found)
+
+    def test_problems_file_beside_satisfies_it(self):
+        self.assertEqual(self.check(with_problems_file=True), [])
 
 
 if __name__ == "__main__":

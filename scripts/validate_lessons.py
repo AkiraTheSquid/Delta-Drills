@@ -32,6 +32,7 @@ from pathlib import Path
 
 import content_safety
 import validate_math
+from validate_math import math_bank
 from lesson_lib import (LESSONS_DIR, REPO, all_kp_paths, code_fences, flat_question, load_bank,
                         load_registry, parse_kp, split_items)
 import lesson_quality as quality
@@ -144,6 +145,17 @@ def check_kp(path, registry, bank, errors):
         if not kp["sections"].get(sec):
             errors.append(f"{name}: empty/missing '## {sec}'")
 
+    # MC problems a code page owns (validate_math.py holds them against the
+    # problems file beside the page). They carry no code to leak, so the
+    # code-only checks below skip them.
+    listed = list(kp["faded"]) + list(kp["guided"]) + list(kp["independent"]) + list(kp.get("integrated") or [])
+    mc_ids = {qid for qid in listed
+              if qid in bank and math_bank.is_math_row(bank[qid].get("exercise") or {})}
+    problems_path = path.with_name(path.name[:-3] + ".problems.json")
+    if mc_ids and not problems_path.exists():
+        errors.append(f"{name}: lists MC problems {sorted(mc_ids)} but has no {problems_path.name} "
+                      "beside it — a page lists only the MC problems it owns")
+
     # 3. executable prose/worked-example code — run fences in DOCUMENT order
     # within each segment, against a namespace that is FRESH PER SEGMENT.
     #
@@ -250,7 +262,7 @@ def check_kp(path, registry, bank, errors):
                     errors.extend(quality.check_pairing(seg["worked"], flat_question(bank[qid]), f"{name}: q{qid}"))
                     errors.extend(quality.fade_findings(kp, qid, content, bank, f"{name}: q{qid}"))
         for item_qid in kp["independent"]:
-            if item_qid in bank:
+            if item_qid in bank and item_qid not in mc_ids:
                 errors.extend(
                     quality.check_prompt_leak(flat_question(bank[item_qid]), "solo", f"{name}: q{item_qid}")
                 )
@@ -269,7 +281,7 @@ def check_kp(path, registry, bank, errors):
     leak_sink = errors if strict else LEAK_WARNINGS
     for rung, ids in (("solo", kp["independent"]), ("integrated", kp.get("integrated") or [])):
         for qid in ids:
-            if qid not in bank:
+            if qid not in bank or qid in mc_ids:
                 continue
             q = flat_question(bank[qid])
             leak_sink.extend(content_safety.leak_findings(q, rung, f"{name}: q{qid}"))

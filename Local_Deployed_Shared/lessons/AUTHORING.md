@@ -365,6 +365,16 @@ minimal fixture is in `scripts/test_validate_math.py`.
   put the key wherever you like, but vary it across problems). `answer` is
   the key. `solution` is markdown + LaTeX, shown after the verdict.
 
+**Which page owns an MC problem.** The concept whose prerequisites cover
+everything the problem assumes — not the answer format. A pure-math question
+lives on its `math.*` page. One that reads torch (`t.linalg.norm(D, dim=1)`,
+a `(2, 3)` ray tensor, `t.where(...)`) is multiple choice but still a torch
+question: put it in `kp-<slug>.problems.json` beside the CODE page of the KC
+that teaches that torch (no `kind: math` on that page), list it under
+`## Solo practice` / `## Integrated practice` only (never Faded — that rung
+is a starter/solution completion there), and keep the math atom as a second
+atom tag. `validate_math.py` checks both placements.
+
 **Prompt vs solution rendering.** The prompt goes through the DRILL
 renderer: plain text, `code` spans and LaTeX only — no markdown emphasis,
 lists or headings (they would show as literal `*`/`#`). The solution goes
