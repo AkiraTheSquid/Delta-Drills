@@ -328,7 +328,7 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .oversight-chain span { color: var(--green); }
   /* ---- solid tiles ----
      Every block of running text sits on an opaque card so the background field
-     (js/background field.js) never runs under it; the field shows in the gaps between
+     (js/field.js) never runs under it; the field shows in the gaps between
      tiles and in the side gutters. Kept last so it wins over the block rules. */
   .tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap, .note, .stat, .modes .hand {
     background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow);
@@ -363,23 +363,26 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   /* ---- wireframe cards (Seth, 2026-09-25) ----
      "No cards … visible, but … an invisible card there": every card keeps its
      box but loses its fill and shadow, leaving only a thin outline. What keeps
-     the text readable is js/field.js, which pushes the field's nodes out of
-     every card box (the same list as its CARDS selector) and clips its
-     drawing to the space between them. Kept last so it beats the rules above. */
+     the text readable is js/field.js, which erases its drawing inside every
+     card box (the same list as its CARDS selector), so the field reads as
+     running behind opaque cards. Kept last so it beats the rules above. */
   .tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap, .note, .stat, .modes .hand,
   .modes .lane, figure.fig, .card, .qs li, .aisc-footer {
     background: transparent; box-shadow: none; border-color: var(--wire);
   }
-  /* the card under the cursor lights up in the cursor's own colour while
-     field.js pulls the nodes in round it (it sets .is-hot, innermost card
-     only). A section's title card (kicker + h2) is always lit, centred, a
-     little heavier, and pulls hardest. */
+  /* the card under the cursor lights up in the cursor's own colour
+     (field.js sets .is-hot, innermost card only). A section's title card
+     (kicker + h2) is always lit, and a little heavier. */
   /* the doubled selectors match the specificity of the wireframe rule above
      (figure.fig, .qs li, .modes .hand, .hero > div:first-child), or it wins */
   .is-hot, .modes .lane.is-hot, figure.fig.is-hot, .qs li.is-hot, .modes .hand.is-hot,
   .hero > div.is-hot:first-child, .tile:has(> .kicker) { border-color: rgb(var(--field-edge)); }
   /* .status sets its own outline further down */
-  .tile:has(> .kicker) { border-width: 2px; margin-left: auto; margin-right: auto; }
+  .tile:has(> .kicker) { border-width: 2px; }
+  /* every tile sits in the middle of the column (Seth, 2026-09-25: "make the
+     tile paragraphs center aligned"); they were fit-content boxes hugging
+     the left edge, under a centred title card */
+  .tile { margin-left: auto; margin-right: auto; }
   .tile:has(> .kicker) > .kicker, .tile:has(> .kicker) > h2 { text-align: center; }
   .note { border-left-color: var(--amber); }
   .modes .lane.ada:not(.is-hot) { border-color: var(--coral); }
@@ -397,29 +400,14 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .fig-expand { background: transparent; }
 
   /* ---- articles (Seth, 2026-09-25) ----
-     The page is five <article>s, one open at a time (../articles.js). The
-     index up top is a row of wireframe cards (they are .card, so field.js
-     keeps out of them and lights the hovered one); the open article's card
-     keeps the title-card outline. */
+     The page is five <article>s, one open at a time (../articles.js),
+     switched from the topbar (#aisc-toc). */
   .aisc-article { display: block; scroll-margin-top: calc(var(--dd-topbar-h, 44px) + 16px); }
   .aisc-article[hidden] { display: none; }
-  .art-index { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; padding: 40px 0 0; }
-  /* id-scoped: `a:not(.rail a):not(.mark)` above zeroes every link's bottom
-     border at (1,2,2). Width and style only, so .is-hot still sets the colour. */
-  #aisc-articles .art-link { display: block; color: inherit; text-decoration: none; padding: 16px 18px; border-bottom-width: 1px; border-bottom-style: solid; }
-  #aisc-articles .art-link:hover { color: inherit; }
-  #aisc-articles .art-link h4 { font-size: 22px; }
-  #aisc-articles .art-link p { font-size: 14px; }
-  #aisc-articles .art-link.on { border-width: 2px; border-color: rgb(var(--field-edge)); padding: 15px 17px; }
   .art-next { text-align: center; margin: 56px 0 0; font: 500 13px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
   .art-next a { color: var(--coral); text-decoration: none; }
   .cols.three { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   @media (max-width: 700px) {
-    .art-index { grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 24px; }
-    #aisc-articles .art-link { padding: 12px 14px; }
-    #aisc-articles .art-link.on { padding: 11px 13px; }
-    #aisc-articles .art-link h4 { font-size: 18px; margin: 0; }
-    #aisc-articles .art-link p { display: none; }
     .cols.three { grid-template-columns: 1fr; }
   }
 }

@@ -17,7 +17,7 @@
   var SCRIPTS = [
     "aisc/js/engine.js?v=1",
     "aisc/js/common.js?v=4",
-    "aisc/js/field.js?v=4",
+    "aisc/js/field.js?v=5",
     "aisc/js/fig-effort.js?v=5",
     "aisc/js/fig-forget.js?v=13",
     "aisc/js/fig-graphs.js?v=6",

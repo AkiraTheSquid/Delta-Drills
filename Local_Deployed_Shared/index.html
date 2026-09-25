@@ -167,7 +167,7 @@
        typefaces come from Google Fonts, loaded NON-blocking (media swap): a
        dead fonts CDN must not hold up first paint of the whole app for one
        page most visits never open; the fallbacks are Georgia / monospace. -->
-  <link rel="stylesheet" href="aisc/aisc.css?v=11" />
+  <link rel="stylesheet" href="aisc/aisc.css?v=12" />
   <link rel="stylesheet" media="print" onload="this.media='all'"
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
@@ -882,26 +882,21 @@
            `data-about-runtime` marks the live figures: about-page-editor.js
            never lets them be edited and restores them from this markup when a
            saved copy is shown. Since 2026-09-25 the sections are grouped
-           into five <article>s (see ARTICLES INDEX below); the two
+           into five <article>s (see ARTICLES below); the two
            account-menu rows land on #aisc-a-why and #aisc-why-use. -->
       <div class="aisc" id="aisc-root">
 
       <div class="aisc-main" id="aisc-top">
 
-      <!-- ================================================ ARTICLES INDEX
+      <!-- ================================================ ARTICLES
            The page is a set of articles since 2026-09-25 (Seth: "break up the
            page for the different sections into different articles"). One is
            open at a time; aisc/articles.js shows it, hides the rest, marks it
-           here and in the topbar (#aisc-toc), and opens the right one for any
-           #aisc- link on the page. Articles 2–5 ship `hidden` so nothing
-           flashes before the script runs. -->
-      <nav class="art-index" id="aisc-articles" aria-label="Articles">
-        <a class="card art-link" href="#aisc-a-why"><span class="tag">Article 1</span><h4>Why this app exists</h4><p>What Delta Drills is, the three things that set it apart, and how you use it.</p></a>
-        <a class="card art-link" href="#aisc-a-case"><span class="tag">Article 2</span><h4>The case for it</h4><p>Why the ramp into AI safety research is the bottleneck, and why shortening it is safety work.</p></a>
-        <a class="card art-link" href="#aisc-a-how"><span class="tag">Article 3</span><h4>How it works</h4><p>The knowledge graph, placement, spaced repetition and remediation, as live figures.</p></a>
-        <a class="card art-link" href="#aisc-a-evidence"><span class="tag">Article 4</span><h4>Evidence so far</h4><p>What counts as evidence, one learner's September in the app, and where things stand.</p></a>
-        <a class="card art-link" href="#aisc-a-aisc"><span class="tag">Article 5</span><h4>AI Safety Camp 12 proposal</h4><p>The plan for Jan–Apr 2027: streams, timeline, risks, the lead and the open questions.</p></a>
-      </nav>
+           in the topbar (#aisc-toc), and opens the right one for any #aisc-
+           link on the page. Articles 2–5 ship `hidden` so nothing flashes
+           before the script runs. The in-page index of article cards that
+           sat here went the same day (Seth: "remove this top part"); the
+           topbar is the only switcher. -->
 
       <!-- ============================================ ARTICLE 1 · WHY
            Seth's own text from before the AISC write-up replaced the page
@@ -2587,7 +2582,7 @@ t.manual_seed(0)
   <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
   <script src="conceptual/conceptual_chat.js?v=1"></script>
   <script src="app.js?v=36"></script>
-  <script src="about-page-editor.js?v=4"></script>
+  <script src="about-page-editor.js?v=5"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
@@ -2669,8 +2664,8 @@ t.manual_seed(0)
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/articles.js?v=1" defer></script>
-  <script src="aisc/boot.js?v=12" defer></script>
+  <script src="aisc/articles.js?v=2" defer></script>
+  <script src="aisc/boot.js?v=13" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
