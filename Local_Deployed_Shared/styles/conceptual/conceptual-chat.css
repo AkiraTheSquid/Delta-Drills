@@ -1,0 +1,89 @@
+/* ================================================================
+   CONCEPTUAL CHAT PAGE — the frame around <deep-chat>.
+
+   Everything INSIDE the chat (bubbles, composer, markdown) is styled by
+   conceptual/conceptual_chat_theme.js, because it lives in Deep Chat's
+   shadow root where this file cannot reach. This file only lays out the
+   page: a full-height column, a slim header, the chat filling the rest.
+   The height itself is set by conceptual_chat.js (viewport minus whatever
+   is above the page, guest banner included).
+
+   Every colour is a token from styles/variables.css.
+   ================================================================ */
+
+#page-concept-chat {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg);
+}
+
+#page-concept-chat.hidden { display: none; }
+
+.cc-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(760px, 100%);
+  box-sizing: border-box;
+  margin: 0 auto;
+  /* Clears the placement-timer notch that hangs below the topbar. */
+  padding: 30px 16px 0;
+}
+
+/* `#page-concept-chat` in the selector because `.page h1` (layout.css) is
+   (0,1,1) and would otherwise make this a 32px page title. */
+#page-concept-chat .cc-head-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.cc-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k)));
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cc-new:hover {
+  background: rgb(var(--tint-rgb) / calc(0.09 * var(--tint-k)));
+  border-color: var(--border-strong);
+}
+
+#concept-chat-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+#concept-chat-root > deep-chat {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#concept-chat-root[aria-busy="true"]::before {
+  content: "Loading…";
+  margin: auto;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.cc-fail {
+  margin: auto;
+  color: var(--muted);
+  font-size: 14px;
+}

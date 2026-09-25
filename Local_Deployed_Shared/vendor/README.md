@@ -6,13 +6,16 @@ Third-party code the app ships **as files it serves itself**, rather than
 pulling from a CDN at runtime. One subfolder per library, each with its own
 README, LICENSE and `watch.py`.
 
-Four tenants today:
+Five tenants today:
 
 - `tiptap/` — the editor engine behind the Groups tab's three-state checklists.
 - `fonts/` — Inter (woff2 + `inter.css` with its gstatic URLs rewritten to the
   files beside it).
 - `katex/` — the maths renderer for question prompts and lesson prose.
 - `graph/` — cytoscape + dagre + fcose, the How It Works concept graph.
+- `deep-chat/` — Deep Chat 2.5.1 (MIT), the Concept Chat tab's chat UI web
+  component (2026-09-25). Framework-free ESM bundle, `import()`-ed lazily by
+  `conceptual/conceptual_chat.js`.
 
 The last three were vendored on 2026-09-09 (Seth: *"it needs to work without an
 internet connection though, just completely locally"*). With the cable out they
@@ -51,6 +54,8 @@ of this repo at any commit is the app as it ran.
   Note's `shared/web-components/js/vendor/tiptap/` so the two apps write the
   same `{v, doc}` checklist document. Read `tiptap/README.md` before touching
   it: the one-bundle rule there is a correctness constraint, not tidiness.
+- `deep-chat/` — `deepChat.bundle.js` byte for byte from the npm tarball
+  (387 KB, sha256 pinned in its `watch.py`). Never script-tagged.
 
 ## Data & External Dependencies
 

@@ -119,6 +119,7 @@
        groups.css that overrides them — `.dd-member-areas`'s tighter top
        margin — is the same specificity, so source order is what settles it. -->
   <link rel="stylesheet" href="styles/groups.css?v=3" />
+  <link rel="stylesheet" href="styles/conceptual/conceptual-chat.css?v=1" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
        win the ties. Inert until app.js `applyModeVisibility` writes that class,
@@ -290,6 +291,7 @@
       <button class="tab auth-only" data-tab="courses" type="button">Course content</button>
       <button class="tab auth-only" data-tab="practice" type="button">Learner Home</button>
       <button class="tab auth-only" data-tab="groups" type="button">Groups</button>
+      <button class="tab auth-only" data-tab="concept-chat" type="button">Concept Chat</button>
       <button class="tab auth-only" data-tab="notebooks" type="button">Notebooks</button>
       <!-- HIDDEN 2026-08-23 (Seth, via @O): Targeted Practice is not being
            maintained. The HTML `hidden` ATTRIBUTE, the same idiom as split-tool
@@ -1703,6 +1705,19 @@
     </div>
   </main>
 
+  <!-- CONCEPT CHAT — the ChatGPT-style "why does this work" tab (Seth,
+       2026-09-25). One mount point: conceptual/conceptual_chat.js lazily
+       imports Deep Chat (vendor/deep-chat/) and builds the whole chat in
+       #concept-chat-root; it also sizes this page to the viewport. The
+       answers come from /api/conceptual/chat (backend app/conceptual/). -->
+  <main class="page hidden" id="page-concept-chat">
+    <div class="cc-head">
+      <h1 class="cc-head-title">Concept Chat</h1>
+      <button class="cc-new" id="concept-chat-new" type="button">New chat</button>
+    </div>
+    <div id="concept-chat-root" aria-live="polite"></div>
+  </main>
+
   <main class="page hidden session-idle" id="page-practice">
     <div id="practice-workspace-home" hidden></div>
 
@@ -2458,6 +2473,8 @@ t.manual_seed(0)
   <script src="groups/groups_progress.js?v=2"></script>
   <script src="groups/groups_lane.js?v=2"></script>
   <script src="groups/groups_view.js?v=5"></script>
+  <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
+  <script src="conceptual/conceptual_chat.js?v=1"></script>
   <script src="app.js?v=36"></script>
   <script src="about-page-editor.js?v=3"></script>
   <!-- Gives a signed-out visitor a backend session so the diagnostic,
