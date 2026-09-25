@@ -9,11 +9,12 @@
    near it. What changed for the app:
    - The canvas is fixed under the topbar and lives on #page-learn-about-app,
      outside #about-page-content, so the About editor never saves it.
-   - It is not hidden by opaque cards any more. aisc.css masks the canvas's
-     centre band (--aisc-clear wide) with an eased fade (--aisc-fade), so the
-     column of text sits on plain paper and the field shows only in the
-     gutters. Nodes still roam across the band; they are simply not drawn
-     there.
+   - Since 2026-09-25 (Seth: back to the card style, "remove the gradient
+     thing") the canvas is drawn unmasked across the whole page, as on the
+     standalone site: the write-up's opaque cards hide it under the text and
+     it shows between them and in the gutters. The extra gutter nodes read
+     `--aisc-clear` (aisc.css: the cards' 1180px measure) for where the side
+     bands start.
    - It runs only while #aisc-root is on screen. The app keeps every page in
      the DOM, and a `display: none` page never intersects, so the animation
      stops the moment the learner leaves this page.
