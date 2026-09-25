@@ -430,6 +430,16 @@ def save_user_state(user_id: str) -> None:
         _save_user_state(_user_states[user_id])
 
 
+def write_state_file(state: UserPracticeState) -> None:
+    """Persist `state` itself, cached or not — for round-trip checks."""
+    _save_user_state(state)
+
+
+def read_state_file(user_id: str) -> Optional[UserPracticeState]:
+    """What is on disk for `user_id`, bypassing the in-memory cache."""
+    return _load_user_state(user_id)
+
+
 # ---------------------------------------------------------------------------
 # Core algorithm
 # ---------------------------------------------------------------------------

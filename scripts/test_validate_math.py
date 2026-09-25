@@ -218,7 +218,7 @@ class ProblemFile(unittest.TestCase):
         reg = copy.deepcopy(REGISTRY)
         reg["kcs"][0]["lesson"] = "tr-1"
         errors = self.run_check(registry=reg)
-        self.assertTrue(any("not `Mathematics`" in e for e in errors), errors)
+        self.assertTrue(any("not one of" in e and "Mathematics" in e for e in errors), errors)
 
     def test_problem_on_no_rung_and_rung_without_problem(self):
         self.md.write_text(KP_MD.replace("independent: [50001, 50002]", "independent: [50001, 50009]"))

@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 os.environ["USER_DATA_DIR"] = tempfile.mkdtemp(prefix="ray-placement-")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app import diagnostic as D, practice_targets as T, kc_graph as G
-from app.adaptive import UserPracticeState, _save_user_state, _load_user_state
+from app.adaptive import UserPracticeState, read_state_file, write_state_file
 from app.prioritization import question_is_unlocked
 from app.questions import get_question_by_id
 
@@ -77,8 +77,8 @@ class RayPlacementTest(unittest.TestCase):
         s = self.start("persist")
         self.answer(s, "correct")
         D.finish(s)
-        _save_user_state(s)
-        loaded = _load_user_state(s.user_id)
+        write_state_file(s)
+        loaded = read_state_file(s.user_id)
         self.assertEqual(loaded.practice_target, T.RAY)
         self.assertEqual(T.readiness(loaded), T.readiness(s))
         kc = "torch.constructors"

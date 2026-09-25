@@ -99,9 +99,15 @@ score = lambda k: (descendants.get(k, 0) + 1) * kc_prefs.weight_for(st, k)
 expected = max(base, key=lambda k: (score(k), -depth.get(k, 0), k))
 check("frontier head is the node with the highest weighted coreness",
       kc_graph.frontier(st)[0] == expected, f"expected={expected} got={kc_graph.frontier(st)[:3]}")
-check("max weight raised the tail node's score above the old head",
-      score(tail) > (descendants.get(base[0], 0) + 1) * 1.0 or expected == tail,
-      f"tail={tail} score={score(tail)}")
+# Since whole-graph explore (2026-09-24) the frontier is most of the graph, so
+# a max-weight leaf need not outrank a root with ~70 descendants — but it must
+# climb: its score is MAX_WEIGHT × its coreness, and it moves toward the front.
+after = kc_graph.frontier(st)
+new_idx = after.index(tail) if tail in after else None
+check("max weight multiplies the tail's score and moves it up the frontier",
+      score(tail) == kc_prefs.MAX_WEIGHT * (descendants.get(tail, 0) + 1)
+      and new_idx is not None and (new_idx < len(base) - 1 or expected == tail),
+      f"tail={tail} score={score(tail)} idx {len(base) - 1} -> {new_idx}")
 kc_prefs.set_pref(st, tail, weight=0.75)
 check("0.75 keeps it in the frontier", tail in kc_graph.frontier(st))
 check("report carries the pref row",

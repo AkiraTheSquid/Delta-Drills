@@ -18,9 +18,8 @@ Covers what the time-plan rewrite made true and what it broke:
   D. THE STOPPING RULE. A plan ends when the clock runs out as well as when the
      evidence settles, and a 6-hour run really does reach every concept.
 
-The old suite for this module, scripts/test_diagnostic_history.py, tests the
-retired topic-θ model (`p_correct`, `_DIFF_FLOOR`) and has been failing at
-import since that model was removed. This is its replacement; nothing here
+This replaced scripts/test_diagnostic_history.py (deleted 2026-09-25), which
+tested the retired topic-θ model (`p_correct`, `_DIFF_FLOOR`). Nothing here
 depends on the network or on a running server.
 
 Run: .venv/bin/python scripts/test_placement.py
@@ -121,10 +120,10 @@ def _age_pending(state, secs):
 c = UserPracticeState(user_id="clock")
 D.start(c, hours=1)
 q = D.select_probe(c)
-_age_pending(c, 200)                                        # under every concept's cap (shortest is 300)
+_age_pending(c, 150)                                        # under every concept's cap (shortest is 180)
 D.record_probe(c, q, "dont_know", elapsed_secs=0)          # client claims nothing elapsed
 spent = D.get_diag(c)["spent_secs"]
-check("a client reporting 0 cannot buy free time", 195 <= spent <= 205, spent)
+check("a client reporting 0 cannot buy free time", 145 <= spent <= 155, spent)
 check("remaining_secs is the budget minus what was spent",
       D.remaining_secs(c) == 3600 - spent, (D.remaining_secs(c), spent))
 
@@ -171,7 +170,8 @@ check("a probe is charged at most its concept's cap, not the flat 20:00",
 check("with nothing pending the clock quoted is the ceiling",
       D.problem_secs_allowed(per) == D.PER_PROBLEM_SECS)
 lo, hi = D.cap_range(per)
-check("the picker's range spans the assessed concepts", lo == 300 and hi == 900, (lo, hi))
+# 180 = the math MC concepts (math.* multiple choice, 3 min); 900 = ARENA 0.1/0.2 exercises.
+check("the picker's range spans the assessed concepts", lo == 180 and hi == 900, (lo, hi))
 
 # A CORRECT answer past the clock (plus grace) is a miss: the charge is capped
 # at the clock, so an uncapped answer would be free time and free evidence.

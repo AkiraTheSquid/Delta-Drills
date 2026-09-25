@@ -310,7 +310,7 @@ def _split_markdown(src: str) -> list[tuple[str, str, str]]:
 _MAGIC_RE = re.compile(r"^\s*(?:%%|[%!])\w", re.M)
 
 
-def _cells(nb: dict, slug: str) -> list[dict]:
+def notebook_cells(nb: dict, slug: str) -> list[dict]:
     out = []
     for index, cell in enumerate(nb.get("cells") or []):
         src = "".join(cell.get("source") or [])
@@ -399,7 +399,7 @@ def main() -> int:
             continue
         nb = json.loads(source.read_text(encoding="utf-8"))
         slug = _slug(section, rel)
-        cells = _cells(nb, slug)
+        cells = notebook_cells(nb, slug)
         name = f"{PREFIX}{slug}.json"
         payload = {
             "id": slug,
