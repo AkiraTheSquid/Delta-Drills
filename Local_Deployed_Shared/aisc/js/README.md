@@ -16,14 +16,15 @@
 - `engine.js`: `window.DeltaEngine` — placement/BKT/FIRe/remediation constants.
 - `common.js`: `window.AISC` — `css()` token reader (reads `#aisc-root`),
   `rgb01`, `onTheme` (fires on `delta:theme-changed`), `whenVisible`, `graph`
-  (fetch of `aisc/data/kc_graph.json`), `lessonColor`; reveal + section nav
+  (fetch of `aisc/data/kc_graph.json`); reveal + section nav
   (the nav is `#aisc-toc` in the app topbar).
 - `field.js`: the gutter node field — a fixed canvas on the page, animated only
   while `#aisc-root` intersects (a hidden page never does) and the tab is
   visible; idle when its CSS hides it (< 1000px); still frame under reduced
   motion.
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
-  `fig-graphs.js` Figs. 2, 3, 5, 6 (Cytoscape + dagre) · `fig-seth.js` Fig. 7.
+  `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
+  style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
 
 ## Data & External Dependencies
 - `../data/*.json`; global `cytoscape` (app vendor/graph).
@@ -53,3 +54,9 @@
   same readout numbers; handles keyboard-operable (←/→, Home, End).
 - 2026-09-24: `field.js` added (port of the site's bg-field.js, page-scoped);
   `common.js` section nav reads `#aisc-toc` and catches clicks on the document.
+- 2026-09-24: Fig. 2's Cytoscape code removed (the app's why-graph.js draws it
+  now) with `AISC.lessonColor`; Figs. 3/5/6 take why-graph's round-rectangle
+  labelled nodes, red arrows, yellow highlight. Controls trimmed: `fig-effort.js`
+  drops learner/expert sliders, Play, mechanism list, Fermi inputs;
+  `fig-forget.js` drops speed/target/implicit controls (defaults kept in `S`).
+  Readouts are one or two lines.

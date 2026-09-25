@@ -119,10 +119,10 @@
   function readout() {
     var d = data.series[hover == null ? data.series.length - 1 : hover];
     var m = d.min, tot = (m.drill || 0) + (m.lesson || 0) + (m.placement || 0);
-    document.getElementById("aisc-seth-readout").innerHTML = "<b>" + fmtDay(d.date) + "</b><br>" +
-      "app score <b>" + (d.app[section] == null ? "—" : Math.round(d.app[section])) + "</b><br>" +
+    document.getElementById("aisc-seth-readout").innerHTML = "<b>" + fmtDay(d.date) + "</b> · " +
+      "app score <b>" + (d.app[section] == null ? "—" : Math.round(d.app[section])) + "</b> · " +
       "demonstrated <b>" + Math.round(d.demo[section]) + "%</b> · tried <b>" + Math.round(d.tried[section]) + "%</b><br>" +
-      (d.cal ? "7-day right <b>" + Math.round(d.cal.actual * 100) + "%</b> vs predicted <b>" + Math.round(d.cal.predicted * 100) + "%</b> (n=" + d.cal.n + ")<br>" : "") +
+      (d.cal ? "7-day right <b>" + Math.round(d.cal.actual * 100) + "%</b> vs predicted <b>" + Math.round(d.cal.predicted * 100) + "%</b> (n=" + d.cal.n + ") · " : "") +
       "study ≈ <b>" + (tot / 60).toFixed(1) + " h</b>";
   }
 

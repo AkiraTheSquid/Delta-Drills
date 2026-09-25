@@ -118,7 +118,7 @@
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     svg.setAttribute("viewBox", "0 0 " + P.W + " " + P.H);
     svg.setAttribute("width", P.W); svg.setAttribute("height", P.H);
-    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), panel: AISC.css("--paper-2"),
+    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), panel: AISC.css("--paper"),
       red: AISC.css("--red"), amber: AISC.css("--amber"), curve: AISC.css("--green") };
     var mono = "IBM Plex Mono, monospace";
     function label(x, y, text, o) {
@@ -128,7 +128,7 @@
     }
     var sim = simulate();
 
-    // frame: panel, the below-threshold zone, threshold, axes
+    // frame: panel (page paper, so the plot reads as part of the page), the below-threshold zone, threshold, axes
     el("rect", { x: P.L, y: P.T, width: P.R - P.L, height: P.B - P.T, fill: c.panel });
     el("rect", { x: P.L, y: Y(S.target), width: P.R - P.L, height: P.B - Y(S.target), fill: c.red, "fill-opacity": 0.07 });
     el("line", { x1: P.L, x2: P.R, y1: Y(S.target), y2: Y(S.target), stroke: c.red, "stroke-width": 1, "stroke-dasharray": "5 4" });
@@ -186,8 +186,8 @@
 
   function readout(sim) {
     document.getElementById("aisc-forget-readout").innerHTML =
-      "Full reviews in 60 days: <b>" + sim.nrev + "</b><br>Repetitions accrued: <b>" + fmt1(sim.reps) + "</b><br>" +
-      "Lowest recall: <b>" + Math.round(sim.minr * 100) + "%</b><br>Half-life at day 60: <b>" + fmt1(sim.h) + " d</b>";
+      "reviews in 60 days <b>" + sim.nrev + "</b> · repetitions <b>" + fmt1(sim.reps) + "</b> · " +
+      "lowest recall <b>" + Math.round(sim.minr * 100) + "%</b> · half-life at day 60 <b>" + fmt1(sim.h) + " d</b>";
   }
 
   // ---- dragging + keys --------------------------------------------------------
@@ -240,30 +240,18 @@
   function seg(id, fn) {
     document.querySelectorAll("#" + id + " button").forEach(function (b) {
       b.addEventListener("click", function () {
-        document.querySelectorAll("#" + id + " button").forEach(function (x) { x.classList.toggle("on", x === b); });
+        document.querySelectorAll("#" + id + " button").forEach(function (x) {
+          x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b ? "true" : "false");
+        });
         fn(b);
       });
     });
   }
-  seg("aisc-speed-seg", function (b) { S.speed = +b.dataset.s; autoschedule(); });
-  seg("aisc-model-seg", function (b) {
-    S.fixed = b.dataset.m === "today";
-    document.getElementById("aisc-speed-seg").classList.toggle("off", S.fixed);
-    autoschedule();
-  });
-  var st = document.getElementById("aisc-s-target");
-  st.addEventListener("input", function () {
-    document.getElementById("aisc-o-target").textContent = st.value + "%";
-    S.target = st.value / 100; autoschedule();
-  });
+  // Speed, retention target and implicit reviews stay at their defaults
+  // (S): the figure keeps the built-vs-planned switch and the scheduler
+  // (Seth, 2026-09-24: "significantly simplified").
+  seg("aisc-model-seg", function (b) { S.fixed = b.dataset.m === "today"; autoschedule(); });
   document.getElementById("aisc-forget-auto").addEventListener("click", autoschedule);
-  var imp = document.getElementById("aisc-forget-implicit");
-  imp.addEventListener("click", function () {
-    S.implicit = !S.implicit;
-    imp.textContent = "Implicit reviews: " + (S.implicit ? "on" : "off");
-    imp.classList.toggle("on", S.implicit);
-    autoschedule();
-  });
 
   function layout() { P = geometry(); render(); }
   AISC.whenVisible(svg, function () { P = geometry(); autoschedule(); });

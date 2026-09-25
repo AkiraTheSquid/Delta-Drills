@@ -16,12 +16,12 @@
 
   var SCRIPTS = [
     "aisc/js/engine.js?v=1",
-    "aisc/js/common.js?v=2",
+    "aisc/js/common.js?v=3",
     "aisc/js/field.js?v=1",
-    "aisc/js/fig-effort.js?v=1",
-    "aisc/js/fig-forget.js?v=7",
-    "aisc/js/fig-graphs.js?v=2",
-    "aisc/js/fig-seth.js?v=1",
+    "aisc/js/fig-effort.js?v=3",
+    "aisc/js/fig-forget.js?v=10",
+    "aisc/js/fig-graphs.js?v=4",
+    "aisc/js/fig-seth.js?v=2",
   ];
   var started = false;
 
