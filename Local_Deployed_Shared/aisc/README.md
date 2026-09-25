@@ -23,9 +23,8 @@
 - `aisc.css`: the site's stylesheet, every rule nested under `#aisc-root`. Theme
   tokens = the standalone site's own palette, on `#page-learn-about-app` (so the
   page background and the field share it): its dark paper for the app's blue and
-  dark themes, its light paper for `html[data-theme="light"]`. Also the page
-  layout vars (`--aisc-col` / `--aisc-wide` / `--aisc-clear` / `--aisc-fade`),
-  the field's mask, and `#aisc-toc`.
+  dark themes, its light paper for `html[data-theme="light"]`. Also the field
+  canvas rule (`--aisc-clear` = the 1180px card measure) and `#aisc-toc`.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
 - `js/`, `data/`: see those folders.
@@ -55,14 +54,17 @@
 - Never un-nest a rule out of `#aisc-root`: the site's `.card`/`.btn`/`.note`/
   `.status` would restyle the rest of the app.
 - Dropped from the standalone site on purpose: its theme toggle (app owns theme),
-  and presentation mode (`present.js`, global keydown). Its `bg-field.js` came
-  back as `js/field.js`, scoped to this page and masked out of the column.
-- Layout (Seth, 2026-09-24, after uchicagoaisafety.com/about-us): ONE column of
-  paragraphs, no floating prose cards; the mask keeps the field out of the
-  column, so don't reintroduce opaque tiles to hide it. Figures ARE cards
-  (Seth, 2026-09-25): `--aisc-wide` (1132px, the standalone site's figure
-  width), centred on the column, graphic left and controls in a 300px
-  `.fig-side` column on the right (stacked under the graphic below 900px).
+  its in-page rail (contents are in the topbar), and presentation mode
+  (`present.js`, global keydown). Its `bg-field.js` came back as `js/field.js`,
+  scoped to this page.
+- Layout = the standalone site's (Seth, 2026-09-25: "everything needs to go
+  back to the card style … remove the gradient thing"): 1180px measure, every
+  block of running text on an opaque card (the "solid tiles" rules, kept last
+  in the `#aisc-root` block), the node field unmasked behind the whole page.
+  Figures are cards at the full measure, graphic left and controls in a 300px
+  `.fig-side` column on the right (stacked under the graphic below 900px). No
+  fade/mask on the field. The 2026-09-24 one-column XLab layout is retired;
+  only its topbar contents (`#aisc-toc`) stayed.
 - Every figure has a "Full screen" button under its graphic, added by
   `js/fig-expand.js`: `figure.fig.is-max` fixes the card over the viewport,
   Escape or the button closes it, Tab wraps inside it. Fig. 2's button presses
@@ -110,3 +112,7 @@
   the whole page; figures back to cards at 1132px with controls on the right
   (the cut-down controls kept); "Full screen" button under every figure
   (`js/fig-expand.js`).
+- 2026-09-25: Back to the standalone site's card layout everywhere: prose on
+  opaque tiles at the 1180px measure, hero ornament back, field unmasked (the
+  gutter fade is gone). Palette, topbar contents, figure cards and full screen
+  kept.

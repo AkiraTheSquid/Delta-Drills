@@ -44,54 +44,30 @@ html[data-theme="light"] #page-learn-about-app {
 body:has(#page-learn-about-app:not(.hidden)) { background: #0d1017; }
 html[data-theme="light"] body:has(#page-learn-about-app:not(.hidden)) { background: #f3f5f9; }
 
-/* LAYOUT (Seth, 2026-09-24, after uchicagoaisafety.com/about-us): one centred
-   column of paragraphs, the figures between them a little wider, and a field
-   of floating nodes in the side gutters that fades out, very gently, before it
-   reaches the text. No floating cards: the write-up used to put every block
-   of prose on its own opaque tile so the field could run behind the page;
-   now the field is masked out of the column instead.
-
-   --aisc-col   the text measure
-   --aisc-wide  the figures (cards again, 2026-09-25), wider than the text
-   --aisc-clear the band the field is masked out of (column + a margin)
-   --aisc-fade  how far the field takes to fade in, eased, beyond the band */
-#page-learn-about-app {
-  --aisc-col: 720px;
-  --aisc-wide: min(1132px, calc(100vw - 48px));
-  --aisc-clear: calc(var(--aisc-col) + 80px);
-  --aisc-fade: clamp(60px, calc((100vw - var(--aisc-clear)) / 5), 200px);
-}
+/* LAYOUT (Seth, 2026-09-25: "everything needs to go back to the card style
+   … remove the gradient thing"). The standalone site's layout: an 1180px
+   measure, every block of running text on an opaque card (the solid tiles at
+   the end of the #aisc-root block), and the node field (js/field.js) running
+   behind the whole page, unmasked, showing in the gaps between cards and in
+   the gutters. The one thing kept from the 2026-09-24 column layout is the
+   contents in the app's topbar (#aisc-toc) instead of an in-page rail. */
+/* js/field.js keeps its extra "gutter" nodes outside this band: the
+   1180px measure the cards use. */
+#page-learn-about-app { --aisc-clear: 1180px; }
 #page-learn-about-app.page { padding: 0 0 40px; }
 #page-learn-about-app .container { max-width: none; }
 /* The "Why this app exists" menu row scrolls to #aisc-root itself; land it
    under the app's sticky topbar, not beneath it. */
 #aisc-root { scroll-margin-top: var(--dd-topbar-h, 44px); }
-/* The app's own "try it" note and CTA, kept after the write-up on the same
-   column. */
-#page-learn-about-app .lab-after { position: relative; z-index: 1; max-width: calc(var(--aisc-col) + 48px); margin: 0 auto; padding: 0 24px; }
+/* The app's own "try it" note and CTA, kept after the write-up on its old
+   985px measure, above the field. */
+#page-learn-about-app .lab-after { position: relative; z-index: 1; max-width: 985px; margin: 0 auto; padding: 0 20px; }
 
-/* The node field (js/field.js). Fixed under the topbar, behind the write-up.
-   The mask is clear across the centre band and eases in over --aisc-fade on
-   each side; the stops follow a smoothstep so there is no visible edge. */
+/* The node field (js/field.js): fixed under the topbar, behind the write-up. */
 #page-learn-about-app > #aisc-field {
   position: fixed; left: 0; right: 0; top: var(--dd-topbar-h, 44px); bottom: 0;
   width: 100%; height: calc(100% - var(--dd-topbar-h, 44px));
   z-index: 0; pointer-events: none;
-  --l: calc(50% - var(--aisc-clear) / 2);
-  --r: calc(50% + var(--aisc-clear) / 2);
-  --f: var(--aisc-fade);
-  --aisc-mask: linear-gradient(90deg,
-    #000 0, #000 calc(var(--l) - var(--f)),
-    rgba(0,0,0,.9) calc(var(--l) - var(--f) * .8), rgba(0,0,0,.66) calc(var(--l) - var(--f) * .6),
-    rgba(0,0,0,.34) calc(var(--l) - var(--f) * .4), rgba(0,0,0,.1) calc(var(--l) - var(--f) * .2),
-    transparent var(--l), transparent var(--r),
-    rgba(0,0,0,.1) calc(var(--r) + var(--f) * .2), rgba(0,0,0,.34) calc(var(--r) + var(--f) * .4),
-    rgba(0,0,0,.66) calc(var(--r) + var(--f) * .6), rgba(0,0,0,.9) calc(var(--r) + var(--f) * .8),
-    #000 calc(var(--r) + var(--f)), #000 100%);
-  -webkit-mask-image: var(--aisc-mask);
-  mask-image: var(--aisc-mask);
-  /* No gutters worth drawing in: field.js sees a zero box and stays idle. */
-  @media (max-width: 1000px) { display: none; }
 }
 
 /* The contents, in the app's own topbar (index.html #aisc-toc, in
@@ -116,10 +92,10 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
 #aisc-root {
   &, & * { box-sizing: border-box; }
   & {
-    /* transparent so the field (behind, z-index 0) shows in the gutters;
+    /* transparent so the field (behind, z-index 0) shows between the cards;
        the page under it is --paper already */
     position: relative; z-index: 1; background: transparent; color: var(--ink);
-    font: 19px/1.7 var(--serif); font-optical-sizing: auto;
+    font: 19px/1.6 var(--serif); font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
   }
   a { color: var(--slate); text-underline-offset: 3px; }
@@ -129,52 +105,56 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   a:not(.rail a):not(.mark):hover { color: var(--ink); }
   ::selection { background: var(--amber); color: #161a23; }
 
+
   /* The old in-page rail. The contents live in the topbar now (#aisc-toc);
      this only hides one inside a copy saved before the move. */
   .rail { display: none; }
 
   /* ---------- layout ---------- */
-  .aisc-main { max-width: calc(var(--aisc-col) + 48px); margin: 0 auto; padding: 0 24px 120px; }
-  section { scroll-margin-top: calc(var(--dd-topbar-h, 44px) + 28px); padding: 56px 0 0; }
-  .prose { max-width: none; }
+  .aisc-main { max-width: 1180px; margin: 0 auto; padding: 0 24px 120px; }
+  section { scroll-margin-top: calc(var(--dd-topbar-h, 44px) + 28px); padding: 88px 0 24px; border-top: 1px solid var(--rule); }
+  section:first-of-type { border-top: 0; }
+  .prose { max-width: var(--measure); }
   .prose p { margin: 0 0 1em; }
   .kicker { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--coral); margin: 0 0 14px; }
   h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0 0 .4em; letter-spacing: -.01em; }
-  h2 { font-size: clamp(34px, 3.6vw, 44px); margin-bottom: .5em; }
-  h3 { font-size: 28px; margin-top: 1.6em; }
+  h2 { font-size: clamp(40px, 5.2vw, 64px); }
+  h3 { font-size: 30px; margin-top: 1.4em; }
   h2 em, h1 em { color: var(--coral); }
-  .lede { font-size: 21px; line-height: 1.55; color: var(--ink-2); }
+  .lede { font-size: 23px; line-height: 1.45; color: var(--ink-2); max-width: 60ch; }
   .num { font-family: var(--mono); font-size: .86em; }
   .muted { color: var(--ink-3); }
   .small { font-size: 15px; line-height: 1.5; }
 
-  /* ---------- hero = the page header ----------
-     Eyebrow, title, lede and the meta list, closed by a hairline, as the
-     XLab page opens. The DAG ornament beside it is retired: the gutter field
-     is the page's one piece of decoration now. */
-  .hero { padding: 72px 0 36px; margin-bottom: 8px; border-bottom: 1px solid var(--rule); }
-  .hero h1 { font-size: clamp(48px, 5.4vw, 72px); line-height: .98; margin: 0 0 22px; }
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 40px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 56px; align-items: end; }
+  .hero h1 { font-size: clamp(56px, 8.6vw, 116px); line-height: .92; margin: 0 0 24px; }
   .hero h1 .delta { color: var(--coral); font-style: italic; }
-  .hero .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 26px 0 0; font: 13px/1.5 var(--mono); color: var(--ink-2); }
+  .hero .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; font: 13px/1.5 var(--mono); color: var(--ink-2); border-top: 1px solid var(--ink); padding-top: 14px; }
   .hero .meta dt { color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; padding-top: 2px; }
   .hero .meta dd { margin: 0; }
-  .hero-fig { display: none; }
+  .hero-fig { position: relative; aspect-ratio: 1 / 1; }
+  .hero-fig svg { width: 100%; height: 100%; overflow: visible; }
+  .hero-fig .h-edge { stroke: var(--ink-3); stroke-width: 1.2; fill: none; stroke-dasharray: 3 4; animation: aisc-dash 30s linear infinite; }
+  .hero-fig .h-node { fill: var(--card); stroke: var(--ink); stroke-width: 1.2; }
+  .hero-fig .h-node.k { fill: var(--green-soft); stroke: var(--green); }
+  .hero-fig .h-node.f { fill: var(--amber); stroke: var(--ink); }
+  .hero-fig text { font: 11px var(--mono); fill: var(--ink-2); }
 
-  /* ---------- status (Mom Test honesty): three short paragraphs ---------- */
-  .status { display: grid; gap: 16px; margin: 32px 0 0; }
-  .status > div { padding-left: 18px; border-left: 2px solid var(--rule); }
-  .status b { display: block; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
-  .status .built { border-color: var(--green); } .status .built b { color: var(--green); }
-  .status .testing { border-color: var(--amber); } .status .testing b { color: var(--amber); }
-  .status .unknown { border-color: var(--red); } .status .unknown b { color: var(--red); }
-  .status p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  /* ---------- status strip (Mom Test honesty) ---------- */
+  .status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 36px 0 0; }
+  .status > div { background: var(--card); padding: 18px 20px; }
+  .status b { display: block; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+  .status .built b { color: var(--green); }
+  .status .testing b { color: var(--amber); }
+  .status .unknown b { color: var(--red); }
+  .status p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--ink-2); }
 
   /* ---------- figures ----------
-     Cards again (Seth, 2026-09-25), as the standalone site draws them: an
-     opaque card over the field, as wide as the site's figures were (its
-     1180px main less padding), wider than the text column and centred on it,
-     graphic on the left and its controls in a 300px column on the right. */
-  figure.fig { width: var(--aisc-wide); margin: 44px calc((100% - var(--aisc-wide)) / 2); background: var(--card); border: 1px solid var(--rule); box-shadow: var(--shadow); border-radius: 4px; overflow: hidden; }
+     Cards, as the standalone site draws them (Seth, 2026-09-25): an opaque
+     card over the field, the full 1180px measure, graphic on the left and
+     its controls in a 300px column on the right. */
+  figure.fig { margin: 36px 0; background: var(--card); border: 1px solid var(--rule); box-shadow: var(--shadow); border-radius: 4px; overflow: hidden; }
   .fig-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 14px 20px; border-bottom: 1px solid var(--rule); }
   .fig-head .fig-no { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
   .fig-head .fig-title { font: 400 24px/1.1 var(--display); }
@@ -235,15 +215,13 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .wta-graph-legend { background: none; border: 0; padding: 0; }
   .wta-modes { align-self: flex-start; }
 
+
   /* ---------- misc blocks ---------- */
-  /* What were side-by-side cards read as paragraphs now: a small label, a
-     run of display type, the text. */
-  .cols { display: grid; gap: 26px; margin: 30px 0; }
-  /* components.css gives every .card in the app a surface, border and radius */
-  .card { padding: 0; margin: 0; background: none; border: 0; border-radius: 0; box-shadow: none; }
-  .card h4 { font: 400 26px/1.15 var(--display); margin: 0 0 6px; }
-  .card p { margin: 0; }
-  .card .tag { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--coral); display: block; margin-bottom: 8px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin: 28px 0; }
+  .card { background: var(--card); border: 1px solid var(--rule); padding: 20px 22px; border-radius: 4px; }
+  .card h4 { font: 400 24px/1.1 var(--display); margin: 0 0 8px; }
+  .card p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+  .card .tag { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--coral); display: block; margin-bottom: 10px; }
   table.cmp { width: 100%; border-collapse: collapse; font-size: 16px; margin: 24px 0; }
   table.cmp th, table.cmp td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
   table.cmp th { font: 500 11px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
@@ -261,12 +239,12 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .timeline .what b { font-family: var(--display); font-weight: 400; font-size: 22px; display: block; line-height: 1.1; margin-bottom: 4px; }
   .timeline .what { font-size: 16px; line-height: 1.5; color: var(--ink-2); }
   .ladder { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 6px; }
-  .ladder li { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 6px 14px; border-left: 3px solid var(--rule); font-size: 16px; }
+  .ladder li { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 14px; background: var(--card); border-left: 4px solid var(--rule); font-size: 16px; }
   .ladder li b { font: 500 11px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
   .ladder li.w { border-color: var(--rule); } .ladder li.m { border-color: var(--amber); } .ladder li.s { border-color: var(--green); }
-  .note { border-left: 2px solid var(--amber); padding: 2px 0 2px 18px; color: var(--ink-2); font-size: 17px; line-height: 1.65; margin: 24px 0; }
+  .note { border-left: 3px solid var(--amber); padding: 6px 0 6px 16px; color: var(--ink-2); font-size: 16px; margin: 20px 0; max-width: var(--measure); }
   .todo { background: repeating-linear-gradient(-45deg, transparent 0 8px, rgba(231,178,58,.12) 8px 16px); outline: 1px dashed var(--amber); }
-  .aisc-footer { max-width: var(--aisc-col); margin: 0 auto 60px; padding: 28px 0 0; border-top: 1px solid var(--rule); font: 13px/1.6 var(--mono); color: var(--ink-3); }
+  .aisc-footer { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; border-top: 1px solid var(--rule); font: 13px/1.6 var(--mono); color: var(--ink-3); }
 
   /* reveal */
   .rv { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
@@ -278,30 +256,29 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
     & { font-size: 17px; }
     .hero { grid-template-columns: 1fr; gap: 20px; }
     .hero-fig { max-width: 360px; }
-    .status { grid-template-columns: 1fr; }
-    .chain { grid-template-columns: 1fr; }
-    .timeline { grid-template-columns: 1fr; }
-    .timeline .when { padding-bottom: 0; border-bottom: 0; }
     .fig-body { grid-template-columns: 1fr; grid-template-rows: auto; }
     .fig-side { grid-column: auto; grid-row: auto; border-left: 0; border-top: 1px solid var(--rule); }
     .fig-expand-row { grid-column: auto; }
     figure.fig.is-max .fig-body { grid-template-rows: minmax(0, 1fr) auto auto; }
     figure.fig.is-max .fig-side { max-height: 40vh; }
+    .status { grid-template-columns: 1fr; }
+    .chain { grid-template-columns: 1fr; }
+    .timeline { grid-template-columns: 1fr; }
+    .timeline .when { padding-bottom: 0; border-bottom: 0; }
   }
   @media (max-width: 600px) {
     .aisc-main { padding: 0 16px 80px; }
-    section { padding-top: 44px; }
-    .aisc-footer { margin: 0 16px 40px; }
+    .rail { padding: 36px 16px 10px; }
+    section { padding-top: 56px; }
     .fig-stage { min-height: 340px; }
     .wta-graph:not(.is-max) { min-height: 340px; }
     .ladder li { grid-template-columns: 1fr; gap: 2px; }
   }
 
-
   /* closing questions */
-  .qs { counter-reset: q; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; }
-  .qs li { counter-increment: q; display: block; position: relative; padding: 0 0 0 40px; font-size: 18px; }
-  .qs li::before { content: counter(q); position: absolute; left: 4px; top: 2px; font: 400 24px/1 "Instrument Serif", serif; color: var(--coral); }
+  .qs { counter-reset: q; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; max-width: var(--measure); }
+  .qs li { counter-increment: q; display: grid; grid-template-columns: 34px 1fr; padding: 12px 14px; background: var(--card); border: 1px solid var(--rule); font-size: 17px; }
+  .qs li::before { content: counter(q); font: 400 24px/1 "Instrument Serif", serif; color: var(--coral); }
 
   /* two modes: linear notebooks + adaptive layer */
   .modes { display: grid; grid-template-columns: 1fr 120px 1fr; align-items: center; gap: 0; margin: 24px 0 36px; }
@@ -333,7 +310,7 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   @media (max-width: 900px) { .modes .hand .out::after { content: " ↓"; } .modes .hand .back::before { content: "↑ "; } }
   .modes .hand span { white-space: nowrap; }
   .plain { margin: 8px 0 0; padding-left: 18px; font-size: 16px; line-height: 1.55; } .plain li { margin: 4px 0; }
-  .stat { font: 400 24px/1.4 var(--display); color: var(--ink); margin: 28px 0 8px; } .stat b { color: var(--coral); font-weight: 400; }
+  .stat { font: 400 21px/1.4 var(--display); color: var(--ink); max-width: var(--measure); margin: 18px 0 8px; } .stat b { color: var(--coral); font-weight: 400; }
 
 
   /* Fig. 1 — one chart */
@@ -343,22 +320,41 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .aisc-forget-handle:active { cursor: grabbing; }
   .aisc-forget-handle:focus { outline: none; }
   .aisc-forget-handle:focus-visible { stroke: var(--ink); stroke-width: 3; }
-  .oversight-chain { margin: 10px 20px 4px; font: 13px/1.5 var(--mono); color: var(--ink-3); text-align: center; }
+  .oversight-chain { margin: 4px 18px 16px; font: 13px/1.5 var(--mono); color: var(--ink-2); }
   .oversight-chain span { color: var(--green); }
-
-  /* ---- the five-step chain keeps to the column like the figures ---- */
-  .chain { gap: 0 16px; }
-  .chain > div { padding-right: 0; }
-  .chain > div b { font-size: 18px; }
-  .chain > div span { font-size: 14px; }
-  .timeline > div:nth-last-child(-n+2) { border-bottom: 0; }
-  .table-wrap tr:last-child td { border-bottom: 0; }
-  /* .tile is only a wrapper now: the space between two of them is paragraph
-     space, and a tile that opens on a subheading gets a subheading's room. */
-  .tile { margin: 0 0 1em; }
+  /* ---- solid tiles ----
+     Every block of running text sits on an opaque card so the background field
+     (js/background field.js) never runs under it; the field shows in the gaps between
+     tiles and in the side gutters. Kept last so it wins over the block rules. */
+  .tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap, .note, .stat, .modes .hand {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow);
+  }
+  .tile { width: fit-content; max-width: min(100%, calc(var(--measure) + 62px)); padding: 26px 30px; margin: 0 0 28px; }
   .tile > :first-child { margin-top: 0; }
-  .tile > h3:first-child { margin-top: 1.6em; }
   .tile > :last-child, .tile > .prose > :last-child { margin-bottom: 0; }
+  .hero > div:first-child { padding: 30px 34px; }
+  /* the card's padding narrows the title column: without these the h1 wraps
+     to 6 lines and the figure (align end) drops to the bottom of a tall card */
+  .hero { align-items: center; }
+  @media (min-width: 901px) { .hero { grid-template-columns: 1.5fr 1fr; gap: 48px; } }
+  .hero h1 { font-size: clamp(56px, 6.2vw, 96px); }
+  .chain { padding: 0 24px 10px; gap: 0 20px; }
+  .chain > div { padding-right: 0; }
+  .timeline { padding: 4px 26px; }
+  .timeline > div:nth-last-child(-n+2) { border-bottom: 0; }
+  .runway { padding: 0 24px 18px; }
+  .table-wrap { padding: 0 10px; }
+  .table-wrap table.cmp { margin: 6px 0; }
+  .table-wrap tr:last-child td { border-bottom: 0; }
+  .note { padding: 14px 22px 14px 20px; border-left: 3px solid var(--amber); }
+  .stat { padding: 14px 22px; }
+  .tile .note { background: none; border: 0; border-left: 3px solid var(--amber); box-shadow: none; padding: 6px 0 6px 16px; }
+  .modes .hand { padding: 18px 8px; }
+  /* .qs li was a 34px/1fr grid, so its bare text node fell into the 34px number
+     column one word per line; number is now absolutely placed in the gutter */
+  .qs li { display: block; position: relative; padding-left: 48px; }
+  .qs li::before { position: absolute; left: 14px; top: 12px; }
+  .aisc-footer { width: calc(100% - 48px); max-width: 1132px; background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow); padding: 24px 30px; margin-bottom: 60px; }
 }
 
 /* Fig. 2's Maximize fixes .wta-graph over the whole app (z-index 300 in

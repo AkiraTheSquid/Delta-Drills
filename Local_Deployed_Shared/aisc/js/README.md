@@ -18,10 +18,9 @@
   `rgb01`, `onTheme` (fires on `delta:theme-changed`), `whenVisible`, `graph`
   (fetch of `aisc/data/kc_graph.json`); reveal + section nav
   (the nav is `#aisc-toc` in the app topbar).
-- `field.js`: the gutter node field — a fixed canvas on the page, animated only
-  while `#aisc-root` intersects (a hidden page never does) and the tab is
-  visible; idle when its CSS hides it (< 1000px); still frame under reduced
-  motion.
+- `field.js`: the page's node field — a fixed canvas behind the write-up's
+  cards, unmasked since 2026-09-25, animated only while `#aisc-root`
+  intersects and the tab is visible; still frame under reduced motion.
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
   style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
@@ -68,3 +67,5 @@
 - 2026-09-25: `fig-expand.js` added (full screen per figure, Escape, Tab wrap);
   `fig-graphs.js` refits on stage resize; `fig-forget.js` plot panel back to
   `--paper-2` (it sits in a card again).
+- 2026-09-25: `field.js` drawn unmasked across the page (card layout back);
+  its gutter band reads `--aisc-clear` = 1180px.
