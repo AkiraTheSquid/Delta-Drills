@@ -216,7 +216,7 @@ def start(user_state: UserPracticeState, hours=None, scope="all", minutes=None, 
     d["scope"] = scope
     # Areas BEFORE the priors below: assessed_kcs reads them. The rapid ray
     # check has its own concept set, so a focus never narrows it further.
-    d["areas"] = None if scope == practice_targets.RAY else placement_scope.normalize_areas(areas)
+    d["areas"] = None if scope == practice_targets.RAY else placement_scope.normalize_areas(areas, user_state)
     if scope == practice_targets.RAY:
         user_state.practice_target = scope
     m = placement_scope.normalize_minutes(minutes)

@@ -83,7 +83,10 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.resnet34": "ar-02",
     "cnn.feature-extraction": "ar-02",
     "cnn.training-loop": "ar-02",
-    "cnn.forward-hooks": "ar-02"
+    "cnn.forward-hooks": "ar-02",
+    "deltadrills.mastery": "dd-1",
+    "deltadrills.spaced-repetition": "dd-1",
+    "deltadrills.why-drills": "dd-1"
   },
   "kps": {
     "math.vector-arithmetic": "dd-kp-math-vector-arithmetic",
@@ -167,7 +170,10 @@ Object.assign(window.DD_NOTEBOOKS, {
     "cnn.resnet34": "dd-kp-cnn-resnet34",
     "cnn.feature-extraction": "dd-kp-cnn-feature-extraction",
     "cnn.training-loop": "dd-kp-cnn-training-loop",
-    "cnn.forward-hooks": "dd-kp-cnn-forward-hooks"
+    "cnn.forward-hooks": "dd-kp-cnn-forward-hooks",
+    "deltadrills.mastery": "dd-kp-deltadrills-mastery",
+    "deltadrills.spaced-repetition": "dd-kp-deltadrills-spaced-repetition",
+    "deltadrills.why-drills": "dd-kp-deltadrills-why-drills"
   },
   "segments": {
     "math.barycentric-coordinates#weights": "dd-seg-math-barycentric-coordinates-0",

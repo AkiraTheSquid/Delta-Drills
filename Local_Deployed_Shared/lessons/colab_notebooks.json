@@ -113,6 +113,14 @@
       "subtopic_key": "PyTorch: ar-02",
       "file": "ar-02-arena-0-2---neural-networks-and-resnets.ipynb",
       "problems": 190
+    },
+    {
+      "id": "dd-1",
+      "title": "What this app is, and the math behind it",
+      "topic": "Delta Drills",
+      "subtopic_key": "Delta Drills: How this app works",
+      "file": "dd-1-what-this-app-is--and-the-math-behind-it.ipynb",
+      "problems": 0
     }
   ],
   "questions": {
@@ -1154,7 +1162,8 @@
     "Einops: Einsum": "es-1",
     "PyTorch: ar-00": "ar-00",
     "PyTorch: ar-01": "ar-01",
-    "PyTorch: ar-02": "ar-02"
+    "PyTorch: ar-02": "ar-02",
+    "Delta Drills: How this app works": "dd-1"
   },
   "kcs": {
     "math.vector-arithmetic": "ma-00",
@@ -1238,7 +1247,10 @@
     "cnn.resnet34": "ar-02",
     "cnn.feature-extraction": "ar-02",
     "cnn.training-loop": "ar-02",
-    "cnn.forward-hooks": "ar-02"
+    "cnn.forward-hooks": "ar-02",
+    "deltadrills.mastery": "dd-1",
+    "deltadrills.spaced-repetition": "dd-1",
+    "deltadrills.why-drills": "dd-1"
   },
   "kps": {
     "math.vector-arithmetic": "dd-kp-math-vector-arithmetic",
@@ -1322,7 +1334,10 @@
     "cnn.resnet34": "dd-kp-cnn-resnet34",
     "cnn.feature-extraction": "dd-kp-cnn-feature-extraction",
     "cnn.training-loop": "dd-kp-cnn-training-loop",
-    "cnn.forward-hooks": "dd-kp-cnn-forward-hooks"
+    "cnn.forward-hooks": "dd-kp-cnn-forward-hooks",
+    "deltadrills.mastery": "dd-kp-deltadrills-mastery",
+    "deltadrills.spaced-repetition": "dd-kp-deltadrills-spaced-repetition",
+    "deltadrills.why-drills": "dd-kp-deltadrills-why-drills"
   },
   "segments": {
     "math.barycentric-coordinates#weights": "dd-seg-math-barycentric-coordinates-0",

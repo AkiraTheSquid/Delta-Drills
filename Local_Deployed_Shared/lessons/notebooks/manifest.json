@@ -1414,6 +1414,21 @@
     "cnn.forward-hooks#hook-signature-and-handle": "dd-seg-cnn-forward-hooks-0",
     "cnn.forward-hooks#apply-recursively": "dd-seg-cnn-forward-hooks-1"
    }
+  },
+  {
+   "id": "dd-1",
+   "title": "What this app is, and the math behind it",
+   "topic": "Delta Drills",
+   "subtopic_key": "Delta Drills: How this app works",
+   "file": "dd-1.json",
+   "cells": 18,
+   "questions": [],
+   "kcs": [
+    "deltadrills.mastery",
+    "deltadrills.spaced-repetition",
+    "deltadrills.why-drills"
+   ],
+   "segments": {}
   }
  ]
 }

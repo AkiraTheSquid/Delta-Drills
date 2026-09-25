@@ -314,7 +314,7 @@ skill report the same thing from the other side.
   `cosine-similarity` and `raytracing.segment-intersection` / `batched-segments` /
   `make-rays-2d` / `triangle-intersection` / `mesh-visibility`. Written for the ARENA
   share mix (`app/arena_mix.py`, Account → Advanced & developer settings slider; Seth at
-  50%). 🔴 A drill's topic/subtopic must be the PAGE'S OWN (`PyTorch` / `ar-00`,
+  50%) — since 2026-09-25 `app/course_mix.py`, set by the Courses tab enable toggle. 🔴 A drill's topic/subtopic must be the PAGE'S OWN (`PyTorch` / `ar-00`,
   `ar-01`): filed under `Numpy / Applied patterns` the picker never reached them —
   `pick_for_subtopic` only sees one subtopic. 🔴 `run_queue` now holds a REVIEW REPEAT
   (answered, not owed) from the wanted half and serves the other half's fresh work first.
@@ -323,6 +323,13 @@ skill report the same thing from the other side.
   batched-segments Faded solution fences q1107/q1108 are 17 lines; Solo q1124/1127/1128
   on make-rays-2d omit the camera geometry when served alone; q103's prompt says "shift
   before exponentiating".
+
+- **Delta Drills course — the app explaining itself** (2026-09-25): standalone 3-KC chain
+  `deltadrills.mastery` → `spaced-repetition` → `why-drills` in `lessons/deltadrills/`, one
+  page + 2 statement MC each (q50112–50117), reachable ONLY while enabled on the Courses tab
+  (`app/course_registry.py::course_off` via `kc_prefs.is_disabled`). 🔴 The mastery page's
+  numbers are the app's real BKT (slip 0.1, guess 0.2, no transit on a miss, learned at 0.85):
+  equal estimates move equally whatever the history. Re-derive them if `bkt_mastery.py` changes.
 
 When you finish a concept, update the list above with the date and the ids, so
 the next session can see where the frontier is without re-deriving it.

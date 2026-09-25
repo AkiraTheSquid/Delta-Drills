@@ -39,6 +39,14 @@
 .kgv-seg button.active { background: var(--accent); color: var(--on-accent); font-weight: 700; }
 .kgv-seg button:not(.active):hover { color: var(--text); }
 
+/* Course dropdown — roots the graph on one course (course-registry.js). */
+.kgv-course { display: flex; align-items: center; gap: 6px; }
+.kgv-course-label { color: var(--muted); font-weight: 600; }
+.kgv-course-select {
+  flex: 1 1 auto; min-width: 0; font: inherit; font-size: 11.5px; color: var(--text);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 5px;
+}
+
 .kgv-hint { color: var(--muted); line-height: 1.4; min-height: 1.4em; }
 .kgv-hint b { color: var(--text); }
 /* The two fan colours, named in the hint the same way they are drawn. */

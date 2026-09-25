@@ -1,16 +1,19 @@
-/* Courses tab — page wrapper. The tab renders the one ARENA course directly,
-   so there is no list view, search input, results grid, or course card here:
-   those selectors left with the list UI on 2026-07-31. */
+/* Courses tab — page wrapper. Back to a catalog (docs/spec-multi-course-catalog.md,
+   2026-09-25): #courses-list-view (card grid, catalog.css) and
+   #courses-detail-view (one course's article — this file only sets up the
+   shared page chrome around both). No search input or results grid — that UI
+   left in 2026-07-31 and stays retired; the card grid here is a new, smaller
+   shape, not its return. */
 
 .courses-page {
   padding-top: 32px;
 }
 
 /* ---- "What this app is for" ------------------------------------------
-   Sits above the course article, in static markup in index.html so it
-   survives courses.js re-rendering #courses-detail-view. Reads as a
+   Sits above the catalog, in static markup in index.html so it survives
+   courses.js re-rendering the list/detail views below it. Reads as a
    framing note rather than a card: no fill, one accent rule down the
-   left, so it doesn't compete with the ARENA hero right below it. */
+   left, so it doesn't compete with the catalog grid right below it. */
 
 .courses-about {
   margin: 0 0 28px;

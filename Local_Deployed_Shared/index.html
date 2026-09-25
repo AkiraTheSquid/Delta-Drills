@@ -45,16 +45,17 @@
   <!-- The Knowledge Graph's view modes (adaptive / condensed / complete) and
        its bottom-left settings card. AFTER how-it-works.css, which owns the
        .kg2-* rules it overrides on source order. -->
-  <link rel="stylesheet" href="styles/graph-views.css?v=1" />
+  <link rel="stylesheet" href="styles/graph-views.css?v=2" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
   <link rel="stylesheet" href="styles/why-map.css?v=2" />
   <link rel="stylesheet" href="styles/stats.css?v=2" />
   <link rel="stylesheet" href="styles/arena.css" />
-  <link rel="stylesheet" href="styles/courses/page.css?v=2" />
+  <link rel="stylesheet" href="styles/courses/page.css?v=3" />
+  <link rel="stylesheet" href="styles/courses/catalog.css?v=1" />
   <link rel="stylesheet" href="styles/courses/forkgate.css?v=2" />
-  <link rel="stylesheet" href="styles/courses/detail.css?v=2" />
+  <link rel="stylesheet" href="styles/courses/detail.css?v=3" />
   <link rel="stylesheet" href="styles/courses/modal.css?v=3" />
   <link rel="stylesheet" href="styles/courses/responsive.css?v=2" />
   <link rel="stylesheet" href="styles/infotips.css?v=2" />
@@ -1595,11 +1596,6 @@
                 <label for="account-mathpix-key">Mathpix App Key</label>
                 <input id="account-mathpix-key" class="text-input" type="text" placeholder="Your Mathpix App Key" />
               </div>
-              <div class="field" id="account-arena-share-field">
-                <label for="account-arena-share" data-dd-info="arena-share">ARENA share of practice: <output id="account-arena-share-out" for="account-arena-share">—</output></label>
-                <input id="account-arena-share" type="range" min="0" max="100" step="5" value="0" disabled />
-                <div class="hint" id="account-arena-share-note" role="status">Loading…</div>
-              </div>
               <div class="field" id="account-token-field">
                 <label for="account-dd-token" data-dd-info="dd-token">Your API token (DD_TOKEN)</label>
                 <div class="dd-token-row">
@@ -1622,36 +1618,35 @@
 
   <main class="page hidden" id="page-courses">
     <div class="container courses-page">
-      <!-- WHAT THIS APP IS FOR — first thing on the tab, above the course
-           itself. The Courses tab is where someone lands to work out what
-           they're looking at, and "one app, one curriculum" is the single
-           fact that makes the rest of it legible. Static markup rather than
-           part of courses.js's render, so it is not wiped by a re-render and
-           does not wait on the course data.
+      <!-- WHAT THIS APP IS FOR — first thing on the tab, above the catalog.
+           Static markup rather than part of courses.js's render, so it is not
+           wiped by a re-render and does not wait on the course data.
            The two .cae-* lines are the same sentence for the two deploys;
            styles/courses/page.css shows exactly one, keyed off the
            html.dd-colab-edition class that practice/colab_mode.js sets. -->
       <section class="courses-about">
         <div class="courses-about-eyebrow">What this app is for</div>
-        <h2 class="courses-about-title">ARENA Delta Drills is built for one curriculum: <strong>ARENA</strong>.</h2>
+        <h2 class="courses-about-title">Two courses, each with its own drills: <strong>ARENA</strong> and <strong>Delta Drills</strong>.</h2>
         <p class="courses-about-body">
           ARENA takes you from PyTorch fundamentals to original AI-safety
           research, and it assumes you can already <em>write</em> the code —
-          the tensor manipulation, the einops, the training loops. This app is
-          the practice engine for exactly that assumption. It drills the
-          mechanics behind the chapters below, tracks which ones you have, and
-          sends you to the real ARENA exercise once you're ready for it. It is
-          not a replacement for the course; it is the reps the course expects
-          you to have already done.
+          the tensor manipulation, the einops, the training loops. Delta
+          Drills is this app's own small course: what mastery and spaced
+          repetition mean, and why the app drills you the way it does. This
+          app is the practice engine for whichever course you enable below —
+          it drills the mechanics, tracks which ones you have, and for ARENA,
+          sends you to the real exercise once you're ready for it.
         </p>
         <p class="courses-about-edition">
           <span class="cae-app">You're on the <strong>main edition</strong> — drills are solved in the app's own code editor.</span>
           <span class="cae-colab">You're on the <strong>Colab edition</strong> — drills open as Colab notebooks, and the app tutors alongside them.</span>
         </p>
       </section>
-      <!-- One course, rendered directly: courses.js fills this with the ARENA
-           article (hero + source links + intro + chapters). No list, no search. -->
-      <div class="courses-detail-view" id="courses-detail-view"></div>
+      <!-- courses.js toggles between these two: the catalog (list of course
+           cards, each with an enable toggle) and one course's own detail
+           view (ARENA's article, or Delta Drills' lesson list). -->
+      <div class="course-catalog-grid" id="courses-list-view"></div>
+      <div class="courses-detail-view" id="courses-detail-view" hidden></div>
     </div>
   </main>
 
@@ -2547,7 +2542,7 @@ t.manual_seed(0)
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=4" defer></script>
+  <script src="concept-graph/graph-views.js?v=5" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
@@ -2745,7 +2740,6 @@ t.manual_seed(0)
   <script src="practice/placement-plan.js?v=5"></script>
   <script src="practice/placement-results.js?v=5"></script>
   <script src="practice/practice-target.js?v=1"></script>
-  <script src="practice/arena-share.js?v=1"></script>
   <script src="practice/diagnostic-page.js?v=26"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
        fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
@@ -2764,11 +2758,15 @@ t.manual_seed(0)
   <script src="stats/weights.js?v=10"></script>
   <script src="stats/predicted-links.js?v=4"></script>
   <script src="stats/predicted-prereqs-temp.js?v=6"></script>
+  <!-- course-registry.js is the shared course list courses.js (catalog cards)
+       and concept-graph/graph-views.js (KG course dropdown, deferred so it
+       always runs later) both read off window.DeltaCourseRegistry. -->
+  <script src="concept-graph/course-registry.js?v=1"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=4"></script>
+  <script src="courses.js?v=5"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
   <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->

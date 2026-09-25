@@ -79,7 +79,9 @@ def check_every_page_is_a_registered_py0_concept():
 def check_the_floor_stays_under_the_numpy_course():
     """One root, and it is the python one; np-1's first concept still stands on py-0."""
     kcs = {kc["id"]: kc for kc in _registry()["kcs"]}
-    roots = sorted(k for k, v in kcs.items() if not v["prereqs"])
+    # deltadrills.* is its own standalone course (backend course_registry.py),
+    # outside the ARENA prerequisite graph, so its root is not a second floor.
+    roots = sorted(k for k, v in kcs.items() if not v["prereqs"] and not k.startswith("deltadrills."))
     assert roots == [ROOT_KC], (
         "the course's root concept(s) are %s. There must be exactly one, and it "
         "must be %s — a second root is a lesson with nothing prior to it, which "

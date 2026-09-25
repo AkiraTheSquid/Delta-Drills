@@ -23371,5 +23371,53 @@
   ],
   "new_syntax": [],
   "source": "kp-integrated"
+ },
+ "50112": {
+  "target_kcs": [
+   "deltadrills.mastery"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50113": {
+  "target_kcs": [
+   "deltadrills.mastery"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50114": {
+  "target_kcs": [
+   "deltadrills.spaced-repetition"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50115": {
+  "target_kcs": [
+   "deltadrills.spaced-repetition"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50116": {
+  "target_kcs": [
+   "deltadrills.why-drills"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "50117": {
+  "target_kcs": [
+   "deltadrills.why-drills"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
  }
 }

@@ -43,7 +43,7 @@ from __future__ import annotations
 
 from typing import Callable, List, Optional, Set
 
-from app import arena_mix, attempt_history, kc_explore, kc_graph, kc_prefs, memory_model
+from app import attempt_history, course_mix, kc_explore, kc_graph, kc_prefs, memory_model
 
 # Misses on a concept, with no unaided correct answer among them, before the
 # picker turns to its prerequisites.
@@ -163,12 +163,13 @@ def targets(user_state, skip: Optional[Set[str]] = None, cap: bool = True):
     blocked = capped(user_state) if cap else set()
     # `skip` is tested on the concept SERVED, not the frontier concept it
     # stands for: a concept the caller has excluded (dry, or the other half
-    # of the ARENA mix) still sends its struggling learner to a prerequisite
-    # that is not excluded. An ARENA concept on its own turn is served as
-    # itself (arena_mix.holds), and the ARENA concepts are walked first.
+    # of the course mix) still sends its struggling learner to a prerequisite
+    # that is not excluded. A concept on its own course's turn is served as
+    # itself (course_mix.holds), and every enabled course's concepts are
+    # walked first.
     def new_work():
-        for kc in arena_mix.order(user_state, kc_graph.frontier(user_state)):
-            yield kc if arena_mix.holds(user_state, kc) else redirect(user_state, kc)
+        for kc in course_mix.order(user_state, kc_graph.frontier(user_state)):
+            yield kc if course_mix.holds(user_state, kc) else redirect(user_state, kc)
 
     # Back from a break (kc_explore RETURN WINDOW): re-probe the most
     # informative taught concepts ahead of the reviews — one answer on a deep

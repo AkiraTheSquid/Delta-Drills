@@ -406,11 +406,21 @@ check("a finished run answers 400", (D.finish(route_state), _answer(ru, second.i
 print("AREAS — the learner narrows the test; the lengths shrink with it")
 from app import placement_scope as PS
 
-cat = {row["key"]: row["kcs"] for row in PS.area_catalog(UserPracticeState(user_id="cat"))}
+cat_state = UserPracticeState(user_id="cat")
+cat = {row["key"]: row["kcs"] for row in PS.area_catalog(cat_state)}
 check("the catalogue is the registry's topics", {"PyTorch", "Einops"} <= set(cat), cat)
 check("an empty, unknown or complete pick is the whole curriculum",
       PS.normalize_areas([]) is None and PS.normalize_areas(["nope"]) is None
-      and PS.normalize_areas(list(cat)) is None)
+      and PS.normalize_areas(list(cat), cat_state) is None)
+from app import kc_prefs  # noqa: E402
+dd_state = UserPracticeState(user_id="dd")
+check("a switched-off course's concepts and area leave the test",
+      kc_prefs.is_disabled(dd_state, "deltadrills.mastery")
+      and "Delta Drills" not in cat and PS.normalize_areas(["Delta Drills"], dd_state) is None)
+dd_state.course_shares["delta-drills"] = 0.4
+check("switching the course on brings them back",
+      not kc_prefs.is_disabled(dd_state, "deltadrills.mastery")
+      and PS.normalize_areas(["Delta Drills"], dd_state) == ["Delta Drills"])
 check("unknown names are dropped, known ones kept once",
       PS.normalize_areas("Einops,nope,Einops") == ["Einops"])
 

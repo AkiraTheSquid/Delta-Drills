@@ -23,6 +23,10 @@ places, all through this module so the rule is stated once:
     disabled is not servable, so the weakest-first fallback cannot hand it
     back after the frontier has skipped it.
 
+A standalone course the learner hasn't enabled (Delta Drills, 2026-09-25)
+reads as disabled through `is_disabled` too — its concepts are outside the
+main graph, so the Courses tab toggle is their only way in.
+
 Weights are clamped to [MIN_WEIGHT, MAX_WEIGHT] and NEVER zero: "off" is the
 `enabled` flag alone, so the wire row can never say enabled while the queue
 treats the concept as disabled. 1.0 is neutral and is stored as an absent entry
@@ -32,6 +36,8 @@ so an untouched learner's file carries nothing.
 from __future__ import annotations
 
 from typing import Dict, Optional
+
+from app import course_registry
 
 DEFAULT_WEIGHT = 1.0
 MIN_WEIGHT = 0.25
@@ -66,8 +72,13 @@ def weight_for(user_state, kc: str) -> float:
 
 
 def is_disabled(user_state, kc: str) -> bool:
+    """Off for the queue: the learner turned it off here, or it belongs to a
+    standalone course they haven't enabled (course_registry.course_off). The
+    wire row (`pref_row`) still reports only the learner's own flag."""
     row = _prefs(user_state).get(kc)
-    return isinstance(row, dict) and row.get("enabled") is False
+    if isinstance(row, dict) and row.get("enabled") is False:
+        return True
+    return course_registry.course_off(user_state, kc)
 
 
 def set_pref(user_state, kc: str, *, enabled: Optional[bool] = None,

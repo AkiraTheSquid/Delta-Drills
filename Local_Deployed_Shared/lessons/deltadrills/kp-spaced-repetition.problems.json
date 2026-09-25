@@ -1,0 +1,33 @@
+{
+  "kc": "deltadrills.spaced-repetition",
+  "problems": [
+    {
+      "id": 50114,
+      "kind": "statement",
+      "difficulty": 20,
+      "prompt": "Two concepts were both marked learned a month ago. One has been reviewed three times since, spaced out; the other has not been touched since the day it was learned. Which one's mastery estimate has likely decayed further by today?",
+      "choices": [
+        {"key": "A", "text": "The one reviewed three times, because more reviews means more practice fatigue"},
+        {"key": "B", "text": "The one never reviewed again — a full month with nothing renewing it lets it fade the most"},
+        {"key": "C", "text": "Both decay by exactly the same amount, since decay depends only on how long ago it was learned"},
+        {"key": "D", "text": "Neither has decayed — once a concept crosses the learned threshold it stays there"}
+      ],
+      "answer": "B",
+      "solution": "Memory strength decays over time without practice, and each spaced review resets and extends that decay. The concept with three reviews has had its forgetting curve reset three times since; the untouched one has had a full month to fade unopposed."
+    },
+    {
+      "id": 50115,
+      "kind": "statement",
+      "difficulty": 20,
+      "prompt": "A concept was learned yesterday. Why does the app schedule its first review for a few days out, instead of either drilling it again immediately or waiting a month?",
+      "choices": [
+        {"key": "A", "text": "Immediately would be too easy to test anything, and a month would be so late the concept had already faded past the threshold and had to be relearned — the app aims for the point where recall takes real effort but still succeeds"},
+        {"key": "B", "text": "It reviews on a fixed weekly schedule for every concept, regardless of when it was learned"},
+        {"key": "C", "text": "It waits until the learner explicitly asks for a review"},
+        {"key": "D", "text": "It only reviews concepts the learner got wrong, never ones just learned"}
+      ],
+      "answer": "A",
+      "solution": "Spaced repetition aims each review at the point on the forgetting curve where recall is difficult but still likely to succeed — too soon wastes the review on something you still remember easily; too late lets the concept lapse and forces a relearn instead of a reinforcement."
+    }
+  ]
+}

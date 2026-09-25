@@ -56,6 +56,7 @@
   const VIEW_KEY = "dd_kg_view";
   const CHAPTERS_OFF_KEY = "dd_kg_chapters_off";
   const CHAPTERS_OPEN_KEY = "dd_kg_chapters_open";
+  const COURSE_KEY = "dd_kg_course";
   const MODES = ["adaptive", "condensed", "complete"];
   // Mirrors of lesson-graph.js's gates, used ONLY by the guest/offline mirror
   // of the frontier — a signed-in learner gets the server's `state`.
@@ -134,6 +135,10 @@
   let condensedLay = null;       // its running layout, stopped before a rebuild
   let mode = "adaptive";
   let chaptersOff = new Set();
+  let courseFilter = null;       // a course-registry id, or null = "All concepts"
+  let courseVisible = null;      // Set: that course's milestones + prereq closure, or null while loading/off
+  const courseMilestones = {};   // course id -> Set, resolved lazily from course-registry.js
+  let courseSelectEl = null;
   let expanded = new Set();      // adaptive: KCs whose neighbourhood is revealed
   let openSections = new Set();  // condensed: sections opened into concepts
   let removed = null;            // cy collection of everything we took off the canvas
@@ -151,12 +156,77 @@
     const off = JSON.parse(localStorage.getItem(CHAPTERS_OFF_KEY) || "[]");
     if (Array.isArray(off)) chaptersOff = new Set(off.filter((x) => typeof x === "string"));
   } catch (_) {}
+  try { courseFilter = localStorage.getItem(COURSE_KEY) || null; } catch (_) {}
 
   const persist = () => {
     try {
       localStorage.setItem(VIEW_KEY, mode);
       localStorage.setItem(CHAPTERS_OFF_KEY, JSON.stringify([...chaptersOff]));
+      if (courseFilter) localStorage.setItem(COURSE_KEY, courseFilter);
+      else localStorage.removeItem(COURSE_KEY);
     } catch (_) {}
+  };
+
+  /* ---------------- course filter (concept-graph/course-registry.js) --- */
+  // Same shape as the Chapters filter (a takeOff on every view, `chapterHidden`
+  // below) but scoped to ONE course's own concepts plus their prerequisite
+  // closure, so picking a course roots the graph on it without a second
+  // rendering path. `courseVisible` is null while off OR while that course's
+  // milestone set hasn't resolved yet (course-registry.js's ARENA lookup is a
+  // fetch) — null reads as "don't hide anything", same fail-open the Chapters
+  // filter uses before its own map has loaded.
+  const resolveCourseMilestones = (id, course) => {
+    if (courseMilestones[id]) return Promise.resolve(courseMilestones[id]);
+    // Registry script not loaded yet (or blocked) is a TRANSIENT failure —
+    // reject so the caller can fail open, not "this course has no concepts".
+    if (!course) return Promise.reject(new Error("course registry not loaded"));
+    return Promise.resolve(course.milestoneKcs()).then((set) => {
+      courseMilestones[id] = set instanceof Set ? set : new Set(set || []);
+      return courseMilestones[id];
+    });
+  };
+  const applyCourseFilter = () => {
+    if (!courseFilter) { courseVisible = null; applyView(); return; }
+    const requested = courseFilter;
+    const course = window.DeltaCourseRegistry && window.DeltaCourseRegistry.get(requested);
+    // A ONCE-valid id the registry no longer knows (e.g. stale localStorage
+    // after a course was removed) resets to "All" instead of silently
+    // filtering the graph to nothing while the dropdown shows no selection.
+    // A registry that hasn't loaded yet is different (see resolveCourseMilestones)
+    // and falls through to the normal fail-open retry path below.
+    if (window.DeltaCourseRegistry && !course) {
+      courseFilter = null;
+      courseVisible = null;
+      persist();
+      if (courseSelectEl) courseSelectEl.value = "";
+      applyView();
+      return;
+    }
+    resolveCourseMilestones(requested, course).then((set) => {
+      if (courseFilter !== requested) return; // filter moved on while this load was in flight
+      const seeds = [...set].filter((kc) => allKcs.includes(kc));
+      courseVisible = closure(seeds);
+      applyView();
+    }).catch(() => {
+      // Load failed — fail open: show everything rather than filter to nothing
+      // or keep the PREVIOUS course's subset under the new selection.
+      if (courseFilter !== requested) return;
+      courseVisible = null;
+      applyView();
+    });
+  };
+  const courseHidden = (kc) => !!(courseFilter && courseVisible && !courseVisible.has(kc));
+
+  // courses.js's "View course" (lesson-list detail) calls this to land on the
+  // KG tab already scoped to that course, instead of the learner re-picking it
+  // from the dropdown. Safe before the panel exists — buildPanel() below reads
+  // `courseFilter` back out when it wires the select.
+  window.deltaSetKgCourseFilter = (id) => {
+    courseFilter = id || null;
+    courseVisible = null;
+    persist();
+    if (courseSelectEl) courseSelectEl.value = courseFilter || "";
+    applyCourseFilter();
   };
 
   /* ---------------- the learner's frontier ---------------------------- */
@@ -555,7 +625,7 @@
       restoreAll();
       const selId = selectedId();
       // Chapter filter applies to every view.
-      takeOff(cy.nodes().filter((n) => chapterHidden(n.id())));
+      takeOff(cy.nodes().filter((n) => chapterHidden(n.id()) || courseHidden(n.id())));
       panel.querySelectorAll("[data-view]").forEach((b) => {
         const on = b.dataset.view === mode;
         b.classList.toggle("active", on);
@@ -611,6 +681,7 @@
     panel.setAttribute("aria-label", "Graph view");
     let chaptersOpen = false;
     try { chaptersOpen = localStorage.getItem(CHAPTERS_OPEN_KEY) === "1"; } catch (_) {}
+    const courses = (window.DeltaCourseRegistry && window.DeltaCourseRegistry.list()) || [];
     panel.innerHTML =
       '<div class="kgv-head"><span class="kgv-title">View</span>' +
         '<button type="button" class="kgv-reset" id="kg-view-reset" title="Collapse what you expanded">Reset</button></div>' +
@@ -619,6 +690,13 @@
         '<button type="button" data-view="condensed" title="One bubble per section">Condensed</button>' +
         '<button type="button" data-view="complete" title="Every concept">Complete</button>' +
       "</div>" +
+      (courses.length ?
+        '<div class="kgv-course"><label class="kgv-course-label" for="kg-view-course">Course</label>' +
+        '<select id="kg-view-course" class="kgv-course-select" title="Root the graph on one course\'s own concepts">' +
+          '<option value="">All concepts</option>' +
+          courses.map((c) => `<option value="${esc(c.id)}">${esc(c.label)}</option>`).join("") +
+        "</select></div>"
+        : "") +
       '<div class="kgv-hint" id="kg-view-hint"></div>' +
       '<details class="kgv-chapters"' + (chaptersOpen ? " open" : "") + '><summary>Chapters</summary>' +
         '<div class="kgv-chapter-list" id="kg-view-chapters"></div></details>';
@@ -635,6 +713,17 @@
       expanded.clear(); openSections.clear();
       applyView();
     });
+    courseSelectEl = $("kg-view-course");
+    if (courseSelectEl) {
+      courseSelectEl.value = courseFilter || "";
+      courseSelectEl.addEventListener("change", () => {
+        courseFilter = courseSelectEl.value || null;
+        courseVisible = null;
+        persist();
+        applyCourseFilter();
+      });
+      if (courseFilter) applyCourseFilter();
+    }
     const det = panel.querySelector("details.kgv-chapters");
     det.addEventListener("toggle", () => { try { localStorage.setItem(CHAPTERS_OPEN_KEY, det.open ? "1" : "0"); } catch (_) {} });
     buildChapters();

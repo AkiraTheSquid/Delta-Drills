@@ -386,10 +386,12 @@ class PracticeTargetRequest(BaseModel):
     target: Literal["all", "raytracing-0.1"]
 
 
-class ArenaShareRequest(BaseModel):
-    """Fraction of practice served from the ARENA exercise concepts
-    themselves (app/arena_mix.py). 0 turns the mix off."""
-    share: float = Field(ge=0.0, le=1.0)
+class CourseShareRequest(BaseModel):
+    """Courses tab enable toggle (app/course_mix.py): which course, on or
+    off. The share itself is fixed (course_mix.DEFAULT_ENABLE_SHARE) — no
+    per-course fine-tune this pass."""
+    course: str
+    enabled: bool
 
 
 class DiagnosticPlanArea(BaseModel):

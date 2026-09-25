@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1470,
-  "kcs_covered": 82,
-  "kcs_total": 82,
-  "kcs_measured": 64,
-  "atoms_used": 110,
-  "pairs": 217
+  "questions_joined": 1526,
+  "kcs_covered": 85,
+  "kcs_total": 85,
+  "kcs_measured": 67,
+  "atoms_used": 113,
+  "pairs": 220
  },
  "kcs": {
   "cnn.batch-normalization": {
@@ -677,6 +677,51 @@
     }
    ]
   },
+  "deltadrills.mastery": {
+   "n": 2,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "dd-mastery",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 2
+    }
+   ]
+  },
+  "deltadrills.spaced-repetition": {
+   "n": 2,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "dd-spaced-repetition",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 2
+    }
+   ]
+  },
+  "deltadrills.why-drills": {
+   "n": 2,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "dd-why-drills",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 2
+    }
+   ]
+  },
   "einops.attention-einsum": {
    "n": 8,
    "reliability": 0.634,
@@ -1036,7 +1081,7 @@
    ]
   },
   "math.dot-products-norms": {
-   "n": 6,
+   "n": 14,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -1046,7 +1091,7 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 14
     }
    ]
   },
@@ -1066,7 +1111,7 @@
    ]
   },
   "math.linear-combinations": {
-   "n": 6,
+   "n": 14,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -1076,12 +1121,12 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 14
     }
    ]
   },
   "math.matrix-equations": {
-   "n": 6,
+   "n": 14,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -1091,12 +1136,12 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 14
     }
    ]
   },
   "math.ray-distance": {
-   "n": 6,
+   "n": 14,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -1106,22 +1151,22 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 14
     }
    ]
   },
   "math.ray-geometry": {
-   "n": 6,
-   "reliability": 0.335,
-   "shared_with": 2.0,
+   "n": 14,
+   "reliability": 0.541,
+   "shared_with": 0.8,
    "tier": "measured",
    "atoms": [
     {
      "a": "ray-parametric-form",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.335,
-     "n": 6
+     "spec": 0.541,
+     "n": 14
     }
    ]
   },
@@ -1141,7 +1186,7 @@
    ]
   },
   "math.vector-arithmetic": {
-   "n": 6,
+   "n": 16,
    "reliability": 1.0,
    "shared_with": 0.0,
    "tier": "measured",
@@ -1151,7 +1196,7 @@
      "w": 1.0,
      "share": 1.0,
      "spec": 1.0,
-     "n": 6
+     "n": 16
     }
    ]
   },
@@ -1393,15 +1438,15 @@
   },
   "raytracing.ray-parametrisation": {
    "n": 14,
-   "reliability": 0.665,
-   "shared_with": 0.5,
+   "reliability": 0.459,
+   "shared_with": 1.2,
    "tier": "measured",
    "atoms": [
     {
      "a": "ray-parametric-form",
      "w": 1.0,
      "share": 1.0,
-     "spec": 0.665,
+     "spec": 0.459,
      "n": 14
     }
    ]

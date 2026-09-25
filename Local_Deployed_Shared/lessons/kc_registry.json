@@ -85,6 +85,12 @@
    "topic": "PyTorch",
    "title": "ARENA 0.2 \u2014 Neural networks and ResNets",
    "subtopic_key": "PyTorch: ar-02"
+  },
+  {
+   "id": "dd-1",
+   "topic": "Delta Drills",
+   "title": "What this app is, and the math behind it",
+   "subtopic_key": "Delta Drills: How this app works"
   }
  ],
  "kcs": [
@@ -1125,6 +1131,37 @@
    },
    "arena_section": "0.2",
    "assessment": "composite"
+  },
+  {
+   "id": "deltadrills.mastery",
+   "lesson": "dd-1",
+   "title": "What \"mastery\" means in this app",
+   "syntax": false,
+   "prereqs": []
+  },
+  {
+   "id": "deltadrills.spaced-repetition",
+   "lesson": "dd-1",
+   "title": "Why drills come back: spaced repetition",
+   "syntax": false,
+   "prereqs": [
+    "deltadrills.mastery"
+   ],
+   "encompassing": {
+    "deltadrills.mastery": 0.6
+   }
+  },
+  {
+   "id": "deltadrills.why-drills",
+   "lesson": "dd-1",
+   "title": "Why drills, instead of just reading answers",
+   "syntax": false,
+   "prereqs": [
+    "deltadrills.spaced-repetition"
+   ],
+   "encompassing": {
+    "deltadrills.spaced-repetition": 0.6
+   }
   }
  ]
 }

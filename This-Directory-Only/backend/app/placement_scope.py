@@ -49,15 +49,19 @@ def area_catalog(user_state) -> List[dict]:
     return [{"key": a, "kcs": n} for a, n in counts.items()]
 
 
-def normalize_areas(areas) -> Optional[List[str]]:
+def normalize_areas(areas, user_state=None) -> Optional[List[str]]:
     """The learner's focus as known area keys, or None for "every area".
     Unknown names are dropped; choosing nothing (or everything) is the whole
-    curriculum — never a test with zero concepts in it."""
+    curriculum — never a test with zero concepts in it. With `user_state`,
+    "known" is `area_catalog`'s areas, so picking every area the learner is
+    offered still reads as everything when a whole course (Delta Drills,
+    course_registry) is switched off."""
     if not areas:
         return None
     if isinstance(areas, str):
         areas = areas.split(",")
-    known = {kc_area(k) for k in kc_graph._registry()}
+    known = {kc_area(k) for k in kc_graph._registry()
+             if user_state is None or not kc_prefs.is_disabled(user_state, k)}
     keep = [a for a in dict.fromkeys(str(x).strip() for x in areas) if a in known]
     if not keep or set(keep) == known:
         return None
@@ -115,7 +119,7 @@ def plan_options(user_state, areas=None) -> dict:
     shrink the next full placement's picker."""
     from app import diagnostic  # diagnostic imports this module
 
-    kcs = kcs_for(user_state, "all", normalize_areas(areas))
+    kcs = kcs_for(user_state, "all", normalize_areas(areas, user_state))
     mean_secs = diagnostic._mean_est_secs(kcs)
     # Roughly two direct probes settle a concept (diagnostic.STOP_GAIN).
     probes_to_settle = max(1, 2 * len(kcs))

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app import arena_mix, diagnostic, placement_scope, practice_targets
+from app import course_mix, course_registry, diagnostic, placement_scope, practice_targets
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
 from app.models import User
@@ -26,7 +26,7 @@ from app.practice_schemas import (
     DiagnosticPlanResponse,
     DiagnosticStartRequest,
     DiagnosticStatusResponse,
-    ArenaShareRequest,
+    CourseShareRequest,
     PracticeTargetRequest,
 )
 from app.questions import get_question_by_id
@@ -131,19 +131,30 @@ def set_practice_target(payload: PracticeTargetRequest, user: User = Depends(get
     return practice_target(user)
 
 
-@router.get("/arena-share")
-def arena_share(user: User = Depends(get_current_user)):
-    """The ARENA-vs-graph mix (app/arena_mix.py): the share, and which turn
-    the next drill would be."""
-    return arena_mix.status(get_user_state(str(user.id)))
-
-
-@router.post("/arena-share")
-def set_arena_share(payload: ArenaShareRequest, user: User = Depends(get_current_user)):
+@router.get("/course-shares")
+def course_shares(user: User = Depends(get_current_user)):
+    """The Courses tab: every course's enable state and mix (app/course_mix.py)
+    — the share, and which turn the next drill would be."""
     state = get_user_state(str(user.id))
-    state.arena_share = payload.share
+    return {
+        "courses": [course_mix.status(state, c) for c in course_registry.COURSE_IDS],
+        "enable_share": course_mix.DEFAULT_ENABLE_SHARE,
+    }
+
+
+@router.post("/course-shares")
+def set_course_share(payload: CourseShareRequest, user: User = Depends(get_current_user)):
+    """Toggle one course. Enabling sets its share to the fixed default
+    (`course_mix.DEFAULT_ENABLE_SHARE`); disabling sets it to 0. No
+    fine-tune slider — the Courses tab toggle is the only control."""
+    if payload.course not in course_registry.COURSE_IDS:
+        raise HTTPException(status_code=400, detail=f"Unknown course '{payload.course}'")
+    state = get_user_state(str(user.id))
+    shares = dict(state.course_shares or {})
+    shares[payload.course] = course_mix.DEFAULT_ENABLE_SHARE if payload.enabled else 0.0
+    state.course_shares = shares
     save_user_state(str(user.id))
-    return arena_mix.status(state)
+    return course_shares(user)
 
 
 @router.post("/diagnostic/answer", response_model=DiagnosticStatusResponse)

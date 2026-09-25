@@ -434,36 +434,39 @@ def check_invariants():
             "globals defined by these files)"
         )
 
-    # Courses page contract: the tab renders the single ARENA course directly,
-    # so only the detail-view shell that courses.js queries by id must remain
-    # in index.html — there is no list view, no search input, and no results
-    # container. courses.js and its fork gate must both load (script tags
-    # present) so the tab is interactive, and courses.js must still embed the
-    # ARENA detail content (chapter images + source links) the user expects.
+    # Courses page contract (docs/spec-multi-course-catalog.md, 2026-09-25): the
+    # tab is a catalog again — both the list-view grid and the detail-view
+    # shell that courses.js queries by id must be in index.html. courses.js,
+    # its fork gate, and course-registry.js (the shared list both courses.js
+    # and graph-views.js read) must all load so the tab is interactive, and
+    # courses.js must still embed the ARENA detail content (chapter images +
+    # source links) the user expects for that one course.
     for marker in (
+        'id="courses-list-view"',
         'id="courses-detail-view"',
         'src="courses.js',
         'src="courses-fork-gate.js',
+        'src="concept-graph/course-registry.js',
     ):
         assert marker in index_html, f"index.html missing {marker}"
 
-    # The removed list view must not creep back in — these ids are what the
-    # search/card UI hung off of.
-    for gone in ('id="courses-search"', 'id="courses-results"', 'id="courses-list-view"'):
-        assert gone not in index_html, (
-            f"index.html still has {gone}: the Courses tab is ARENA-only and has no list view"
-        )
+    # These ids are gone for good — the search/results UI they belonged to
+    # was retired well before the catalog came back.
+    for gone in ('id="courses-search"', 'id="courses-results"'):
+        assert gone not in index_html, f"index.html still has {gone}: that search UI stays retired"
 
     # courses.js resolves Colab hrefs through colabUpstreamHref(), which
-    # stats/predicted-links.js defines, so that file must load first.
+    # stats/predicted-links.js defines, so that file must load first. Both
+    # courses.js and graph-views.js read window.DeltaCourseRegistry, so
+    # course-registry.js must precede courses.js too.
     courses_pos = _script_offset("courses.js")
-    for dep in ("stats/predicted-links.js", "courses-fork-gate.js"):
+    for dep in ("stats/predicted-links.js", "courses-fork-gate.js", "concept-graph/course-registry.js"):
         dep_pos = _script_offset(dep)
         assert dep_pos != -1, f"index.html missing dep script: {dep}"
         assert dep_pos < courses_pos, (
             f"load-order broken: {dep} must come before courses.js (courses.js "
-            "resolves Colab hrefs via colabUpstreamHref and hands first clicks "
-            "to window.CoursesForkGate)"
+            "resolves Colab hrefs via colabUpstreamHref, hands first clicks to "
+            "window.CoursesForkGate, and reads window.DeltaCourseRegistry)"
         )
 
     courses_js = _read(os.path.join(HERE, "courses.js"))

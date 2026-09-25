@@ -114,6 +114,14 @@ window.DD_NOTEBOOKS = {
       "subtopic_key": "PyTorch: ar-02",
       "file": "ar-02-arena-0-2---neural-networks-and-resnets.ipynb",
       "problems": 190
+    },
+    {
+      "id": "dd-1",
+      "title": "What this app is, and the math behind it",
+      "topic": "Delta Drills",
+      "subtopic_key": "Delta Drills: How this app works",
+      "file": "dd-1-what-this-app-is--and-the-math-behind-it.ipynb",
+      "problems": 0
     }
   ],
   "subtopics": {
@@ -130,6 +138,7 @@ window.DD_NOTEBOOKS = {
     "Einops: Einsum": "es-1",
     "PyTorch: ar-00": "ar-00",
     "PyTorch: ar-01": "ar-01",
-    "PyTorch: ar-02": "ar-02"
+    "PyTorch: ar-02": "ar-02",
+    "Delta Drills: How this app works": "dd-1"
   }
 };

@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import arena_mix, content_gaps, diagnostic, kc_graph
+from app import content_gaps, course_mix, diagnostic, kc_graph
 from app.practice.grading import select_question_for_difficulty
 from app.attempt_history import owed_question_ids
 from app.prioritization import (
@@ -253,12 +253,13 @@ def run_queue(
     # rounds too (its pool alone, the selector never asked): a focused
     # concept whose only work is an in-cooldown retake serves the retake,
     # not a 409 (codex, 2026-09-19).
-    # THE ARENA MIX (2026-09-20, app/arena_mix.py). With a share set, each
-    # request is an ARENA turn or a GRAPH turn, and the round is run with
-    # the OTHER half's concepts excluded from the start — then again with
-    # the wanted half excluded, so a dry half falls back to the other rather
-    # than 409. A focused request is one concept by the learner's own hand
-    # and takes no side.
+    # THE COURSE MIX (2026-09-20, generalized to N courses 2026-09-25,
+    # app/course_mix.py). With any course enabled, each request is that
+    # course's turn or a GRAPH turn, and the round is run with the OTHER
+    # half's concepts excluded from the start — then again with the wanted
+    # half excluded, so a dry half falls back to the other rather than 409.
+    # A focused request is one concept by the learner's own hand and takes
+    # no side.
     # A half whose only work is a REVIEW REPEAT — a drill already answered
     # and not owed a retake — does not win its turn on that: within a
     # cooldown round the other half's fresh work is served first, and the
@@ -270,7 +271,7 @@ def run_queue(
     # prerequisite work. Without the mix (one round, `[set()]`) nothing
     # changes: the repeat is the only candidate and is served as before.
     first_gap: dict | None = None
-    halves = [set()] if focus_subtopic is not None else arena_mix.rounds(user_state)
+    halves = [set()] if focus_subtopic is not None else course_mix.rounds(user_state)
     for cooldown in (True, False):
         repeat = None
         for half in halves:

@@ -1,11 +1,19 @@
 /* ================================================================
-   COURSES.JS — Courses tab: the ARENA curriculum, rendered directly.
+   COURSES.JS — Courses tab: a catalog of courses, each enable-able.
 
-   There is exactly one course, so there is no list, no search box, no
-   "Include course for study?" toggle, and no "Back to courses" button.
-   The tab IS the ARENA article: hero + source links + intro at the top,
-   then the alternating chapter rows. Clicking a chapter opens the
-   sections modal, and each section row opens that section's notebook.
+   Back to a list (docs/spec-multi-course-catalog.md, 2026-09-25): a
+   `#courses-list-view` card per `window.DeltaCourseRegistry.list()` entry
+   (course-registry.js) with an enable toggle that reads/writes
+   `GET/POST /api/practice/course-shares` — enabling a course sets its
+   share above 0, which is what feeds it into practice (backend
+   `app/course_mix.py`). "View course" swaps to `#courses-detail-view`,
+   dispatched by the course's `detailKind`: "arena" renders the article
+   below unchanged; "lesson-list" renders a small KC list that jumps into
+   the Knowledge Graph tab. A back control returns to the list.
+
+   ARENA's own render path — hero + source links + intro, then the
+   alternating chapter rows, sections modal, in-app notebooks — is
+   UNCHANGED from the one-course era described below.
 
    🔴 A SECTION ROW STAYS IN THE APP (Seth, 2026-09-01: "it won't actually
    take you to the Google Colab. It will instead stay inside of the app, and
@@ -185,7 +193,8 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
 
 (function initCoursesTab() {
   const detailView = document.getElementById("courses-detail-view");
-  if (!detailView) return;
+  const listView = document.getElementById("courses-list-view");
+  if (!detailView || !listView) return;
 
   const buildSources = (sources) => {
     const bar = document.createElement("nav");
@@ -499,5 +508,215 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
   };
   document.addEventListener("courses:github-owner-changed", refreshColabHrefs);
 
-  detailView.replaceChildren(buildArticle(ARENA_DETAIL));
+  /* ================================================================
+     CATALOG — the list view, one card per course-registry.js entry, and
+     the detail dispatch that swaps a card's "View course" for the right
+     renderer. Enabling a card is the ONLY control over a course's practice
+     share now (Account tab's slider is gone) — the toggle round-trips
+     `GET/POST /api/practice/course-shares`, which owns the number
+     server-side (app/course_mix.py), same pattern arena-share.js used
+     for the single-course version of this control.
+     ================================================================ */
+
+  const registry = () => (window.DeltaCourseRegistry ? window.DeltaCourseRegistry.list() : []);
+
+  let shareState = null; // { courses: [{course, enabled, share, ...}], enable_share }
+  // Toggles stay disabled until the initial GET lands — otherwise a toggle
+  // during that window races its own load: the load can resolve AFTER the
+  // toggle's own save and re-render the checkbox back to the pre-toggle state.
+  let sharesReady = false;
+  let loadError = null;
+  // Bumped by every load and every save: a load that resolves after a newer
+  // request (the learner's own toggle) is dropped instead of repainting over it.
+  let generation = 0;
+  const shareRow = (courseId) =>
+    (shareState && shareState.courses && shareState.courses.find((r) => r.course === courseId)) || null;
+
+  const loadCourseShares = async () => {
+    const res = await apiFetch("/api/practice/course-shares");
+    if (!res.ok) throw new Error("Could not load your course settings. Check your connection and sign-in.");
+    return res.json();
+  };
+  const setCourseEnabled = async (courseId, enabled) => {
+    const res = await apiFetch("/api/practice/course-shares", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ course: courseId, enabled }),
+    });
+    if (!res.ok) throw new Error("Could not save that — check your connection and sign-in.");
+    return res.json();
+  };
+
+  const buildLessonListArticle = (course) => {
+    const article = document.createElement("article");
+    article.className = "course-article";
+
+    const hero = document.createElement("header");
+    hero.className = "course-hero";
+    const heroText = document.createElement("div");
+    heroText.className = "course-hero-text";
+    const heroTitle = document.createElement("h1");
+    heroTitle.className = "course-hero-title";
+    heroTitle.textContent = course.label;
+    const heroSub = document.createElement("p");
+    heroSub.className = "course-hero-subtitle";
+    heroSub.textContent = course.eyebrow || "";
+    heroText.appendChild(heroTitle);
+    heroText.appendChild(heroSub);
+    hero.appendChild(heroText);
+    article.appendChild(hero);
+
+    const intro = document.createElement("p");
+    intro.className = "course-intro";
+    intro.textContent =
+      "A small graph, on its own: a lesson and a couple of multiple-choice questions per concept. Open one to work it on the Knowledge Graph, scoped to just this course.";
+    article.appendChild(intro);
+
+    const list = document.createElement("ul");
+    list.className = "course-lesson-list";
+    Promise.resolve(course.milestoneKcs()).then((set) => {
+      [...(set instanceof Set ? set : new Set(set || []))].forEach((kc) => {
+        const row = document.createElement("li");
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "course-lesson-item";
+        item.textContent = course.kcTitle ? course.kcTitle(kc) : kc;
+        item.addEventListener("click", () => {
+          window.deltaSetKgCourseFilter?.(course.id);
+          switchTab("knowledge-graph");
+          window.deltaFocusConceptGraphKc?.(kc);
+        });
+        row.appendChild(item);
+        list.appendChild(row);
+      });
+    });
+    article.appendChild(list);
+
+    return article;
+  };
+
+  const DETAIL_BUILDERS = {
+    arena: () => buildArticle(ARENA_DETAIL),
+    "lesson-list": (course) => buildLessonListArticle(course),
+  };
+
+  const showList = () => {
+    detailView.hidden = true;
+    detailView.replaceChildren();
+    listView.hidden = false;
+  };
+
+  const showDetail = (course) => {
+    listView.hidden = true;
+    detailView.hidden = false;
+    const back = document.createElement("button");
+    back.type = "button";
+    back.className = "course-back-link";
+    back.textContent = "← All courses";
+    back.addEventListener("click", showList);
+    const build = DETAIL_BUILDERS[course.detailKind] || DETAIL_BUILDERS.arena;
+    detailView.replaceChildren(back, build(course));
+  };
+
+  const buildCourseCard = (course) => {
+    const card = document.createElement("div");
+    card.className = "course-catalog-card";
+
+    const text = document.createElement("div");
+    text.className = "course-catalog-card-text";
+    const title = document.createElement("h3");
+    title.className = "course-catalog-card-title";
+    title.textContent = course.label;
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "course-catalog-card-eyebrow";
+    eyebrow.textContent = course.eyebrow || "";
+    text.appendChild(title);
+    text.appendChild(eyebrow);
+
+    const actions = document.createElement("div");
+    actions.className = "course-catalog-card-actions";
+
+    const toggleLabel = document.createElement("label");
+    toggleLabel.className = "course-catalog-toggle";
+    const toggle = document.createElement("input");
+    toggle.type = "checkbox";
+    // The course name keeps each card's toggle distinguishable to a screen
+    // reader. The words are the course's own (course-registry.js): ARENA's
+    // toggle only mixes its exercises in early — its concepts are the main
+    // graph either way — while Delta Drills' is the only way into practice.
+    const toggleWords = course.toggleLabel || "Add to practice";
+    toggle.setAttribute("aria-label", `${course.label}: ${toggleWords}`);
+    const row = shareRow(course.id);
+    toggle.checked = !!(row && row.enabled);
+    toggle.disabled = !sharesReady;
+    toggle.addEventListener("change", async () => {
+      ++generation;
+      toggle.disabled = true;
+      try {
+        shareState = await setCourseEnabled(course.id, toggle.checked);
+      } catch (err) {
+        toggle.checked = !toggle.checked;
+        toggle.disabled = false;
+        window.alert?.(err.message);
+        return;
+      }
+      toggle.disabled = false;
+      // The save already landed — a refresh hiccup here must not roll the
+      // checkbox back and claim the change failed when it didn't.
+      try {
+        await window.deltaRefreshKcLattice?.();
+      } catch (_) {
+        /* lattice refresh is best-effort; the saved setting still stands */
+      }
+      window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed"));
+    });
+    const toggleText = document.createElement("span");
+    toggleText.textContent = !sharesReady && loadError ? loadError : toggleWords;
+    toggleLabel.appendChild(toggle);
+    toggleLabel.appendChild(toggleText);
+
+    const view = document.createElement("button");
+    view.type = "button";
+    view.className = "course-catalog-view-btn";
+    view.textContent = "View course →";
+    view.addEventListener("click", () => showDetail(course));
+
+    actions.appendChild(toggleLabel);
+    actions.appendChild(view);
+
+    card.appendChild(text);
+    card.appendChild(actions);
+    return card;
+  };
+
+  const renderList = () => {
+    // listView (#courses-list-view) IS the grid — its class is set in
+    // index.html — so cards go straight in it, not into a second nested grid.
+    listView.replaceChildren(...registry().map(buildCourseCard));
+  };
+
+  // Only a SUCCESSFUL load enables the toggles: a failed one keeps them
+  // disabled with the error on the card, rather than showing every course as
+  // off and editable. Waits for practice/init.js's mode announcement — before
+  // it a fresh guest has no token yet and the GET would fail for that alone.
+  const refreshShares = async () => {
+    const mine = ++generation;
+    try {
+      const data = await loadCourseShares();
+      if (mine !== generation) return;
+      shareState = data;
+      sharesReady = true;
+      loadError = null;
+    } catch (err) {
+      if (mine !== generation) return;
+      sharesReady = false;
+      loadError = err.message;
+    }
+    renderList();
+  };
+
+  renderList();
+  showList();
+  window.addEventListener("delta:practice-mode-ready", refreshShares);
+  if (window.DDPracticeModeReady) refreshShares();
 })();

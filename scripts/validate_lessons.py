@@ -43,7 +43,7 @@ from checks import run_checked
 sys.path.append(str(REPO / "Local_Deployed_Shared"))
 from delta_paths import ensure_torch_python  # noqa: E402
 
-EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch", "Mathematics")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays); "Mathematics" = the math MC lane (validate_math.py)
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch", "Mathematics", "Delta Drills")  # "Python" = lesson py-0, the prerequisite floor; "PyTorch" = lesson tr-1 (ARENA 0.1 rays); "Mathematics"/"Delta Drills" = the math MC lane (validate_math.py)
 
 
 def run_code(code, ns):
