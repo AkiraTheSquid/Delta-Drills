@@ -368,12 +368,21 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .modes .lane, figure.fig, .card, .qs li, .aisc-footer {
     background: transparent; box-shadow: none; border-color: var(--wire);
   }
+  /* the card under the cursor lights up in the cursor's own colour while
+     field.js pulls the nodes in round it (it sets .is-hot, innermost card
+     only). A section's title card (kicker + h2) is always lit, centred, a
+     little heavier, and pulls hardest. */
+  .is-hot, .modes .lane.is-hot, .tile:has(> .kicker) { border-color: rgb(var(--field-edge)); }
+  /* .status sets its own outline further down */
+  .tile:has(> .kicker) { border-width: 2px; margin-left: auto; margin-right: auto; }
+  .tile:has(> .kicker) > .kicker, .tile:has(> .kicker) > h2 { text-align: center; }
   .note { border-left-color: var(--amber); }
-  .modes .lane.ada { border-color: var(--coral); }
+  .modes .lane.ada:not(.is-hot) { border-color: var(--coral); }
   .ladder li, .modes li, .modes .lin li.stuck { background: transparent; }
   .modes .lin li.stuck { background: color-mix(in srgb, var(--coral) 10%, transparent); }
   /* the strip drew its dividers as 1px of background between filled cells */
   .status { background: transparent; border-color: var(--wire); gap: 0; }
+  .status.is-hot { border-color: rgb(var(--field-edge)); }
   .status > div { background: transparent; }
   .status > div + div { border-left: 1px solid var(--wire); }
   @media (max-width: 900px) { .status > div + div { border-left: 0; border-top: 1px solid var(--wire); } }

@@ -73,6 +73,12 @@
   drawing inside them. A new kind of card goes in BOTH the wireframe rule
   (end of the `#aisc-root` block) and `field.js` `CARDS`; `watch.py` checks.
   Only a full-screen figure stays opaque (it covers the page).
+- Hover and title cards (Seth, 2026-09-25): the card under the cursor gets
+  `.is-hot` from `js/field.js`, its outline turns the cursor's colour
+  (`--field-edge`) and it pulls the nodes in round it. A section's title card
+  (`.tile:has(> .kicker)`, the 01–09 openers) is centred, has a 2px outline
+  that is always lit, and always pulls, much harder. The title markup is not
+  given a class: saved About copies carry the old markup.
 - Every figure has a "Full screen" button under its graphic, added by
   `js/fig-expand.js`: `figure.fig.is-max` fixes the card over the viewport,
   Escape or the button closes it, Tab wraps inside it. Fig. 2's button presses
@@ -127,3 +133,6 @@
 - 2026-09-25: Cards made see-through wireframes; the node field now keeps
   out of them itself (pushes nodes out, erases links inside). `watch.py`
   checks the CSS and JS card lists match.
+- 2026-09-25: The cursor drags the field's nodes (by link strength); the
+  hovered card lights up and pulls nodes in; section title cards centred,
+  2px always-lit outline, strongest pull.

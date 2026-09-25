@@ -20,6 +20,14 @@
      pushes any node inside one out through its nearest side, and erases its
      drawing inside them, so links never cross the text either. While a
      figure is full screen there is nothing to keep clear.
+   - The cursor drags the nodes it is linked to as it moves, each by the
+     same share its link is drawn at (Seth, 2026-09-25: "a strength
+     according to … how solid the lines are"): a node right at the cursor
+     follows it, one at the edge of its reach barely stirs.
+   - The card under the cursor is marked .is-hot (aisc.css lights its outline
+     in the cursor's colour) and pulls the nodes in round its outline. A
+     section's title card (a .tile opening on a .kicker) is always lit and
+     always pulls, much harder. Pulled nodes still stop at the card's edge.
    - It runs only while #aisc-root is on screen. The app keeps every page in
      the DOM, and a `display: none` page never intersects, so the animation
      stops the moment the learner leaves this page.
@@ -58,8 +66,14 @@
   var EJECT = 0.14;      // share of its depth a node inside a card moves out per frame
   var FALL = 48;         // px outside a card over which it still pushes, fading out
   var SHOVE = 0.03;      // that push at the card's edge
+  var DRAG = 1;          // share of the cursor's move a node takes, times its link strength
+  var DRAG_MAX = 20;     // px a drag moves a node per frame: under half the thinnest padded card, so a flick can't carry one through
+  var HOT_PULL = 0.03, HOT_REACH = 260;     // the card under the cursor pulls nodes in
+  var TITLE_PULL = 0.05, TITLE_REACH = 420; // a title card, always; under the cursor, twice that
 
   var W = 0, H = 0, top = 0, dpr = 1, nodes = [], mouse = null, col = {};
+  var moved = null;      // the cursor's move since the last frame
+  var hot = null;        // the card under the cursor
   var band = 0;          // width of each side gutter the extra nodes live in
   var onScreen = false;
   var cards = [], boxes = []; // card elements; their padded boxes on screen, canvas px
@@ -100,6 +114,8 @@
     band = Math.max(80, Math.min(W / 3, (W - clear) / 2 + 60));
   }
 
+  function isTitle(el) { return !!el.querySelector(":scope > .kicker"); }
+
   // The cards' boxes are measured in page coordinates only when the layout
   // may have moved (resize, the write-up changing size, a reveal settling,
   // and once a second besides); scrolling just shifts them.
@@ -108,13 +124,16 @@
     var y = window.scrollY;
     for (var i = 0; i < cards.length; i++) {
       var r = cards[i].getBoundingClientRect();
-      if (r.width) laid.push({ l: r.left, r: r.right, t: r.top + y, b: r.bottom + y });
+      if (r.width) laid.push({ l: r.left, r: r.right, t: r.top + y, b: r.bottom + y,
+        el: cards[i], title: isTitle(cards[i]) });
     }
     stale = false; age = 0;
   }
   function restale() { stale = true; }
 
-  // the cards on screen now, in canvas coordinates, grown by PAD
+  // the cards on screen now, in canvas coordinates, grown by PAD, each with
+  // how hard and how far it pulls nodes in (0 for most). A pulling card just
+  // off screen still draws in the nodes near that edge.
   function readBoxes() {
     boxes = [];
     var b = document.body.classList;
@@ -122,15 +141,21 @@
     if (stale || ++age > 60) layout();
     var off = window.scrollY + top;
     for (var i = 0; i < laid.length; i++) {
-      var c = laid[i];
-      if (c.b - off < -PAD || c.t - off > H + PAD) continue;
-      boxes.push({ l: c.l - PAD, r: c.r + PAD, t: c.t - off - PAD, b: c.b - off + PAD });
+      var c = laid[i], pull = 0, reach = 0;
+      if (c.title) { pull = TITLE_PULL; reach = TITLE_REACH; }
+      else if (c.el === hot) { pull = HOT_PULL; reach = HOT_REACH; }
+      if (c.title && c.el === hot) pull *= 2;
+      var edge = Math.max(PAD, reach);
+      if (c.b - off < -edge || c.t - off > H + edge) continue;
+      boxes.push({ l: c.l - PAD, r: c.r + PAD, t: c.t - off - PAD, b: c.b - off + PAD, pull: pull, reach: reach });
     }
   }
 
   // a node inside a card leaves through the nearest side, fast when deep in
-  // (a card scrolled over it) and never slower than a drift; one just outside
-  // is shoved gently away, so the nodes don't stack up into a wall on the edge
+  // (a card scrolled over it) and never slower than a drift, losing only the
+  // part of its speed that points in. One just outside a card is shoved
+  // gently away, so the nodes don't stack up into a wall on the edge, unless
+  // the card pulls: then it is drawn toward the edge instead.
   function eject(a, dt) {
     for (var k = 0; k < boxes.length; k++) {
       var c = boxes[k];
@@ -138,7 +163,12 @@
         var ox = a.x < c.l ? a.x - c.l : a.x > c.r ? a.x - c.r : 0;
         var oy = a.y < c.t ? a.y - c.t : a.y > c.b ? a.y - c.b : 0;
         var od = Math.sqrt(ox * ox + oy * oy);
-        if (od > 0 && od < FALL) {
+        if (c.pull) {
+          if (od > 0 && od < c.reach) {
+            var pl = (1 - od / c.reach) * c.pull * dt / od;
+            a.vx -= ox * pl; a.vy -= oy * pl;
+          }
+        } else if (od > 0 && od < FALL) {
           var sh = (1 - od / FALL) * SHOVE * dt / od;
           a.vx += ox * sh; a.vy += oy * sh;
         }
@@ -146,10 +176,10 @@
       }
       var dl = a.x - c.l, dr = c.r - a.x, du = a.y - c.t, dd = c.b - a.y;
       var m = Math.min(dl, dr, du, dd), mv = Math.min(m, (1 + m * EJECT) * dt);
-      if (m === dl) { a.x -= mv; a.vx = -Math.abs(a.vx); }
-      else if (m === dr) { a.x += mv; a.vx = Math.abs(a.vx); }
-      else if (m === du) { a.y -= mv; a.vy = -Math.abs(a.vy); }
-      else { a.y += mv; a.vy = Math.abs(a.vy); }
+      if (m === dl) { a.x -= mv; a.vx = Math.min(a.vx, 0); }
+      else if (m === dr) { a.x += mv; a.vx = Math.max(a.vx, 0); }
+      else if (m === du) { a.y -= mv; a.vy = Math.min(a.vy, 0); }
+      else { a.y += mv; a.vy = Math.max(a.vy, 0); }
     }
   }
 
@@ -186,9 +216,11 @@
       }
       if (mouse) {
         dx = mouse.x - a.x; dy = mouse.y - a.y; d2 = dx * dx + dy * dy;
-        if (d2 < MOUSE_REACH * MOUSE_REACH && d2 > 400) {
+        if (d2 < MOUSE_REACH * MOUSE_REACH) {
           d = Math.sqrt(d2); s = 1 - d / MOUSE_REACH;
-          a.vx += dx / d * s * 0.002 * dt; a.vy += dy / d * s * 0.002 * dt;
+          // carried along by the cursor's move, as strongly as its link is drawn
+          if (moved) { a.x += moved.x * s * DRAG; a.y += moved.y * s * DRAG; }
+          if (d2 > 400) { a.vx += dx / d * s * 0.002 * dt; a.vy += dy / d * s * 0.002 * dt; }
         }
       }
     }
@@ -265,13 +297,18 @@
   function frame(t) {
     var dt = last ? Math.min((t - last) / 16.67, 3) : 1;
     last = t;
+    if (moved) {
+      var mm = Math.hypot(moved.x, moved.y);
+      if (mm > DRAG_MAX) { moved.x *= DRAG_MAX / mm; moved.y *= DRAG_MAX / mm; }
+    }
     readBoxes(); step(dt); draw();
+    moved = null;
     raf = requestAnimationFrame(frame);
   }
   function stop() { cancelAnimationFrame(raf); raf = 0; }
   function sync() {
     reduced = motionQ.matches;
-    if (!onScreen || document.hidden) { stop(); return; }
+    if (!onScreen || document.hidden) { stop(); forget(); return; }
     resize();
     if (!W) { stop(); return; } // canvas hidden (narrow screen): nothing to draw
     if (reduced) { stop(); mouse = null; still(); }
@@ -283,17 +320,49 @@
     for (var i = 0; i < nodes.length; i++) for (var n = 0; n < 40; n++) eject(nodes[i], 3);
     draw();
   }
-  function lose() { mouse = null; if (reduced) draw(); }
+  // the cursor is gone (left the window, or the page is off screen): no
+  // links to it, no drag pending, no card left lit
+  function forget() { mouse = null; moved = null; at = null; setHot(null); }
+  function lose() { forget(); if (reduced) draw(); }
+
+  // the innermost card under the cursor; a note inside a tile is part of
+  // that tile (it has no outline of its own)
+  function setHot(el) {
+    while (el && el.matches(".tile .note")) el = el.parentElement.closest(CARDS);
+    if (el === hot) return;
+    if (hot) hot.classList.remove("is-hot");
+    hot = el;
+    if (hot) hot.classList.add("is-hot");
+  }
+  var at = null; // the cursor, page-relative, for re-reading the card under it on scroll
+  function hotAt(x, y) {
+    var el = document.elementFromPoint(x, y);
+    setHot(el && host.contains(el) ? el.closest(CARDS) : null);
+  }
   // the cards move under a still frame as the page scrolls
-  var stillRaf = 0;
+  var stillRaf = 0, hotRaf = 0;
   window.addEventListener("scroll", function () {
+    // a card scrolls under a cursor that stays put (once a frame)
+    if (at && onScreen && !hotRaf) hotRaf = requestAnimationFrame(function () {
+      hotRaf = 0;
+      if (at) hotAt(at.x, at.y);
+    });
     if (!reduced || !onScreen || !W || stillRaf) return;
     stillRaf = requestAnimationFrame(function () { stillRaf = 0; still(); });
   }, { passive: true });
 
   window.addEventListener("pointermove", function (e) {
-    if (!raf || e.pointerType === "touch") return;
-    mouse = { x: e.clientX, y: e.clientY - top };
+    if (e.pointerType === "touch") return;
+    at = { x: e.clientX, y: e.clientY };
+    setHot(onScreen && host.contains(e.target) ? e.target.closest(CARDS) : null);
+    if (!raf) return;
+    var next = { x: e.clientX, y: e.clientY - top };
+    // a jump (the cursor coming back in) is not a drag
+    if (mouse && Math.abs(next.x - mouse.x) + Math.abs(next.y - mouse.y) < 120) {
+      moved = moved || { x: 0, y: 0 };
+      moved.x += next.x - mouse.x; moved.y += next.y - mouse.y;
+    }
+    mouse = next;
   }, { passive: true });
   document.documentElement.addEventListener("pointerleave", lose);
   window.addEventListener("blur", lose);

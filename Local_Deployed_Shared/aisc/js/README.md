@@ -26,6 +26,10 @@
   nodes near one are shoved off, and its drawing is erased inside every card.
   Card boxes are measured on layout changes only (resize, ResizeObserver on
   `#aisc-root`, reveal `transitionend`, once a second), shifted by scroll.
+  The cursor drags the nodes it links to, each by its link strength (the
+  share its line is drawn at). The card under the cursor gets `.is-hot`
+  (lit in `--field-edge`) and pulls nodes in round its outline; a section
+  title card (`.tile` opening on a `.kicker`) always pulls, harder.
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
   style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
@@ -77,3 +81,5 @@
 - 2026-09-25: `field.js` keeps out of the (now see-through) cards: pushes
   nodes out, erases its drawing inside them. `fig-forget.js` plot panel
   unfilled, `fig-effort.js` marker ring in page paper.
+- 2026-09-25: `field.js` v4: cursor drags nodes by link strength; hovered
+  card `.is-hot` + pulls nodes in; title cards always pull, twice when hovered.
