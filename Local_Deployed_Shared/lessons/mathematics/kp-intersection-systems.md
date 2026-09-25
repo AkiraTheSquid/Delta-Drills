@@ -9,7 +9,7 @@ concepts: [columns]
 faded: [50006, 50007]
 guided: []
 independent: [50008, 50009]
-integrated: [50010, 50011]
+integrated: [50010, 50011, 50110]
 ---
 
 ## Concept: One coefficient per unknown
@@ -111,3 +111,6 @@ A nonsingular system solves to [u, v] = [2, 1.4], with residual M[u, v] − b = 
 
 ### q50011
 O = (1, 1), D = (2, −1), A = (5, −2), B = (5, 2). Does the ray hit the segment, and where?
+
+### q50110
+Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 − L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 − L2](u, v) = L1 − O. Which (u, v) solves it?

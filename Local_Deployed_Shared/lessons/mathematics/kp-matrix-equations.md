@@ -9,7 +9,7 @@ concepts: []
 faded: [50050, 50051]
 guided: []
 independent: [50052, 50053, 50104, 50105, 50106, 50107, 50108, 50109]
-integrated: [50054, 50055, 50110, 50111]
+integrated: [50054, 50055]
 ---
 
 ## Concept
@@ -103,8 +103,3 @@ Solve u + 2v = 7, v + w = 5, and w = 2. Choose (u, v, w).
 ### q50055
 A 3-by-2 matrix has two independent columns. Which statement about Mx = b is correct?
 
-### q50110
-Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 − L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 − L2](u, v) = L1 − O. Which (u, v) solves it?
-
-### q50111
-A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?

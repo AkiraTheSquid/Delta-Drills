@@ -8,7 +8,7 @@ previews: []
 concepts: []
 faded: [50038, 50039]
 guided: []
-independent: [50040, 50041, 50080, 50081, 50082, 50083, 50084, 50085]
+independent: [50040, 50041, 50080, 50081, 50082, 50083, 50084]
 integrated: [50042, 50043, 50086, 50087]
 ---
 
@@ -95,9 +95,6 @@ O = (0, 0), D = (3, 4), X = (5, 10). How far along D's direction does X project 
 
 ### q50084
 ‖u‖ = 3, ‖v‖ = 4 and u · v = 2. What is ‖u − v‖²?
-
-### q50085
-D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?
 
 ## Integrated practice
 

@@ -7,8 +7,8 @@ supporting: ['cnn.module-state', 'torch.dot-matmul-patterns', 'torch.transpose-a
 previews: []
 faded: [1185, 1186, 1187, 1188]
 guided: []
-independent: [1189, 1190, 1191, 1192, 1193, 1194, 1195, 1196, 1197]
-integrated: [1198, 1199, 1200]
+independent: [1189, 1190, 1191, 1192, 1193, 1194, 1195, 1197, 1200]
+integrated: [1198, 1199, 1196]
 ---
 
 ## Concept: Each output owns a weight row
@@ -187,11 +187,11 @@ Return the tied-weight autoencoder output, shape (...,in_features). x: float (..
 ### q1195
 Return total squared affine activation per example, shape (...). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).
 
-### q1196
-Return the residual tied-weight autoencoder output: reconstruction plus original input, shape (...,in_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).
-
 ### q1197
 Return the difference between affine outputs on x and on zero input, shape (...,out_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).
+
+### q1200
+Return a learned affine module without bias: register weight from w (out,in) as its only parameter; forward maps (...,in) to (...,out).
 
 ## Integrated practice
 
@@ -201,8 +201,8 @@ Return a new learned affine module initialized from float weight w (out,in) and 
 ### q1199
 Return an affine-then-ReLU module using supplied float weight w (out,in), bias b (out,). Register weight and bias; preserve every leading input axis.
 
-### q1200
-Return a learned affine module without bias: register weight from w (out,in) as its only parameter; forward maps (...,in) to (...,out).
+### q1196
+Return the residual tied-weight autoencoder output: reconstruction plus original input, shape (...,in_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).
 
 ## Misconceptions
 

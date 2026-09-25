@@ -36,12 +36,8 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
-- **`test_diagnostic_history.py` tests a model that no longer exists** — `ACTIVE`
-  - When it happens: any run of it, since the 2026-09-07 placement rewrite.
-  - Symptom: `AttributeError: module 'app.diagnostic' has no attribute 'p_correct'` at line 39; the whole file aborts.
-  - Root cause: it validates the retired topic-θ estimator (`p_correct`, `_DIFF_FLOOR`, per-area budgets). The rewrite deleted that model and left the suite behind, and no watcher runs it, so it went red silently.
-  - Prevention/fix: `test_placement.py` covers the replacement model. Retire this file (or port the two checks worth keeping: history-informed priors and post-completion estimate stability) rather than leaving a red suite nothing runs.
-  - Status: ACTIVE.
+- **`test_diagnostic_history.py` tested a model that no longer exists** — `RESOLVED 2026-09-25`
+  - It validated the retired topic-θ estimator (`p_correct`, per-area budgets) and had failed at import since the 2026-09-07 placement rewrite. Deleted; `test_placement.py` covers the replacement model.
 
 - **Recompute script reads user files in place** — `ACTIVE`
   - When it happens: `recompute_p_ewma.py` rewrites JSON files directly with no backup.
@@ -51,6 +47,7 @@ One-shot maintenance scripts for the FastAPI backend — DB initialization and o
   - Status: ACTIVE.
 
 ## Recent Changes
+- 2026-09-25: every `test_*.py` here passes again. `test_diagnostic_history.py` deleted (tested the deleted topic-θ model). Stale expectations updated to the current behaviour: `test_placement` (shortest clock is 180 s since the math MC lane; its free-time probe ages 150 s so it stays under every cap), `test_timeout_submit` (a timeout is a scored miss since 2026-09-20; it asserted the 09-11 "scored nowhere" contract, and read a live list after mutating it), `test_kc_prefs` (whole-graph explore made the frontier ~80 nodes, so max weight is checked as "moves up", not "beats a 70-descendant root"). `test_ray_placement` uses the new public `adaptive.write_state_file` / `read_state_file` instead of the private helpers.
 - 2026-09-07: `test_placement.py` added — 29 checks over the graph-wide placement diagnostic, written alongside the fix for the unreachable 6-hour plan. `test_diagnostic_history.py` recorded as ACTIVE-broken above; it has been failing at import since the model it tests was deleted.
 - 2026-04-28: Doc filled in.
 - 2026-04-27: Initial doc created.

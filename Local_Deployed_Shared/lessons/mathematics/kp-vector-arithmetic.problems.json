@@ -372,7 +372,7 @@
       "id": 50067,
       "kind": "compute",
       "difficulty": 45,
-      "prompt": "A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?",
+      "prompt": "A point starts at O = (1, 1, 1) and moves along D = (2, −1, 0). Where is O + sD at s = 0.5?",
       "choices": [
         {
           "key": "A",
@@ -396,45 +396,10 @@
         }
       ],
       "answer": "B",
-      "solution": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the origin.\n- D: $D + 0.5O$ swaps the roles of origin and direction.",
+      "solution": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the starting point.\n- D: $D + 0.5O$ swaps the roles of the starting point and the direction.",
       "verify": {
         "sympy": {
           "truth": "Matrix([1,1,1])+Rational(1,2)*Matrix([2,-1,0])"
-        }
-      }
-    },
-    {
-      "id": 50068,
-      "kind": "compute",
-      "difficulty": 60,
-      "prompt": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?",
-      "choices": [
-        {
-          "key": "A",
-          "text": "(3, −0.5, 2)",
-          "value": "Matrix([3,Rational(-1,2),2])"
-        },
-        {
-          "key": "B",
-          "text": "(3, 0, 0)",
-          "value": "Matrix([3,0,0])"
-        },
-        {
-          "key": "C",
-          "text": "(1, −1.5, 6)",
-          "value": "Matrix([1,Rational(-3,2),6])"
-        },
-        {
-          "key": "D",
-          "text": "(3, −1.5, 6)",
-          "value": "Matrix([3,Rational(-3,2),6])"
-        }
-      ],
-      "answer": "D",
-      "solution": "The direction's $x$ component is 1, so $x = 3$ needs $s = 3$: $(0, 0, 0) + 3(1, -0.5, 2) = (3, -1.5, 6)$.\n\n- A: moves $x$ alone; every component moves with $s$.\n- B: the $y$ and $z$ of the direction still apply.\n- C: scales $y$ and $z$ but leaves $x$ at the direction's value.",
-      "verify": {
-        "sympy": {
-          "truth": "Matrix([0,0,0])+3*Matrix([1,Rational(-1,2),2])"
         }
       }
     },
@@ -512,7 +477,7 @@
       "id": 50071,
       "kind": "statement",
       "difficulty": 60,
-      "prompt": "Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.",
+      "prompt": "Two directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0) start from the same point O = (2, 1, 0). Compare the points O + 3D₁ and O + D₂.",
       "choices": [
         {
           "key": "A",
@@ -532,7 +497,7 @@
         }
       ],
       "answer": "C",
-      "solution": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the ray covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one origin give one line.\n- D: the shared origin cancels whatever it is."
+      "solution": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the line through O covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one point give one line.\n- D: the shared starting point cancels whatever it is."
     }
   ]
 }

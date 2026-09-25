@@ -1,0 +1,31 @@
+{
+  "kc": "raytracing.batched-segments",
+  "problems": [
+    {
+      "id": 50111,
+      "kind": "statement",
+      "difficulty": 65,
+      "prompt": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "(2,)"
+        },
+        {
+          "key": "B",
+          "text": "(5, 2, 2)"
+        },
+        {
+          "key": "C",
+          "text": "(2, 5)"
+        },
+        {
+          "key": "D",
+          "text": "(5, 2)"
+        }
+      ],
+      "answer": "D",
+      "solution": "The leading 5 is a batch dimension: `solve` solves five separate $2 \\times 2$ systems and returns one 2-component solution per system, shape $(5, 2)$, in the same layout as `b`.\n\n- A: a single system's solution; the batch dimension is kept.\n- B: the shape of `A`, not of the solutions.\n- C: puts the batch dimension last."
+    }
+  ]
+}

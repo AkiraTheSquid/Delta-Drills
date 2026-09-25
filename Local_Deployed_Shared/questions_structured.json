@@ -81246,7 +81246,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?",
+      "question_text": "A point starts at O = (1, 1, 1) and moves along D = (2, −1, 0). Where is O + sD at s = 0.5?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -81285,7 +81285,7 @@
         }
       ],
       "correct_choice": "B",
-      "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the origin.\n- D: $D + 0.5O$ swaps the roles of origin and direction.",
+      "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the starting point.\n- D: $D + 0.5O$ swaps the roles of the starting point and the direction.",
       "verify": {
         "sympy": {
           "truth": "Matrix([1,1,1])+Rational(1,2)*Matrix([2,-1,0])"
@@ -81298,12 +81298,12 @@
     "id": 50068,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-ray-parametrisation.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "topic": "PyTorch",
+      "subtopic": "Rays as tensors",
+      "subtopic_key": "PyTorch: Rays as tensors",
       "difficulty_score": 60,
       "difficulty_label": "medium"
     },
@@ -81323,7 +81323,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.vector-arithmetic",
+      "math_kc": "raytracing.ray-parametrisation",
       "choices": [
         {
           "key": "A",
@@ -81494,7 +81494,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.",
+      "question_text": "Two directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0) start from the same point O = (2, 1, 0). Compare the points O + 3D₁ and O + D₂.",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -81533,7 +81533,7 @@
         }
       ],
       "correct_choice": "C",
-      "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the ray covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one origin give one line.\n- D: the shared origin cancels whatever it is.",
+      "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the line through O covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one point give one line.\n- D: the shared starting point cancels whatever it is.",
       "verify": null,
       "hint": null
     }
@@ -82336,12 +82336,12 @@
     "id": 50085,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-row-normalization.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "topic": "PyTorch",
+      "subtopic": "ar-00",
+      "subtopic_key": "PyTorch: ar-00",
       "difficulty_score": 55,
       "difficulty_label": "medium"
     },
@@ -82361,7 +82361,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.dot-products-norms",
+      "math_kc": "tensor.row-normalization",
       "choices": [
         {
           "key": "A",
@@ -82704,12 +82704,12 @@
     "id": 50091,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+      "path": "Local_Deployed_Shared/lessons/tensors/kp-linalg-basics.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "topic": "Numpy",
+      "subtopic": "Core array literacy",
+      "subtopic_key": "Numpy: Core array literacy",
       "difficulty_score": 50,
       "difficulty_label": "medium"
     },
@@ -82729,7 +82729,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.linear-combinations",
+      "math_kc": "torch.linalg-basics",
       "choices": [
         {
           "key": "A",
@@ -82948,12 +82948,12 @@
     "id": 50095,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-segment-intersection.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "subtopic_key": "PyTorch: ar-01",
       "difficulty_score": 65,
       "difficulty_label": "medium"
     },
@@ -82973,7 +82973,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.linear-combinations",
+      "math_kc": "raytracing.segment-intersection",
       "choices": [
         {
           "key": "A",
@@ -83134,12 +83134,12 @@
     "id": 50098,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-mesh-visibility.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "ARENA 0.1",
-      "subtopic_key": "Mathematics: ARENA 0.1",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "subtopic_key": "PyTorch: ar-01",
       "difficulty_score": 50,
       "difficulty_label": "medium"
     },
@@ -83159,7 +83159,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.ray-distance",
+      "math_kc": "raytracing.mesh-visibility",
       "choices": [
         {
           "key": "A",
@@ -83378,12 +83378,12 @@
     "id": 50102,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-mesh-visibility.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "ARENA 0.1",
-      "subtopic_key": "Mathematics: ARENA 0.1",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "subtopic_key": "PyTorch: ar-01",
       "difficulty_score": 60,
       "difficulty_label": "medium"
     },
@@ -83403,7 +83403,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.ray-distance",
+      "math_kc": "raytracing.mesh-visibility",
       "choices": [
         {
           "key": "A",
@@ -83866,12 +83866,12 @@
     "id": 50110,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+      "path": "Local_Deployed_Shared/lessons/mathematics/kp-intersection-systems.problems.json"
     },
     "curriculum": {
       "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "subtopic": "ARENA 0.1",
+      "subtopic_key": "Mathematics: ARENA 0.1",
       "difficulty_score": 60,
       "difficulty_label": "medium"
     },
@@ -83891,7 +83891,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "compute",
-      "math_kc": "math.matrix-equations",
+      "math_kc": "math.intersection-systems",
       "choices": [
         {
           "key": "A",
@@ -83928,12 +83928,12 @@
     "id": 50111,
     "source": {
       "type": "math_json",
-      "path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json"
+      "path": "Local_Deployed_Shared/lessons/pytorch/kp-batched-segments.problems.json"
     },
     "curriculum": {
-      "topic": "Mathematics",
-      "subtopic": "Linear algebra",
-      "subtopic_key": "Mathematics: Linear algebra",
+      "topic": "PyTorch",
+      "subtopic": "ar-01",
+      "subtopic_key": "PyTorch: ar-01",
       "difficulty_score": 65,
       "difficulty_label": "medium"
     },
@@ -83953,7 +83953,7 @@
       "expected_artifact_type": "choice",
       "supports_visual_output": false,
       "math_kind": "statement",
-      "math_kc": "math.matrix-equations",
+      "math_kc": "raytracing.batched-segments",
       "choices": [
         {
           "key": "A",

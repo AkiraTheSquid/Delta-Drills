@@ -8,8 +8,8 @@ previews: []
 concepts: []
 faded: [50044, 50045]
 guided: []
-independent: [50046, 50047, 50088, 50089, 50090, 50091, 50092, 50093]
-integrated: [50048, 50049, 50094, 50095]
+independent: [50046, 50047, 50088, 50089, 50090, 50092, 50093]
+integrated: [50048, 50049, 50094]
 ---
 
 ## Concept
@@ -85,9 +85,6 @@ E1 = (1, 0, 1), E2 = (0, 2, 1). Which weights (u, v) give uE1 + vE2 = (2, 4, 4)?
 ### q50090
 E1 = (1, 0, 1), E2 = (0, 2, 1). Can uE1 + vE2 equal (1, 2, 4)?
 
-### q50091
-w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?
-
 ### q50092
 E1 = (2, 1), E2 = (4, 2), E3 = (0, 1). Which pair does NOT span the whole plane?
 
@@ -105,5 +102,3 @@ A = (1, −1, 2), E1 = (2, 0, 0), E2 = (0, 3, 0). Find A + E1/2 + E2/3.
 ### q50094
 A = (1, 1), B = (5, 1), C = (1, 4). Which (u, v) gives A + u(B − A) + v(C − A) = (3, 2.5)?
 
-### q50095
-E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?

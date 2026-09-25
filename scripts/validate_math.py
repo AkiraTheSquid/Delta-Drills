@@ -3,11 +3,15 @@
 
 A math KP is `lessons/<topic>/kp-<slug>.md` with `kind: math` in its
 frontmatter plus `kp-<slug>.problems.json` beside it (format: lessons/math_bank.py).
+A CODE KP (no `kind`) may carry a problems file too: answer format belongs to
+the problem, ownership to the concept, so an MC question that assumes torch
+lives on the torch KC that teaches it (2026-09-25).
 This is the gate that lets Fable author one and know it will serve:
 
 Per problems file:
-  1. shape — `kc` matches the KP beside it and exists in the registry; the
-     KP's lesson is a Mathematics lesson
+  1. shape — `kc` matches the KP beside it and exists in the registry; beside
+     a `kind: math` page, the KP's lesson is a Mathematics lesson (any topic
+     beside a code page)
   2. per problem — id >= MATH_ID_FLOOR and unique across every math file and
      the CSV bank; kind in KINDS; difficulty in 10..100; prompt, solution and
      every choice text non-empty; choice keys A.. in order; texts distinct;
@@ -22,8 +26,10 @@ Per problems file:
      outside the repo before running the gate on it.
   4. rung placement — the KP frontmatter (faded/independent/integrated) lists
      exactly this file's ids: every problem sits on ONE rung, no rung names
-     a problem that does not exist, `guided` (legacy) stays empty. A targeted
-     run still sees the ids every other math file owns.
+     a problem that does not exist, `guided` (legacy) stays empty. Beside a
+     code page only ids >= MATH_ID_FLOOR count as this file's, and they sit on
+     independent / integrated only (faded there is a starter/solution rung).
+     A targeted run still sees the ids every other math file owns.
   5. atom tags — every problem has a row in backend/app/data/question_atom_tags.jsonl
      whose atoms are nodes of the concept graph (the audit gate blocks a
      placed-but-untagged question; say so here, at authoring time, by id)
@@ -258,13 +264,6 @@ def check_problem_file(path: Path, registry: dict, seen_ids: dict[int, str], csv
     kc = str(data["kc"])
     kcs = {k["id"]: k for k in registry.get("kcs", [])}
     lessons = {l["id"]: l for l in registry.get("lessons", [])}
-    if kc not in kcs:
-        errors.append(f"{name}: kc `{kc}` not in kc_registry.json")
-    else:
-        lesson = lessons.get(kcs[kc].get("lesson")) or {}
-        if lesson.get("topic") not in MATH_TOPICS:
-            errors.append(f"{name}: kc `{kc}` belongs to lesson `{kcs[kc].get('lesson')}` whose topic is "
-                          f"`{lesson.get('topic')}`, not one of {MATH_TOPICS}")
     md_path = math_bank.kp_markdown_for(path)
     meta = {}
     if not md_path.exists():
@@ -274,10 +273,26 @@ def check_problem_file(path: Path, registry: dict, seen_ids: dict[int, str], csv
             meta, _ = parse_frontmatter(md_path.read_text(encoding="utf-8"), md_path)
         except Exception as exc:
             errors.append(f"{md_path.name}: {exc}")
-        if meta.get("kind") != "math":
-            errors.append(f"{md_path.name}: frontmatter needs `kind: math` to pair with {name}")
         if meta.get("kc") != kc:
             errors.append(f"{name}: kc `{kc}` != {md_path.name} kc `{meta.get('kc')}`")
+    # Answer FORMAT belongs to the problem, concept OWNERSHIP to the KC whose
+    # prerequisites cover what the problem assumes. A code page may therefore
+    # own MC problems (a question about a tensor's shape is multiple choice
+    # but still a PyTorch question); only a `kind: math` page is held to the
+    # Mathematics topic, because it has no kernel and nothing else to serve.
+    # `kind` absent (lesson_lib reads that as "code") is the only way to be a
+    # code page here; a misspelt kind is held to the math rules, not waved through.
+    on_math_page = not meta or meta.get("kind") not in (None, "code")
+    if meta and on_math_page and meta.get("kind") != "math":
+        errors.append(f"{md_path.name}: unknown `kind: {meta.get('kind')}` — `math`, or no kind for a code page")
+    if kc not in kcs:
+        errors.append(f"{name}: kc `{kc}` not in kc_registry.json")
+    elif on_math_page:
+        lesson = lessons.get(kcs[kc].get("lesson")) or {}
+        if lesson.get("topic") not in MATH_TOPICS:
+            errors.append(f"{name}: kc `{kc}` belongs to lesson `{kcs[kc].get('lesson')}` whose topic is "
+                          f"`{lesson.get('topic')}`, not one of {MATH_TOPICS} — a page on another topic "
+                          "owns MC problems as a code page (no `kind: math`)")
 
     ids_here: list[int] = []
     for i, problem in enumerate(data["problems"]):
@@ -305,12 +320,22 @@ def check_problem_file(path: Path, registry: dict, seen_ids: dict[int, str], csv
         errors.extend(sympy_findings(problem, label))
 
     if meta:
-        if meta.get("guided"):
-            errors.append(f"{md_path.name}: `guided` is a legacy rung with no section on a math page — "
-                          "use faded / independent / integrated")
-        placed: list[int] = []
-        for role in ("faded", "guided", "independent", "integrated"):
-            placed += [int(x) for x in (meta.get(role) or []) if isinstance(x, int)]
+        rungs = {role: [int(x) for x in (meta.get(role) or []) if isinstance(x, int)]
+                 for role in ("faded", "guided", "independent", "integrated")}
+        if on_math_page:
+            if rungs["guided"]:
+                errors.append(f"{md_path.name}: `guided` is a legacy rung with no section on a math page — "
+                              "use faded / independent / integrated")
+        else:
+            # A code page's own drills are validate_lessons' business; the ids
+            # this file answers for are the ones in the math id range.
+            rungs = {role: [x for x in ids if x >= math_bank.MATH_ID_FLOOR] for role, ids in rungs.items()}
+            for role in ("faded", "guided"):
+                if rungs[role]:
+                    errors.append(f"{md_path.name}: MC problems {rungs[role]} on the `{role}` rung of a code "
+                                  "page — that rung is a starter/solution completion; put MC on "
+                                  "independent / integrated")
+        placed: list[int] = [x for ids in rungs.values() for x in ids]
         not_placed = sorted(set(ids_here) - set(placed))
         unknown = sorted(set(placed) - set(ids_here))
         # Exactly once: a problem on two rungs would be served under two

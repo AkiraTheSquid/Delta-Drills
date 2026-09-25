@@ -1,16 +1,7 @@
 {
  "_": "Known graph-structure findings. watch.py fails on anything NOT listed here. Shrink it; re-record only with a reason.",
- "count": 52,
+ "count": 43,
  "known": [
-  "difficulty|einops.channel-groups-temporal|faded>guided",
-  "difficulty|einops.dl-flatten-heads|guided>independent",
-  "difficulty|einops.grids-montage|independent>integrated",
-  "difficulty|einops.pooling|independent>integrated",
-  "difficulty|torch.axis-reductions|faded>guided",
-  "difficulty|torch.broadcasting-rules|faded>guided",
-  "difficulty|torch.dot-matmul-patterns|faded>guided",
-  "difficulty|torch.dtype-astype|guided>solo",
-  "difficulty|torch.sorting|faded>guided",
   "edge-missing|einops.channel-groups-temporal|torch.ranges",
   "edge-missing|einops.dl-flatten-heads|einops.reduce-model",
   "edge-missing|einops.dl-flatten-heads|torch.constructors",
@@ -30,6 +21,8 @@
   "edge-missing|einops.repeat-model|torch.ranges",
   "edge-missing|einops.singleton-and-lists|torch.constructors",
   "edge-missing|einops.split-axes|torch.ranges",
+  "edge-missing|python.calling-functions|python.lists-and-tuples",
+  "edge-missing|python.dots-and-imports|python.lists-and-tuples",
   "edge-missing|torch.aggregations|torch.constructors",
   "edge-missing|torch.aggregations|torch.ranges",
   "edge-missing|torch.argmin-argmax|torch.slicing-views",
@@ -51,8 +44,6 @@
   "edge-missing|torch.stack-concat-interleave|torch.aggregations",
   "edge-missing|torch.stack-concat-interleave|torch.axis-reductions",
   "edge-missing|torch.stack-concat-interleave|torch.constructors",
-  "edge-missing|torch.stack-concat-interleave|torch.sorting",
-  "edge-missing|python.calling-functions|python.lists-and-tuples",
-  "edge-missing|python.dots-and-imports|python.lists-and-tuples"
+  "edge-missing|torch.stack-concat-interleave|torch.sorting"
  ]
 }

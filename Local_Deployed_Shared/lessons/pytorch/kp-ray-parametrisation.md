@@ -6,7 +6,7 @@ new_syntax: [syntax.unpack]
 previews: []
 faded: [820, 821]
 guided: []
-independent: [822, 823, 824, 825, 826, 827, 1604, 1605]
+independent: [822, 823, 824, 825, 826, 827, 1604, 1605, 50068]
 integrated: [828, 829, 830, 1606]
 ---
 
@@ -230,6 +230,9 @@ assert (origin + 2.0 * direction).tolist() == [4.0, 7.0, 0.0]
 
 ### q1605
 Read u back off a known point — one coordinate is enough.
+
+### q50068
+ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?
 
 ## Integrated practice
 

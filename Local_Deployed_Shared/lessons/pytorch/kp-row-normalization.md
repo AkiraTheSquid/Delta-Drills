@@ -7,7 +7,7 @@ supporting: ['torch.axis-reductions', 'torch.broadcasting-rules', 'torch.boolean
 previews: []
 faded: [993, 994, 995, 996]
 guided: []
-independent: [997, 998, 999, 1000, 1001, 1002, 1071, 1072, 1073]
+independent: [997, 998, 999, 1000, 1001, 1002, 1071, 1072, 1073, 50085]
 integrated: [1003, 1004, 1005, 1682, 1683, 1684, 1685]
 ---
 
@@ -183,6 +183,9 @@ Return a matrix of row-length ratios: entry i,j is length of row i divided by le
 
 ### q1073
 Return the component of each unit row direction on the first coordinate axis, shape (m,). x: float (m,n), every row nonzero.
+
+### q50085
+D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?
 
 ## Integrated practice
 

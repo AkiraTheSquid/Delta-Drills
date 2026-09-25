@@ -65,7 +65,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Einops",
       "subtopic_key": "Einops: Reduce",
       "file": "eo-2-reduce.ipynb",
-      "problems": 21
+      "problems": 25
     },
     {
       "id": "eo-3",

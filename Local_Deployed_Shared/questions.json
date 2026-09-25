@@ -71997,7 +71997,7 @@
     "topic": "Mathematics",
     "subtopic": "Linear algebra",
     "subtopic_key": "Mathematics: Linear algebra",
-    "question_text": "A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?",
+    "question_text": "A point starts at O = (1, 1, 1) and moves along D = (2, −1, 0). Where is O + sD at s = 0.5?",
     "answer_code": "",
     "difficulty_score": 45,
     "difficulty_label": "medium",
@@ -72041,7 +72041,7 @@
       }
     ],
     "correct_choice": "B",
-    "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the origin.\n- D: $D + 0.5O$ swaps the roles of origin and direction.",
+    "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the starting point.\n- D: $D + 0.5O$ swaps the roles of the starting point and the direction.",
     "verify": {
       "sympy": {
         "truth": "Matrix([1,1,1])+Rational(1,2)*Matrix([2,-1,0])"
@@ -72050,9 +72050,9 @@
   },
   {
     "id": 50068,
-    "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "topic": "PyTorch",
+    "subtopic": "Rays as tensors",
+    "subtopic_key": "PyTorch: Rays as tensors",
     "question_text": "ARENA stores one ray as a (2, 3) tensor: row 0 is the origin, row 1 the direction. rays[i] = [[0, 0, 0], [1, −0.5, 2]]. Which point on this ray has x = 3?",
     "answer_code": "",
     "difficulty_score": 60,
@@ -72071,9 +72071,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-vector-arithmetic.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-ray-parametrisation.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.vector-arithmetic",
+    "math_kc": "raytracing.ray-parametrisation",
     "choices": [
       {
         "key": "A",
@@ -72221,7 +72221,7 @@
     "topic": "Mathematics",
     "subtopic": "Linear algebra",
     "subtopic_key": "Mathematics: Linear algebra",
-    "question_text": "Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.",
+    "question_text": "Two directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0) start from the same point O = (2, 1, 0). Compare the points O + 3D₁ and O + D₂.",
     "answer_code": "",
     "difficulty_score": 60,
     "difficulty_label": "medium",
@@ -72265,7 +72265,7 @@
       }
     ],
     "correct_choice": "C",
-    "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the ray covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one origin give one line.\n- D: the shared origin cancels whatever it is.",
+    "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the line through O covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one point give one line.\n- D: the shared starting point cancels whatever it is.",
     "verify": null
   },
   {
@@ -72986,9 +72986,9 @@
   },
   {
     "id": 50085,
-    "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "topic": "PyTorch",
+    "subtopic": "ar-00",
+    "subtopic_key": "PyTorch: ar-00",
     "question_text": "D = t.tensor([[1., 2., 2.], [0., 3., 4.], [2., 0., 0.]]) holds one ray direction per row. What is t.linalg.norm(D, dim=1)?",
     "answer_code": "",
     "difficulty_score": 55,
@@ -73007,9 +73007,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-dot-products-norms.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-row-normalization.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.dot-products-norms",
+    "math_kc": "tensor.row-normalization",
     "choices": [
       {
         "key": "A",
@@ -73318,9 +73318,9 @@
   },
   {
     "id": 50091,
-    "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "topic": "Numpy",
+    "subtopic": "Core array literacy",
+    "subtopic_key": "Numpy: Core array literacy",
     "question_text": "w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?",
     "answer_code": "",
     "difficulty_score": 50,
@@ -73339,9 +73339,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/tensors/kp-linalg-basics.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.linear-combinations",
+    "math_kc": "torch.linalg-basics",
     "choices": [
       {
         "key": "A",
@@ -73538,9 +73538,9 @@
   },
   {
     "id": 50095,
-    "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
     "question_text": "E1 = t.tensor([2., 1.]), E2 = t.tensor([3., 4.]), T = t.tensor([5., 5.]). What does t.linalg.solve(t.stack([E1, E2], dim=1), T) return?",
     "answer_code": "",
     "difficulty_score": 65,
@@ -73559,9 +73559,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-linear-combinations.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-segment-intersection.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.linear-combinations",
+    "math_kc": "raytracing.segment-intersection",
     "choices": [
       {
         "key": "A",
@@ -73706,9 +73706,9 @@
   },
   {
     "id": 50098,
-    "topic": "Mathematics",
-    "subtopic": "ARENA 0.1",
-    "subtopic_key": "Mathematics: ARENA 0.1",
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
     "question_text": "A kernel forgets the s ≥ 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?",
     "answer_code": "",
     "difficulty_score": 50,
@@ -73727,9 +73727,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-mesh-visibility.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.ray-distance",
+    "math_kc": "raytracing.mesh-visibility",
     "choices": [
       {
         "key": "A",
@@ -73926,9 +73926,9 @@
   },
   {
     "id": 50102,
-    "topic": "Mathematics",
-    "subtopic": "ARENA 0.1",
-    "subtopic_key": "Mathematics: ARENA 0.1",
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
     "question_text": "Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?",
     "answer_code": "",
     "difficulty_score": 60,
@@ -73947,9 +73947,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-ray-distance.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-mesh-visibility.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.ray-distance",
+    "math_kc": "raytracing.mesh-visibility",
     "choices": [
       {
         "key": "A",
@@ -74367,8 +74367,8 @@
   {
     "id": 50110,
     "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "subtopic": "ARENA 0.1",
+    "subtopic_key": "Mathematics: ARENA 0.1",
     "question_text": "Ray O + uD with O = (0, 0), D = (1, 1). Segment L1 + v(L2 − L1) with L1 = (2, 0), L2 = (0, 2). Setting them equal gives the system [D, L1 − L2](u, v) = L1 − O. Which (u, v) solves it?",
     "answer_code": "",
     "difficulty_score": 60,
@@ -74387,9 +74387,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-intersection-systems.problems.json",
     "math_kind": "compute",
-    "math_kc": "math.matrix-equations",
+    "math_kc": "math.intersection-systems",
     "choices": [
       {
         "key": "A",
@@ -74422,9 +74422,9 @@
   },
   {
     "id": 50111,
-    "topic": "Mathematics",
-    "subtopic": "Linear algebra",
-    "subtopic_key": "Mathematics: Linear algebra",
+    "topic": "PyTorch",
+    "subtopic": "ar-01",
+    "subtopic_key": "PyTorch: ar-01",
     "question_text": "A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?",
     "answer_code": "",
     "difficulty_score": 65,
@@ -74443,9 +74443,9 @@
     "supports_visual_output": false,
     "hint": null,
     "source_type": "math_json",
-    "source_path": "Local_Deployed_Shared/lessons/mathematics/kp-matrix-equations.problems.json",
+    "source_path": "Local_Deployed_Shared/lessons/pytorch/kp-batched-segments.problems.json",
     "math_kind": "statement",
-    "math_kc": "math.matrix-equations",
+    "math_kc": "raytracing.batched-segments",
     "choices": [
       {
         "key": "A",

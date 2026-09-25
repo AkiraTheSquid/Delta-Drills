@@ -246,41 +246,6 @@
       }
     },
     {
-      "id": 50098,
-      "kind": "compute",
-      "difficulty": 50,
-      "prompt": "A kernel forgets the s ≥ 0 check: nearest = t.where(valid, s, t.inf).min() with s = t.tensor([2., -3., 5.]) and valid all True. What value does nearest hold?",
-      "choices": [
-        {
-          "key": "A",
-          "text": "2",
-          "value": "2"
-        },
-        {
-          "key": "B",
-          "text": "−3",
-          "value": "-3"
-        },
-        {
-          "key": "C",
-          "text": "5",
-          "value": "5"
-        },
-        {
-          "key": "D",
-          "text": "inf",
-          "value": "oo"
-        }
-      ],
-      "answer": "B",
-      "solution": "Nothing is masked, so the minimum of $[2, -3, 5]$ is $-3$: a surface behind the camera wins. With `forward = valid & (s >= 0)` the $-3$ becomes $+\\infty$ and the answer is 2, the correct visible hit.\n\n- A: what the code should return, not what it does.\n- C: the maximum.\n- D: only if every candidate were masked.",
-      "verify": {
-        "sympy": {
-          "truth": "Min(2, -3, 5)"
-        }
-      }
-    },
-    {
       "id": 50099,
       "kind": "compute",
       "difficulty": 55,
@@ -373,41 +338,6 @@
       "verify": {
         "sympy": {
           "truth": "2*sqrt(9+16)"
-        }
-      }
-    },
-    {
-      "id": 50102,
-      "kind": "compute",
-      "difficulty": 60,
-      "prompt": "Three rays by two triangles: s = t.tensor([[2., 5.], [-1., 3.], [1., 4.]]), valid = t.tensor([[True, True], [True, True], [False, True]]). What is t.where(valid & (s >= 0), s, t.inf).min(dim=1).values?",
-      "choices": [
-        {
-          "key": "A",
-          "text": "tensor([2., 3., 4.])",
-          "value": "Matrix([2,3,4])"
-        },
-        {
-          "key": "B",
-          "text": "tensor([2., -1., 4.])",
-          "value": "Matrix([2,-1,4])"
-        },
-        {
-          "key": "C",
-          "text": "tensor([2., 3., 1.])",
-          "value": "Matrix([2,3,1])"
-        },
-        {
-          "key": "D",
-          "text": "tensor([2., 3.])",
-          "value": "Matrix([2,3])"
-        }
-      ],
-      "answer": "A",
-      "solution": "Mask each row, then take the minimum across triangles (`dim=1`):\n\n- ray 0: $[2, 5] \\to 2$\n- ray 1: $[+\\infty, 3] \\to 3$ ($-1$ is behind the origin)\n- ray 2: $[+\\infty, 4] \\to 4$ (the first pair is invalid)\n\nWrong choices:\n\n- B: drops the $s \\ge 0$ check.\n- C: drops the `valid` mask.\n- D: `dim=0`, one value per triangle instead of per ray.",
-      "verify": {
-        "sympy": {
-          "truth": "Matrix([Min(2,5), 3, 4])"
         }
       }
     },

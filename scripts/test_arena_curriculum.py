@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from arena_curriculum import annotate
-from compile_arena_notebooks import _cells
+from compile_arena_notebooks import notebook_cells
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "Local_Deployed_Shared/lessons/notebooks"
@@ -20,7 +20,7 @@ class CurriculumTest(unittest.TestCase):
             {"cell_type": "code", "source": []},
             {"cell_type": "markdown", "source": ["<details><summary>Solution</summary>\n\n### Exercise - secret\n\n```python\nanswer = 42\n```\n</details>"]},
         ]}
-        cells = _cells(raw, "test")
+        cells = notebook_cells(raw, "test")
         meta = annotate(cells, "test")
         self.assertEqual(meta["setup_cells"], ["test-c001"])
         self.assertEqual(len(meta["exercises"]), 1)

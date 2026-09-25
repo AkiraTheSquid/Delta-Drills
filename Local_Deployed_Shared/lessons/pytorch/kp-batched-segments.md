@@ -7,7 +7,7 @@ supporting: ['raytracing.segment-intersection', 'torch.broadcasting-rules', 'tor
 previews: []
 faded: [1105, 1106, 1107, 1108, 1729, 1730]
 guided: []
-independent: [1109, 1110, 1111, 1112, 1113, 1114, 1115, 1116, 1117]
+independent: [1109, 1110, 1111, 1112, 1113, 1114, 1115, 1116, 1117, 50111]
 integrated: [1118, 1119, 1120, 1706, 1707, 1708, 1709]
 ---
 
@@ -268,6 +268,9 @@ Return whether each ray hits exactly one segment, shape (nr,). r: rays (nr,2,3) 
 
 ### q1117
 Return number of segment pairs whose line intersection is behind the ray origin, per ray, shape (nr,). r: rays (nr,2,3) as [origin, direction]; s: segments (ns,2,3) as [start, end]. Float tensors in the xy plane; a singular pair is a miss.
+
+### q50111
+A holds one 2-by-2 system per ray: A.shape = (5, 2, 2), b.shape = (5, 2). What shape does t.linalg.solve(A, b) return?
 
 ## Integrated practice
 

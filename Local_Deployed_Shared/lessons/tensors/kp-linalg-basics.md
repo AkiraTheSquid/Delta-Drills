@@ -5,7 +5,7 @@ supporting: [torch.aggregations, torch.elementwise-ops]
 new_syntax: [syntax.matmul, torch.linalg.inv, torch.linalg.solve]
 faded: [239, 107, 1722, 1723, 1724, 1725, 1726, 1727]
 guided: [508, 509]
-independent: [510, 511, 512, 513, 1571, 1572, 1573, 1574]
+independent: [510, 511, 512, 513, 1571, 1572, 1573, 1574, 50091]
 integrated: [1521, 1522, 1523, 1575, 1662, 1663, 1664, 1665]
 ---
 
@@ -377,6 +377,9 @@ The inverse of a matrix — not the reciprocal of its entries.
 
 ### q1574
 Solve a @ x = b — the system, not a product.
+
+### q50091
+w = t.tensor([2., -1.]) and E = t.tensor([[1., 0.], [3., 1.]]) stores E1 and E2 as its rows. What is w @ E?
 
 ## Integrated practice
 

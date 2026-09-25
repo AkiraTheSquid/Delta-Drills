@@ -32,6 +32,9 @@ sys.path.insert(0, REPO)
 
 LESSON_ID = "py-0"
 ROOT_KC = "python.values-and-names"
+# Other chains' own floors — exact ids, so a SECOND root inside either chain
+# (a math concept that lost its prereqs) still fails the check below.
+OTHER_FLOORS = {"math.vector-arithmetic", "deltadrills.mastery"}
 
 
 def _registry():
@@ -79,9 +82,11 @@ def check_every_page_is_a_registered_py0_concept():
 def check_the_floor_stays_under_the_numpy_course():
     """One root, and it is the python one; np-1's first concept still stands on py-0."""
     kcs = {kc["id"]: kc for kc in _registry()["kcs"]}
-    # deltadrills.* is its own standalone course (backend course_registry.py),
-    # outside the ARENA prerequisite graph, so its root is not a second floor.
-    roots = sorted(k for k, v in kcs.items() if not v["prereqs"] and not k.startswith("deltadrills."))
+    # Chains with their own floor are not a second root of THIS course:
+    # deltadrills.mastery heads a standalone course (backend course_registry.py),
+    # and math.vector-arithmetic the standalone linear-algebra chain under
+    # ARENA 0.1 (d18fff13), by design.
+    roots = sorted(k for k, v in kcs.items() if not v["prereqs"] and k not in OTHER_FLOORS)
     assert roots == [ROOT_KC], (
         "the course's root concept(s) are %s. There must be exactly one, and it "
         "must be %s — a second root is a lesson with nothing prior to it, which "
