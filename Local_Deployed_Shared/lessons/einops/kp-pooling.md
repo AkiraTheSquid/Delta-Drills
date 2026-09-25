@@ -5,8 +5,8 @@ supporting: [einops.reduce-model, einops.split-axes]
 new_syntax: []
 faded: [324]
 guided: [363]
-independent: [368, 354, 336, 377, 1638, 1639, 1640, 1641]
-integrated: [917, 918, 919, 920, 929, 930, 931]
+independent: [368, 354, 1638, 1639, 1640, 1641, 917, 918, 919, 929, 930, 931]
+integrated: [920, 336, 377]
 ---
 
 ## Concept
@@ -158,10 +158,6 @@ axes), q354 (subtract each (batch, channel) pair's spatial MINIMUM from its
 own map — a reduce with kept singletons feeding a broadcast subtraction,
 not a pooling; recognize the difference).
 
-Also from the bank: q336 (max-pool AND tile the batch into a grid in ONE
-reduce), q377 (max-pool then flatten everything but the batch, also in one
-reduce).
-
 ### q1638
 Split each axis into (kept × 3), reduce the 3s away.
 
@@ -174,8 +170,6 @@ Three factored axes: nothing new, one more group.
 ### q1641
 Temporal pooling with a sum: the window is the fast factor of time.
 
-## Integrated practice
-
 ### q917
 2x2 max pool
 
@@ -185,9 +179,6 @@ Temporal pooling with a sum: the window is the fast factor of time.
 ### q919
 k x k min pool
 
-### q920
-Pool, then side by side.
-
 ### q929
 One axis, window 7: the maximum of each week.
 
@@ -196,6 +187,20 @@ One axis, window k: the mean of each block.
 
 ### q931
 One axis, window 7: the total of each week.
+
+## Integrated practice
+
+Each of these pools AND moves axes in the same reduce — the window factors
+disappear while the kept axes are rearranged around them.
+
+### q920
+Pool, then side by side.
+
+### q336
+Max-pool AND tile the batch into a grid, in one reduce.
+
+### q377
+Max-pool, then flatten everything but the batch, in one reduce.
 
 ## Misconceptions
 

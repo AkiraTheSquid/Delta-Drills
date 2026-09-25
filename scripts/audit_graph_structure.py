@@ -24,10 +24,10 @@ same-move — two drills on the SAME rung of the SAME concept whose solutions
     ladder promotes on the repeat. Constants ARE normalized on purpose:
     `dim=0` vs `dim=1` is the same move.
 
-difficulty — mean difficulty_score inverts across the rung ladder for one
-    concept by more than TOLERANCE (a later rung scoring EASIER than an earlier
-    one). Informational pressure, not proof; the tolerance absorbs small-n
-    noise.
+difficulty — mean difficulty_score inverts across the SERVED ladder
+    (Solo = `independent`, then Integrated) for one concept by more than
+    TOLERANCE (the later rung scoring EASIER). Informational pressure, not
+    proof; the tolerance absorbs small-n noise.
 
 Usage
 -----
@@ -64,6 +64,13 @@ ATOM_GRAPH = (ROOT / "This-Directory-Only" / "backend" / "app" / "data"
 BASELINE = Path(__file__).resolve().parent / "graph_structure_baseline.json"
 
 RUNGS = ("faded", "guided", "applied", "solo", "independent", "integrated")
+# The ladder a learner actually climbs, for the difficulty check. `faded` and
+# `guided` (ranks 0/1) are retired — kc_graph._STAGE_TO_RANKS serves neither —
+# and `applied` / `solo` are not rungs of their own: compile_lessons fills them
+# from the `independent` frontmatter list (same ids, rank 2, some with an
+# example above). Walking all six compared a subset against its own superset
+# and a retired rung against a live one — 23 of 26 findings on 2026-09-25.
+SERVED_LADDER = ("independent", "integrated")
 TOLERANCE = 5.0  # difficulty_score points a later rung may sit BELOW an earlier one
 
 
@@ -317,7 +324,7 @@ def check_difficulty(findings):
     for lesson in data["lessons"]:
         for kp in lesson["kps"]:
             means = []
-            for rung in RUNGS:
+            for rung in SERVED_LADDER:
                 items = kp.get(f"{rung}_items") or []
                 ids = [it["question_id"] if isinstance(it, dict) else it
                        for it in items]

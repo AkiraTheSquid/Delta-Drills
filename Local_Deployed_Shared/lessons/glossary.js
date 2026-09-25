@@ -209,7 +209,9 @@ window.DD_GLOSSARY = {
     {
       term: "dot product",
       aliases: ["dot products", "inner product"],
-      kc: "torch.dot-matmul-patterns",
+      // The math page defines it first (course rank 1); the torch page
+      // applies it. Pointed here 2026-09-25 — see "ray" below.
+      kc: "math.dot-products-norms",
       def: "Multiply corresponding entries of two equal-length vectors, then add them up. Every product in linear algebra is built from this one atom: elementwise multiply plus a reduction.",
     },
     {
@@ -315,7 +317,12 @@ window.DD_GLOSSARY = {
     {
       term: "ray",
       aliases: ["rays", "half-line"],
-      kc: "raytracing.ray-parametrisation",
+      // math.ray-geometry DEFINES a ray and is a prerequisite of
+      // ray-parametrisation, which only stores one in a tensor. Pointing
+      // the term at the later page sent "Take me to the lesson" past the
+      // definition, and made every math page that says "ray" a forward
+      // reference to the prose ratchet (2026-09-25).
+      kc: "math.ray-geometry",
       def: "A half-line: every point O + u·D for u ≥ 0, with O the origin and D the direction. Stored as a (2, 3) tensor — row 0 the origin, row 1 the direction.",
     },
     {

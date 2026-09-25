@@ -7,8 +7,8 @@ previews: []
 concepts: [named-axes-at-rank, per-head-weights-and-ellipsis]
 faded: [1555, 1556, 1557]
 guided: []
-independent: [1558, 1559, 1560]
-integrated: [1561, 1562]
+independent: [1559, 1560, 1561]
+integrated: [1558, 1562]
 ---
 
 ## Concept: named axes at model rank — the projection and the weighted sum
@@ -228,19 +228,19 @@ def solve(x, W):
 
 ## Solo practice
 
-### q1558
-Scaled attention scores: two position names, then divide by sqrt(d_head).
-
 ### q1559
 A per-instance projection that works under any number of leading axes.
 
 ### q1560
 Direct logit attribution: each head's output dotted with its position's correct-token direction.
 
-## Integrated practice
-
 ### q1561
 Queries for every component of a decomposed residual stream — pattern from the shapes alone.
+
+## Integrated practice
+
+### q1558
+Scaled attention scores: two position names, then divide by sqrt(d_head).
 
 ### q1562
 The feature-overlap matrix W^T W for every instance, with the same tensor passed twice.

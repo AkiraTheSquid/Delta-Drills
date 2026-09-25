@@ -7781,43 +7781,31 @@
      "solo_items": [],
      "integrated_items": [
       {
-       "question_id": 917,
-       "prompt": "2x2 max pool"
-      },
-      {
-       "question_id": 918,
-       "prompt": "2x2 mean pool"
-      },
-      {
-       "question_id": 919,
-       "prompt": "k x k min pool"
-      },
-      {
        "question_id": 920,
        "prompt": "Pool, then side by side."
       },
       {
-       "question_id": 929,
-       "prompt": "One axis, window 7: the maximum of each week."
+       "question_id": 336,
+       "prompt": "Max-pool AND tile the batch into a grid, in one reduce."
       },
       {
-       "question_id": 930,
-       "prompt": "One axis, window k: the mean of each block."
-      },
-      {
-       "question_id": 931,
-       "prompt": "One axis, window 7: the total of each week."
+       "question_id": 377,
+       "prompt": "Max-pool, then flatten everything but the batch, in one reduce."
       }
      ],
      "independent_items": [
       368,
       354,
-      336,
-      377,
       1638,
       1639,
       1640,
-      1641
+      1641,
+      917,
+      918,
+      919,
+      929,
+      930,
+      931
      ],
      "misconceptions_markdown": "- **\"Pooling needs a framework (torch.nn.AvgPool2d) or a loop.\"** \u2014 Non-\n  overlapping pooling is reshape+reduce, which is exactly what the factored\n  pattern states. Frameworks add padding/stride options; the core is this.\n- **\"The window names (h2, w2) must be called that.\"** \u2014 Any names; what\n  matters is they appear inside input parens and NOT in the output. The\n  kept block-count names are the ones that survive.\n- **\"reduce can do stride-1 (overlapping) pooling too.\"** \u2014 No: factored\n  axes tile the input disjointly. Overlap = sliding_window_view + reduction\n  on `x.unfold(...)`. \"Non-overlapping\" in a task is your green light for\n  the einops form.",
      "notes_markdown": ""
@@ -9089,11 +9077,6 @@
      "applied_items": [],
      "solo_items": [
       {
-       "question_id": 1558,
-       "prompt": "Scaled attention scores: two position names, then divide by sqrt(d_head).",
-       "worked_example_code": ""
-      },
-      {
        "question_id": 1559,
        "prompt": "A per-instance projection that works under any number of leading axes.",
        "worked_example_code": ""
@@ -9102,12 +9085,17 @@
        "question_id": 1560,
        "prompt": "Direct logit attribution: each head's output dotted with its position's correct-token direction.",
        "worked_example_code": ""
+      },
+      {
+       "question_id": 1561,
+       "prompt": "Queries for every component of a decomposed residual stream \u2014 pattern from the shapes alone.",
+       "worked_example_code": ""
       }
      ],
      "integrated_items": [
       {
-       "question_id": 1561,
-       "prompt": "Queries for every component of a decomposed residual stream \u2014 pattern from the shapes alone."
+       "question_id": 1558,
+       "prompt": "Scaled attention scores: two position names, then divide by sqrt(d_head)."
       },
       {
        "question_id": 1562,
@@ -9115,9 +9103,9 @@
       }
      ],
      "independent_items": [
-      1558,
       1559,
-      1560
+      1560,
+      1561
      ],
      "misconceptions_markdown": "",
      "notes_markdown": ""
@@ -11821,13 +11809,13 @@
        "worked_example_code": ""
       },
       {
-       "question_id": 1196,
-       "prompt": "Return the residual tied-weight autoencoder output: reconstruction plus original input, shape (...,in_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).",
+       "question_id": 1197,
+       "prompt": "Return the difference between affine outputs on x and on zero input, shape (...,out_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).",
        "worked_example_code": ""
       },
       {
-       "question_id": 1197,
-       "prompt": "Return the difference between affine outputs on x and on zero input, shape (...,out_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,).",
+       "question_id": 1200,
+       "prompt": "Return a learned affine module without bias: register weight from w (out,in) as its only parameter; forward maps (...,in) to (...,out).",
        "worked_example_code": ""
       }
      ],
@@ -11841,8 +11829,8 @@
        "prompt": "Return an affine-then-ReLU module using supplied float weight w (out,in), bias b (out,). Register weight and bias; preserve every leading input axis."
       },
       {
-       "question_id": 1200,
-       "prompt": "Return a learned affine module without bias: register weight from w (out,in) as its only parameter; forward maps (...,in) to (...,out)."
+       "question_id": 1196,
+       "prompt": "Return the residual tied-weight autoencoder output: reconstruction plus original input, shape (...,in_features). x: float (...,in_features); w: float (out_features,in_features); b: float (out_features,)."
       }
      ],
      "independent_items": [
@@ -11853,8 +11841,8 @@
       1193,
       1194,
       1195,
-      1196,
-      1197
+      1197,
+      1200
      ],
      "misconceptions_markdown": "- **The weight is `(in, out)` so that `x @ w` works.** PyTorch stores `(out, in)`; the transpose belongs in the forward.\n- **The bias has one entry per example.** It has one per output feature and broadcasts over every leading axis.\n- **A batch needs a loop over examples.** One matrix product handles every example and every leading position with the same weights.\n- **`bias=False` means a bias of zeros.** It means no bias tensor exists; the state is absent, not constant.",
      "notes_markdown": ""
