@@ -202,6 +202,8 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .readout { font: 13px/1.5 var(--mono); color: var(--ink-2); background: var(--paper-2); border-radius: 3px; padding: 10px 12px; }
   .readout b { color: var(--ink); }
   .readout:empty { display: none; }
+  .mech { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); display: grid; gap: 6px; }
+  .mech b { color: var(--ink); }
   .legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font: 12px/1 var(--mono); color: var(--ink-2); }
   .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--ink-3); }
   .probe-card { border: 1px solid var(--ink); border-radius: 3px; padding: 12px; background: var(--paper); }
@@ -372,7 +374,10 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
      field.js pulls the nodes in round it (it sets .is-hot, innermost card
      only). A section's title card (kicker + h2) is always lit, centred, a
      little heavier, and pulls hardest. */
-  .is-hot, .modes .lane.is-hot, .tile:has(> .kicker) { border-color: rgb(var(--field-edge)); }
+  /* the doubled selectors match the specificity of the wireframe rule above
+     (figure.fig, .qs li, .modes .hand, .hero > div:first-child), or it wins */
+  .is-hot, .modes .lane.is-hot, figure.fig.is-hot, .qs li.is-hot, .modes .hand.is-hot,
+  .hero > div.is-hot:first-child, .tile:has(> .kicker) { border-color: rgb(var(--field-edge)); }
   /* .status sets its own outline further down */
   .tile:has(> .kicker) { border-width: 2px; margin-left: auto; margin-right: auto; }
   .tile:has(> .kicker) > .kicker, .tile:has(> .kicker) > h2 { text-align: center; }

@@ -30,7 +30,8 @@
   share its line is drawn at). The card under the cursor gets `.is-hot`
   (lit in `--field-edge`) and pulls nodes in round its outline; a section
   title card (`.tile` opening on a `.kicker`) always pulls, harder.
-- `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
+- `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles;
+  implicit reps of `IMPLICIT_W` always on, tagged on the plot, keyed in the side) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
   style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
 - `fig-expand.js`: the "Full screen" button under every figure's graphic;
@@ -83,3 +84,6 @@
   unfilled, `fig-effort.js` marker ring in page paper.
 - 2026-09-25: `field.js` v4: cursor drags nodes by link strength; hovered
   card `.is-hot` + pulls nodes in; title cards always pull, twice when hovered.
+- 2026-09-25: Readouts back to full detail (`fig-effort.js` mechanism list,
+  `fig-graphs.js` probe id / practised id / 7-line remediation log);
+  `fig-forget.js` implicit reps always on with +w tags and a readout line.

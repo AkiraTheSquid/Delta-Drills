@@ -79,6 +79,12 @@
   (`.tile:has(> .kicker)`, the 01–09 openers) is centred, has a 2px outline
   that is always lit, and always pulls, much harder. The title markup is not
   given a class: saved About copies carry the old markup.
+  `.is-hot` has to out-rank every wireframe selector: `figure.fig`, `.qs li`,
+  `.modes .hand` and `.hero > div:first-child` each carry their own
+  `.is-hot` variant in `aisc.css`, or the hovered figure never lights.
+- Controls are cut down but the information is not (Seth, 2026-09-25): each
+  figure's readout still states what its fixed defaults do, and Fig. 4 always
+  runs with the fractional implicit reps on.
 - Every figure has a "Full screen" button under its graphic, added by
   `js/fig-expand.js`: `figure.fig.is-max` fixes the card over the viewport,
   Escape or the button closes it, Tab wraps inside it. Fig. 2's button presses
@@ -136,3 +142,9 @@
 - 2026-09-25: The cursor drags the field's nodes (by link strength); the
   hovered card lights up and pulls nodes in; section title cards centred,
   2px always-lit outline, strongest pull.
+- 2026-09-25: Figures light up on hover too (`figure.fig` out-ranked
+  `.is-hot`). Readouts restored to the standalone site's detail (Fig. 1
+  mechanism list + understanding numbers, Fig. 3 probe id + counts, Fig. 5
+  practised concept id + one line per credited concept, Fig. 6 seven-line
+  log). Fig. 4 shows implicit reps always: thin bars tagged +0.3, a key, and
+  an implicit-reps line in the readout.

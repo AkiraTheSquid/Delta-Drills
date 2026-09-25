@@ -125,13 +125,15 @@
           });
         });
         document.getElementById("aisc-place-readout").innerHTML =
-          "asked <b>" + Object.keys(probed).length + "</b> · known <b>" + counts.known + "</b> · uncertain <b>" + counts.uncertain +
-          "</b> · unknown <b>" + counts.unknown + "</b> · frontier <b>" + frontier + "</b>";
+          "Probes asked: <b>" + Object.keys(probed).length + "</b> of " + G.kcs.length +
+          "<br>known <b>" + counts.known + "</b> · uncertain <b>" + counts.uncertain + "</b> · unknown <b>" + counts.unknown + "</b>" +
+          "<br>frontier: <b>" + frontier + "</b> concepts";
       }
       function next() {
         var cands = graph.kcs.filter(function (k) { return !probed[k]; });
         var ranked = E.rankProbes(B, graph, value, cands);
         current = ranked.length ? ranked[0][1] : null;
+        document.getElementById("aisc-probe-id").textContent = current || "done";
         document.getElementById("aisc-probe-title").textContent = current ? byId[current].title : "Every concept probed.";
         paint();
       }
@@ -207,7 +209,7 @@
           n.style("background-color", mix("#9a9ab0", AISC.css("--green"), Math.min(1, (p - E.BKT.P_INIT) / (1 - E.BKT.P_INIT))));
           n.toggleClass("target", n.id() === target);
         });
-        document.getElementById("aisc-fire-target").innerHTML = "<span class='id'>Practising</span> <span class='t'>" + byId[target].title + "</span> <span class='id'>P(known) " + effective(target).toFixed(2) + "</span>";
+        document.getElementById("aisc-fire-target").innerHTML = "<span class='id'>Practising</span> <span class='t'>" + byId[target].title + "</span> <span class='id'>" + target + " · P(known) now " + effective(target).toFixed(2) + "</span>";
       }
       function reset() {
         mastery = {}; touched = {}; day = 0;
@@ -226,7 +228,7 @@
         });
         if (ok && lines.length === 1) lines.push("<span class='muted'>it encompasses nothing, so no implicit credit</span>");
         if (!ok) lines.push("<span class='muted'>a wrong answer credits nothing downstream</span>");
-        document.getElementById("aisc-fire-readout").innerHTML = lines.join(" · ");
+        document.getElementById("aisc-fire-readout").innerHTML = lines.join("<br>");
         Object.keys(ch).forEach(function (k) { if (k !== target) { var n = cy.getElementById(k); n.addClass("flash"); setTimeout(function () { n.removeClass("flash"); }, 900); } });
         paint();
       }
@@ -289,7 +291,7 @@
         });
         document.getElementById("aisc-remed-id").textContent = serving === TARGET ? "frontier concept" : "prerequisite, redirected";
         document.getElementById("aisc-remed-title").textContent = byId[serving].title;
-        document.getElementById("aisc-remed-log").innerHTML = log.slice(-4).join("<br>");
+        document.getElementById("aisc-remed-log").innerHTML = log.slice(-7).join("<br>");
       }
       function reset() {
         mastery = Object.assign({}, START); attempts = {}; seq = 0; log = ["Serving the frontier concept. Try missing it twice."];

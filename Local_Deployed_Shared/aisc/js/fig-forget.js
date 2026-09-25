@@ -19,8 +19,10 @@
   var svg = document.getElementById("aisc-forget-svg");
   if (!svg) return;
   var NS = "http://www.w3.org/2000/svg";
-  var DAYS = 60, N_REV = 6, IMPLICIT_DAYS = [3, 8, 14, 21, 29, 38, 48], HANDLE = "#e6663f";
-  var S = { speed: 1, target: 0.7, implicit: false, fixed: false };
+  // Implicit reps: the days a harder concept that encompasses this one is
+  // practised (Fig. 5), each worth IMPLICIT_W of a full repetition.
+  var DAYS = 60, N_REV = 6, IMPLICIT_DAYS = [3, 8, 14, 21, 29, 38, 48], IMPLICIT_W = 0.3, HANDLE = "#e6663f";
+  var S = { speed: 1, target: 0.7, implicit: true, fixed: false };
   var rev = [];                               // day of review i, or null = parked
   for (var i = 0; i < N_REV; i++) rev.push(null);
   var P = null;                               // pixel geometry of the last draw
@@ -34,13 +36,13 @@
   function events() {
     var ev = [];
     rev.forEach(function (t) { if (t != null) ev.push([t, 1]); });
-    if (S.implicit) IMPLICIT_DAYS.forEach(function (d) { ev.push([d, 0.3]); });
+    if (S.implicit) IMPLICIT_DAYS.forEach(function (d) { ev.push([d, IMPLICIT_W]); });
     return ev.sort(function (a, b) { return a[0] - b[0]; });
   }
   // Walk the timeline in 0.2-day steps, stopping exactly on each event.
   function simulate() {
     var ev = events(), h = h0(), r0 = 1, tl = 0, curve = [[0, 1]], jumps = [];
-    var reps = 1, nrev = 0, minr = 1, k = 0, t = 0;
+    var reps = 1, nrev = 0, nimp = 0, minr = 1, k = 0, t = 0;
     while (t < DAYS) {
       var tn = Math.min(t + 0.2, DAYS);
       if (k < ev.length && ev[k][0] <= tn) tn = ev[k][0];
@@ -53,13 +55,13 @@
         var rn = rc + w * (1 - rc);
         jumps.push({ t: tn, from: rc, to: rn, w: w });
         r0 = rn; tl = tn; rc = rn; reps += w;
-        if (w === 1) nrev++;
+        if (w === 1) nrev++; else nimp++;
         curve.push([tn, rn]);
         k++;
       }
       t = tn;
     }
-    return { curve: curve, jumps: jumps, reps: reps, nrev: nrev, minr: minr, h: h };
+    return { curve: curve, jumps: jumps, reps: reps, nrev: nrev, nimp: nimp, minr: minr, h: h };
   }
   // Place reviews where recall first falls to the target; the rest park.
   function autoschedule() {
@@ -69,8 +71,8 @@
       t += 0.05;
       var rc = r0 * Math.pow(2, -(t - tl) / h);
       if (j < imp.length && imp[j] <= t) {
-        h = h * (1 + 0.3 * (gain(rc) - 1));
-        r0 = rc + 0.3 * (1 - rc); tl = t; j++; rc = r0;
+        h = h * (1 + IMPLICIT_W * (gain(rc) - 1));
+        r0 = rc + IMPLICIT_W * (1 - rc); tl = t; j++; rc = r0;
       }
       if (rc <= S.target && t < DAYS) {
         rev[placed++] = t;
@@ -158,10 +160,15 @@
     // reviews: amber bars, an arrow on full reviews (the Math Academy glyph).
     // Half-width 7px on a desktop plot, down to 4px on a phone's.
     var bw = Math.max(4, Math.min(7, (P.R - P.L) / 90));
+    // Implicit reps: half-width, paler, each tagged with its fraction unless
+    // a full review's bar (and arrow) sits right beside it.
+    var fullX = sim.jumps.filter(function (j) { return j.w === 1; }).map(function (j) { return X(j.t); });
     sim.jumps.forEach(function (j) {
       var full = j.w === 1, wd = full ? bw : bw / 2, x = X(j.t), top = Y(j.to);
       el("rect", { x: x - wd, y: top, width: 2 * wd, height: Y(j.from) - top, fill: c.amber, "fill-opacity": full ? 0.9 : 0.55 });
       if (full) el("path", { d: "M" + (x - bw) + " " + (top + 2 * bw - 1) + "H" + (x + bw) + "L" + x + " " + (top + 2) + "Z", fill: c.ink, "fill-opacity": 0.8 });
+      else if (!P.narrow && fullX.every(function (fx) { return Math.abs(fx - x) > 2 * bw + 14; })) label(x, top - 5, "+" + j.w, { size: 9, fill: c.amber, anchor: "middle" })
+        .setAttribute("style", "paint-order:stroke;stroke:" + c.halo + ";stroke-width:3px;stroke-linejoin:round");
     });
     el("polyline", { points: sim.curve.map(function (p) { return X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1); }).join(" "),
       fill: "none", stroke: c.curve, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" });
@@ -189,8 +196,10 @@
 
   function readout(sim) {
     document.getElementById("aisc-forget-readout").innerHTML =
-      "reviews in 60 days <b>" + sim.nrev + "</b> · repetitions <b>" + fmt1(sim.reps) + "</b> · " +
-      "lowest recall <b>" + Math.round(sim.minr * 100) + "%</b> · half-life at day 60 <b>" + fmt1(sim.h) + " d</b>";
+      "Full reviews in 60 days: <b>" + sim.nrev + "</b><br>" +
+      "Implicit reps: <b>" + sim.nimp + " × " + IMPLICIT_W + " = " + fmt1(sim.nimp * IMPLICIT_W) + "</b><br>" +
+      "Repetitions accrued: <b>" + fmt1(sim.reps) + "</b><br>" +
+      "Lowest recall: <b>" + Math.round(sim.minr * 100) + "%</b><br>Half-life at day 60: <b>" + fmt1(sim.h) + " d</b>";
   }
 
   // ---- dragging + keys --------------------------------------------------------
@@ -250,11 +259,13 @@
       });
     });
   }
-  // Speed, retention target and implicit reviews stay at their defaults
-  // (S): the figure keeps the built-vs-planned switch and the scheduler
-  // (Seth, 2026-09-24: "significantly simplified").
+  // Speed and retention target stay at their defaults (S): the figure keeps
+  // the built-vs-planned switch and the scheduler (Seth, 2026-09-24:
+  // "significantly simplified"). Implicit reps are always on (Seth,
+  // 2026-09-25: the graph "needs the fractional implicit repetition").
   seg("aisc-model-seg", function (b) { S.fixed = b.dataset.m === "today"; autoschedule(); });
   document.getElementById("aisc-forget-auto").addEventListener("click", autoschedule);
+  document.getElementById("aisc-forget-w").textContent = IMPLICIT_W;   // the legend's weight
 
   function layout() { P = geometry(); render(); }
   AISC.whenVisible(svg, function () { P = geometry(); autoschedule(); });

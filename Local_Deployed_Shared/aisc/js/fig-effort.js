@@ -172,6 +172,8 @@
   // The learner/expert effects and the Fermi inputs stay at their defaults
   // (A): the figure keeps two sliders, AGI and the deploy date (Seth,
   // 2026-09-24: "significantly simplified"). Dragging the plot moves the date.
+  // The readout and mechanism list still say what those defaults do (Seth,
+  // 2026-09-25: keep "the extra graph information").
   var sDeploy = $("aisc-s-deploy"), sAgi = $("aisc-s-agi");
   function update(animate) {               // recompute the green line; tween it if asked
     var next = understanding(deploy);
@@ -206,9 +208,15 @@
     arr = arr || cur;
     var y = fmtAgi(agi), now = at(arr, agi), was = at(base, agi);
     var gained = gainBefore(arr, agi), delay = gained - gainBefore(understanding(deploy + 1), agi);
+    $("aisc-effort-mech").innerHTML =
+      "<li><b>Learners, ×" + A.learn.toFixed(2) + ".</b> " + BASE.T0 + " → <b>" + ramp1().toFixed(1) + " mo</b> to useful; freed program budget reopens seats <b>×" + seatMult().toFixed(2) +
+        "</b>; remote learners <b>+" + Math.round(A.remote * 100) + "%</b>. The pool grows.</li>" +
+      "<li><b>Experts, ×" + A.expert.toFixed(2) + ".</b> An AI-generated tutor lets the same researchers keep up with superhuman systems, conceptually and technically. Phased in over a year.</li>";
     $("aisc-effort-readout").innerHTML = deploy >= agi
-      ? "Delta Drills arrives after AGI (" + y + "): <b>no gain before it</b>."
-      : "Understanding at AGI <b>+" + Math.round((now / was - 1) * 100) + "%</b> · researcher-years gained <b>+" + num(gained) + "</b> · a year of delay costs <b>" + num(delay) + "</b>";
+      ? "Delta Drills arrives after AGI (" + y + "):<br><b>no gain before it</b>. Move the date earlier."
+      : "Understanding at AGI (" + y + ")<br>today <b>" + num(was) + "</b> · with Delta Drills <b>" + num(now) + "</b> (+" + Math.round((now / was - 1) * 100) + "%)<br>" +
+        "Researcher-years gained before AGI: <b>+" + num(gained) + "</b><br>" +
+        "Each year of delay costs <b>" + num(delay) + "</b> of them";
   }
 
   document.querySelectorAll("#aisc-fig-effort [data-scale]").forEach(function (b) {
