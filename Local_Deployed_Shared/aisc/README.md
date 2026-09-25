@@ -22,7 +22,7 @@
 ## Key Files
 - `aisc.css`: the site's stylesheet, every rule nested under `#aisc-root`; theme
   tokens mapped to the app's `html[data-theme]` light | dark | blue. Also the
-  page layout vars (`--aisc-col` / `--aisc-wide` / `--aisc-clear` /
+  page layout vars (`--aisc-col` / `--aisc-clear` /
   `--aisc-fade` on `#page-learn-about-app`), the field's mask, and `#aisc-toc`.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
@@ -56,9 +56,18 @@
   and presentation mode (`present.js`, global keydown). Its `bg-field.js` came
   back as `js/field.js`, scoped to this page and masked out of the column.
 - Layout (Seth, 2026-09-24, after uchicagoaisafety.com/about-us): ONE column of
-  paragraphs, no floating cards. Figures (and the five-step `.chain`) break out
-  to `--aisc-wide`; nothing else does. Don't reintroduce opaque tiles to hide
-  the field: the mask keeps it out of the column.
+  paragraphs, no floating cards. Figures and the `.chain` keep to the column
+  too, and are NOT cards (no surface, border, shadow): title, graphic, then its
+  few controls as one centred row UNDER it (`.fig-side`), then the caption.
+  Never put controls beside a graphic; the column has no room. Don't
+  reintroduce opaque tiles to hide the field: the mask keeps it out of the
+  column.
+- Fig. 2 is the app's own concept map: `../concept-graph/why-graph.js` mounts
+  on `#wta-graph-cy` inside `.wta-graph` (styles `../styles/why-map.css`,
+  unframed here). `watch_front_door.py` requires exactly one, inside
+  `#aisc-fig-graph`. Its Maximize is `position: fixed` inside `#aisc-root`'s
+  stacking context, hence `body.wta-max-open #aisc-root { z-index: 300 }`.
+  Figs. 3/5/6 copy that map's node/edge look (`js/fig-graphs.js`).
 - The contents nav is `#aisc-toc` in the app topbar (`../index.html`,
   `.topbar-mid`), shown by a `body:has(#page-learn-about-app:not(.hidden))`
   rule; on a phone it scrolls sideways in the narrow middle cell. Not inside `#about-page-content`, so never saved.
@@ -85,3 +94,9 @@
   tiles unboxed, figures wider (1080px); node field in the gutters
   (`js/field.js`) with an eased mask; contents moved from the in-page sticky
   rail into the app topbar (`#aisc-toc`); hero ornament retired.
+- 2026-09-24: Figures centred at column width and unboxed; controls moved
+  under each graphic and cut down (Fig. 1: AGI + deploy sliders, scale; Fig. 4:
+  model switch + schedule; learner/expert sliders, Play, Fermi inputs, speed,
+  target and implicit-review controls removed, their defaults kept). Fig. 2 is
+  the old embedded concept map (why-graph.js) with Maximize and cold/mine
+  modes; Figs. 3/5/6 restyled to its look. `--aisc-wide` removed.

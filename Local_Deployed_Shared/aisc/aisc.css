@@ -51,13 +51,11 @@ html[data-theme="light"] #aisc-root {
    of prose on its own opaque tile so the field could run behind the page;
    now the field is masked out of the column instead.
 
-   --aisc-col   the text measure
-   --aisc-wide  figures and the other wide diagrams
+   --aisc-col   the text measure; figures and diagrams keep to it too
    --aisc-clear the band the field is masked out of (column + a margin)
    --aisc-fade  how far the field takes to fade in, eased, beyond the band */
 #page-learn-about-app {
   --aisc-col: 720px;
-  --aisc-wide: min(1080px, calc(100vw - 48px));
   --aisc-clear: calc(var(--aisc-col) + 80px);
   --aisc-fade: clamp(60px, calc((100vw - var(--aisc-clear)) / 5), 200px);
 }
@@ -169,47 +167,52 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .status .unknown { border-color: var(--red); } .status .unknown b { color: var(--red); }
   .status p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
 
-  /* ---------- figures ---------- */
-  /* A figure is the one boxed thing left: it breaks the column, wider than
-     the text, and separates the paragraphs either side of it. */
-  figure.fig { width: var(--aisc-wide); margin: 44px calc((100% - var(--aisc-wide)) / 2); background: var(--card); border: 1px solid var(--rule); box-shadow: var(--shadow); border-radius: 4px; overflow: hidden; }
-  .fig-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+  /* ---------- figures ----------
+     Not cards (Seth, 2026-09-24): a figure is the column's width, sits on the
+     same paper as the text, and reads as part of it. Title above, graphic,
+     then the few controls it has as one centred row UNDER the graphic, then
+     the caption. Nothing sits beside a graphic: the column has no room. */
+  figure.fig { margin: 48px 0; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
+  .fig-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; padding: 0 0 12px; }
   .fig-head .fig-no { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
-  .fig-head .fig-title { font: 400 24px/1.1 var(--display); }
-  .fig-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; min-height: 420px; }
-  .fig-body.wide { grid-template-columns: 1fr; }
-  .fig-stage { position: relative; min-height: 420px; min-width: 0; overflow: hidden; }
+  .fig-head .fig-title { font: 400 22px/1.15 var(--display); }
+  .fig-body { display: block; }
+  .fig-stage { position: relative; min-width: 0; }
+  .fig-stage:has(> .cy) { height: 420px; }
   .fig-stage canvas { display: block; }
   .cy { position: absolute; inset: 0; }
-  .fig-side { border-left: 1px solid var(--rule); padding: 18px 20px; font-size: 15px; line-height: 1.5; display: flex; flex-direction: column; gap: 14px; }
-  .fig-side h4 { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
-  figcaption { padding: 12px 20px 16px; border-top: 1px solid var(--rule); font-size: 15px; line-height: 1.5; color: var(--ink-2); }
-  figcaption b { color: var(--ink); font-weight: 600; }
+  .fig-side { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 18px; padding: 14px 0 0; font-size: 14px; line-height: 1.45; text-align: center; }
+  figcaption { padding: 14px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-3); }
+  figcaption b { color: var(--ink-2); font-weight: 600; }
 
-  /* controls */
-  .ctl { display: grid; gap: 6px; }
-  .ctl label { display: flex; justify-content: space-between; font: 12px/1.2 var(--mono); color: var(--ink-2); }
-  .ctl label output { color: var(--ink); font-weight: 600; }
-  input[type=range] { width: 100%; accent-color: var(--coral); }
-  .btns { display: flex; flex-wrap: wrap; gap: 6px; }
-  .btn { font: 500 12px/1 var(--mono); padding: 9px 11px; border-radius: 3px; border: 1px solid var(--ink); background: var(--card); color: var(--ink); cursor: pointer; transition: transform .08s, background .15s; }
-  .btn:hover { background: var(--paper-2); }
-  .btn:active { transform: translateY(1px); }
-  .btn.ok { background: var(--green); border-color: var(--green); color: #fff; }
-  .btn.no { background: var(--red); border-color: var(--red); color: #fff; }
-  .btn.dk { background: var(--ink-2); border-color: var(--ink-2); color: var(--paper); }
-  .btn.ghost { border-color: var(--rule); color: var(--ink-2); }
-  .btn.on { background: var(--ink); color: var(--paper); }
-  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
-  .seg button { font: 500 12px/1 var(--mono); padding: 8px 10px; border: 0; background: var(--card); color: var(--ink-2); cursor: pointer; }
-  .seg button.on { background: var(--ink); color: var(--paper); }
-  .readout { font: 13px/1.5 var(--mono); color: var(--ink-2); background: var(--paper-2); border-radius: 3px; padding: 10px 12px; }
-  .readout b { color: var(--ink); }
-  .legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font: 12px/1 var(--mono); color: var(--ink-2); }
-  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--ink-3); }
-  .probe-card { border: 1px solid var(--ink); border-radius: 3px; padding: 12px; background: var(--paper); }
-  .probe-card .t { font: 400 20px/1.15 var(--display); margin: 4px 0 10px; }
-  .probe-card .id { font: 11px var(--mono); color: var(--ink-3); }
+  /* controls: small, quiet, one vocabulary for every figure */
+  .ctl { display: flex; align-items: center; gap: 10px; }
+  .ctl label { font: 12px/1.2 var(--mono); color: var(--ink-3); white-space: nowrap; }
+  .ctl label output { color: var(--ink); font-weight: 600; margin-left: 4px; }
+  input[type=range] { width: 140px; accent-color: var(--coral); }
+  .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .btn, .seg button { font: 500 12px/1 var(--mono); padding: 6px 11px; border-radius: 999px; border: 1px solid var(--rule); background: transparent; color: var(--ink-2); cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+  .btn:hover, .seg button:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn.ok { color: var(--green); border-color: color-mix(in srgb, var(--green) 55%, transparent); }
+  .btn.no { color: var(--red); border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+  .btn.on, .seg button.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .seg { display: inline-flex; gap: 4px; }
+  .readout { flex-basis: 100%; font: 12.5px/1.6 var(--mono); color: var(--ink-3); }
+  .readout b { color: var(--ink); font-weight: 600; }
+  .readout:empty { display: none; }
+  .legend { flex-basis: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font: 11px/1 var(--mono); color: var(--ink-3); }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .probe-card { flex-basis: 100%; font-size: 17px; line-height: 1.35; }
+  .probe-card .t { font-family: var(--display); font-size: 20px; }
+  .probe-card .id { font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* Fig. 2 is the app's own concept map (concept-graph/why-graph.js,
+     styles/why-map.css). Unframed here like the other figures; maximised it
+     keeps why-map.css's full-screen frame. */
+  .wta-graph:not(.is-max) { height: 440px; margin: 0; border: 0; border-radius: 0; background: transparent; }
+  .wta-graph-legend { flex-basis: 100%; justify-content: center; background: none; border: 0; padding: 0; }
+  .wta-modes { border-radius: 999px; }
+  .wta-graph-nodata { max-width: calc(100% - 150px); } /* clear of Maximize */
 
   /* ---------- misc blocks ---------- */
   /* What were side-by-side cards read as paragraphs now: a small label, a
@@ -254,8 +257,6 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
     & { font-size: 17px; }
     .hero { grid-template-columns: 1fr; gap: 20px; }
     .hero-fig { max-width: 360px; }
-    .fig-body { grid-template-columns: 1fr; }
-    .fig-side { border-left: 0; border-top: 1px solid var(--rule); }
     .status { grid-template-columns: 1fr; }
     .chain { grid-template-columns: 1fr; }
     .timeline { grid-template-columns: 1fr; }
@@ -265,13 +266,10 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
     .aisc-main { padding: 0 16px 80px; }
     section { padding-top: 44px; }
     .aisc-footer { margin: 0 16px 40px; }
-    .fig-stage { min-height: 340px; }
+    .fig-stage:has(> .cy), .wta-graph:not(.is-max) { height: 340px; }
     .ladder li { grid-template-columns: 1fr; gap: 2px; }
   }
 
-  /* built-vs-planned toggle greys the controls that don't apply */
-  .seg.off { opacity: .4; pointer-events: none; }
-  #aisc-model-seg { margin-bottom: 14px; }
 
   /* closing questions */
   .qs { counter-reset: q; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; }
@@ -318,20 +316,14 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .aisc-forget-handle:active { cursor: grabbing; }
   .aisc-forget-handle:focus { outline: none; }
   .aisc-forget-handle:focus-visible { stroke: var(--ink); stroke-width: 3; }
-  .oversight-chain { margin: 4px 18px 16px; font: 13px/1.5 var(--mono); color: var(--ink-2); }
+  .oversight-chain { margin: 10px 0 0; font: 13px/1.5 var(--mono); color: var(--ink-3); text-align: center; }
   .oversight-chain span { color: var(--green); }
-  .mech { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); display: grid; gap: 6px; }
-  .mech b { color: var(--ink); }
-  #aisc-effort-play { align-self: flex-start; }
-  .assume summary { font: 500 12px/1 var(--mono); color: var(--ink-2); cursor: pointer; }
-  .assume label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 12px/1.3 var(--mono); color: var(--ink-2); margin-top: 8px; }
-  .assume input { width: 64px; font: 12px var(--mono); padding: 3px 5px; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; }
 
-  /* ---- wide diagrams ----
-     The five-step chain needs more than the text measure; it breaks out to
-     the figure width like a figure does. Everything else stays in the column. */
-  .chain { width: var(--aisc-wide); margin-left: calc((100% - var(--aisc-wide)) / 2); margin-right: calc((100% - var(--aisc-wide)) / 2); gap: 0 20px; }
+  /* ---- the five-step chain keeps to the column like the figures ---- */
+  .chain { gap: 0 16px; }
   .chain > div { padding-right: 0; }
+  .chain > div b { font-size: 18px; }
+  .chain > div span { font-size: 14px; }
   .timeline > div:nth-last-child(-n+2) { border-bottom: 0; }
   .table-wrap tr:last-child td { border-bottom: 0; }
   /* .tile is only a wrapper now: the space between two of them is paragraph
@@ -341,3 +333,8 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .tile > h3:first-child { margin-top: 1.6em; }
   .tile > :last-child, .tile > .prose > :last-child { margin-bottom: 0; }
 }
+
+/* Fig. 2's Maximize fixes .wta-graph over the whole app (z-index 300 in
+   why-map.css), but #aisc-root is its own stacking context at z-index 1, which
+   would trap the frame under the topbar. Lift the write-up while it is open. */
+body.wta-max-open #aisc-root { z-index: 300; }

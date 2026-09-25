@@ -77,18 +77,6 @@
 
   var graphPromise = fetch("aisc/data/kc_graph.json").then(function (r) { return r.json(); });
 
-  // Lesson palette — muted, distinguishable in both themes.
-  var LESSON_HUES = {
-    "py-0": 28, "ma-00": 205, "ma-01": 220, "np-1": 150, "np-2": 165, "np-3": 180,
-    "eo-1": 45, "eo-2": 55, "eo-3": 65, "es-1": 330, "tr-1": 265,
-    "ar-00": 10, "ar-01": 350, "ar-02": 0,
-  };
-  function lessonColor(lesson) {
-    var p = rgb01(css("--paper")), dark = p[0] + p[1] + p[2] < 1.5;
-    var h = LESSON_HUES[lesson] != null ? LESSON_HUES[lesson] : 0;
-    return "hsl(" + h + (dark ? ",35%,42%)" : ",45%,72%)");
-  }
-
   // Hero ornament: a small DAG with a frontier, drawn once.
   (function hero() {
     var svg = document.getElementById("aisc-hero-svg");
@@ -111,5 +99,5 @@
     svg.innerHTML = s;
   })();
 
-  root.AISC = { css: css, rgb01: rgb01, onTheme: onTheme, whenVisible: whenVisible, graph: graphPromise, lessonColor: lessonColor };
+  root.AISC = { css: css, rgb01: rgb01, onTheme: onTheme, whenVisible: whenVisible, graph: graphPromise };
 })(window);

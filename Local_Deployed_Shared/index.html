@@ -165,7 +165,7 @@
        typefaces come from Google Fonts, loaded NON-blocking (media swap): a
        dead fonts CDN must not hold up first paint of the whole app for one
        page most visits never open; the fallbacks are Georgia / monospace. -->
-  <link rel="stylesheet" href="aisc/aisc.css?v=4" />
+  <link rel="stylesheet" href="aisc/aisc.css?v=5" />
   <link rel="stylesheet" media="print" onload="this.media='all'"
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <!-- KaTeX — render the $…$ math in question prompts (was showing raw/garbled).
@@ -853,9 +853,9 @@
        exists", #aisc-how for "How this app works" — not a <details> to open.
 
        The old page (lead paragraph, "three markers" and "How the app works"
-       disclosures, and the concept map drawn by concept-graph/why-graph.js)
-       is gone. why-graph.js is still loaded and returns early without its
-       #wta-graph-cy container.
+       disclosures) is gone. Its concept map, drawn by
+       concept-graph/why-graph.js, is now Fig. 2 of the write-up
+       (#aisc-fig-graph holds #wta-graph-cy).
 
        Styling: aisc/aisc.css, nested under #aisc-root; it also lifts this
        page's 985px .container cap, since the write-up has its own measure. -->
@@ -940,21 +940,12 @@
               <p class="oversight-chain"><b>Why the green line matters:</b> humans who understand the system <span>→ align</span> the trusted model <span>→ which oversees</span> the untrusted model doing the work. Understanding is what lets humans hold it accountable and correct it.</p>
             </div>
             <div class="fig-side">
-              <div class="seg" role="tablist" aria-label="Scale">
-                <button data-scale="lin" class="on">Linear</button><button data-scale="log">Log scale</button>
+              <div class="ctl"><label for="aisc-s-agi">AGI <output id="aisc-o-agi">2030</output></label><input id="aisc-s-agi" type="range" min="2027" max="2036" step="0.25" value="2030"></div>
+              <div class="ctl"><label for="aisc-s-deploy">Delta Drills from <output id="aisc-o-deploy">Jan 2028</output></label><input id="aisc-s-deploy" type="range" min="2027" max="2033" step="0.0833333" value="2028"></div>
+              <div class="seg" role="group" aria-label="Scale">
+                <button data-scale="lin" class="on" aria-pressed="true">Linear</button><button data-scale="log" aria-pressed="false">Log</button>
               </div>
-              <div class="ctl"><label>AGI timeline: AI research overtakes human understanding <output id="aisc-o-agi">2030</output></label><input id="aisc-s-agi" type="range" min="2027" max="2036" step="0.25" value="2030"></div>
-              <div class="ctl"><label>Delta Drills in every ARENA program from <output id="aisc-o-deploy">Jan 2028</output></label><input id="aisc-s-deploy" type="range" min="2027" max="2033" step="0.0833333" value="2028"></div>
-              <div class="ctl"><label>Learner effect: new researchers learn <output id="aisc-o-learn">1.90×</output></label><input id="aisc-s-learn" type="range" min="1" max="3" step="0.05" value="1.9"></div>
-              <div class="ctl"><label>Expert effect: researchers keep up <output id="aisc-o-expert">1.30×</output></label><input id="aisc-s-expert" type="range" min="1" max="2" step="0.05" value="1.3"></div>
-              <button class="btn ghost" id="aisc-effort-play" type="button">▶ Play the deploy date</button>
-              <ul class="mech" id="aisc-effort-mech"></ul>
               <div class="readout" id="aisc-effort-readout"></div>
-              <details class="assume" id="aisc-effort-assume">
-                <summary>Fermi assumptions</summary>
-                <label>Freed budget reused for seats, % <input type="number" data-k="reuse" data-pct="1" value="50" step="10" min="0" max="100"></label>
-                <label>Extra remote learners, % <input type="number" data-k="remote" data-pct="1" value="20" step="5" min="0"></label>
-              </details>
             </div>
           </div>
           <figcaption><b>This is a hypothesis, not a result.</b> After MacAskill &amp; Moorhouse's chart (AI research effort ≈25×/yr), with AI effort split into capabilities and safety. The human side is <i>shared human understanding</i>: safety researchers who understand the systems well enough to check them, in researcher-equivalents. AI safety research here is humans directing AI agents, so it grows with that understanding. <b>AGI</b> marks the year AI research overtakes human understanding; move it to test short and long timelines. Delta Drills helps in two ways. <b>Learners</b> (default 1.9×) reach useful sooner, freed program budget reopens seats, and remote learners join, so the pool grows. <b>Experts</b> (default 1.3×) keep up with superhuman systems through a tutor the AI itself generates, so the same people understand more. Pool model: 1,000 people a year (growing 15%/yr) start a 12-month ramp; 40% finish; researchers leave at 15%/yr. Both effect sizes are estimates, not measurements; measuring them is what the pilot is for. The model shows the <i>mechanism</i>, not a forecast.</figcaption>
@@ -1010,16 +1001,37 @@
         <figure class="fig rv" data-about-runtime id="aisc-fig-graph">
           <div class="fig-head"><span class="fig-title">The ARENA prerequisite graph</span><span class="fig-no">Fig. 2 · live data</span></div>
           <div class="fig-body">
-            <div class="fig-stage"><div class="cy" id="aisc-cy-graph"></div></div>
+            <!-- The app's own concept map, drawn by concept-graph/why-graph.js
+                 (it mounts on #wta-graph-cy inside .wta-graph). Maximize lives
+                 inside the frame because the frame is what goes full-screen,
+                 and then hosts the real Knowledge Graph. -->
+            <div class="fig-stage">
+              <div class="wta-graph">
+                <button type="button" class="wta-graph-btn" id="wta-graph-max"
+                        aria-pressed="false" aria-label="Maximize the map"
+                        title="Maximize">&#10530; Maximize</button>
+                <div class="wta-graph-cy" id="wta-graph-cy" role="img"
+                     aria-label="A map of every concept the app teaches, drawn bottom to top, joined by arrows that each mean you need the concept an arrow comes from before the one it points to. Grey and dashed at the cold start; switched to your own reading, coloured from red for weak to blue for strong."></div>
+                <div class="kg2-nodata wta-graph-nodata" id="wta-graph-nodata" hidden></div>
+                <div class="wta-graph-status" id="wta-graph-status">Loading the map…</div>
+              </div>
+            </div>
             <div class="fig-side">
-              <h4>Selected concept</h4>
-              <div class="readout" id="aisc-graph-readout">Click a node.</div>
-              <div class="btns"><button class="btn ghost" id="aisc-graph-reset">Reset view</button></div>
-              <h4>Lessons</h4>
-              <div class="legend" id="aisc-graph-legend"></div>
+              <div class="wta-modes" id="wta-graph-modes" role="group"
+                   aria-label="What the colours on the map show">
+                <button type="button" data-wta-mode="cold" class="active"
+                        aria-pressed="true">Cold start</button>
+                <button type="button" data-wta-mode="mine"
+                        aria-pressed="false">Your mastery</button>
+              </div>
+              <div class="kg2-legend kg2-legend-mastery wta-graph-legend" id="wta-graph-legend">
+                <span class="kg2-li"><span class="kg2-li-dot" style="background:#5b5b70"></span>No estimate</span>
+                <span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred</span>
+                <span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>
+              </div>
             </div>
           </div>
-          <figcaption>The real graph shipped in the app today: <b><span class="num" id="aisc-g-kcs">82</span> concepts</b> and <b><span class="num" id="aisc-g-edges">211</span> prerequisite edges</b>, from Python basics up to building a ResNet in ARENA 0.2. The AISC project maps the rest of ARENA, chapter by chapter.</figcaption>
+          <figcaption>Hover a concept to light up everything it needs first. The real graph shipped in the app today: <b><span class="num" id="aisc-g-kcs">82</span> concepts</b> and <b><span class="num" id="aisc-g-edges">211</span> prerequisite edges</b>, from Python basics up to building a ResNet in ARENA 0.2. The AISC project maps the rest of ARENA, chapter by chapter.</figcaption>
         </figure>
 
         <div class="tile">
@@ -1031,13 +1043,10 @@
           <div class="fig-body">
             <div class="fig-stage"><div class="cy" id="aisc-cy-place"></div></div>
             <div class="fig-side">
-              <h4>Next probe <span class="muted">(max expected information)</span></h4>
-              <div class="probe-card"><div class="id" id="aisc-probe-id">—</div><div class="t" id="aisc-probe-title">—</div>
-                <div class="btns"><button class="btn ok" data-r="correct">Correct</button><button class="btn no" data-r="incorrect">Wrong</button><button class="btn dk" data-r="dont_know">Don't know</button></div>
-              </div>
+              <div class="probe-card"><span class="id">Next probe</span> <span class="t" id="aisc-probe-title">—</span></div>
+              <div class="btns"><button class="btn ok" data-r="correct">Correct</button><button class="btn no" data-r="incorrect">Wrong</button><button class="btn dk" data-r="dont_know">Don't know</button><button class="btn ghost" id="aisc-place-auto">Simulate a learner</button><button class="btn ghost" id="aisc-place-reset">Reset</button></div>
               <div class="readout" id="aisc-place-readout"></div>
-              <div class="btns"><button class="btn ghost" id="aisc-place-auto">Simulate a learner</button><button class="btn ghost" id="aisc-place-reset">Reset</button></div>
-              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:var(--amber)"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:var(--card);border:2px solid var(--ink)"></i>frontier</span></div>
+              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:var(--amber)"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
             </div>
           </div>
           <figcaption>Belief per concept starts at 50%. A correct answer is strong evidence (Bayes factor ≈16), a wrong one weaker (≈0.21, careless slips are common in code), "I don't know" strongest of all (≈0.05) — the same asymmetry ALEKS uses. Evidence propagates up to 3 hops, halving per hop toward prerequisites. <b>Frontier</b> = not yet known, but every prerequisite is. The production test also caps each problem's time and draws probes from ARENA's own exercises first.</figcaption>
@@ -1052,16 +1061,12 @@
           <div class="fig-body">
             <div class="fig-stage"><svg id="aisc-forget-svg" role="group" aria-label="Forgetting curve with draggable review markers"></svg></div>
             <div class="fig-side">
-              <h4>Model</h4>
-              <div class="seg" id="aisc-model-seg"><button data-m="today">Production today</button><button data-m="planned" class="on">Planned (AISC)</button></div>
-              <h4>Learning speed on this concept</h4>
-              <div class="seg" id="aisc-speed-seg"><button data-s="0.5">0.5×</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button></div>
-              <div class="ctl"><label>Review when recall drops to <output id="aisc-o-target">70%</output></label><input id="aisc-s-target" type="range" min="50" max="90" step="5" value="70"></div>
-              <div class="btns"><button class="btn" id="aisc-forget-auto">Schedule reviews</button><button class="btn ghost" id="aisc-forget-implicit">Implicit reviews: off</button></div>
+              <div class="seg" id="aisc-model-seg" role="group" aria-label="Model"><button data-m="today" aria-pressed="false">Production today</button><button data-m="planned" class="on" aria-pressed="true">Planned (AISC)</button></div>
+              <div class="btns"><button class="btn ghost" id="aisc-forget-auto">Schedule reviews</button></div>
               <div class="readout" id="aisc-forget-readout"></div>
             </div>
           </div>
-          <figcaption>Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty). <b>Implicit reviews</b> are the small bumps a concept gets when a harder concept that contains it is practised — see Fig. 5. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is Stream 2.</figcaption>
+          <figcaption>Drag the review markers under the plot. Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty); the scheduler reviews when recall drops to 70%. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is Stream 2.</figcaption>
         </figure>
 
         <div class="tile">
@@ -1073,12 +1078,10 @@
           <div class="fig-body">
             <div class="fig-stage"><div class="cy" id="aisc-cy-fire"></div></div>
             <div class="fig-side">
-              <h4>Practise a concept</h4>
-              <div class="readout" id="aisc-fire-target">Click a coloured concept.</div>
-              <div class="btns"><button class="btn ok" id="aisc-fire-ok">Answer correctly</button><button class="btn no" id="aisc-fire-no">Answer wrong</button></div>
-              <div class="ctl"><label>Days pass <output id="aisc-o-days">0 d</output></label><input id="aisc-s-days" type="range" min="0" max="42" step="1" value="0"></div>
-              <div class="btns"><button class="btn ghost" id="aisc-fire-reset">Reset</button></div>
-              <div class="readout small" id="aisc-fire-readout"></div>
+              <div class="probe-card" id="aisc-fire-target">Click a coloured concept.</div>
+              <div class="btns"><button class="btn ok" id="aisc-fire-ok">Correct</button><button class="btn no" id="aisc-fire-no">Wrong</button><button class="btn ghost" id="aisc-fire-reset">Reset</button></div>
+              <div class="ctl"><label for="aisc-s-days">Days pass <output id="aisc-o-days">0 d</output></label><input id="aisc-s-days" type="range" min="0" max="42" step="1" value="0"></div>
+              <div class="readout" id="aisc-fire-readout"></div>
             </div>
           </div>
           <figcaption>Node fill = P(known) under per-concept Bayesian Knowledge Tracing (prior 0.10, learn 0.30, guess 0.20, slip 0.10). Edge labels are the encompassing weights authored in the curriculum: a correct answer on the upper concept adds a <i>0.30 × weight</i> learning step to the lower one. Wrong answers credit nothing downstream. Forgetting regresses every belief toward the prior with a 14-day half-life.</figcaption>
@@ -1093,12 +1096,9 @@
           <div class="fig-body">
             <div class="fig-stage"><div class="cy" id="aisc-cy-remed"></div></div>
             <div class="fig-side">
-              <h4>Session</h4>
-              <div class="probe-card"><div class="id" id="aisc-remed-id">—</div><div class="t" id="aisc-remed-title">—</div>
-                <div class="btns"><button class="btn ok" data-a="1">Correct</button><button class="btn no" data-a="0">Wrong</button></div>
-              </div>
-              <div class="readout small" id="aisc-remed-log"></div>
-              <div class="btns"><button class="btn ghost" id="aisc-remed-reset">Reset</button></div>
+              <div class="probe-card"><span class="id" id="aisc-remed-id">—</span> <span class="t" id="aisc-remed-title">—</span></div>
+              <div class="btns"><button class="btn ok" data-a="1">Correct</button><button class="btn no" data-a="0">Wrong</button><button class="btn ghost" id="aisc-remed-reset">Reset</button></div>
+              <div class="readout" id="aisc-remed-log"></div>
             </div>
           </div>
           <figcaption>Target: <b>attention-pattern einsum</b>, ARENA's first real bottleneck. Miss it twice and the picker walks to the weakest one-hop prerequisite, then its prerequisites. A deliberate miss buys at most three easier drills per prerequisite, so the rule cannot be gamed into an easy streak.</figcaption>
@@ -1177,9 +1177,8 @@
         <figure class="fig rv" data-about-runtime id="aisc-fig-seth">
           <div class="fig-head"><span class="fig-title">September on the ARENA prerequisites</span><span class="fig-no">Fig. 7 · real data · n = 1, the author</span></div>
           <div class="fig-body">
-            <div class="fig-stage" style="min-height:0"><svg id="aisc-seth-svg" role="img" aria-label="Competency, prediction accuracy and study hours per day, September 2026"></svg></div>
+            <div class="fig-stage"><svg id="aisc-seth-svg" role="img" aria-label="Competency, prediction accuracy and study hours per day, September 2026"></svg></div>
             <div class="fig-side">
-              <h4>Section</h4>
               <div class="btns" id="aisc-seth-sections"></div>
               <div class="readout" id="aisc-seth-readout">Hover a day.</div>
               <div class="legend">
@@ -2542,7 +2541,7 @@ t.manual_seed(0)
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/boot.js?v=5" defer></script>
+  <script src="aisc/boot.js?v=6" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>

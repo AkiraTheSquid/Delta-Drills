@@ -169,7 +169,10 @@
 
   // ---- interaction -------------------------------------------------------------
   function $(id) { return document.getElementById(id); }
-  var sDeploy = $("aisc-s-deploy"), sAgi = $("aisc-s-agi"), sLearn = $("aisc-s-learn"), sExpert = $("aisc-s-expert");
+  // The learner/expert effects and the Fermi inputs stay at their defaults
+  // (A): the figure keeps two sliders, AGI and the deploy date (Seth,
+  // 2026-09-24: "significantly simplified"). Dragging the plot moves the date.
+  var sDeploy = $("aisc-s-deploy"), sAgi = $("aisc-s-agi");
   function update(animate) {               // recompute the green line; tween it if asked
     var next = understanding(deploy);
     readout(next);
@@ -190,68 +193,37 @@
   }
   function tFromX(clientX) { var r = svg.getBoundingClientRect(); return X0 + (clientX - r.left - G.L) / (G.W - G.L - G.R) * (X1 - X0); }
   function startDrag(ev) {
-    stopPlay(); ev.preventDefault();
+    ev.preventDefault();
     var move = function (e) { setDeploy(tFromX(e.clientX), false); };
     move(ev);
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", function () { window.removeEventListener("pointermove", move); }, { once: true });
   }
-  sDeploy.addEventListener("input", function () { stopPlay(); setDeploy(+sDeploy.value, true); });
+  sDeploy.addEventListener("input", function () { setDeploy(+sDeploy.value, true); });
   sAgi.addEventListener("input", function () { agi = +sAgi.value; $("aisc-o-agi").textContent = fmtAgi(agi); readout(); draw(); });
-  sLearn.addEventListener("input", function () { A.learn = +sLearn.value; $("aisc-o-learn").textContent = A.learn.toFixed(2) + "×"; update(true); });
-  sExpert.addEventListener("input", function () { A.expert = +sExpert.value; $("aisc-o-expert").textContent = A.expert.toFixed(2) + "×"; update(true); });
-
-  // ▶ sweeps the deploy date from latest to earliest, so the green line grows.
-  var playBtn = $("aisc-effort-play"), playing = null;
-  function stopPlay() { if (playing) { clearInterval(playing); playing = null; playBtn.textContent = "▶ Play"; } }
-  playBtn.addEventListener("click", function () {
-    if (playing) return stopPlay();
-    var t = +sDeploy.max; setDeploy(t, false); playBtn.textContent = "■ Stop";
-    playing = setInterval(function () {
-      t -= 1 / 12;
-      if (t < +sDeploy.min - 1e-9) return stopPlay();
-      setDeploy(t, false);
-    }, 45);
-  });
 
   function readout(arr) {
     arr = arr || cur;
     var y = fmtAgi(agi), now = at(arr, agi), was = at(base, agi);
     var gained = gainBefore(arr, agi), delay = gained - gainBefore(understanding(deploy + 1), agi);
-    $("aisc-effort-mech").innerHTML =
-      "<li><b>Learners, ×" + A.learn.toFixed(2) + ".</b> " + BASE.T0 + " → <b>" + ramp1().toFixed(1) + " mo</b> to useful; freed program budget reopens seats <b>×" + seatMult().toFixed(2) +
-        "</b>; remote learners <b>+" + Math.round(A.remote * 100) + "%</b>. The pool grows.</li>" +
-      "<li><b>Experts, ×" + A.expert.toFixed(2) + ".</b> An AI-generated tutor lets the same researchers keep up with superhuman systems, conceptually and technically. Phased in over a year.</li>";
     $("aisc-effort-readout").innerHTML = deploy >= agi
-      ? "Delta Drills arrives after AGI (" + y + "):<br><b>no gain before it</b>. Move the date earlier."
-      : "Understanding at AGI (" + y + ")<br>today <b>" + num(was) + "</b> · with Delta Drills <b>" + num(now) + "</b> (+" + Math.round((now / was - 1) * 100) + "%)<br>" +
-        "Researcher-years gained before AGI: <b>+" + num(gained) + "</b><br>" +
-        "Each year of delay costs <b>" + num(delay) + "</b> of them";
+      ? "Delta Drills arrives after AGI (" + y + "): <b>no gain before it</b>."
+      : "Understanding at AGI <b>+" + Math.round((now / was - 1) * 100) + "%</b> · researcher-years gained <b>+" + num(gained) + "</b> · a year of delay costs <b>" + num(delay) + "</b>";
   }
 
   document.querySelectorAll("#aisc-fig-effort [data-scale]").forEach(function (b) {
     b.addEventListener("click", function () {
       scale = b.dataset.scale;
-      document.querySelectorAll("#aisc-fig-effort [data-scale]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      document.querySelectorAll("#aisc-fig-effort [data-scale]").forEach(function (x) {
+        x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
       draw();
     });
   });
-  function rebuild() {
-    base = understanding(null);
-    update(false);
-  }
   function fixAxis() {                     // once, at the defaults and the earliest date: sliders never rescale it
     var raw = Math.max.apply(null, understanding(+sDeploy.min)) * 1.08 / 4, mag = Math.pow(10, Math.floor(Math.log10(raw)));
     ymaxFixed = 4 * mag * [1, 2, 2.5, 5, 10].filter(function (m) { return m * mag >= raw; })[0];
   }
-  document.querySelectorAll("#aisc-effort-assume input").forEach(function (inp) {
-    inp.addEventListener("input", function () {
-      var v = parseFloat(inp.value); if (!isFinite(v) || v < 0) return;
-      A[inp.dataset.k] = v / 100;
-      rebuild();
-    });
-  });
-
   AISC.whenVisible(svg, function () { fixAxis(); base = understanding(null); setDeploy(deploy, false); });
   var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(draw, 120); });
   AISC.onTheme(draw);

@@ -48,14 +48,24 @@ def check_front_door():
         "the AISC write-up (#aisc-root, with its #aisc-how section) must be "
         "the body of #page-learn-about-app"
     )
-    assert 'class="lab-disclosure"' not in page and 'id="wta-graph-cy"' not in page, (
-        "the old disclosures / concept map came back beside the write-up"
+    assert 'class="lab-disclosure"' not in page, (
+        "the old disclosures came back beside the write-up"
+    )
+    # The app's concept map (concept-graph/why-graph.js) is Fig. 2 of the
+    # write-up since 2026-09-24 (Seth: "use the old embedded graph"). Exactly
+    # one, inside that figure, or why-graph.js binds to the wrong frame.
+    assert page.count('id="wta-graph-cy"') == 1, "Fig. 2 must hold ONE #wta-graph-cy"
+    fig2 = page.split('id="aisc-fig-graph"')[1].split("</figure>")[0]
+    has_frame = re.search(r'class="(?:[^"]*\s)?wta-graph(?:\s[^"]*)?"', fig2)
+    assert 'id="wta-graph-cy"' in fig2 and has_frame, (
+        "the concept map belongs inside Fig. 2 (#aisc-fig-graph)"
     )
     # Every id is prefixed, and every in-page link names a prefixed id: an
     # unprefixed `href="#how"` sets location.hash and scrolls nowhere.
+    # wta-graph-* are why-graph.js's own ids, kept as that file expects them.
     aisc = page.split('id="aisc-root"')[1]
     for bad in re.findall(r'\bid="([^"]+)"', aisc):
-        assert bad.startswith("aisc-") or bad.startswith("about-"), (
+        assert bad.startswith(("aisc-", "about-", "wta-graph-")), (
             f"#{bad} inside the write-up is not aisc- prefixed"
         )
     for ref in re.findall(r'href="#([^"]+)"', aisc):

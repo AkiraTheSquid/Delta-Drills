@@ -1,8 +1,14 @@
-/* Figs. 2, 3, 5, 6 — the knowledge-graph figures, on Cytoscape.
+/* Figs. 3, 5, 6 — the knowledge-graph figures, on Cytoscape.
 
-   All four read the real concept registry (data/kc_graph.json, exported from
+   All three read the real concept registry (data/kc_graph.json, exported from
    Local_Deployed_Shared/lessons/kc_registry.json) and run DeltaEngine, the
-   browser port of the production update rules. */
+   browser port of the production update rules.
+
+   Fig. 2 is NOT here: it is the app's own concept map, drawn by
+   concept-graph/why-graph.js into #wta-graph-cy. These three borrow that
+   map's look (Seth, 2026-09-24: "use the old embedded graph"): labelled
+   round-rectangle nodes, red prerequisite arrows, yellow highlight, the
+   dagre bottom-to-top layout. Each figure's own state still sets the fill. */
 (function () {
   "use strict";
   var E = window.DeltaEngine;
@@ -12,22 +18,23 @@
     var A = AISC.rgb01(a), B = AISC.rgb01(b);
     return "rgb(" + A.map(function (v, i) { return Math.round(255 * (v + (B[i] - v) * t)); }).join(",") + ")";
   }
+  // why-graph.js's palette, so the four maps read as one product
+  var EDGE = "#e3212c", ACCENT = "#ffd23f", LABEL = "#15151f";
   function baseStyle() {
     return [
       { selector: "node", style: {
-        "background-color": AISC.css("--grey-node"), "border-width": 1, "border-color": AISC.css("--ink-3"),
-        width: 16, height: 16, label: "data(label)", "font-family": "IBM Plex Mono", "font-size": 8,
-        color: AISC.css("--ink-2"), "text-valign": "bottom", "text-margin-y": 3, "min-zoomed-font-size": 7,
-        "text-wrap": "wrap", "text-max-width": 90,
+        "background-color": "#9a9ab0", shape: "round-rectangle", label: "data(label)",
+        width: "label", height: "label", padding: "7px", "text-wrap": "wrap", "text-max-width": 90,
+        "text-valign": "center", "text-halign": "center", "font-size": 11, "font-weight": 600, color: LABEL,
+        "border-width": 1, "border-color": "rgba(0,0,0,.28)",
       } },
       { selector: "edge", style: {
-        width: 1, "line-color": AISC.css("--rule"), "target-arrow-color": AISC.css("--rule"),
-        "target-arrow-shape": "triangle", "arrow-scale": 0.6, "curve-style": "bezier",
+        "curve-style": "bezier", width: 1.6, "line-color": EDGE, "target-arrow-color": EDGE,
+        "target-arrow-shape": "triangle", "arrow-scale": 0.8, opacity: 0.9,
       } },
       { selector: ".dim", style: { opacity: 0.12 } },
-      { selector: ".hl", style: { "border-width": 2, "border-color": AISC.css("--ink"), "z-index": 5 } },
-      { selector: "edge.hl", style: { "line-color": AISC.css("--ink"), "target-arrow-color": AISC.css("--ink"), width: 1.6 } },
-      { selector: ".sel", style: { width: 24, height: 24, "border-width": 3, "border-color": AISC.css("--coral"), "font-size": 12, color: AISC.css("--ink"), "z-index": 9 } },
+      { selector: "node.hl", style: { "border-width": 3, "border-color": ACCENT, "z-index": 5 } },
+      { selector: "edge.hl", style: { "line-color": ACCENT, "target-arrow-color": ACCENT, width: 3, "z-index": 6 } },
     ];
   }
   // `extra` is a FUNCTION so a theme switch can rebuild styles from the new tokens.
@@ -41,7 +48,7 @@
     return cy;
   }
   function dagreLayout(opts) {
-    return Object.assign({ name: "dagre", rankDir: "BT", nodeSep: 10, rankSep: 38, edgeSep: 4, padding: 16, fit: true }, opts || {});
+    return Object.assign({ name: "dagre", rankDir: "BT", nodeSep: 12, rankSep: 58, edgeSep: 8, padding: 16, fit: true }, opts || {});
   }
   function graphElements(kcs, keep) {
     var ids = {}; kcs.forEach(function (k) { if (!keep || keep[k.id]) ids[k.id] = true; });
@@ -72,44 +79,11 @@
 
   AISC.graph.then(function (G) {
     var byId = {}; G.kcs.forEach(function (k) { byId[k.id] = k; });
-    var lessonTitle = {}; G.lessons.forEach(function (l) { lessonTitle[l.id] = l.title; });
     var nEdges = G.kcs.reduce(function (s, k) { return s + k.prereqs.length; }, 0);
     document.getElementById("aisc-stat-kcs").textContent = G.kcs.length;
     document.getElementById("aisc-g-kcs").textContent = G.kcs.length;
     document.getElementById("aisc-g-edges").textContent = nEdges;
     document.getElementById("aisc-stat-q").textContent = G.n_questions.toLocaleString();
-
-    // ================================================================ Fig 2
-    AISC.whenVisible(document.getElementById("aisc-cy-graph"), function () {
-      var el = document.getElementById("aisc-cy-graph");
-      function lessonStyle() {
-        return G.lessons.map(function (l) { return { selector: 'node[lesson = "' + l.id + '"]', style: { "background-color": AISC.lessonColor(l.id) } }; });
-      }
-      var cy = makeCy(el, graphElements(G.kcs), lessonStyle, dagreLayout());
-      ctrlZoom(cy, el);
-      var legend = document.getElementById("aisc-graph-legend");
-      function paintLegend() {
-        legend.innerHTML = G.lessons.map(function (l) {
-          return '<span><i style="background:' + AISC.lessonColor(l.id) + '"></i>' + l.title + "</span>";
-        }).join("");
-      }
-      paintLegend();
-      var out = document.getElementById("aisc-graph-readout");
-      function clear() { cy.elements().removeClass("dim hl sel"); out.textContent = "Click a node."; }
-      cy.on("tap", "node", function (evt) {
-        var n = evt.target, up = n.predecessors(), down = n.successors();
-        cy.elements().addClass("dim").removeClass("hl sel");
-        n.removeClass("dim").addClass("sel");
-        up.removeClass("dim").addClass("hl"); down.removeClass("dim").addClass("hl");
-        var k = byId[n.id()];
-        out.innerHTML = "<b>" + k.title + "</b><br><span class='muted'>" + k.id + "</span><br>" + lessonTitle[k.lesson] +
-          "<br>needs <b>" + up.nodes().length + "</b> concepts · unlocks <b>" + down.nodes().length + "</b>" +
-          (k.arena ? "<br>tested by ARENA " + k.arena : "");
-      });
-      cy.on("tap", function (evt) { if (evt.target === cy) clear(); });
-      document.getElementById("aisc-graph-reset").addEventListener("click", function () { clear(); cy.fit(undefined, 16); });
-      AISC.onTheme(function () { cy.restyle(); paintLegend(); });
-    });
 
     // ================================================================ Fig 3
     AISC.whenVisible(document.getElementById("aisc-cy-place"), function () {
@@ -117,9 +91,11 @@
       var graph = new E.Graph(G.kcs), value = E.coreness(graph);
       var B, probed, current, timer = null, truth = null;
       var cy = makeCy(el, graphElements(G.kcs), function () { return [
-        { selector: "node.frontier", style: { "border-width": 3, "border-color": AISC.css("--ink") } },
-        { selector: "node.probe", style: { width: 26, height: 26, "border-width": 4, "border-color": AISC.css("--coral"), "font-size": 12, color: AISC.css("--ink"), "z-index": 9 } },
-        { selector: "node.probed", style: { shape: "round-rectangle" } },
+        // not yet asked = dashed, as why-graph.js draws an inferred reading
+        { selector: "node", style: { "border-style": "dashed" } },
+        { selector: "node.probed", style: { "border-style": "solid" } },
+        { selector: "node.frontier", style: { "border-width": 3, "border-style": "solid", "border-color": ACCENT } },
+        { selector: "node.probe", style: { "border-width": 4, "border-style": "solid", "border-color": AISC.css("--coral"), "z-index": 9 } },
       ]; }, dagreLayout());
       ctrlZoom(cy, el);
 
@@ -139,15 +115,13 @@
           });
         });
         document.getElementById("aisc-place-readout").innerHTML =
-          "Probes asked: <b>" + Object.keys(probed).length + "</b> of " + G.kcs.length +
-          "<br>known <b>" + counts.known + "</b> · uncertain <b>" + counts.uncertain + "</b> · unknown <b>" + counts.unknown + "</b>" +
-          "<br>frontier: <b>" + frontier + "</b> concepts";
+          "asked <b>" + Object.keys(probed).length + "</b> · known <b>" + counts.known + "</b> · uncertain <b>" + counts.uncertain +
+          "</b> · unknown <b>" + counts.unknown + "</b> · frontier <b>" + frontier + "</b>";
       }
       function next() {
         var cands = graph.kcs.filter(function (k) { return !probed[k]; });
         var ranked = E.rankProbes(B, graph, value, cands);
         current = ranked.length ? ranked[0][1] : null;
-        document.getElementById("aisc-probe-id").textContent = current || "done";
         document.getElementById("aisc-probe-title").textContent = current ? byId[current].title : "Every concept probed.";
         paint();
       }
@@ -209,10 +183,9 @@
         encIndex[k.id] = Object.keys(k.enc).filter(function (t) { return keep[t]; }).map(function (t) { return { kc: t, w: k.enc[t] }; });
       });
       var cy = makeCy(el, graphElements(G.kcs, keep), function () { return [
-        { selector: "edge.enc", style: { width: 2.2, "line-color": AISC.css("--green"), "target-arrow-color": AISC.css("--green"), label: "data(wl)", "font-size": 9, "font-family": "IBM Plex Mono", color: AISC.css("--green"), "text-background-color": AISC.css("--card"), "text-background-opacity": 1, "text-background-padding": 2 } },
+        { selector: "edge.enc", style: { width: 2.2, "line-color": AISC.css("--green"), "target-arrow-color": AISC.css("--green"), label: "data(wl)", "font-size": 9, "font-family": "IBM Plex Mono", color: AISC.css("--green"), "text-background-color": AISC.css("--paper"), "text-background-opacity": 1, "text-background-padding": 2 } },
         { selector: "edge.pre", style: { "line-style": "dashed", "line-dash-pattern": [3, 3] } },
-        { selector: "node", style: { "font-size": 10, "text-max-width": 110, width: 22, height: 22, "min-zoomed-font-size": 0 } },
-        { selector: "node.flash", style: { "border-width": 4, "border-color": AISC.css("--green") } },
+        { selector: "node.flash", style: { "border-width": 4, "border-color": ACCENT } },
         { selector: "node.target", style: { "border-width": 4, "border-color": AISC.css("--coral") } },
       ]; }, dagreLayout({ rankSep: 50, nodeSep: 14, nodeDimensionsIncludeLabels: true }));
       ctrlZoom(cy, el);
@@ -221,16 +194,16 @@
       function paint() {
         cy.nodes().forEach(function (n) {
           var p = effective(n.id());
-          n.style("background-color", mix(AISC.css("--grey-node"), AISC.css("--green"), Math.min(1, (p - E.BKT.P_INIT) / (1 - E.BKT.P_INIT))));
+          n.style("background-color", mix("#9a9ab0", AISC.css("--green"), Math.min(1, (p - E.BKT.P_INIT) / (1 - E.BKT.P_INIT))));
           n.toggleClass("target", n.id() === target);
         });
-        document.getElementById("aisc-fire-target").innerHTML = "<b>" + byId[target].title + "</b><br><span class='muted'>" + target + "</span><br>P(known) now <b>" + effective(target).toFixed(2) + "</b>";
+        document.getElementById("aisc-fire-target").innerHTML = "<span class='id'>Practising</span> <span class='t'>" + byId[target].title + "</span> <span class='id'>P(known) " + effective(target).toFixed(2) + "</span>";
       }
       function reset() {
         mastery = {}; touched = {}; day = 0;
         Object.keys(keep).forEach(function (k) { mastery[k] = 0.55; touched[k] = 0; });
         document.getElementById("aisc-s-days").value = 0; document.getElementById("aisc-o-days").textContent = "0 d";
-        document.getElementById("aisc-fire-readout").textContent = "Every concept starts at 0.55. Practise one and watch where the credit lands.";
+        document.getElementById("aisc-fire-readout").textContent = "Every concept starts at 0.55. Click one, answer, and watch where the credit lands.";
         paint();
       }
       function practise(ok) {
@@ -241,9 +214,9 @@
         var lines = Object.keys(ch).map(function (k) {
           return (k === target ? "direct " : "implicit ") + shortName(k) + ": " + before[k].toFixed(2) + " → <b>" + ch[k].toFixed(2) + "</b>";
         });
-        if (ok && lines.length === 1) lines.push("<span class='muted'>This concept encompasses nothing, so no implicit credit.</span>");
-        if (!ok) lines.push("<span class='muted'>A wrong answer credits nothing downstream.</span>");
-        document.getElementById("aisc-fire-readout").innerHTML = lines.join("<br>");
+        if (ok && lines.length === 1) lines.push("<span class='muted'>it encompasses nothing, so no implicit credit</span>");
+        if (!ok) lines.push("<span class='muted'>a wrong answer credits nothing downstream</span>");
+        document.getElementById("aisc-fire-readout").innerHTML = lines.join(" · ");
         Object.keys(ch).forEach(function (k) { if (k !== target) { var n = cy.getElementById(k); n.addClass("flash"); setTimeout(function () { n.removeClass("flash"); }, 900); } });
         paint();
       }
@@ -267,9 +240,8 @@
       byId[TARGET].prereqs.forEach(function (p) { keep[p] = true; byId[p].prereqs.forEach(function (q) { keep[q] = true; }); });
       var START = { "einops.attention-einsum": 0.30, "einops.einsum": 0.88, "einops.dl-flatten-heads": 0.52, "einops.merge-axes": 0.64, "einops.split-axes": 0.41, "einops.pattern-language": 0.83 };
       var cy = makeCy(el, graphElements(G.kcs, keep), function () { return [
-        { selector: "node", style: { "font-size": 11, "text-max-width": 120, width: 26, height: 26, "min-zoomed-font-size": 0 } },
-        { selector: "node.serving", style: { "border-width": 5, "border-color": AISC.css("--coral"), width: 34, height: 34 } },
-        { selector: "node.goal", style: { shape: "star", width: 34, height: 34 } },
+        { selector: "node.goal", style: { "border-width": 5, "border-style": "double", "border-color": LABEL } },
+        { selector: "node.serving", style: { "border-width": 4, "border-style": "solid", "border-color": ACCENT } },
       ]; }, dagreLayout({ rankSep: 50, nodeSep: 18, nodeDimensionsIncludeLabels: true }));
       var mastery, attempts, seq, log;
       function trailingMisses(kc) {
@@ -307,7 +279,7 @@
         });
         document.getElementById("aisc-remed-id").textContent = serving === TARGET ? "frontier concept" : "prerequisite, redirected";
         document.getElementById("aisc-remed-title").textContent = byId[serving].title;
-        document.getElementById("aisc-remed-log").innerHTML = log.slice(-7).join("<br>");
+        document.getElementById("aisc-remed-log").innerHTML = log.slice(-4).join("<br>");
       }
       function reset() {
         mastery = Object.assign({}, START); attempts = {}; seq = 0; log = ["Serving the frontier concept. Try missing it twice."];
