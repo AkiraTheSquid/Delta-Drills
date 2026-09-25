@@ -73,9 +73,11 @@
 
   /* THE TWO EXPLAINER ROWS. Both route to #page-learn-about-app; what tells
      them apart is WHERE on it the learner lands. Since 2026-09-24 that page is
-     the AISC write-up (aisc/), one long article with no disclosures, so
-     `data-lab-open` names a section id: #aisc-root for "Why this app exists",
-     #aisc-how for "How this app works". A <details> target is still opened
+     the AISC write-up (aisc/), and since 2026-09-25 a set of articles with
+     one open at a time, so `data-lab-open` names an element id: #aisc-a-why
+     for "Why this app exists", #aisc-why-use for "How this app works".
+     aisc/articles.js opens the article holding it first — a hidden article
+     has no box to scroll to. A <details> target is still opened
      (exclusively, as before) so an old-shaped id cannot land on a closed box.
 
      🔴 `scrollIntoView` runs on the NEXT frame, not now. `switchTab` un-hides
@@ -90,6 +92,7 @@
         d.open = d === wanted;
       });
     }
+    window.AISCArticles?.openFor(wanted);
     requestAnimationFrame(() => {
       wanted.scrollIntoView({ block: "start", behavior: "smooth" });
     });

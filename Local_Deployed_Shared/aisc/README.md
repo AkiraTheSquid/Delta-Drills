@@ -2,8 +2,10 @@
 
 ## Purpose
 - The app's "Why this app exists" / "How this app works" page
-  (`#page-learn-about-app`) is the AISC-12 proposal write-up: the argument for
-  Delta Drills and the mechanisms behind it, with seven live figures.
+  (`#page-learn-about-app`): five articles, one open at a time (2026-09-25).
+  Article 1 is Seth's own pre-AISC text; 2–5 are the AISC-12 proposal
+  write-up (the case, how it works, evidence, the AISC plan) with seven live
+  figures.
 - Ported 2026-09-24 from the standalone site `~/Applications/delta-drills-aisc`
   (Seth: replace both halves of the page with the whole site).
 
@@ -15,8 +17,11 @@
 - The markup: it lives inline in `../index.html` inside `#about-page-content`
   (so the owner-only About editor, `../about-page-editor.js`, can edit it).
 - The copy's source of truth: `~/Applications/delta-drills-aisc`
-  (`index.html`, `content/copy.md`). Re-port from there; don't fork the prose.
-- Menu routing: `../account-menu.js` (`data-lab-open` = section id to scroll to).
+  (`index.html`, `content/copy.md`) for articles 2–5. Re-port from there;
+  don't fork the prose. Article 1 is Seth's own words (from `../index.html`
+  at 43b78681); keep them verbatim.
+- Menu routing: `../account-menu.js` (`data-lab-open` = id to scroll to; it
+  asks `articles.js` to open the article holding it first).
 - Cytoscape + dagre: the app's `../vendor/graph/`.
 
 ## Key Files
@@ -27,6 +32,12 @@
   canvas rule (`--aisc-clear` = the 1180px card measure) and `#aisc-toc`.
 - `watch.py`: scoped-rule check, plus the wireframe card list in `aisc.css`
   must match `js/field.js` `CARDS`.
+- `articles.js` (loaded eagerly, defer): `window.AISCArticles` — `show(id)`,
+  `openFor(el)`, `current()`. Hides every `article.aisc-article` but the open
+  one (`hidden` attribute), marks its link in the index (`#aisc-articles`)
+  and the topbar (`#aisc-toc`), and handles every `#aisc-…` link: opens the
+  article holding the target, then scrolls. Fires a window `resize` after a
+  switch so the SVG figures redraw at their real width.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
 - `js/`, `data/`: see those folders.
@@ -43,9 +54,12 @@
    after vendor/graph).
 2. about-page-editor.js loads any saved copy, restoring `[data-about-runtime]`
    figure shells from the static markup; that resolves `DDAboutContentReady`.
-3. When the page is first shown, boot.js loads the scripts; each figure starts on
-   its own `AISC.whenVisible` (IntersectionObserver).
-4. App theme switches arrive as `delta:theme-changed` → figures repaint.
+3. articles.js re-applies the open article (the saved copy carries stale
+   `hidden` flags). Article 1 is open on load.
+4. When the page is first shown, boot.js loads the scripts; each figure starts on
+   its own `AISC.whenVisible` (IntersectionObserver) — so a figure in a hidden
+   article starts the first time its article is opened.
+5. App theme switches arrive as `delta:theme-changed` → figures repaint.
 
 ## Invariants & Constraints
 - Every id in the write-up is `aisc-` prefixed; every in-page `href="#…"` names
@@ -99,6 +113,21 @@
 - The contents nav is `#aisc-toc` in the app topbar (`../index.html`,
   `.topbar-mid`), shown by a `body:has(#page-learn-about-app:not(.hidden))`
   rule; on a phone it scrolls sideways in the narrow middle cell. Not inside `#about-page-content`, so never saved.
+  Since 2026-09-25 it lists the articles, not sections.
+- Articles (Seth, 2026-09-25): `<article class="aisc-article" id="aisc-a-…">`
+  directly in `.aisc-main`, after the `#aisc-articles` index of `.card`
+  links. Articles 2–5 ship `hidden` (no flash before `articles.js`). Order
+  keeps figure numbers rising: why → case (Fig. 1) → how (Figs. 2–6) →
+  evidence (Fig. 7) → AISC proposal (hero, status, plan, risks, lead,
+  questions). Section kickers lost their 01–09 numbers. Each article ends
+  in a `.art-next` link to the next.
+- The About editor applies a saved copy only if it has `id="aisc-articles"`:
+  a copy saved before the split would put the one long page back. Prod's
+  saved copy (2026-09-25 14:32 UTC) predates it and is ignored; it held no
+  prose edits (only runtime-written text).
+- `concept-graph/why-graph.js` draws Fig. 2 when it first has a box: it
+  watches the page SUBTREE for `class` and `hidden` changes, because opening
+  article 3 changes nothing on the page's own class list.
 
 ## Extension Points
 - Copy change: edit the aisc repo first, then re-port the section into
@@ -108,7 +137,8 @@
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
-- **Hidden page measures 0 wide** — `ACTIVE`
+- **Hidden page measures 0 wide** — `ACTIVE` (article switches are
+  handled: `articles.js` fires a `resize` after each)
   - When it happens: window resized while another app page is showing.
   - Symptom: Fig. 1 / Fig. 7 redraw at the 800px fallback width.
   - Root cause: `getBoundingClientRect()` of a `display:none` page is 0.
@@ -148,3 +178,9 @@
   practised concept id + one line per credited concept, Fig. 6 seven-line
   log). Fig. 4 shows implicit reps always: thin bars tagged +0.3, a key, and
   an implicit-reps line in the readout.
+- 2026-09-25: Page split into five articles (`articles.js`), one open at a
+  time, with an index of cards up top and the topbar listing articles.
+  Article 1 "Why this app exists" is Seth's pre-AISC text again (the three
+  markers, the three steps, the loop, the map), in the write-up's tiles and
+  cards. Account menu lands on `#aisc-a-why` / `#aisc-why-use`; the editor
+  ignores copies saved before the split.

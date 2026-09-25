@@ -395,6 +395,33 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   /* full screen covers the page, so that card stays opaque */
   figure.fig.is-max { background: var(--paper); }
   .fig-expand { background: transparent; }
+
+  /* ---- articles (Seth, 2026-09-25) ----
+     The page is five <article>s, one open at a time (../articles.js). The
+     index up top is a row of wireframe cards (they are .card, so field.js
+     keeps out of them and lights the hovered one); the open article's card
+     keeps the title-card outline. */
+  .aisc-article { display: block; scroll-margin-top: calc(var(--dd-topbar-h, 44px) + 16px); }
+  .aisc-article[hidden] { display: none; }
+  .art-index { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; padding: 40px 0 0; }
+  /* id-scoped: `a:not(.rail a):not(.mark)` above zeroes every link's bottom
+     border at (1,2,2). Width and style only, so .is-hot still sets the colour. */
+  #aisc-articles .art-link { display: block; color: inherit; text-decoration: none; padding: 16px 18px; border-bottom-width: 1px; border-bottom-style: solid; }
+  #aisc-articles .art-link:hover { color: inherit; }
+  #aisc-articles .art-link h4 { font-size: 22px; }
+  #aisc-articles .art-link p { font-size: 14px; }
+  #aisc-articles .art-link.on { border-width: 2px; border-color: rgb(var(--field-edge)); padding: 15px 17px; }
+  .art-next { text-align: center; margin: 56px 0 0; font: 500 13px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .art-next a { color: var(--coral); text-decoration: none; }
+  .cols.three { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  @media (max-width: 700px) {
+    .art-index { grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 24px; }
+    #aisc-articles .art-link { padding: 12px 14px; }
+    #aisc-articles .art-link.on { padding: 11px 13px; }
+    #aisc-articles .art-link h4 { font-size: 18px; margin: 0; }
+    #aisc-articles .art-link p { display: none; }
+    .cols.three { grid-template-columns: 1fr; }
+  }
 }
 
 /* Fig. 2's Maximize fixes .wta-graph over the whole app (z-index 300 in

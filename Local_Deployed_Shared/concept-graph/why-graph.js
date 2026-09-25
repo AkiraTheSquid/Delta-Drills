@@ -395,9 +395,12 @@
     };
     if (run()) return;
     // `.page` visibility is a class app.js toggles, so the class list is the
-    // signal. No polling, and nothing for app.js to have to call.
+    // signal. No polling, and nothing for app.js to have to call. SUBTREE and
+    // `hidden` too since 2026-09-25: the map is Fig. 2 inside one of the About
+    // page's articles, and aisc/articles.js hides the ones not open with the
+    // `hidden` attribute, which the page's class list never sees.
     const observer = new MutationObserver(() => { if (run()) observer.disconnect(); });
-    observer.observe(page, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(page, { attributes: true, subtree: true, attributeFilter: ["class", "hidden"] });
     // The disclosure the map sits in, if it is in one. `toggle` fires on close
     // too; `run()` is false then and the listener stays for the next open.
     // It retires the PAGE observer on success for the same reason that
