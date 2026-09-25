@@ -24,7 +24,7 @@ For nonzero $\mathbf v$, the unit vector
 $$\hat{\mathbf v}=\frac{\mathbf v}{\|\mathbf v\|}$$
 has length one and the same direction. Zero cannot be normalized: its norm is zero. Scaling obeys $\|c\mathbf v\|=|c|\,\|\mathbf v\|$.
 
-Two nonzero vectors with dot product zero are perpendicular. For core ray tracing, the essential use here is length: the distance between points is $\|B-A\|$, and displacement $sD$ has length $|s|\,\|D\|$. A parameter is a distance only when the direction has unit length (and the parameter is nonnegative).
+Two nonzero vectors with dot product zero are perpendicular. The use that matters most in the lessons ahead is length: the distance between points is $\|B-A\|$, and displacement $sD$ has length $|s|\,\|D\|$. A parameter is a distance only when the direction has unit length (and the parameter is nonnegative).
 
 ## Worked example
 
@@ -88,7 +88,7 @@ Which unit vector points the same way as u = (2, −1, 2)?
 u = (3, 4), v = (4, 3). What is cos θ for the angle θ between them?
 
 ### q50082
-A ray starts at O with direction D = (1, 2). A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?
+A point moves from O along D = (1, 2), as O + sD with s ≥ 0. A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?
 
 ### q50083
 O = (0, 0), D = (3, 4), X = (5, 10). How far along D's direction does X project from O, i.e. what is (X − O) · D / ‖D‖?
@@ -105,7 +105,7 @@ A = (−1, 2, 0), B = (1, −1, 6). What is their Euclidean distance?
 A nonzero vector D has norm 5. What is the norm of −2D?
 
 ### q50086
-A ray starts at O = (0, 0) with direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to the ray's line?
+The line through O = (0, 0) has direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to that line?
 
 ### q50087
-A camera ray from the origin has direction D = (1, 0.75, 0). It meets the wall x = 4 at s = 4 in P(s) = sD. How far from the origin is that hit point?
+A point moves as P(s) = sD with D = (1, 0.75, 0). At s = 4 it reaches x = 4. How far from the origin is P(4)?

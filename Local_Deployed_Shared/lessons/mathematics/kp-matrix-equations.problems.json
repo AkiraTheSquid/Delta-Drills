@@ -276,23 +276,23 @@
       "id": 50106,
       "kind": "statement",
       "difficulty": 50,
-      "prompt": "M has shape (4, 3). For M @ x to work, what shape must x have, and what shape is the result?",
+      "prompt": "M is a 4-by-3 matrix (4 rows, 3 columns). For the product Mx to be defined, how many components must x have, and how many does Mx have?",
       "choices": [
         {
           "key": "A",
-          "text": "x: (3,); result: (4,)"
+          "text": "x has 3; Mx has 4"
         },
         {
           "key": "B",
-          "text": "x: (4,); result: (3,)"
+          "text": "x has 4; Mx has 3"
         },
         {
           "key": "C",
-          "text": "x: (3,); result: (3,)"
+          "text": "x has 3; Mx has 3"
         },
         {
           "key": "D",
-          "text": "x: (4,); result: (4,)"
+          "text": "x has 4; Mx has 4"
         }
       ],
       "answer": "A",
@@ -337,31 +337,31 @@
       "id": 50108,
       "kind": "compute",
       "difficulty": 55,
-      "prompt": "M = t.tensor([[1., 2.], [3., 4.]]), x = t.tensor([1., -1.]). What is M @ x?",
+      "prompt": "M has rows (1, 2) and (3, 4), and x = (1, −1). What is Mx?",
       "choices": [
         {
           "key": "A",
-          "text": "tensor([-1., -1.])",
+          "text": "(−1, −1)",
           "value": "Matrix([-1,-1])"
         },
         {
           "key": "B",
-          "text": "tensor([-2., -2.])",
+          "text": "(−2, −2)",
           "value": "Matrix([-2,-2])"
         },
         {
           "key": "C",
-          "text": "tensor([1., -4.])",
+          "text": "(1, −4)",
           "value": "Matrix([1,-4])"
         },
         {
           "key": "D",
-          "text": "tensor([3., 7.])",
+          "text": "(3, 7)",
           "value": "Matrix([3,7])"
         }
       ],
       "answer": "A",
-      "solution": "`@` dots each row with $x$: $1 - 2 = -1$ and $3 - 4 = -1$.\n\n- B: `x @ M`, which combines the rows: $(1 - 3, 2 - 4)$.\n- C: the diagonal of `M * x`, elementwise products, not a matrix product.\n- D: ignores the minus sign in $x$.",
+      "solution": "$Mx$ dots each row of $M$ with $x$: $1 - 2 = -1$ and $3 - 4 = -1$.\n\n- B: $x^\\top M$, which combines the rows: $(1 - 3, 2 - 4)$.\n- C: multiplies matching entries ($1 \\cdot 1$ and $4 \\cdot (-1)$) instead of dotting each row with $x$.\n- D: ignores the minus sign in $x$.",
       "verify": {
         "sympy": {
           "truth": "Matrix([[1,2],[3,4]])*Matrix([1,-1])"

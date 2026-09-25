@@ -16,13 +16,13 @@ integrated: [50054, 50055]
 
 An $m$-by-$n$ matrix has $m$ rows and $n$ columns. Multiplying it by an $n$-component column vector gives $m$ components. Each output component is a row's weighted sum; equivalently, $M\mathbf x$ combines the columns of $M$ using the entries of $\mathbf x$ as weights:
 $$\begin{pmatrix}a&b\\c&d\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}ax+by\\cx+dy\end{pmatrix}=x\begin{pmatrix}a\\c\end{pmatrix}+y\begin{pmatrix}b\\d\end{pmatrix}.$$
-This is not elementwise multiplication.
+It is not the same as multiplying matching entries.
 
 In $M\mathbf x=\mathbf b$, $\mathbf x$ holds unknown coefficients, $M$ holds their coefficients in each equation, and $\mathbf b$ holds the right-hand sides. Rows correspond to equations; columns correspond to unknowns. Keep the order of unknowns fixed. Moving a term across equality changes its sign.
 
 Solving means finding coefficients that satisfy every equation simultaneously. Substitute a candidate back: the residual $M\mathbf x-\mathbf b$ must be zero for an exact solution. This checks the equations, not additional inequalities.
 
-Use elimination or substitution on paper: add a multiple of one equation to another to cancel an unknown, then back-substitute. A square system need not have a unique solution; the determinant lesson explains when it does.
+Use elimination or substitution on paper: add a multiple of one equation to another to cancel an unknown, then back-substitute. A square system need not have a unique solution; the next lesson gives a test for when it does.
 
 ## Worked example
 
@@ -84,13 +84,13 @@ M has rows (2, −1, 0) and (1, 3, 2). Find Mx for x = (1, 2, −1).
 Rewrite 2u = 3v + 4 and v − u = 1 as M(u, v) = (4, 1). Which M? Matrices are written as rows.
 
 ### q50106
-M has shape (4, 3). For M @ x to work, what shape must x have, and what shape is the result?
+M is a 4-by-3 matrix (4 rows, 3 columns). For the product Mx to be defined, how many components must x have, and how many does Mx have?
 
 ### q50107
 Solve 3u + 2v = 12 and u − 2v = −4. Choose (u, v).
 
 ### q50108
-M = t.tensor([[1., 2.], [3., 4.]]), x = t.tensor([1., -1.]). What is M @ x?
+M has rows (1, 2) and (3, 4), and x = (1, −1). What is Mx?
 
 ### q50109
 M has rows (1, 2) and (3, −1), b = (3, 3). Candidate x = (1, 1). What is the residual Mx − b?

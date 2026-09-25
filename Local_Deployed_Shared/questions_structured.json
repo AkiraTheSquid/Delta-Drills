@@ -81920,7 +81920,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "make_rays_1d(num_pixels=5, y_limit=2) stores ray i as [[0, 0, 0], [1, y_i, 0]], with y_i from −2 to 2. Where does ray i = 3 reach x = 4?",
+      "question_text": "Five rays start at (0, 0, 0). Ray i has direction (1, y_i, 0), where y_0, …, y_4 are evenly spaced from −2 to 2. Where does ray i = 3 reach x = 4?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -82164,7 +82164,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A ray starts at O with direction D = (1, 2). A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?",
+      "question_text": "A point moves from O along D = (1, 2), as O + sD with s ≥ 0. A point X has X − O = (−3, 1). The dot product (X − O) · D = −1. What does its sign tell you?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -82183,7 +82183,7 @@
       "choices": [
         {
           "key": "A",
-          "text": "X lies on the ray.",
+          "text": "X is reached, at some s ≥ 0.",
           "value": null
         },
         {
@@ -82203,7 +82203,7 @@
         }
       ],
       "correct_choice": "C",
-      "solution_md": "$(X - O) \\cdot D = -3 + 2 = -1 < 0$. A negative dot product means the angle is more than $90^\\circ$, so moving from $O$ toward $X$ goes partly backwards against $D$. Any parameter $s$ that gets near $X$ would be negative, which a ray ($s \\ge 0$) does not allow.\n\n- A: on the ray, $X - O$ would be a nonnegative multiple of $D$; $(-3, 1)$ is not.\n- B: perpendicular needs a dot product of exactly 0.\n- D: in front needs a positive dot product.",
+      "solution_md": "$(X - O) \\cdot D = -3 + 2 = -1 < 0$. A negative dot product means the angle is more than $90^\\circ$, so moving from $O$ toward $X$ goes partly backwards against $D$. Any parameter $s$ that gets near $X$ would be negative, which $s \\ge 0$ does not allow.\n\n- A: to be reached, $X - O$ would be a nonnegative multiple of $D$; $(-3, 1)$ is not.\n- B: perpendicular needs a dot product of exactly 0.\n- D: in front needs a positive dot product.",
       "verify": null,
       "hint": null
     }
@@ -82408,7 +82408,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A ray starts at O = (0, 0) with direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to the ray's line?",
+      "question_text": "The line through O = (0, 0) has direction D = (3, 4). What is the perpendicular distance from X = (5, 0) to that line?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -82470,7 +82470,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A camera ray from the origin has direction D = (1, 0.75, 0). It meets the wall x = 4 at s = 4 in P(s) = sD. How far from the origin is that hit point?",
+      "question_text": "A point moves as P(s) = sD with D = (1, 0.75, 0). At s = 4 it reaches x = 4. How far from the origin is P(4)?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -83632,7 +83632,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "M has shape (4, 3). For M @ x to work, what shape must x have, and what shape is the result?",
+      "question_text": "M is a 4-by-3 matrix (4 rows, 3 columns). For the product Mx to be defined, how many components must x have, and how many does Mx have?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -83651,22 +83651,22 @@
       "choices": [
         {
           "key": "A",
-          "text": "x: (3,); result: (4,)",
+          "text": "x has 3; Mx has 4",
           "value": null
         },
         {
           "key": "B",
-          "text": "x: (4,); result: (3,)",
+          "text": "x has 4; Mx has 3",
           "value": null
         },
         {
           "key": "C",
-          "text": "x: (3,); result: (3,)",
+          "text": "x has 3; Mx has 3",
           "value": null
         },
         {
           "key": "D",
-          "text": "x: (4,); result: (4,)",
+          "text": "x has 4; Mx has 4",
           "value": null
         }
       ],
@@ -83752,7 +83752,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "M = t.tensor([[1., 2.], [3., 4.]]), x = t.tensor([1., -1.]). What is M @ x?",
+      "question_text": "M has rows (1, 2) and (3, 4), and x = (1, −1). What is Mx?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -83771,27 +83771,27 @@
       "choices": [
         {
           "key": "A",
-          "text": "tensor([-1., -1.])",
+          "text": "(−1, −1)",
           "value": "Matrix([-1,-1])"
         },
         {
           "key": "B",
-          "text": "tensor([-2., -2.])",
+          "text": "(−2, −2)",
           "value": "Matrix([-2,-2])"
         },
         {
           "key": "C",
-          "text": "tensor([1., -4.])",
+          "text": "(1, −4)",
           "value": "Matrix([1,-4])"
         },
         {
           "key": "D",
-          "text": "tensor([3., 7.])",
+          "text": "(3, 7)",
           "value": "Matrix([3,7])"
         }
       ],
       "correct_choice": "A",
-      "solution_md": "`@` dots each row with $x$: $1 - 2 = -1$ and $3 - 4 = -1$.\n\n- B: `x @ M`, which combines the rows: $(1 - 3, 2 - 4)$.\n- C: the diagonal of `M * x`, elementwise products, not a matrix product.\n- D: ignores the minus sign in $x$.",
+      "solution_md": "$Mx$ dots each row of $M$ with $x$: $1 - 2 = -1$ and $3 - 4 = -1$.\n\n- B: $x^\\top M$, which combines the rows: $(1 - 3, 2 - 4)$.\n- C: multiplies matching entries ($1 \\cdot 1$ and $4 \\cdot (-1)$) instead of dotting each row with $x$.\n- D: ignores the minus sign in $x$.",
       "verify": {
         "sympy": {
           "truth": "Matrix([[1,2],[3,4]])*Matrix([1,-1])"

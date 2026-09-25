@@ -14,7 +14,7 @@ integrated: [50060, 50061]
 
 ## Concept
 
-For a square matrix, the determinant is a scalar that detects whether its columns are independent. In two dimensions,
+For a square matrix, the determinant is a scalar that detects whether its columns are independent. For a 2-by-2 matrix,
 $$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc.$$
 Its absolute value is the area-scaling factor; a negative sign indicates reversed orientation, not failure. A nonzero determinant means the matrix is invertible: every right-hand side has exactly one solution.
 
@@ -23,7 +23,7 @@ Zero determinant means singular: columns are dependent. Some right-hand sides ar
 In 3D, absolute determinant measures volume scaling. For a triangular matrix, the determinant is the product of diagonal entries. In general, expand along the first row:
 $$\det\begin{pmatrix}a&b&c\\d&e&f\\g&h&i\end{pmatrix}=a(ei-fh)-b(di-fg)+c(dh-eg).$$
 
-These statements are exact. Numerical ray tracing uses a tolerance on $|\det M|$ to avoid unstable solves. That cutoff is an implementation convention, not the definition of singularity; determinant magnitude alone is not a scale-independent conditioning test.
+These statements are exact. Numerical code uses a tolerance on $|\det M|$ to avoid unstable solves. That cutoff is an implementation convention, not the definition of singularity; determinant magnitude alone is not a scale-independent conditioning test.
 
 ## Worked example
 
@@ -43,7 +43,7 @@ A triangular matrix multiplies its diagonal:
 $$\det\begin{pmatrix}2&5&1\\0&-1&4\\0&0&3\end{pmatrix}=2\cdot(-1)\cdot3=-6,$$
 nonzero, so it is invertible too.
 
-**In code.** $ad-bc$ read straight off the tensor entries. `t.linalg.det(regular)` gives the same value, up to floating-point rounding.
+**In code.** $ad-bc$ computed from the four entries. `t.linalg.det(regular)` gives the same value, up to floating-point rounding.
 
 ```python
 import torch as t
