@@ -24,8 +24,16 @@ os.environ["USER_DATA_DIR"] = tempfile.mkdtemp(prefix="kc_ladder_test_")
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app import kc_graph  # noqa: E402
+from app import kc_explore, kc_graph  # noqa: E402
 from app.adaptive import AttemptRecord, UserPracticeState  # noqa: E402
+
+# These checks are about the LADDER. Since 2026-09-24 kc_explore runs on every
+# concept, so a torch fixture with a few correct answers settles by belief
+# (settled = learned) and an old-dated fixture sits in the return window —
+# both would bypass the rung mechanics under test. Pin the explore area to
+# math, as it was when these were written; scripts/test_kc_explore.py covers
+# the whole-graph behaviour.
+kc_explore.EXPLORE_PREFIXES = ("math.",)
 
 NOW = "2026-08-31T00:00:00+00:00"
 
@@ -199,7 +207,6 @@ check("every row carries an estimate",
       all(isinstance(r.get("ladder_estimate"), dict) for r in rows.values()))
 # Explore-area concepts (kc_explore) open as diagnostic probes at the Solo
 # rung, not on their lesson page; everywhere else a cold learner starts there.
-from app import kc_explore  # noqa: E402
 check("a cold learner is on the first rung everywhere",
       all(r["ladder_stage"] == "worked" for k, r in rows.items() if not kc_explore.in_area(k)))
 check("a cold learner meets explore-area concepts as probes",

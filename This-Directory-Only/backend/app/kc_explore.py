@@ -49,13 +49,22 @@ not a claim about the learner.
 from __future__ import annotations
 
 import math
-from typing import Dict, Iterable, List, Optional
+import time
+import weakref
+from datetime import datetime, timezone
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from app import example_schedule
 
-# Concept areas the explore/settle model runs on. Math first: its items are
-# 4-option multiple choice, which the likelihoods below are calibrated for.
-EXPLORE_PREFIXES = ("math.",)
+# Concept areas the explore/settle model runs on. Math only until 2026-09-24;
+# now EVERY concept (None). The learner simulation that decided it (scratchpad
+# `usim/`, reconciled with a gpt-6-astra review) found whole-graph explore
+# pays ONLY together with the AREA PRIOR + COST GATE and the RETURN WINDOW
+# below: probed naively at 50/50 it cost beginners 10-20%; gated, it was
+# neutral with no break and 8% faster to recover after a 30-180 day break
+# (15-20% for learners who already knew things). A tuple of prefixes still
+# works to narrow it.
+EXPLORE_PREFIXES: Optional[tuple] = None
 
 # 4-option MC: a blind guess passes 1 in 4; a knower misreads ~1 in 10.
 P_GUESS = 0.25
@@ -113,9 +122,91 @@ def _sigmoid(x: float) -> float:
 SETTLE_LOGODDS = _logit(SETTLE_P)
 OUT_LOGODDS = _logit(OUT_OF_STATE)
 
+# COST GATE. A probe replaces the lesson: right, it saves the lesson's minutes;
+# wrong, the drill's minutes are spent and the lesson still comes. So a probe
+# pays only while P(known) > drill minutes / lesson minutes. Minutes are the
+# simulation's calibration (math MC ~1.5 of a ~6 min page, code ~4 of ~8), not
+# measured from the attempt log yet. PROBE_MARGIN: how far above the break-even
+# P(known) must be — see the constant's note for why it is not zero.
+PROBE_COST_RATIO_MATH = 1.5 / 6.0
+PROBE_COST_RATIO_CODE = 4.0 / 8.0
+PROBE_MARGIN = 0.0
+
+# AREA PRIOR. Before a concept has evidence of its own, how likely the learner
+# knows it is read off their PROBE answers in the same area (`torch`, `einops`,
+# `math`, ...): a probe is answered with no lesson first, so it measures what
+# they came with. Guess/slip-corrected, and shrunk toward a NEUTRAL 0.5 with
+# AREA_PRIOR_PSEUDO probes' weight — not toward their overall rate, which let
+# one python miss block probing math the learner knew (astra, 2026-09-24).
+AREA_PRIOR_PSEUDO = 2.0
+
+# RETURN WINDOW. After a break of RETURN_GAP_DAYS with no answers, concepts
+# already taught may be probed again (unaided, ranked by information) for
+# RETURN_WINDOW_DAYS: their old answers have faded (kc_evidence retention), so
+# one answer on a deep concept re-settles it and credits what it encompasses.
+# With no break this changes nothing; re-probing taught concepts ALL the time
+# was worse than only on return in the simulation.
+RETURN_GAP_DAYS = 14.0
+RETURN_WINDOW_DAYS = 7.0
+
 
 def in_area(kc: str) -> bool:
-    return kc.startswith(EXPLORE_PREFIXES)
+    return EXPLORE_PREFIXES is None or kc.startswith(EXPLORE_PREFIXES)
+
+
+def area_of(kc: str) -> str:
+    return kc.split(".", 1)[0]
+
+
+def probe_cost_ratio(kc: str) -> float:
+    return PROBE_COST_RATIO_MATH if kc.startswith("math.") else PROBE_COST_RATIO_CODE
+
+
+def area_known(kc: str, counts: Dict[str, Tuple[int, int]]) -> float:
+    """P(known) for a concept in `kc`'s area with no evidence of its own, from
+    `counts[area] = (probes, correct)`."""
+    guess, slip = likelihood(kc)
+    n, h = counts.get(area_of(kc), (0, 0))
+    neutral = guess + (1.0 - guess - slip) * 0.5
+    acc = (h + AREA_PRIOR_PSEUDO * neutral) / (n + AREA_PRIOR_PSEUDO)
+    return min(0.98, max(0.02, (acc - guess) / (1.0 - guess - slip)))
+
+
+def leave_out(counts: Dict[str, Tuple[int, int]], kc: str, own: Optional[Tuple[int, int]]):
+    """`counts` without `kc`'s own probe responses: its posterior already holds
+    them, and they must not come back a second time as its prior."""
+    if not own:
+        return counts
+    n, h = counts.get(area_of(kc), (0, 0))
+    return {**counts, area_of(kc): (max(0, n - own[0]), max(0, h - own[1]))}
+
+
+def worth_probing(kc: str, x: float, counts: Dict[str, Tuple[int, int]]) -> bool:
+    """The cost gate: the posterior `x` (log-odds) combined with the area prior
+    clears the break-even P(known), by PROBE_MARGIN. The 1e-9 keeps a neutral
+    0.5 against a 0.5 ratio from flipping on float rounding."""
+    p = _sigmoid(x + _logit(area_known(kc, counts)))
+    return p >= probe_cost_ratio(kc) + PROBE_MARGIN - 1e-9
+
+
+def return_start(answer_days: List[float], now_day: float) -> Optional[float]:
+    """When the learner came back from their latest break of RETURN_GAP_DAYS
+    or more (the first answer after it, or NOW if they have not answered since),
+    as days since the epoch; None when there was no such break. Pure."""
+    days = sorted(answer_days)
+    if not days:
+        return None
+    if now_day - days[-1] >= RETURN_GAP_DAYS:
+        return now_day
+    for i in range(len(days) - 1, 0, -1):
+        if days[i] - days[i - 1] >= RETURN_GAP_DAYS:
+            return days[i]
+    return None
+
+
+def in_return_window(answer_days: List[float], now_day: float) -> bool:
+    start = return_start(answer_days, now_day)
+    return start is not None and now_day - start < RETURN_WINDOW_DAYS
 
 
 # --- graph ----------------------------------------------------------------------
@@ -227,7 +318,7 @@ def _variance(L: Dict[str, float], value: Dict[str, float]) -> float:
 def rank(registry: Dict[str, dict], ev: List[tuple], candidates: Iterable[str],
          value: Dict[str, float], level: Optional[str] = None,
          area: Optional[Iterable[str]] = None,
-         item_weight: Optional[Dict[str, float]] = None) -> List[str]:
+         item_weight: Optional[Dict[str, float]] = None, graph=None) -> List[str]:
     """Candidates by expected value-weighted variance reduction, best first.
 
     `area` scopes the graph (default: the explore area). `item_weight[kc]` is
@@ -259,41 +350,123 @@ def scored_probes(registry, ev, candidates, value, level=None, area=None, item_w
 
 # --- learner-facing (reads kc_graph lazily: kc_graph imports this module) ----------
 
+# Whole-graph explore made every picker call rebuild the posterior over every
+# concept, ~190 times per `frontier()` (0.25 s on Seth's state). The inputs are
+# memoised per learner state, keyed like memory_model.memories: id() + a weakref
+# that drops the entry with the state, checked against the ladder fingerprint
+# (an appended answer invalidates it), the level, the explore area, and the
+# hour (retention discounts old answers as time passes; an hour moves it by
+# far less than one answer does).
+_memo: Dict[int, tuple] = {}
+_graph_memo: Optional[tuple] = None
+
+
+def _default_graph(reg: Dict[str, dict]):
+    global _graph_memo
+    key = (id(reg), EXPLORE_PREFIXES)
+    if _graph_memo is None or _graph_memo[0] is not reg or _graph_memo[1] != key:
+        _graph_memo = (reg, key, _area_graph(reg))
+    return _graph_memo[2]
+
+
+class _Inputs:
+    __slots__ = ("reg", "ev", "level", "graph", "L", "counts", "own", "answer_days", "last_day", "now_day")
+
+
+def _inputs(user_state) -> _Inputs:
+    from app import kc_evidence, kc_graph, memory_model
+    reg = kc_graph._registry()
+    level = getattr(user_state, "self_reported_level", None)
+    now_day = time.time() / 86400.0
+    fp = (memory_model._fingerprint(user_state), level, EXPLORE_PREFIXES, id(reg), int(now_day * 24))
+    key = id(user_state)
+    hit = _memo.get(key)
+    if hit is not None and hit[0]() is user_state and hit[1] == fp:
+        return hit[2]
+    attempts = {k: (kc_graph.ladder_view(user_state, k).get("attempts") or []) for k in reg}
+    graph = _default_graph(reg)
+    I = _Inputs()
+    I.reg, I.level, I.graph, I.now_day = reg, level, graph, now_day
+    # Retention (kc_evidence.weigher) discounts an answer from long ago, so a
+    # concept settled a month back reopens as a probe.
+    I.ev = evidence({k: a for k, a in attempts.items() if in_area(k)}, kc_evidence.weigher(user_state))
+    I.L = logodds(reg, I.ev, level, graph)
+    # Probe responses per area, each counted ONCE: a question tagged with two
+    # concepts wrote a row under each (codex, 2026-09-24). `own[kc]` = the
+    # responses on `kc` itself, left out of its own prior (explorable).
+    responses: Dict[tuple, bool] = {}
+    own_keys: Dict[str, set] = {}
+    days: List[float] = []
+    last_day: Dict[str, float] = {}
+    for k, rows in attempts.items():
+        for a in rows:
+            t = kc_evidence._days(a.get("ts"))
+            if t is not None:
+                days.append(t)
+                last_day[k] = max(t, last_day.get(k, t))
+            if a.get("probe") and not example_schedule.aided(a):
+                rkey = (area_of(k), a.get("question_id"), a.get("ts"))
+                responses[rkey] = bool(a.get("correct"))
+                own_keys.setdefault(k, set()).add(rkey)
+    counts: Dict[str, Tuple[int, int]] = {}
+    for (ar, _q, _t), ok in responses.items():
+        n, h = counts.get(ar, (0, 0))
+        counts[ar] = (n + 1, h + ok)
+    I.own = {k: (len(keys), sum(responses[x] for x in keys)) for k, keys in own_keys.items()}
+    # The ladder keeps only each concept's last _LADDER_WINDOW answers, so on
+    # its own it can FABRICATE a break (one concept's old answers trimmed
+    # away between another's); the attempt log is the untrimmed record.
+    for k, t, *_rest in memory_model._log_answers(user_state):
+        days.append(t)
+        last_day[k] = max(t, last_day.get(k, t))
+    # Sorted once here: return_start() re-sorts, and Timsort on a sorted list is linear.
+    I.counts, I.answer_days, I.last_day = counts, sorted(days), last_day
+    try:
+        ref = weakref.ref(user_state, lambda _r, k=key: _memo.pop(k, None))
+    except TypeError:  # not weak-referenceable (a plain object in a test)
+        return I
+    _memo[key] = (ref, fp, I)
+    return I
+
 
 def _state_inputs(user_state):
-    from app import kc_evidence, kc_graph
-    reg = kc_graph._registry()
-    attempts = {k: (kc_graph.ladder_view(user_state, k).get("attempts") or [])
-                for k in reg if in_area(k)}
-    # Math items all weigh 1 by similarity; retention still discounts an answer
-    # from long ago, so a concept settled a month back reopens as a probe.
-    return reg, evidence(attempts, kc_evidence.weigher(user_state)), getattr(user_state, "self_reported_level", None)
+    I = _inputs(user_state)
+    return I.reg, I.ev, I.level
 
 
 def beliefs(user_state) -> Dict[str, float]:
     """P(known) per explore-area KC."""
-    reg, ev, level = _state_inputs(user_state)
-    return {k: _sigmoid(x) for k, x in logodds(reg, ev, level).items()}
+    return {k: _sigmoid(x) for k, x in _inputs(user_state).L.items()}
+
+
+def _modelled(kc: str) -> bool:
+    """In the explore area AND in the graph — a concept the registry does not
+    know has no belief, so nothing is built for it."""
+    from app import kc_graph
+    return in_area(kc) and kc in kc_graph._registry()
 
 
 def settled(user_state, kc: str) -> bool:
-    if not in_area(kc):
+    if not _modelled(kc):
         return False
-    reg, ev, level = _state_inputs(user_state)
-    return logodds(reg, ev, level).get(kc, -math.inf) >= SETTLE_LOGODDS
+    return _inputs(user_state).L.get(kc, -math.inf) >= SETTLE_LOGODDS
 
 
 def explorable(user_state, kc: str) -> bool:
-    """May be probed even though its prerequisites are not learned yet."""
-    if not in_area(kc):
+    """May be probed even though its prerequisites are not learned yet: open
+    (not settled, not refuted), no refuted-and-unlearned prerequisite, and
+    worth a probe's minutes (the cost gate, `worth_probing`)."""
+    if not _modelled(kc):
         return False
     from app import kc_graph
-    reg, ev, level = _state_inputs(user_state)
-    L = logodds(reg, ev, level)
+    I = _inputs(user_state)
+    L = I.L
     x = L.get(kc)
     if x is None or x >= SETTLE_LOGODDS or x <= OUT_LOGODDS:
         return False
-    for p in reg[kc]["prereqs"]:
+    if not worth_probing(kc, x, leave_out(I.counts, kc, I.own.get(kc))):
+        return False
+    for p in I.reg[kc]["prereqs"]:
         if p in L:
             if L[p] <= OUT_LOGODDS and not kc_graph.kc_is_learned(user_state, p):
                 return False
@@ -302,38 +475,107 @@ def explorable(user_state, kc: str) -> bool:
     return True
 
 
+def taught(user_state, kc: str) -> bool:
+    """Shown the lesson by the ladder (`worked_seen`) or read it on their own
+    (graph node, `?lesson=`)."""
+    from app import kc_graph, lessons, practice_targets
+    if int(kc_graph.ladder_view(user_state, kc).get("worked_seen") or 0):
+        return True
+    return bool(lessons.kc_lesson_read(kc, practice_targets.effective_exposure(user_state)))
+
+
+def returning(user_state) -> bool:
+    """Inside the RETURN WINDOW: back from a break of RETURN_GAP_DAYS or more,
+    for RETURN_WINDOW_DAYS."""
+    I = _inputs(user_state)
+    return in_return_window(I.answer_days, time.time() / 86400.0)
+
+
+def stale(user_state, kc: str) -> bool:
+    """In the return window AND last answered before the break: its evidence is
+    what the break faded. A concept answered since coming back (or first met
+    after it) is not stale — so each concept is re-probed once per return, and
+    one taught after the return keeps its lesson (codex, 2026-09-24)."""
+    I = _inputs(user_state)
+    now = time.time() / 86400.0
+    start = return_start(I.answer_days, now)
+    if start is None or now - start >= RETURN_WINDOW_DAYS:
+        return False
+    last = I.last_day.get(kc)
+    return last is not None and last < start
+
+
 def probing(user_state, kc: str) -> bool:
     """Serve as a diagnostic probe: no lesson first, no example on screen.
-    Only while the learner has not been taught it — neither shown the lesson
-    by the ladder (`worked_seen`) nor read it on their own (graph node,
-    `?lesson=`) — or the answer measures the page, not what they came with."""
-    from app import kc_graph, lessons, practice_targets
+    Only while the learner has not been taught it — or the answer measures the
+    page, not what they came with — except in the RETURN WINDOW, where a taught
+    concept whose old answers have faded is probed again (unaided, never below
+    its rung: kc_graph.kc_stage) — once per return, see `stale`."""
     if not explorable(user_state, kc):
         return False
-    if int(kc_graph.ladder_view(user_state, kc).get("worked_seen") or 0):
-        return False
-    return not lessons.kc_lesson_read(kc, practice_targets.effective_exposure(user_state))
+    return not taught(user_state, kc) or stale(user_state, kc)
+
+
+def _prelimit(I: _Inputs, kcs: List[str], value: Dict[str, float], n: int = 10) -> List[str]:
+    """The `n` candidates with the most value-weighted variance: scoring each
+    costs two posterior rebuilds. An approximation — a low-variance concept
+    whose answer would move many correlated neighbours can be cut here — kept
+    because the simulation that chose this design used the same cut."""
+    def var(k):
+        p = _sigmoid(I.L[k])
+        return value.get(k, 1.0) * p * (1.0 - p)
+    return sorted(kcs, key=lambda k: (-var(k), k))[:n]
+
+
+def _value(user_state, reg) -> Dict[str, float]:
+    """What knowing each concept is worth: the frontier's own ordering value,
+    (descendants + 1) × the learner's weight for it (Graph Settings), so an
+    up-weighted concept is worth more to resolve."""
+    from app import kc_graph, kc_prefs
+    descendants, _depth = kc_graph._closure()
+    return {k: (descendants.get(k, 0) + 1) * kc_prefs.weight_for(user_state, k) for k in reg if in_area(k)}
 
 
 def reorder(user_state, ordered: List[str]) -> List[str]:
     """`ordered` with the explore-area concepts re-sorted in the slots they
     already hold: open probes first, by expected information (explore), then
-    everything else in its original greedy order (exploit). Slots are kept so
-    the model changes WHICH math concept comes next, never how math
-    interleaves with the rest."""
+    everything else in its original greedy order (exploit). With a narrowed
+    EXPLORE_PREFIXES the other areas keep their slots. Whole-graph (the
+    default since 2026-09-24) every slot is in the area, so an open probe of
+    ANY area goes ahead of greedy work — as in the simulation, where a probe
+    pre-empted whatever the greedy pick was. The ARENA share is applied after
+    this (remediation.targets → arena_mix.order), so it still holds."""
     slots = [i for i, k in enumerate(ordered) if in_area(k)]
     if len(slots) < 2:
         return ordered
-    from app import kc_graph
-    reg, ev, level = _state_inputs(user_state)
-    descendants, _depth = kc_graph._closure()
+    I = _inputs(user_state)
     area = [ordered[i] for i in slots]
     probes = [k for k in area if probing(user_state, k)]
     if not probes:
         return ordered
-    value = {k: descendants.get(k, 0) + 1 for k in reg if in_area(k)}
-    best = rank(reg, ev, probes, value, level) + [k for k in area if k not in probes]
+    value = _value(user_state, I.reg)
+    top = _prelimit(I, probes, value)
+    best = rank(I.reg, I.ev, top, value, I.level, graph=I.graph)
+    best += [k for k in probes if k not in best] + [k for k in area if k not in probes]
     out = list(ordered)
     for i, kc in zip(slots, best):
         out[i] = kc
     return out
+
+
+def return_probes(user_state) -> List[str]:
+    """In the RETURN WINDOW: taught concepts worth re-probing, best first (by
+    expected information); [] outside it. remediation.targets serves them ahead
+    of the due reviews — one answer on a deep concept re-settles what it
+    encompasses, which is cheaper than reviewing each of them."""
+    if not returning(user_state):
+        return []
+    from app import kc_graph, kc_prefs
+    I = _inputs(user_state)
+    cands = [k for k in I.L
+             if stale(user_state, k) and not kc_prefs.is_disabled(user_state, k)
+             and kc_graph.questions_for_kc(k) and taught(user_state, k) and explorable(user_state, k)]
+    if not cands:
+        return []
+    value = _value(user_state, I.reg)
+    return rank(I.reg, I.ev, _prelimit(I, cands, value), value, I.level, graph=I.graph)
