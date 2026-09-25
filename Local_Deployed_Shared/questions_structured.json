@@ -81246,7 +81246,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?",
+      "question_text": "A point starts at O = (1, 1, 1) and moves along D = (2, −1, 0). Where is O + sD at s = 0.5?",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -81285,7 +81285,7 @@
         }
       ],
       "correct_choice": "B",
-      "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the origin.\n- D: $D + 0.5O$ swaps the roles of origin and direction.",
+      "solution_md": "$O + 0.5D = (1, 1, 1) + (1, -0.5, 0) = (2, 0.5, 1)$.\n\n- A: $O + 2D$ uses $s = 2$.\n- C: $0.5(O + D)$ also halves the starting point.\n- D: $D + 0.5O$ swaps the roles of the starting point and the direction.",
       "verify": {
         "sympy": {
           "truth": "Matrix([1,1,1])+Rational(1,2)*Matrix([2,-1,0])"
@@ -81494,7 +81494,7 @@
       "difficulty_label": "medium"
     },
     "exercise": {
-      "question_text": "Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.",
+      "question_text": "Two directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0) start from the same point O = (2, 1, 0). Compare the points O + 3D₁ and O + D₂.",
       "task_type": "mc",
       "language": "math",
       "primary_library": "math",
@@ -81533,7 +81533,7 @@
         }
       ],
       "correct_choice": "C",
-      "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the ray covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one origin give one line.\n- D: the shared origin cancels whatever it is.",
+      "solution_md": "$D_2 = 3D_1$, so $O + 3D_1 = O + D_2 = (5, 7, 0)$. A direction's length changes which parameter reaches a point, not which points the line through O covers.\n\n- A: they are on the same line and are also the same point.\n- B: parallel directions from one point give one line.\n- D: the shared starting point cancels whatever it is.",
       "verify": null,
       "hint": null
     }

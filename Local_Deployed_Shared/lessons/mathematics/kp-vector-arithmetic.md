@@ -37,7 +37,7 @@ The midpoint is $A$ plus half that displacement:
 $$A+\tfrac12(B-A)=\begin{pmatrix}2\\-1\\3\end{pmatrix}+\begin{pmatrix}1.5\\2\\-1\end{pmatrix}=\begin{pmatrix}3.5\\1\\2\end{pmatrix}.$$
 Reversing the subtraction gives $A-B=(-3,-4,2)$, the displacement back.
 
-**In code.** The same two steps on tensors. Arithmetic on a tensor acts on every component at once, so no loop is needed. Predict the printed values before running it.
+**In code.** The same two steps. Each operation acts on every component at once, so no loop is needed. Predict the printed values before running it.
 
 ```python
 import torch as t
@@ -88,7 +88,7 @@ u = (1, 2, −1), v = (3, 0, 2). Solve 2x + u = v for the vector x.
 A = (0, 3, −3), B = (6, 0, 3). Which point is one third of the way from A to B?
 
 ### q50067
-A ray has origin O = (1, 1, 1) and direction D = (2, −1, 0). Which point does it reach at s = 0.5?
+A point starts at O = (1, 1, 1) and moves along D = (2, −1, 0). Where is O + sD at s = 0.5?
 
 ## Integrated practice
 
@@ -105,4 +105,4 @@ A segment is stored as [[1, 2, 0], [5, −2, 4]]: row 0 is A, row 1 is B. Which 
 ABCD is a parallelogram with its vertices in that order. A = (1, 0, 2), B = (4, 1, 2), D = (0, 3, 1). Find C.
 
 ### q50071
-Two rays share origin O = (2, 1, 0), with directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0). Compare the points O + 3D₁ and O + D₂.
+Two directions D₁ = (1, 2, 0) and D₂ = (3, 6, 0) start from the same point O = (2, 1, 0). Compare the points O + 3D₁ and O + D₂.
