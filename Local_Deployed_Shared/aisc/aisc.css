@@ -24,6 +24,7 @@
   --olive: #a8ad86; --green: #5fc48a; --green-soft: #1f4a33; --amber: #e2a92e; --red: #e06a5c;
   --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 32px -18px rgba(0,0,0,.85);
   --field-node: 150, 165, 200; --field-edge: 157, 143, 255;
+  --wire: #3a4357;
   --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
   --display: "Instrument Serif", "Newsreader", Georgia, serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -36,6 +37,7 @@ html[data-theme="light"] #page-learn-about-app {
   --olive: #6f7a55; --green: #2f8a57; --green-soft: #b4dcc4; --amber: #e2a92e; --red: #c9453f;
   --shadow: 0 1px 0 rgba(22, 26, 35, .05), 0 12px 32px -18px rgba(22, 26, 35, .32);
   --field-node: 97, 108, 140; --field-edge: 109, 93, 252;
+  --wire: #bcc4d3;
   color-scheme: light;
 }
 /* The page wears the site's paper edge to edge, and so does whatever of the
@@ -46,10 +48,10 @@ html[data-theme="light"] body:has(#page-learn-about-app:not(.hidden)) { backgrou
 
 /* LAYOUT (Seth, 2026-09-25: "everything needs to go back to the card style
    … remove the gradient thing"). The standalone site's layout: an 1180px
-   measure, every block of running text on an opaque card (the solid tiles at
-   the end of the #aisc-root block), and the node field (js/field.js) running
-   behind the whole page, unmasked, showing in the gaps between cards and in
-   the gutters. The one thing kept from the 2026-09-24 column layout is the
+   measure, every block of running text on a card (the solid tiles at the end
+   of the #aisc-root block, made see-through wireframes by the rules after
+   them), and the node field (js/field.js) running behind the whole page,
+   unmasked, kept out of the cards by the field itself. The one thing kept from the 2026-09-24 column layout is the
    contents in the app's topbar (#aisc-toc) instead of an in-page rail. */
 /* js/field.js keeps its extra "gutter" nodes outside this band: the
    1180px measure the cards use. */
@@ -355,6 +357,30 @@ body:has(#page-learn-about-app:not(.hidden)) #aisc-toc { display: flex; }
   .qs li { display: block; position: relative; padding-left: 48px; }
   .qs li::before { position: absolute; left: 14px; top: 12px; }
   .aisc-footer { width: calc(100% - 48px); max-width: 1132px; background: var(--card); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow); padding: 24px 30px; margin-bottom: 60px; }
+
+  /* ---- wireframe cards (Seth, 2026-09-25) ----
+     "No cards … visible, but … an invisible card there": every card keeps its
+     box but loses its fill and shadow, leaving only a thin outline. What keeps
+     the text readable is js/field.js, which pushes the field's nodes out of
+     every card box (the same list as its CARDS selector) and clips its
+     drawing to the space between them. Kept last so it beats the rules above. */
+  .tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap, .note, .stat, .modes .hand,
+  .modes .lane, figure.fig, .card, .qs li, .aisc-footer {
+    background: transparent; box-shadow: none; border-color: var(--wire);
+  }
+  .note { border-left-color: var(--amber); }
+  .modes .lane.ada { border-color: var(--coral); }
+  .ladder li, .modes li, .modes .lin li.stuck { background: transparent; }
+  .modes .lin li.stuck { background: color-mix(in srgb, var(--coral) 10%, transparent); }
+  /* the strip drew its dividers as 1px of background between filled cells */
+  .status { background: transparent; border-color: var(--wire); gap: 0; }
+  .status > div { background: transparent; }
+  .status > div + div { border-left: 1px solid var(--wire); }
+  @media (max-width: 900px) { .status > div + div { border-left: 0; border-top: 1px solid var(--wire); } }
+  .tile .note { border-color: transparent; border-left-color: var(--amber); }
+  /* full screen covers the page, so that card stays opaque */
+  figure.fig.is-max { background: var(--paper); }
+  .fig-expand { background: transparent; }
 }
 
 /* Fig. 2's Maximize fixes .wta-graph over the whole app (z-index 300 in

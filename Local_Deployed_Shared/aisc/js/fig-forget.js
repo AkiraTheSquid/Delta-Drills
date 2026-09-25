@@ -121,7 +121,7 @@
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     svg.setAttribute("viewBox", "0 0 " + P.W + " " + P.H);
     svg.setAttribute("width", P.W); svg.setAttribute("height", P.H);
-    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), panel: AISC.css("--paper-2"),
+    var c = { ink: AISC.css("--ink"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), halo: AISC.css("--paper"),
       red: AISC.css("--red"), amber: AISC.css("--amber"), curve: AISC.css("--green") };
     var mono = "IBM Plex Mono, monospace";
     function label(x, y, text, o) {
@@ -131,8 +131,8 @@
     }
     var sim = simulate();
 
-    // frame: panel (page paper, so the plot reads as part of the page), the below-threshold zone, threshold, axes
-    el("rect", { x: P.L, y: P.T, width: P.R - P.L, height: P.B - P.T, fill: c.panel });
+    // frame: the below-threshold zone, threshold, axes. No panel fill: the
+    // card is a see-through wireframe (2026-09-25), so the plot is too.
     el("rect", { x: P.L, y: Y(S.target), width: P.R - P.L, height: P.B - Y(S.target), fill: c.red, "fill-opacity": 0.07 });
     el("line", { x1: P.L, x2: P.R, y1: Y(S.target), y2: Y(S.target), stroke: c.red, "stroke-width": 1, "stroke-dasharray": "5 4" });
     el("path", { d: "M" + P.L + " " + P.T + "V" + P.B + "H" + P.R, stroke: c.ink, "stroke-width": 1.2, fill: "none" });
@@ -168,7 +168,7 @@
     // Threshold label: under the line, where bars never reach, and drawn over
     // the curve with a panel-coloured halo so a decay through it stays legible.
     label(P.R - 4, Y(S.target) + 15, "review threshold " + Math.round(S.target * 100) + "%", { fill: c.red, anchor: "end" })
-      .setAttribute("style", "paint-order:stroke;stroke:" + c.panel + ";stroke-width:4px;stroke-linejoin:round");
+      .setAttribute("style", "paint-order:stroke;stroke:" + c.halo + ";stroke-width:4px;stroke-linejoin:round");
 
     // handle track + the unused lane
     el("line", { x1: P.L, x2: P.R, y1: P.track, y2: P.track, stroke: c.rule, "stroke-width": 5, "stroke-linecap": "round" });

@@ -76,7 +76,7 @@
     var W = svg.parentNode.getBoundingClientRect().width || 800, narrow = W < 560;
     var H = narrow ? 380 : 460, L = narrow ? 40 : 58, R = narrow ? 10 : 18, T = 18, B = 40;
     svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("width", W); svg.setAttribute("height", H);
-    var c = { ink2: AISC.css("--ink-2"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), card: AISC.css("--card"),
+    var c = { ink2: AISC.css("--ink-2"), mut: AISC.css("--ink-3"), rule: AISC.css("--rule"), paper: AISC.css("--paper"),
       coral: AISC.css("--coral"), slate: AISC.css("--slate"), olive: AISC.css("--olive"), green: AISC.css("--green") };
     var serif = "Instrument Serif", mono = "IBM Plex Mono", fs = narrow ? 12.5 : 17, fm = narrow ? 9.5 : 11.5;
     var X = function (t) { return L + (t - X0) / (X1 - X0) * (W - L - R); };
@@ -160,7 +160,7 @@
     // deploy marker (draggable anywhere on the plot)
     var xd = X(deploy), right = xd > W * 0.62;
     el("line", { x1: xd, x2: xd, y1: top + 4, y2: bot, stroke: c.green, "stroke-width": 1.2, "stroke-dasharray": "3 4" });
-    el("circle", { cx: xd, cy: bot, r: 7, fill: c.green, stroke: c.card, "stroke-width": 2 });
+    el("circle", { cx: xd, cy: bot, r: 7, fill: c.green, stroke: c.paper, "stroke-width": 2 });
     el("text", { x: xd + (right ? -10 : 10), y: bot - 12, "text-anchor": right ? "end" : "start", "font-family": mono, "font-size": 10.5, "font-weight": 600, fill: c.green },
       narrow ? fmtDate(deploy) : (right ? "" : "◂ ") + "Delta Drills everywhere · " + fmtDate(deploy) + (right ? " ▸" : ""));
     var hit = el("rect", { x: L, y: top, width: W - L - R, height: bot - top + 20, fill: "transparent", style: "cursor:ew-resize;touch-action:none" });

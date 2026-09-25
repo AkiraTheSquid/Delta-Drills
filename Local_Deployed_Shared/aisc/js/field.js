@@ -10,11 +10,16 @@
    - The canvas is fixed under the topbar and lives on #page-learn-about-app,
      outside #about-page-content, so the About editor never saves it.
    - Since 2026-09-25 (Seth: back to the card style, "remove the gradient
-     thing") the canvas is drawn unmasked across the whole page, as on the
-     standalone site: the write-up's opaque cards hide it under the text and
-     it shows between them and in the gutters. The extra gutter nodes read
-     `--aisc-clear` (aisc.css: the cards' 1180px measure) for where the side
-     bands start.
+     thing") the canvas is drawn unmasked across the whole page. The extra
+     gutter nodes read `--aisc-clear` (aisc.css: the cards' 1180px measure)
+     for where the side bands start.
+   - The cards are see-through wireframes (Seth, 2026-09-25: "an invisible
+     card there … the nodes get pushed out of the way so that it's easier to
+     read"), so the field keeps out of them itself: every frame it reads the
+     boxes of the cards on screen (CARDS, the same list aisc.css outlines),
+     pushes any node inside one out through its nearest side, and erases its
+     drawing inside them, so links never cross the text either. While a
+     figure is full screen there is nothing to keep clear.
    - It runs only while #aisc-root is on screen. The app keeps every page in
      the DOM, and a `display: none` page never intersects, so the animation
      stops the moment the learner leaves this page.
@@ -47,10 +52,18 @@
   var VMAX = 0.7;
   var SIDE_AREA = 4500;  // px^2 per extra node in each side gutter
   var HOME = 0.0006;     // soft pull that keeps a gutter node in its gutter
+  var CARDS = ".tile, .hero > div:first-child, .chain, .timeline, .runway, .table-wrap," +
+    " .note, .stat, .modes .hand, .modes .lane, figure.fig, .status, .card, .qs li, .aisc-footer";
+  var PAD = 12;          // px of clear space kept round every card
+  var EJECT = 0.14;      // share of its depth a node inside a card moves out per frame
+  var FALL = 48;         // px outside a card over which it still pushes, fading out
+  var SHOVE = 0.03;      // that push at the card's edge
 
   var W = 0, H = 0, top = 0, dpr = 1, nodes = [], mouse = null, col = {};
   var band = 0;          // width of each side gutter the extra nodes live in
   var onScreen = false;
+  var cards = [], boxes = []; // card elements; their padded boxes on screen, canvas px
+  var laid = [], stale = true, age = 0; // the cards' boxes in page px, re-read on a layout change
 
   function tokens() {
     var cs = getComputedStyle(host);
@@ -87,6 +100,59 @@
     band = Math.max(80, Math.min(W / 3, (W - clear) / 2 + 60));
   }
 
+  // The cards' boxes are measured in page coordinates only when the layout
+  // may have moved (resize, the write-up changing size, a reveal settling,
+  // and once a second besides); scrolling just shifts them.
+  function layout() {
+    laid = [];
+    var y = window.scrollY;
+    for (var i = 0; i < cards.length; i++) {
+      var r = cards[i].getBoundingClientRect();
+      if (r.width) laid.push({ l: r.left, r: r.right, t: r.top + y, b: r.bottom + y });
+    }
+    stale = false; age = 0;
+  }
+  function restale() { stale = true; }
+
+  // the cards on screen now, in canvas coordinates, grown by PAD
+  function readBoxes() {
+    boxes = [];
+    var b = document.body.classList;
+    if (b.contains("aisc-fig-max-open") || b.contains("wta-max-open")) return;
+    if (stale || ++age > 60) layout();
+    var off = window.scrollY + top;
+    for (var i = 0; i < laid.length; i++) {
+      var c = laid[i];
+      if (c.b - off < -PAD || c.t - off > H + PAD) continue;
+      boxes.push({ l: c.l - PAD, r: c.r + PAD, t: c.t - off - PAD, b: c.b - off + PAD });
+    }
+  }
+
+  // a node inside a card leaves through the nearest side, fast when deep in
+  // (a card scrolled over it) and never slower than a drift; one just outside
+  // is shoved gently away, so the nodes don't stack up into a wall on the edge
+  function eject(a, dt) {
+    for (var k = 0; k < boxes.length; k++) {
+      var c = boxes[k];
+      if (a.x <= c.l || a.x >= c.r || a.y <= c.t || a.y >= c.b) {
+        var ox = a.x < c.l ? a.x - c.l : a.x > c.r ? a.x - c.r : 0;
+        var oy = a.y < c.t ? a.y - c.t : a.y > c.b ? a.y - c.b : 0;
+        var od = Math.sqrt(ox * ox + oy * oy);
+        if (od > 0 && od < FALL) {
+          var sh = (1 - od / FALL) * SHOVE * dt / od;
+          a.vx += ox * sh; a.vy += oy * sh;
+        }
+        continue;
+      }
+      var dl = a.x - c.l, dr = c.r - a.x, du = a.y - c.t, dd = c.b - a.y;
+      var m = Math.min(dl, dr, du, dd), mv = Math.min(m, (1 + m * EJECT) * dt);
+      if (m === dl) { a.x -= mv; a.vx = -Math.abs(a.vx); }
+      else if (m === dr) { a.x += mv; a.vx = Math.abs(a.vx); }
+      else if (m === du) { a.y -= mv; a.vy = -Math.abs(a.vy); }
+      else { a.y += mv; a.vy = Math.abs(a.vy); }
+    }
+  }
+
   function resize() {
     var oldW = W, oldH = H;
     var box = canvas.getBoundingClientRect();
@@ -96,6 +162,8 @@
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     measureBand();
+    cards = host.querySelectorAll(CARDS);
+    stale = true;
     if (oldW && oldH) nodes.forEach(function (a) { a.x *= W / oldW; a.y *= H / oldH; });
     fill();
   }
@@ -136,6 +204,7 @@
       if (v > VMAX) { a.vx *= VMAX / v; a.vy *= VMAX / v; }
       else if (v < 0.08) { a.vx += (Math.random() - 0.5) * 0.05; a.vy += (Math.random() - 0.5) * 0.05; }
       a.x += a.vx * dt; a.y += a.vy * dt;
+      eject(a, dt);
       if (a.x < -20) { a.x = -20; a.vx = Math.abs(a.vx); } else if (a.x > W + 20) { a.x = W + 20; a.vx = -Math.abs(a.vx); }
       if (a.y < -20) { a.y = -20; a.vy = Math.abs(a.vy); } else if (a.y > H + 20) { a.y = H + 20; a.vy = -Math.abs(a.vy); }
     }
@@ -176,6 +245,17 @@
       ctx.fillStyle = "rgba(" + col.node + "," + (col.dark ? 0.55 : 0.5) + ")";
       ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
     }
+    // nothing of the field inside a card: not a node on its way out, not a
+    // link across it, not the cursor's links while it reads
+    if (boxes.length) {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "#000";
+      for (i = 0; i < boxes.length; i++) {
+        a = boxes[i];
+        ctx.fillRect(a.l + PAD / 2, a.t + PAD / 2, a.r - a.l - PAD, a.b - a.t - PAD);
+      }
+      ctx.globalCompositeOperation = "source-over";
+    }
   }
 
   // Animates only while the page is on screen and the tab is visible.
@@ -185,7 +265,7 @@
   function frame(t) {
     var dt = last ? Math.min((t - last) / 16.67, 3) : 1;
     last = t;
-    step(dt); draw();
+    readBoxes(); step(dt); draw();
     raf = requestAnimationFrame(frame);
   }
   function stop() { cancelAnimationFrame(raf); raf = 0; }
@@ -194,10 +274,22 @@
     if (!onScreen || document.hidden) { stop(); return; }
     resize();
     if (!W) { stop(); return; } // canvas hidden (narrow screen): nothing to draw
-    if (reduced) { stop(); mouse = null; draw(); }
+    if (reduced) { stop(); mouse = null; still(); }
     else if (!raf) { last = 0; raf = requestAnimationFrame(frame); }
   }
+  // the still frame: nodes already out of the cards as they sit now
+  function still() {
+    readBoxes();
+    for (var i = 0; i < nodes.length; i++) for (var n = 0; n < 40; n++) eject(nodes[i], 3);
+    draw();
+  }
   function lose() { mouse = null; if (reduced) draw(); }
+  // the cards move under a still frame as the page scrolls
+  var stillRaf = 0;
+  window.addEventListener("scroll", function () {
+    if (!reduced || !onScreen || !W || stillRaf) return;
+    stillRaf = requestAnimationFrame(function () { stillRaf = 0; still(); });
+  }, { passive: true });
 
   window.addEventListener("pointermove", function (e) {
     if (!raf || e.pointerType === "touch") return;
@@ -208,7 +300,10 @@
   window.addEventListener("resize", function () { if (onScreen) sync(); });
   document.addEventListener("visibilitychange", sync);
   if (motionQ.addEventListener) motionQ.addEventListener("change", sync);
-  if (window.AISC && AISC.onTheme) AISC.onTheme(function () { tokens(); if (reduced) draw(); });
+  if (window.AISC && AISC.onTheme) AISC.onTheme(function () { tokens(); if (reduced) still(); });
+
+  if (window.ResizeObserver) new ResizeObserver(restale).observe(host);
+  host.addEventListener("transitionend", restale);
 
   new IntersectionObserver(function (ents) {
     onScreen = ents.some(function (e) { return e.isIntersecting; });

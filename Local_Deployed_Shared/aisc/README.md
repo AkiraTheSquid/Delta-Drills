@@ -25,6 +25,8 @@
   page background and the field share it): its dark paper for the app's blue and
   dark themes, its light paper for `html[data-theme="light"]`. Also the field
   canvas rule (`--aisc-clear` = the 1180px card measure) and `#aisc-toc`.
+- `watch.py`: scoped-rule check, plus the wireframe card list in `aisc.css`
+  must match `js/field.js` `CARDS`.
 - `boot.js`: waits for `DDAboutContentReady`, then loads `js/*` in order
   the first time `#aisc-root` is on screen.
 - `js/`, `data/`: see those folders.
@@ -65,6 +67,12 @@
   `.fig-side` column on the right (stacked under the graphic below 900px). No
   fade/mask on the field. The 2026-09-24 one-column XLab layout is retired;
   only its topbar contents (`#aisc-toc`) stayed.
+- The cards are see-through wireframes (Seth, 2026-09-25: "an invisible card
+  there"): no fill or shadow, a thin `--wire` outline. Readability comes from
+  `js/field.js`, which pushes its nodes out of every card and erases its
+  drawing inside them. A new kind of card goes in BOTH the wireframe rule
+  (end of the `#aisc-root` block) and `field.js` `CARDS`; `watch.py` checks.
+  Only a full-screen figure stays opaque (it covers the page).
 - Every figure has a "Full screen" button under its graphic, added by
   `js/fig-expand.js`: `figure.fig.is-max` fixes the card over the viewport,
   Escape or the button closes it, Tab wraps inside it. Fig. 2's button presses
@@ -116,3 +124,6 @@
   opaque tiles at the 1180px measure, hero ornament back, field unmasked (the
   gutter fade is gone). Palette, topbar contents, figure cards and full screen
   kept.
+- 2026-09-25: Cards made see-through wireframes; the node field now keeps
+  out of them itself (pushes nodes out, erases links inside). `watch.py`
+  checks the CSS and JS card lists match.
