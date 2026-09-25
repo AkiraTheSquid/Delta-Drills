@@ -83,6 +83,9 @@
     "cnn.resnet34": 900,
     "cnn.feature-extraction": 900,
     "cnn.training-loop": 900,
-    "cnn.forward-hooks": 900
+    "cnn.forward-hooks": 900,
+    "deltadrills.mastery": 180,
+    "deltadrills.spaced-repetition": 180,
+    "deltadrills.why-drills": 180
   }
 }

@@ -83981,5 +83981,353 @@
       "verify": null,
       "hint": null
     }
+  },
+  {
+    "id": 50112,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-mastery.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "A concept's mastery estimate is 0.99 after a long streak of correct answers. You answer the next question wrong. What is the most likely effect?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.mastery",
+      "choices": [
+        {
+          "key": "A",
+          "text": "It drops back near 0.5, as if you were starting over",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "It stays exactly flat — a single answer never moves the estimate",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "It dips a little, staying above the 0.85 learned threshold",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "It is immediately marked unlearned",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "At 0.99 the model is nearly sure you know the concept, and it expects someone who knows it to slip about one time in ten, so one miss is weak evidence: the estimate falls to about 0.93, still above 0.85. From 0.9 the same miss would land near 0.53 — the size of the move depends on where the estimate sits.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50113,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-mastery.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Two concepts both sit at mastery 0.6. One has ten prior answers behind that number; the other has one. You get the next question wrong on both. Which estimate drops further?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "C",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.mastery",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The one with only one prior answer — with little history the estimate is more sensitive",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "The one with ten prior answers — more history means more room for it to fall",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "They drop by the same amount — the update uses only the current estimate and this answer",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Neither drops — the estimate only moves on correct answers",
+          "value": null
+        }
+      ],
+      "correct_choice": "C",
+      "solution_md": "The update reads two things: the current estimate and whether this answer was right. Ten answers or one, both histories are already folded into the 0.6, so the same miss takes both to the same place (about 0.16).",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50114,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-spaced-repetition.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "Two concepts were both marked learned a month ago. One has been reviewed three times since, spaced out; the other has not been touched since the day it was learned. Which one's mastery estimate has likely decayed further by today?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.spaced-repetition",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The one reviewed three times, because more reviews means more practice fatigue",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "The one never reviewed again — a full month with nothing renewing it lets it fade the most",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Both decay by exactly the same amount, since decay depends only on how long ago it was learned",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Neither has decayed — once a concept crosses the learned threshold it stays there",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "Memory strength decays over time without practice, and each spaced review resets and extends that decay. The concept with three reviews has had its forgetting curve reset three times since; the untouched one has had a full month to fade unopposed.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50115,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-spaced-repetition.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "A concept was learned yesterday. Why does the app schedule its first review for a few days out, instead of either drilling it again immediately or waiting a month?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "A",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.spaced-repetition",
+      "choices": [
+        {
+          "key": "A",
+          "text": "Immediately would be too easy to test anything, and a month would be so late the concept had already faded past the threshold and had to be relearned — the app aims for the point where recall takes real effort but still succeeds",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "It reviews on a fixed weekly schedule for every concept, regardless of when it was learned",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "It waits until the learner explicitly asks for a review",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "It only reviews concepts the learner got wrong, never ones just learned",
+          "value": null
+        }
+      ],
+      "correct_choice": "A",
+      "solution_md": "Spaced repetition aims each review at the point on the forgetting curve where recall is difficult but still likely to succeed — too soon wastes the review on something you still remember easily; too late lets the concept lapse and forces a relearn instead of a reinforcement.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50116,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-why-drills.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "A learner re-reads a worked example five times instead of trying to answer similar questions from memory. Compared to a learner who attempts and checks five times in the same span, what does the testing effect predict about their recall a week later?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.why-drills",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The re-reading learner will recall it better, since repetition is repetition either way",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "The retrieval-practice learner will recall it better, because producing an answer from memory strengthens it more than recognizing familiar material",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Both will recall it equally well, since they spent the same total time studying",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Neither will recall it — a week is too long for either method to matter",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "The testing effect: actively retrieving an answer from memory builds a stronger, more durable memory trace than passively re-reading the same material, even though re-reading feels easier at the time.",
+      "verify": null,
+      "hint": null
+    }
+  },
+  {
+    "id": 50117,
+    "source": {
+      "type": "math_json",
+      "path": "Local_Deployed_Shared/lessons/deltadrills/kp-why-drills.problems.json"
+    },
+    "curriculum": {
+      "topic": "Delta Drills",
+      "subtopic": "How this app works",
+      "subtopic_key": "Delta Drills: How this app works",
+      "difficulty_score": 20,
+      "difficulty_label": "easy"
+    },
+    "exercise": {
+      "question_text": "After a concept's lesson, why does the app have you write each answer yourself instead of showing you more worked examples?",
+      "task_type": "mc",
+      "language": "math",
+      "primary_library": "math",
+      "function_name": null,
+      "starter_code": "",
+      "test_cases": [],
+      "submission_mode": "mc",
+      "wrong_examples": [],
+      "provenance": null,
+      "canonical_solution": "",
+      "expected_output": "B",
+      "expected_artifact_type": "choice",
+      "supports_visual_output": false,
+      "math_kind": "statement",
+      "math_kc": "deltadrills.why-drills",
+      "choices": [
+        {
+          "key": "A",
+          "text": "To reduce how much content the app has to store",
+          "value": null
+        },
+        {
+          "key": "B",
+          "text": "Because retrieving an answer from memory is what builds the memory — re-reading an example never forces that retrieval",
+          "value": null
+        },
+        {
+          "key": "C",
+          "text": "Because worked examples are being removed from the app entirely",
+          "value": null
+        },
+        {
+          "key": "D",
+          "text": "Because longer worked examples are harder to display on a phone screen",
+          "value": null
+        }
+      ],
+      "correct_choice": "B",
+      "solution_md": "The lesson's worked example gives the first foothold on a new idea, but only an unaided retrieval — struggling a little, sometimes getting it wrong — produces the strengthening the testing effect is named for.",
+      "verify": null,
+      "hint": null
+    }
   }
 ]

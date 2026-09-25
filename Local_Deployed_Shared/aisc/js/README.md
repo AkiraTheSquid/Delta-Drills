@@ -21,6 +21,11 @@
 - `field.js`: the page's node field — a fixed canvas behind the write-up's
   cards, unmasked since 2026-09-25, animated only while `#aisc-root`
   intersects and the tab is visible; still frame under reduced motion.
+  The cards are see-through wireframes, so it keeps out of them itself:
+  nodes inside a card box (`CARDS`) are pushed out through the nearest side,
+  nodes near one are shoved off, and its drawing is erased inside every card.
+  Card boxes are measured on layout changes only (resize, ResizeObserver on
+  `#aisc-root`, reveal `transitionend`, once a second), shifted by scroll.
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles) ·
   `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
   style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
@@ -69,3 +74,6 @@
   `--paper-2` (it sits in a card again).
 - 2026-09-25: `field.js` drawn unmasked across the page (card layout back);
   its gutter band reads `--aisc-clear` = 1180px.
+- 2026-09-25: `field.js` keeps out of the (now see-through) cards: pushes
+  nodes out, erases its drawing inside them. `fig-forget.js` plot panel
+  unfilled, `fig-effort.js` marker ring in page paper.

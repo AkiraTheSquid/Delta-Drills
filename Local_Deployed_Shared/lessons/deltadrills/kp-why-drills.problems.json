@@ -1,0 +1,57 @@
+{
+  "kc": "deltadrills.why-drills",
+  "problems": [
+    {
+      "id": 50116,
+      "kind": "statement",
+      "difficulty": 20,
+      "prompt": "A learner re-reads a worked example five times instead of trying to answer similar questions from memory. Compared to a learner who attempts and checks five times in the same span, what does the testing effect predict about their recall a week later?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "The re-reading learner will recall it better, since repetition is repetition either way"
+        },
+        {
+          "key": "B",
+          "text": "The retrieval-practice learner will recall it better, because producing an answer from memory strengthens it more than recognizing familiar material"
+        },
+        {
+          "key": "C",
+          "text": "Both will recall it equally well, since they spent the same total time studying"
+        },
+        {
+          "key": "D",
+          "text": "Neither will recall it — a week is too long for either method to matter"
+        }
+      ],
+      "answer": "B",
+      "solution": "The testing effect: actively retrieving an answer from memory builds a stronger, more durable memory trace than passively re-reading the same material, even though re-reading feels easier at the time."
+    },
+    {
+      "id": 50117,
+      "kind": "statement",
+      "difficulty": 20,
+      "prompt": "After a concept's lesson, why does the app have you write each answer yourself instead of showing you more worked examples?",
+      "choices": [
+        {
+          "key": "A",
+          "text": "To reduce how much content the app has to store"
+        },
+        {
+          "key": "B",
+          "text": "Because retrieving an answer from memory is what builds the memory — re-reading an example never forces that retrieval"
+        },
+        {
+          "key": "C",
+          "text": "Because worked examples are being removed from the app entirely"
+        },
+        {
+          "key": "D",
+          "text": "Because longer worked examples are harder to display on a phone screen"
+        }
+      ],
+      "answer": "B",
+      "solution": "The lesson's worked example gives the first foothold on a new idea, but only an unaided retrieval — struggling a little, sometimes getting it wrong — produces the strengthening the testing effect is named for."
+    }
+  ]
+}

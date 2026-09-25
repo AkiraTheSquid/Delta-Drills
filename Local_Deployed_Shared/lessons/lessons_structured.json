@@ -13895,6 +13895,140 @@
      "notes_markdown": ""
     }
    ]
+  },
+  {
+   "id": "dd-1",
+   "topic": "Delta Drills",
+   "title": "What this app is, and the math behind it",
+   "subtopic_key": "Delta Drills: How this app works",
+   "kps": [
+    {
+     "kc": "deltadrills.mastery",
+     "kind": "math",
+     "title": "What \"mastery\" means in this app",
+     "supporting_kcs": [],
+     "new_syntax": [],
+     "concept_markdown": "Every concept you practice has a mastery estimate: a number between 0 and 1,\nthe app's belief that you know the concept. It is not a percent of questions\nanswered correctly \u2014 it is a probability, and it moves every time you answer.\n\nThe update reads only two things: where the estimate sits now, and whether\nthis answer was right. The estimate already sums up your whole history on the\nconcept, so two concepts at the same number move the same way on the same\nanswer, however many answers got them there. What sets the size of the move\nis the number itself. The model expects someone who knows a concept to slip\nabout one time in ten, and someone who doesn't to guess right about one time\nin five \u2014 so a miss from 0.99 barely dents the estimate, while a miss from 0.9\ncuts it roughly in half. The app calls a concept learned once its estimate\nreaches 0.85: that is what unlocks the next concept in the graph and, on\nARENA concepts, the real exercise.",
+     "worked_example_markdown": "Say a concept's estimate sits at 0.55. You answer a question on it\ncorrectly. A lucky guess is fairly rare, so one correct answer is strong\nevidence: the estimate jumps to about 0.89 \u2014 past 0.85, so the concept is\nmarked learned and the picker turns to what comes after it in the graph.\n\nNow take a concept at 0.99 after a long correct streak, and miss one\nquestion. A slip by someone who knows the concept is expected now and then,\nso the estimate falls only to about 0.93 \u2014 still learned. The same miss from\n0.9 lands near 0.53: at 0.9 the model still had real doubt, and a miss is\nexactly the evidence that doubt predicted.",
+     "segments": [
+      {
+       "concept_id": "s0-",
+       "title": "",
+       "concept_markdown": "Every concept you practice has a mastery estimate: a number between 0 and 1,\nthe app's belief that you know the concept. It is not a percent of questions\nanswered correctly \u2014 it is a probability, and it moves every time you answer.\n\nThe update reads only two things: where the estimate sits now, and whether\nthis answer was right. The estimate already sums up your whole history on the\nconcept, so two concepts at the same number move the same way on the same\nanswer, however many answers got them there. What sets the size of the move\nis the number itself. The model expects someone who knows a concept to slip\nabout one time in ten, and someone who doesn't to guess right about one time\nin five \u2014 so a miss from 0.99 barely dents the estimate, while a miss from 0.9\ncuts it roughly in half. The app calls a concept learned once its estimate\nreaches 0.85: that is what unlocks the next concept in the graph and, on\nARENA concepts, the real exercise.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Say a concept's estimate sits at 0.55. You answer a question on it\ncorrectly. A lucky guess is fairly rare, so one correct answer is strong\nevidence: the estimate jumps to about 0.89 \u2014 past 0.85, so the concept is\nmarked learned and the picker turns to what comes after it in the graph.\n\nNow take a concept at 0.99 after a long correct streak, and miss one\nquestion. A slip by someone who knows the concept is expected now and then,\nso the estimate falls only to about 0.93 \u2014 still learned. The same miss from\n0.9 lands near 0.53: at 0.9 the model still had real doubt, and a miss is\nexactly the evidence that doubt predicted.",
+       "worked_example_code": "",
+       "faded_items": []
+      }
+     ],
+     "faded_items": [],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50112,
+       "prompt": "A concept's mastery estimate is 0.99 after a long streak of correct answers.\nYou answer the next question wrong. What is the most likely effect?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50113,
+       "prompt": "Two concepts both sit at mastery 0.6. One has ten prior answers behind that\nnumber; the other has one. You get the next question wrong on both. Which\nestimate drops further?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [],
+     "independent_items": [
+      50112,
+      50113
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "deltadrills.spaced-repetition",
+     "kind": "math",
+     "title": "Why drills come back \u2014 spaced repetition",
+     "supporting_kcs": [],
+     "new_syntax": [],
+     "concept_markdown": "Mastery is not permanent. Even a concept you answered correctly ten times\nin a row fades from memory if you never see it again \u2014 the estimate the app\nholds for you decays a little with every day that passes without practice,\nfaster right after you learned it and more slowly the longer it has stuck.\nThis is the forgetting curve: memory strength rises sharply from practice\nand drops off over time, and the drop is steeper the newer the memory is.\n\nSpaced repetition is the app's answer to that curve: instead of drilling a\nconcept once and moving on for good, it schedules a review to land close to\nthe point where you would otherwise have forgotten it \u2014 late enough that\nrecalling it takes real effort (which is what strengthens it further), but\nbefore the estimate has fallen so far that the concept counts as unlearned\nagain. A concept you have seen many times, spread out, gets a longer gap\nbefore its next review than one you just barely learned.",
+     "worked_example_markdown": "You learn a concept on Monday. Its forgetting curve says that by Wednesday,\nwithout another look, your recall probability would drop below the learned\nthreshold. The app schedules a review for Wednesday morning instead of, say,\nnext Monday \u2014 early enough to catch you before you have actually forgotten\nit, which is also the point where a review does the most good.\n\nYou get the Wednesday review right. That correct, effortful recall pushes\nthe next natural forgetting point further out \u2014 maybe a week and a half away\nthis time \u2014 so the app schedules the following review for then, not for the\nnext day. Each successful spaced review buys a longer gap before the next\none is needed.",
+     "segments": [
+      {
+       "concept_id": "s0-",
+       "title": "",
+       "concept_markdown": "Mastery is not permanent. Even a concept you answered correctly ten times\nin a row fades from memory if you never see it again \u2014 the estimate the app\nholds for you decays a little with every day that passes without practice,\nfaster right after you learned it and more slowly the longer it has stuck.\nThis is the forgetting curve: memory strength rises sharply from practice\nand drops off over time, and the drop is steeper the newer the memory is.\n\nSpaced repetition is the app's answer to that curve: instead of drilling a\nconcept once and moving on for good, it schedules a review to land close to\nthe point where you would otherwise have forgotten it \u2014 late enough that\nrecalling it takes real effort (which is what strengthens it further), but\nbefore the estimate has fallen so far that the concept counts as unlearned\nagain. A concept you have seen many times, spread out, gets a longer gap\nbefore its next review than one you just barely learned.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "You learn a concept on Monday. Its forgetting curve says that by Wednesday,\nwithout another look, your recall probability would drop below the learned\nthreshold. The app schedules a review for Wednesday morning instead of, say,\nnext Monday \u2014 early enough to catch you before you have actually forgotten\nit, which is also the point where a review does the most good.\n\nYou get the Wednesday review right. That correct, effortful recall pushes\nthe next natural forgetting point further out \u2014 maybe a week and a half away\nthis time \u2014 so the app schedules the following review for then, not for the\nnext day. Each successful spaced review buys a longer gap before the next\none is needed.",
+       "worked_example_code": "",
+       "faded_items": []
+      }
+     ],
+     "faded_items": [],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50114,
+       "prompt": "Two concepts were both marked \"learned\" a month ago. One has been reviewed\nthree times since, spaced out; the other has not been touched since the day\nit was learned. Which one's mastery estimate has likely decayed further by\ntoday?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50115,
+       "prompt": "A concept was learned yesterday. Why does the app schedule its first review\nfor a few days out, instead of either drilling it again immediately or\nwaiting a month?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [],
+     "independent_items": [
+      50114,
+      50115
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    },
+    {
+     "kc": "deltadrills.why-drills",
+     "kind": "math",
+     "title": "Why drills, instead of just reading answers",
+     "supporting_kcs": [],
+     "new_syntax": [],
+     "concept_markdown": "The app could show you a worked example and ask you to re-read it a few\ntimes. It drills you instead \u2014 makes you produce an answer from nothing,\ngrades it, and only then shows the solution. That choice rests on the\ntesting effect: the act of retrieving an answer from memory strengthens\nthat memory more than re-reading the same material does, even when\nre-reading feels easier and more comfortable in the moment.\n\nThis is why the ladder starts with a lesson \u2014 its worked example gives you a\nfirst foothold on a brand-new concept \u2014 and then has you write every answer\nyourself, with nothing to copy. Struggling to recall, and sometimes getting\nit wrong, is not a sign the method is failing: the effort of retrieval is\nwhat strengthens the memory, and an easy re-read skips it.",
+     "worked_example_markdown": "Imagine two learners studying the same concept for the same total time.\nOne re-reads the worked example five times. The other reads it once, then\ncloses it and tries to reproduce the answer from memory five times,\nchecking after each attempt. A week later, with no further practice, the\nsecond learner recalls the concept better \u2014 not because they spent more\ntime on it, but because every attempt forced an actual retrieval instead of\nrecognition (\"yes, this looks familiar\").\n\nThis is also why the app's drills change the numbers or framing each time\nrather than repeating an identical question: recognizing a memorized\nanswer is not the same skill as reconstructing it, and only the second one\ntransfers to a new problem that looks slightly different.",
+     "segments": [
+      {
+       "concept_id": "s0-",
+       "title": "",
+       "concept_markdown": "The app could show you a worked example and ask you to re-read it a few\ntimes. It drills you instead \u2014 makes you produce an answer from nothing,\ngrades it, and only then shows the solution. That choice rests on the\ntesting effect: the act of retrieving an answer from memory strengthens\nthat memory more than re-reading the same material does, even when\nre-reading feels easier and more comfortable in the moment.\n\nThis is why the ladder starts with a lesson \u2014 its worked example gives you a\nfirst foothold on a brand-new concept \u2014 and then has you write every answer\nyourself, with nothing to copy. Struggling to recall, and sometimes getting\nit wrong, is not a sign the method is failing: the effort of retrieval is\nwhat strengthens the memory, and an easy re-read skips it.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "Imagine two learners studying the same concept for the same total time.\nOne re-reads the worked example five times. The other reads it once, then\ncloses it and tries to reproduce the answer from memory five times,\nchecking after each attempt. A week later, with no further practice, the\nsecond learner recalls the concept better \u2014 not because they spent more\ntime on it, but because every attempt forced an actual retrieval instead of\nrecognition (\"yes, this looks familiar\").\n\nThis is also why the app's drills change the numbers or framing each time\nrather than repeating an identical question: recognizing a memorized\nanswer is not the same skill as reconstructing it, and only the second one\ntransfers to a new problem that looks slightly different.",
+       "worked_example_code": "",
+       "faded_items": []
+      }
+     ],
+     "faded_items": [],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 50116,
+       "prompt": "A learner re-reads a worked example five times instead of trying to answer\nsimilar questions from memory. Compared to a learner who attempts and\nchecks five times in the same span, what does the testing effect predict\nabout their recall a week later?",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 50117,
+       "prompt": "After a concept's lesson, why does the app have you write each answer\nyourself instead of showing you more worked examples?",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [],
+     "independent_items": [
+      50116,
+      50117
+     ],
+     "misconceptions_markdown": "",
+     "notes_markdown": ""
+    }
+   ]
   }
  ]
 }

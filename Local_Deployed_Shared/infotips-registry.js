@@ -131,10 +131,6 @@ window.DD_INFOTIPS = {
     title: "Advanced settings",
     body: "Developer knobs: which backend to talk to, third-party API keys, and your API token. Nothing here is needed to practise.",
   },
-  "arena-share": {
-    title: "ARENA share",
-    body: "What fraction of your drills come from the ARENA course's own exercise concepts — the course's problems and alternatives on the same concept — served <em>before</em> the graph's 85% gate says you are ready for them. The rest drill the graph as usual: prerequisites first, and a course concept you are struggling on sends its weakest prerequisite to the front. It follows your practice focus: section 0.1 only, or the whole course. 0 turns the mix off.",
-  },
   "dd-token": {
     title: "DD_TOKEN",
     body: "Paste this into a drill notebook when it asks, and work done there counts against your account. It's your session token — keep it private.",

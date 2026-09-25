@@ -62,8 +62,27 @@ def check_invariants():
             sel += ch
 
 
+def check_card_list():
+    # The cards are see-through wireframes (aisc.css), readable only because
+    # js/field.js keeps its nodes out of them. Both list the cards; a card in
+    # the CSS list that field.js doesn't know would show the field under text.
+    css = re.sub(r"/\*.*?\*/", "", _read("aisc.css"), flags=re.S)
+    m = re.search(r"([^{}]*?)\{\s*background: transparent; box-shadow: none; border-color: var\(--wire\);", css)
+    assert m, "aisc.css: wireframe card rule not found"
+    wire = {x.strip() for x in m.group(1).split(",") if x.strip()}
+    js = _read("js/field.js")
+    m = re.search(r"var CARDS = ((?:\"[^\"]*\"\s*\+?\s*)+);", js)
+    assert m, "field.js: CARDS not found"
+    cards = {x.strip() for x in "".join(re.findall(r'"([^"]*)"', m.group(1))).split(",") if x.strip()}
+    # .status draws its wireframe with rules of its own (its dividers)
+    missing = wire - cards
+    assert not missing, f"field.js CARDS lacks wireframe cards {sorted(missing)}"
+    extra = cards - wire - {".status"}
+    assert not extra, f"field.js CARDS has {sorted(extra)}, not outlined in aisc.css"
+
+
 if __name__ == '__main__':
-    checks = [check_imports, check_public_api, check_invariants]
+    checks = [check_imports, check_public_api, check_invariants, check_card_list]
     for fn in checks:
         try:
             fn()

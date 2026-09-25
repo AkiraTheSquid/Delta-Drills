@@ -254,6 +254,9 @@ const switchTab = (tabName, opts) => {
      typed on is gone by the time the timer fires. */
   if (tabName === "groups") window.DDGroups?.refresh();
   else window.DDGroups?.suspend?.();
+  // Concept Chat mounts lazily (it imports a 387 KB bundle) and re-fits its
+  // height to the viewport on every arrival. conceptual/conceptual_chat.js.
+  if (tabName === "concept-chat") window.DDConceptualChat?.open();
 };
 
 tabs.forEach((t) => {

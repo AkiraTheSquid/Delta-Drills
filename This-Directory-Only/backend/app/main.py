@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.auth_router import router as auth_router
 from app.about_page_router import router as about_page_router
 from app.chapters_router import router as chapters_router
+from app.conceptual import router as conceptual_router
 from app.jobs_router import router as jobs_router
 from app.lifecycle import register_lifecycle
 from app.practice import router as practice_router
@@ -25,6 +26,7 @@ app.include_router(auth_router)
 app.include_router(about_page_router)
 app.include_router(jobs_router)
 app.include_router(chapters_router)
+app.include_router(conceptual_router)
 
 app.add_middleware(
     CORSMiddleware,

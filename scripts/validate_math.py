@@ -53,7 +53,7 @@ from lesson_lib import LESSONS_DIR, REPO, code_fences, load_registry, parse_fron
 sys.path.insert(0, str(LESSONS_DIR))
 import math_bank  # noqa: E402
 
-MATH_TOPIC = "Mathematics"
+MATH_TOPICS = ("Mathematics", "Delta Drills")  # "Delta Drills" = the app-explainer course's own MC lane
 SYMPY_TIMEOUT_SECS = 5
 ATOM_TAGS_PATH = REPO / "This-Directory-Only" / "backend" / "app" / "data" / "question_atom_tags.jsonl"
 ATOM_GRAPH_PATH = REPO / "This-Directory-Only" / "backend" / "app" / "data" / "concept_graphs" / "arena_drillable_v1.json"
@@ -262,9 +262,9 @@ def check_problem_file(path: Path, registry: dict, seen_ids: dict[int, str], csv
         errors.append(f"{name}: kc `{kc}` not in kc_registry.json")
     else:
         lesson = lessons.get(kcs[kc].get("lesson")) or {}
-        if lesson.get("topic") != MATH_TOPIC:
+        if lesson.get("topic") not in MATH_TOPICS:
             errors.append(f"{name}: kc `{kc}` belongs to lesson `{kcs[kc].get('lesson')}` whose topic is "
-                          f"`{lesson.get('topic')}`, not `{MATH_TOPIC}`")
+                          f"`{lesson.get('topic')}`, not one of {MATH_TOPICS}")
     md_path = math_bank.kp_markdown_for(path)
     meta = {}
     if not md_path.exists():

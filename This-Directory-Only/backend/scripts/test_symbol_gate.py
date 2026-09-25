@@ -95,6 +95,10 @@ if late:
     check("downstream owner does not gate", kc not in symbol_gate.blocking_kcs(st, q2), f"q{q2} {kc}")
 
 # Whole course stays walkable: frontier walk, only the current KC's lesson read.
+# Every course on, so a standalone course's concepts (course_registry) count too.
+from app import course_registry  # noqa: E402
+for c in course_registry.COURSES:
+    st.course_shares[c["id"]] = 0.4
 reg = kc_graph._registry()
 by_kc = defaultdict(list)
 for q in get_every_question():

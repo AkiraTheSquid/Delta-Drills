@@ -28,6 +28,13 @@ class Settings(BaseSettings):
     modal_token_id: str | None = None
     modal_token_secret: str | None = None
     kernel_backend: str = "auto"
+    # Conceptual chat (app/conceptual/). BASE_URL set = an openai-oauth proxy
+    # (Seth's ChatGPT subscription) on a PRIVATE address; unset = the OpenAI
+    # API with openai_api_key. MODEL empty = the door's default.
+    conceptual_chat_base_url: str = ""
+    conceptual_chat_model: str = ""
+    conceptual_chat_per_user_hour: int = 40
+    conceptual_chat_daily_cap: int = 1500
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

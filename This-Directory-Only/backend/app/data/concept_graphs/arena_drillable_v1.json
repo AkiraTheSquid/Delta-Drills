@@ -3707,9 +3707,14 @@
     "drill-atom",
     "part1-transformer"
    ]
-  }
+  },
+  {"id":"dd-mastery","title":"What \"mastery\" means in this app","topic":"Delta Drills","subtopic":"How this app works","node_type":"concept","kind":"skill","tier":"core","description":"The app's own explainer course: BKT mastery estimates, assessed without coding via deltadrills.mastery.","tags":["drill-atom","delta-drills"]},
+  {"id":"dd-spaced-repetition","title":"Why drills come back: spaced repetition","topic":"Delta Drills","subtopic":"How this app works","node_type":"concept","kind":"skill","tier":"core","description":"The app's own explainer course: forgetting curves and spaced review, assessed without coding via deltadrills.spaced-repetition.","tags":["drill-atom","delta-drills"]},
+  {"id":"dd-why-drills","title":"Why drills, instead of just reading answers","topic":"Delta Drills","subtopic":"How this app works","node_type":"concept","kind":"skill","tier":"core","description":"The app's own explainer course: the testing effect, assessed without coding via deltadrills.why-drills.","tags":["drill-atom","delta-drills"]}
  ],
  "prerequisite_edges": [
+  {"prerequisite_id":"dd-mastery","dependent_id":"dd-spaced-repetition","weight":1,"confidence":0.7,"is_hard_gate":true,"is_encompassing":true,"propagation_weight":0.6,"rationale":"Delta Drills course chain: mastery -> spaced repetition -> why drills."},
+  {"prerequisite_id":"dd-spaced-repetition","dependent_id":"dd-why-drills","weight":1,"confidence":0.7,"is_hard_gate":true,"is_encompassing":true,"propagation_weight":0.6,"rationale":"Delta Drills course chain: mastery -> spaced repetition -> why drills."},
   {"prerequisite_id":"la-vector-arithmetic","dependent_id":"la-dot-products-norms","weight":1,"confidence":1,"is_hard_gate":true,"is_encompassing":false,"propagation_weight":0,"rationale":"Mathematical prerequisite; dependent answers do not by themselves certify every prerequisite skill."},
   {"prerequisite_id":"la-vector-arithmetic","dependent_id":"la-linear-combinations","weight":1,"confidence":1,"is_hard_gate":true,"is_encompassing":false,"propagation_weight":0,"rationale":"Mathematical prerequisite; dependent answers do not by themselves certify every prerequisite skill."},
   {"prerequisite_id":"la-linear-combinations","dependent_id":"la-matrix-equations","weight":1,"confidence":1,"is_hard_gate":true,"is_encompassing":false,"propagation_weight":0,"rationale":"Mathematical prerequisite; dependent answers do not by themselves certify every prerequisite skill."},
@@ -12804,7 +12809,13 @@
    "role": "primary",
    "weight": 1.0,
    "notes": "Vanilla SGD over custom Parameters: zero_grad sets grad=None; step does p -= p.grad*lr under NoGrad."
-  }
+  },
+  {"source_bank":"delta_drills","problem_ref":"50112","concept_id":"dd-mastery","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: what a mastery estimate means."},
+  {"source_bank":"delta_drills","problem_ref":"50113","concept_id":"dd-mastery","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: what a mastery estimate means."},
+  {"source_bank":"delta_drills","problem_ref":"50114","concept_id":"dd-spaced-repetition","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: forgetting curves and spaced review."},
+  {"source_bank":"delta_drills","problem_ref":"50115","concept_id":"dd-spaced-repetition","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: forgetting curves and spaced review."},
+  {"source_bank":"delta_drills","problem_ref":"50116","concept_id":"dd-why-drills","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: the testing effect."},
+  {"source_bank":"delta_drills","problem_ref":"50117","concept_id":"dd-why-drills","role":"primary","weight":1,"notes":"Delta Drills explainer MCQ: the testing effect."}
  ],
  "mastery_gate": {
   "mastery_threshold": 0.8,
@@ -12813,6 +12824,7 @@
   "notes": "Defaults inherited from Delta Drills MasteryGatePolicy. Threshold can be tuned once real attempt data is collected. require_all_hard_prereqs=True means: a learner unlocks atom X only when ALL hard-gate prerequisites are above the mastery threshold."
  },
  "intentional_root_atoms": [
+  "dd-mastery",
   "la-vector-arithmetic",
   "argmax-prediction",
   "conv-output-shape",

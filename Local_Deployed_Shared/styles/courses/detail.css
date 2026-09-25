@@ -1,9 +1,28 @@
 /* Courses tab — article view: hero, source links, intro, chapter rows.
-   There is no back button: the tab has only this one course. */
+   Shared by both courses: ARENA's own article (unchanged) and Delta
+   Drills' lesson list, which reuses .course-hero/-intro here (its rows are
+   .course-lesson-list in catalog.css). */
 
 .courses-detail-view {
   max-width: 880px;
   margin: 0 auto;
+}
+
+.course-back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-back-link:hover {
+  color: var(--text);
 }
 
 .course-article {

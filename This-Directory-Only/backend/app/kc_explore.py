@@ -544,7 +544,7 @@ def reorder(user_state, ordered: List[str]) -> List[str]:
     default since 2026-09-24) every slot is in the area, so an open probe of
     ANY area goes ahead of greedy work — as in the simulation, where a probe
     pre-empted whatever the greedy pick was. The ARENA share is applied after
-    this (remediation.targets → arena_mix.order), so it still holds."""
+    this (remediation.targets → course_mix.order), so it still holds."""
     slots = [i for i, k in enumerate(ordered) if in_area(k)]
     if len(slots) < 2:
         return ordered

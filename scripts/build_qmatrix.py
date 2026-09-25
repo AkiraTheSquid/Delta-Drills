@@ -19,7 +19,7 @@ from lesson_lib import LESSONS_DIR, all_kp_paths, load_bank, load_registry, pars
 # course now starts BELOW torch.tensor-model, and its drills have to be
 # tagged like any other course question or the crosswalk cannot measure the
 # seven concepts under it.
-EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch", "Mathematics")
+EASY_TOPICS = ("Python", "Numpy", "Einsum", "Einops", "PyTorch", "Mathematics", "Delta Drills")
 
 # Hand-assigned target KCs for questions not referenced by any KP.
 LEFTOVER_TARGETS = {

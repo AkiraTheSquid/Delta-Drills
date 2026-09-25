@@ -203,9 +203,12 @@ class UserPracticeState:
     # posterior is always recomputed from the probe log, never persisted.
     diagnostic: Dict = field(default_factory=dict)
     practice_target: str = "all"
-    # Fraction of practice served from the ARENA exercise concepts themselves
-    # (app/arena_mix.py). 0 = off; the account page sets it.
-    arena_share: float = 0.0
+    # Fraction of practice served from each ENABLED course's own exercise
+    # concepts (app/course_mix.py), keyed by course_registry course id.
+    # Missing/0.0 = off; the Courses tab enable toggle sets it. Generalized
+    # 2026-09-25 from the single `arena_share` float — see `_load_user_state`
+    # for the one-time migration of an existing value into `course_shares["arena"]`.
+    course_shares: Dict[str, float] = field(default_factory=dict)
     # The drill on screen right now: the LAST question served, across every
     # subtopic. The on-screen guard in question_pick reads this. It used to
     # read each subtopic's own served tail, which is not "on screen" at all —
@@ -282,7 +285,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "self_reported_level": state.self_reported_level,
         "diagnostic": state.diagnostic,
         "practice_target": state.practice_target,
-        "arena_share": state.arena_share,
+        "course_shares": state.course_shares,
         "last_served_question_id": state.last_served_question_id,
         "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
@@ -329,8 +332,15 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.self_reported_level = data.get("self_reported_level")
         state.diagnostic = data.get("diagnostic") or {}
         state.practice_target = data.get("practice_target") or "all"
-        # Additive: a save without a share is a learner who never set one.
-        state.arena_share = float(data.get("arena_share") or 0.0)
+        # Additive: a save without shares is a learner who never enabled a
+        # course. One-time migration of the old single-course `arena_share`
+        # float (predates 2026-09-25's course_shares dict) into
+        # `course_shares["arena"]`, only when the new key is itself absent —
+        # a save already carrying `course_shares` is never overwritten by a
+        # stale `arena_share` a later save of THIS state might still hold.
+        state.course_shares = dict(data.get("course_shares") or {})
+        if "course_shares" not in data and data.get("arena_share"):
+            state.course_shares["arena"] = float(data["arena_share"])
         state.last_served_question_id = data.get("last_served_question_id")
         state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}
