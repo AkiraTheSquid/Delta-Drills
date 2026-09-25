@@ -40,7 +40,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from app import feedback_ai_layer, lessons, math_questions
+from app import feedback_ai_layer, leetcode_questions, lessons, math_questions
 
 logger = logging.getLogger(__name__)
 
@@ -732,6 +732,7 @@ def load_questions(csv_path: Optional[Path] = None) -> None:
             overrides=overrides, deleted_ids=deleted_ids, broken_ids=broken_ids,
         )
         math_questions.load_math_into(questions, Question)
+        leetcode_questions.load_leetcode_into(questions, Question)
 
     _apply_atom_tags(questions)
     _apply_solution_aids(questions)

@@ -569,6 +569,7 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
     const intro = document.createElement("p");
     intro.className = "course-intro";
     intro.textContent =
+      course.intro ||
       "A small graph, on its own: a lesson and a couple of multiple-choice questions per concept. Open one to work it on the Knowledge Graph, scoped to just this course.";
     article.appendChild(intro);
 

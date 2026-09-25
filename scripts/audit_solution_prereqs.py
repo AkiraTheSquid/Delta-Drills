@@ -189,6 +189,13 @@ def owner_of(sym: str, declared: dict[str, str],
     return None
 
 
+LESSONLESS_PREFIXES = ("leetcode.",)
+
+
+def is_lessonless(targets) -> bool:
+    return bool(targets) and all(k.startswith(LESSONLESS_PREFIXES) for k in targets)
+
+
 def find(surfaces: tuple[str, ...], only_qid: int | None = None) -> list[dict]:
     bank = json.loads(QUESTIONS.read_text(encoding="utf-8"))
     questions = bank if isinstance(bank, list) else bank.get("questions", bank)
@@ -203,6 +210,10 @@ def find(surfaces: tuple[str, ...], only_qid: int | None = None) -> list[dict]:
         if only_qid is not None and qid != only_qid:
             continue
         targets = (qmatrix.get(str(qid)) or {}).get("target_kcs") or []
+        # A lesson-less standalone course (LeetCode Patterns) has no page order:
+        # its learners bring the language with them, so there is nothing to check.
+        if is_lessonless(targets):
+            continue
         ranked = [(rank[k], k) for k in targets if k in rank]
         if not ranked:
             continue

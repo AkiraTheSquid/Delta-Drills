@@ -23457,5 +23457,3069 @@
   "supporting_kcs": [],
   "new_syntax": [],
   "source": "kp-independent"
+ },
+ "60000": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60001": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60002": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60003": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60004": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60005": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60006": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60007": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60008": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60009": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60010": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60011": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60012": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60013": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60014": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60015": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60016": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60017": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60018": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60019": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60020": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60021": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60022": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60023": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60024": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60025": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60026": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60027": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60028": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60029": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60030": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60032": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60033": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60034": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60035": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60037": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60038": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60040": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60041": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60042": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60043": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60045": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60046": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60048": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60049": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60050": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60051": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60052": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60053": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60054": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60055": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60056": {
+  "target_kcs": [
+   "leetcode.sliding-window"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60060": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60061": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60062": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60065": {
+  "target_kcs": [
+   "leetcode.fast-slow-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60066": {
+  "target_kcs": [
+   "leetcode.fast-slow-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60067": {
+  "target_kcs": [
+   "leetcode.fast-slow-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60068": {
+  "target_kcs": [
+   "leetcode.in-place-reversal"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60069": {
+  "target_kcs": [
+   "leetcode.in-place-reversal"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60070": {
+  "target_kcs": [
+   "leetcode.cyclic-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60071": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60072": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60075": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60076": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60077": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60078": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60079": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60080": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60081": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60082": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60083": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60084": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60085": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60086": {
+  "target_kcs": [
+   "leetcode.monotonic-stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60087": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60088": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60089": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60090": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60091": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60092": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60093": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60094": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60095": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60096": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60097": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60098": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60099": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60100": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60101": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60102": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60103": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60104": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60105": {
+  "target_kcs": [
+   "leetcode.merge-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60106": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60107": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60108": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60109": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60110": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60111": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60112": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60113": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60114": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60115": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60116": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60117": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60118": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60119": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60120": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60121": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60122": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60123": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60124": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60126": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60127": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60128": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60129": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60130": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60131": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60132": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60133": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60134": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60135": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60136": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60137": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60138": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60139": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60140": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60141": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60143": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60144": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60146": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60147": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60148": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60151": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60152": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60153": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60154": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60155": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60157": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60158": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60159": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60160": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60161": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60163": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60164": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60165": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60166": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60170": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60171": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60172": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60174": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60175": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60176": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60177": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60178": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60179": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60180": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60182": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60183": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60184": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60185": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60187": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60188": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60189": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60190": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60191": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60192": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60193": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60194": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60196": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60197": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60198": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60200": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60201": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60202": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60203": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60204": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60205": {
+  "target_kcs": [
+   "leetcode.union-find"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60206": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60208": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60209": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60212": {
+  "target_kcs": [
+   "leetcode.k-way-merge"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60214": {
+  "target_kcs": [
+   "leetcode.two-heaps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60215": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60216": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60217": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60218": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60219": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60220": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60221": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60222": {
+  "target_kcs": [
+   "leetcode.shortest-paths"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60223": {
+  "target_kcs": [
+   "leetcode.mst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60224": {
+  "target_kcs": [
+   "leetcode.mst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60225": {
+  "target_kcs": [
+   "leetcode.mst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60226": {
+  "target_kcs": [
+   "leetcode.mst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60227": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60228": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60229": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60230": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60231": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60232": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60234": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60235": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60238": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60239": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60240": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60241": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60242": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60243": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60244": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60246": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60247": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60248": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60249": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60250": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60251": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60252": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60253": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60254": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60255": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60256": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60257": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60258": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60259": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60260": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60261": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60262": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60263": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60264": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60265": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60266": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60267": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60268": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60269": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60270": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60271": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60272": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60273": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60274": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60275": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60276": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60277": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60278": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60279": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60280": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60281": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60282": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60283": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60284": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60285": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60286": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60287": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60288": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60289": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60290": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60291": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60292": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60293": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60294": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60295": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60296": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60297": {
+  "target_kcs": [
+   "leetcode.dp-grid"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60298": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60299": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60300": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60301": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60302": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60303": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60304": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60305": {
+  "target_kcs": [
+   "leetcode.dp-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60306": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60307": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60308": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60309": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60310": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60311": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60312": {
+  "target_kcs": [
+   "leetcode.dp-lis"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60313": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60314": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60315": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60316": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60317": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60318": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60319": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60320": {
+  "target_kcs": [
+   "leetcode.dp-intervals"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60323": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60324": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60325": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60327": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60328": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60329": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60330": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60331": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60332": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60333": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60334": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60335": {
+  "target_kcs": [
+   "leetcode.arrays-strings"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60336": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60337": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60338": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60339": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60340": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60341": {
+  "target_kcs": [
+   "leetcode.hash-maps"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60342": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60343": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60344": {
+  "target_kcs": [
+   "leetcode.prefix-sums"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60345": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60346": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60347": {
+  "target_kcs": [
+   "leetcode.two-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60348": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60349": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60350": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60351": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60352": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60353": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60354": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60355": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60356": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60357": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60358": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60359": {
+  "target_kcs": [
+   "leetcode.linked-lists"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60360": {
+  "target_kcs": [
+   "leetcode.fast-slow-pointers"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60361": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60362": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60363": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60364": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60365": {
+  "target_kcs": [
+   "leetcode.stack"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60366": {
+  "target_kcs": [
+   "leetcode.recursion"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60367": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60368": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60369": {
+  "target_kcs": [
+   "leetcode.sorting-algorithms"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60370": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60371": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60372": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60373": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60374": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60375": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60376": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60377": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60378": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60379": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60380": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60381": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60382": {
+  "target_kcs": [
+   "leetcode.binary-search"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60383": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60384": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60385": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60386": {
+  "target_kcs": [
+   "leetcode.bit-manipulation"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60387": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60388": {
+  "target_kcs": [
+   "leetcode.math"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60389": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60390": {
+  "target_kcs": [
+   "leetcode.binary-trees"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60391": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60392": {
+  "target_kcs": [
+   "leetcode.tree-bfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60393": {
+  "target_kcs": [
+   "leetcode.tree-dfs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60394": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60395": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60396": {
+  "target_kcs": [
+   "leetcode.bst"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60397": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60398": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60399": {
+  "target_kcs": [
+   "leetcode.graphs"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60400": {
+  "target_kcs": [
+   "leetcode.islands"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60401": {
+  "target_kcs": [
+   "leetcode.topological-sort"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60402": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60403": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60404": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60405": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60406": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60407": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60408": {
+  "target_kcs": [
+   "leetcode.top-k-elements"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60409": {
+  "target_kcs": [
+   "leetcode.subsets"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60410": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60411": {
+  "target_kcs": [
+   "leetcode.backtracking"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60412": {
+  "target_kcs": [
+   "leetcode.trie"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60413": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60414": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60415": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60416": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60417": {
+  "target_kcs": [
+   "leetcode.greedy"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60418": {
+  "target_kcs": [
+   "leetcode.dp-1d"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60419": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
+ },
+ "60420": {
+  "target_kcs": [
+   "leetcode.knapsack-dp"
+  ],
+  "supporting_kcs": [],
+  "new_syntax": [],
+  "source": "kp-independent"
  }
 }

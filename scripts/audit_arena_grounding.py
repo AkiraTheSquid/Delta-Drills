@@ -74,7 +74,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audit_lesson_syntax import lesson_order  # noqa: E402
 from audit_solution_prereqs import (  # noqa: E402
-    QMATRIX, QUESTIONS, declaring_kcs, question_symbols,
+    QMATRIX, QUESTIONS, declaring_kcs, is_lessonless, question_symbols,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -208,6 +208,10 @@ def drill_violations(corpus: Corpus, surfaces: tuple[str, ...],
         if only_qid is not None and int(qid) != only_qid:
             continue
         targets = (qmatrix.get(str(qid)) or {}).get("target_kcs") or []
+        # A lesson-less course's drills are plain Python, not ARENA prep, and
+        # its list/str methods resolve to torch.* in this audit (torch.append).
+        if is_lessonless(targets):
+            continue
         for surface in surfaces:
             if surface == "declarations":
                 continue

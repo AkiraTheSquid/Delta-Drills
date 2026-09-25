@@ -617,8 +617,10 @@ def is_prelibrary(question_id: int) -> bool:
     # the concept could never be learned and every cnn.* concept behind it
     # was locked for good. Found by replaying Seth's state (traj.py,
     # 2026-09-19): the frontier collapsed to that one concept at ~45 h.
+    # `leetcode.*` (course_registry.py) is plain Python by design and has no
+    # lesson pages, so it never appears in _kc_gate_info; match the prefix.
     return all(
-        kc.startswith("python.")
+        kc.startswith(("python.", "leetcode."))
         or (_kc_gate_info.get(kc) or {}).get("topic") in _PRELIBRARY_TOPICS
         for kc in kcs
     )

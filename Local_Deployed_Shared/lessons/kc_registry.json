@@ -91,6 +91,12 @@
    "topic": "Delta Drills",
    "title": "What this app is, and the math behind it",
    "subtopic_key": "Delta Drills: How this app works"
+  },
+  {
+   "id": "lc-1",
+   "topic": "LeetCode",
+   "title": "LeetCode Patterns",
+   "subtopic_key": "LeetCode: Patterns"
   }
  ],
  "kcs": [
@@ -1161,6 +1167,513 @@
    ],
    "encompassing": {
     "deltadrills.spaced-repetition": 0.6
+   }
+  },
+  {
+   "id": "leetcode.arrays-strings",
+   "lesson": "lc-1",
+   "title": "Arrays and strings: traversal and simulation",
+   "syntax": false,
+   "prereqs": []
+  },
+  {
+   "id": "leetcode.hash-maps",
+   "lesson": "lc-1",
+   "title": "Hash maps: lookup and counting",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.5
+   }
+  },
+  {
+   "id": "leetcode.prefix-sums",
+   "lesson": "lc-1",
+   "title": "Prefix sums",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.hash-maps"
+   ],
+   "encompassing": {
+    "leetcode.hash-maps": 0.4
+   }
+  },
+  {
+   "id": "leetcode.two-pointers",
+   "lesson": "lc-1",
+   "title": "Two pointers",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.5
+   }
+  },
+  {
+   "id": "leetcode.sliding-window",
+   "lesson": "lc-1",
+   "title": "Sliding window",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.two-pointers",
+    "leetcode.hash-maps"
+   ],
+   "encompassing": {
+    "leetcode.two-pointers": 0.6,
+    "leetcode.hash-maps": 0.4
+   }
+  },
+  {
+   "id": "leetcode.linked-lists",
+   "lesson": "lc-1",
+   "title": "Linked lists: traversal and pointer updates",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.3
+   }
+  },
+  {
+   "id": "leetcode.fast-slow-pointers",
+   "lesson": "lc-1",
+   "title": "Fast and slow pointers",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.linked-lists",
+    "leetcode.two-pointers"
+   ],
+   "encompassing": {
+    "leetcode.linked-lists": 0.6,
+    "leetcode.two-pointers": 0.4
+   }
+  },
+  {
+   "id": "leetcode.in-place-reversal",
+   "lesson": "lc-1",
+   "title": "In-place reversal of a linked list",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.linked-lists"
+   ],
+   "encompassing": {
+    "leetcode.linked-lists": 0.7
+   }
+  },
+  {
+   "id": "leetcode.cyclic-sort",
+   "lesson": "lc-1",
+   "title": "Cyclic sort",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.5
+   }
+  },
+  {
+   "id": "leetcode.stack",
+   "lesson": "lc-1",
+   "title": "Stacks",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.4
+   }
+  },
+  {
+   "id": "leetcode.monotonic-stack",
+   "lesson": "lc-1",
+   "title": "Monotonic stack",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.stack"
+   ],
+   "encompassing": {
+    "leetcode.stack": 0.7
+   }
+  },
+  {
+   "id": "leetcode.recursion",
+   "lesson": "lc-1",
+   "title": "Recursion",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.3
+   }
+  },
+  {
+   "id": "leetcode.sorting-algorithms",
+   "lesson": "lc-1",
+   "title": "Sorting algorithms: merge sort and quick sort",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.recursion",
+    "leetcode.two-pointers"
+   ],
+   "encompassing": {
+    "leetcode.recursion": 0.4,
+    "leetcode.two-pointers": 0.3
+   }
+  },
+  {
+   "id": "leetcode.merge-intervals",
+   "lesson": "lc-1",
+   "title": "Merge intervals",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.two-pointers"
+   ],
+   "encompassing": {
+    "leetcode.two-pointers": 0.3
+   }
+  },
+  {
+   "id": "leetcode.binary-search",
+   "lesson": "lc-1",
+   "title": "Modified binary search",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.4
+   }
+  },
+  {
+   "id": "leetcode.bit-manipulation",
+   "lesson": "lc-1",
+   "title": "Bitwise XOR and bit manipulation",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.3
+   }
+  },
+  {
+   "id": "leetcode.math",
+   "lesson": "lc-1",
+   "title": "Math and number theory",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.arrays-strings"
+   ],
+   "encompassing": {
+    "leetcode.arrays-strings": 0.4
+   }
+  },
+  {
+   "id": "leetcode.binary-trees",
+   "lesson": "lc-1",
+   "title": "Binary trees: structure and traversal",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.recursion",
+    "leetcode.linked-lists"
+   ],
+   "encompassing": {
+    "leetcode.recursion": 0.5,
+    "leetcode.linked-lists": 0.2
+   }
+  },
+  {
+   "id": "leetcode.tree-bfs",
+   "lesson": "lc-1",
+   "title": "Tree breadth-first search",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.binary-trees"
+   ],
+   "encompassing": {
+    "leetcode.binary-trees": 0.6
+   }
+  },
+  {
+   "id": "leetcode.tree-dfs",
+   "lesson": "lc-1",
+   "title": "Tree depth-first search",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.binary-trees",
+    "leetcode.recursion"
+   ],
+   "encompassing": {
+    "leetcode.binary-trees": 0.6,
+    "leetcode.recursion": 0.5
+   }
+  },
+  {
+   "id": "leetcode.bst",
+   "lesson": "lc-1",
+   "title": "Binary search trees",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.tree-dfs",
+    "leetcode.binary-search"
+   ],
+   "encompassing": {
+    "leetcode.tree-dfs": 0.5,
+    "leetcode.binary-search": 0.3
+   }
+  },
+  {
+   "id": "leetcode.graphs",
+   "lesson": "lc-1",
+   "title": "Graph traversal: BFS and DFS",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.tree-bfs",
+    "leetcode.tree-dfs",
+    "leetcode.hash-maps"
+   ],
+   "encompassing": {
+    "leetcode.tree-bfs": 0.5,
+    "leetcode.tree-dfs": 0.5,
+    "leetcode.hash-maps": 0.3
+   }
+  },
+  {
+   "id": "leetcode.islands",
+   "lesson": "lc-1",
+   "title": "Island (matrix traversal)",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.graphs"
+   ],
+   "encompassing": {
+    "leetcode.graphs": 0.7
+   }
+  },
+  {
+   "id": "leetcode.topological-sort",
+   "lesson": "lc-1",
+   "title": "Topological sort",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.graphs"
+   ],
+   "encompassing": {
+    "leetcode.graphs": 0.6
+   }
+  },
+  {
+   "id": "leetcode.union-find",
+   "lesson": "lc-1",
+   "title": "Union find",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.graphs"
+   ],
+   "encompassing": {
+    "leetcode.graphs": 0.3
+   }
+  },
+  {
+   "id": "leetcode.top-k-elements",
+   "lesson": "lc-1",
+   "title": "Heaps and top-K elements",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.hash-maps"
+   ],
+   "encompassing": {
+    "leetcode.hash-maps": 0.3
+   }
+  },
+  {
+   "id": "leetcode.two-heaps",
+   "lesson": "lc-1",
+   "title": "Two heaps",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.top-k-elements"
+   ],
+   "encompassing": {
+    "leetcode.top-k-elements": 0.7
+   }
+  },
+  {
+   "id": "leetcode.k-way-merge",
+   "lesson": "lc-1",
+   "title": "K-way merge",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.top-k-elements",
+    "leetcode.linked-lists"
+   ],
+   "encompassing": {
+    "leetcode.top-k-elements": 0.6,
+    "leetcode.linked-lists": 0.3
+   }
+  },
+  {
+   "id": "leetcode.shortest-paths",
+   "lesson": "lc-1",
+   "title": "Shortest paths: Dijkstra and Bellman-Ford",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.graphs",
+    "leetcode.top-k-elements"
+   ],
+   "encompassing": {
+    "leetcode.graphs": 0.6,
+    "leetcode.top-k-elements": 0.4
+   }
+  },
+  {
+   "id": "leetcode.mst",
+   "lesson": "lc-1",
+   "title": "Minimum spanning trees",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.union-find",
+    "leetcode.top-k-elements"
+   ],
+   "encompassing": {
+    "leetcode.union-find": 0.5,
+    "leetcode.top-k-elements": 0.3
+   }
+  },
+  {
+   "id": "leetcode.subsets",
+   "lesson": "lc-1",
+   "title": "Subsets and permutations",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.recursion"
+   ],
+   "encompassing": {
+    "leetcode.recursion": 0.5
+   }
+  },
+  {
+   "id": "leetcode.backtracking",
+   "lesson": "lc-1",
+   "title": "Backtracking",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.subsets",
+    "leetcode.recursion"
+   ],
+   "encompassing": {
+    "leetcode.subsets": 0.6,
+    "leetcode.recursion": 0.4
+   }
+  },
+  {
+   "id": "leetcode.trie",
+   "lesson": "lc-1",
+   "title": "Trie",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.hash-maps",
+    "leetcode.tree-dfs"
+   ],
+   "encompassing": {
+    "leetcode.hash-maps": 0.4,
+    "leetcode.tree-dfs": 0.3
+   }
+  },
+  {
+   "id": "leetcode.greedy",
+   "lesson": "lc-1",
+   "title": "Greedy algorithms",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.merge-intervals"
+   ],
+   "encompassing": {
+    "leetcode.merge-intervals": 0.3
+   }
+  },
+  {
+   "id": "leetcode.dp-1d",
+   "lesson": "lc-1",
+   "title": "Dynamic programming: 1-D",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.recursion",
+    "leetcode.hash-maps"
+   ],
+   "encompassing": {
+    "leetcode.recursion": 0.5,
+    "leetcode.hash-maps": 0.2
+   }
+  },
+  {
+   "id": "leetcode.knapsack-dp",
+   "lesson": "lc-1",
+   "title": "0/1 knapsack",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.dp-1d",
+    "leetcode.subsets"
+   ],
+   "encompassing": {
+    "leetcode.dp-1d": 0.6,
+    "leetcode.subsets": 0.3
+   }
+  },
+  {
+   "id": "leetcode.dp-grid",
+   "lesson": "lc-1",
+   "title": "Dynamic programming: 2-D grids",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.dp-1d"
+   ],
+   "encompassing": {
+    "leetcode.dp-1d": 0.6
+   }
+  },
+  {
+   "id": "leetcode.dp-strings",
+   "lesson": "lc-1",
+   "title": "Dynamic programming on two strings",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.dp-grid"
+   ],
+   "encompassing": {
+    "leetcode.dp-grid": 0.6
+   }
+  },
+  {
+   "id": "leetcode.dp-lis",
+   "lesson": "lc-1",
+   "title": "Longest increasing subsequence",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.dp-1d",
+    "leetcode.binary-search"
+   ],
+   "encompassing": {
+    "leetcode.dp-1d": 0.6,
+    "leetcode.binary-search": 0.3
+   }
+  },
+  {
+   "id": "leetcode.dp-intervals",
+   "lesson": "lc-1",
+   "title": "Interval and partition DP",
+   "syntax": false,
+   "prereqs": [
+    "leetcode.dp-grid"
+   ],
+   "encompassing": {
+    "leetcode.dp-grid": 0.5
    }
   }
  ]

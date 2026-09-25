@@ -10,12 +10,12 @@
  "measured_reliability_min": 0.333,
  "thresholds_note": "both cuts are author defaults, not sourced or validated",
  "coverage": {
-  "questions_joined": 1526,
-  "kcs_covered": 85,
-  "kcs_total": 85,
-  "kcs_measured": 67,
-  "atoms_used": 113,
-  "pairs": 227
+  "questions_joined": 1909,
+  "kcs_covered": 125,
+  "kcs_total": 125,
+  "kcs_measured": 107,
+  "atoms_used": 153,
+  "pairs": 267
  },
  "kcs": {
   "cnn.batch-normalization": {
@@ -1047,6 +1047,606 @@
      "share": 0.357,
      "spec": 0.144,
      "n": 8
+    }
+   ]
+  },
+  "leetcode.arrays-strings": {
+   "n": 34,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-arrays-strings",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 34
+    }
+   ]
+  },
+  "leetcode.backtracking": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-backtracking",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.binary-search": {
+   "n": 28,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-binary-search",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 28
+    }
+   ]
+  },
+  "leetcode.binary-trees": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-binary-trees",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.bit-manipulation": {
+   "n": 12,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-bit-manipulation",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 12
+    }
+   ]
+  },
+  "leetcode.bst": {
+   "n": 7,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-bst",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 7
+    }
+   ]
+  },
+  "leetcode.cyclic-sort": {
+   "n": 1,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-cyclic-sort",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "leetcode.dp-1d": {
+   "n": 17,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-dp-1d",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 17
+    }
+   ]
+  },
+  "leetcode.dp-grid": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-dp-grid",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.dp-intervals": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-dp-intervals",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.dp-lis": {
+   "n": 7,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-dp-lis",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 7
+    }
+   ]
+  },
+  "leetcode.dp-strings": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-dp-strings",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.fast-slow-pointers": {
+   "n": 4,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-fast-slow-pointers",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 4
+    }
+   ]
+  },
+  "leetcode.graphs": {
+   "n": 12,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-graphs",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 12
+    }
+   ]
+  },
+  "leetcode.greedy": {
+   "n": 23,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-greedy",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 23
+    }
+   ]
+  },
+  "leetcode.hash-maps": {
+   "n": 15,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-hash-maps",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 15
+    }
+   ]
+  },
+  "leetcode.in-place-reversal": {
+   "n": 2,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-in-place-reversal",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 2
+    }
+   ]
+  },
+  "leetcode.islands": {
+   "n": 7,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-islands",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 7
+    }
+   ]
+  },
+  "leetcode.k-way-merge": {
+   "n": 1,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-k-way-merge",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "leetcode.knapsack-dp": {
+   "n": 7,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-knapsack-dp",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 7
+    }
+   ]
+  },
+  "leetcode.linked-lists": {
+   "n": 15,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-linked-lists",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 15
+    }
+   ]
+  },
+  "leetcode.math": {
+   "n": 10,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-math",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 10
+    }
+   ]
+  },
+  "leetcode.merge-intervals": {
+   "n": 1,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-merge-intervals",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "leetcode.monotonic-stack": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-monotonic-stack",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.mst": {
+   "n": 4,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-mst",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 4
+    }
+   ]
+  },
+  "leetcode.prefix-sums": {
+   "n": 9,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-prefix-sums",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 9
+    }
+   ]
+  },
+  "leetcode.recursion": {
+   "n": 16,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-recursion",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 16
+    }
+   ]
+  },
+  "leetcode.shortest-paths": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-shortest-paths",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.sliding-window": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-sliding-window",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.sorting-algorithms": {
+   "n": 6,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-sorting-algorithms",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 6
+    }
+   ]
+  },
+  "leetcode.stack": {
+   "n": 11,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-stack",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 11
+    }
+   ]
+  },
+  "leetcode.subsets": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-subsets",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.top-k-elements": {
+   "n": 10,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-top-k-elements",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 10
+    }
+   ]
+  },
+  "leetcode.topological-sort": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-topological-sort",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.tree-bfs": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-tree-bfs",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.tree-dfs": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-tree-dfs",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.trie": {
+   "n": 8,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-trie",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 8
+    }
+   ]
+  },
+  "leetcode.two-heaps": {
+   "n": 1,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-two-heaps",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 1
+    }
+   ]
+  },
+  "leetcode.two-pointers": {
+   "n": 10,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-two-pointers",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 10
+    }
+   ]
+  },
+  "leetcode.union-find": {
+   "n": 9,
+   "reliability": 1.0,
+   "shared_with": 0.0,
+   "tier": "measured",
+   "atoms": [
+    {
+     "a": "lc-union-find",
+     "w": 1.0,
+     "share": 1.0,
+     "spec": 1.0,
+     "n": 9
     }
    ]
   },

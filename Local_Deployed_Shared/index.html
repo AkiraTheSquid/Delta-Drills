@@ -2606,7 +2606,7 @@ t.manual_seed(0)
        injected later is re-derived from the DOM by infotips.js's observer. -->
   <script src="infotips-registry.js?v=15"></script>
   <script src="infotips.js?v=2"></script>
-  <script src="lessons/glossary.js?v=2"></script>
+  <script src="lessons/glossary.js?v=3"></script>
   <script src="jargon.js?v=2"></script>
   <!-- Hamburger nav. AFTER app.js and infotips.js on purpose: it MOVES the
        live <nav class="tabs"> into the drawer below 900px, so both of those
@@ -2876,12 +2876,12 @@ t.manual_seed(0)
   <!-- course-registry.js is the shared course list courses.js (catalog cards)
        and concept-graph/graph-views.js (KG course dropdown, deferred so it
        always runs later) both read off window.DeltaCourseRegistry. -->
-  <script src="concept-graph/course-registry.js?v=1"></script>
+  <script src="concept-graph/course-registry.js?v=2"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=5"></script>
+  <script src="courses.js?v=6"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
   <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->

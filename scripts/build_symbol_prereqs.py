@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audit_lesson_syntax import lesson_order  # noqa: E402
 from audit_solution_prereqs import (  # noqa: E402
     QMATRIX, QUESTIONS, SELF_DEFINED, SURFACES, declaring_kcs, owner_of,
-    question_symbols,
+    is_lessonless, question_symbols,
 )
 
 OUT = QMATRIX.parent / "question_symbol_kcs.json"
@@ -48,6 +48,10 @@ def build() -> dict:
     for q in questions:
         qid = q.get("id")
         targets = set((qmatrix.get(str(qid)) or {}).get("target_kcs") or [])
+        # Lesson-less course (audit_solution_prereqs.LESSONLESS_PREFIXES): its
+        # drills assume Python, so no python.* page may gate them at runtime.
+        if is_lessonless(targets):
+            continue
         owners: dict[str, list[str]] = {}
         for surface in SURFACES:
             for sym in sorted(question_symbols(q, surface)):

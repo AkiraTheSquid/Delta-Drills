@@ -44,7 +44,8 @@ lessons._load()
 # (416 tagged questions, 63 KCs) and both had been failing for weeks: every
 _registry = lessons._read_json("kc_registry.json") or {}
 _registry_kcs = {kc["id"] for kc in _registry.get("kcs", [])}
-_missing_kp = sorted(_registry_kcs - set(lessons._kc_gate_info))
+# LeetCode is a lesson-less course by design: its KCs have drills, no pages.
+_missing_kp = sorted(k for k in _registry_kcs - set(lessons._kc_gate_info) if not k.startswith("leetcode."))
 check("every registered KC has an introducing KP", not _missing_kp,
       f"{len(_missing_kp)} without one: {_missing_kp[:5]}")
 

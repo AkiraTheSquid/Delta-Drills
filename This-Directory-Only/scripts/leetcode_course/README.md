@@ -69,5 +69,9 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-09-25: `export_app.py` added, the last pipeline step. It grades every drill
+  (the reference passes, the bare starter fails) and writes problems.json, ids.json, the
+  `leetcode.*` registry rows, the qmatrix slice, glossary kcLesson, clock caps, `lc-*` atoms,
+  edges and atom tags. `select_bank.py` runs without generated.jsonl.
 - 2026-09-25: Folder created: pool, verify, codex generation, TypeSafe tagging,
   selection and difficulty rating for the LeetCode Patterns course.
