@@ -31,8 +31,9 @@
   cursor gets `.is-hot` (lit in `--field-edge`).
 - `fig-effort.js` Fig. 1 · `fig-forget.js` Fig. 4 (SVG, draggable review handles;
   implicit reps of `IMPLICIT_W` always on, tagged on the plot, keyed in the side) ·
-  `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre, drawn in why-graph.js's
-  style) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
+  `fig-graphs.js` Figs. 3, 5, 6 (Cytoscape + dagre; why-graph.js's red arrows
+  and yellow highlight, the old site's small circle nodes labelled underneath,
+  fill `known(p)` = red → green by P(known)) · `fig-seth.js` Fig. 7. Fig. 2 is `../../concept-graph/why-graph.js`.
 - `fig-expand.js`: the "Full screen" button under every figure's graphic;
   toggles `figure.fig.is-max`, announces a window `resize` so the SVG figures
   redraw (Fig. 4 caps its height to the stage while full screen) and
@@ -92,3 +93,8 @@
 - 2026-09-25: `field.js` v5 back to a plain background (Seth: "doesn't have
   the thing where it pulls nodes in"): card push-out, hover/title pulls and
   cursor drag removed; erase-inside-cards and `.is-hot` kept.
+- 2026-09-25: `fig-graphs.js` v7: Figs. 3/5/6 nodes back to the standalone
+  site's circles (sizes per figure as there); fill is one red → green ramp
+  by P(known) in all three (Seth: "green for known, and red for not known"),
+  replacing red→amber→green and Fig. 5's grey→green. Fig. 3 legend's
+  "uncertain" swatch is the red/green midpoint.

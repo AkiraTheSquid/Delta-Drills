@@ -1124,7 +1124,7 @@
               <div class="probe-card"><span class="id">Next probe · max expected information</span> <span class="t" id="aisc-probe-title">—</span> <span class="id" id="aisc-probe-id">—</span></div>
               <div class="btns"><button class="btn ok" data-r="correct">Correct</button><button class="btn no" data-r="incorrect">Wrong</button><button class="btn dk" data-r="dont_know">Don't know</button><button class="btn ghost" id="aisc-place-auto">Simulate a learner</button><button class="btn ghost" id="aisc-place-reset">Reset</button></div>
               <div class="readout" id="aisc-place-readout"></div>
-              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:var(--amber)"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
+              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:color-mix(in srgb, var(--red), var(--green))"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
             </div>
           </div>
           <figcaption>Belief per concept starts at 50%. A correct answer is strong evidence (Bayes factor ≈16), a wrong one weaker (≈0.21, careless slips are common in code), "I don't know" strongest of all (≈0.05) — the same asymmetry ALEKS uses. Evidence propagates up to 3 hops, halving per hop toward prerequisites. <b>Frontier</b> = not yet known, but every prerequisite is. The production test also caps each problem's time and draws probes from ARENA's own exercises first.</figcaption>
@@ -2665,7 +2665,7 @@ t.manual_seed(0)
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
   <script src="aisc/articles.js?v=2" defer></script>
-  <script src="aisc/boot.js?v=13" defer></script>
+  <script src="aisc/boot.js?v=14" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
