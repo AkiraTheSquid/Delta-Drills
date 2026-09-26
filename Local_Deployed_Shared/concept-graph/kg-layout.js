@@ -98,14 +98,15 @@
   };
 
   /* ---------------- 1. place ------------------------------------------- */
-  const place = (nodes, edges, opt) => {
-    const o = Object.assign({
+  const PLACE = {
       // Separations are box-to-box. 40/40/50 packed every node at the
       // minimum (median gap 60 px; Seth 2026-09-25: "too jumbled and close
       // together"); these give a median of ~137 px at the same crossings.
       sepX: 130, sepY: 110, gapY: 120, wCross: 200, wThrough: 40, wLen: 0.2, wGrav: 0.02, slope: 1.5,
       sweeps: 220, gap: 140, polish: 30, t0: 70, t1: 0.4, sigma: 220, seed: 1, ov0: 0.0005, ov1: 2,
-    }, opt || {});
+  };
+  const place = (nodes, edges, opt) => {
+    const o = Object.assign({}, PLACE, opt || {});
     const n = nodes.length;
     const { E, inc } = model(nodes, edges);
     const X = new Float64Array(n), Y = new Float64Array(n);
@@ -378,11 +379,12 @@
   // Eight headings, clockwise from up; odd ones are diagonal.
   const DX = [0, 1, 1, 1, 0, -1, -1, -1], DY = [-1, -1, 0, 1, 1, 1, 0, -1];
   const SQ2 = Math.SQRT2;
-  const route = (nodes, edges, pos, opt) => {
-    const o = Object.assign({
+  const ROUTE = {
       cell: CELL, pad: 6, margin: 180, bend: 3, near: 0.8, cross: 100, bundle: 0.15, down: 0.8,
       hist: 0.6, rounds: 4, radius: 60, lane: 4, laneRel: 1, lane2: 0.25, entry: "bottom", window: 28, wall: 400, greed: 1.25,
-    }, opt || {});
+  };
+  const route = (nodes, edges, pos, opt) => {
+    const o = Object.assign({}, ROUTE, opt || {});
     const { E } = model(nodes, edges);
     const c = o.cell;
     const P = nodes.map((d) => pos[d.id] || { x: d.x, y: d.y });
@@ -792,7 +794,9 @@
     return job.then((out) => store(k, out));
   };
 
-  const api = { layout, place, route, hashStr, key, cached: (nodes, edges, opt) => cached(key(nodes, edges, opt)), run };
+  // The defaults, for kg-tune.js's sliders (copies: nothing may change them).
+  const defaults = () => ({ place: Object.assign({}, PLACE), route: Object.assign({}, ROUTE) });
+  const api = { layout, place, route, defaults, hashStr, key, cached: (nodes, edges, opt) => cached(key(nodes, edges, opt)), run };
   root.DeltaKgLayout = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

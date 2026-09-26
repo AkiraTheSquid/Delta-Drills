@@ -345,6 +345,33 @@ console.log(JSON.stringify(bad));
     assert 0 <= a < b, 'index.html must load kg-layout.js BEFORE kg-look.js, which calls it'
 
 
+def check_every_tuning_slider_is_a_real_knob():
+    """kg-tune.js (`?kgtune=1`) slides kg-layout.js's knobs by name. A slider
+    whose key the optimizer doesn't have moves nothing and says nothing, so
+    every `["place"|"route", "<key>", ...]` row must name a default that
+    kg-layout.js exports; and kg-toolbar.js must load the tuner only behind
+    the flag, never for every learner.
+    """
+    import re
+    import shutil
+    import subprocess
+    tune = _read(os.path.join(HERE, 'kg-tune.js'))
+    rows = re.findall(r'\[\s*"(place|route)",\s*"(\w+)",\s*"', tune)
+    assert len(rows) >= 10, f'kg-tune.js: expected its slider rows, found {len(rows)}'
+    toolbar = _read(os.path.join(HERE, 'kg-toolbar.js'))
+    assert 'kgtune=' in toolbar and 'dd_kg_tune_on' in toolbar and '"kg-tune.js' in toolbar, (
+        'kg-toolbar.js must load kg-tune.js only behind ?kgtune=1')
+    node = shutil.which('node')
+    if not node:
+        return
+    out = subprocess.run([node, '-e', 'console.log(JSON.stringify(require(process.argv[1]).defaults()))',
+                          os.path.join(HERE, 'kg-layout.js')], capture_output=True, text=True, timeout=30)
+    assert out.returncode == 0, f'kg-layout.js defaults() failed: {out.stderr[-300:]}'
+    d = json.loads(out.stdout)
+    missing = [f'{st}.{k}' for st, k in rows if k not in d[st]]
+    assert not missing, f'kg-tune.js slides knobs kg-layout.js does not have: {missing}'
+
+
 def _assert_every_check_is_listed(checks):
     """A check this module defines but never calls is worse than no check.
 
@@ -376,6 +403,7 @@ if __name__ == '__main__':
         check_a_placed_learner_is_not_told_they_answered_nothing,
         check_disabled_concepts_have_an_optional_graph_treatment,
         check_the_layout_optimizer_keeps_its_rules,
+        check_every_tuning_slider_is_a_real_knob,
     ]
     try:
         _assert_every_check_is_listed(checks)

@@ -187,7 +187,13 @@
         cw: n.outerWidth(), ch: n.outerHeight() };
     });
     const edges = eles.edges().map((e) => ({ id: e.id(), s: e.source().id(), t: e.target().id() }));
-    return { nodes, edges, opt: { route: { entry: look === "dot" ? "side" : "bottom" } } };
+    // kg-tune.js (the `?kgtune=1` sliders) may override the optimizer's
+    // knobs in this browser; the cache key includes them.
+    const tune = (window.DeltaKgTune && window.DeltaKgTune.opts()) || {};
+    return { nodes, edges, opt: {
+      place: Object.assign({}, tune.place),
+      route: Object.assign({}, tune.route, { entry: look === "dot" ? "side" : "bottom" }),
+    } };
   };
   // A pointer or wheel on the canvas after a layout started: the learner has
   // taken the view, so a late refinement must not refit it.
@@ -198,6 +204,8 @@
     const el = cy.container();
     if (el) { el.addEventListener("wheel", mark, { passive: true }); el.addEventListener("pointerdown", mark); }
   };
+  // The optimizer's answer is on the canvas (routes installed).
+  const announce = (cy) => window.dispatchEvent(new CustomEvent("delta:kg-layout-done", { detail: { cy } }));
   const routeLayout = (cy, o) => {
     const eles = layoutEles(cy);
     const g = new window.dagre.graphlib.Graph({ multigraph: true });
@@ -245,6 +253,7 @@
       cy.__kgRoutes = Object.assign({}, hit ? hit.routes : dagreRoutes);
       if (hit) cy.__kgLayoutStats = Object.assign({ cached: true }, hit.stats);
       kickCurve(cy);
+      if (hit) announce(cy);
       if (hit || !L) return;
       // A tick later: a caller that stops this layout to start the next one
       // fires this `layoutstop` first, and the next layout's generation
@@ -265,6 +274,7 @@
           if (cy.destroyed() || cy.__kgGen !== gen) return;
           cy.__kgRoutes = Object.assign({}, res.routes);
           kickCurve(cy);
+          announce(cy);
           if (typeof o.refit === "function" && !(cy.__kgTouched > started)) o.refit();
         });
         cy.__kgGlide = glide;
