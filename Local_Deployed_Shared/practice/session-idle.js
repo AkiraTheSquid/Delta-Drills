@@ -72,11 +72,9 @@
     dial.classList.remove("readiness-dial--unknown");
     dial.style.setProperty("--dd-ready-pct", String(info.pct));
     pctEl.textContent = `${info.pct}%`;
-    dial.setAttribute(
-      "aria-label",
-      `${info.pct} percent ready for the ARENA curriculum`,
-    );
-    if (captionEl) captionEl.textContent = "ready for the ARENA curriculum";
+    const words = window.PracticeReadiness.caption(info);
+    dial.setAttribute("aria-label", `${info.pct} percent ${words}`);
+    if (captionEl) captionEl.textContent = words;
     /* 🔴 THE WORDS COME FROM readiness.js TOO, not just the number. This
        screen and the placement results card show the same figure, and two
        hand-written captions for one number is how they start disagreeing

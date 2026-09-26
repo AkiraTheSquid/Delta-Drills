@@ -195,6 +195,47 @@ def order(user_state, kcs: Iterable[str]) -> List[str]:
     return prioritized + [k for k in kcs if k not in in_a_pool]
 
 
+# --- the two writers ---------------------------------------------------------
+# `course_shares` and `study_courses` are coupled: a standalone course is on
+# exactly while it is studied, and a course left out has no share. Both
+# endpoints (practice/diagnostic_router.py) go through these two, so the pair
+# cannot drift apart.
+
+
+def toggle(user_state, course_id: str, enabled: bool) -> None:
+    """The Courses tab toggle. Enabling sets the fixed share and, with an
+    answered study set, studies the course (for ARENA, the only way back in
+    after leaving it out at onboarding); switching a standalone course off
+    stops studying it. Switching ARENA's MIX off leaves ARENA studied — its
+    concepts are the main graph."""
+    shares = dict(user_state.course_shares or {})
+    shares[course_id] = DEFAULT_ENABLE_SHARE if enabled else 0.0
+    user_state.course_shares = shares
+    if user_state.study_courses is not None:
+        study = set(user_state.study_courses)
+        if enabled:
+            study.add(course_id)
+        elif course_id != "arena":
+            study.discard(course_id)
+        user_state.study_courses = course_registry.normalize_study(study)
+
+
+def set_study(user_state, picked: List[str]) -> None:
+    """The onboarding answer (already normalized, non-empty). A course left
+    out gets share 0, ARENA's mix included; a standalone course picked is
+    switched on at the fixed share, unchanged if already on. ARENA picked
+    keeps whatever mix it has — re-picking it does not switch its exercise
+    mix on, which the learner never asked for."""
+    shares = dict(user_state.course_shares or {})
+    for c in course_registry.COURSE_IDS:
+        if c not in picked:
+            shares[c] = 0.0
+        elif c != "arena" and share(user_state, c) <= 0.0:
+            shares[c] = DEFAULT_ENABLE_SHARE
+    user_state.course_shares = shares
+    user_state.study_courses = list(picked)
+
+
 def status(user_state, course_id: str) -> dict:
     """What the Courses tab card shows for one course."""
     f = course_fraction(user_state, course_id)
@@ -204,6 +245,10 @@ def status(user_state, course_id: str) -> dict:
         "course": course_id,
         "share": s,
         "enabled": s > 0.0,
+        # In the learner's study set (course_registry.course_off): with no
+        # onboarding answer, ARENA always and a standalone course while on.
+        "studied": not course_registry.course_off_by_study(user_state, course_id)
+        and (course_id == "arena" or s > 0.0),
         "scope": getattr(user_state, "practice_target", "all") if course_id == "arena" else "all",
         "course_kcs": len(milestones(user_state, course_id)),
         "window": WINDOW,

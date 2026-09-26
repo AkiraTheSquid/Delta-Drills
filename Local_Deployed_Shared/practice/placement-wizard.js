@@ -43,6 +43,8 @@ const PlacementWizard = (() => {
     PyTorch: ["PyTorch", "Tensor ops, rays, modules and ResNets — ARENA 0.0 to 0.2."],
     Einops: ["einops", "rearrange, reduce, repeat and einsum."],
     Mathematics: ["Math", "Linear algebra and ray geometry for ARENA 0.1."],
+    LeetCode: ["LeetCode Patterns", "Two pointers, sliding window, trees, graphs, heaps, DP."],
+    "Delta Drills": ["Delta Drills", "How this app works: mastery, spaced repetition, why drills."],
   };
   const areaName = (key) => (AREA_TEXT[key] || [key])[0];
   // Listed in curriculum order, not the registry's; unknown areas go last.
@@ -66,6 +68,7 @@ const PlacementWizard = (() => {
   let chosen = null;           // Set of area keys; null until the catalogue arrives
   let tier = null;
   const plans = new Map();     // areas key -> plan response (or a pending promise)
+  let catalogGen = 0;          // bumped by coursesChanged; a plan asked before it is dropped
 
   const _api = () => (typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI);
   const el = (tag, className, text) => {
@@ -145,9 +148,11 @@ const PlacementWizard = (() => {
     const key = areasKey();
     if (plans.has(key) || retryTimer) return;
     const params = areasParam();
+    const asked = catalogGen;
     const pending = (async () => {
       let plan = null;
       try { plan = await _api()?.diagnosticPlan?.(params); } catch (_) {}
+      if (asked !== catalogGen) return; // the courses changed while it was out
       if (plan && !plan.unavailable && Array.isArray(plan.options)) {
         plans.set(key, plan);
         _adoptCatalog(plan);
@@ -241,6 +246,10 @@ const PlacementWizard = (() => {
     }
     if (alt) {
       alt.textContent = "";
+    }
+    // The rapid check is ARENA 0.1's; a learner not studying ARENA has no
+    // PyTorch area and nothing for it to test.
+    if (alt && catalog && catalog.some((a) => a.key === "PyTorch")) {
       const btn = el("button", "placement-focus-alt-btn");
       btn.type = "button";
       btn.setAttribute("aria-pressed", String(ray));
@@ -439,9 +448,25 @@ const PlacementWizard = (() => {
     return { scope: "all", minutes: opt ? Number(opt.minutes) : null, areas: areasParam() };
   };
 
+  /* The onboarding course question (practice/course-pick.js) changed which
+     concepts exist for this learner: drop the area catalogue, the plans cut
+     from it and the saved focus, so the next status repaints from the new
+     one with every area picked. */
+  const coursesChanged = () => {
+    catalogGen += 1;
+    catalog = null;
+    chosen = null;
+    plans.clear();
+    stepIndex = 0;
+    if (scope === RAY) scope = "all";
+    write(STORE_AREAS, "null");
+    if (status) paint();
+  };
+
   return {
     render,
     startPayload,
+    coursesChanged,
     areaName,
     selectedScope: () => scope,
     /* practice-target.js routes here to take the rapid check. On a finished

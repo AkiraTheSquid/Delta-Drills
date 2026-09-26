@@ -394,6 +394,12 @@ class CourseShareRequest(BaseModel):
     enabled: bool
 
 
+class StudyCoursesRequest(BaseModel):
+    """The onboarding "which courses do you want to study?" answer: the
+    course ids picked, at least one (app/course_registry.course_off)."""
+    courses: List[str]
+
+
 class DiagnosticPlanArea(BaseModel):
     key: str
     kcs: int

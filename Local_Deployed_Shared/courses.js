@@ -645,9 +645,13 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
     // reader. The words are the course's own (course-registry.js): ARENA's
     // toggle only mixes its exercises in early — its concepts are the main
     // graph either way — while Delta Drills' is the only way into practice.
-    const toggleWords = course.toggleLabel || "Add to practice";
-    toggle.setAttribute("aria-label", `${course.label}: ${toggleWords}`);
+    // A course left out at onboarding (practice/course-pick.js) is not
+    // studied at all — ARENA included — and switching it on is what brings
+    // it back, so its toggle says that instead.
     const row = shareRow(course.id);
+    const notStudied = !!(row && row.studied === false);
+    const toggleWords = notStudied ? "Add to practice" : course.toggleLabel || "Add to practice";
+    toggle.setAttribute("aria-label", `${course.label}: ${toggleWords}`);
     toggle.checked = !!(row && row.enabled);
     toggle.disabled = !sharesReady;
     toggle.addEventListener("change", async () => {
@@ -662,6 +666,8 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
         return;
       }
       toggle.disabled = false;
+      // ARENA's words depend on whether it is studied, which the save changed.
+      if (course.id === "arena") renderList();
       // The save already landed — a refresh hiccup here must not roll the
       // checkbox back and claim the change failed when it didn't.
       try {
@@ -719,5 +725,7 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
   renderList();
   showList();
   window.addEventListener("delta:practice-mode-ready", refreshShares);
+  // The onboarding course question (practice/course-pick.js) changed them.
+  window.addEventListener("delta:courses-changed", refreshShares);
   if (window.DDPracticeModeReady) refreshShares();
 })();

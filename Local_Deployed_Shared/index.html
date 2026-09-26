@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ARENA Delta Drills v1.0.15</title>
+  <title>Delta Drills v1.0.16</title>
   <!-- delta-drills.vercel.app → deltadrills.com, carrying localStorage across.
        FIRST and SYNCHRONOUS: it may stop the page before anything else reads
        storage on the wrong origin. See domain-move.js. -->
@@ -825,10 +825,13 @@
            A learner who has ALREADY placed is not stranded by this: the card
            reads "Retake the placement test" over their last results, and
            #placement-skip-btn is a one-click route on to practice. -->
-      <button type="button" class="welcome-arm welcome-arm--right" data-goto-tab="placement">
+      <!-- Since 2026-09-25 it stops at ONE question first, "which courses do
+           you want to study?" (#page-course-pick), and that page's Continue
+           opens the placement. -->
+      <button type="button" class="welcome-arm welcome-arm--right" data-goto-tab="course-pick">
         <span class="welcome-arrow" aria-hidden="true">&#8594;</span>
         <span class="welcome-arm-label">Jump into practicing the app</span>
-        <span class="welcome-arm-note">Starts with the placement test.</span>
+        <span class="welcome-arm-note">Pick your courses, then a placement test.</span>
       </button>
       </div>
       <!-- THE THIRD, QUIET ARM (Seth, 2026-08-24): an expert reviewing the
@@ -846,6 +849,32 @@
         <span class="welcome-arm-note">Review the content and give feedback on it, rather than
           practicing it. You can switch back any time from the account menu.</span>
       </button>
+    </div>
+  </main>
+
+
+  <!-- WHICH COURSES — the one question between the welcome fork's right arm
+       and the placement set-up (Seth, 2026-09-25: "a single prompt question
+       that asks them which courses they want to include for study").
+       practice/course-pick.js fills the tiles from course-registry.js, posts
+       the answer (POST /api/practice/study-courses) and opens #page-placement.
+       NOT A TAB, like #page-placement: no [data-tab="course-pick"]. Tiles and
+       Continue borrow the placement set-up's classes so the two screens read
+       as one sequence. -->
+  <main class="page hidden" id="page-course-pick">
+    <div class="container placement-page">
+      <div class="diagnostic-eyebrow">Getting started</div>
+      <section class="card diagnostic-card">
+        <div class="placement-step">
+          <h2 class="placement-step-q">Which courses do you want to study?</h2>
+          <p class="placement-step-hint">Pick one or more. Only these are practised and placed; you can change this any time on the Courses tab.</p>
+          <div class="placement-focus-grid" id="course-pick-grid" role="group" aria-label="Courses to study"></div>
+        </div>
+        <div class="placement-wizard-nav">
+          <span class="placement-focus-count" id="course-pick-note" aria-live="polite"></span>
+          <button type="button" class="placement-forward-btn" id="course-pick-continue" disabled>Continue &rarr;</button>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -2364,7 +2393,7 @@ t.manual_seed(0)
     <div class="container placement-page" id="diagnostic-overview">
       <div class="placement-hero">
         <div>
-          <div class="diagnostic-eyebrow">ARENA placement</div>
+          <div class="diagnostic-eyebrow">Placement</div>
           <h1>Placement test</h1>
           <p class="subtitle">Finds where to start you. It seeds practice; it never awards mastery.</p>
         </div>
@@ -2787,8 +2816,8 @@ t.manual_seed(0)
        proxies Continue practicing to the hidden resume/start buttons. AFTER
        timer.js, whose `hasPausedSession()` decides which of those two the one
        button means, and after notch-menu.js for no reason but reading order. -->
-  <script src="practice/readiness.js?v=4"></script>
-  <script src="practice/session-idle.js?v=8"></script>
+  <script src="practice/readiness.js?v=5"></script>
+  <script src="practice/session-idle.js?v=9"></script>
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
@@ -2864,9 +2893,9 @@ t.manual_seed(0)
   <script src="practice/feedback-panel.js?v=3"></script>
   <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
        own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-wizard.js?v=2"></script>
+  <script src="practice/placement-wizard.js?v=3"></script>
   <script src="practice/placement-plan.js?v=5"></script>
-  <script src="practice/placement-results.js?v=5"></script>
+  <script src="practice/placement-results.js?v=6"></script>
   <script src="practice/practice-target.js?v=1"></script>
   <script src="practice/diagnostic-page.js?v=26"></script>
   <!-- Placement probes run outside a practice session, so they carry their own
@@ -2894,7 +2923,10 @@ t.manual_seed(0)
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=6"></script>
+  <script src="courses.js?v=7"></script>
+  <!-- After course-registry.js (the tiles) and placement-wizard.js (reset on
+       Continue). -->
+  <script src="practice/course-pick.js?v=1"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
   <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->

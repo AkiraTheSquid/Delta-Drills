@@ -100,7 +100,10 @@
   /* ---------------- 1. place ------------------------------------------- */
   const place = (nodes, edges, opt) => {
     const o = Object.assign({
-      sepX: 40, sepY: 40, gapY: 50, wCross: 200, wThrough: 40, wLen: 0.2, wGrav: 0.02, slope: 1.5,
+      // Separations are box-to-box. 40/40/50 packed every node at the
+      // minimum (median gap 60 px; Seth 2026-09-25: "too jumbled and close
+      // together"); these give a median of ~137 px at the same crossings.
+      sepX: 130, sepY: 110, gapY: 120, wCross: 200, wThrough: 40, wLen: 0.2, wGrav: 0.02, slope: 1.5,
       sweeps: 220, gap: 140, polish: 30, t0: 70, t1: 0.4, sigma: 220, seed: 1, ov0: 0.0005, ov1: 2,
     }, opt || {});
     const n = nodes.length;
@@ -369,13 +372,16 @@
     };
   };
 
+  // Routing grid. 16 px keeps parallel edges a lane apart that reads as two
+  // lines, not a smear, and is no slower than 12 (fewer cells, longer steps).
+  const CELL = 16;
   // Eight headings, clockwise from up; odd ones are diagonal.
   const DX = [0, 1, 1, 1, 0, -1, -1, -1], DY = [-1, -1, 0, 1, 1, 1, 0, -1];
   const SQ2 = Math.SQRT2;
   const route = (nodes, edges, pos, opt) => {
     const o = Object.assign({
-      cell: 12, pad: 6, margin: 180, bend: 3, near: 0.8, cross: 100, bundle: 0.15, down: 0.8,
-      hist: 0.6, rounds: 4, radius: 60, entry: "bottom", window: 28, wall: 400, greed: 1.25,
+      cell: CELL, pad: 6, margin: 180, bend: 3, near: 0.8, cross: 100, bundle: 0.15, down: 0.8,
+      hist: 0.6, rounds: 4, radius: 60, lane: 4, laneRel: 1, lane2: 0.25, entry: "bottom", window: 28, wall: 400, greed: 1.25,
     }, opt || {});
     const { E } = model(nodes, edges);
     const c = o.cell;
@@ -427,10 +433,25 @@
     for (let a = 0; a < 8; a++) for (let b = 0; b < 8; b++) TCOST[a * 8 + b] = turnOf(a, b) > 2 ? -1 : TURN[turnOf(a, b)];
 
     const occ = new Array(NC);         // cell -> edges through it
+    const nbr = new Array(NC);         // cell -> edges through one of its 8 neighbours
+    const nbr2 = new Array(NC);        // cell -> edges two cells away (the next ring)
     const docc = new Map();            // 2x2 block + slant -> edges crossing it diagonally
     const hist = new Float32Array(NC); // negotiated-congestion history
     const paths = new Array(E.length);
     const shares = (a, b) => a.s === b.s || a.s === b.t || a.t === b.s || a.t === b.t;
+    // Running next to an unrelated edge (one lane over) costs `lane` a cell:
+    // two lines 16 px apart read as one smear. Bundles stay free.
+    // An edge counts once, in the nearest ring it is in: one that runs
+    // THROUGH the cell is a shared trunk (priced by `price`), not a lane over.
+    const lanePrice = (L, k, f, A, B) => {
+      let v = 0;
+      for (let m = 0; m < L.length; m++) {
+        const e = L[m];
+        if (e === k || (A && A.includes(e)) || (B && B.includes(e))) continue;
+        v += shares(E[e], E[k]) ? o.laneRel : o.lane;
+      }
+      return v * f;
+    };
     const price = (L, k, q) => {
       let v = 0;
       if (!L) return 0;
@@ -449,12 +470,32 @@
       const p = paths[k];
       if (!p) return;
       const seen = new Set();
+      let into = occ;
       const put = (L, map, key) => {
-        if (add) { if (!L) { L = []; if (map) map.set(key, L); else occ[key] = L; } L.push(k); }
+        if (add) { if (!L) { L = []; if (map) map.set(key, L); else into[key] = L; } L.push(k); }
         else if (L) { const at = L.indexOf(k); if (at >= 0) L.splice(at, 1); }
       };
+      const around = new Set(), around2 = new Set();
       p.forEach((q, m) => {
-        if (!seen.has(q)) { seen.add(q); put(occ[q], null, q); }
+        if (!seen.has(q)) {
+          seen.add(q); put(occ[q], null, q);
+          {
+            const x = q % GW;
+            for (let d = 0; d < 8; d++) {
+              const nx = x + DX[d], n = q + DY[d] * GW + DX[d];
+              if (nx < 0 || nx >= GW || n < 0 || n >= NC || around.has(n)) continue;
+              around.add(n); into = nbr; put(nbr[n], null, n); into = occ;
+            }
+            if (o.lane2) {
+              for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) !== 2) continue;
+                const nx = x + dx, n = q + dy * GW + dx;
+                if (nx < 0 || nx >= GW || n < 0 || n >= NC || around2.has(n)) continue;
+                around2.add(n); into = nbr2; put(nbr2[n], null, n); into = occ;
+              }
+            }
+          }
+        }
         if (m && q - p[m - 1] !== 1 && p[m - 1] - q !== 1 && q - p[m - 1] !== GW && p[m - 1] - q !== GW) {
           const key = dkey(p[m - 1], q);
           put(docc.get(key), docc, key);
@@ -529,6 +570,8 @@
             cost += price(docc.get(dkey(q, nq) ^ 1), k, nq);
           }
           if (occ[nq]) cost += price(occ[nq], k, nq);
+          if (nbr[nq]) cost += lanePrice(nbr[nq], k, step, occ[nq]);
+          if (nbr2[nq]) cost += lanePrice(nbr2[nq], k, step * o.lane2, occ[nq], nbr[nq]);
           const gd = nq === gA ? dA : nq === gB ? dB : undefined;
           if (gd != null) cost += TURN[Math.min(2, turnOf(nd, gd))] + (turnOf(nd, gd) > 2 ? o.bend * 4 : 0);
           const ns = nq * 8 + nd, ng = gq + cost;
@@ -575,6 +618,15 @@
       order.forEach((k) => { if (bad.has(k)) { lay(k, false); routeOne(k); } });
     }
     const left = clashes(false).pairs.size;
+    // Edge closeness: cells of a route with an unrelated edge one lane over
+    // (a route's own neighbours don't count, nor the cells it shares).
+    let closeCells = 0;
+    paths.forEach((p, k) => {
+      if (p) p.forEach((q) => {
+        const L = nbr[q];
+        if (L && L.some((f) => f !== k && !shares(E[f], E[k]) && !(occ[q] && occ[q].includes(f)))) closeCells++;
+      });
+    });
 
     // Cells -> turning points -> control points.
     const routes = {};
@@ -613,7 +665,7 @@
       }
       routes[e.id] = { pts: clean, cps };
     });
-    return { routes, stats: { grid: GW + "x" + GH, rounds, clashPairs: left, searches, pops } };
+    return { routes, stats: { grid: GW + "x" + GH, rounds, clashPairs: left, closeCells, searches, pops } };
   };
 
   /* ---------------- both ----------------------------------------------- */
@@ -622,7 +674,7 @@
     const seed = hashStr(nodes.map((d) => d.id).join("|") + "#" + edges.map((e) => e.s + ">" + e.t).join("|"));
     const t0 = Date.now();
     // Snap to the routing grid so a port sits on a cell's centre line.
-    const cell = (o.route && o.route.cell) || 12;
+    const cell = (o.route && o.route.cell) || CELL;
     const placed = place(nodes, edges, Object.assign({ seed, snap: cell }, o.place));
     Object.keys(placed.pos).forEach((id) => {
       const p = placed.pos[id];
@@ -652,7 +704,7 @@
     return;
   }
 
-  const VERSION = 1;
+  const VERSION = 2;
   const r1 = (v) => Math.round((v || 0) * 10) / 10;
   const key = (nodes, edges, opt) => VERSION + "." + hashStr(JSON.stringify([
     nodes.map((d) => [d.id, r1(d.x), r1(d.y), r1(d.w), r1(d.h), r1(d.ox), r1(d.oy), r1(d.cw), r1(d.ch)]),

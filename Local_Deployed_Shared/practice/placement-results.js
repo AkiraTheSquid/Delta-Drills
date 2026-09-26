@@ -208,7 +208,9 @@ const PlacementResults = (() => {
         if (!info) return; // unknown, not zero — the "—" already says so
         dial.classList.remove("readiness-dial--unknown");
         dial.style.setProperty("--dd-ready-pct", String(info.pct));
-        dial.setAttribute("aria-label", `${info.pct} percent ready for the ARENA curriculum`);
+        const words = window.PracticeReadiness.caption(info);
+        dial.setAttribute("aria-label", `${info.pct} percent ${words}`);
+        caption.textContent = words;
         value.textContent = `${info.pct}%`;
         detail.textContent = window.PracticeReadiness.detail(info);
       })

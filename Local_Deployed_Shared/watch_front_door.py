@@ -120,10 +120,25 @@ def check_front_door():
     # a block ON the Learner Home and the arm's own note — "Starts with the
     # placement test" — was kept true by that. The card has its own page again,
     # so the note is only true if the arm names it.
-    assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="placement"' in fork, (
-        "left arm reads about the app, right arm starts with the placement "
-        "test — which is #page-placement, not the Learner Home"
+    # Since 2026-09-25 by way of ONE question first (Seth: "a single prompt
+    # question that asks them which courses they want to include for study
+    # ... between the 'take me to diagnostic' and viewing diagnostic
+    # controls"): the arm opens #page-course-pick, whose Continue opens the
+    # placement.
+    assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="course-pick"' in fork, (
+        "left arm reads about the app, right arm asks which courses — "
+        "#page-course-pick — before the placement, not the Learner Home"
     )
+    assert 'id="page-course-pick"' in markup and 'data-tab="course-pick"' not in markup, (
+        "#page-course-pick is a page with no tab, like #page-placement"
+    )
+    with open(os.path.join(HERE, "practice", "course-pick.js")) as f:
+        pick_js = f.read()
+    assert '"/api/practice/study-courses"' in pick_js and 'switchTab("placement")' in pick_js, (
+        "the course question saves the answer and then opens the placement — "
+        "it is a step on the way there, not a dead end"
+    )
+    assert 'src="practice/course-pick.js' in index_html, "course-pick.js is not loaded"
     assert "optional" in fork, (
         "the reading path must say out loud that it is optional, or a fork "
         "reads as a prerequisite"
