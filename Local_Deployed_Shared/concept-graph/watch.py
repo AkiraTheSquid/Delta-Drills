@@ -279,9 +279,10 @@ def check_disabled_concepts_have_an_optional_graph_treatment():
 
 def check_the_layout_optimizer_keeps_its_rules():
     """kg-layout.js may move nodes anywhere, but never breaks the graph's
-    rules: every prerequisite sits at least `gapY` (50 px) below what it
+    rules: every prerequisite sits at least 50 px (`gapY` floor) below what it
     unlocks, no two boxes overlap, every edge gets a route and no route runs
-    through a node it doesn't touch, and the same graph lays out the same way
+    through a node it doesn't touch, edges keep a lane apart (the `lane` cost
+    at least halves the cells next to an unrelated edge), and the same graph lays out the same way
     twice, routes included (the cache and a reload rely on it). Run under Node on a small graph
     with a crossing dagre-style rows would keep (a 3x3 bipartite block plus a
     chain); skipped when Node isn't installed.
@@ -327,6 +328,11 @@ for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++
   if (Math.abs(A.x - B.x) < 90 && Math.abs(A.y - B.y) < 30) bad.push('overlap: ' + nodes[i].id + '/' + nodes[j].id);
 }
 if (JSON.stringify([one.pos, one.routes]) !== JSON.stringify([two.pos, two.routes])) bad.push('not deterministic');
+// Edges one lane apart read as one smear: the lane cost must at least halve
+// the cells where an edge runs next to an unrelated one (6 vs 21 here).
+const off = L.layout(nodes, edges, { route: { lane: 0, laneRel: 0, lane2: 0 } });
+if (typeof one.stats.closeCells !== 'number' || !(one.stats.closeCells * 2 <= off.stats.closeCells))
+  bad.push('edges crowd: closeCells ' + one.stats.closeCells + ' with the lane cost, ' + off.stats.closeCells + ' without');
 console.log(JSON.stringify(bad));
 """
     out = subprocess.run([node, '-e', script, os.path.join(HERE, 'kg-layout.js')],
