@@ -46,6 +46,10 @@
        its bottom-left settings card. AFTER how-it-works.css, which owns the
        .kg2-* rules it overrides on source order. -->
   <link rel="stylesheet" href="styles/graph-views.css?v=2" />
+  <!-- The Knowledge Graph's one toolbar + compact legend + edge ink
+       (concept-graph/kg-toolbar.js, kg-look.js). AFTER graph-views.css,
+       whose card pieces it re-seats in the bar. -->
+  <link rel="stylesheet" href="styles/kg-toolbar.css?v=1" />
   <!-- The landing page's concept map, split out of how-it-works.css.
        AFTER it: `.kg2-nodata` stayed behind with the other Knowledge Graph
        rules, and the map's overrides of `.kg2-*` resolve on source order. -->
@@ -2649,11 +2653,17 @@ t.manual_seed(0)
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=2" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=3" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=36" defer></script>
+  <!-- How the graph draws (node look setting, curved edges, shortcuts).
+       BEFORE lesson-graph.js, which builds its stylesheet from it. -->
+  <script src="concept-graph/kg-look.js?v=1" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=37" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=7" defer></script>
+  <script src="concept-graph/graph-views.js?v=8" defer></script>
+  <!-- Gathers the controls lesson-graph.js and graph-views.js built into
+       one bar across the top. AFTER both; optional. -->
+  <script src="concept-graph/kg-toolbar.js?v=1" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
