@@ -37,7 +37,8 @@
      with `pct: null`, which the pill draws as an empty, dashed track and
      says so; it is never drawn as 0%.
 
-   🔴 THE COLOUR RAMP IS THE GRAPH'S. Red #d64848 at 0 → blue #3b82f6 at 1,
+   🔴 THE COLOUR RAMP IS THE GRAPH'S. Red #d64848 at 0 → amber #e2a92e at
+   0.5 → green #34a862 at 1 (was red → blue until 2026-09-25),
    grey #5b5b70 for no reading — `masteryColor` in lesson-graph.js, which
    is not exported. `window.deltaKcMasteryColor` is read first so the day
    it is, this copy stops being consulted; until then the two endpoints are
@@ -53,7 +54,8 @@
   const EVENT = "dd-notebook-concept";
   const UNKNOWN = "#5b5b70";
   const LO = [214, 72, 72];
-  const HI = [59, 130, 246];
+  const MID = [226, 169, 46];
+  const HI = [52, 168, 98];
 
   let sections = [];
   let active = null;
@@ -70,7 +72,8 @@
     if (typeof window.deltaKcMasteryColor === "function") return window.deltaKcMasteryColor(r);
     if (!Number.isFinite(r)) return UNKNOWN;
     const t = Math.max(0, Math.min(1, r));
-    const c = LO.map((v, i) => Math.round(v + (HI[i] - v) * t));
+    const a = t < 0.5 ? LO : MID, b = t < 0.5 ? MID : HI, u = t < 0.5 ? t / 0.5 : (t - 0.5) / 0.5;
+    const c = a.map((v, i) => Math.round(v + (b[i] - v) * u));
     return `rgb(${c[0]},${c[1]},${c[2]})`;
   };
 

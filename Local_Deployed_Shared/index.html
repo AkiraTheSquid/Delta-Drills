@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=35" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=36" />
   <!-- The Knowledge Graph's view modes (adaptive / condensed / complete) and
        its bottom-left settings card. AFTER how-it-works.css, which owns the
        .kg2-* rules it overrides on source order. -->
@@ -1124,7 +1124,7 @@
               <div class="probe-card"><span class="id">Next probe · max expected information</span> <span class="t" id="aisc-probe-title">—</span> <span class="id" id="aisc-probe-id">—</span></div>
               <div class="btns"><button class="btn ok" data-r="correct">Correct</button><button class="btn no" data-r="incorrect">Wrong</button><button class="btn dk" data-r="dont_know">Don't know</button><button class="btn ghost" id="aisc-place-auto">Simulate a learner</button><button class="btn ghost" id="aisc-place-reset">Reset</button></div>
               <div class="readout" id="aisc-place-readout"></div>
-              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:color-mix(in srgb, var(--red), var(--green))"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
+              <div class="legend"><span><i style="background:var(--green)"></i>known</span><span><i style="background:var(--amber)"></i>uncertain</span><span><i style="background:var(--red)"></i>unknown</span><span><i style="background:transparent;border:2px solid #ffd23f"></i>frontier</span></div>
             </div>
           </div>
           <figcaption>Belief per concept starts at 50%. A correct answer is strong evidence (Bayes factor ≈16), a wrong one weaker (≈0.21, careless slips are common in code), "I don't know" strongest of all (≈0.05) — the same asymmetry ALEKS uses. Evidence propagates up to 3 hops, halving per hop toward prerequisites. <b>Frontier</b> = not yet known, but every prerequisite is. The production test also caps each problem's time and draws probes from ARENA's own exercises first.</figcaption>
@@ -2647,25 +2647,25 @@ t.manual_seed(0)
   <script src="concept-graph/kc_interval.js?v=1" defer></script>
   <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
        are `defer`, so document order is execution order. -->
-  <script src="concept-graph/mastery-bar.js?v=1" defer></script>
+  <script src="concept-graph/mastery-bar.js?v=2" defer></script>
   <script src="concept-graph/kc_lattice_read.js?v=3" defer></script>
-  <script src="concept-graph/lesson-graph.js?v=34" defer></script>
+  <script src="concept-graph/lesson-graph.js?v=35" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=5" defer></script>
+  <script src="concept-graph/graph-views.js?v=6" defer></script>
   <!-- The map on "Why this app exists" — the whole lesson graph, at the cold
        start or on the learner's own reading. AFTER lesson-graph.js, whose
        exports it reads for that second mode and whose live graph it borrows
        when maximised; and after cytoscape + cytoscape-dagre. `defer` keeps
        document order, so all of them have run by the time this does. Its only
        fetch is lessons/kc_registry.json. -->
-  <script src="concept-graph/why-graph.js?v=13" defer></script>
+  <script src="concept-graph/why-graph.js?v=14" defer></script>
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
   <script src="aisc/articles.js?v=2" defer></script>
-  <script src="aisc/boot.js?v=14" defer></script>
+  <script src="aisc/boot.js?v=15" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
@@ -2830,7 +2830,7 @@ t.manual_seed(0)
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
        concept pill which section the reader is in. -->
-  <script src="practice/arena-notebook-focus.js?v=1"></script>
+  <script src="practice/arena-notebook-focus.js?v=2"></script>
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>

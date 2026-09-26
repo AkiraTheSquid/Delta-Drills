@@ -348,7 +348,7 @@
       name: window.cytoscapeDagre ? "dagre" : "cose",
       rankDir: "BT", nodeSep: 26, rankSep: o.rankSep || 150, edgeSep: 12,
       animate: o.animate !== false, animationDuration: 320, animationEasing: "ease-out",
-      fit: false, padding: 40,
+      fit: false, padding: 40, nodeDimensionsIncludeLabels: true,
     });
     lay.one("layoutstop", () => { if (mainLay === lay) fitTo(fitEles, o.pad); });
     mainLay = lay;
@@ -448,6 +448,11 @@
     return el;
   };
 
+  // A condensed concept's label sits under its circle on the pane, so it takes
+  // the pane's text colour; re-read on a theme switch.
+  let kcInk = "#c8cdd8";
+  const readKcInk = () => { const g = document.querySelector(".kg2-graph"); if (g) kcInk = getComputedStyle(g).color || kcInk; };
+  window.addEventListener("delta:theme-changed", () => { readKcInk(); if (ccy) ccy.style().update(); });
   const kcColor = (kc) => {
     if (typeof window.deltaKcMasteryColor === "function") return window.deltaKcMasteryColor(readiness(kc));
     return "#9aa3b2";
@@ -532,6 +537,7 @@
     const el = ensureCondensedContainer();
     if (!el || typeof cytoscape === "undefined") return;
     el.hidden = false;
+    readKcInk();
     const { els } = condensedElements();
     if (ccy) {
       // Nothing may still be animating what is about to be removed.
@@ -556,10 +562,12 @@
               "text-halign": "center", "text-margin-y": -8, "font-size": 13, "font-weight": 700, "color": "#15151f",
               "padding": "24px",
           }},
+          // Circles labelled underneath, as on the main canvas (lesson-graph.js).
           { selector: "node.kc", style: {
-              "shape": "round-rectangle", "background-color": "data(color)", "label": "data(label)",
-              "width": "label", "height": "label", "padding": "10px", "text-wrap": "wrap", "text-max-width": "110px",
-              "text-valign": "center", "text-halign": "center", "font-size": 11.5, "font-weight": 600, "color": "#15151f",
+              "shape": "ellipse", "background-color": "data(color)", "label": "data(label)",
+              "width": 26, "height": 26, "text-wrap": "wrap", "text-max-width": "110px",
+              "text-valign": "bottom", "text-halign": "center", "text-margin-y": 4, "font-size": 11.5, "font-weight": 600,
+              "color": () => kcInk,
               "border-width": 1.5, "border-color": "rgba(21,21,31,0.35)",
           }},
           { selector: "node.kc[!measured]", style: { "background-opacity": 0.45, "border-style": "dashed" } },

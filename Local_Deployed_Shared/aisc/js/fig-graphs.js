@@ -9,7 +9,7 @@
    map's red prerequisite arrows, yellow highlight and dagre bottom-to-top
    layout (Seth, 2026-09-24: "use the old embedded graph"). The nodes are the
    standalone delta-drills-aisc site's small circles, labelled underneath
-   (Seth, 2026-09-25), filled by P(known): green = known, red = not (known()). */
+   (Seth, 2026-09-25), filled by P(known): red → amber → green (known()). */
 (function () {
   "use strict";
   var E = window.DeltaEngine;
@@ -19,8 +19,11 @@
     var A = AISC.rgb01(a), B = AISC.rgb01(b);
     return "rgb(" + A.map(function (v, i) { return Math.round(255 * (v + (B[i] - v) * t)); }).join(",") + ")";
   }
-  // P(known) → fill: red (0) to green (1).
-  function known(p) { return mix(AISC.css("--red"), AISC.css("--green"), Math.max(0, Math.min(1, p))); }
+  // P(known) → fill: red (0) → amber (0.5) → green (1).
+  function known(p) {
+    p = Math.max(0, Math.min(1, p));
+    return p >= 0.5 ? mix(AISC.css("--amber"), AISC.css("--green"), (p - 0.5) / 0.5) : mix(AISC.css("--red"), AISC.css("--amber"), p / 0.5);
+  }
   // why-graph.js's arrow + highlight, so the four maps read as one product
   var EDGE = "#e3212c", ACCENT = "#ffd23f";
   function baseStyle() {

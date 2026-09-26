@@ -35,8 +35,8 @@
    learner-model reader to keep in step.
 
    It still borrows lesson-graph.js's LOOK by copy for the preview
-   — same round-rectangle nodes, same red→blue ramp, same red
-   prerequisite arrows. If that styling changes over there and this
+   — same circle nodes labelled underneath (since 2026-09-25), same
+   red→amber→green ramp, same red prerequisite arrows. If that styling changes over there and this
    page starts looking like a different product, this is the file
    to update.
    ================================================================ */
@@ -50,12 +50,14 @@
   const ACCENT = "#ffd23f";                  // prerequisite-path highlight
   const UNKNOWN_COLOR = "#5b5b70";           // no estimate
   const EDGE_COLOR = "#e3212c";
-  // red (low) → muted purple → blue (high)
+  // red (low) → amber → green (high), as lesson-graph.js
   const masteryColor = (r) => {
     if (!Number.isFinite(r)) return UNKNOWN_COLOR;
     const t = Math.max(0, Math.min(1, r));
-    const lo = [214, 72, 72], hi = [59, 130, 246];
-    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * t));
+    // red (not known) → amber → green (known); Seth, 2026-09-25
+    const lo = t < 0.5 ? [214, 72, 72] : [226, 169, 46], hi = t < 0.5 ? [226, 169, 46] : [52, 168, 98];
+    const u = t < 0.5 ? t / 0.5 : (t - 0.5) / 0.5;
+    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * u));
     return `rgb(${c[0]},${c[1]},${c[2]})`;
   };
 
@@ -187,10 +189,10 @@
   const LAYOUT = {
     name: "dagre",
     rankDir: "BT", nodeSep: 12, rankSep: 58, edgeSep: 8,
-    animate: false, fit: true, padding: 24,
+    animate: false, fit: true, padding: 24, nodeDimensionsIncludeLabels: true,
   };
   const layoutOpts = () =>
-    (global.cytoscapeDagre ? LAYOUT : { name: "cose", animate: false, fit: true, padding: 24 });
+    (global.cytoscapeDagre ? LAYOUT : { name: "cose", animate: false, fit: true, padding: 24, nodeDimensionsIncludeLabels: true });
 
   const refit = () => {
     if (!cy) return;
@@ -200,7 +202,14 @@
     cy.fit(undefined, 24);
   };
 
+  let labelInk = "#c8cdd8";
+  const readInk = (el) => { if (el) labelInk = getComputedStyle(el).color || labelInk; };
+  global.addEventListener("delta:theme-changed", () => {
+    if (cy) { readInk(cy.container()); cy.style().update(); }
+  });
+
   const draw = (container, elements) => {
+    readInk(container);
     cy = global.cytoscape({
       container,
       elements,
@@ -211,12 +220,13 @@
         { selector: "node", style: {
             "background-color": UNKNOWN_COLOR,
             "background-opacity": 0.42,
-            "shape": "round-rectangle",
+            "shape": "ellipse",
             "label": "data(label)",
-            "width": "label", "height": "label", "padding": "9px",
+            "width": 18, "height": 18,
             "text-wrap": "wrap", "text-max-width": "96px",
-            "text-valign": "center", "text-halign": "center",
-            "font-size": 12, "font-weight": 600, "color": "#15151f",
+            "text-valign": "bottom", "text-halign": "center", "text-margin-y": 3,
+            // under the circle, on the pane: the pane's own text colour
+            "font-size": 12, "font-weight": 600, "color": () => labelInk,
             "border-width": 1, "border-color": "rgba(0,0,0,.28)",
             "border-style": "dashed",
             "transition-property": "opacity, border-width, border-color",
