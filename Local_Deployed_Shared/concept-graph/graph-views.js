@@ -362,6 +362,10 @@
       rankDir: "BT", nodeSep: 26, rankSep: o.rankSep || 150, edgeSep: 12,
       animate: o.animate !== false, animationDuration: 320, animationEasing: "ease-out",
       fit: false, padding: 40, nodeDimensionsIncludeLabels: true,
+      // kg-look.js refines the layout off-thread and calls this when the
+      // nodes have glided to their final places (not if the learner has
+      // panned or zoomed since).
+      refit: () => { if (mainLay === lay) fitTo(fitEles, o.pad); },
     };
     const lay = (look && look.routeLayout(cy, dagreOpts)) ||
       (look ? look.layoutEles(cy) : cy.elements()).layout(dagreOpts);

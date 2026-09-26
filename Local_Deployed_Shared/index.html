@@ -2655,12 +2655,15 @@ t.manual_seed(0)
   <script src="concept-graph/kc_lattice_read.js?v=3" defer></script>
   <!-- How the graph draws (node look setting, curved edges, shortcuts).
        BEFORE lesson-graph.js, which builds its stylesheet from it. -->
-  <script src="concept-graph/kg-look.js?v=1" defer></script>
+  <!-- Node placement + edge routing that cut crossings; runs itself as a
+       Worker. BEFORE kg-look.js, which calls it. -->
+  <script src="concept-graph/kg-layout.js?v=1" defer></script>
+  <script src="concept-graph/kg-look.js?v=2" defer></script>
   <script src="concept-graph/lesson-graph.js?v=37" defer></script>
   <!-- The view modes layered over that graph. AFTER lesson-graph.js: it
        borrows its Cytoscape instance (deltaConceptGraphCy) and its section
        rule (deltaKcSection); `defer` keeps document order. -->
-  <script src="concept-graph/graph-views.js?v=8" defer></script>
+  <script src="concept-graph/graph-views.js?v=9" defer></script>
   <!-- Gathers the controls lesson-graph.js and graph-views.js built into
        one bar across the top. AFTER both; optional. -->
   <script src="concept-graph/kg-toolbar.js?v=1" defer></script>

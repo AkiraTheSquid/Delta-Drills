@@ -15,11 +15,15 @@
  *      stylesheets and re-run their layouts (a box and a dot are different
  *      sizes, so dagre has to place them again).
  *
- *   2. EDGES — soft slate instead of solid red, curved S-bends that leave and
- *      enter each node vertically, width by encompassing weight. The curve is
- *      an unbundled bezier whose two control points sit at the source's and
- *      the target's x on the edge's mid-height; they are recomputed from node
- *      positions once per animation frame while anything moves (`curve`).
+ *   2. EDGES — soft slate instead of solid red, width by encompassing
+ *      weight, drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
+ *      moves the nodes off dagre's rows and routes every edge around the
+ *      nodes to cut crossings; the nodes glide there and each edge becomes an
+ *      unbundled bezier through its route's control points (`routeLayout`).
+ *      An edge with no route (dragged node, shortcut lit on a chain, an
+ *      instructor's proposal) is an S-bend leaving and entering vertically.
+ *      Control points follow node positions once per animation frame while
+ *      anything moves (`curve`).
  *
  *   3. SHORTCUTS — an edge A→C is a shortcut when A already reaches C through
  *      another path (A→B→C). A quarter of the graph's links are shortcuts
@@ -152,15 +156,48 @@
   const layoutEles = (cy) => (showShortcuts ? cy.elements() : cy.elements().not("edge.kg-shortcut"));
 
   /* ---------------- layout with routes -------------------------------- */
-  // dagre does two jobs: it places the nodes, and it ROUTES every edge that
-  // spans more than one rank through a chain of bend points placed between
-  // that rank's nodes, ordering them to cut crossings. cytoscape-dagre keeps
-  // the first and throws the second away, so a long edge was drawn straight
-  // through everything dagre had steered it around. This runs dagre itself,
-  // keeps the routes (`routes`, model coordinates, keyed by edge id), and
-  // hands back an ordinary `preset` layout for the nodes — so callers keep
-  // `.run()`, `.stop()`, `layoutstop` and the animation.
-  let routes = {};
+  // Two stages. dagre first, synchronously: it places the nodes in rows and
+  // ROUTES every edge that spans more than one row through bend points it
+  // ordered to cut crossings (cytoscape-dagre throws those away; this keeps
+  // them). Then kg-layout.js, in a Worker: it moves nodes off the rows, up,
+  // down and sideways, and routes every edge on a grid around the nodes,
+  // lowering the drawn crossings (608 → ~120 on the full graph, 2026-09-25).
+  // When it answers, the nodes glide to their new places and the edges take
+  // its routes. Its answer is cached by the graph, so a return visit skips
+  // straight to it. Callers still get an ordinary `preset` layout back, so
+  // `.run()`, `.stop()`, `layoutstop` and the animation are theirs as before.
+  //
+  // Routes are control points in model coordinates, per edge id, on the
+  // graph (`cy.__kgRoutes`); they hold only for the positions they were
+  // computed for, so a node dragged by hand drops its own.
+  const ptsToCps = (s, t, pts) => {
+    const mid = pts.slice(1, -1);
+    if (mid.length < 2) return null;
+    const a = mid[0], z = mid[mid.length - 1];
+    return [{ x: s.x, y: (s.y + a.y) / 2 }, ...mid, { x: t.x, y: (t.y + z.y) / 2 }];
+  };
+  // What kg-layout.js needs from a node: its box with the label, and the
+  // shape alone (a dot's label hangs under it, so its edges enter the side).
+  const layoutInput = (eles, pos) => {
+    const nodes = eles.nodes().map((n) => {
+      const bb = n.boundingBox({ includeLabels: true, includeOverlays: false });
+      const p = n.position(), q = pos[n.id()] || p;
+      return { id: n.id(), x: q.x, y: q.y, w: Math.max(1, bb.w), h: Math.max(1, bb.h),
+        ox: (bb.x1 + bb.x2) / 2 - p.x, oy: (bb.y1 + bb.y2) / 2 - p.y,
+        cw: n.outerWidth(), ch: n.outerHeight() };
+    });
+    const edges = eles.edges().map((e) => ({ id: e.id(), s: e.source().id(), t: e.target().id() }));
+    return { nodes, edges, opt: { route: { entry: look === "dot" ? "side" : "bottom" } } };
+  };
+  // A pointer or wheel on the canvas after a layout started: the learner has
+  // taken the view, so a late refinement must not refit it.
+  const watchTouch = (cy) => {
+    if (cy.__kgTouchWatch) return;
+    cy.__kgTouchWatch = true;
+    const mark = () => { cy.__kgTouched = Date.now(); };
+    const el = cy.container();
+    if (el) { el.addEventListener("wheel", mark, { passive: true }); el.addEventListener("pointerdown", mark); }
+  };
   const routeLayout = (cy, o) => {
     const eles = layoutEles(cy);
     const g = new window.dagre.graphlib.Graph({ multigraph: true });
@@ -177,18 +214,106 @@
     window.dagre.layout(g);
     const pos = {};
     g.nodes().forEach((id) => { const d = g.node(id); if (d) pos[id] = { x: d.x, y: d.y }; });
-    routes = {};
-    g.edges().forEach((ed) => { const d = g.edge(ed); if (d && d.points) routes[ed.name] = d.points; });
-    return eles.nodes().layout({
-      name: "preset", positions: (n) => pos[n.id()] || n.position(), fit: false, padding: o.padding || 40,
-      animate: !!o.animate, animationDuration: o.animationDuration || 320, animationEasing: o.animationEasing || "ease-out",
+    const dagreRoutes = {};
+    g.edges().forEach((ed) => {
+      const d = g.edge(ed);
+      if (!d || !d.points || !pos[ed.v] || !pos[ed.w]) return;
+      const cps = ptsToCps(pos[ed.v], pos[ed.w], d.points);
+      if (cps) dagreRoutes[ed.name] = { cps };
+    });
+
+    const gen = (cy.__kgGen = (cy.__kgGen || 0) + 1);
+    // A glide from the layout before this one would keep writing positions.
+    if (cy.__kgGlide) { try { cy.__kgGlide.stop(); } catch (_) {} cy.__kgGlide = null; }
+    const started = Date.now();
+    watchTouch(cy);
+    const L = window.DeltaKgLayout;
+    const input = L ? layoutInput(eles, pos) : null;
+    const hit = L ? L.cached(input.nodes, input.edges, input.opt) : null;
+    const target = hit ? hit.pos : pos;
+    const anim = {
+      fit: false, padding: o.padding || 40, animate: !!o.animate,
+      animationDuration: o.animationDuration || 320, animationEasing: o.animationEasing || "ease-out",
+    };
+    // While nodes move, edges draw as plain S-bends; routes land at the end.
+    cy.__kgRoutes = {};
+    const lay = eles.nodes().layout(Object.assign({ name: "preset", positions: (n) => target[n.id()] || n.position() }, anim));
+    lay.one("layoutstop", () => {
+      if (cy.destroyed() || cy.__kgGen !== gen) return;
+      // A copy: dragging a node deletes entries, and the cache's own map
+      // must survive for the next time this layout is asked for.
+      cy.__kgRoutes = Object.assign({}, hit ? hit.routes : dagreRoutes);
+      if (hit) cy.__kgLayoutStats = Object.assign({ cached: true }, hit.stats);
+      kickCurve(cy);
+      if (hit || !L) return;
+      // A tick later: a caller that stops this layout to start the next one
+      // fires this `layoutstop` first, and the next layout's generation
+      // then says this one is stale before any worker is asked.
+      setTimeout(() => { if (!cy.destroyed() && cy.__kgGen === gen) refine(); }, 0);
+    });
+    const refine = () => {
+      const t0 = Date.now();
+      L.run(input.nodes, input.edges, input.opt).then((res) => {
+        if (cy.destroyed() || cy.__kgGen !== gen) return;
+        cy.__kgLayoutStats = Object.assign({ ms: Date.now() - t0, cached: !!res.cached }, res.stats);
+        cy.__kgRoutes = {};
+        const glide = eles.nodes().filter((n) => !n.removed()).layout({
+          name: "preset", positions: (n) => res.pos[n.id()] || n.position(), fit: false,
+          animate: true, animationDuration: 650, animationEasing: "ease-in-out-cubic",
+        });
+        glide.one("layoutstop", () => {
+          if (cy.destroyed() || cy.__kgGen !== gen) return;
+          cy.__kgRoutes = Object.assign({}, res.routes);
+          kickCurve(cy);
+          if (typeof o.refit === "function" && !(cy.__kgTouched > started)) o.refit();
+        });
+        cy.__kgGlide = glide;
+        glide.run();
+      }).catch(() => { /* superseded, or no Worker: dagre's layout stands */ });
+    };
+    return lay;
+  };
+  // A node dragged by hand invalidates the routes through it (on the first
+  // move — `grab` also fires on a plain tap, which moves nothing), and any
+  // other edge's route it was dropped onto (free); those edges fall back to
+  // the S-bend until the next layout.
+  const dropRoutes = (node) => {
+    const r = node.cy().__kgRoutes;
+    if (r) node.connectedEdges().forEach((e) => { delete r[e.id()]; });
+  };
+  const dropRoutesUnder = (node) => {
+    const cy = node.cy(), r = cy.__kgRoutes;
+    if (!r) return;
+    const bb = node.boundingBox({ includeLabels: true });
+    const inside = (p) => p.x > bb.x1 && p.x < bb.x2 && p.y > bb.y1 && p.y < bb.y2;
+    Object.keys(r).forEach((id) => {
+      const e = cy.getElementById(id);
+      if (!e.length || e.source().same(node) || e.target().same(node)) return;
+      if (curvePts(e.source().position(), e.target().position(), r[id].cps).some(inside)) delete r[id];
     });
   };
-  // A node dragged by hand invalidates the routes through it; its edges fall
-  // back to the S-bend until the next layout.
-  const dropRoutes = (node) => node.connectedEdges().forEach((e) => { delete routes[e.id()]; });
 
   /* ---------------- curves --------------------------------------------- */
+  // Points along the curve Cytoscape draws for an unbundled bezier: from the
+  // source through quadratics whose ends are the midpoints of consecutive
+  // control points, `k` samples each, at most 4 px apart.
+  const curvePts = (s, t, cps) => {
+    const out = [];
+    let cur = s;
+    for (let i = 0; i <= cps.length; i++) {
+      const last = i >= cps.length - 1;
+      const end = last ? t : { x: (cps[i].x + cps[i + 1].x) / 2, y: (cps[i].y + cps[i + 1].y) / 2 };
+      const ctl = i < cps.length ? cps[i] : { x: (cur.x + end.x) / 2, y: (cur.y + end.y) / 2 };
+      const k = Math.max(4, Math.ceil((Math.hypot(ctl.x - cur.x, ctl.y - cur.y) + Math.hypot(end.x - ctl.x, end.y - ctl.y)) / 4));
+      for (let f = 0; f <= k; f++) {
+        const a = f / k, b = 1 - a;
+        out.push({ x: b * b * cur.x + 2 * b * a * ctl.x + a * a * end.x, y: b * b * cur.y + 2 * b * a * ctl.y + a * a * end.y });
+      }
+      cur = end;
+      if (last) break;
+    }
+    return out;
+  };
   // Control points as Cytoscape's unbundled-bezier wants them: a weight along
   // the source→target line and a signed distance off it.
   const toCtrl = (s, t, pts) => {
@@ -210,27 +335,18 @@
     const my = (s.y + t.y) / 2;
     return toCtrl(s, t, [{ x: s.x, y: my }, { x: t.x, y: my }]);
   };
-  // A routed edge: through dagre's bend points, entering and leaving
-  // vertically like the S-bend (a point straight off each end, half-way to the
-  // first/last bend). Only the INTERIOR points are dagre's; its first and last
-  // sit on the node borders.
-  const routed = (s, t, pts) => {
-    const mid = pts.slice(1, -1);
-    if (mid.length < 2) return null;
-    const a = mid[0], z = mid[mid.length - 1];
-    return toCtrl(s, t, [{ x: s.x, y: (s.y + a.y) / 2 }, ...mid, { x: t.x, y: (t.y + z.y) / 2 }]);
-  };
   const curveNow = (cy) => {
     cy.batch(() => cy.edges().forEach((e) => {
       if (e.removed()) return;
       const s = e.source().position(), t = e.target().position();
-      const r = routes[e.id()];
-      const b = (r && routed(s, t, r)) || bend(s, t);
+      const r = cy.__kgRoutes && cy.__kgRoutes[e.id()];
+      const b = r ? (r.cps.length ? toCtrl(s, t, r.cps) : null) : bend(s, t);
       if (b) e.style({ "control-point-distances": b.d, "control-point-weights": b.w });
       else e.style({ "control-point-distances": "0", "control-point-weights": "0.5" });
     }));
   };
   // Once per frame at most, however many nodes moved in it.
+  const kickCurve = (cy) => { if (cy.__kgKick) cy.__kgKick(); };
   const curve = (cy) => {
     if (!cy || cy.__kgCurved) return;
     cy.__kgCurved = true;
@@ -240,10 +356,26 @@
       queued = true;
       requestAnimationFrame(() => { queued = false; if (!cy.destroyed()) curveNow(cy); });
     };
+    cy.__kgKick = kick;
     cy.on("position", "node", kick);
     cy.on("add", "edge", kick);
     cy.on("layoutstop", kick);
-    cy.on("grab", "node", (evt) => dropRoutes(evt.target));
+    // The first move of a drag: drop this node's routes, and cancel a
+    // refinement still on its way (it would glide the node back).
+    let dragging = null;
+    cy.on("drag", "node", (evt) => {
+      if (dragging === evt.target) return;
+      dragging = evt.target;
+      dropRoutes(evt.target);
+      if (cy.__kgGlide) { try { cy.__kgGlide.stop(); } catch (_) {} cy.__kgGlide = null; }
+      cy.__kgGen = (cy.__kgGen || 0) + 1;
+    });
+    cy.on("free", "node", (evt) => {
+      if (dragging !== evt.target) return;
+      dragging = null;
+      dropRoutesUnder(evt.target);
+      kick();
+    });
     kick();
   };
 
