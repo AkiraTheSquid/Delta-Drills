@@ -5,7 +5,7 @@
    Behaviour in practice/arena-notebook-focus.js. It puts `dd-ex-focus` on
    ONE heading at a time — the exercise whose section holds the reading
    point of the viewport — and writes `--dd-ready-color` on it: the same
-   red → blue ramp the knowledge graph colours its nodes with, grey when
+   red → amber → green ramp the knowledge graph colours its nodes with, grey when
    the concept has no reading. Seth, 2026-09-11: "whenever you are close
    enough to it ... it essentially gets highlighted for the color of skill
    that you are, for whether it's red or blue or whatever for how ready

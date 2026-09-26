@@ -43,12 +43,14 @@
 
   const clamp01 = (n) => Math.max(0, Math.min(1, n));
 
-  /** The red→blue ramp the graph nodes use, so a bar and its node agree. */
+  /** The red→amber→green ramp the graph nodes use, so a bar and its node agree. */
   function masteryColor(r, unknownColor) {
     if (!Number.isFinite(r)) return unknownColor || UNKNOWN_COLOR;
     const t = clamp01(r);
-    const lo = [214, 72, 72], hi = [59, 130, 246];  // #d64848 → #3b82f6
-    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * t));
+    // red (not known) → amber → green (known); Seth, 2026-09-25
+    const lo = t < 0.5 ? [214, 72, 72] : [226, 169, 46], hi = t < 0.5 ? [226, 169, 46] : [52, 168, 98];
+    const u = t < 0.5 ? t / 0.5 : (t - 0.5) / 0.5;
+    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * u));
     return `rgb(${c[0]},${c[1]},${c[2]})`;
   }
 

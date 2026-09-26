@@ -20,7 +20,7 @@
     "aisc/js/field.js?v=5",
     "aisc/js/fig-effort.js?v=5",
     "aisc/js/fig-forget.js?v=13",
-    "aisc/js/fig-graphs.js?v=7",
+    "aisc/js/fig-graphs.js?v=8",
     "aisc/js/fig-seth.js?v=2",
     "aisc/js/fig-expand.js?v=1",
   ];

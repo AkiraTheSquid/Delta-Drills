@@ -351,14 +351,26 @@
     const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
     return (row && row.ladder_estimate && row.ladder_estimate.last_ts) || null;
   };
-  // red (low) → muted purple → blue (high); gray for no estimate.
+  // red (low) → amber → green (high); gray for no estimate.
+  // #d64848 → #e2a92e → #34a862, restated in mastery-bar.js, why-graph.js,
+  // arena-notebook-focus.js and how-it-works.css's .kg2-scale-bar.
   const masteryColor = (r) => {
     if (!Number.isFinite(r)) return UNKNOWN_COLOR;
     const t = Math.max(0, Math.min(1, r));
-    const lo = [214, 72, 72], hi = [59, 130, 246];  // #d64848 → #3b82f6
-    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * t));
+    // red (not known) → amber → green (known); Seth, 2026-09-25
+    const lo = t < 0.5 ? [214, 72, 72] : [226, 169, 46], hi = t < 0.5 ? [226, 169, 46] : [52, 168, 98];
+    const u = t < 0.5 ? t / 0.5 : (t - 0.5) / 0.5;
+    const c = lo.map((v, i) => Math.round(v + (hi[i] - v) * u));
     return `rgb(${c[0]},${c[1]},${c[2]})`;
   };
+  // Node labels sit under the circle, on the pane: its own text colour,
+  // re-read on a theme switch (a mapper, so .kc-disabled's grey still wins).
+  let nodeInk = "#c8cdd8";
+  const readInk = () => {
+    const el = $("kg-cy");
+    if (el) nodeInk = getComputedStyle(el).color || nodeInk;
+  };
+  window.addEventListener("delta:theme-changed", () => { readInk(); if (cy) cy.style().update(); });
   const nodeColor = (kc) => {
     if (colorMode === "section") return sectionColor(kc);
     if (colorMode === "category") return familyColor(kc);
@@ -1479,7 +1491,7 @@
   /* ---------------- mastery handoff: iframe → graph -------------------- */
   // The embedded practice page posts `delta:kc-mastered` when the competency
   // bar crosses 0.95. Sequence: refresh the learner state the iframe just
-  // wrote → drop back to the map → animate the node red→blue → offer the next
+  // wrote → drop back to the map → animate the node red→green → offer the next
   // concept. The iframe stays open for ~900ms so the bar visibly reaches the
   // gate before the overlay closes.
   const MASTERED_HOLD_MS = 900;
@@ -1889,6 +1901,7 @@
     if (cy || building) return;
     const container = $("kg-cy");
     if (!container || typeof cytoscape === "undefined") return;
+    readInk();
     building = true;
 
     try { if (window.cytoscapeDagre) cytoscape.use(window.cytoscapeDagre); } catch (_) {}
@@ -1977,12 +1990,15 @@
       style: [
         { selector: "node", style: {
             "background-color": (n) => nodeColor(n.id()),
-            "shape": "round-rectangle",
+            // Circles labelled underneath, as the AISC write-up's figures
+            // draw them (Seth, 2026-09-25); the label sits on the canvas, so
+            // it takes the pane's text colour (nodeInk), not a fixed dark.
+            "shape": "ellipse",
             "label": "data(label)",
-            "width": "label", "height": "label", "padding": "13px",
+            "width": 30, "height": 30,
             "text-wrap": "wrap", "text-max-width": "120px",
-            "text-valign": "center", "text-halign": "center",
-            "font-size": 13, "font-weight": 600, "color": "#15151f",
+            "text-valign": "bottom", "text-halign": "center", "text-margin-y": 5,
+            "font-size": 13, "font-weight": 600, "color": () => nodeInk,
             "border-width": 1, "border-color": "rgba(0,0,0,.28)",
             "transition-property": "opacity, border-width, border-color", "transition-duration": "120ms",
         }},
@@ -2028,7 +2044,8 @@
         }},
       ],
       layout: { name: window.cytoscapeDagre ? "dagre" : "cose",
-        rankDir: "BT", nodeSep: 26, rankSep: 150, edgeSep: 12, animate: false, fit: true, padding: 40 },
+        rankDir: "BT", nodeSep: 26, rankSep: 150, edgeSep: 12, animate: false, fit: true, padding: 40,
+        nodeDimensionsIncludeLabels: true },
     });
 
     if ($("kg-status")) $("kg-status").style.display = "none";

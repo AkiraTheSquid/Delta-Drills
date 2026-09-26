@@ -713,7 +713,7 @@ body.kg-maxi-open { overflow: hidden; }
 #kg-colormode button.active { background: var(--accent); color: var(--on-accent); font-weight: 700; }
 #kg-colormode button:not(.active):hover { color: var(--text); }
 
-/* Mastery legend: gray "no estimate" chip + red→blue gradient scale */
+/* Mastery legend: gray "no estimate" chip + red→amber→green gradient scale */
 .kg2-legend-mastery .kg2-li-scale { display: inline-flex; align-items: center; gap: 6px; }
 .kg2-scale-bar { display: inline-block; width: 74px; height: 10px; border-radius: 5px;
   /* NOT tokens: this legend has to match the node colours
@@ -722,7 +722,7 @@ body.kg-maxi-open { overflow: hidden; }
      would make it lie about the graph beside it. Same for
      .kg2-li-projected above. */
   /* graph-legend */
-  background: linear-gradient(90deg, #d64848 0%, #8a6597 50%, #3b82f6 100%); border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
+  background: linear-gradient(90deg, #d64848 0%, #e2a92e 50%, #34a862 100%); border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
 
 /* Learner-model readout, docked across the bottom of the graph pane.
    Fixed height (--kg2-dock-h, which also insets #kg-cy) so hovering bubble to
