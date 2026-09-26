@@ -845,5 +845,6 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-set-presets button.active { background: var(--accent); color: var(--on-accent); }
 .kg2-set-status { color: var(--muted); font-size: 12px; min-height: 1.2em; }
 .kg2-li-off { /* graph-legend */ background: rgba(120, 120, 120, .22); border-style: solid; }
+.kg2-li-course-off { /* graph-legend */ background: #b8dc6e; opacity: .45; border-style: dotted; }
 .kg2-li-edge { /* graph-legend */ display: inline-block; width: 22px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 3px solid #e3212c; }
 .kg2-li-edge-pre { /* graph-legend */ border-top: 1px dashed #e3212c; opacity: .6; }

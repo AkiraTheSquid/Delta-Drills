@@ -85,10 +85,16 @@
   // Mathematics family and the Math/Code mode both use, so the one colour means
   // "this is maths" on every reading of the map.
   const PREP_MATH = { id: "sm12", label: "Section −1.2 — the maths underneath (our prep)", color: "#f0a3a3" };
-  // Legend order: the prep tiers, then ARENA's sections in notebook order.
+  // The standalone courses (course-registry.js) are not ARENA and not prep for
+  // it: `leetcode.*` used to fall through to −1.1 and read as array prep. Each
+  // gets its own tier, in a hue no ARENA or prep tier uses (Seth, 2026-09-25).
+  const COURSE_LEETCODE = { id: "clc", label: "LeetCode Patterns — standalone course", color: "#b8dc6e" };
+  const COURSE_DELTA = { id: "cdd", label: "Delta Drills — how the app works (standalone course)", color: "#c4a8f0" };
+  // Legend order: the prep tiers, ARENA's sections in notebook order, then
+  // the standalone courses.
   const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS, PREP_MATH]
     .concat(Object.keys(ARENA_SECTIONS).sort().map((k) => ARENA_SECTIONS[k]))
-    .concat([ARENA_LATER]);
+    .concat([ARENA_LATER, COURSE_LEETCODE, COURSE_DELTA]);
 
   // kc id -> section, built from the exercise map once it has loaded. Empty
   // until then, and empty forever if the fetch failed — which is why
@@ -158,6 +164,23 @@
       test: (id) => id.startsWith("raytracing.") },
     { id: "fa.cnn", group: "ARENA exercises", label: "CNNs & ResNets", color: "#e8a765",
       test: (id) => id.startsWith("cnn.") },
+
+    /* --- LeetCode Patterns (standalone course): four families in hues the
+       map does not use elsewhere — lime, yellow, slate, sand. Split the way
+       the course's prerequisite chains run. Specific tests above the
+       catch-all, which keeps arrays, pointers, search, sorting and maths. -- */
+    { id: "fa.lc-lists", group: "LeetCode patterns", label: "Linked lists, stacks & heaps", color: "#e6d35a",
+      test: (id) => /^leetcode\.(linked-lists|fast-slow-pointers|in-place-reversal|stack|monotonic-stack|top-k-elements|two-heaps|k-way-merge)$/.test(id) },
+    { id: "fa.lc-graphs", group: "LeetCode patterns", label: "Trees, tries & graphs", color: "#8fa6b8",
+      test: (id) => /^leetcode\.(binary-trees|tree-bfs|tree-dfs|bst|trie|graphs|islands|topological-sort|union-find|shortest-paths|mst)$/.test(id) },
+    { id: "fa.lc-dp", group: "LeetCode patterns", label: "Recursion, backtracking & DP", color: "#c9a27e",
+      test: (id) => /^leetcode\.(recursion|subsets|backtracking|knapsack-dp|dp-[a-z0-9-]+)$/.test(id) },
+    { id: "fa.lc-arrays", group: "LeetCode patterns", label: "Arrays, pointers, search & sorting", color: "#b8dc6e",
+      test: (id) => id.startsWith("leetcode.") },
+
+    /* --- Delta Drills (standalone course): the app explaining itself ---- */
+    { id: "fa.dd", group: "Delta Drills", label: "How the app works", color: "#c4a8f0",
+      test: (id) => id.startsWith("deltadrills.") },
   ];
   const FAMILY_GROUPS = [];
   FAMILIES.forEach((f) => { if (FAMILY_GROUPS.indexOf(f.group) < 0) FAMILY_GROUPS.push(f.group); });
@@ -209,6 +232,8 @@
     if (arena) return arena;
     const id = typeof kc === "string" ? kc : "";
     const lid = (kcById[kc] || {}).lesson || "";
+    if (id.startsWith("leetcode.") || /^lc-/.test(lid)) return COURSE_LEETCODE;
+    if (id.startsWith("deltadrills.") || /^dd-/.test(lid)) return COURSE_DELTA;
     if (id.startsWith("python.") || /^py-/.test(lid)) return PREP_PYTHON;
     if (id.startsWith("math.") || /^ma-/.test(lid)) return PREP_MATH;
     return PREP_ARRAYS;
@@ -234,6 +259,16 @@
   const BKT_P_INIT = 0.10, BKT_HALF_LIFE_DAYS = 14.0;
   const UNKNOWN_COLOR = "#5b5b70";       // no estimate yet
   const DISABLED_COLOR = "#94949d";      // deliberately neutral in every colour mode
+  /* Two reasons the server reports `state: "disabled"` (kc_prefs.is_disabled):
+     the learner switched the concept off (row.pref.enabled === false), or it
+     belongs to a standalone course — LeetCode Patterns, Delta Drills — that
+     is off in the Courses tab (course_registry.course_off; the default for
+     both). The first stays the neutral grey below. The second keeps its
+     colour, faded: a whole course painted #94949d at 0.18 hid what the map
+     is for, and "Off — your Settings" named a switch the learner never
+     touched (Seth, 2026-09-25). */
+  const _userOff = (row) => !!(row && row.pref && row.pref.enabled === false);
+  const _courseOff = (row) => !!(row && row.state === "disabled" && !_userOff(row));
   const DIM_DISABLED_KEY = "dd_kg_dim_disabled";
   let colorMode = "mastery";             // "mastery" | "section" | "category" | "domain"
   let dimDisabled = true;
@@ -1626,8 +1661,11 @@
   // because buildLegend() rewrites the element it lives on.
   let legendFoldOpen = true;
   const _disabledLegend = () => (dimDisabled
-    ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>'
+    ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
+      (_anyCourseOff() ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-course-off"></span>Faded — its course is off in Courses</span>' : "")
     : "") + _edgeLegend();
+  const _anyCourseOff = () => !!(lattice && lattice.kcs &&
+    Object.keys(lattice.kcs).some((k) => _courseOff(lattice.kcs[k])));
   // Edge kinds are the same in every colour mode, so every legend carries them.
   const _edgeLegend = () =>
     '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-enc"></span>Encompasses — practising it also practises the parent (thicker = more)</span>' +
@@ -1715,21 +1753,29 @@
   // evidence bearing on this concept.
   // Border WIDTH is left to the stylesheet so the .hl prerequisite highlight
   // still wins; only the dash pattern is set per node.
+  let legendCourseOff = false;
   const recolor = () => {
     if (!cy) return;
     cy.batch(() => cy.nodes().forEach((n) => {
       const row = lattice && lattice.kcs ? lattice.kcs[n.id()] : null;
-      const disabled = dimDisabled && row && row.state === "disabled";
+      const courseOff = dimDisabled && _courseOff(row);
+      const disabled = dimDisabled && row && row.state === "disabled" && !courseOff;
       const inferred = !disabled && colorMode === "mastery" && !_isMeasured(n.id());
       n.style({
         "background-color": disabled ? DISABLED_COLOR : nodeColor(n.id()),
         "background-opacity": inferred ? 0.42 : 1,
-        "border-style": inferred ? "dashed" : "solid",
+        // Set here, not in the .kc-course-off rule: a per-element style
+        // outranks any selector, so this is the only place it can win.
+        "border-style": courseOff ? "dotted" : inferred ? "dashed" : "solid",
       });
     }));
     markNextUp();
     _refreshNoData();
     _announceReadiness();
+    // The legend is first built before the lattice arrives; its "course off"
+    // row can only be decided once it has.
+    const courseOff = _anyCourseOff();
+    if (courseOff !== legendCourseOff) { legendCourseOff = courseOff; buildLegend(); }
   };
 
   /* Other surfaces read the learner model through the exports at the bottom of
@@ -1875,12 +1921,13 @@
     // Gate state, straight from the server's report. This is the difference
     // between a diagram of the curriculum and a picture of the tutor: a locked
     // node is one the learner genuinely cannot be served yet.
-    cy.nodes().removeClass("kc-locked kc-frontier kc-disabled");
+    cy.nodes().removeClass("kc-locked kc-frontier kc-disabled kc-course-off");
     if (lattice) {
       cy.nodes().forEach((n) => {
         const row = lattice.kcs[n.id()];
         if (!row) return;
-        if (dimDisabled && row.state === "disabled") n.addClass("kc-disabled");
+        if (dimDisabled && _courseOff(row)) n.addClass("kc-course-off");
+        else if (dimDisabled && row.state === "disabled") n.addClass("kc-disabled");
         else if (colorMode === "mastery" && row.state === "locked") n.addClass("kc-locked");
         else if (colorMode === "mastery" && row.state === "frontier") n.addClass("kc-frontier");
       });
@@ -2034,6 +2081,9 @@
         { selector: "node.kc-disabled", style: {
             "opacity": 0.18, "border-width": 0, "color": "#505058", "z-index": 0,
         }},
+        // In a standalone course that is off in the Courses tab: not served,
+        // but still the course it is, so it keeps its colour, faded.
+        { selector: "node.kc-course-off", style: { "opacity": 0.45, "z-index": 1 } },
         { selector: "node.kc-frontier", style: {
             "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,
             "border-opacity": 0.55, "z-index": 40,
