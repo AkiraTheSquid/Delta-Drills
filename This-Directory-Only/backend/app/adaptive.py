@@ -209,6 +209,11 @@ class UserPracticeState:
     # 2026-09-25 from the single `arena_share` float — see `_load_user_state`
     # for the one-time migration of an existing value into `course_shares["arena"]`.
     course_shares: Dict[str, float] = field(default_factory=dict)
+    # The courses the learner said they want to study (the onboarding "which
+    # courses?" question, 2026-09-25); course_registry.course_off takes every
+    # other course's concepts out. None = never asked: every course is in as
+    # before (ARENA always, a standalone course while its share is > 0).
+    study_courses: Optional[List[str]] = None
     # The drill on screen right now: the LAST question served, across every
     # subtopic. The on-screen guard in question_pick reads this. It used to
     # read each subtopic's own served tail, which is not "on screen" at all —
@@ -286,6 +291,7 @@ def _save_user_state(state: UserPracticeState) -> None:
         "diagnostic": state.diagnostic,
         "practice_target": state.practice_target,
         "course_shares": state.course_shares,
+        "study_courses": state.study_courses,
         "last_served_question_id": state.last_served_question_id,
         "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
@@ -341,6 +347,8 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
         state.course_shares = dict(data.get("course_shares") or {})
         if "course_shares" not in data and data.get("arena_share"):
             state.course_shares["arena"] = float(data["arena_share"])
+        study = data.get("study_courses")
+        state.study_courses = list(study) if isinstance(study, list) else None
         state.last_served_question_id = data.get("last_served_question_id")
         state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}

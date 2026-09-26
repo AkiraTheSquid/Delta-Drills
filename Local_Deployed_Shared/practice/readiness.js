@@ -171,6 +171,26 @@ window.PracticeReadiness = (() => {
     return latticeReq;
   };
 
+  /* 🔴 ONLY THE COURSES BEING STUDIED. The registry holds every course's
+     concepts — LeetCode's 40 and Delta Drills' 3 beside ARENA's graph since
+     2026-09-25 — and a learner who never enabled LeetCode was scored 0 on
+     all 40 of them, so their readiness fell by a third overnight. The
+     lattice says what is off (`state: "disabled"`: a course left out at
+     onboarding or on the Courses tab, or a concept switched off on the
+     Graph Settings tab); with no lattice, the standalone courses are off,
+     as they are by default. */
+  const STANDALONE_RE = /^(leetcode|deltadrills)\./;
+  const _studied = (kc) => {
+    let row = null;
+    try {
+      row = window.getKcLattice?.()?.kcs?.[kc] || null;
+    } catch (_) {
+      row = null;
+    }
+    if (row) return row.state !== "disabled";
+    return !STANDALONE_RE.test(kc);
+  };
+
   /* {r, source} or null. The SOURCE comes back with the number because
      lesson-graph.js's own contract says it must: "a subtopic number is NOT a
      per-concept measurement, and an extrapolated one is not a measurement at
@@ -198,8 +218,10 @@ window.PracticeReadiness = (() => {
   const read = async (opts) => {
     if (!(await _reader())) return null;
     await _ensureLattice(opts && opts.stamp);
-    const ids = await _loadKcIds();
-    if (!ids || !ids.length) return null;
+    const all = await _loadKcIds();
+    if (!all || !all.length) return null;
+    const ids = all.filter(_studied);
+    if (!ids.length) return null;
 
     let sum = 0;
     let known = 0;
@@ -223,6 +245,8 @@ window.PracticeReadiness = (() => {
 
     const total = ids.length;
     return {
+      // Whether the map read includes ARENA's graph, for `caption`.
+      arena: ids.some((kc) => !STANDALONE_RE.test(kc)),
       /* The mean over the WHOLE map, not over the concepts that happen to
          have a reading: a learner with one strong concept and 62 blanks is
          not 90% ready, and averaging only what is known says they are. An
@@ -257,5 +281,11 @@ window.PracticeReadiness = (() => {
     return info.mastered ? `${own} · ${info.mastered} mastered` : own;
   };
 
-  return { read, detail, MASTERY_T };
+  /* The words beside the figure: ARENA's when the map includes its graph
+     (the app's own goal), plain otherwise — a LeetCode-only learner is not
+     being measured against ARENA. */
+  const caption = (info) =>
+    info && info.arena === false ? "ready across your courses" : "ready for the ARENA curriculum";
+
+  return { read, detail, caption, MASTERY_T };
 })();

@@ -59,15 +59,43 @@ def milestones(course_id: str) -> List[str]:
     return []
 
 
-def course_off(user_state, kc: str) -> bool:
-    """True for a concept of a STANDALONE course the learner hasn't enabled.
-    Read through kc_prefs.is_disabled, so every path that already respects a
-    disabled concept — frontier, drill servability, explore probes, reviews,
-    placement — respects the course toggle too, with no second rule."""
+def course_of(kc: str) -> str:
+    """The course a concept belongs to: a standalone course's own, else ARENA
+    (the main prerequisite graph is ARENA's)."""
     course_id = _STANDALONE_KCS.get(kc)
     if course_id is None and kc.startswith(LEETCODE_PREFIX):
         course_id = "leetcode"
-    if course_id is None:
+    return course_id or "arena"
+
+
+def normalize_study(courses) -> List[str]:
+    """Known course ids from a client's pick, registry order, no repeats."""
+    picked = {str(c) for c in (courses or [])}
+    return [c for c in COURSE_IDS if c in picked]
+
+
+def course_off_by_study(user_state, course_id: str) -> bool:
+    """The learner answered "which courses?" and left this one out."""
+    study = getattr(user_state, "study_courses", None)
+    return study is not None and course_id not in study
+
+
+def course_off(user_state, kc: str) -> bool:
+    """True for a concept of a course the learner is not studying. Read
+    through kc_prefs.is_disabled, so every path that already respects a
+    disabled concept — frontier, drill servability, explore probes, reviews,
+    placement — respects the course choice too, with no second rule.
+
+    Two ways a course is out:
+      * `study_courses` (the onboarding "which courses?" question, Seth
+        2026-09-25) is set and leaves it out. This is the ONLY way ARENA's
+        main graph goes off; None = never asked, everything as before.
+      * a STANDALONE course whose share is 0 (its Courses tab toggle).
+        diagnostic_router keeps the two in step for standalone courses."""
+    course_id = course_of(kc)
+    if course_off_by_study(user_state, course_id):
+        return True
+    if course_id == "arena":
         return False
     from app import course_mix
     return course_mix.share(user_state, course_id) <= 0.0

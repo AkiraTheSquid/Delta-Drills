@@ -28,6 +28,7 @@ from app.practice_schemas import (
     DiagnosticStatusResponse,
     CourseShareRequest,
     PracticeTargetRequest,
+    StudyCoursesRequest,
 )
 from app.questions import get_question_by_id
 
@@ -139,6 +140,8 @@ def course_shares(user: User = Depends(get_current_user)):
     return {
         "courses": [course_mix.status(state, c) for c in course_registry.COURSE_IDS],
         "enable_share": course_mix.DEFAULT_ENABLE_SHARE,
+        # None until the onboarding "which courses?" question is answered.
+        "study_courses": state.study_courses,
     }
 
 
@@ -150,9 +153,23 @@ def set_course_share(payload: CourseShareRequest, user: User = Depends(get_curre
     if payload.course not in course_registry.COURSE_IDS:
         raise HTTPException(status_code=400, detail=f"Unknown course '{payload.course}'")
     state = get_user_state(str(user.id))
-    shares = dict(state.course_shares or {})
-    shares[payload.course] = course_mix.DEFAULT_ENABLE_SHARE if payload.enabled else 0.0
-    state.course_shares = shares
+    course_mix.toggle(state, payload.course, payload.enabled)
+    save_user_state(str(user.id))
+    return course_shares(user)
+
+
+@router.post("/study-courses")
+def set_study_courses(payload: StudyCoursesRequest, user: User = Depends(get_current_user)):
+    """The onboarding "which courses do you want to study?" answer (Seth,
+    2026-09-25). The courses left out go off (course_registry.course_off),
+    ARENA's whole graph included; a standalone course picked is switched on
+    at the Courses tab's share (unchanged if already on). ARENA's mix is
+    kept when ARENA is picked and dropped with it when it is not."""
+    picked = course_registry.normalize_study(payload.courses)
+    if not picked:
+        raise HTTPException(status_code=400, detail="Pick at least one course.")
+    state = get_user_state(str(user.id))
+    course_mix.set_study(state, picked)
     save_user_state(str(user.id))
     return course_shares(user)
 
