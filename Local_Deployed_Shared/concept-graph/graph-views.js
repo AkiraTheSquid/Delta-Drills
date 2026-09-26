@@ -287,7 +287,9 @@
   // background-color / background-opacity / border-style as bypasses too,
   // and a bare removeStyle() would strip an inferred node's dashed border
   // and a disabled node's grey along with the halo.
-  const FAN_PROPS = "line-color target-arrow-color width opacity underlay-color underlay-opacity underlay-padding";
+  // `display` too: a fan edge may be a shortcut kg-look.js hides, and the fan
+  // is exactly the direct links, so it shows.
+  const FAN_PROPS = "line-color target-arrow-color width opacity display underlay-color underlay-opacity underlay-padding";
   const clearFans = () => {
     if (fanStyled && fanStyled.length) fanStyled.forEach((e) => e.removeStyle(FAN_PROPS));
     fanStyled = null;
@@ -350,12 +352,19 @@
     // its layoutstop fit racing this one around the old subset.
     if (mainLay) { try { mainLay.stop(); } catch (_) {} mainLay = null; }
     cy.stop(true);
-    const lay = cy.layout({
+    // Without the shortcut links kg-look.js hides: dagre orders each rank to
+    // cut crossings, and a hidden edge it still counts only costs it moves.
+    // kg-look.js runs dagre itself so the edges can follow the routes it
+    // computes (see routeLayout there); cytoscape-dagre is the fallback.
+    const look = window.DeltaKgLook;
+    const dagreOpts = {
       name: window.cytoscapeDagre ? "dagre" : "cose",
       rankDir: "BT", nodeSep: 26, rankSep: o.rankSep || 150, edgeSep: 12,
       animate: o.animate !== false, animationDuration: 320, animationEasing: "ease-out",
       fit: false, padding: 40, nodeDimensionsIncludeLabels: true,
-    });
+    };
+    const lay = (look && look.routeLayout(cy, dagreOpts)) ||
+      (look ? look.layoutEles(cy) : cy.elements()).layout(dagreOpts);
     lay.one("layoutstop", () => { if (mainLay === lay) fitTo(fitEles, o.pad); });
     mainLay = lay;
     mainLaidOut = true;
@@ -395,7 +404,7 @@
       const node = cy.getElementById(kc);
       if (!node.length) return;
       node.incomers("edge").forEach((e) => {
-        e.style({ "line-color": FAN_IN, "target-arrow-color": FAN_IN, "width": 3, "opacity": 1 });
+        e.style({ "line-color": FAN_IN, "target-arrow-color": FAN_IN, "width": 3, "opacity": 1, "display": "element" });
         fanStyled = fanStyled.union(e);
         const src = e.source();
         if (!expanded.has(src.id())) {
@@ -404,7 +413,7 @@
         }
       });
       node.outgoers("edge").forEach((e) => {
-        e.style({ "line-color": FAN_OUT, "target-arrow-color": FAN_OUT, "width": 3, "opacity": 1 });
+        e.style({ "line-color": FAN_OUT, "target-arrow-color": FAN_OUT, "width": 3, "opacity": 1, "display": "element" });
         fanStyled = fanStyled.union(e);
         const tgt = e.target();
         if (!expanded.has(tgt.id())) {
@@ -459,6 +468,46 @@
   let kcInk = "#c8cdd8";
   const readKcInk = () => { const g = document.querySelector(".kg2-graph"); if (g) kcInk = getComputedStyle(g).color || kcInk; };
   window.addEventListener("delta:theme-changed", () => { readKcInk(); if (ccy) ccy.style().update(); });
+  const kcLook = () => (window.DeltaKgLook ? window.DeltaKgLook.node(0.9, () => kcInk) : {
+    "shape": "round-rectangle", "label": "data(label)", "width": "label", "height": "label", "padding": "10px",
+    "text-wrap": "wrap", "text-max-width": "110px", "text-valign": "center", "text-halign": "center",
+    "font-size": 11.5, "font-weight": 600, "color": "#15151f",
+  });
+  const edgeInk = () => (window.DeltaKgLook ? window.DeltaKgLook.edgeInk() : "#8f9bb8");
+  // The condensed canvas's stylesheet. A function: the concept rule follows
+  // the node look (kg-look.js), and a look switch swaps the whole sheet.
+  const condensedSheet = () => [
+    { selector: "node.sec", style: {
+        "shape": "round-rectangle", "background-color": "data(color)", "background-opacity": 0.95,
+        "label": "data(label)", "text-wrap": "wrap", "text-max-width": "190px", "text-valign": "center",
+        "text-halign": "center", "font-size": 13, "font-weight": 700, "line-height": 1.35, "color": "#15151f",
+        "width": "label", "height": "label", "padding": "22px", "border-width": 2,
+        "border-color": "rgba(21,21,31,0.35)",
+    }},
+    { selector: "node.sec-open", style: {
+        "shape": "round-rectangle", "background-color": "data(color)", "background-opacity": 0.16,
+        "border-width": 2, "border-color": "data(color)", "label": "data(label)", "text-valign": "top",
+        "text-halign": "center", "text-margin-y": -8, "font-size": 13, "font-weight": 700, "color": "#15151f",
+        "padding": "24px",
+    }},
+    // Concepts inside an opened section: the main canvas's node look
+    // (kg-look.js — labelled box or dot), a touch smaller.
+    { selector: "node.kc", style: Object.assign(kcLook(), {
+        "background-color": "data(color)", "border-width": 1.5, "border-color": "rgba(21,21,31,0.35)",
+    })},
+    { selector: "node.kc[!measured]", style: { "background-opacity": 0.45, "border-style": "dashed" } },
+    { selector: "edge", style: {
+        "curve-style": "bezier", "target-arrow-shape": "triangle", "line-color": () => edgeInk(),
+        "target-arrow-color": () => edgeInk(), "width": 1.4, "arrow-scale": 0.9, "opacity": 0.7,
+    }},
+    { selector: "edge.agg", style: {
+        "width": (e) => Math.min(9, 1.5 + e.data("count") * 0.7), "label": "data(label)",
+        "font-size": 12, "font-weight": 700, "color": "#15151f", "text-background-color": "#fff",
+        "text-background-opacity": 0.9, "text-background-padding": "3px", "text-background-shape": "round-rectangle",
+        "opacity": 0.8,
+    }},
+    { selector: "node:active, node.sec:selected", style: { "overlay-opacity": 0.08 } },
+  ];
   const kcColor = (kc) => {
     if (typeof window.deltaKcMasteryColor === "function") return window.deltaKcMasteryColor(readiness(kc));
     return "#9aa3b2";
@@ -554,41 +603,7 @@
     else {
       ccy = cytoscape({
         container: el, elements: els, wheelSensitivity: 0.25, minZoom: 0.1, maxZoom: 3,
-        style: [
-          { selector: "node.sec", style: {
-              "shape": "round-rectangle", "background-color": "data(color)", "background-opacity": 0.95,
-              "label": "data(label)", "text-wrap": "wrap", "text-max-width": "190px", "text-valign": "center",
-              "text-halign": "center", "font-size": 13, "font-weight": 700, "line-height": 1.35, "color": "#15151f",
-              "width": "label", "height": "label", "padding": "22px", "border-width": 2,
-              "border-color": "rgba(21,21,31,0.35)",
-          }},
-          { selector: "node.sec-open", style: {
-              "shape": "round-rectangle", "background-color": "data(color)", "background-opacity": 0.16,
-              "border-width": 2, "border-color": "data(color)", "label": "data(label)", "text-valign": "top",
-              "text-halign": "center", "text-margin-y": -8, "font-size": 13, "font-weight": 700, "color": "#15151f",
-              "padding": "24px",
-          }},
-          // Circles labelled underneath, as on the main canvas (lesson-graph.js).
-          { selector: "node.kc", style: {
-              "shape": "ellipse", "background-color": "data(color)", "label": "data(label)",
-              "width": 26, "height": 26, "text-wrap": "wrap", "text-max-width": "110px",
-              "text-valign": "bottom", "text-halign": "center", "text-margin-y": 4, "font-size": 11.5, "font-weight": 600,
-              "color": () => kcInk,
-              "border-width": 1.5, "border-color": "rgba(21,21,31,0.35)",
-          }},
-          { selector: "node.kc[!measured]", style: { "background-opacity": 0.45, "border-style": "dashed" } },
-          { selector: "edge", style: {
-              "curve-style": "bezier", "target-arrow-shape": "triangle", "line-color": "#e3212c",
-              "target-arrow-color": "#e3212c", "width": 1.6, "arrow-scale": 1.1,
-          }},
-          { selector: "edge.agg", style: {
-              "width": (e) => Math.min(9, 1.5 + e.data("count") * 0.7), "label": "data(label)",
-              "font-size": 12, "font-weight": 700, "color": "#15151f", "text-background-color": "#fff",
-              "text-background-opacity": 0.9, "text-background-padding": "3px", "text-background-shape": "round-rectangle",
-              "line-color": "#c53a42", "target-arrow-color": "#c53a42",
-          }},
-          { selector: "node:active, node.sec:selected", style: { "overlay-opacity": 0.08 } },
-        ],
+        style: condensedSheet(),
         layout: { name: "preset" },
       });
       ccy.on("tap", "node.sec, node.sec-open", (evt) => {
@@ -640,12 +655,15 @@
       const selId = selectedId();
       // Chapter filter applies to every view.
       takeOff(cy.nodes().filter((n) => chapterHidden(n.id()) || courseHidden(n.id())));
-      panel.querySelectorAll("[data-view]").forEach((b) => {
+      // By id, not under `panel`: kg-toolbar.js moves the segment into its bar.
+      document.querySelectorAll("#kg-view-seg [data-view]").forEach((b) => {
         const on = b.dataset.view === mode;
         b.classList.toggle("active", on);
         b.setAttribute("aria-pressed", on ? "true" : "false");
       });
       panel.dataset.view = mode;
+      const graphEl = document.querySelector(".kg2-graph");
+      if (graphEl) graphEl.dataset.kgView = mode;
       if (mode === "condensed") {
         showCondensed(true);
         buildCondensed();
@@ -842,6 +860,12 @@
   window.deltaKgView = {
     mode: () => mode,
     set: (m) => { if (MODES.includes(m)) { mode = m; applyView(); } },
+    // Same view, laid out again — kg-look.js's node look changed size.
+    // A node-look switch (lesson-graph.js calls this on
+    // `delta:kg-look-changed`): the condensed sheet is replaced whole, since
+    // patching node.kc would leave the old look's properties under the new
+    // rule, then the current view is laid out again.
+    relayout: () => { if (ccy) ccy.style(condensedSheet()); applyView(); },
     reset: () => { expanded.clear(); openSections.clear(); applyView(); },
     frontier: () => [...frontierSet()],
     shown: () => [...shown],

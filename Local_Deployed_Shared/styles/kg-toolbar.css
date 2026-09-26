@@ -1,0 +1,184 @@
+/* kg-toolbar.css — the Knowledge Graph's one toolbar (concept-graph/kg-toolbar.js),
+   its compact legend, and the edge ink kg-look.js reads.
+
+   Linked AFTER how-it-works.css and graph-views.css: it repositions their
+   `.kg2-controls`, `.kg2-legend`, `.kg2-nodata` and `.kgv-*` pieces once they
+   live in the bar, and has to win ties against both. Everything is scoped under
+   `.kg2-graph.has-kgt` (set only when the bar was built), so without the script
+   the old layout is untouched. */
+
+/* Edge ink for kg-look.js: a slate that recedes behind the nodes. Read by JS
+   (getComputedStyle), so plain hex, no color-mix. */
+.kg2-graph { --kg-edge: #8793b0; }
+:root[data-theme="light"] .kg2-graph { --kg-edge: #6f7a92; }
+
+.kg2-graph.has-kgt {
+  --kgt-h: 30px;
+  --kgt-glass: color-mix(in srgb, var(--surface) 84%, transparent);
+  --kgt-line: color-mix(in srgb, var(--border) 85%, transparent);
+  --kgt-shadow: 0 1px 2px rgb(0 0 0 / .16), 0 8px 22px -12px rgb(0 0 0 / .5);
+  --kgt-on: color-mix(in srgb, var(--accent) 20%, transparent);
+  --kgt-on-line: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* ---- the header: bar + caption ---------------------------------------- */
+/* The header sits on a clear strip; the canvases start under it at
+   `--kgt-top`, which kg-toolbar.js measures. Its gaps let pointer events
+   through to nothing (the canvas is below), its controls take them. */
+.kgt-head {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 7;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 8px;
+  box-sizing: border-box; pointer-events: none;
+}
+.kgt-head > * { pointer-events: auto; }
+.kgt-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; pointer-events: none; }
+.kgt-bar > * { pointer-events: auto; }
+.kgt-spacer { flex: 1 1 0; pointer-events: none !important; }
+
+/* graph-views.js's card, emptied into the bar. `.kgv-panel` sets display:flex,
+   which outranks the `hidden` attribute. */
+.kg2-graph.has-kgt .kgv-panel[hidden] { display: none; }
+
+/* Segments: the view, the colour, the node look. One vocabulary. The
+   `#kg-colormode` selectors are there to outrank how-it-works.css's own rules
+   for that element, which are by ID. */
+.kg2-graph.has-kgt .kgt-seg,
+.kg2-graph.has-kgt #kg-colormode.kgt-seg {
+  display: inline-flex; align-items: center; gap: 2px; height: var(--kgt-h);
+  padding: 2px; box-sizing: border-box; overflow: visible;
+  background: var(--kgt-glass); border: 1px solid var(--kgt-line); border-radius: 10px;
+  box-shadow: var(--kgt-shadow); backdrop-filter: blur(8px);
+}
+.kg2-graph.has-kgt .kgt-seg button,
+.kg2-graph.has-kgt #kg-colormode.kgt-seg button {
+  flex: 0 0 auto; height: 100%; display: inline-flex; align-items: center; gap: 5px;
+  background: transparent; color: var(--muted); border: 0; border-radius: 8px;
+  padding: 0 10px; font: inherit; font-size: 12px; font-weight: 500; line-height: 1;
+  cursor: pointer; white-space: nowrap; transition: background 120ms, color 120ms, box-shadow 120ms;
+}
+.kg2-graph.has-kgt .kgt-seg button + button,
+.kg2-graph.has-kgt #kg-colormode.kgt-seg button + button { border-left: 0; }
+.kg2-graph.has-kgt #kg-colormode.kgt-seg button:not(.active):hover,
+.kg2-graph.has-kgt .kgt-seg button:not(.active):hover { color: var(--text); background: color-mix(in srgb, var(--text) 7%, transparent); }
+.kg2-graph.has-kgt .kgt-seg button.active,
+.kg2-graph.has-kgt #kg-colormode.kgt-seg button.active {
+  background: var(--kgt-on); color: var(--text); font-weight: 650;
+  box-shadow: inset 0 0 0 1px var(--kgt-on-line);
+}
+.kg2-graph.has-kgt .kgt-seg button:focus-visible,
+.kgt-btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
+
+/* Plain buttons: Filter, Reset, Fit. Reset and Fit are icons. */
+.kgt-btn,
+.kg2-graph.has-kgt .kg2-fit {
+  display: inline-flex; align-items: center; gap: 6px; height: var(--kgt-h); box-sizing: border-box;
+  background: var(--kgt-glass); color: var(--text); border: 1px solid var(--kgt-line); border-radius: 10px;
+  padding: 0 11px; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+  box-shadow: var(--kgt-shadow); backdrop-filter: blur(8px); transition: border-color 120ms, color 120ms;
+}
+.kgt-btn:hover, .kg2-graph.has-kgt .kg2-fit:hover { border-color: var(--accent-text); color: var(--accent-text); }
+.kgt-btn.is-on { border-color: var(--kgt-on-line); }
+.kgt-icon { width: var(--kgt-h); padding: 0 !important; justify-content: center; }
+.kgt-icon svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.kgt-caret { font-size: 9px; color: var(--muted); }
+.kgt-badge {
+  min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 8px;
+  background: var(--accent); color: var(--on-accent); font-size: 10.5px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.kgt-badge[hidden] { display: none; }
+/* graph-views.js's Reset, restyled; nothing to collapse in the complete view. */
+.kg2-graph.has-kgt #kg-view-reset { color: var(--muted); }
+.kg2-graph.has-kgt #kg-view-reset:hover { color: var(--accent-text); }
+.kg2-graph.has-kgt[data-kg-view="complete"] #kg-view-reset { display: none; }
+
+/* lesson-graph.js's corner box (Fit, Colab links), now the bar's right end. */
+.kg2-graph.has-kgt .kgt-bar .kg2-controls { position: static; display: inline-flex; gap: 8px; }
+
+/* Node look: two drawn icons. */
+.kgt-look svg { width: 18px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.kgt-look button.active svg { fill: color-mix(in srgb, var(--accent-text) 45%, transparent); }
+.kgt-look button { padding: 0 8px !important; }
+.kgt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- filter popover --------------------------------------------------- */
+.kgt-filter { position: relative; }
+.kgt-pop {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 9;
+  width: 290px; max-width: calc(100vw - 40px); box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 10px; padding: 12px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid var(--kgt-line); border-radius: 12px;
+  box-shadow: 0 18px 40px -16px rgb(0 0 0 / .6); backdrop-filter: blur(10px);
+  font-size: 12px; color: var(--text);
+}
+.kgt-pop[hidden] { display: none; }
+.kgt-pop .kgv-course { display: flex; flex-direction: column; align-items: stretch; gap: 5px; }
+.kgt-pop .kgv-course-label,
+.kgt-pop .kgv-chapters > summary {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+}
+.kgt-pop .kgv-course-select { font-size: 12.5px; padding: 5px 7px; border-radius: 8px; }
+.kgt-pop .kgv-chapters { border-top: 1px solid var(--kgt-line); padding-top: 9px; }
+.kgt-pop .kgv-chapters > summary { list-style: none; pointer-events: none; margin-bottom: 7px; }
+.kgt-pop .kgv-chapters > summary::-webkit-details-marker { display: none; }
+.kgt-pop .kgv-chapter-list { gap: 5px; max-height: 46vh; }
+.kgt-pop .kgv-chapter { font-size: 12px; }
+
+.kg2-graph.has-kgt #kg-cy,
+.kg2-graph.has-kgt .kgv-condensed { top: var(--kgt-top, 48px); }
+
+/* ---- caption: the view's hint, then the cold-start notice -------------- */
+.kgt-sub {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 14px;
+  padding: 0 4px; font-size: 12px; line-height: 1.45; color: var(--muted);
+}
+.kgt-sub:not(:has(> :not([hidden]):not(:empty))) { display: none; }
+.kg2-graph.has-kgt .kgt-sub .kgv-hint { font-size: 12px; line-height: 1.45; color: var(--muted); min-height: 0; }
+.kg2-graph.has-kgt .kgt-sub .kg2-nodata {
+  position: static; max-width: none; margin: 0; padding: 0 0 0 14px; border: 0; border-radius: 0;
+  background: none; box-shadow: none; backdrop-filter: none;
+  font-size: 12px; color: var(--text); position: relative;
+}
+/* A small amber dot: "nothing measured" is a state, not an error. */
+.kg2-graph.has-kgt .kgt-sub .kg2-nodata::before {
+  content: ""; position: absolute; left: 2px; top: .5em; width: 6px; height: 6px; border-radius: 50%;
+  background: #e2a92e;
+}
+.kg2-graph.has-kgt .kgt-sub .kg2-nodata[hidden] { display: none; }
+
+/* ---- the legend, alone in the corner now ------------------------------ */
+.kg2-graph.has-kgt .kg2-legend {
+  left: 12px; max-width: calc(100% - 24px); max-height: 46%;
+  align-items: center; gap: 4px 14px; padding: 6px 12px; border-radius: 12px;
+  background: var(--kgt-glass); border-color: var(--kgt-line); box-shadow: var(--kgt-shadow);
+  backdrop-filter: blur(8px); overflow: auto;
+}
+.kg2-graph.has-kgt .kg2-legend-grouped { max-width: calc(100% - 24px); }
+.kg2-graph.has-kgt .kg2-legend-fold { flex: 0 1 auto; }
+.kg2-graph.has-kgt .kg2-legend-fold[open] { flex: 0 0 100%; }
+/* "Key": everything but the colour scale — edge kinds, off / faded, no
+   estimate, the shortcut switch. Closed by default. */
+.kg2-legend-more { flex: 0 1 auto; }
+.kg2-legend-more[open] { flex: 0 0 100%; }
+.kg2-legend-more > summary {
+  cursor: pointer; list-style: none; color: var(--muted); font-weight: 600; font-size: 11.5px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.kg2-legend-more > summary::-webkit-details-marker { display: none; }
+.kg2-legend-more > summary::before { content: "ⓘ"; font-size: 12px; }
+.kg2-legend-more > summary:hover { color: var(--text); }
+.kg2-legend-more[open] > summary { margin-bottom: 6px; }
+.kg2-legend-more-body { display: flex; flex-direction: column; gap: 4px; }
+.kg2-li-toggle { cursor: pointer; }
+.kg2-li-toggle input { margin: 0 2px 0 0; }
+/* Edge samples match the canvas (kg-look.js), not the old red. */
+.kg2-graph .kg2-li-edge { border-top-color: var(--kg-edge); }
+.kg2-graph .kg2-li-edge-pre { border-top-style: solid; border-top-width: 1px; }
+
+@media (max-width: 820px) {
+  .kgt-bar { gap: 6px; }
+  .kg2-graph.has-kgt .kgt-seg button,
+.kg2-graph.has-kgt #kg-colormode.kgt-seg button { padding: 0 7px; }
+  .kgt-sub .kgv-hint { display: none; }
+}

@@ -1659,7 +1659,7 @@
   /* ---------------- legend (mode-aware) + recolour --------------------- */
   // Whether the Category legend's family list is unfolded. Module-level
   // because buildLegend() rewrites the element it lives on.
-  let legendFoldOpen = true;
+  let legendFoldOpen = false;
   const _disabledLegend = () => (dimDisabled
     ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
       (_anyCourseOff() ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-course-off"></span>Faded — its course is off in Courses</span>' : "")
@@ -1667,9 +1667,25 @@
   const _anyCourseOff = () => !!(lattice && lattice.kcs &&
     Object.keys(lattice.kcs).some((k) => _courseOff(lattice.kcs[k])));
   // Edge kinds are the same in every colour mode, so every legend carries them.
+  // With kg-look.js loaded, shortcut links (implied by a longer chain) are
+  // hidden and the Key carries the switch to show them.
   const _edgeLegend = () =>
     '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-enc"></span>Encompasses — practising it also practises the parent (thicker = more)</span>' +
-    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-pre"></span>Prerequisite only — must be known first</span>';
+    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-pre"></span>Prerequisite only — must be known first</span>' +
+    (LOOK() ? '<label class="kg2-li kg2-li-toggle"><input type="checkbox" data-kg-shortcuts' +
+      (LOOK().shortcutsShown() ? " checked" : "") + '>Show shortcut links (already implied by a longer chain)</label>' : "");
+  // Everything but the colour key folds under "Key", closed by default and
+  // remembered across rebuilds (this element's HTML is replaced every time).
+  let legendMoreOpen = false;
+  const _more = (extra) =>
+    '<details class="kg2-legend-more"' + (legendMoreOpen ? " open" : "") + "><summary>Key</summary>" +
+      '<div class="kg2-legend-more-body">' + (extra || "") + _disabledLegend() + "</div></details>";
+  const _wireMore = (el) => {
+    const more = el.querySelector(".kg2-legend-more");
+    if (more) more.addEventListener("toggle", () => { legendMoreOpen = more.open; });
+    const sc = el.querySelector("[data-kg-shortcuts]");
+    if (sc) sc.addEventListener("change", () => { if (LOOK()) LOOK().setShortcuts(sc.checked); });
+  };
   const buildLegend = () => {
     const el = $("kg-legend");
     if (!el) return;
@@ -1677,10 +1693,10 @@
       el.classList.add("kg2-legend-mastery");
       el.classList.remove("kg2-legend-grouped");
       el.innerHTML =
-        '<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
-        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>' +
-        _disabledLegend() +
-        '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>';
+        '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>' +
+        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred</span>' +
+        _more('<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
+          '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>');
     } else {
       // The two non-mastery legends answer different questions, so they are
       // built separately rather than as one list at two grains. Either way a
@@ -1697,7 +1713,7 @@
         ids.forEach((id) => { has[_domainOf(id).id] = true; });
         el.innerHTML = DOMAINS.filter((d) => has[d.id]).map((d) =>
           `<span class="kg2-li"><span class="kg2-li-dot" style="background:${d.color}"></span>${esc(d.label)}</span>`
-        ).join("") + _disabledLegend();
+        ).join("") + _more();
       } else if (colorMode === "section") {
         const has = {};
         ids.forEach((id) => { has[_sectionOf(id).id] = true; });
@@ -1706,8 +1722,8 @@
         ).join("");
         // With no exercise map every concept falls to prep, which looks like a
         // finished answer instead of a missing file. Say which it is.
-        el.innerHTML = rows + _disabledLegend() + (arenaMapLoaded ? "" :
-          '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>');
+        el.innerHTML = rows + (arenaMapLoaded ? "" :
+          '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>') + _more();
       } else {
         // Even at ten families the legend is tall enough to sit on top of
         // the bubbles it is explaining — the prerequisite floor lands in
@@ -1736,13 +1752,14 @@
           '<details class="kg2-legend-fold"' + (legendFoldOpen ? " open" : "") + ">" +
             '<summary>Colour = subject, grouped by area</summary>' +
             '<div class="kg2-legend-fold-body">' + body + "</div>" +
-          "</details>" + _disabledLegend();
+          "</details>" + _more();
         // The element is rebuilt on every legend build, so the listener is
         // fresh each time and nothing accumulates.
         const fold = el.querySelector(".kg2-legend-fold");
         if (fold) fold.addEventListener("toggle", () => { legendFoldOpen = fold.open; });
       }
     }
+    _wireMore(el);
   };
 
   // Unmeasured bubbles are washed out and dashed: they carry a colour because a
@@ -1943,6 +1960,78 @@
     node.incomers("edge").addClass("next-up-edge");
   };
 
+  /* ---------------- stylesheet ----------------------------------------- */
+  // The node's SHAPE and the edges come from concept-graph/kg-look.js (a
+  // learner setting: labelled boxes or dots; soft curved edges; shortcuts
+  // hidden). Everything below them is this file's own state styling — gate
+  // classes, the highlighted chain, next-up — and is the same in either look.
+  // Rebuilt whole on `delta:kg-look-changed`; per-node bypasses (recolor)
+  // survive a stylesheet swap.
+  // Read at call time: kg-look.js is a separate deferred script.
+  const LOOK = () => window.DeltaKgLook || null;
+  const sheet = () => [
+    { selector: "node", style: Object.assign(
+        LOOK() ? LOOK().node(1, () => nodeInk) : {
+          "shape": "round-rectangle", "label": "data(label)",
+          "width": "label", "height": "label", "padding": "13px",
+          "text-wrap": "wrap", "text-max-width": "120px",
+          "text-valign": "center", "text-halign": "center",
+          "font-size": 13, "font-weight": 600, "color": "#15151f",
+          "border-width": 1, "border-color": "rgba(0,0,0,.28)",
+        },
+        { "background-color": (n) => nodeColor(n.id()),
+          "transition-property": "opacity, border-width, border-color", "transition-duration": "120ms" }) },
+    ...(LOOK() ? LOOK().edgeRules() : [
+      { selector: "edge", style: {
+          "curve-style": "bezier", "width": 1.8, "line-color": "#e3212c",
+          "target-arrow-shape": "triangle", "target-arrow-color": "#e3212c", "arrow-scale": 0.8, "opacity": 0.9,
+      }},
+      { selector: "edge[kind = 'prereq']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.2, "opacity": 0.55 } },
+      { selector: "edge[kind = 'encompassing']", style: { "line-style": "solid", "width": (e) => 1.5 + 3 * (e.data("w") || 0), "opacity": 0.95 } },
+    ]),
+    { selector: ".faded", style: { "opacity": 0.1 } },
+    { selector: "node.hl", style: { "opacity": 1, "border-width": 3, "border-color": ACCENT, "z-index": 50 } },
+    { selector: "node.hl-strong", style: { "opacity": 1, "border-width": 5, "border-color": ACCENT, "font-size": 12, "z-index": 99 } },
+    { selector: "edge.hl", style: { "opacity": 1, "width": 3, "line-color": ACCENT, "target-arrow-color": ACCENT, "z-index": 60 } },
+    // Where the queue is pointing. The outline sits OUTSIDE the border, so
+    // a dashed projected node keeps showing that it is projected instead of
+    // having the marker overwrite that fact.
+    { selector: "node.next-up", style: {
+        "border-width": 4, "border-color": NEXT_UP, "border-style": "solid",
+        "outline-width": 6, "outline-color": NEXT_UP, "outline-opacity": 0.35,
+        "z-index": 80,
+    }},
+    // Gate state. Locked = the queue will not serve this yet, so it is
+    // dimmed and desaturated; frontier = unlocked and unfinished, the set
+    // the next-up ring is chosen from, so it keeps full presence.
+    { selector: "node.kc-locked", style: {
+        "opacity": 0.32, "border-style": "dotted", "z-index": 1,
+    }},
+    // Switched off by the learner (Settings tab). Not locked — nothing is
+    // waiting on it — just out of the queue, so it fades harder than a
+    // locked node and loses its border entirely.
+    { selector: "node.kc-disabled", style: {
+        "opacity": 0.18, "border-width": 0, "color": "#505058", "z-index": 0,
+    }},
+    // In a standalone course that is off in the Courses tab: not served,
+    // but still the course it is, so it keeps its colour, faded.
+    { selector: "node.kc-course-off", style: { "opacity": 0.45, "z-index": 1 } },
+    { selector: "node.kc-frontier", style: {
+        "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,
+        "border-opacity": 0.55, "z-index": 40,
+    }},
+    { selector: "edge.next-up-edge", style: {
+        "width": 3.5, "line-color": NEXT_UP, "target-arrow-color": NEXT_UP,
+        "opacity": 1, "z-index": 70,
+    }},
+  ];
+  window.addEventListener("delta:kg-look-changed", () => {
+    if (!cy) return;
+    cy.style(sheet());
+    // A box and a dot are different sizes: the layout has to run again.
+    if (window.deltaKgView && typeof window.deltaKgView.relayout === "function") window.deltaKgView.relayout();
+  });
+
   /* ---------------- build ---------------------------------------------- */
   async function build() {
     if (cy || building) return;
@@ -2034,71 +2123,17 @@
       elements,
       wheelSensitivity: 0.25,
       minZoom: 0.1, maxZoom: 3,
-      style: [
-        { selector: "node", style: {
-            "background-color": (n) => nodeColor(n.id()),
-            // Circles labelled underneath, as the AISC write-up's figures
-            // draw them (Seth, 2026-09-25); the label sits on the canvas, so
-            // it takes the pane's text colour (nodeInk), not a fixed dark.
-            "shape": "ellipse",
-            "label": "data(label)",
-            "width": 30, "height": 30,
-            "text-wrap": "wrap", "text-max-width": "120px",
-            "text-valign": "bottom", "text-halign": "center", "text-margin-y": 5,
-            "font-size": 13, "font-weight": 600, "color": () => nodeInk,
-            "border-width": 1, "border-color": "rgba(0,0,0,.28)",
-            "transition-property": "opacity, border-width, border-color", "transition-duration": "120ms",
-        }},
-        { selector: "edge", style: {
-            "curve-style": "bezier", "width": 1.8, "line-color": "#e3212c",
-            "target-arrow-shape": "triangle", "target-arrow-color": "#e3212c", "arrow-scale": 0.8, "opacity": 0.9,
-        }},
-        // A plain prerequisite only gates; it is drawn thin and dashed so the
-        // solid, weighted encompassing edges read as the load-bearing ones.
-        { selector: "edge[kind = 'prereq']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.2, "opacity": 0.55 } },
-        { selector: "edge[kind = 'encompassing']", style: { "line-style": "solid", "width": (e) => 1.5 + 3 * (e.data("w") || 0), "opacity": 0.95 } },
-        { selector: ".faded", style: { "opacity": 0.1 } },
-        { selector: "node.hl", style: { "opacity": 1, "border-width": 3, "border-color": ACCENT, "z-index": 50 } },
-        { selector: "node.hl-strong", style: { "opacity": 1, "border-width": 5, "border-color": ACCENT, "font-size": 12, "z-index": 99 } },
-        { selector: "edge.hl", style: { "opacity": 1, "width": 3, "line-color": ACCENT, "target-arrow-color": ACCENT, "z-index": 60 } },
-        // Where the queue is pointing. The outline sits OUTSIDE the border, so
-        // a dashed projected node keeps showing that it is projected instead of
-        // having the marker overwrite that fact.
-        { selector: "node.next-up", style: {
-            "border-width": 4, "border-color": NEXT_UP, "border-style": "solid",
-            "outline-width": 6, "outline-color": NEXT_UP, "outline-opacity": 0.35,
-            "z-index": 80,
-        }},
-        // Gate state. Locked = the queue will not serve this yet, so it is
-        // dimmed and desaturated; frontier = unlocked and unfinished, the set
-        // the next-up ring is chosen from, so it keeps full presence.
-        { selector: "node.kc-locked", style: {
-            "opacity": 0.32, "border-style": "dotted", "z-index": 1,
-        }},
-        // Switched off by the learner (Settings tab). Not locked — nothing is
-        // waiting on it — just out of the queue, so it fades harder than a
-        // locked node and loses its border entirely.
-        { selector: "node.kc-disabled", style: {
-            "opacity": 0.18, "border-width": 0, "color": "#505058", "z-index": 0,
-        }},
-        // In a standalone course that is off in the Courses tab: not served,
-        // but still the course it is, so it keeps its colour, faded.
-        { selector: "node.kc-course-off", style: { "opacity": 0.45, "z-index": 1 } },
-        { selector: "node.kc-frontier", style: {
-            "opacity": 1, "border-width": 2.5, "border-color": NEXT_UP,
-            "border-opacity": 0.55, "z-index": 40,
-        }},
-        { selector: "edge.next-up-edge", style: {
-            "width": 3.5, "line-color": NEXT_UP, "target-arrow-color": NEXT_UP,
-            "opacity": 1, "z-index": 70,
-        }},
-      ],
+      style: sheet(),
       layout: { name: window.cytoscapeDagre ? "dagre" : "cose",
         rankDir: "BT", nodeSep: 26, rankSep: 150, edgeSep: 12, animate: false, fit: true, padding: 40,
         nodeDimensionsIncludeLabels: true },
     });
+    // How it is drawn — node look, soft curved edges, hidden shortcuts — is
+    // concept-graph/kg-look.js's; see sheet().
+    if (LOOK()) { LOOK().markShortcuts(cy); LOOK().curve(cy); }
 
     if ($("kg-status")) $("kg-status").style.display = "none";
+
     cy.on("tap", "node", (evt) => selectNode(evt.target.id()));
     cy.on("tap", (evt) => { if (evt.target === cy) resetView(); });
 
