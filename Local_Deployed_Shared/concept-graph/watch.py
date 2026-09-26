@@ -277,6 +277,68 @@ def check_disabled_concepts_have_an_optional_graph_treatment():
     )
 
 
+def check_the_layout_optimizer_keeps_its_rules():
+    """kg-layout.js may move nodes anywhere, but never breaks the graph's
+    rules: every prerequisite sits at least `gapY` (50 px) below what it
+    unlocks, no two boxes overlap, every edge gets a route and no route runs
+    through a node it doesn't touch, and the same graph lays out the same way
+    twice, routes included (the cache and a reload rely on it). Run under Node on a small graph
+    with a crossing dagre-style rows would keep (a 3x3 bipartite block plus a
+    chain); skipped when Node isn't installed.
+    """
+    import shutil
+    import subprocess
+    node = shutil.which('node')
+    if not node:
+        return
+    script = r"""
+const L = require(process.argv[1]);
+const nodes = [], edges = [];
+const add = (id, x, y) => nodes.push({ id, x, y, w: 90, h: 30 });
+['a','b','c'].forEach((id, i) => add(id, i * 140, 400));
+['p','q','r'].forEach((id, i) => add(id, i * 140, 200));
+add('z', 140, 0); add('y', 420, 0);
+let k = 0;
+['a','b','c'].forEach((s) => ['p','q','r'].forEach((t) => edges.push({ id: 'e' + (k++), s, t })));
+edges.push({ id: 'e' + (k++), s: 'p', t: 'z' }, { id: 'e' + (k++), s: 'r', t: 'y' }, { id: 'e' + (k++), s: 'a', t: 'y' });
+const one = L.layout(nodes, edges, {}), two = L.layout(nodes, edges, {});
+const P = one.pos, bad = [];
+edges.forEach((e) => { if (!(P[e.t].y + 15 + 50 <= P[e.s].y - 15 + 0.01)) bad.push('not 50px below: ' + e.s + '>' + e.t); });
+edges.forEach((e) => {
+  const r = one.routes[e.id];
+  if (!r) { bad.push('no route: ' + e.id); return; }
+  // The curve as Cytoscape draws an unbundled bezier: quadratics from the
+  // source's centre through the midpoints of consecutive control points.
+  const c = r.cps, pts = [];
+  let cur = P[e.s];
+  for (let i = 0; i <= c.length; i++) {
+    const end = i < c.length - 1 ? { x: (c[i].x + c[i + 1].x) / 2, y: (c[i].y + c[i + 1].y) / 2 } : P[e.t];
+    const ctl = i < c.length ? c[i] : { x: (cur.x + end.x) / 2, y: (cur.y + end.y) / 2 };
+    for (let f = 0; f <= 16; f++) { const t = f / 16, u = 1 - t; pts.push({ x: u*u*cur.x + 2*u*t*ctl.x + t*t*end.x, y: u*u*cur.y + 2*u*t*ctl.y + t*t*end.y }); }
+    cur = end;
+    if (i >= c.length - 1) break;
+  }
+  pts.forEach(({ x, y }) => nodes.forEach((n) => {
+    if (n.id !== e.s && n.id !== e.t && Math.abs(x - P[n.id].x) < 45 && Math.abs(y - P[n.id].y) < 15) bad.push('through ' + n.id + ': ' + e.id);
+  }));
+});
+for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+  const A = P[nodes[i].id], B = P[nodes[j].id];
+  if (Math.abs(A.x - B.x) < 90 && Math.abs(A.y - B.y) < 30) bad.push('overlap: ' + nodes[i].id + '/' + nodes[j].id);
+}
+if (JSON.stringify([one.pos, one.routes]) !== JSON.stringify([two.pos, two.routes])) bad.push('not deterministic');
+console.log(JSON.stringify(bad));
+"""
+    out = subprocess.run([node, '-e', script, os.path.join(HERE, 'kg-layout.js')],
+                         capture_output=True, text=True, timeout=60)
+    assert out.returncode == 0, f'kg-layout.js failed under Node: {out.stderr[-400:]}'
+    bad = json.loads(out.stdout.strip().splitlines()[-1])
+    assert not bad, f'kg-layout.js broke a layout rule: {bad[:5]}'
+    index = _read(os.path.join(HERE, '..', 'index.html'))
+    a, b = index.find('concept-graph/kg-layout.js'), index.find('concept-graph/kg-look.js')
+    assert 0 <= a < b, 'index.html must load kg-layout.js BEFORE kg-look.js, which calls it'
+
+
 def _assert_every_check_is_listed(checks):
     """A check this module defines but never calls is worse than no check.
 
@@ -307,6 +369,7 @@ if __name__ == '__main__':
         check_a_topic_reading_contributes_no_direct_evidence,
         check_a_placed_learner_is_not_told_they_answered_nothing,
         check_disabled_concepts_have_an_optional_graph_treatment,
+        check_the_layout_optimizer_keeps_its_rules,
     ]
     try:
         _assert_every_check_is_listed(checks)
