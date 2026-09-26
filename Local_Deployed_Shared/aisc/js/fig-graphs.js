@@ -6,9 +6,10 @@
 
    Fig. 2 is NOT here: it is the app's own concept map, drawn by
    concept-graph/why-graph.js into #wta-graph-cy. These three borrow that
-   map's look (Seth, 2026-09-24: "use the old embedded graph"): labelled
-   round-rectangle nodes, red prerequisite arrows, yellow highlight, the
-   dagre bottom-to-top layout. Each figure's own state still sets the fill. */
+   map's red prerequisite arrows, yellow highlight and dagre bottom-to-top
+   layout (Seth, 2026-09-24: "use the old embedded graph"). The nodes are the
+   standalone delta-drills-aisc site's small circles, labelled underneath
+   (Seth, 2026-09-25), filled by P(known): green = known, red = not (known()). */
 (function () {
   "use strict";
   var E = window.DeltaEngine;
@@ -18,15 +19,17 @@
     var A = AISC.rgb01(a), B = AISC.rgb01(b);
     return "rgb(" + A.map(function (v, i) { return Math.round(255 * (v + (B[i] - v) * t)); }).join(",") + ")";
   }
-  // why-graph.js's palette, so the four maps read as one product
-  var EDGE = "#e3212c", ACCENT = "#ffd23f", LABEL = "#15151f";
+  // P(known) → fill: red (0) to green (1).
+  function known(p) { return mix(AISC.css("--red"), AISC.css("--green"), Math.max(0, Math.min(1, p))); }
+  // why-graph.js's arrow + highlight, so the four maps read as one product
+  var EDGE = "#e3212c", ACCENT = "#ffd23f";
   function baseStyle() {
     return [
       { selector: "node", style: {
-        "background-color": "#9a9ab0", shape: "round-rectangle", label: "data(label)",
-        width: "label", height: "label", padding: "7px", "text-wrap": "wrap", "text-max-width": 90,
-        "text-valign": "center", "text-halign": "center", "font-size": 11, "font-weight": 600, color: LABEL,
-        "border-width": 1, "border-color": "rgba(0,0,0,.28)",
+        "background-color": AISC.css("--red"), "border-width": 1, "border-color": AISC.css("--ink-3"),
+        width: 16, height: 16, label: "data(label)", "font-family": "IBM Plex Mono", "font-size": 8,
+        color: AISC.css("--ink-2"), "text-valign": "bottom", "text-margin-y": 3, "min-zoomed-font-size": 7,
+        "text-wrap": "wrap", "text-max-width": 90,
       } },
       { selector: "edge", style: {
         "curve-style": "bezier", width: 1.6, "line-color": EDGE, "target-arrow-color": EDGE,
@@ -105,7 +108,7 @@
         { selector: "node", style: { "border-style": "dashed" } },
         { selector: "node.probed", style: { "border-style": "solid" } },
         { selector: "node.frontier", style: { "border-width": 3, "border-style": "solid", "border-color": ACCENT } },
-        { selector: "node.probe", style: { "border-width": 4, "border-style": "solid", "border-color": AISC.css("--coral"), "z-index": 9 } },
+        { selector: "node.probe", style: { width: 26, height: 26, "border-width": 4, "border-style": "solid", "border-color": AISC.css("--coral"), "font-size": 12, color: AISC.css("--ink"), "z-index": 9 } },
       ]; }, dagreLayout());
       ctrlZoom(cy, el);
 
@@ -115,8 +118,7 @@
           cy.nodes().forEach(function (n) {
             var p = P[n.id()], c = E.classify(p);
             counts[c]++;
-            var col = p >= 0.5 ? mix(AISC.css("--amber"), AISC.css("--green"), (p - 0.5) / 0.5) : mix(AISC.css("--red"), AISC.css("--amber"), p / 0.5);
-            n.style("background-color", col);
+            n.style("background-color", known(p));
             var isF = c !== "known" && graph.parents[n.id()].every(function (q) { return P[q] >= E.PL.IN_STATE; });
             n.toggleClass("frontier", isF);
             if (isF) frontier++;
@@ -197,6 +199,7 @@
       var cy = makeCy(el, graphElements(G.kcs, keep), function () { return [
         { selector: "edge.enc", style: { width: 2.2, "line-color": AISC.css("--green"), "target-arrow-color": AISC.css("--green"), label: "data(wl)", "font-size": 9, "font-family": "IBM Plex Mono", color: AISC.css("--green"), "text-background-color": AISC.css("--paper"), "text-background-opacity": 1, "text-background-padding": 2 } },
         { selector: "edge.pre", style: { "line-style": "dashed", "line-dash-pattern": [3, 3] } },
+        { selector: "node", style: { "font-size": 10, "text-max-width": 110, width: 22, height: 22, "min-zoomed-font-size": 0 } },
         { selector: "node.flash", style: { "border-width": 4, "border-color": ACCENT } },
         { selector: "node.target", style: { "border-width": 4, "border-color": AISC.css("--coral") } },
       ]; }, dagreLayout({ rankSep: 50, nodeSep: 14, nodeDimensionsIncludeLabels: true }));
@@ -206,7 +209,7 @@
       function paint() {
         cy.nodes().forEach(function (n) {
           var p = effective(n.id());
-          n.style("background-color", mix("#9a9ab0", AISC.css("--green"), Math.min(1, (p - E.BKT.P_INIT) / (1 - E.BKT.P_INIT))));
+          n.style("background-color", known(p));
           n.toggleClass("target", n.id() === target);
         });
         document.getElementById("aisc-fire-target").innerHTML = "<span class='id'>Practising</span> <span class='t'>" + byId[target].title + "</span> <span class='id'>" + target + " · P(known) now " + effective(target).toFixed(2) + "</span>";
@@ -252,8 +255,9 @@
       byId[TARGET].prereqs.forEach(function (p) { keep[p] = true; byId[p].prereqs.forEach(function (q) { keep[q] = true; }); });
       var START = { "einops.attention-einsum": 0.30, "einops.einsum": 0.88, "einops.dl-flatten-heads": 0.52, "einops.merge-axes": 0.64, "einops.split-axes": 0.41, "einops.pattern-language": 0.83 };
       var cy = makeCy(el, graphElements(G.kcs, keep), function () { return [
-        { selector: "node.goal", style: { "border-width": 5, "border-style": "double", "border-color": LABEL } },
-        { selector: "node.serving", style: { "border-width": 4, "border-style": "solid", "border-color": ACCENT } },
+        { selector: "node", style: { "font-size": 11, "text-max-width": 120, width: 26, height: 26, "min-zoomed-font-size": 0 } },
+        { selector: "node.goal", style: { "border-width": 5, "border-style": "double", "border-color": AISC.css("--ink") } },
+        { selector: "node.serving", style: { "border-width": 4, "border-style": "solid", "border-color": ACCENT, width: 34, height: 34 } },
       ]; }, dagreLayout({ rankSep: 50, nodeSep: 18, nodeDimensionsIncludeLabels: true }));
       var mastery, attempts, seq, log;
       function trailingMisses(kc) {
@@ -284,7 +288,7 @@
       function paint() {
         cy.nodes().forEach(function (n) {
           var p = mastery[n.id()];
-          n.style("background-color", p >= 0.5 ? mix(AISC.css("--amber"), AISC.css("--green"), (p - 0.5) / 0.5) : mix(AISC.css("--red"), AISC.css("--amber"), p / 0.5));
+          n.style("background-color", known(p));
           n.data("label", shortName(n.id()) + "\n" + p.toFixed(2));
           n.toggleClass("serving", n.id() === serving);
           n.toggleClass("goal", n.id() === TARGET);

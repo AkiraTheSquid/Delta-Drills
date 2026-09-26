@@ -191,3 +191,5 @@
   background motion (no card push-out, no hover/title pull, no cursor drag),
   still erased inside cards. Editor guard now keys on `#aisc-a-why` without
   `#aisc-articles`.
+- 2026-09-25: Figs. 3/5/6 nodes are the standalone site's circles again, filled
+  red → green by P(known); arrows/highlight stay why-graph's. See js/README.md.
