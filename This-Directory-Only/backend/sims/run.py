@@ -17,7 +17,9 @@ Run from This-Directory-Only/backend:
   .venv/bin/python -m sims.run pilot  --n 20
   .venv/bin/python -m sims.run final  --n 100
   .venv/bin/python -m sims.run report
-CPU: 11 workers at nice 19 (Seth: keep the machine usable).
+CPU: 10 workers at nice 19 inside a CPUQuota=1000% scope (Seth: <= 80% total):
+  systemd-run --user --scope -p CPUQuota=1000% .venv/bin/python -m sims.run ...
+New arm only: `--arms BV K KV` appends to the existing pilot/final files.
 """
 from __future__ import annotations
 
@@ -44,11 +46,12 @@ WORLDS = ("W1", "W2")
 # review alone gives 0.93, so the grid runs up to where it can still bind).
 P_THETAS = (0.8, 0.9, 0.95, 0.98, 0.99)
 R_THETAS = (0.5, 0.7, 0.8, 0.9, 0.95)
-THETAS = {"C": P_THETAS, "B": P_THETAS, "H": P_THETAS, "A0": R_THETAS, "A": R_THETAS,
+THETAS = {"C": P_THETAS, "B": P_THETAS, "BS": P_THETAS, "BV": P_THETAS,
+          "K": P_THETAS, "KV": P_THETAS, "H": P_THETAS, "A0": R_THETAS, "A": R_THETAS,
           "O": (0.9,)}
 REVIEWS = (0.6, 0.7, 0.8, 0.9, 0.95)
-CONTENDERS = ("C", "B", "A0", "A", "H")
-WORKERS = 11
+CONTENDERS = ("C", "B", "BS", "BV", "K", "KV", "A0", "A", "H")
+WORKERS = 10               # + systemd CPUQuota=1000%: <= 62.5% of 16 cores (Seth: <= 80% total)
 _G = None
 
 
@@ -65,10 +68,10 @@ def _one(task):
             "review": rev, "break": brk, **asdict(r)}
 
 
-def _grid(tasks, path: Path):
+def _grid(tasks, path: Path, append=False):
     OUT.mkdir(exist_ok=True)
     t0 = time.time()
-    with Pool(WORKERS, initializer=_init) as pool, path.open("w") as f:
+    with Pool(WORKERS, initializer=_init) as pool, path.open("a" if append else "w") as f:
         for i, row in enumerate(pool.imap_unordered(_one, tasks, chunksize=4)):
             f.write(json.dumps(row) + "\n")
             if (i + 1) % 500 == 0:
@@ -76,20 +79,32 @@ def _grid(tasks, path: Path):
     print(f"{len(tasks)} runs in {time.time() - t0:.0f}s → {path}")
 
 
-def pilot(n):
+def pilot(n, arms=None):
+    """`arms` given: run only those and APPEND (runs are paired per learner,
+    so a new arm needs no rerun of the others)."""
     tasks = [(w, lt, s, arm, th, rev, 0.0)
              for w, lt, s in itertools.product(WORLDS, world.LEARNER_TYPES, range(n))
-             for arm in (*CONTENDERS, "O")
+             for arm in (arms or (*CONTENDERS, "O"))
              for th, rev in itertools.product(THETAS[arm], REVIEWS)]
-    _grid(tasks, OUT / "pilot.jsonl")
+    _grid(tasks, OUT / "pilot.jsonl", append=bool(arms))
     pick(OUT / "pilot.jsonl")
 
 
+def _rows(path: Path):
+    """One row per experimental unit: a retried arm appends duplicates, the
+    last one wins."""
+    key = lambda r: (r["world"], r["ltype"], r["seed"], r["arm"], r["theta"],  # noqa: E731
+                     r.get("review"), r["break"])
+    return list({key(r): r for r in map(json.loads, path.open())}.values())
+
+
 def pick(path: Path):
-    rows = [json.loads(l) for l in path.open()]
+    rows = _rows(path)
     best = {}
     print("\nmedian summed crossing hours (mean of W1, W2 medians); rows = gate, cols = review:")
     for arm in (*CONTENDERS, "O"):
+        if not any(r["arm"] == arm for r in rows):
+            continue
         score = {}
         for th, rev in itertools.product(THETAS[arm], REVIEWS):
             meds = [np.median([r["sum_h"] for r in rows if r["arm"] == arm and r["theta"] == th
@@ -104,13 +119,13 @@ def pick(path: Path):
     (OUT / "pilot_best.json").write_text(json.dumps(best, indent=1))
 
 
-def final(n):
+def final(n, arms=None):
     best = json.loads((OUT / "pilot_best.json").read_text())
     tasks = [(w, lt, s, arm, *best[arm], brk)
              for w, lt, s in itertools.product(WORLDS, world.LEARNER_TYPES, range(1000, 1000 + n))
              for brk in (0.0, 30.0, 180.0)
-             for arm in (*CONTENDERS, "O")]
-    _grid(tasks, OUT / "final.jsonl")
+             for arm in (arms or (*CONTENDERS, "O"))]
+    _grid(tasks, OUT / "final.jsonl", append=bool(arms))
     report()
 
 
@@ -149,7 +164,7 @@ def _boot_learners(rows, arm, ref, w, lt, reps=2000):
 
 
 def report(path: Path = OUT / "final.jsonl"):
-    rows = [json.loads(l) for l in path.open()]
+    rows = _rows(path)
     best = json.loads((OUT / "pilot_best.json").read_text())
     print(f"\n{len(rows)} runs. (gate, review) per arm: {best}")
     print("negative % = FASTER than the reference on the same learner; [95% CI]\n")
@@ -171,11 +186,13 @@ def report(path: Path = OUT / "final.jsonl"):
                     cells.append(f"{m:+.1f}% [{lo:+.1f}, {hi:+.1f}] ({(d < 0).mean():.0%} faster)")
                 print(f"| {w} | {brk:.0f}d | " + " | ".join(cells) + " |")
         print()
-    print("### A and H vs B by learner type, all breaks (cluster bootstrap over learners)")
+    print("### new arms and H vs B by learner type, all breaks (cluster bootstrap over learners)")
     for w in WORLDS:
         for lt in world.LEARNER_TYPES:
             parts = []
-            for arm in ("A", "H"):
+            for arm in ("BS", "BV", "K", "KV", "H"):
+                if not any(r["arm"] == arm for r in rows):
+                    continue
                 m, lo, hi = _boot_learners(rows, arm, "B", w, lt)
                 parts.append(f"{arm} {m:+6.1f}% [{lo:+.1f}, {hi:+.1f}]")
             print(f"  {w} {lt:7s}  " + "   ".join(parts))
@@ -183,6 +200,8 @@ def report(path: Path = OUT / "final.jsonl"):
     for w in WORLDS:
         for arm in (*CONTENDERS, "O"):
             sel = [r for r in rows if r["world"] == w and r["arm"] == arm]
+            if not sel:
+                continue
             print(f"  {w} {arm:3s} Σh {np.median([r['sum_h'] for r in sel]):6.0f}  "
                   f"crossed {np.mean([r['crossed'] for r in sel]):4.1f}/27  "
                   f"false decl {np.mean([r['false_decl'] for r in sel]):4.1f}  "
@@ -194,6 +213,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("phase", choices=("pilot", "pick", "final", "report"))
     ap.add_argument("--n", type=int, default=20)
+    ap.add_argument("--arms", nargs="+", help="run only these arms, appending")
     a = ap.parse_args()
-    {"pilot": lambda: pilot(a.n), "pick": lambda: pick(OUT / "pilot.jsonl"),
-     "final": lambda: final(a.n), "report": report}[a.phase]()
+    {"pilot": lambda: pilot(a.n, a.arms), "pick": lambda: pick(OUT / "pilot.jsonl"),
+     "final": lambda: final(a.n, a.arms), "report": report}[a.phase]()

@@ -99,9 +99,34 @@ for t, ok in ((1.0, True), (3.0, True), (9.0, False), (12.0, True)):
 diff = abs(pb.due_R(20.0)[k] - bb.due_R(20.0)[k])
 check("identical particles follow the point FSRS", diff < 1e-9, f"ΔR {diff:.2e}")
 
+print("decision-value explorer (voi.py)")
+from sims import voi  # noqa: E402
+from sims.beliefs import BKTBelief  # noqa: E402
+from sims.joint import JointBelief  # noqa: E402
+for kind in ("math", "code"):
+    J0, J1, T = voi.tables(kind, 0.95)
+    check(f"{kind}: cost-to-go falls as P(learned) rises", np.all(np.diff(J0) <= 1e-6)
+          and np.all(np.diff(J1) <= 1e-6))
+    check(f"{kind}: probing option never costs more than teaching", np.all(J0 <= T + 1e-6))
+    (hx, hy), _ = voi.hulls(kind, 0.95)
+    Jc = np.interp(voi._P, hx, hy)
+    slope = np.diff(hy) / np.diff(hx)
+    check(f"{kind}: spillover curve is concave and never below J (information never hurts)",
+          np.all(np.diff(slope) <= 1e-9) and np.all(Jc >= J0 - 1e-9))
+for Bel in (BKTBelief, JointBelief):
+    bel = Bel(G, np.random.default_rng(0))
+    cands = np.arange(5)
+    pa, q = bel.p_after(cands, 0.0)
+    back = (1 - q)[:, None] * pa[:, 0] + q[:, None] * pa[:, 1]
+    own = back[np.arange(5), cands] - (1 - back[np.arange(5), cands]) * 0  # includes transit
+    others = np.delete(back, cands, 1) if Bel is JointBelief else back[:, 5:]
+    check(f"{Bel.__name__}: p_after averages back to p (martingale) off the probed concept",
+          np.allclose(others, np.delete(bel._p(), cands) if Bel is JointBelief else bel._p()[5:],
+                      atol=0.02 if Bel is BKTBelief else 1e-9))
+
 print("sanity runs")
 res = {arm: [sim.run(G, "W1", lt, s, arm, 0.80, 0) for lt in ("novice", "torch") for s in (1, 2)]
-       for arm in ("C", "O", "A", "B", "H")}
+       for arm in ("C", "O", "A", "B", "H", "BV", "K", "KV")}
 med = {arm: float(np.median([r.sum_h for r in rs])) for arm, rs in res.items()}
 print("   ", {k: round(v) for k, v in med.items()})
 check("every result finite", all(np.isfinite(r.sum_h) for rs in res.values() for r in rs))

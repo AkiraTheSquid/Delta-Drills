@@ -19,8 +19,14 @@
 - `fsrs_vec.py`: FSRS-6 scalar + numpy ports of `memory_model` (parity-tested to 1e-9).
 - `world.py`: concept graph (27 `arena_section` goals + their prerequisites, 71 concepts),
   learner types (novice / torch / math / strong), the true learner.
-- `beliefs.py`: `BKTBelief` (B), `ParticleBelief(hybrid=False)` (A, FSRS only),
-  `ParticleBelief(hybrid=True)` (H, FSRS + learned state), `OracleBelief`.
+- `beliefs.py`: `BKTBelief` (B), `BKTSpreadBelief` (BS: B + a spread on FSRS stability),
+  `ParticleBelief(hybrid=False)` (A, FSRS only), `ParticleBelief(hybrid=True)` (H, FSRS +
+  learned state), `OracleBelief`.
+- `joint.py`: `JointBelief` (K/KV): one particle cloud over the WHOLE learner
+  (knowledge-space / ALEKS style), area + soft-prerequisite correlated prior, exact
+  encompassing-edge likelihood.
+- `voi.py`: probe for minutes saved (BV/KV): per-concept optimal-stopping DP J(p);
+  score = teach-now minus probe cost, plus spillover on the concave hull of J.
 - `sim.py`: review → explore → exploit policy, run loop, metric.
 - `run.py`: `pilot` (theta tuning), `final` (fresh seeds, breaks), `report`.
 - `test_sim.py`: FSRS parity, common random numbers, collapsed-particle = point FSRS, sanity.
@@ -45,7 +51,10 @@
 - Common random numbers: truth draws are indexed by (concept, event count), so arms are paired.
 - Tune and score on disjoint seeds.
 - FSRS copy must match `memory_model` (watch.py + test_sim.py fail otherwise).
-- 11 workers at nice 19 (Seth: keep CPU usable).
+- 10 workers at nice 19 inside `systemd-run --user --scope -p CPUQuota=1000%` (Seth 09-26:
+  whole machine <= 80%; 16 cores).
+- Arms are paired per learner, so a new arm runs alone (`--arms X`) and appends; it
+  must leave every existing arm's result bit-identical (checked for B).
 
 ## Extension Points
 - New belief: implement `K`, `K_row`, `gate`, `due_R`, `info`, `lesson`, `answer` in
@@ -63,6 +72,12 @@
   was deleted. This one is committed.
 
 ## Recent Changes
+- 2026-09-26: Result (800 fresh learners × 3 breaks, paired vs B): BV at B's gate (0.99, 0.8)
+  = tie (W1 +1%, W2 ±1%); its pilot pick (0.9) gave W1 −9% / W2 +9% — that is the GATE,
+  not decision-value probing. K +8% W1 / +11–16% W2; KV +21–35%; BS ≈ 0. B stays the belief.
+  The gate optimum depends on the truth world (W1 wants ~0.9, W2 0.99).
+- 2026-09-26: Arms BS, BV (B + decision-value probing), K (joint belief), KV (joint +
+  decision value). Arms tuple gained a probe scorer ("var" | "voi").
 - 2026-09-26: Review threshold split from the gate (`sim.run(review_at=)`), tuned per arm.
   Critic fix: pure-FSRS never-reviewed particles now take FSRS's FIRST review on their first
   lesson/answer (they took a 365-day-overdue one: S 0.08 vs 1.5), and sessions stop at the

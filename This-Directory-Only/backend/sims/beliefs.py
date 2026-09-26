@@ -41,6 +41,10 @@ AREA_PRIOR_PSEUDO = 2.0
 INDIRECT_CLIP = 1.2
 N_PARTICLES = 64
 LESSON_S_SIGMA = 1.0
+SPREAD0 = 0.3              # BKTSpreadBelief: log-S sd right after an answer
+SPREAD_GROW = 0.15         # ... plus this x log(1 + days since the last answer)
+_GH_Z = np.array([-math.sqrt(3.0), 0.0, math.sqrt(3.0)])   # 3-pt Gauss-Hermite
+_GH_W = np.array([1 / 6, 2 / 3, 1 / 6])
 
 
 def _logit(p):
@@ -131,6 +135,34 @@ class BKTBelief(_Shared):
         var = R * R * p * (1 - p)
         return var - R * R * (q1 * p1 * (1 - p1) + (1 - q1) * p0 * (1 - p0))
 
+    def p_after(self, cands, t):
+        """P(learned) for every concept after a hypothetical wrong / right
+        PROBE on each candidate: [k, 2, C], and P(right) [k]. Carries the
+        probe's own update and the area prior it moves (indirect credit
+        aside). Used by the decision-value explorer (voi.py)."""
+        g = self.g
+        p, R = self._p(), self._R(t)
+        out = np.tile(p, (len(cands), 2, 1))
+        q = np.empty(len(cands))
+        for j, c in enumerate(cands):
+            e = (1 - g.slip[c]) * R[c] + g.guess[c] * (1 - R[c])
+            q[j] = p[c] * e + (1 - p[c]) * g.guess[c]
+            same = (self.area_ix == self.area_ix[c]) & ~self.touched
+            a = g.area[c]
+            saved = self.counts.get(a)
+            for y in (0, 1):
+                ll, lu = (e, g.guess[c]) if y else (1 - e, 1 - g.guess[c])
+                post = p[c] * ll / (p[c] * ll + (1 - p[c]) * lu)
+                n, h = saved or [0, 0]
+                self.counts[a] = [n + 1, h + y]
+                out[j, y, same] = self.prior_eff()[same]
+                out[j, y, c] = post + (1 - post) * T_PROBE
+            if saved is None:
+                del self.counts[a]
+            else:
+                self.counts[a] = saved
+        return out, q
+
     def _touch(self, c):
         if not self.touched[c]:
             self.pL[c] = self.prior_eff()[c]
@@ -165,6 +197,52 @@ class BKTBelief(_Shared):
         self.pL[c] += (1 - self.pL[c]) * T
         if probe:
             self.record_probe(c, correct)
+
+
+class BKTSpreadBelief(BKTBelief):
+    """B with uncertainty over stability, not just over learned-or-not.
+
+    Point FSRS says "stability is exactly S". Here log S is Normal(log S,
+    sigma) with sigma widening with time since the concept's last answer
+    (an answer pins it; a long silence loosens it). Three-point Gauss-Hermite
+    nodes carry the spread. What changes:
+      - recall read everywhere (K, the answer update, review) is E[R] over
+        the spread, not R at the point estimate;
+      - probe value is the exact variance drop over the joint states
+        (learned x stability node) + unlearned, so a probe on a known concept
+        whose stability is unsure is worth something (B scores it ~0).
+    Gating is unchanged (P(learned))."""
+    name = "bkt_spread"
+
+    def _nodes(self, t):
+        el = np.maximum(t - self.tl, 0.0)
+        sig = SPREAD0 + SPREAD_GROW * np.log1p(el)
+        S = self.S[:, None] * np.exp(sig[:, None] * _GH_Z[None, :])
+        R = F.vR(S, self.tl[:, None], t, W)
+        return np.where(self.has_mem[:, None], R, 1.0)          # [C, 3]
+
+    def _R(self, t):
+        return self._nodes(t) @ _GH_W
+
+    def info(self, t):
+        g = self.g
+        p = self._p()[:, None]
+        Rn = self._nodes(t)
+        # States: learned at node j (prob p w_j, K = R_j), unlearned (K = 0).
+        pr = np.concatenate([p * _GH_W[None, :], 1 - p], 1)            # [C, 4]
+        K = np.concatenate([Rn, np.zeros((len(g.ids), 1))], 1)
+        lik = g.guess[:, None] + (1 - g.guess[:, None] - g.slip[:, None]) * K
+
+        def var(wm):
+            q = wm.sum(1, keepdims=True)
+            wn = wm / np.maximum(q, 1e-12)
+            m = (wn * K).sum(1, keepdims=True)
+            return (wn * (K - m) ** 2).sum(1), q[:, 0]
+
+        v, _ = var(pr)
+        v1, q1 = var(pr * lik)
+        v0, q0 = var(pr * (1 - lik))
+        return v - q1 * v1 - q0 * v0
 
 
 class ParticleBelief(_Shared):

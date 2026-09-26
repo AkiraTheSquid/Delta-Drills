@@ -36,6 +36,8 @@ from typing import Optional
 import numpy as np
 
 from sims import beliefs as B
+from sims import voi
+from sims.joint import JointBelief
 from sims.world import Graph, Truth, minutes
 
 SESSION_MIN = 60.0          # practice minutes per day
@@ -48,13 +50,17 @@ DAY_CAP = 3                 # drills on one concept per session (the app's cap)
 RETURN_GAP, RETURN_WINDOW = 14.0, 7.0
 
 ARMS = {
-    # name: (belief, explore)
-    "C": ("bkt", False),       # control: today's belief, no explore
-    "B": ("bkt", True),        # Bayesian BKT x point FSRS + explore
-    "A0": ("fsrs", False),     # Bayesian FSRS alone, no explore
-    "A": ("fsrs", True),       # Bayesian FSRS alone + explore
-    "H": ("hybrid", True),     # Bayesian FSRS + learned state + explore
-    "O": ("oracle", False),    # sees the truth
+    # name: (belief, explore, "var" | "voi" probe score)
+    "C": ("bkt", False, None),         # control: today's belief, no explore
+    "B": ("bkt", True, "var"),         # Bayesian BKT x point FSRS + explore
+    "BS": ("bkt_spread", True, "var"),  # B, with a spread on FSRS stability
+    "BV": ("bkt", True, "voi"),        # B, probing for minutes saved (voi.py)
+    "K": ("joint", True, "var"),       # one joint belief over the graph (joint.py)
+    "KV": ("joint", True, "voi"),      # joint belief + minutes-saved probing
+    "A0": ("fsrs", False, None),       # Bayesian FSRS alone, no explore
+    "A": ("fsrs", True, "var"),        # Bayesian FSRS alone + explore
+    "H": ("hybrid", True, "var"),      # Bayesian FSRS + learned state + explore
+    "O": ("oracle", False, None),      # sees the truth
 }
 
 
@@ -72,9 +78,13 @@ class Result:
 
 
 def make_belief(kind, g, truth, seed):
-    rng = np.random.default_rng([seed, 7, ("bkt", "fsrs", "hybrid", "oracle").index(kind)])
+    rng = np.random.default_rng([seed, 7, ("bkt", "fsrs", "hybrid", "oracle", "bkt_spread", "joint").index(kind)])
     if kind == "bkt":
         return B.BKTBelief(g, rng)
+    if kind == "joint":
+        return JointBelief(g, rng)
+    if kind == "bkt_spread":
+        return B.BKTSpreadBelief(g, rng)
     if kind == "fsrs":
         return B.ParticleBelief(g, rng, hybrid=False)
     if kind == "hybrid":
@@ -85,7 +95,7 @@ def make_belief(kind, g, truth, seed):
 def run(g: Graph, world: str, ltype: str, seed: int, arm: str, theta: float,
         break_days: float, review_at: float = 0.80) -> Result:
     truth = Truth(g, world, ltype, seed)
-    kind, explore = ARMS[arm]
+    kind, explore, scorer = ARMS[arm]
     bel = make_belief(kind, g, truth, seed)
     oracle = kind == "oracle"
     C = len(g.ids)
@@ -137,14 +147,37 @@ def run(g: Graph, world: str, ltype: str, seed: int, arm: str, theta: float,
             if action is None and explore:
                 ok_pre = learned | (K >= REFUTED)
                 pre_ok = np.array([all(ok_pre[p] for p in prereq_lists[c]) for c in range(C)])
-                cand = ~learned & ~lesson_read & (K >= cost) & pre_ok & (today < DAY_CAP)
-                if t < return_until:
-                    cand |= stale & (today < DAY_CAP)
-                if cand.any():
-                    score = np.where(cand, g.value * bel.info(t), -1.0)
+                fresh = ~learned & ~lesson_read & pre_ok & (today < DAY_CAP)
+                back = stale & (today < DAY_CAP) if t < return_until else np.zeros(C, bool)
+                if scorer == "voi" and back.any():
+                    # Return window: re-probe what the break may have erased
+                    # first, by the same rule every explore arm uses.
+                    score = np.where(back, g.value * bel.info(t), -1.0)
                     c = int(np.argmax(score))
                     if score[c] > 1e-6:
                         action = ("probe", c)
+                elif scorer == "voi":
+                    # Probe for minutes saved (voi.py); no cost gate: the
+                    # score already charges the probe's minutes.
+                    cands = np.flatnonzero(fresh)
+                    if len(cands):
+                        pa, q = bel.p_after(cands, t)
+                        sc = voi.scores(g, theta, cands, bel._p(), pa, q, learned, lesson_read)
+                        j = int(np.argmax(sc))
+                        if sc[j] > 0:
+                            action = ("probe", int(cands[j]))
+                else:
+                    cand = (fresh & (K >= cost)) | back
+                    if cand.any():
+                        if hasattr(bel, "probe_scores"):
+                            score = np.full(C, -1.0)
+                            ix = np.flatnonzero(cand)
+                            score[ix] = bel.probe_scores(t, ix)
+                        else:
+                            score = np.where(cand, g.value * bel.info(t), -1.0)
+                        c = int(np.argmax(score))
+                        if score[c] > 1e-6:
+                            action = ("probe", c)
             if action is None:
                 if focus is None or learned[focus] or today[focus] >= DAY_CAP:
                     front = [c for c in np.flatnonzero(~learned & (today < DAY_CAP))
