@@ -39,13 +39,14 @@ def check_the_clock_is_the_problems_own():
          (no stamp) is timed the way the question was served.
       5. The picker is gone from the idle screen and from index.html.
       6. (2026-09-14) The learner may SCALE the problem's clock, never replace
-         it: practice/session-clock-scale.js holds one factor in (0.1 … 1],
+         it: practice/session-clock-scale.js holds one factor in [0.1, 4],
          default 1, and session-clock.js multiplies the problem's own number
          by it AFTER the ceiling clamp, whole seconds, ≥ 1. Absent the scale
          file the clock is exactly the table. Seth: "a multiplier for less
          time. so you would give .5 for half as much time as you would
-         usually get." A factor > 1 is refused — the table is the most a
-         practice question gets, since the placement charges the same cap.
+         usually get." (2026-09-25) Up to 4 is allowed — Seth: "allow
+         adjusting the time multiplier upwards ... increasing it to 2".
+         The placement is still unscaled, so its evidence stays comparable.
     """
     timer = read(os.path.join(HERE, "timer.js"))
     for name in ("ANSWER_SECS", "REVIEW_SECS"):
@@ -163,7 +164,9 @@ eq(C.answerSecs(), 300, "the clock follows the question");
 eq(C.reviewSecs(), 300, "review gets the same number");
 eq(C.hasOwn(), true, "a stamped question has its own clock");
 PracticeAPI.currentQuestion = { secs_allowed: 99999 };
-eq(C.answerSecs(), 1200, "clamped to the ceiling, like the server's table");
+eq(C.answerSecs(), 3600, "a stamp is clamped to the 60:00 stamp ceiling (LeetCode hards), not the table's 20:00");
+PracticeAPI.currentQuestion = { secs_allowed: 2400 };
+eq(C.answerSecs(), 2400, "a 40:00 LeetCode stamp survives the table ceiling");
 for (const bad of [null, undefined, 0, -5, "300", true, NaN]) {
   PracticeAPI.currentQuestion = { secs_allowed: bad };
   eq(C.answerSecs(), 1200, `unstamped (${String(bad)}) = the ceiling, never no-limit`);
@@ -197,7 +200,7 @@ const eq = (got, want, why) => {
 };
 const S = window.SessionClockScale;
 const C = window.SessionClock;
-eq(S.MAX, 1, "a factor may not exceed 1 — the table is the most a practice question gets");
+eq(S.MAX, 4, "a factor may go up to 4 (Seth 2026-09-25: increasing it to 2)");
 eq(S.factor(), 1, "default factor is 1");
 PracticeAPI.currentQuestion = { secs_allowed: 300 };
 eq(C.answerSecs(), 300, "at 1 the clock is the table");
@@ -207,15 +210,20 @@ eq(C.reviewSecs(), 150, "review is scaled alike");
 eq(C.secsFor({ secs_allowed: 300 }), 150, "secsFor (the snapshot's copy) is the scaled number");
 eq(C.rawSecsFor({ secs_allowed: 300 }), 300, "rawSecsFor is the table");
 PracticeAPI.currentQuestion = { secs_allowed: 99999 };
-eq(C.answerSecs(), 600, "scaled AFTER the ceiling clamp");
+eq(C.answerSecs(), 1800, "scaled AFTER the 60:00 stamp clamp");
 PracticeAPI.currentQuestion = null;
 eq(C.answerSecs(), 600, "the ceiling fallback is scaled too");
-for (const bad of [0, -1, 1.5, 2, "abc", "", null, undefined, Infinity, NaN, true, 0.09]) {
+for (const bad of [0, -1, 4.5, 10, "abc", "", null, undefined, Infinity, NaN, true, 0.09]) {
   eq(S.set(bad), 0.5, `refused (${String(bad)}) leaves the factor in force`);
 }
 eq(S.set(" .25 "), 0.25, "a padded decimal string cleans to a number");
 eq(S.set(1), 1, "1 is accepted (the table as written)");
 eq(S.set(0.1), 0.1, "the floor is accepted");
+eq(S.set(2), 2, "2 is accepted (double the time)");
+PracticeAPI.currentQuestion = { secs_allowed: 300 };
+eq(C.answerSecs(), 600, "2 doubles the problem's own clock");
+eq(S.set(4), 4, "the cap is accepted");
+eq(S.set(0.1), 0.1, "back to the floor");
 eq(S.apply(1), 1, "never below one second");
 eq(S.apply(null), null, "no limit passes through untouched");
 refuse = true;

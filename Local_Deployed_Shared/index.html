@@ -86,7 +86,7 @@
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
   <link rel="stylesheet" href="styles/practice/readiness.css?v=5" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=7" />
   <link rel="stylesheet" href="styles/practice/feedback.css?v=8" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
@@ -1860,22 +1860,22 @@
                to how much time you need for each of them rather than what you
                select at the beginning". The per-question picker that stood
                here from 2026-08-28 to 2026-09-09 went with the choice. -->
-          <p class="session-clock-note" id="session-clock-note">Each problem has its own clock, set by its concept — the same one the placement test uses.</p>
+          <p class="session-clock-note" id="session-clock-note">Each problem has its own clock, set by its concept; a LeetCode problem's is set by its difficulty and pattern.</p>
           <!-- THE MULTIPLIER on that clock. Seth, 2026-09-14: "a setting
                before practice that you can modify that lets you create a
                multiplier for less time. so you would give .5 for half as much
                time as you would usually get." The markup holds no default:
                practice/session-clock-scale.js paints the factor in force
                (1 unless the account set one) and commits a change on blur /
-               Enter. Range (0.1 … 1] — it tightens the problem's clock, never
-               loosens it past what the placement charges. Only on the idle
+               Enter. Range [0.1, 4] — Seth, 2026-09-25: "allow adjusting the
+               time multiplier upwards ... increasing it to 2". Only on the idle
                screen, so a running countdown never moves under the learner. -->
           <label class="session-clock-scale" for="session-clock-scale">
             <span class="session-clock-scale-label">Time multiplier</span>
             <input class="session-clock-scale-input" id="session-clock-scale" type="number"
-                   inputmode="decimal" min="0.1" max="1" step="0.05" autocomplete="off"
+                   inputmode="decimal" min="0.1" max="4" step="0.05" autocomplete="off"
                    aria-describedby="session-clock-scale-hint">
-            <span class="session-clock-scale-hint" id="session-clock-scale-hint">0.5 = half the time each problem usually gets</span>
+            <span class="session-clock-scale-hint" id="session-clock-scale-hint">0.5 = half the time each problem usually gets, 2 = double</span>
           </label>
           <!-- ONE button, two meanings: resume the paused question if there is
                one, otherwise start a fresh block. It PROXIES to the buttons
@@ -2670,7 +2670,7 @@ t.manual_seed(0)
   <script src="supabase-practice.js?v=8"></script>
   <script src="practice/config.js?v=8"></script>
   <script src="practice/mode.js?v=11"></script>
-  <script src="practice/questions.js?v=27"></script>
+  <script src="practice/questions.js?v=28"></script>
   <script src="practice/engine.js?v=10"></script>
   <script src="practice/adaptive.js?v=11"></script>
   <script src="practice/storage.js?v=7"></script>
@@ -2678,11 +2678,11 @@ t.manual_seed(0)
        the factor this holds (window.SessionClockScale), and AFTER storage.js,
        whose getPracticeStorageKey() makes the factor per-account. It also
        binds #session-clock-scale on the idle screen. -->
-  <script src="practice/session-clock-scale.js?v=1"></script>
+  <script src="practice/session-clock-scale.js?v=2"></script>
   <!-- BEFORE timer.js: it reads the learner's per-question allowance through
        window.SessionClock on every phase change, and AFTER storage.js, whose
        getPracticeStorageKey() is what makes the choice per-account. -->
-  <script src="practice/session-clock.js?v=5"></script>
+  <script src="practice/session-clock.js?v=6"></script>
   <!-- BEFORE timer.js, and after storage.js: it owns the pause snapshot (the
        reader, the writer and the resume arithmetic, split out of timer.js on
        2026-09-09 at Modulario's LOC limit) and keys it with
@@ -2713,7 +2713,10 @@ t.manual_seed(0)
        graded). ui.js, stage-ladder.js and concept-pill.js read it; loaded
        first so the heading's first write is already masked. -->
   <script src="practice/concept-mask.js?v=1"></script>
-  <script src="practice/ui.js?v=45"></script>
+  <!-- The drill prompt's markdown (headings, bold, lists). Before ui.js,
+       whose renderQuestionBody hands it each prose chunk. -->
+  <script src="practice/prompt-markdown.js?v=1"></script>
+  <script src="practice/ui.js?v=46"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
   <script src="practice/test-check.js?v=3"></script>

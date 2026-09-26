@@ -390,6 +390,9 @@ function buildPracticeQuestionFromBank(q, overrides = {}) {
     // practice/question-examples.js. Empty for most bank questions.
     wrong_examples: Array.isArray(q.wrong_examples) ? q.wrong_examples : [],
     provenance: q.provenance || null,
+    // A drill that brings its own clock (the LeetCode rows' `secs_allowed`);
+    // session-clock.js reads it before the concept table. Absent elsewhere.
+    ...(Number.isFinite(q.secs_allowed) ? { secs_allowed: q.secs_allowed } : {}),
     ...mathFieldsFromBank(q),
     target_difficulty:
       (typeof getTargetDifficultyFromAdaptiveState === "function"

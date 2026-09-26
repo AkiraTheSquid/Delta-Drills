@@ -76,5 +76,6 @@
   - Status: RESOLVED 2026-09-25.
 
 ## Recent Changes
+- 2026-09-25: Rows carry `secs_allowed` (own clock, 11–60 min) and markdown statements; see `scripts/leetcode_course/drill_format.py`.
 - 2026-09-25: Course wired into the app. 383 drills (q60000+) on 40 concepts;
   14 problems skipped by the export grader.

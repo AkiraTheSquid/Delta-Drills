@@ -25,6 +25,8 @@ import json
 import sys
 from pathlib import Path
 
+from drill_format import clock_secs, statement_markdown
+
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 COURSE_DIR = REPO / "This-Directory-Only" / "leetcode_course"
@@ -34,7 +36,7 @@ ID_FLOOR = 60000
 LESSON = {"id": "lc-1", "topic": "LeetCode", "title": "LeetCode Patterns", "subtopic_key": "LeetCode: Patterns"}
 MAX_CASES = 8
 MAX_CASE_CHARS = 700
-CLOCK_SECS = 1200  # a LeetCode medium is a 20-minute problem; also the clock's ceiling
+CLOCK_SECS = 1200  # the concept's PLACEMENT clock (table ceiling); practice uses each drill's secs_allowed
 
 # Runtime names LeetCode's judge provides implicitly. In setup_code (runs after
 # the learner's code, same globals) so a solution that uses deque/heappush/inf
@@ -173,7 +175,7 @@ def drill_row(p: dict, qid: int, concept_title: str) -> dict | None:
         "topic": LESSON["topic"],
         "subtopic": "Patterns",
         "subtopic_key": LESSON["subtopic_key"],
-        "question_text": f"**{p['title']}**\n\n{p['statement'].strip()}",
+        "question_text": f"**{p['title']}**\n\n{statement_markdown(p['statement'].strip())}",
         "answer_code": header + p["solution"].strip() + "\n",
         "difficulty_score": score,
         "difficulty_label": _label(score),
@@ -195,6 +197,9 @@ def drill_row(p: dict, qid: int, concept_title: str) -> dict | None:
         "source_path": "Local_Deployed_Shared/lessons/leetcode/problems.json",
         "leetcode_kc": p["concept"],
         "concept_title": concept_title,
+        # The drill's own answer clock (drill_format.clock_secs); the backend
+        # serves it in place of the concept's 5:00-clamped table clock.
+        "secs_allowed": clock_secs(p),
     }
 
 
