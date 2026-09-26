@@ -69,6 +69,7 @@
   - Status: `RESOLVED`.
 
 ## Recent Changes
+- 2026-09-25: `drill_format.py`: each drill gets `secs_allowed` = base by LeetCode difficulty (Easy 15 / Medium 25 / Hard 40 min; unlabeled rows placed by TypeSafe score) × pattern weight (graphs/DP/backtracking/trie 1.2, arrays/hashing/two-pointers/stack 0.85) × TypeSafe spread ±15% (+5 min for a design class), clamped 5–60 min. Dataset statements are rewritten to markdown: `### Example N` / `### Constraints`, **Input:**/**Output:**/**Explanation:** labels, constraints as a list with formulas code-spanned and flattened superscripts restored (`105` → `10^5`, `231` → `2^31`).
 - 2026-09-25: `export_app.py` added, the last pipeline step. It grades every drill
   (the reference passes, the bare starter fails) and writes problems.json, ids.json, the
   `leetcode.*` registry rows, the qmatrix slice, glossary kcLesson, clock caps, `lc-*` atoms,

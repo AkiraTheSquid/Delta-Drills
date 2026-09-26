@@ -114,11 +114,17 @@
      is > 0 and would have survived the check, then rounded to 0 — a question
      that expires the instant it is rendered. Clamped to the ceiling the way
      the server clamps the table. */
-  const _clean = (raw) => {
+  const _clean = (raw, max = CEILING_SECS) => {
     if (typeof raw !== "number" || !Number.isFinite(raw) || raw <= 0) return null;
-    const secs = Math.min(CEILING_SECS, Math.round(raw));
+    const secs = Math.min(max, Math.round(raw));
     return secs >= 1 ? secs : null;
   };
+  /* 🔴 A QUESTION'S OWN STAMP MAY EXCEED THE TABLE CEILING. The 20:00 ceiling
+     bounds the concept TABLE; a LeetCode drill carries its own clock (up to
+     60:00 for a hard graph/DP problem — leetcode_questions.CLOCK_MAX_SECS,
+     scripts/leetcode_course/drill_format.py), and clamping that to 20:00
+     made every hard unsolvable on time. Seth, 2026-09-25. */
+  const STAMP_MAX_SECS = 60 * 60;
 
   const _capFor = (kc) => {
     if (!_caps || typeof kc !== "string" || !kc) return null;
@@ -166,7 +172,7 @@
   };
 
   const rawSecsFor = (question) => {
-    const own = _clean(question?.secs_allowed);
+    const own = _clean(question?.secs_allowed, STAMP_MAX_SECS);
     if (own !== null) return own;
     const ladder = _capFor(question?.ladder_kc);
     if (ladder !== null) return ladder;

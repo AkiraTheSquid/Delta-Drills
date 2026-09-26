@@ -112,9 +112,12 @@ function renderQuestionBody(q) {
     if (p.type === "code") {
       return `<pre class="question-code-block"><code>${_escapeHtml(p.text)}</code></pre>`;
     }
-    // Escape HTML, then turn inline `backtick` spans into <code>. Math ($…$) is
-    // left untouched for KaTeX auto-render below. Blank lines split paragraphs
-    // (each its own div — .question-prose has no pre-wrap, so raw \n collapses).
+    // Markdown — headings, bold/italic, lists, line breaks — escaped, with math
+    // ($…$) held untouched for KaTeX auto-render below (practice/prompt-markdown.js).
+    if (window.PromptMarkdown) return window.PromptMarkdown.render(p.text);
+    // Fallback if that file did not load: escape HTML, inline `code` only.
+    // Blank lines split paragraphs (each its own div — .question-prose has no
+    // pre-wrap, so raw \n collapses).
     return p.text
       .split(/\n{2,}/)
       .map((para) => para.trim())

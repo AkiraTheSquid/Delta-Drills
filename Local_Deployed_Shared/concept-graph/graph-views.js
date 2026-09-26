@@ -75,6 +75,10 @@
   const PREP_ARRAYS = { id: "sm11", label: "Section −1.1 — arrays, einops, tensors", color: "#b0b4c0", order: 1 };
   const PREP_MATH = { id: "sm12", label: "Section −1.2 — the maths underneath", color: "#f0a3a3", order: 2 };
   const LATER = { id: "sNN", label: "Later ARENA sections", color: "#e0709a", order: 99 };
+  // The standalone courses, as lesson-graph.js's COURSE_LEETCODE / COURSE_DELTA
+  // (2026-09-25): before, their concepts fell through to −1.1.
+  const COURSE_LEETCODE = { id: "clc", label: "LeetCode Patterns — standalone course", color: "#b8dc6e", order: 200 };
+  const COURSE_DELTA = { id: "cdd", label: "Delta Drills — how the app works", color: "#c4a8f0", order: 201 };
   const SLUG_COLORS = { "0-0": "#4f9fe0", "0-1": "#bb7de8", "0-2": "#e8a765" };
   const _slugSection = (slug) => {
     const m = /^(\d+)-(\d+)$/.exec(slug);
@@ -108,6 +112,8 @@
   const _sectionFallback = (kc, lessonId) => {
     const slug = arenaSlugByKc[kc];
     if (slug) return _slugSection(slug);
+    if (String(kc).startsWith("leetcode.") || /^lc-/.test(lessonId || "")) return COURSE_LEETCODE;
+    if (String(kc).startsWith("deltadrills.") || /^dd-/.test(lessonId || "")) return COURSE_DELTA;
     if (String(kc).startsWith("python.") || /^py-/.test(lessonId || "")) return PREP_PYTHON;
     if (String(kc).startsWith("math.") || /^ma-/.test(lessonId || "")) return PREP_MATH;
     return PREP_ARRAYS;

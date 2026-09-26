@@ -37,6 +37,10 @@ def check_public_api():
         assert all(c.get("call") and "expected_expr" in c for c in cases), f"q{r['id']} has a malformed case"
         # The audit reads the FIRST case: a None answer there is a placeholder the bare starter passes.
         assert cases[0]["expected_expr"] != "None", f"q{r['id']} leads with a None-expected case"
+        # Its own answer clock (drill_format.clock_secs): the backend serves it
+        # in place of the 5:00 practice cap, so a missing one means 5:00 again.
+        secs = r.get("secs_allowed")
+        assert isinstance(secs, int) and 5 * 60 <= secs <= 60 * 60, f"q{r['id']} secs_allowed {secs!r} not in 5-60 min"
 
 
 def check_invariants():

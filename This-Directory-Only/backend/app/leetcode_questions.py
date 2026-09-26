@@ -17,6 +17,17 @@ logger = logging.getLogger(__name__)
 
 PROBLEMS_PATH = Path(__file__).resolve().parents[3] / "Local_Deployed_Shared" / "lessons" / "leetcode" / "problems.json"
 ID_FLOOR = 60000
+# A drill's own answer clock, question id -> seconds (problems.json
+# `secs_allowed`, sized by LeetCode difficulty and pattern in
+# scripts/leetcode_course/drill_format.py). question_pick.secs_allowed_for
+# serves it in place of the concept table's 5:00-clamped clock.
+CLOCK_MAX_SECS = 60 * 60
+_CLOCKS: dict[int, int] = {}
+
+
+def clock_secs(question_id: int) -> int | None:
+    """The LeetCode drill's own clock, or None for any other question."""
+    return _CLOCKS.get(question_id)
 
 
 def load_leetcode_into(questions: list, question_cls) -> None:
@@ -31,12 +42,18 @@ def load_leetcode_into(questions: list, question_cls) -> None:
     except Exception as exc:  # noqa: BLE001 — content error must not stop boot
         logger.warning("LeetCode bank not loaded: %s", exc)
         return
+    # Rebuilt whole on every load: a row dropped from problems.json must not
+    # keep overriding its id's concept clock. Codex, 2026-09-25.
+    _CLOCKS.clear()
     taken = {q.id for q in questions}
     for row in rows:
         if row["id"] < ID_FLOOR or row["id"] in taken:
             logger.error("LeetCode problem id %s collides with the drill bank — skipped", row["id"])
             continue
         taken.add(row["id"])
+        secs = row.get("secs_allowed")
+        if isinstance(secs, int) and not isinstance(secs, bool) and secs > 0:
+            _CLOCKS[row["id"]] = min(secs, CLOCK_MAX_SECS)
         questions.append(question_cls(
             id=row["id"],
             topic=row["topic"],

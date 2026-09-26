@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, course_mix, diagnostic, kc_graph
+from app import content_gaps, course_mix, diagnostic, kc_graph, leetcode_questions
 from app.practice.grading import select_question_for_difficulty
 from app.attempt_history import owed_question_ids
 from app.prioritization import (
@@ -38,7 +38,14 @@ def secs_allowed_for(question_id: int, ladder_kc: str | None) -> int:
     PRACTICE_MAX_SECS. The concept is the one the ladder narrowed to; a
     question served un-narrowed is timed by the LONGEST of the concepts it
     targets (a problem that integrates two needs the longer clock); one with
-    no concept at all gets the table's default."""
+    no concept at all gets the table's default.
+
+    A LeetCode drill brings its OWN clock (15-60 min by difficulty and
+    pattern, leetcode_questions.clock_secs) and is not clamped: no LeetCode
+    medium fits in 5:00, and the 5:00 was set for one-call torch drills."""
+    own = leetcode_questions.clock_secs(question_id)
+    if own:
+        return own
     kcs = [ladder_kc] if ladder_kc else kc_graph.question_kcs(question_id)
     caps = [diagnostic.kc_cap_secs(kc) for kc in kcs if kc]
     cap = max(caps) if caps else diagnostic.kc_cap_secs(None)
