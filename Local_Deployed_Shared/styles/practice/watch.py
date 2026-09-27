@@ -12,17 +12,14 @@ SHARED = os.path.dirname(os.path.dirname(HERE))
 
 CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
              "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css",
-             # What survived diagnostic.css when the placement test was
-             # retired (2026-09-26): the course question's tiles, the group
-             # board's area rows, the weekly activity bars.
+             # The Learner Home's two-column idle card, and the course
+             # question's tiles (what survived diagnostic.css, 2026-09-26).
              "home.css",
              # The syntax-highlight overlay (@M, 2026-08-23). Its metrics are
              # SHARED with .code-editor in editor.css — a font, padding or
              # border restated in one and not the other drifts the overlay off
              # the textarea it sits behind.
              "code-highlight.css",
-             # The Practice tab's idle readiness dial (2026-08-23).
-             "readiness.css",
              # Basic mode (2026-08-23). Rides on `body.dd-basic-mode`, the same
              # class the stage ladder is gated on. 🔴 Must stay LAST in
              # index.html's <link> order: every rule in it overrides something
@@ -70,19 +67,16 @@ def check_public_api():
         "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
         "notebook-editor.css": [".practice-notebook", ".notebook-cell", ".notebook-cell-output"],
         "misc.css": [".torch-colab-notice", ".practice-aids"],
-        # Minted by practice/course-pick.js (the tiles), groups/groups_lane.js
-        # (the area rows, scored through practice/area-readiness.js) and
-        # practice/activity-chart.js (the bars). Every class keeps a rule here
-        # or that surface renders as unstyled spans.
+        # Minted by practice/course-pick.js (the tiles) and the idle card's
+        # two columns (index.html, practice/xp-panel.js). Every class keeps a
+        # rule here or that surface renders unstyled.
         "home.css": [
             ".placement-page", ".diagnostic-card", ".placement-step-q",
             ".placement-focus-grid", ".placement-focus-tile", ".placement-focus-check",
             ".placement-focus-name", ".placement-focus-blurb", ".placement-focus-count",
             ".placement-wizard-nav", ".placement-forward-btn",
-            ".placement-areas", ".placement-areas-head", ".placement-area",
-            ".placement-area-name", ".placement-area-bar", ".placement-area-pct",
-            ".placement-area-conf", ".placement-area-probes", ".placement-area--unprobed",
-            ".learner-activity", ".activity-day-bar",
+            ".home-main", ".home-graphs", ".session-go", ".session-clock-scale",
+            ".session-continue-btn",
         ],
     }
     for fname, selectors in expected.items():

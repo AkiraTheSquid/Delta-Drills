@@ -1,21 +1,14 @@
 /* ================================================================
-   THE IDLE SCREEN — a dial, a sentence, and one way back in
+   THE IDLE SCREEN'S ONE WAY BACK IN
 
-   WHAT REPLACED WHAT
-     "Set up your session" was three inputs and a total-time estimate —
-     questions, answer time, review time — and it went on 2026-08-23. What
-     took its place is how far through the map the learner is ("N% ready
-     for the ARENA curriculum", Seth's words) and a button that starts the
-     next block.
+   The Learner Home between blocks is measured learning and two graphs
+   (practice/xp-panel.js) and this button. The readiness dial that stood
+   here from 2026-08-23 went on 2026-09-26 (Seth: "remove ... the %
+   readiness"), and with it the per-block read of every concept.
 
-     ONE of those three inputs came back on 2026-08-28 as a picker — the
-     time each QUESTION gets — and went again on 2026-09-09: the clock is
-     the PROBLEM's own now, its concept's cap sent on the question
-     (practice/session-clock.js reads it), so there is nothing to choose
-     here. Seth: "keyed to how much time you need for each of them rather
-     than what you select at the beginning". The other two never came
-     back, and must not — a block still has no question quota and no
-     length, which is why there is no End session button for them to imply.
+   There is nothing to set up: each problem brings its own clock
+   (practice/session-clock.js), and a block has no question quota and no
+   length, which is why there is no End session button either.
 
    🔴 THE BUTTON IS A PROXY, not a third implementation of "start".
      #session-resume-btn and #session-start-btn are still the real
@@ -25,28 +18,12 @@
      timer.js's own answer — rather than from anything this file tracks.
      The same pattern as the notch (practice/notch-menu.js), for the same
      reason: two copies of what resuming means is how they drift apart.
-
-   WHEN IT REDRAWS
-     `#page-practice.session-idle` is the class timer.js adds on pause and
-     removes on start/resume, and it is the one fact that says this screen
-     is on. A MutationObserver on it is what triggers a re-read — a
-     readiness number that was computed once at load would still be the
-     one from before the session that just ended.
    ================================================================ */
 
 (function initSessionIdle() {
   const page = document.getElementById("page-practice");
-  const dial = document.getElementById("readiness-dial");
-  const pctEl = document.getElementById("readiness-pct");
-  const captionEl = document.getElementById("readiness-caption");
-  const detailEl = document.getElementById("readiness-detail");
   const continueBtn = document.getElementById("session-continue-btn");
   if (!page) return;
-
-  /* Only one read may be in flight. The observer fires on any class change to
-     #page-practice — several of them arrive in the same frame when a session
-     ends — and each read walks 63 concepts. */
-  let reading = false;
 
   /* 🔴 `PracticeSession` is a top-level `const` in practice/timer.js, and a
      classic script's top-level `const` does NOT become a property of `window`
@@ -56,43 +33,6 @@
      so a page that never loaded timer.js still parses. */
   const _session = () =>
     typeof PracticeSession !== "undefined" ? PracticeSession : window.PracticeSession;
-
-  const _paint = (info) => {
-    if (!dial || !pctEl) return;
-    if (!info) {
-      /* The registry could not be read. NOT 0% — that is a claim about the
-         learner, and this is a claim about the network. */
-      dial.style.setProperty("--dd-ready-pct", "0");
-      dial.classList.add("readiness-dial--unknown");
-      pctEl.textContent = "—";
-      if (captionEl) captionEl.textContent = "readiness unavailable right now";
-      if (detailEl) detailEl.textContent = "";
-      return;
-    }
-    dial.classList.remove("readiness-dial--unknown");
-    dial.style.setProperty("--dd-ready-pct", String(info.pct));
-    pctEl.textContent = `${info.pct}%`;
-    const words = window.PracticeReadiness.caption(info);
-    dial.setAttribute("aria-label", `${info.pct} percent ${words}`);
-    if (captionEl) captionEl.textContent = words;
-    /* 🔴 THE WORDS COME FROM readiness.js TOO, not just the number. This
-       screen and the placement results card show the same figure, and two
-       hand-written captions for one number is how they start disagreeing
-       again in a smaller way — "8 concepts mastered" here against "12 of 63
-       measured" there, about the same learner in the same minute. */
-    if (detailEl) detailEl.textContent = window.PracticeReadiness.detail(info);
-  };
-
-  const refresh = () => {
-    if (reading || !window.PracticeReadiness) return;
-    reading = true;
-    window.PracticeReadiness.read()
-      .then(_paint)
-      .catch(() => _paint(null))
-      .finally(() => {
-        reading = false;
-      });
-  };
 
   const _resumeBtn = () => document.getElementById("session-resume-btn");
 
@@ -160,7 +100,6 @@
   if (typeof MutationObserver === "function") {
     new MutationObserver(() => {
       if (!page.classList.contains("session-idle")) return;
-      refresh();
       _syncLabel();
     }).observe(page, { attributes: true, attributeFilter: ["class"] });
 
@@ -182,24 +121,11 @@
     }
   }
 
-  /* The practice page starts idle, so paint once at load rather than waiting
+  /* The practice page starts idle, so label once at load rather than waiting
      for the first pause. index.html loads this AFTER timer.js in the same
      ordered block of classic scripts, so `hasPausedSession` already knows
      about a snapshot restored from localStorage by the time this runs. */
-  refresh();
   _syncLabel();
 
-  /* And again once the DEFER scripts have run. concept-graph/lesson-graph.js
-     is deferred, so `window.deltaKcReadinessInfo` does not exist during the
-     paint above; DOMContentLoaded is the first moment it is guaranteed to.
-     Nothing is lost if the first read already succeeded — `read()` is a pure
-     re-read of state this file does not own. */
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", refresh, { once: true });
-  }
-
-  window.PracticeIdleScreen = {
-    refresh,
-    syncLabel: _syncLabel,
-  };
+  window.PracticeIdleScreen = { syncLabel: _syncLabel };
 })();

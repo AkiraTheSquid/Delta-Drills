@@ -161,6 +161,8 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+
+- 2026-09-26 (**Learner Home simplified; groups UI and readiness dial removed**, Seth): the idle card is measured learning (left) and Daily XP over Toward the course (right) on one screen — see `practice/README.md`. The whole groups frontend is deleted (`groups/`, `styles/groups.css`, `vendor/tiptap/`, its only importer gone) along with the `?group=` invite routing in `app.js`; a stale `groups` tab name still lands on Practice. The backend `/api/practice/groups/*` routes and their tables are untouched.
 - 2026-09-26 (**Groups tab folded into the Learner Home**, Seth): `index.html` drops `#page-groups`, the Groups strip tab and account-menu row; `#learner-group` (holding `#groups-root`) sits after `#practice-session-setup` in `#page-practice`. `groups/groups_home.js` loads after `app.js` and runs the board's refresh/suspend; `app.js` (`?v=38`) routes `groups` → `practice`. Details: `groups/README.md`.
 - 2026-09-26 (**placement test RETIRED**, Seth: survey on entering Practice replaces it): account-menu placement row, `#page-placement`, the topbar placement clock and every placement script are gone; `solo-route.js` maps an old `diagnostic` route to `practice`; welcome fork's right arm = pick courses → Practice → five quick questions. `concept-graph/kc_lattice_read.js::loadPlacementStatus` resolves null. Details: `practice/README.md`.
 - 2026-09-25: Courses tab is a catalog again (`docs/spec-multi-course-catalog.md`): `index.html` has `#courses-list-view` (card grid, `styles/courses/catalog.css?v=1`) beside `#courses-detail-view`, loads `concept-graph/course-registry.js?v=1` before `courses.js?v=5`, and drops the Account ARENA-share slider + `practice/arena-share.js`. One card per course with a toggle (`/api/practice/course-shares`; loaded on `delta:practice-mode-ready`, and a failed load keeps the toggles disabled with the error on the card) and View course. The toggle words are the course's own: ARENA's only mixes its exercises in early (its concepts are the main graph either way), Delta Drills' is its only way into practice; ARENA's detail is its old article, Delta Drills' (`lessons/deltadrills/`) a lesson list that opens the Knowledge Graph scoped to that course. 🔴 both views swap with `hidden` and `.course-catalog-grid` is `display:grid`, so catalog.css restates `[hidden] { display:none }`. `watch.py` now requires the list view and the registry script's load order.
@@ -714,8 +716,8 @@ the reason is worth keeping.
     Placement tab every time they opened it months later. **Basic mode only** —
     advanced mode still has the strip, so `#diagnostic-results` stays readable
     there for as long as the learner wants it. Nothing is lost in basic mode
-    either: `practice/readiness.js` is the single writer of that figure and the
-    Practice idle dial prints the same reading, caption and detail line.
+    either: the Practice idle dial printed the same reading (both the dial and
+    `practice/readiness.js` were deleted on 2026-09-26).
   - `watch.py::check_front_door` asserts the lot — one tab and no trace of the
     two it replaced, two disclosures with the lead paragraph OUTSIDE them, the
     map inside *How the app works*, the toggle listener in `why-graph.js`, the

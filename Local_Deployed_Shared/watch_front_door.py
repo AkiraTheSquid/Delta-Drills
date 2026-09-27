@@ -216,14 +216,24 @@ def check_front_door():
     # runs to the end of the file. The pages are top-level <main>s, closed at
     # two spaces.
     home = index_html.split('id="page-practice"')[1].split("\n  </main>")[0]
-    for needle in ('id="readiness-dial"', 'id="learner-survey"', 'id="learner-xp"'):
+    for needle in ('id="learner-survey"', 'id="learner-xp"', 'id="learner-xp-graphs"'):
         assert needle in home, (
             f"{needle} is not on the Learner Home — the daily surface is the "
-            "readiness dial, the survey that sets the start, and measured XP"
+            "survey that sets the start, measured XP and its two graphs"
+        )
+    # Seth, 2026-09-26: the page has what he described and nothing else.
+    for gone in ('id="readiness-dial"', 'id="learner-group"', 'id="learner-activity"'):
+        assert gone not in home, f"{gone} is back on the Learner Home; it was removed"
+    assert not re.search(r'(?:src|href)="(?:styles/)?groups[/.]', index_html), (
+        "index.html loads the removed groups UI"
+    )
+    for word in ("ARENA", "LeetCode"):
+        assert word not in index_html.split('id="practice-session-setup"')[1].split('id="session-resume-panel"')[0], (
+            f"the idle card names {word}; its copy is course-agnostic"
         )
 
     # 🔴 THE MODE IS ANNOUNCED. Every surface that reads the backend on load
-    # (xp.js, survey.js, course-pick.js, courses.js, activity-chart.js)
+    # (xp.js, survey.js, course-pick.js, courses.js)
     # parses before practice/init.js, and a read made while `practiceMode` is
     # still its "local" default answers null.
     init_js = _read(os.path.join(HERE, "practice", "init.js"))
