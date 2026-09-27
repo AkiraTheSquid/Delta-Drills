@@ -570,6 +570,7 @@ def check_an_example_is_priced_into_the_model():
 
 # ── Run all checks ────────────────────────────
 if __name__ == '__main__':
+    from app import watch_learning_xp
     checks = [
         check_imports,
         check_public_api,
@@ -582,6 +583,7 @@ if __name__ == '__main__':
         check_the_example_schedule_fades_and_then_tests,
         check_only_unaided_answers_promote,
         check_an_example_is_priced_into_the_model,
+        watch_learning_xp.check_the_finish_pace_is_net_and_counts_today,
     ]
     for fn in checks:
         try:
