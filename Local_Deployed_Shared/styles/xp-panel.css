@@ -1,45 +1,45 @@
 /* ================================================================
    XP-PANEL.CSS — measured learning and its two graphs, inside the
-   Learner Home's idle card (../practice/xp-panel.js; the card's two
+   Learner Home's idle card (../practice/xp-panel.js draws the left column
+   and the range tabs, ../practice/xp-charts.js the graphs; the card's two
    columns are laid out in practice/home.css).
 
-   Reads like an instrument, not a scoreboard: one large serif numeral
-   (today's learning), three quiet readings under it, one line for the
-   target, and two charts in the level pill's own indigo→cyan ink
-   (`--xp-from` / `--xp-to`, defined per theme in variables.css — the
-   pill and this card are visibly the same quantity).
+   A quiet instrument (2026-09-27 cleanup). Three inks, each with one job:
+     * --xp-to     the learner's own numbers — bars, the knowledge line,
+                   today's meter. Flat: no gradients;
+     * --warn      the target, wherever it is drawn;
+     * --accent    (the brand red) only on the one button that starts
+                   practice, styled in practice/home.css.
+   Numerals in Instrument Serif, words in the UI face in sentence case,
+   IBM Plex Mono only for axis ticks. Both faces are already loaded from
+   Google Fonts in index.html.
 
-   Token-first: no hex here (styles/watch.py enforces it). Faces are the
-   two the app already loads from Google Fonts in index.html — Instrument
-   Serif for figures, IBM Plex Mono for labels.
+   Token-first: no hex here (styles/watch.py enforces it).
    ================================================================ */
 
 .session-setup {
   --xp-display: "Instrument Serif", var(--prose-heading);
   --xp-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --xp-ink: var(--xp-to);
+  --xp-quiet: var(--muted-dim);
 }
 
 .learner-xp { min-width: 0; }
 .learner-xp.is-empty { display: none; }
 
 .learner-xp-head {
-  color: var(--muted);
-  font-family: var(--xp-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  margin: 0 0 18px;
-  text-transform: uppercase;
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0 0 22px;
 }
 
 .xp-eyebrow {
   color: var(--muted);
-  font-family: var(--xp-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.12em;
   margin: 0 0 6px;
-  text-transform: uppercase;
 }
 
 /* ---- today ------------------------------------------------------------- */
@@ -47,7 +47,7 @@
 .xp-hero {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
 }
 
 .xp-today-figure {
@@ -60,22 +60,22 @@
 .xp-today-num {
   color: var(--white);
   font-family: var(--xp-display);
-  font-size: clamp(64px, 9vw, 88px);
+  font-size: clamp(60px, 7vw, 76px);
   font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: -0.02em;
-  line-height: 0.85;
+  line-height: 0.9;
 }
 .xp-today-of {
   color: var(--muted);
-  font-family: var(--xp-mono);
-  font-size: 13px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 
 .xp-meter {
   background: rgb(var(--well-rgb) / calc(0.22 * var(--well-k)));
   border-radius: 999px;
-  height: 8px;
-  margin: 16px 0 10px;
+  height: 6px;
+  margin: 14px 0 10px;
   overflow: hidden;
   position: relative;
 }
@@ -84,18 +84,16 @@
   border: 1px dashed var(--border-strong);
 }
 .xp-meter-fill {
-  background: linear-gradient(90deg, var(--xp-from), var(--xp-to));
+  background: var(--xp-ink);
   border-radius: inherit;
   display: block;
   height: 100%;
   width: var(--xp-meter-pct, 0%);
   transition: width 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.xp-meter.is-met {
-  box-shadow: 0 0 0 1px rgb(var(--xp-glow-rgb) / 0.45), 0 0 14px rgb(var(--xp-glow-rgb) / 0.35);
-}
+.xp-meter.is-met .xp-meter-fill { background: var(--ok); }
 .xp-today-line {
-  color: var(--text);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.45;
   margin: 0;
@@ -104,40 +102,41 @@
 /* ---- level · course · finish ------------------------------------------ */
 
 .xp-stats {
-  border-bottom: 1px solid var(--border);
   border-top: 1px solid var(--border);
   display: grid;
+  gap: 0 18px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
+  padding-top: 16px;
 }
-.xp-stat {
-  min-width: 0;
-  padding: 12px 0 11px 14px;
-}
-.xp-stat:first-child { padding-left: 0; }
-.xp-stat + .xp-stat { border-left: 1px solid var(--border); }
-.xp-stat dt { margin: 0 0 4px; }
+.xp-stat { min-width: 0; }
+.xp-stat dt { margin: 0 0 2px; }
 .xp-stat dd { margin: 0; }
 .xp-stat-value {
   color: var(--white);
   font-family: var(--xp-display);
-  font-size: 28px;
+  font-size: 32px;
   font-variant-numeric: lining-nums tabular-nums;
-  line-height: 1;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 .xp-stat-sub {
-  color: var(--muted-dim);
-  font-family: var(--xp-mono);
-  font-size: 10.5px;
+  color: var(--xp-quiet);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
   line-height: 1.4;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 .xp-stat.is-behind .xp-stat-value { color: var(--warn); }
 .xp-stat.is-ahead .xp-stat-value { color: var(--ok); }
 
 /* ---- the target -------------------------------------------------------- */
 
-.xp-target { margin-top: 14px; }
+.xp-target {
+  border-top: 1px solid var(--border);
+  margin-top: 18px;
+  padding-top: 14px;
+}
 .xp-target-now {
   align-items: baseline;
   display: flex;
@@ -146,14 +145,14 @@
 .xp-target-now .xp-eyebrow { margin: 0; }
 .xp-target-value {
   color: var(--text);
-  font-family: var(--xp-mono);
-  font-size: 12px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
   min-width: 0;
 }
 .xp-link {
   background: none;
   border: 0;
-  color: var(--xp-to);
+  color: var(--xp-ink);
   cursor: pointer;
   font-size: 12.5px;
   font-weight: 600;
@@ -161,30 +160,31 @@
   padding: 0;
 }
 .xp-link:hover { text-decoration: underline; text-underline-offset: 3px; }
-.xp-link:focus-visible { outline: 2px solid var(--xp-to); outline-offset: 2px; }
+.xp-link:focus-visible { outline: 2px solid var(--xp-ink); outline-offset: 2px; }
 
 .xp-target-form { margin-top: 12px; }
 .xp-seg {
+  background: rgb(var(--well-rgb) / calc(0.18 * var(--well-k)));
   border: 1px solid var(--border);
   border-radius: 8px;
   display: inline-flex;
   margin-bottom: 10px;
-  overflow: hidden;
+  padding: 2px;
 }
 .xp-seg-btn {
   background: none;
   border: 0;
+  border-radius: 6px;
   color: var(--muted);
   cursor: pointer;
   font-size: 12px;
-  padding: 5px 11px;
+  padding: 4px 11px;
 }
-.xp-seg-btn + .xp-seg-btn { border-left: 1px solid var(--border); }
 .xp-seg-btn[aria-pressed="true"] {
-  background: rgb(var(--xp-glow-rgb) / 0.14);
+  background: rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k)));
   color: var(--white);
 }
-.xp-seg-btn:focus-visible { outline: 2px solid var(--xp-to); outline-offset: -2px; }
+.xp-seg-btn:focus-visible { outline: 2px solid var(--xp-ink); outline-offset: -2px; }
 
 .xp-target-fields {
   align-items: center;
@@ -198,12 +198,13 @@
   border-radius: 8px;
   color: var(--text);
   color-scheme: inherit;
-  font-family: var(--xp-mono);
+  font: inherit;
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
   padding: 6px 10px;
 }
 .xp-input-num { width: 96px; }
-.xp-input:focus-visible { border-color: var(--xp-to); outline: none; box-shadow: 0 0 0 3px rgb(var(--xp-glow-rgb) / 0.18); }
+.xp-input:focus-visible { border-color: var(--xp-ink); outline: none; box-shadow: 0 0 0 3px rgb(var(--xp-glow-rgb) / 0.18); }
 
 .xp-save,
 .xp-clear {
@@ -215,7 +216,7 @@
 }
 .xp-save {
   background: rgb(var(--xp-glow-rgb) / 0.14);
-  border: 1px solid var(--xp-to);
+  border: 1px solid var(--xp-ink);
   color: var(--white);
 }
 .xp-save:hover { background: rgb(var(--xp-glow-rgb) / 0.24); }
@@ -243,12 +244,12 @@
 
 /* ---- how XP is measured ------------------------------------------------ */
 
-.xp-explain { margin-top: 12px; }
+.xp-explain { margin-top: 10px; }
 .xp-explain summary {
-  color: var(--muted-dim);
+  color: var(--xp-quiet);
   cursor: pointer;
-  font-family: var(--xp-mono);
-  font-size: 11px;
+  font-size: 12px;
+  width: max-content;
 }
 .xp-explain summary:hover { color: var(--muted); }
 .xp-explain ul {
@@ -260,50 +261,63 @@
 }
 .xp-explain li + li { margin-top: 6px; }
 
-/* ---- the graphs -------------------------------------------------------- */
-
-.xp-chart + .xp-chart {
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
-}
-.xp-chart-head {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.xp-chart-title {
-  color: var(--white);
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0;
-}
+/* ---- the range: one row across the column, over both graphs ------------ */
 
 .xp-range {
-  background: rgb(var(--well-rgb) / calc(0.18 * var(--well-k)));
+  background: rgb(var(--well-rgb) / calc(0.20 * var(--well-k)));
   border: 1px solid var(--border);
-  border-radius: 999px;
-  display: inline-flex;
-  padding: 2px;
+  border-radius: 10px;
+  display: grid;
+  gap: 3px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 3px;
 }
 .xp-range-btn {
   background: none;
   border: 0;
-  border-radius: 999px;
+  border-radius: 7px;
   color: var(--muted);
   cursor: pointer;
-  font-family: var(--xp-mono);
-  font-size: 10.5px;
-  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  min-height: 32px;
+  padding: 6px 8px;
+  transition: background 0.15s, color 0.15s;
 }
 .xp-range-btn:hover { color: var(--text); }
 .xp-range-btn[aria-pressed="true"] {
-  background: rgb(var(--tint-rgb) / calc(0.10 * var(--tint-k)));
+  background: var(--surface-2);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
   color: var(--white);
 }
-.xp-range-btn:focus-visible { outline: 2px solid var(--xp-to); outline-offset: 1px; }
+.xp-range-btn:focus-visible { outline: 2px solid var(--xp-ink); outline-offset: 1px; }
+
+/* ---- the graphs -------------------------------------------------------- */
+
+.xp-chart + .xp-chart {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.xp-chart-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.xp-chart-title {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.xp-chart-note {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
 
 .xp-chart-frame { width: 100%; }
 .xp-bars,
@@ -316,36 +330,39 @@
 
 .xp-grid {
   stroke: var(--border);
-  stroke-dasharray: 2 4;
   stroke-width: 1;
 }
 .xp-floor { stroke: var(--border-strong); stroke-width: 1; }
 .xp-axis {
-  fill: var(--muted-dim);
+  fill: var(--xp-quiet);
   font-family: var(--xp-mono);
   font-size: 10px;
 }
-.xp-stop-from { stop-color: var(--xp-from); }
-.xp-stop-to { stop-color: var(--xp-to); }
-.xp-hatch-ink { fill: var(--xp-to); opacity: 0.75; }
+.xp-axis.is-now { fill: var(--text); }
+.xp-hatch-ink { fill: var(--xp-ink); }
 
 .xp-bar-hit { fill: transparent; }
-.xp-bar:hover .xp-bar-hit { fill: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k))); }
-.xp-bar-fill { transition: opacity 0.15s; }
-.xp-bar:hover .xp-bar-fill { opacity: 0.8; }
-.xp-bar.is-today .xp-bar-fill { stroke: var(--xp-to); stroke-width: 1; }
+.xp-bar:hover .xp-bar-hit { fill: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k))); }
+.xp-bar-fill {
+  fill: var(--xp-ink);
+  opacity: 0.88;
+  transition: opacity 0.15s;
+}
+.xp-bar:hover .xp-bar-fill { opacity: 1; }
+/* Today is provisional: hatched. In CSS, since a stylesheet `fill` beats the
+   SVG attribute. */
+.xp-bar.is-today .xp-bar-fill { fill: url(#xp-hatch); opacity: 1; stroke: var(--xp-ink); stroke-width: 1; }
 
 .xp-target-line {
-  stroke: var(--text);
-  stroke-dasharray: 5 4;
+  stroke: var(--warn);
+  stroke-dasharray: 4 4;
   stroke-width: 1.25;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 .xp-target-label {
-  fill: var(--text);
+  fill: var(--warn);
   font-family: var(--xp-mono);
   font-size: 10px;
-  opacity: 0.85;
   /* A halo in the card colour keeps the label legible where it crosses a bar. */
   paint-order: stroke;
   stroke: var(--surface);
@@ -354,55 +371,60 @@
 }
 
 .xp-readout {
-  color: var(--muted);
-  font-family: var(--xp-mono);
-  font-size: 11px;
-  margin: 4px 0 0;
+  color: var(--xp-quiet);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 0;
   min-height: 1.4em;
 }
 
-.xp-area-top { stop-color: var(--xp-to); stop-opacity: 0.28; }
-.xp-area-bottom { stop-color: var(--xp-to); stop-opacity: 0; }
+.xp-area-top { stop-color: var(--xp-ink); stop-opacity: 0.22; }
+.xp-area-bottom { stop-color: var(--xp-ink); stop-opacity: 0; }
 .xp-line {
   fill: none;
+  stroke: var(--xp-ink);
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2.5;
+  stroke-width: 2.25;
+}
+.xp-now-rule {
+  stroke: var(--border-strong);
+  stroke-dasharray: 2 3;
+  stroke-width: 1;
 }
 .xp-projection {
-  stroke: var(--muted);
-  stroke-dasharray: 3 5;
+  stroke: var(--xp-ink);
+  stroke-dasharray: 2 4;
   stroke-linecap: round;
-  stroke-width: 1.5;
+  stroke-width: 1.75;
+  opacity: 0.75;
 }
 .xp-needed {
   stroke: var(--warn);
-  stroke-dasharray: 7 4;
+  stroke-dasharray: 6 4;
   stroke-width: 1.5;
 }
-.xp-target-rule { stroke: var(--warn); stroke-width: 1; opacity: 0.35; }
 .xp-target-dot { fill: var(--warn); }
 .xp-now-dot {
   fill: var(--surface);
-  stroke: var(--xp-to);
-  stroke-width: 2.5;
+  stroke: var(--xp-ink);
+  stroke-width: 2.25;
 }
 
 .xp-legend {
   color: var(--muted);
   display: flex;
   flex-wrap: wrap;
-  font-family: var(--xp-mono);
-  font-size: 10.5px;
-  gap: 4px 16px;
+  font-size: 12px;
+  gap: 4px 18px;
   list-style: none;
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   padding: 0;
 }
-.xp-legend li { align-items: center; display: inline-flex; gap: 6px; }
+.xp-legend li { align-items: center; display: inline-flex; gap: 7px; }
 .xp-key { display: inline-block; height: 0; width: 18px; }
-.xp-key-line { border-top: 2.5px solid var(--xp-to); }
-.xp-key-projection { border-top: 1.5px dotted var(--muted); }
+.xp-key-line { border-top: 2.25px solid var(--xp-ink); }
+.xp-key-projection { border-top: 2px dotted var(--xp-ink); }
 .xp-key-needed { border-top: 1.5px dashed var(--warn); }
 
 /* ---- first paint: one staggered rise, bars growing from the floor ------ */
@@ -425,8 +447,8 @@
 }
 .session-setup.is-revealing .xp-panel-body > :nth-child(2) { animation-delay: 70ms; }
 .session-setup.is-revealing .xp-panel-body > :nth-child(3) { animation-delay: 140ms; }
-.session-setup.is-revealing .home-graphs > :nth-child(1) { animation-delay: 100ms; }
-.session-setup.is-revealing .home-graphs > :nth-child(2) { animation-delay: 190ms; }
+.session-setup.is-revealing .home-graphs > :nth-child(2) { animation-delay: 90ms; }
+.session-setup.is-revealing .home-graphs > :nth-child(3) { animation-delay: 180ms; }
 .session-setup.is-revealing .xp-bar-fill {
   animation: xp-grow 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   animation-delay: calc(160ms + var(--i, 0) * 14ms);

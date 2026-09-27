@@ -70,7 +70,7 @@
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
-  <link rel="stylesheet" href="styles/xp-panel.css?v=3" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=4" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -118,7 +118,7 @@
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
   <!-- The Learner Home: the two-column idle card, and the course
        question's tiles (what survived diagnostic.css, 2026-09-26). -->
-  <link rel="stylesheet" href="styles/practice/home.css?v=3" />
+  <link rel="stylesheet" href="styles/practice/home.css?v=4" />
   <link rel="stylesheet" href="styles/conceptual/conceptual-chat.css?v=1" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
@@ -2427,9 +2427,11 @@ t.manual_seed(0)
   <!-- THE IDLE SCREEN. session-idle.js proxies Continue practicing to the
        hidden resume/start buttons — AFTER timer.js, whose
        `hasPausedSession()` decides which of the two the one button means.
-       xp-panel.js paints measured learning and the two graphs. -->
+       xp-panel.js paints measured learning and the range tabs; xp-charts.js
+       draws the two graphs under them. -->
   <script src="practice/session-idle.js?v=10"></script>
-  <script src="practice/xp-panel.js?v=3"></script>
+  <script src="practice/xp-charts.js?v=2"></script>
+  <script src="practice/xp-panel.js?v=4"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls

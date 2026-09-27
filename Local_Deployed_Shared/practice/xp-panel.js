@@ -16,12 +16,10 @@
        re-read every day) or a fixed XP per day.
 
    RIGHT (#learner-xp-graphs)
-     * DAILY XP bars with today's target line — a week, a month, three
-       months or everything. Today's bar is hatched: it is provisional,
-       because later answers can still revise when the model believes the
-       learning happened;
-     * TOWARD THE COURSE: knowledge over time on the full 0 → total scale,
-       the pace projection, and the target date if there is one.
+     * one row of range tabs across the column — Week (the default),
+       Month, 3 months, All — that controls BOTH graphs (Seth, 2026-09-27);
+     * DAILY XP bars and TOWARD THE COURSE under it, drawn by
+       ./xp-charts.js for that range.
 
    It draws from `delta:xp-summary`, which ../xp.js broadcasts after every
    read it makes for the level pill — one request feeds both. Nothing here
@@ -33,7 +31,6 @@
 (function () {
   "use strict";
 
-  const SVG = "http://www.w3.org/2000/svg";
   const RANGES = [
     { id: "7", label: "Week", days: 7 },
     { id: "30", label: "Month", days: 30 },
@@ -59,41 +56,8 @@
 
   const host = () => document.getElementById("learner-xp");
   const graphs = () => document.getElementById("learner-xp-graphs");
-  const nf = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
-  const fmt = (n) => nf.format(Math.round(Number(n) || 0));
+  const { el, fmt, shortDate, longDate, daysBetween, addDays } = window.DDXpCharts.util;
   const compact = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 });
-
-  const el = (tag, cls, text) => {
-    const node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text !== undefined) node.textContent = text;
-    return node;
-  };
-  const svgEl = (tag, attrs = {}, text) => {
-    const node = document.createElementNS(SVG, tag);
-    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
-    if (text !== undefined) node.textContent = text;
-    return node;
-  };
-
-  const dateOf = (iso) => {
-    const [y, m, d] = String(iso).split("-").map(Number);
-    return new Date(y, m - 1, d);
-  };
-  const isoOf = (d) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  const shortDate = (iso) => dateOf(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-  const weekday = (iso) => dateOf(iso).toLocaleDateString(undefined, { weekday: "short" });
-  const longDate = (iso) =>
-    dateOf(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-  const daysBetween = (a, b) => Math.round((dateOf(b) - dateOf(a)) / 86400000);
-  // Calendar days, not 24-hour blocks: across a DST change N×86400000 ms from
-  // local midnight lands at 23:00 the day before.
-  const addDays = (iso, n) => {
-    const d = dateOf(iso);
-    d.setDate(d.getDate() + n);
-    return isoOf(d);
-  };
   const coursePct = (s) => {
     const pct = s.course.total_xp ? (s.knowledge / s.course.total_xp) * 100 : 0;
     return `${pct < 10 ? pct.toFixed(1) : Math.round(pct)}%`;
@@ -175,7 +139,7 @@
     }
     return {
       value: finish ? shortDate(finish) : "—",
-      sub: s.pace > 0 ? `at ${fmt(s.pace)} XP/day` : "no pace yet",
+      sub: s.pace > 0 ? `at ${fmt(s.pace)} XP/day` : "no net gain yet",
       cls,
     };
   }
@@ -317,21 +281,19 @@
       "Knowledge is the model's belief you have learned a concept, times how well you still recall it. Finding out what you already knew counts as starting knowledge, not XP.",
       "Today's number settles as you answer more: later answers can move credit to the day the learning actually happened.",
       "Forgetting lowers your knowledge but never takes XP away. Relearning earns XP again.",
+      `Finish divides what is left by your net learning over the last ${s.pace_days || 14} days and today so far, forgetting included, so it moves as you answer.`,
     ].forEach((t) => ul.appendChild(el("li", "", t)));
     d.appendChild(ul);
     return d;
   }
 
-  // ── daily XP bars ──────────────────────────────────────────────
-  function barsChart(s) {
-    const box = el("section", "xp-chart");
-    const head = el("div", "xp-chart-head");
-    head.appendChild(el("h3", "xp-chart-title", "Daily XP"));
+  // ── the range: one row of tabs over both graphs ────────────────
+  function rangeTabs() {
     const tabs = el("div", "xp-range");
     // Plain toggle buttons, not a tablist: there are no tab panels, and
     // Tab + Enter is the whole keyboard contract a pressed button needs.
     tabs.setAttribute("role", "group");
-    tabs.setAttribute("aria-label", "Days shown");
+    tabs.setAttribute("aria-label", "Time shown in both graphs");
     RANGES.forEach((r) => {
       const b = el("button", "xp-range-btn", r.label);
       b.type = "button";
@@ -343,176 +305,27 @@
         } catch (_) {
           /* convenience only */
         }
-        paint();
+        paintGraphs();
+        graphs()?.querySelector('.xp-range-btn[aria-pressed="true"]')?.focus();
       });
       tabs.appendChild(b);
     });
-    head.appendChild(tabs);
-    box.appendChild(head);
-
-    const wanted = RANGES.find((r) => r.id === range)?.days ?? 7;
-    // Pad a short history with empty days so a week always reads as seven.
-    const byDate = new Map(s.days.map((d) => [d.date, d]));
-    const last = s.today.date;
-    const count = Number.isFinite(wanted) ? wanted : s.days.length;
-    const days = [];
-    for (let i = count - 1; i >= 0; i -= 1) {
-      const iso = addDays(last, -i);
-      days.push(byDate.get(iso) || { date: iso, xp: 0, answers: 0, knowledge: null });
-    }
-
-    const W = chartWidth(), H = 196, L = 34, R = W - 8, T = 16, B = 168;
-    const target = s.today.target || 0;
-    const top = Math.max(10, target, ...days.map((d) => d.xp)) * 1.12;
-    const y = (v) => B - (v / top) * (B - T);
-    const slot = (R - L) / days.length;
-    const bw = Math.max(2, Math.min(40, slot * 0.62));
-
-    const svg = svgEl("svg", {
-      viewBox: `0 0 ${W} ${H}`, class: "xp-bars", role: "img",
-      "aria-label": `Daily XP, ${shortDate(days[0].date)} to ${shortDate(last)}${target ? `; today's target ${fmt(target)}` : ""}`,
-    });
-    const defs = svgEl("defs");
-    const grad = svgEl("linearGradient", { id: "xp-bar-grad", x1: "0", y1: "1", x2: "0", y2: "0" });
-    grad.append(svgEl("stop", { offset: "0", class: "xp-stop-from" }), svgEl("stop", { offset: "1", class: "xp-stop-to" }));
-    const hatch = svgEl("pattern", { id: "xp-hatch", width: "6", height: "6", patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
-    hatch.appendChild(svgEl("rect", { width: "3", height: "6", class: "xp-hatch-ink" }));
-    defs.append(grad, hatch);
-    svg.appendChild(defs);
-
-    // Four quiet gridlines and their values.
-    for (let i = 0; i <= 3; i += 1) {
-      const v = (top / 1.12) * (i / 3);
-      svg.appendChild(svgEl("line", { x1: L, x2: R, y1: y(v), y2: y(v), class: "xp-grid" }));
-      svg.appendChild(svgEl("text", { x: L - 6, y: y(v) + 3.5, "text-anchor": "end", class: "xp-axis" }, fmt(v)));
-    }
-
-    const readout = el("p", "xp-readout");
-    const describe = (d) =>
-      `${longDate(d.date)} · ${fmt(d.xp)} XP · ${d.answers || 0} answer${d.answers === 1 ? "" : "s"}` +
-      (d.date === last ? " · today, still settling" : "");
-    readout.textContent = describe(days[days.length - 1]);
-
-    const every = Math.ceil(days.length / 7);
-    days.forEach((d, i) => {
-      const cx = L + slot * (i + 0.5);
-      const h = Math.max(d.xp > 0 ? 2 : 0, B - y(d.xp));
-      const isToday = d.date === last;
-      const g = svgEl("g", { class: `xp-bar${isToday ? " is-today" : ""}`, style: `--i:${i}` });
-      g.appendChild(svgEl("rect", { x: cx - slot / 2, y: T, width: slot, height: B - T, class: "xp-bar-hit" }));
-      g.appendChild(svgEl("rect", {
-        x: cx - bw / 2, y: B - h, width: bw, height: h, rx: Math.min(3, bw / 3),
-        class: "xp-bar-fill", fill: isToday ? "url(#xp-hatch)" : "url(#xp-bar-grad)",
-      }));
-      g.appendChild(svgEl("title", {}, describe(d)));
-      g.addEventListener("pointerenter", () => { readout.textContent = describe(d); });
-      svg.appendChild(g);
-      if ((days.length - 1 - i) % every === 0) {
-        svg.appendChild(svgEl("text", { x: cx, y: B + 18, "text-anchor": "middle", class: "xp-axis" },
-          isToday ? "Today" : days.length <= 7 ? weekday(d.date) : shortDate(d.date)));
-      }
-    });
-    svg.appendChild(svgEl("line", { x1: L, x2: R, y1: B, y2: B, class: "xp-floor" }));
-    if (target) {
-      svg.appendChild(svgEl("line", { x1: L, x2: R, y1: y(target), y2: y(target), class: "xp-target-line" }));
-      svg.appendChild(svgEl("text", { x: R, y: y(target) - 6, "text-anchor": "end", class: "xp-target-label" },
-        `target ${fmt(target)}`));
-    }
-    svg.addEventListener("pointerleave", () => { readout.textContent = describe(days[days.length - 1]); });
-
-    const frame = el("div", "xp-chart-frame");
-    frame.appendChild(svg);
-    box.append(frame, readout);
-    return box;
+    return tabs;
   }
 
-  // ── trajectory toward the course ───────────────────────────────
-  function trajectory(s) {
-    const box = el("section", "xp-chart");
-    const head = el("div", "xp-chart-head");
-    head.appendChild(el("h3", "xp-chart-title", "Toward the course"));
-    box.appendChild(head);
-
-    const history = s.days.filter((d) => Number.isFinite(d.knowledge));
-    if (!history.length) return box;
-    const start = history[0].date;
-    const today = s.today.date;
-    const ends = [today];
-    if (s.projected_finish) ends.push(s.projected_finish);
-    if (s.target?.mode === "date") ends.push(s.target.date);
-    // A projection years away would flatten the history into a sliver;
-    // the axis stops a year out and the line says where it was heading.
-    const horizon = addDays(today, 365);
-    let end = ends.reduce((a, b) => (b > a ? b : a));
-    if (end > horizon) end = horizon;
-    const span = Math.max(1, daysBetween(start, end));
-
-    const W = chartWidth(), H = 186, L = 34, R = W - 12, T = 18, B = 158;
-    const total = s.course.total_xp || 1;
-    const x = (iso) => L + (Math.min(span, Math.max(0, daysBetween(start, iso))) / span) * (R - L);
-    const y = (v) => B - (Math.min(total, Math.max(0, v)) / total) * (B - T);
-
-    const svg = svgEl("svg", {
-      viewBox: `0 0 ${W} ${H}`, class: "xp-trajectory", role: "img",
-      "aria-label": `Course knowledge ${fmt(s.knowledge)} of ${fmt(total)} XP` +
-        (s.projected_finish ? `; at this pace the course is finished ${longDate(s.projected_finish)}` : ""),
-    });
-    const defs = svgEl("defs");
-    const area = svgEl("linearGradient", { id: "xp-area-grad", x1: "0", y1: "0", x2: "0", y2: "1" });
-    area.append(svgEl("stop", { offset: "0", class: "xp-area-top" }), svgEl("stop", { offset: "1", class: "xp-area-bottom" }));
-    const stroke = svgEl("linearGradient", { id: "xp-line-grad", x1: "0", y1: "0", x2: "1", y2: "0" });
-    stroke.append(svgEl("stop", { offset: "0", class: "xp-stop-from" }), svgEl("stop", { offset: "1", class: "xp-stop-to" }));
-    defs.append(area, stroke);
-    svg.appendChild(defs);
-
-    [0, 0.25, 0.5, 0.75, 1].forEach((f) => {
-      svg.appendChild(svgEl("line", { x1: L, x2: R, y1: y(total * f), y2: y(total * f), class: "xp-grid" }));
-      svg.appendChild(svgEl("text", { x: L - 6, y: y(total * f) + 3.5, "text-anchor": "end", class: "xp-axis" },
-        `${Math.round(f * 100)}%`));
-    });
-
-    const pts = history.map((d) => `${x(d.date).toFixed(1)},${y(d.knowledge).toFixed(1)}`);
-    svg.appendChild(svgEl("path", {
-      d: `M${x(start)},${B} L${pts.join(" L")} L${x(today)},${B} Z`, fill: "url(#xp-area-grad)", class: "xp-area",
-    }));
-    svg.appendChild(svgEl("path", { d: `M${pts.join(" L")}`, class: "xp-line", stroke: "url(#xp-line-grad)" }));
-
-    const nowX = x(today), nowY = y(s.knowledge);
-    if (s.projected_finish) {
-      svg.appendChild(svgEl("line", {
-        x1: nowX, y1: nowY, x2: x(s.projected_finish), y2: y(s.projected_finish > horizon
-          ? s.knowledge + s.pace * daysBetween(today, horizon) : total), class: "xp-projection",
-      }));
-    }
-    if (s.target?.mode === "date") {
-      const tx = x(s.target.date);
-      svg.appendChild(svgEl("line", { x1: nowX, y1: nowY, x2: tx, y2: y(total), class: "xp-needed" }));
-      svg.appendChild(svgEl("line", { x1: tx, x2: tx, y1: T, y2: B, class: "xp-target-rule" }));
-      svg.appendChild(svgEl("circle", { cx: tx, cy: y(total), r: 4.5, class: "xp-target-dot" }));
-      svg.appendChild(svgEl("text", { x: Math.min(tx, R - 2), y: T - 5, "text-anchor": tx > R - 60 ? "end" : "middle", class: "xp-target-label" },
-        `target ${shortDate(s.target.date)}`));
-    }
-    svg.appendChild(svgEl("circle", { cx: nowX, cy: nowY, r: 5, class: "xp-now-dot" }));
-    svg.appendChild(svgEl("line", { x1: L, x2: R, y1: B, y2: B, class: "xp-floor" }));
-    svg.appendChild(svgEl("text", { x: L, y: B + 18, class: "xp-axis" }, shortDate(start)));
-    svg.appendChild(svgEl("text", { x: R, y: B + 18, "text-anchor": "end", class: "xp-axis" },
-      end === horizon && ends.some((e) => e > horizon) ? `${shortDate(end)} →` : shortDate(end)));
-
-    const frame = el("div", "xp-chart-frame");
-    frame.appendChild(svg);
-    box.appendChild(frame);
-
-    const legend = el("ul", "xp-legend");
-    const key = (cls, text) => {
-      const li = el("li");
-      li.append(el("i", `xp-key ${cls}`), document.createTextNode(text));
-      legend.appendChild(li);
-    };
-    key("xp-key-line", "your knowledge");
-    if (s.projected_finish) key("xp-key-projection", "at your pace");
-    if (s.target?.mode === "date") key("xp-key-needed", "needed for your date");
-    box.appendChild(legend);
-    return box;
+  /** The right column alone: the tabs and the two graphs for the range. */
+  function paintGraphs() {
+    const right = graphs();
+    if (!right || !summary) return;
+    const days = RANGES.find((r) => r.id === range)?.days ?? 7;
+    // Measured after the column is shown: a hidden column is 0 wide.
+    drawnWidth = chartWidth();
+    const opts = { width: drawnWidth };
+    right.replaceChildren(
+      rangeTabs(),
+      window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length }),
+      window.DDXpCharts.trajectory(summary, { ...opts, count: days }),
+    );
   }
 
   // ── paint ──────────────────────────────────────────────────────
@@ -531,9 +344,7 @@
     section.classList.remove("is-empty");
     right?.classList.remove("is-empty");
     root.replaceChildren(hero(s), targetRow(s), explainer(s));
-    // Measured after the column is shown: a hidden column is 0 wide.
-    drawnWidth = chartWidth();
-    right?.replaceChildren(barsChart(s), trajectory(s));
+    paintGraphs();
     if (focusToggle) {
       focusToggle = false;
       section.querySelector(".xp-link")?.focus();

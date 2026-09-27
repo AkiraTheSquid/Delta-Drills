@@ -105,7 +105,8 @@ T_AIDED = 0.10
 GUESS_EXPLOIT = 0.30
 GUESS_BY_STAGE = {"worked": 0.50, "faded": 0.45}
 
-# The projection's pace: the mean of the last this-many complete days.
+# The projection's pace: net learning over the last this-many days plus
+# today so far.
 PACE_DAYS = 14
 
 TARGET_MODES = ("date", "daily")
@@ -384,9 +385,27 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
 
 # --- the readout -------------------------------------------------------------
 
-def _pace(xp: List[float]) -> float:
-    done = xp[:-1][-PACE_DAYS:]
-    return sum(done) / len(done) if done else 0.0
+def _pace(r: dict, zone, now: datetime) -> float:
+    """Course knowledge gained per day, net of forgetting, from the open of
+    the day PACE_DAYS before today up to `now`. Net, because `remaining`
+    shrinks by net learning: a mean of the daily XP (gross gains only) kept
+    the projection optimistic through every idle day. Today counts, so the
+    finish date moves with each answer instead of once at midnight."""
+    days, closing = r["days"], r["knowledge"]
+    k = max(0, len(days) - 1 - PACE_DAYS)
+    start = r["open_knowledge"] if k == 0 else closing[k - 1]
+    elapsed = (now - _midnight(days[k], zone)).total_seconds() / 86400.0
+    # At least a day: an hour-old history would otherwise project from one
+    # good hour.
+    return max(0.0, closing[-1] - start) / max(1.0, elapsed)
+
+
+def _finish(today: date, remaining: float, pace: float) -> Optional[str]:
+    """The day `remaining` reaches zero at `pace`; None with no pace or
+    nothing left."""
+    if pace <= 0 or remaining <= 0:
+        return None
+    return (today + timedelta(days=int(math.ceil(remaining / pace)))).isoformat()
 
 
 def daily_target(target: Optional[dict], remaining_open: float, today: date) -> Optional[int]:
@@ -422,8 +441,8 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
     target = getattr(user_state, "xp_target", None) or None
     remaining_open = max(0.0, total - r["today_open_knowledge"])
     need_today = daily_target(target, remaining_open, today)
-    pace = _pace(r["xp"])
-    finish = (today + timedelta(days=int(math.ceil(remaining / pace)))).isoformat() if pace > 0 and remaining > 0 else None
+    pace = _pace(r, zone, now)
+    finish = _finish(today, remaining, pace)
     ready = sum(1 for v in r["per_kc_now"].values() if v >= READY - 1e-9)
     return {
         "course": {"concepts": len(r["scope"]), "total_xp": total, "ready_at": XP_PER_CONCEPT,
