@@ -323,6 +323,8 @@ function renderQuestion(q, count) {
   } else {
     codeEditor.value = q.starter_code || DEFAULT_EDITOR_CODE;
   }
+  // Python | JavaScript toggle on a LeetCode drill (practice/lang-js.js).
+  window.DeltaLang?.onQuestion?.(q);
   // "Numpy: Numpy: Vectorization and broadcasting". The two modes disagree on
   // what `subtopic` is: local mode sends the bare name and the topic has to be
   // prefixed, while the backend already sends the COMPOSITE key

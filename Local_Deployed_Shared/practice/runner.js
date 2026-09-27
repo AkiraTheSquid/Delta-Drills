@@ -295,10 +295,16 @@ function installCodeEditorKeys(editor) {
       let indent = (line.match(/^[ \t]*/) || [""])[0];
       // Only the code BEFORE the caret decides the next indent — pressing Enter
       // mid-line splits it, and the trailing half is what moves down.
-      const codeBefore = line.replace(/#.*$/, "").trimEnd();
-      if (codeBefore.endsWith(":")) {
+      // A JavaScript editor (practice/lang-js.js) opens a block with `{`, and
+      // `return x;` there does not end one.
+      const js = el.closest?.("[data-code-lang]")?.dataset.codeLang === "javascript";
+      // JS strings are blanked first so `"http://…"` is not read as a comment.
+      const codeBefore = (js
+        ? line.replace(/(["'`])(?:\\.|(?!\1)[^\\])*\1/g, '""').replace(/\/\/.*$/, "")
+        : line.replace(/#.*$/, "")).trimEnd();
+      if (js ? /[{([]$/.test(codeBefore) : codeBefore.endsWith(":")) {
         indent += EDITOR_INDENT;
-      } else if (EDITOR_DEDENT_AFTER.test(line) && indent.length >= EDITOR_INDENT.length) {
+      } else if (!js && EDITOR_DEDENT_AFTER.test(line) && indent.length >= EDITOR_INDENT.length) {
         indent = indent.slice(0, indent.length - EDITOR_INDENT.length);
       }
       if (indent) {

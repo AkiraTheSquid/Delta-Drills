@@ -139,6 +139,9 @@ class NextQuestionResponse(BaseModel):
 class SubmitRequest(BaseModel):
     question_id: int
     user_code: str
+    # "javascript" only on a LeetCode drill (app/leetcode_js.py); everything
+    # else is Python, and so is an older client that does not send it.
+    language: Literal["python", "javascript"] = "python"
     # Did the learner actually SEE a worked-example popup in front of this
     # drill? The server scheduled one (`ladder_example.show`) but the client
     # can decline to draw it (no KP page, Colab edition, diagnostic), and an
@@ -440,6 +443,7 @@ class CheckRequest(BaseModel):
     """The Run button asking how the code would grade, without grading it."""
     question_id: int
     user_code: str
+    language: Literal["python", "javascript"] = "python"
 
 
 class CheckResponse(BaseModel):

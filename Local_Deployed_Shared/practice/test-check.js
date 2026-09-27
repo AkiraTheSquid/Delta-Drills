@@ -206,6 +206,11 @@ json.dumps(_delta_results)
     const withCalls = (tests) => tests.map((t, i) => ({ ...t, call: t.call || cases[i]?.call || "" }));
     const requiresLocalPyodide =
       questionNeedsEinops(question) && !needsTorchRuntime(question, code);
+    // JavaScript (practice/lang-js.js) only ever runs on the server.
+    const language = window.DeltaLang?.languageFor?.(question) || "python";
+    if (language === "javascript" && practiceMode !== "backend") {
+      return { error: "JavaScript answers are checked on the server. Sign in again to check them." };
+    }
 
     if (practiceMode === "backend" && !requiresLocalPyodide) {
       let res;
@@ -213,7 +218,7 @@ json.dumps(_delta_results)
         res = await apiFetch("/api/practice/check", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question_id: question.question_id, user_code: code }),
+          body: JSON.stringify({ question_id: question.question_id, user_code: code, language }),
         });
       } catch (_err) {
         return { error: "Could not reach the practice backend to check the test cases." };
@@ -225,7 +230,7 @@ json.dumps(_delta_results)
       } else {
         const data = await res.json();
         if (!data.supported) return { unsupported: true };
-        return { tests: withCalls(data.tests || []), correct: !!data.correct };
+        return { tests: withCalls(data.tests || []), correct: !!data.correct, language };
       }
     }
 
@@ -300,8 +305,9 @@ json.dumps(_delta_results)
     const rows = [];
     for (let i = 0; i < total; i++) {
       const t = outcome.tests[i];
+      // A JS call carries its inputs inline; the Python setup_code is not them.
       const call = esc(clip((t && t.call) || cases[i]?.call || `case ${i + 1}`))
-        + inputsOf(cases[i]).map((l, j) => `\n    ${j ? "          " : "with:     "}${esc(l)}`).join("");
+        + (outcome.language === "javascript" ? [] : inputsOf(cases[i])).map((l, j) => `\n    ${j ? "          " : "with:     "}${esc(l)}`).join("");
       if (!t) {
         // The harness stopped before this case (the code itself failed to
         // run): the first row carries the traceback, the rest never ran.

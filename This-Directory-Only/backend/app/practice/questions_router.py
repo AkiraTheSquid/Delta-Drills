@@ -288,7 +288,7 @@ def submit_answer(
         )
 
     correct, actual_output, expected_output, failed_tests = grade_submission(
-        question, payload.user_code, user
+        question, payload.user_code, user, payload.language
     )
 
     is_diagnostic = diagnostic.get_diag(user_state)["active"]

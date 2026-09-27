@@ -2,9 +2,10 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# System deps: gcc for psycopg/numpy compilation, libpq-dev for PostgreSQL driver
+# System deps: gcc for psycopg/numpy compilation, libpq-dev for PostgreSQL driver,
+# nodejs for LeetCode drills answered in JavaScript (app/leetcode_js.py)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libpq-dev && rm -rf /var/lib/apt/lists/*
+    gcc libpq-dev nodejs && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies. torch MUST come from the cpu index first —
 # plain PyPI serves the CUDA-bundled wheel (multi-GB, OOMs the VM); the cpu

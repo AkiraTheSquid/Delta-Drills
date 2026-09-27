@@ -115,7 +115,11 @@ const DeltaNotebook = (() => {
          fallback (practice/init.js and notch-menu.js do the same). */
       const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
       const question = window.LessonGate?.activeQuestion || _papi?.currentQuestion;
-      let result = await window.LessonNotebook?.runSource(editor.value, {
+      /* A LeetCode drill answered in JavaScript (practice/lang-js.js) has no
+         Python kernel to run in: every learner cell, joined the way Submit
+         joins them, runs once in node on the server. */
+      const js = window.DeltaLang?.isJsEditor?.();
+      let result = js ? await window.DeltaLang.runCell(submissionCode()) : await window.LessonNotebook?.runSource(editor.value, {
         context: "practice-editor",
         name: `<cell ${cell.dataset.cellId}>`,
         echo: true,
@@ -145,7 +149,7 @@ const DeltaNotebook = (() => {
       }
       // No `result.pyodide` gate: a backend run has none, and the image
       // drills are all torch — practice/runner.js::renderBackendOutputVisual.
-      if (cell === primary && !result.failed) {
+      if (cell === primary && !result.failed && !js) {
         await window.DeltaRunner.renderRunOutputVisual(result.pyodide, question, editor.value);
       }
     } catch (err) {
@@ -466,8 +470,12 @@ const DeltaNotebook = (() => {
      🔴 A cell in this notebook is the learner's, or it is the graded answer.
      Nothing else gets to be a cell. */
 
-  const reset = (code, { addScratch = true } = {}) => {
+  /* `lang` is the editor's language (practice/lang-js.js). Written BEFORE the
+     code so the highlighter repaints the new text in the new language; every
+     caller that does not say otherwise is putting Python in. */
+  const reset = (code, { addScratch = true, lang = "python" } = {}) => {
     if (!primary) return;
+    if (host) host.dataset.codeLang = lang === "javascript" ? "javascript" : "python";
     clearSolution();
     cells().slice(1).forEach((cell) => cell.remove());
     const editor = editorOf(primary);
@@ -484,6 +492,7 @@ const DeltaNotebook = (() => {
 
   const serialize = () => ({
     version: 1,
+    lang: host?.dataset.codeLang || "python",
     cells: cells().map((cell) => ({
       id: Number(cell.dataset.cellId),
       code: editorOf(cell)?.value || "",
@@ -498,7 +507,7 @@ const DeltaNotebook = (() => {
       return;
     }
     if (!draft?.cells?.length) return;
-    reset(draft.cells[0].code, { addScratch: false });
+    reset(draft.cells[0].code, { addScratch: false, lang: draft.lang });
     if (draft.cells[0].output) {
       outputOf(primary).textContent = draft.cells[0].output;
       outputShellOf(primary)?.classList.remove("hidden");
@@ -507,10 +516,12 @@ const DeltaNotebook = (() => {
     draft.cells.slice(1).forEach((saved) => addCell(saved.code, saved));
   };
 
+  // `#` is not a comment in JavaScript (it is private-field syntax).
   const submissionCode = () => cells()
     .map((cell, index) => {
       const code = editorOf(cell)?.value.trimEnd() || "";
-      return code ? `# --- cell ${index + 1} ---\n${code}` : "";
+      const mark = host?.dataset.codeLang === "javascript" ? "//" : "#";
+      return code ? `${mark} --- cell ${index + 1} ---\n${code}` : "";
     })
     .filter(Boolean)
     .join("\n\n");

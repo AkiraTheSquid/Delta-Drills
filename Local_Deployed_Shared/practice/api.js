@@ -489,6 +489,16 @@ const PracticeAPI = {
       questionNeedsEinops(this.currentQuestion) &&
       !needsTorchRuntime(this.currentQuestion, userCode);
 
+    /* A LeetCode drill answered in JavaScript (practice/lang-js.js) is graded
+       by node on the server and nowhere else. Falling through to the Pyodide
+       path below would run JS as Python and RECORD a wrong answer. */
+    const language = window.DeltaLang?.languageFor?.(this.currentQuestion) || "python";
+    if (language === "javascript" && practiceMode !== "backend") {
+      const blocked = new Error("JavaScript answers are graded on the server. Sign in again to submit.");
+      blocked.blocked = true;
+      throw blocked;
+    }
+
     if (practiceMode === "backend" && !requiresLocalPyodide) {
       const res = await apiFetch("/api/practice/submit", {
         method: "POST",
@@ -496,6 +506,7 @@ const PracticeAPI = {
         body: JSON.stringify({
           question_id: questionId,
           user_code: userCode,
+          language,
           example_shown: _exampleShown(questionId),
           // The answer clock pressed Submit, not the learner (timer.js
           // consumeTimedOut). The server logs a wrong answer under this as a
@@ -505,6 +516,11 @@ const PracticeAPI = {
       });
       if (res.status === 401) {
         handleExpiredToken();
+        if (language === "javascript") {
+          const blocked = new Error("Signed out — JavaScript answers are graded on the server. Sign in again to submit.");
+          blocked.blocked = true;
+          throw blocked;
+        }
         // fall through to local mode below
       } else if (!res.ok) {
         const detail = await res.text();
