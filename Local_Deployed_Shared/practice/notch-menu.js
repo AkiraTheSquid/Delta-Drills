@@ -32,12 +32,6 @@
   const btn = document.getElementById("practice-notch-btn");
   const menu = document.getElementById("practice-notch-menu");
   const pauseItem = document.getElementById("practice-notch-pause");
-  /* Finish the placement early — placement only, hidden for a session. Calls
-     DiagnosticPage.finish() directly rather than clicking the card's button:
-     that button is `.hidden` while a probe is on screen (exactly when this
-     row is needed) and a hidden button's click still fires, but the two-click
-     arm/confirm then shows its label nowhere. This row carries the label. */
-  const finishItem = document.getElementById("practice-notch-finish");
   /* The square, to the LEFT of the clock. Same destination as the menu's
      Pause item — one behaviour, two ways to reach it, neither of them a copy
      of what pausing does. There is no End counterpart: the session model has
@@ -59,19 +53,11 @@
     typeof PracticeSession !== "undefined" ? PracticeSession : window.PracticeSession;
 
   const _pauseBtn = () => document.getElementById("session-pause-btn");
-  /* The placement's own pause control (index.html, owned by
-     practice/diagnostic-page.js). A placement runs OUTSIDE a session, so
-     `#session-pause-btn` is inert for the whole test — proxying to it was what
-     left the square and the menu row dead while a probe was on the clock. */
-  const _placementPauseBtn = () => document.getElementById("placement-pause-btn");
-
-  /* WHICH pause this notch is offering right now. The placement wins whenever
-     its clock is up, because that is the clock the notch is showing (see
-     `_syncClock`) and pausing has to mean the thing the learner is looking at.
-     Returns null when neither is available, which is what disables both
-     controls. */
+  /* WHICH pause this notch is offering right now: the clock the notch is
+     showing (see `_syncClock`), because pausing has to mean the thing the
+     learner is looking at. Returns null when nothing is available, which is
+     what disables both controls. */
   function _pauseTarget() {
-    if (_placementOnClock()) return _placementPauseBtn();
     if (_lessonOnClock()) return _lessonPauseBtn();
     if (_sessionOpen()) return _pauseBtn();
     return _notebookOnClock() ? _notebookPauseBtn() : null;
@@ -107,7 +93,7 @@
      mirror of #session-countdown, and the square proxies to the block's own
      "Pause timer to come back later" button — the real element with the real
      handler, so pausing from the notch and from the block are one behaviour.
-     It ranks below a session and a placement, which cannot be live at the
+     It ranks below a session, which cannot be live at the
      same time as it in practice (the notebook page is not the practice page)
      but the order is written down so nobody has to guess. */
   function _notebookOnClock() {
@@ -134,23 +120,6 @@
      `--low` is timer.js's own last-30-seconds class, and it is applied only
      while ANSWERING: review time running out costs nothing, so painting it
      like a deadline would teach the wrong urgency. */
-  /* 🔴 THE TAB SHOWS ONE CLOCK. The placement test runs OUTSIDE a session —
-     starting it calls PracticeSession.finish("placement") — so `_sessionOpen()`
-     is false for the whole test and the session clock would sit beside the
-     probe's countdown greyed at 02:00, which reads as a second timer that has
-     stopped. While a probe is being timed the placement clock is the clock.
-
-     Read from the ELEMENT, not from `PlacementTimer.isRunning()`: the two
-     disagree for the moments that matter — `pauseForGrading` clears the
-     interval and hides the chip, `_expire` clears the interval before clicking
-     Submit — and the element's own `.hidden` is what is actually on screen.
-     placement-timer.js calls back in here (`_syncNotch`) on every show and
-     hide, so this runs at each of those transitions. */
-  function _placementOnClock() {
-    const el = document.getElementById("placement-timer");
-    return !!el && !el.classList.contains("hidden");
-  }
-
   function _syncClock() {
     if (!clock) return;
     const open = _sessionOpen();
@@ -161,25 +130,6 @@
        hidden between problems (`is-idle`); Seth reversed that the same day —
        "we should remain consistent". What changed instead is what it says
        when idle: see the `!open` branch. */
-    if (_placementOnClock()) {
-      clock.classList.add("hidden");
-      /* The placement's phase is not the session's, and the session's is
-         stale — nothing is answering or reviewing in a block that ended when
-         the test started. Both readers get the placement's own words.
-
-         🔴 THIS TOOLTIP IS NOW THE ONLY PLACE THE PROGRESS IS SAID. The
-         placement page's status line and progress bar are hidden while a probe
-         is on screen (styles/practice/diagnostic.css) — Seth wants a probe to
-         look exactly like a practice question — so "3 of at most 14" lives
-         here, on the surface a practice session already uses for its phase.
-         `progressLabel()` returns "" when nothing is running, which is the
-         same as not having asked. */
-      const where = window.DiagnosticPage?.progressLabel?.() || "";
-      const rule = "Each concept has its own clock, the same for every learner.";
-      if (tab) tab.title = where ? `${where} · ${rule}` : `Placement test — ${rule}`;
-      if (srPhase) srPhase.textContent = where || "Placement question";
-      return;
-    }
     clock.classList.remove("hidden");
     if (_lessonOnClock()) {
       /* The lesson's clock, copied — `dd-lesson-timer:tick` is what brings us
@@ -269,46 +219,14 @@
 
   function _syncItems() {
     const open = _sessionOpen();
-    const placement = _placementOnClock();
-    const lesson = !placement && _lessonOnClock();
-    const notebook = !open && !placement && !lesson && _notebookOnClock();
+    const lesson = _lessonOnClock();
+    const notebook = !open && !lesson && _notebookOnClock();
     const target = _pauseTarget();
     /* Refused for one of two reasons, and they are not the same: nothing to
        pause at all, or a question that is mid-grade. timer.js owns the second
-       and writes the reason into the session button's `title`; the placement's
-       control carries no such state — a probe on the clock can always be put
-       down. */
+       and writes the reason into the session button's `title`. */
     const refused = !target || target.disabled;
-    /* 🔴 THE PLACEMENT'S PAUSE IS REAL NOW (Seth, 2026-09-06). This used to
-       read `!open || …`, which dimmed both controls for the whole of a test —
-       the test runs outside a session by design, so `open` is false throughout
-       — and the tooltip told the learner the test "can't be paused" while a
-       clock counted down in front of them. It was true when it was written and
-       it is not any more: practice/diagnostic-page.js `pause()` stops the probe
-       clock, drops the probe and leaves the placement ACTIVE and resumable.
-       The comparability rule it protected is unharmed — the probe comes back
-       whole, on a fresh 2:00 — see that function's note. */
-    /* 🔴 "No session running." IS STILL A LIE MID-GRADE. `pauseForGrading`
-       hides the placement chip while a probe's answer is in flight, so
-       `_placementOnClock()` goes false for those seconds on a test that is very
-       much running — and the fallback reason would have gone back to claiming
-       nothing was happening. Ask the page, not the chip, for whether a
-       placement exists; the chip only says whether it is being timed. */
-    const placementActive = placement || window.DiagnosticPage?.isRunning?.() === true;
-    /* 🔴 AND WHICH KIND OF "not right now" IT IS. Between probes there is
-       nothing to pause and the way on is a button on the page; mid-grade there
-       IS a probe, it is just not interruptible. Both states hide the chip, so
-       the chip cannot tell them apart — the PROBE can. Same script-scope-const
-       trap as everywhere else: `PracticeAPI` is not on `window`. */
-    const _api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
-    const probeHeldBack = !!_api?.currentQuestion?.diagnostic_active;
-    const why = placement
-      ? "Pause the placement test. It stays where it is; you come back to a fresh 2:00 on this question."
-      : placementActive
-        ? probeHeldBack
-          ? "Pause becomes available when this placement question finishes."
-          : "Nothing to pause — load the next placement question to carry on."
-      : lesson
+    const why = lesson
         ? /* The lesson's own button labels itself for what a click does right
              now (practice/lesson-timer.js `_paintControl`); copying its title
              keeps the square from describing a different behaviour. */
@@ -322,22 +240,15 @@
       pauseItem.disabled = refused;
       pauseItem.title = why;
     }
-    if (finishItem) {
-      // …and only once something has been answered: with zero answers the
-      // server treats /finish as a decline, not a finish.
-      const answered = Number(_api?.lastDiagnosticStatus?.probes_done) || 0;
-      finishItem.classList.toggle("hidden", !placementActive || answered < 1);
-      finishItem.title = "End the placement test now. Your concepts are estimated from what you have answered so far; the question on screen is dropped, not counted.";
-    }
     if (stopBtn) {
       stopBtn.disabled = refused;
       stopBtn.title = why;
     }
-    /* The note explains the idle clock; a placement, a lesson or a notebook
-       clock is not idle. The lesson is the one of the three that can be live
+    /* The note explains the idle clock; a lesson or a notebook clock is not
+       idle. The lesson is the one of the two that can be live
        with no session behind it (`?lesson=<kc>`), so without it here the menu
        said "No session running." under a lesson clock that was counting. */
-    if (note) note.classList.toggle("hidden", open || placement || lesson || notebook);
+    if (note) note.classList.toggle("hidden", open || lesson || notebook);
   }
 
   function _open() {
@@ -391,23 +302,8 @@
   }
 
   /* `_pauseTarget`, not `_pauseBtn`: which pause is on offer is decided per
-     click, because a placement can start or finish under an open menu. */
+     click, because a lesson can start or finish under an open menu. */
   if (pauseItem) pauseItem.addEventListener("click", _proxy(_pauseTarget));
-  if (finishItem) {
-    /* No timer here — the notch's watch forbids a second clock in this file.
-       DiagnosticPage.finish() owns the two-click arm (and its lapse) and
-       writes the armed label onto THIS row as well as the card's button, so
-       the row only forwards the click and keeps the menu open for the second
-       one. Closing happens when the finish actually lands (the page re-renders
-       and the placement clock goes away). */
-    finishItem.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const page = window.DiagnosticPage;
-      if (!page?.finish) return;
-      const done = await page.finish();
-      if (done) _close();
-    });
-  }
   if (stopBtn) stopBtn.addEventListener("click", _proxy(_pauseTarget));
 
   /* Session state changes underneath an open menu — a question submits, the
@@ -478,13 +374,10 @@
     /* Exposed for tests and for anything that changes the session out of
        band; the mirror is otherwise driven entirely by the observer.
 
-       🔴 BOTH HALVES, despite the name. placement-timer.js calls this every
-       time its clock appears or disappears, and the square's tooltip depends
-       on which clock is up ("The placement test can't be paused" vs "No
-       session running") — the observer that normally pairs them watches
-       #session-status-row, and a placement changes nothing in there. Calling
-       only `_syncClock` left the square explaining a state that ended two
-       questions ago. */
+       🔴 BOTH HALVES, despite the name: the square's tooltip depends on which
+       clock is up, and a caller changing a clock out of band changes nothing
+       in #session-status-row, which the observer watches. Calling only
+       `_syncClock` left the square explaining a state that had ended. */
     syncClock: () => {
       _syncClock();
       _syncItems();

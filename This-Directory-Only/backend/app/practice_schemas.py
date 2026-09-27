@@ -63,25 +63,12 @@ class NextQuestionResponse(BaseModel):
     # Present for torch questions, which route to Colab instead of the in-app
     # runner; the frontend opens this and offers the solution separately.
     problem_notebook_path: str | None = None
-    # ALEKS-style placement diagnostic (diagnostic.py). When active, this
-    # question is a placement probe: the frontend shows the placement badge +
-    # "I don't know yet" button and skips the felt-difficulty rating.
-    diagnostic_active: bool = False
-    diagnostic_probe_index: int | None = None   # 1-based index of this probe
-    diagnostic_budget: int | None = None        # MAX_PROBES fatigue cap
-    diagnostic_area: str | None = None          # topic area being probed
-    # THIS probe's answer clock, seconds: its concept's cap
-    # (lessons/placement_time_caps.json) or the plan's remainder if shorter.
-    # placement-timer.js reads it off the question; the status carries the
-    # same number as plan.problem_secs_allowed for the pending probe.
-    diagnostic_secs_allowed: int | None = None
     # THIS question's answer clock, seconds, on the ordinary practice path:
     # its concept's cap from lessons/placement_time_caps.json — the SAME table
     # the placement charges against, so a problem is timed by what it needs,
     # not by anything chosen at the start of a block (Seth, 2026-09-09: "keyed
     # to how much time you need for each of them rather than what you select
-    # at the beginning ... like the diagnostic"). None on a placement probe,
-    # which carries diagnostic_secs_allowed instead. session-clock.js reads it
+    # at the beginning ... like the diagnostic"). session-clock.js reads it
     # off the question; question_pick.secs_allowed_for computes it.
     secs_allowed: int | None = None
     # First-encounter lesson gate: target KCs of this question the learner has
@@ -185,9 +172,8 @@ class LocalEvalResponse(BaseModel):
     finalized: bool = False
     # Whether an attempt is now parked waiting for a felt-difficulty rating.
     # The Colab edition asks for one (`finalize=false`) and needs to know that
-    # there is something for the rating to land on: during a placement
-    # diagnostic no attempt is created at all, and showing the three buttons
-    # there would post a /feedback that 400s on an empty pending slot.
+    # there is something for the rating to land on; without one the three
+    # buttons would post a /feedback that 400s on an empty pending slot.
     pending: bool = False
     target_difficulty_before: float | None = None
     target_difficulty_after: float | None = None
@@ -286,105 +272,6 @@ class PracticeStateResponse(BaseModel):
     self_reported_level: Optional[str] = None
 
 
-class SelfReportRequest(BaseModel):
-    # "beginner" | "default" | "strong" — "default" (or unknown) clears the
-    # prior back to the standard BKT p_init.
-    level: str
-
-
-class SelfReportResponse(BaseModel):
-    success: bool
-    level: Optional[str]  # normalized stored value (None when cleared)
-
-
-class DiagnosticAreaEstimate(BaseModel):
-    topic: str
-    theta: float    # posterior-mean ability on the 0-100 difficulty scale
-    sd: float       # posterior SD (placement uncertainty)
-    probes: int     # probes answered in this area
-
-
-class DiagnosticKcEstimate(BaseModel):
-    kc: str
-    title: str
-    lesson: str | None = None
-    topic: str | None = None
-    p: float                 # P(known), 0-1
-    state: str               # known | uncertain | unknown (ALEKS cut-offs)
-    probes: int = 0
-    arena_probes: int = 0    # of which were ARENA's own exercises
-    arena_linked: bool = False
-
-
-class DiagnosticPlan(BaseModel):
-    hours: float            # 1 / 3 / 6 from old clients; minutes/60 from the tiered picker
-    budget_secs: int
-    per_problem_secs: int
-    spent_secs: int = 0
-    remaining_secs: int = 0
-    problem_secs_allowed: int = 0   # the NEXT problem's clock: its concept's cap, or what is left
-    per_problem_min_secs: int = 0   # shortest / longest concept clock this learner is assessed on
-    per_problem_max_secs: int = 0
-    started_at: str | None = None
-
-
-class DiagnosticPlanOption(BaseModel):
-    key: str = ""            # quick / standard / full (app/placement_scope.py PLAN_TIERS)
-    hours: float
-    minutes: int = 0         # the budget the client sends back to /diagnostic/start
-    budget_secs: int
-    per_problem_secs: int
-    est_probes: int          # problems the plan is likely to hold
-    est_minutes: int         # point estimate of real time, not the cap
-    min_probes_at_cap: int   # if every problem used its full 20:00
-    coverage: float = 1.0    # est_probes / probes_to_settle — how much of the settle-everything test fits
-
-
-class DiagnosticEdgeViolation(BaseModel):
-    prereq: str
-    dependent: str
-    p_prereq: float
-    p_dependent: float
-
-
-class DiagnosticStatusResponse(BaseModel):
-    active: bool
-    scope: Literal["all", "raytracing-0.1"] = "all"
-    practice_target: Literal["all", "raytracing-0.1"] = "all"
-    completed_at: str | None = None
-    # Shortest / longest concept clock this learner is assessed on — at the
-    # top level, not only inside `plan`, so the picker can quote it BEFORE a
-    # run exists (plan is null then).
-    per_problem_min_secs: int = 0
-    per_problem_max_secs: int = 0
-    declined: bool = False
-    probes_done: int = 0
-    budget: int
-    min_probes: int
-    areas: list[DiagnosticAreaEstimate] = Field(default_factory=list)
-    atoms_seeded: int | None = None   # set once finished
-    can_set_prior: bool = False
-    self_reported_level: str | None = None
-    # 2026-09-07 graph-wide placement: the time plan and the per-concept rows.
-    plan: DiagnosticPlan | None = None
-    # The areas this run was narrowed to (registry topics); None = every area.
-    focus_areas: list[str] | None = None
-    kcs: list[DiagnosticKcEstimate] = Field(default_factory=list)
-    fast_track: list[str] = Field(default_factory=list)
-    edge_violations: list[DiagnosticEdgeViolation] = Field(default_factory=list)
-
-
-class DiagnosticStartRequest(BaseModel):
-    # One of diagnostic.PLAN_HOURS; anything else falls back to the default.
-    hours: int | None = None
-    # The tiered picker's budget (app/placement_scope.py); wins over `hours`.
-    minutes: int | None = None
-    # Registry topics to place (Python / Numpy / PyTorch / Einops /
-    # Mathematics). Absent, empty or all of them = the whole curriculum.
-    areas: list[str] | None = None
-    scope: Literal["all", "raytracing-0.1"] = "all"
-
-
 class PracticeTargetRequest(BaseModel):
     target: Literal["all", "raytracing-0.1"]
 
@@ -401,32 +288,6 @@ class StudyCoursesRequest(BaseModel):
     """The onboarding "which courses do you want to study?" answer: the
     course ids picked, at least one (app/course_registry.course_off)."""
     courses: List[str]
-
-
-class DiagnosticPlanArea(BaseModel):
-    key: str
-    kcs: int
-
-
-class DiagnosticPlanResponse(BaseModel):
-    options: list[DiagnosticPlanOption] = Field(default_factory=list)
-    assessed_kcs: int = 0
-    arena_linked_kcs: int = 0
-    # Every area the learner could pick, and the concept count in each.
-    area_catalog: list[DiagnosticPlanArea] = Field(default_factory=list)
-    probes_to_settle: int = 0
-    per_problem_min_secs: int = 0
-    per_problem_max_secs: int = 0
-
-
-class DiagnosticAnswerRequest(BaseModel):
-    question_id: int
-    # "dont_know" is the first-class no-attempt response; correct/incorrect
-    # cover self-rated paths (e.g. Colab-routed items).
-    result: Literal["dont_know", "correct", "incorrect"]
-    # Problem time the client measured, seconds. Advisory: the server's own
-    # serve-to-answer reading wins whenever it has one.
-    elapsed_secs: float | None = None
 
 
 class CodeRunRequest(BaseModel):

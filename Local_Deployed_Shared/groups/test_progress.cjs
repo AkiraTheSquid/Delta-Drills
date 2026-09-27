@@ -7,10 +7,10 @@ const path = require("node:path");
 const http = require("node:http");
 const { chromium } = require("playwright");
 const root = path.resolve(__dirname, "..");
-const scripts = ["practice/activity-bars.js", "practice/placement-results.js", "groups/groups_store.js",
+const scripts = ["practice/activity-bars.js", "practice/area-readiness.js", "groups/groups_store.js",
   "groups/groups_checklist_doc.js", "groups/groups_checklist.js", "groups/groups_day.js",
   "groups/groups_join.js", "groups/groups_progress.js", "groups/groups_lane.js", "groups/groups_view.js"];
-const styles = ["styles/variables.css", "styles/base.css", "styles/components.css", "styles/practice/diagnostic.css", "styles/groups.css"];
+const styles = ["styles/variables.css", "styles/base.css", "styles/components.css", "styles/practice/home.css", "styles/groups.css"];
 const harness = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">${styles.map(p => `<link rel="stylesheet" href="/${p}">`).join("")}</head><body><main class="groups-page"><h1>Study group</h1><div id="groups-root"></div></main><script>window.DDIdentity={isSignedIn:()=>true};window.apiFetch=(url,opts)=>fetch(url,opts);</script>${scripts.map(p => `<script src="/${p}"></script>`).join("")}<script>DDGroups.refresh()</script></body></html>`;
 
 (async () => {

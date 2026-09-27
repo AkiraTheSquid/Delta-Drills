@@ -187,17 +187,16 @@ def check_invariants():
     editor = _src("groups_checklist.js")
     day = _src("groups_day.js")
 
-    # 🔴 No second readiness scale. The map lives in practice/placement-results.js
-    # and mirrors _mastery_from_theta in backend/app/diagnostic.py; practice's
-    # own watcher fails on drift, but only for the copies it knows about.
-    for constant in ("DIFF_FLOOR", "DIFF_SPAN", "SEED_MASTERY"):
+    # 🔴 No second readiness scale. The map lives in practice/area-readiness.js
+    # (since the placement test was retired, 2026-09-26).
+    for constant in ("DIFF_FLOOR", "DIFF_SPAN", "SEED_MASTERY", "FLOOR =", "CAP ="):
         assert constant not in lane, (
             f"{constant} was re-declared in groups_lane.js. Use "
-            "PlacementResults.readiness()/.band() — a second copy of that map "
+            "AreaReadiness.readiness()/.band() — a second copy of that map "
             "is how two screens end up quoting different numbers for one learner"
         )
-    assert "results.readiness(" in lane and "results.band(" in lane, (
-        "groups_lane.js stopped scoring areas through PlacementResults"
+    assert "window.AreaReadiness" in lane and "results.readiness(" in lane and "results.band(" in lane, (
+        "groups_lane.js stopped scoring areas through AreaReadiness"
     )
 
     # 🔴 The public directory never learns a name.
@@ -249,7 +248,7 @@ def check_invariants():
         "token left in the bar gets pasted, bookmarked and screenshotted"
     )
 
-    # The unprobed honesty rule, carried over from placement-results.js.
+    # The unprobed honesty rule, carried over from the retired placement-results.js.
     assert "placement-area--unprobed" in lane and "not probed" in lane, (
         "groups_lane.js stopped dimming unprobed areas. An unprobed theta is a "
         "prior wearing a percentage, and here it is being read ABOUT SOMEBODY ELSE"

@@ -82,6 +82,7 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-09-26 (**placement retired**): `solo-route.css` drops the `data-solo-page="placement"` selectors; `groups.css` comments point at `practice/home.css`.
 - 2026-09-26 (**survey card**): new **`survey.css`** (`?v=1`) after `xp-panel.css` — token-only (in `watch.py`'s `token_first_files`). `#page-practice.session-idle.is-surveying` hides every other child of `.practice-container`; `#page-practice:not(.session-idle) .learner-survey` is always hidden. Phone: choice rows stack under the question.
 - 2026-09-26 (**XP panel**): new **`xp-panel.css`** (`?v=2`) after `xp.css` — Learner Home's measured-learning card. Token-only (in `watch.py`'s `token_first_files`), `--xp-from`/`--xp-to` gradient signature, Instrument Serif figures + IBM Plex Mono labels, chart label halo in `--surface`, `prefers-reduced-motion` drops the reveal.
 - 2026-09-25 (**Knowledge Graph header**): new **`kg-toolbar.css`** (`?v=1`) after `graph-views.css` — one glass toolbar across the top of the graph (view · colour · Filter · node look · Reset · Fit), a caption line under it, the legend alone bottom-left with a Key fold, softer active state (`--accent` at 20% + inset ring instead of a solid fill). No new theme token besides `--kg-edge`.

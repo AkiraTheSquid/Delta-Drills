@@ -104,7 +104,7 @@ const ExerciseTimer = (() => {
   const _api = () =>
     (typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI) || null;
   /* 🔴 `apiFetch` is a script-global const, not a window property — the same
-     trap practice/kc-practice.js and practice/diagnostic-page.js document. */
+     trap practice/kc-practice.js documents. */
   const _fetch = () => (typeof apiFetch !== "undefined" ? apiFetch : window.apiFetch);
 
   const _sourceCell = (block) => {

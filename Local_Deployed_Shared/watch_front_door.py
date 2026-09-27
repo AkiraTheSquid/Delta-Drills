@@ -28,7 +28,6 @@ def check_front_door():
     index_html = _read(os.path.join(HERE, "index.html"))
     app_js = _read(os.path.join(HERE, "app.js"))
     learn_css = _read(os.path.join(HERE, "styles", "learn-about.css"))
-    diagnostic = _read(os.path.join(HERE, "practice", "diagnostic-page.js"))
 
     # ONE tab, and the two it replaced are gone from the markup entirely.
     assert index_html.count('data-tab="learn-about-app"') == 1, (
@@ -113,29 +112,23 @@ def check_front_door():
     assert fork.find("welcome-arm--right") < fork.find("welcome-arm--instructor"), (
         "the instructor arm sits BELOW the learner pair, not among them"
     )
-    # 🔴 THE RIGHT ARM POINTS AT THE PLACEMENT (Seth, 2026-09-01: "whenever it
-    # says get started or whatever, it would essentially take them to the
-    # placement diagnostic and then they would take that"). It pointed at
-    # "practice" between 2026-08-24 and 2026-09-01, when the placement card was
-    # a block ON the Learner Home and the arm's own note — "Starts with the
-    # placement test" — was kept true by that. The card has its own page again,
-    # so the note is only true if the arm names it.
-    # Since 2026-09-25 by way of ONE question first (Seth: "a single prompt
-    # question that asks them which courses they want to include for study
-    # ... between the 'take me to diagnostic' and viewing diagnostic
-    # controls"): the arm opens #page-course-pick, whose Continue opens the
-    # placement.
+    # THE RIGHT ARM ASKS WHICH COURSES, THEN OPENS PRACTICE. Since 2026-09-25
+    # by way of ONE question first (Seth: "a single prompt question that asks
+    # them which courses they want to include for study"): the arm opens
+    # #page-course-pick, whose Continue opens Practice — where the "what have
+    # you done before?" survey waits (it replaced the placement test the arm
+    # led to until 2026-09-26).
     assert 'data-goto-tab="learn-about-app"' in fork and 'data-goto-tab="course-pick"' in fork, (
         "left arm reads about the app, right arm asks which courses — "
-        "#page-course-pick — before the placement, not the Learner Home"
+        "#page-course-pick — before Practice"
     )
     assert 'id="page-course-pick"' in markup and 'data-tab="course-pick"' not in markup, (
-        "#page-course-pick is a page with no tab, like #page-placement"
+        "#page-course-pick is a page with no tab"
     )
     with open(os.path.join(HERE, "practice", "course-pick.js")) as f:
         pick_js = f.read()
-    assert '"/api/practice/study-courses"' in pick_js and 'switchTab("placement")' in pick_js, (
-        "the course question saves the answer and then opens the placement — "
+    assert '"/api/practice/study-courses"' in pick_js and 'switchTab("practice")' in pick_js, (
+        "the course question saves the answer and then opens Practice — "
         "it is a step on the way there, not a dead end"
     )
     assert 'src="practice/course-pick.js' in index_html, "course-pick.js is not loaded"
@@ -195,160 +188,48 @@ def check_front_door():
         "without it an unknown tab name hides every page and shows nothing"
     )
 
-    # ---- TWO PAGES, ONE OF THEM WITHOUT A TAB ----------------------------
+    # ---- ONE PAGE. THE PLACEMENT TEST IS RETIRED ------------------------
     # Seth, 2026-08-24: "the diagnostic and practice should be combined into one
-    # tab, with it being called Learner Home" — and 2026-09-01: "we can probably
-    # just keep the interface for the diagnostic ... separate, and then it only
-    # gets displayed whenever you click on the drop-down one and you go to it
-    # specifically". Both hold. The TAB is still one (Learner Home); what split
-    # back out is the page behind a menu row, under the learner-facing id
-    # #page-placement rather than the retired #page-diagnostic.
-    assert 'id="page-diagnostic"' not in index_html, (
-        "#page-diagnostic is back under its old name. The placement page is "
-        "#page-placement now — solo-route.js, app.js's renamedTabs and "
-        "diagnostic-page.js all read that id"
-    )
+    # tab, with it being called Learner Home". The placement page that split
+    # back out on 2026-09-01 was retired with the test on 2026-09-26 ("just
+    # removing the diagnostic test distinction"); the survey on the Learner
+    # Home sets the starting point instead.
+    for gone in ('id="page-diagnostic"', 'id="page-placement"'):
+        assert gone not in index_html, (
+            f"{gone} is back. The placement test was retired on 2026-09-26 — "
+            "its routes are gone, so its page would render and never load"
+        )
     assert 'data-tab="diagnostic"' not in markup and 'data-tab="placement"' not in markup, (
-        "the Placement test is in the tab strip. It is reached from the account "
-        "menu, the welcome fork and /diagnostic — the strip stays the list of "
-        "places a learner lives in, and a test taken once is not one"
+        "a placement tab is in the strip, for a test that no longer exists"
     )
     assert ">Learner Home<" in index_html, (
         "the Practice tab is called Learner Home now"
     )
+    # 🔴 OLD NAMES STILL ARRIVE. `/diagnostic` (solo-route.js), a stale
+    # `dd_recovered_tab` and old links all name the retired page; each must
+    # land on Practice, not on the "unknown tab" fallback.
+    assert 'diagnostic: "practice"' in app_js and 'placement: "practice"' in app_js, (
+        "switchTab must map the retired `diagnostic` / `placement` names onto "
+        "Practice"
+    )
     # 🔴 SLICE THE PAGE, NOT THE REST OF THE DOCUMENT. `split(...)[1]` alone
-    # runs to the end of the file, so with #page-placement sitting after it
-    # every id on the placement page would satisfy an assertion about the
-    # Learner Home. The pages are top-level <main>s, closed at two spaces.
+    # runs to the end of the file. The pages are top-level <main>s, closed at
+    # two spaces.
     home = index_html.split('id="page-practice"')[1].split("\n  </main>")[0]
-    placement = index_html.split('id="page-placement"')[1].split("\n  </main>")[0]
-    for needle in ('id="learner-areas"', 'id="placement-areas"', 'id="readiness-dial"'):
+    for needle in ('id="readiness-dial"', 'id="learner-survey"', 'id="learner-xp"'):
         assert needle in home, (
             f"{needle} is not on the Learner Home — the daily surface is the "
-            "readiness dial and the area bars, and those stay whatever else moves"
+            "readiness dial, the survey that sets the start, and measured XP"
         )
-    # 🔴 AND THE OFFER IS NOT. Seth, 2026-09-01: the Learner Home "wouldn't even
-    # have the progress ready for arena ... it would have a simple interface
-    # that says take the placement diagnostic", on its own page. A card that
-    # drifts back onto the Home spends the daily screen on an offer taken once.
-    for needle in ('id="diagnostic-overview"', 'id="diagnostic-results"',
-                   'id="diagnostic-workspace-host"', 'id="placement-skip-btn"'):
-        assert needle not in home and needle in placement, (
-            f"{needle} belongs to #page-placement, not the Learner Home "
-            "(Seth, 2026-09-01). The workspace host in particular: hosted on "
-            "#page-practice, a probe renders under the practice page's name"
-        )
-    # 🔴 THE STATUS READ IS WIRED TO BOTH PAGES. One /diagnostic/status payload
-    # writes the card and the start button on #page-placement AND the area bars
-    # on the Learner Home, so app.js refreshes on entry to either and leave()s
-    # on entry to anything else. Pointed at a name that does not exist it
-    # silently took the leave branch every time, and the Home sat on "Loading
-    # placement status…" with no area bars. Nothing throws when this is wrong.
-    assert ('if (tabName === "practice" || tabName === "placement") '
-            "window.DiagnosticPage.refresh();") in app_js, (
-        "app.js must refresh the placement status when EITHER the Learner Home "
-        "or the placement page opens — the same payload feeds both"
-    )
-    assert 'diagnostic: "placement"' in app_js, (
-        "switchTab must map the internal `diagnostic` name onto the placement "
-        "page: it still arrives from /diagnostic, from a stale "
-        "dd_recovered_tab and from practice/events.js"
-    )
-    # 🔴 THE LOCK IS BACK, BECAUSE THE SECOND PAGE IS. One `.practice-container`
-    # is re-parented between the two, so a route to Practice mid-probe would
-    # drag the probe onto the Learner Home and show it under that page's name
-    # (Seth, 2026-08-23). A REDIRECT, not a disabled tab: a disabled tab has no
-    # :disabled style, so it looks live and eats the click.
-    assert 'tabName = "placement";' in app_js and "DiagnosticPage?.isRunning?.()" in app_js, (
-        "switchTab lost the practice->placement redirect. Two pages sharing one "
-        "editor is exactly what the 2026-08-23 lock existed for, and the second "
-        "page is back"
-    )
-    assert "setPracticeLock(" not in diagnostic, (
-        "the tab-DISABLING lock is back. The redirect in app.js is how this is "
-        "held now; disabling the tab leaves an unstyled control that eats clicks"
-    )
-    assert 'byId("page-diagnostic")' not in diagnostic, (
-        "diagnostic-page.js is still looking for the deleted placement page; "
-        "every one of those reads is silently undefined"
-    )
-    assert 'byId("page-placement")' in diagnostic, (
-        "diagnostic-page.js must ask about #page-placement — it is what decides "
-        "whether a probe may be hosted and where the workspace goes"
-    )
 
-    # 🔴 THE AREA BARS ARE ON THE IDLE SCREEN, not locked inside the results
-    # card. Seth, 2026-08-24: "it should display the information about einops,
-    # numpy, and einsum to be learned". /diagnostic/status returns all three
-    # areas from the first call on a new account, so there is always something
-    # to draw; before this they appeared only after a COMPLETED placement.
-    setup = home.split('id="practice-session-setup"')[1].split('class="practice-split"')[0]
-    assert 'id="learner-areas"' in setup and 'id="placement-areas"' in setup, (
-        "the area bars must sit on the idle surface, which is what a learner "
-        "opens every day — inside #diagnostic-results they show only after a "
-        "placement is complete"
-    )
-    results = index_html.split('id="diagnostic-results"')[1].split("</section>")[0]
-    assert 'id="placement-areas"' not in results, (
-        "there are two area lists again. One writer, one host: "
-        "placement-results.js renderAreas fills #placement-areas and it is on "
-        "the idle surface"
-    )
-    placement_results = _read(os.path.join(HERE, "practice", "placement-results.js"))
-    assert "renderAreas," in placement_results or "renderAreas }" in placement_results, (
-        "renderAreas must be public — diagnostic-page.js calls it on every "
-        "status read, not only on a finished placement"
-    )
-    assert "PlacementResults?.renderAreas(" in diagnostic, (
-        "the area bars are only drawn when a placement COMPLETES again"
-    )
-
-    # 🔴 THE SPECIFICITY GUARD. With the host on the same page as the idle
-    # screen, `#page-practice.session-idle .practice-split { display: none }`
-    # (styles/practice/timer.css) outranks `.diagnostic-workspace-host
-    # .practice-split { display: flex }` — a probe would render as a blank idle
-    # screen. Two IDs settle it without depending on stylesheet order.
-    diag_css = _read(os.path.join(HERE, "styles", "practice", "diagnostic.css"))
-    # 🔴 KEPT AFTER THE 2026-09-01 SPLIT even though the host moved back off
-    # #page-practice with the placement page. It matches nothing while the host
-    # is elsewhere and costs nothing; it is the exact pair that has to exist if
-    # the host is ever hosted under that page again, and its absence is how the
-    # blank-probe bug comes back without a failing check.
-    assert "#page-practice #diagnostic-workspace-host .practice-split" in diag_css, (
-        "the hosted workspace has no rule that outranks #page-practice."
-        "session-idle, so a placement probe renders as a blank idle screen"
-    )
-    # 🔴 AND `.diagnostic-running` IS WRITTEN ON #page-placement SINCE THE SPLIT.
-    # It hides the overview card while a probe is hosted over it — pointed at
-    # the page the card is no longer on, the card would stay on screen behind
-    # the probe.
-    assert "#page-placement.diagnostic-running #diagnostic-overview" in diag_css, (
-        ".diagnostic-running is written on #page-placement since 2026-09-01; a "
-        "selector naming any other page matches nothing and leaves the overview "
-        "card on screen underneath a running probe"
-    )
-
-    # 🔴 THE BOOT REFRESH MUST WAIT FOR THE MODE. diagnostic-page.js parses
-    # before practice/init.js, and `PracticeAPI.diagnosticStatus()` returns null
-    # — not a failure, NULL — while `practiceMode` is still its "local" default.
-    # `render(null)` paints "Sign in to take the placement test." with the area
-    # bars hidden. Harmless while the placement had its own (hidden-at-load)
-    # page; since the merge the guard reads #page-practice, which every visitor
-    # lands on, so a parse-time refresh is the first thing they see.
+    # 🔴 THE MODE IS ANNOUNCED. Every surface that reads the backend on load
+    # (xp.js, survey.js, course-pick.js, courses.js, activity-chart.js)
+    # parses before practice/init.js, and a read made while `practiceMode` is
+    # still its "local" default answers null.
     init_js = _read(os.path.join(HERE, "practice", "init.js"))
     assert "delta:practice-mode-ready" in init_js and "detectPracticeMode();" in init_js, (
-        "practice/init.js no longer announces the decided mode; "
-        "diagnostic-page.js is waiting on an event that never fires"
-    )
-    assert "delta:practice-mode-ready" in diagnostic, (
-        "diagnostic-page.js refreshes at parse time again — before "
-        "detectPracticeMode() has run, which renders the signed-out copy at "
-        "signed-in learners"
-    )
-    boot = diagnostic.split("window.DiagnosticPage = DiagnosticPage;")[-1]
-    assert "DiagnosticPage.refresh();" in boot and "addEventListener" in boot, (
-        "the boot block must refresh THROUGH the mode-ready event, not at "
-        "parse time"
+        "practice/init.js no longer announces the decided mode; the Learner "
+        "Home's surfaces wait on an event that never fires"
     )
 
     # 🔴 apiFetch MUST BE ON `window`. It is a top-level const in app.js, so it

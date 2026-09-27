@@ -2,7 +2,7 @@
    GUEST-SESSION.JS — the app, with no sign-in
 
    The learning surface is not evenly available to a signed-out visitor.
-   The diagnostic (practice/api.js diagnosticStart/Status/Answer), the
+   The survey (practice/survey.js), the
    lessons (practice/lessons.js), the stage ladder (practice/ladder.js)
    and the BKT student model behind them are all guarded by
    `practiceMode === "backend"`, and practiceMode is "local" for anyone

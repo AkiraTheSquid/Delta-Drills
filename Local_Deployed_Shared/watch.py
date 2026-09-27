@@ -216,56 +216,13 @@ def check_invariants():
     for label in ("Learner home", "Account and Settings", "Knowledge graph",
                   "Why this app exists", "How this app works"):
         assert f">{label}<" in menu, f"the account menu lost the {label!r} row"
-    # 🔴 THE PLACEMENT ROW IS ASSERTED BY ID, NOT BY WORDS. Its label is state —
-    # diagnostic-page.js rewrites it Take / Resume / Retake off the same
-    # /diagnostic/status payload that labels #placement-start-btn — so matching
-    # the text would fail the moment a learner completes a placement. Same rule
-    # as the instructor row above.
-    assert 'id="account-menu-placement-label"' in menu, (
-        "the account menu lost the placement-test row. Seth, 2026-08-31: the "
-        "retake has to be reachable from this menu, not only from the card on "
-        "the Learner Home"
+    # 🪦 THE PLACEMENT ROW AND #page-placement ARE GONE (Seth, 2026-09-26:
+    # the placement test was retired; the Practice tab's survey sets the
+    # starting point). Asserted gone so a revert of half of it is loud.
+    assert 'data-placement-retake' not in menu and 'id="page-placement"' not in index_html, (
+        "the placement row or #page-placement is back — the placement test was "
+        "retired on 2026-09-26 and its routes no longer exist"
     )
-    assert "data-placement-retake" in menu, (
-        "the placement row lost data-placement-retake — account-menu.js reads "
-        "it to focus and flash the button on the placement card; without it "
-        "the row is a bare jump to a page with nothing highlighted"
-    )
-    # 🔴 IT ROUTES, IT DOES NOT START. `diagnostic.start()` CLEARS the probe log
-    # and blanks completed_at, and this row sits one pixel from "Learner home".
-    # The destructive click stays on the card, behind a second deliberate press.
-    #
-    # 🔴 AND IT ROUTES TO #page-placement (Seth, 2026-09-01: the placement
-    # interface "only gets displayed whenever you click on the drop-down one and
-    # you go to it specifically"). This row is the only standing entry point to
-    # that page from inside the app, so a row that went back to routing at
-    # "practice" would leave the page reachable by URL alone.
-    _placement_row = menu.split("data-placement-retake")[0].rsplit("<button", 1)[1]
-    assert 'data-goto-tab="placement"' in _placement_row, (
-        "the placement row stopped routing to #page-placement through app.js's "
-        "own [data-goto-tab] binding — that page has no tab in the strip, so "
-        "this row is the only way a learner reaches it"
-    )
-    # THE PAGE ITSELF, and the two things that have to be ON it. The 2026-08-24
-    # merge dissolved #page-diagnostic into the Learner Home and Seth asked for
-    # it back on 2026-09-01; without this the merge can happen again silently.
-    # The workspace host is asserted with it because a placement page without it
-    # renders the probe on the practice page under the practice page's name —
-    # the exact failure the old tab lock existed to prevent.
-    assert 'id="page-placement"' in index_html, (
-        "#page-placement is gone. The placement test is its own page again "
-        "(Seth, 2026-09-01) — the Learner Home carries the readiness dial and "
-        "the area bars, not the offer to sit a test"
-    )
-    _placement_page = index_html.split('id="page-placement"')[1].split("\n  </main>")[0]
-    for _id in ('id="diagnostic-overview"', 'id="diagnostic-workspace-host"',
-                'id="placement-skip-btn"'):
-        assert _id in _placement_page, (
-            f"{_id} is not inside #page-placement any more. The card, the probe "
-            "host and the way back out all belong to that page; on the Learner "
-            "Home the card is what Seth asked to remove, and the host is what "
-            "would show a probe under the practice page's name"
-        )
     # The instructor row (Seth, 2026-08-24) is the late door into the mode and
     # the only way out. Its label is REWRITTEN by instructor-mode.js
     # (Enter ↔ Exit), so assert the id it rewrites through, not the text.

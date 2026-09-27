@@ -55,8 +55,7 @@ GAP_B = {"kc": "kc.b", "kc_title": "Concept B", "stage": "faded", "seen": 2, "an
 
 # The loop moved from the router into question_pick.run_queue (2026-09-13) so
 # the lattice can run it dry; the stubs go where the loop now looks them up.
-_orig = (qp.select_next_subtopic, qp.pick_for_subtopic, diagnostic.should_run, content_gaps.record)
-diagnostic.should_run = lambda st: False
+_orig = (qp.select_next_subtopic, qp.pick_for_subtopic, content_gaps.record)
 recorded = []
 content_gaps.record = lambda uid, gap: recorded.append(gap)
 
@@ -155,7 +154,7 @@ try:
     check("F: focused 409 carries the learner message",
           "Concept A" in resp.json()["detail"].get("message", ""), str(resp.json())[:160])
 finally:
-    qp.select_next_subtopic, qp.pick_for_subtopic, diagnostic.should_run, content_gaps.record = _orig
+    qp.select_next_subtopic, qp.pick_for_subtopic, content_gaps.record = _orig
     app.dependency_overrides.clear()
 
 # H. The practice clock is the concept's table number clamped to five minutes

@@ -183,8 +183,7 @@
        `.session-idle` — the practice page is up, but between blocks: the
                          question split is display:none and the idle dial has
                          the screen. timer.js adds it on pause/finish and
-                         removes it on start/resume; diagnostic-page.js sets it
-                         from `practiceHoldsQuestion()`. A lesson page removes
+                         removes it on start/resume. A lesson page removes
                          it too (lessons.js), which is correct — a lesson is a
                          concept on screen.
 

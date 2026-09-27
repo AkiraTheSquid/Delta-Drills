@@ -34,14 +34,8 @@ window.DD_INFOTIPS = {
   },
 
   /* ---- Practice: setting up ---------------------------------------- */
-  "self-report": {
-    title: "Starting point",
-    body: "A prior, not a placement: it only sets where the queue <em>begins</em>. Your answers move it either way within a few questions.",
-  },
-  placement: {
-    title: "Placement test",
-    body: "A test that jumps between different topics in order to determine what concepts you need to learn for PyTorch.<br><br>Choosing your level influences what difficulty you start at for the test, so it's okay if you're not sure where your level is at.",
-  },
+  /* "self-report" and "placement" were DELETED on 2026-09-26 with the
+     placement page their anchors sat on. */
   /* "placement-timer" was DELETED on 2026-08-23 with its anchor's ⓘ. The
      countdown moved out of .question-number-row and onto the notch tab
      (index.html), where a sibling dot would sit between the clock and the
@@ -125,7 +119,7 @@ window.DD_INFOTIPS = {
   /* ---- Account ------------------------------------------------------ */
   "account-mode": {
     title: "Advanced mode",
-    body: "Off, the app is just the drills: <strong>Practice</strong> and the <strong>Diagnostic</strong>. On, it also shows the machinery behind them — the knowledge graph, the ARENA course content, the notebooks and targeted practice. Nothing is deleted either way; the toggle only changes which tabs are in the nav.",
+    body: "Off, the app is just the drills: <strong>Practice</strong>. On, it also shows the machinery behind it — the knowledge graph, the ARENA course content, the notebooks and targeted practice. Nothing is deleted either way; the toggle only changes which tabs are in the nav.",
   },
   "account-advanced": {
     title: "Advanced settings",

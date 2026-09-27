@@ -7,7 +7,7 @@
    the diagnostic for the timing of the questions ... using the same time."
    Every practice question arrives stamped with `secs_allowed` — its
    concept's cap in lessons/placement_time_caps.json, the same number a
-   placement probe on that concept gets — and practice/session-clock.js
+   placement probe on that concept got — and practice/session-clock.js
    reads it off the question. It is what EACH STEP gets, answering and
    reviewing alike, per question.
 
@@ -584,8 +584,7 @@ const PracticeSession = (() => {
     const feedbackSaved =
       review.feedbackComplete ||
       practiceProgress.pendingFeedback?.questionId === _qid ||
-      (_qid != null && practiceProgress.completedQuestionIds?.includes(_qid)) ||
-      PracticeAPI.currentQuestion?.diagnostic_active;
+      (_qid != null && practiceProgress.completedQuestionIds?.includes(_qid));
     if (review.unscored) showNextProblemButton("Time ran out on this one — not counted. Press Next to carry on.");
     else if (feedbackSaved) showNextProblemButton("You already rated this one. Press Next to carry on.");
   };
@@ -617,23 +616,7 @@ const PracticeSession = (() => {
       });
   };
 
-  /* 🔴 A PLACEMENT PROBE IS TIMED BY THE PLACEMENT'S RULE, and this matters
-     MORE now that the session clock is the learner's again (2026-08-28). The
-     placement compares a learner against the bank's difficulty, so every probe
-     has to get the same fixed 2:00 — the learner's own allowance, and above
-     all "No limit", would make the test measure how long they chose to sit
-     there. Starting the placement ends the running session, but a learner can
-     start a fresh session while a placement is still open, and then the probes
-     were inheriting whatever that session was set to. */
-  const _probeOnScreen = () => {
-    const api = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
-    return !!api?.currentQuestion?.diagnostic_active;
-  };
-
-  const _answerSecsFor = () =>
-    _probeOnScreen() && window.PlacementTimer
-      ? window.PlacementTimer.secondsPerQuestion()
-      : ANSWER_SECS();
+  const _answerSecsFor = () => ANSWER_SECS();
 
   const onQuestionRendered = () => {
     if (!isActive()) {
@@ -1060,9 +1043,8 @@ const PracticeSession = (() => {
 
   /* Reasons a block ends WITHOUT a pause. "ended" is gone with the button that
      sent it, and so is "complete": the quota it counted down to no longer
-     exists. What is left is a failure to load and the placement taking over —
-     both of which happen TO the learner, which is why each one says what
-     happened rather than congratulating them. */
+     exists. What is left is a failure to load — which happens TO the learner,
+     which is why it says what happened rather than congratulating them. */
   const finish = (reason, message) => {
     if (!state) return;
     window.AnswerHistory?.abandon();
@@ -1101,9 +1083,7 @@ const PracticeSession = (() => {
       message ||
       (reason === "error"
         ? "Could not load a question — check the connection and try again."
-        : reason === "placement"
-          ? "Placement test started — its questions are timed on their own clock, one at a time."
-          : reason === "complete" && outcome?.text
+        : reason === "complete" && outcome?.text
             ? outcome.text
           : reason === "complete" && outcome?.solved
             ? `Solved on attempt ${outcome.attempts} — ${served} of ${config.quota} questions used. Recorded answers are kept.`

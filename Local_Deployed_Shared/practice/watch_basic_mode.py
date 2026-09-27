@@ -341,14 +341,11 @@ def check_the_difficulty_question_is_one_row_docked_to_the_bottom():
     #     (finalize_attempt), and painting at submit spends the one update the
     #     rating click had to show — the concept pill measured 33.33% before
     #     the click and 33.33% for the whole 2.2s after it.
-    submit_paint = re.search(
-        r"if \(result\.ladder_estimate && window\.StageLadder([^)]*)\)", events
-    )
-    assert submit_paint and "!" in submit_paint.group(1), (
-        "the submit handler paints result.ladder_estimate unconditionally "
-        "again. It must be guarded on there being no rating step to follow "
-        "(placement probes only) or the difficulty answer has nothing left "
-        "to show the learner"
+    #     (Placement probes, which had no rating step, were the one exception
+    #     until the test was retired on 2026-09-26.)
+    assert "setProgress(result.ladder_estimate)" not in events, (
+        "the submit handler paints result.ladder_estimate again — the "
+        "difficulty answer then has nothing left to show the learner"
     )
 
     # 4. Nobody answers it for them while it is visible.

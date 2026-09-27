@@ -198,7 +198,7 @@ def order(user_state, kcs: Iterable[str]) -> List[str]:
 # --- the two writers ---------------------------------------------------------
 # `course_shares` and `study_courses` are coupled: a standalone course is on
 # exactly while it is studied, and a course left out has no share. Both
-# endpoints (practice/diagnostic_router.py) go through these two, so the pair
+# endpoints (practice/settings_router.py) go through these two, so the pair
 # cannot drift apart.
 
 

@@ -3,8 +3,8 @@
 
 Covers: `study_courses` = None keeps the old rules (ARENA always in, a
 standalone course only while its share is on); an answered set takes every
-other course's concepts out, ARENA's main graph included; the placement area
-catalogue follows it; POST /study-courses and the Courses tab toggle keep the
+other course's concepts out, ARENA's main graph included; stored placement
+evidence follows it; POST /study-courses and the Courses tab toggle keep the
 set and the shares in step; the save/load round trip.
 
 Run: .venv/bin/python scripts/test_study_courses.py
@@ -21,10 +21,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from fastapi import HTTPException  # noqa: E402
 
-from app import adaptive, course_mix, course_registry, kc_graph, kc_prefs, placement_scope  # noqa: E402
+from app import adaptive, course_mix, course_registry, diagnostic, kc_graph, kc_prefs  # noqa: E402
 from app.adaptive import UserPracticeState  # noqa: E402
 import importlib  # noqa: E402
-router = importlib.import_module("app.practice.diagnostic_router")
+router = importlib.import_module("app.practice.settings_router")
 from app.practice_schemas import CourseShareRequest, StudyCoursesRequest  # noqa: E402
 
 fails = []
@@ -62,10 +62,8 @@ st.course_shares = {"leetcode": 0.4}
 check("ARENA concept OFF", kc_prefs.is_disabled(st, ARENA_KC))
 check("LeetCode concept on", not kc_prefs.is_disabled(st, LC_KC))
 check("Delta Drills concept off", kc_prefs.is_disabled(st, DD_KC))
-areas = {a["key"] for a in placement_scope.area_catalog(st)}
-check("placement areas = LeetCode only", areas == {"LeetCode"}, str(sorted(areas)))
-kcs = placement_scope.kcs_for(st, "all", None)
-check("placement concepts all leetcode.*", kcs and all(k.startswith("leetcode.") for k in kcs), str(len(kcs)))
+kcs = diagnostic.assessed_kcs(st)
+check("stored-evidence concepts all leetcode.*", kcs and all(k.startswith("leetcode.") for k in kcs), str(len(kcs)))
 rows = {r["course"]: r for r in (course_mix.status(st, c) for c in course_registry.COURSE_IDS)}
 check("status: ARENA not studied", rows["arena"]["studied"] is False)
 check("status: LeetCode studied", rows["leetcode"]["studied"] is True)

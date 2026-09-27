@@ -183,9 +183,9 @@ async function run() {
   assert.equal(h.document.body.classList.contains("lesson-mode"), false);
 
   h = makeHarness({ lessons: [lessonFixture] });
-  assert.equal(await h.gate.maybeShow({ diagnostic_active: true }, () => {}), false);
+  assert.equal(await h.gate.maybeShow({ attempt_first: true }, () => {}), false);
   assert.equal(h.document.body.classList.contains("lesson-mode"), false,
-    "diagnostic must not build lesson screen");
+    "attempt-first must not build lesson screen");
 
   h = makeHarness({ mode: "backend", lessons: [lessonFixture] });
   done = 0;

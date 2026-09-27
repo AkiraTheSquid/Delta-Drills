@@ -3,8 +3,8 @@
    side.
 
    The Groups tab (Seth, 2026-09-02). One ROW per member, two columns:
-   their area mastery on the left — the SAME `.placement-area*` rows
-   the Learner Home draws, through the same `PlacementResults` — and
+   their area mastery on the left — `.placement-area*` rows scored
+   through `AreaReadiness` (practice/area-readiness.js) — and
    on the right the three-state checklist they wrote for the day the
    picker at the top is showing.
 

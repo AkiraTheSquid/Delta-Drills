@@ -99,23 +99,14 @@ const isAdvancedOnlyTab = (tabName) => advancedOnlyTabs.includes(tabName);
 const renamedTabs = {
   "why-this-app": "learn-about-app",
   "how-to-use": "learn-about-app",
-  /* 🔴 AND "diagnostic", which is an ALIAS AGAIN rather than a redirect to a
-     different surface. The Placement test was merged into the Learner Home on
-     2026-08-24 and split back out on 2026-09-01 (Seth: "keep the interface for
-     the diagnostic ... separate ... it only gets displayed whenever you click
-     on the drop-down one and you go to it specifically"), so the page exists
-     once more — under the learner-facing name this time. The internal name
-     `diagnostic` still arrives from three live places: `/diagnostic` in
-     solo-route.js, a stale `dd_recovered_tab`, and practice/events.js. All
-     three mean the placement, and all three now land on it. */
-  diagnostic: "placement",
+  /* The placement test is retired (Seth, 2026-09-26): its page is gone and
+     the Practice tab's "what have you done before?" survey does its job. Old
+     names — `/diagnostic` in solo-route.js, a stale `dd_recovered_tab`, an old
+     bookmark — land on Practice, where that survey is asked. */
+  diagnostic: "practice",
+  placement: "practice",
 };
 
-/* `opts.leavingPlacement` is the ONE way past the practice->placement redirect
-   below, and it is set by the placement page's own exit button. Everything
-   else that asks for Practice mid-test is a learner who wandered, and the test
-   is what they should see; the button that says "go to practice" is a learner
-   who read the sentence and meant it. */
 const switchTab = (tabName, opts) => {
   tabName = renamedTabs[tabName] || tabName;
   /* 🔴 AND THE GENERAL CASE, because the rename is only the instance we know
@@ -140,29 +131,6 @@ const switchTab = (tabName, opts) => {
     // chrome anyway, and it's what embeds point at. Redirecting it would
     // serve a chromeless Practice page to someone who asked for a notebook.
     if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
-  }
-  /* 🔴 THE PRACTICE/PLACEMENT LOCK, BACK WITH THE PAGE IT PROTECTS. Practice
-     and the placement test share ONE editor and one `PracticeAPI.currentQuestion`
-     — there is a single `.practice-container` and diagnostic-page.js re-parents
-     it between the two pages — so a route to Practice while a probe is on
-     screen would drag the probe onto the Learner Home and render it under the
-     practice page's name (Seth, 2026-08-23). Two pages again means that is
-     reachable again, so the redirect is again.
-
-     It is a REDIRECT, not a disabled tab: the learner asked to leave a test
-     they are in the middle of, and the honest answer is the test, not a dead
-     control. `#placement-skip-btn` is the way out that does not lose the probe.
-
-     🔴 `running` ONLY, not "a placement exists". A completed or not-yet-started
-     placement holds nothing, and locking on it would strand a learner on the
-     placement page every time they pressed Learner home. */
-  if (
-    tabName === "practice" &&
-    !opts?.leavingPlacement &&
-    window.DiagnosticPage?.isRunning?.() === true &&
-    document.getElementById("page-placement")
-  ) {
-    tabName = "placement";
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
@@ -227,19 +195,6 @@ const switchTab = (tabName, opts) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
-  /* 🔴 BOTH PAGES, because one /diagnostic/status payload feeds both. The
-     placement card, its results and the start button are on #page-placement;
-     the AREA BARS the same payload writes are on the Learner Home, on the idle
-     surface a learner opens every day. Refreshing on only one of them leaves
-     the other reading whatever the last visit left behind — and when this call
-     said "diagnostic" against a page name that did not exist, every entry took
-     the `leave` branch and the Home rendered "Loading placement status…" with
-     an empty area list, forever. Caught in the browser, not by a check:
-     nothing throws. */
-  if (window.DiagnosticPage) {
-    if (tabName === "practice" || tabName === "placement") window.DiagnosticPage.refresh();
-    else window.DiagnosticPage.leave(tabName);
-  }
   /* The Groups roster is read on ARRIVAL and at no other time. Somebody
      joining is the only thing that changes it, and a page that polled would
      be a request per open tab per interval for a list that changes once a
@@ -266,44 +221,6 @@ tabs.forEach((t) => {
 // In-page buttons that jump to a tab (e.g. the How It Works → Knowledge Graph CTA).
 document.querySelectorAll("[data-goto-tab]").forEach((b) => {
   b.addEventListener("click", () => switchTab(b.dataset.gotoTab));
-});
-
-/* THE PLACEMENT PAGE'S WAY OUT — bound here rather than through
-   [data-goto-tab], because the generic binding cannot say "and I mean it".
-
-   diagnostic-page.js keeps this button off the screen while a placement is
-   ACTIVE (there is no practice stream beside a live test — the backend serves
-   probes), so the redirect above should never see this click. The explicit
-   route is kept anyway: it is three lines, and it is what guarantees the one
-   button on the page that promises an exit can never be inert, whatever a
-   future status rule decides to show it in.
-
-   🔴 AND THE PROBE CLOCK STOPS ON THE WAY OUT. `#placement-timer` hangs off the
-   topbar notch, which is on every page: left running, it would count a probe
-   the learner is no longer looking at down to 00:00 and expire it against a
-   practice screen. The test itself stays ACTIVE and resumable — the account
-   menu row reads "Resume the placement test" — which is what "skip for now"
-   promises. */
-document.getElementById("placement-skip-btn")?.addEventListener("click", async () => {
-  /* 🔴 CONFIRM THE STATE BEFORE HONOURING THE SKIP. This button is hidden the
-     moment a status says the placement is ACTIVE — but it is visible before the
-     first status lands (the markup ships it visible, and `render(null)` keeps it
-     so a signed-out visitor can still leave). Clicked inside that window on a
-     learner who IS mid-test, `leavingPlacement` walks straight past the redirect
-     below; the status then arrives, `moveWorkspace(true)` parks
-     `.practice-container` inside the now-hidden placement page, and Practice is
-     left with an empty workspace and no way to reach the probe. Found by codex,
-     2026-09-01.
-
-     `refresh()` renders before it resolves, so `isRunning()` is authoritative
-     here — and the same render has already replaced this button with "Load next
-     placement question", which is the honest control for that state. An
-     unreachable backend does NOT set it, so an outage still lets the learner
-     out rather than trapping them on a page whose status never loads. */
-  await window.DiagnosticPage?.refresh?.();
-  if (window.DiagnosticPage?.isRunning?.() === true) return;
-  window.PlacementTimer?.stop?.();
-  switchTab("practice", { leavingPlacement: true });
 });
 
 // Tabs a guest is allowed to see/use (the learning surface). Account-only
@@ -819,8 +736,7 @@ if (authToken) {
 const soloTab = window.DDSoloRoute?.read?.() || "";
 /* A reload the LEARNER did not ask for should put them back where they were.
    The only one left is guest-session.js's last-resort recovery, and landing a
-   learner mid-placement on the practice setup card reads as the app having
-   thrown their work away. Read once and clear: this is for the reload that
+   learner somewhere else reads as the app having thrown their work away. Read once and clear: this is for the reload that
    just happened, never for the next one. */
 /* Read once and clear, for BOTH one-shot landing keys. Every one of them is
    about the reload that just happened and never about the next one, so a key

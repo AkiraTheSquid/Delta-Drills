@@ -23,7 +23,8 @@ from app.models import User
 router = APIRouter(prefix="/api/practice", tags=["practice"])
 
 # The words the learner picks → the stored level. "intermediate" is the
-# no-shift default (None), as `PUT /self-report` stores "default".
+# no-shift default (None), the same prior the retired `PUT /self-report`
+# stored as "default".
 LEVELS = {"novice": "beginner", "intermediate": None, "expert": "strong"}
 
 

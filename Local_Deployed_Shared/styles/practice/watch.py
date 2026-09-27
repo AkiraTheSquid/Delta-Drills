@@ -11,7 +11,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.dirname(os.path.dirname(HERE))
 
 CSS_FILES = ["layout.css", "timer.css", "question.css", "feedback.css", "editor.css",
-             "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css", "diagnostic.css",
+             "misc.css", "stage-ladder.css", "notch-menu.css", "notebook-editor.css",
+             # What survived diagnostic.css when the placement test was
+             # retired (2026-09-26): the course question's tiles, the group
+             # board's area rows, the weekly activity bars.
+             "home.css",
              # The syntax-highlight overlay (@M, 2026-08-23). Its metrics are
              # SHARED with .code-editor in editor.css — a font, padding or
              # border restated in one and not the other drifts the overlay off
@@ -65,36 +69,20 @@ def check_public_api():
         "feedback.css": [".result-badge", ".feedback-btn", "#practice-submit-area", ".missed-fact-row"],
         "editor.css": [".code-editor", ".output-area", ".solution-code", ".ai-explanation-text"],
         "notebook-editor.css": [".practice-notebook", ".notebook-cell", ".notebook-cell-output"],
-        "misc.css": [".torch-colab-notice", ".self-report-btn", ".placement-start-btn", ".placement-next-btn", ".practice-aids"],
-        # Written by practice/placement-results.js — every class it mints has
-        # to keep a rule here or the results card renders as unstyled spans.
-        # .placement-overall-figure left this list on 2026-08-23: the card's
-        # headline is the Practice tab's readiness dial now (.readiness-dial,
-        # styled in readiness.css) showing the same figure, so the card no
-        # longer mints a figure block of its own. .placement-chip and the two
-        # -caption/-detail lines replaced the sentences that were there.
-        "diagnostic.css": [
-            ".placement-cta", ".placement-overall", ".placement-chip",
-            ".placement-overall-say", ".placement-overall-caption",
-            ".placement-overall-detail", ".placement-overall-caveat",
-            ".placement-areas",
-            ".placement-areas-head", ".placement-area", ".placement-area-name",
-            ".placement-area-bar", ".placement-area-pct", ".placement-area-conf",
-            ".placement-area-probes", ".placement-area--unprobed",
-            ".placement-results-meta", ".placement-results-empty",
-            # Written by account-menu.js when the account menu's placement row
-            # routes here: the CSS is the whole of the affordance, so a stylesheet
-            # without it leaves the row landing on a page with nothing marked.
-            ".placement-cta-flash",
-            # 🔴 THE HIDE-WHEN-TAKEN RULE IS GONE (2026-09-01), and what
-            # replaced it is asserted instead. The placement card is on
-            # #page-placement now — a page reached on purpose from the account
-            # menu — so hiding it on a completed placement would empty the only
-            # screen it is on. `.diagnostic-running` is the one visibility rule
-            # left: it hides the card while a probe is hosted OVER it, and
-            # pointed at any other page it matches nothing and leaves the card
-            # showing underneath a running probe.
-            "#page-placement.diagnostic-running",
+        "misc.css": [".torch-colab-notice", ".practice-aids"],
+        # Minted by practice/course-pick.js (the tiles), groups/groups_lane.js
+        # (the area rows, scored through practice/area-readiness.js) and
+        # practice/activity-chart.js (the bars). Every class keeps a rule here
+        # or that surface renders as unstyled spans.
+        "home.css": [
+            ".placement-page", ".diagnostic-card", ".placement-step-q",
+            ".placement-focus-grid", ".placement-focus-tile", ".placement-focus-check",
+            ".placement-focus-name", ".placement-focus-blurb", ".placement-focus-count",
+            ".placement-wizard-nav", ".placement-forward-btn",
+            ".placement-areas", ".placement-areas-head", ".placement-area",
+            ".placement-area-name", ".placement-area-bar", ".placement-area-pct",
+            ".placement-area-conf", ".placement-area-probes", ".placement-area--unprobed",
+            ".learner-activity", ".activity-day-bar",
         ],
     }
     for fname, selectors in expected.items():

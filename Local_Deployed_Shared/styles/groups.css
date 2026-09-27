@@ -3,7 +3,7 @@
 
    🔴 THE AREA BARS ARE NOT STYLED HERE. A member card's rows carry the
    Learner Home's own `.placement-area*` classes and are painted by
-   styles/practice/diagnostic.css. That is the point of reusing the
+   styles/practice/home.css. That is the point of reusing the
    markup: one set of rules decides what a readiness bar looks like, so
    the Groups page cannot drift from the page it is quoting. Everything
    below is the frame around them.
@@ -305,13 +305,13 @@
 }
 
 /* 🔴 THE TWO-ROW LAYOUT, AT EVERY WIDTH. `.placement-area`'s five-column
-   default (diagnostic.css) has a ~406px minimum once its gaps are counted,
+   default (home.css) has a ~406px minimum once its gaps are counted,
    and a member card is a 320px grid cell — so the wide template does not
    overflow into a scrollbar, it silently paints "4 probed" OUTSIDE the card,
    on top of the next member. Caught in the browser: nothing throws, and at
    two members the clipped column simply hid behind the second card.
 
-   These are the same five grid-areas diagnostic.css assigns under its 620px
+   These are the same five grid-areas home.css assigns under its 620px
    media query, applied here on the containing card rather than on the
    viewport — a member card is narrow because it is a column of a roster, not
    because the window is. Overriding the template only, so every colour, size
@@ -321,7 +321,7 @@
     "name pct conf"
     "bar bar probes";
   /* The third column is sized by "12 probed", the widest thing that lands in
-     it — at 44px (diagnostic.css's phone width, where the probe count is
+     it — at 44px (home.css's phone width, where the probe count is
      left-aligned under a full-width bar instead) it wraps onto two lines and
      the row grows by 14px for one word. */
   grid-template-columns: 1fr 44px 66px;

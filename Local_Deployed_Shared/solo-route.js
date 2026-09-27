@@ -16,14 +16,10 @@
     "why-this-app": "learn-about-app",
     "how-to-use": "learn-about-app",
     "knowledge-graph": "knowledge-graph",
-    // The internal name for the placement test, and the pathname it has always
-    // been linkable under. It pointed at "practice" between 2026-08-24 and
-    // 2026-09-01, while the test was a card on the Learner Home; the test has
-    // its own page again (#page-placement) and the slug lands on it. The slug
-    // itself stays `diagnostic` — it is a public URL, and the ids, the routes
-    // and the backend endpoints all still say diagnostic; only the learner-
-    // facing words say placement.
-    diagnostic: "placement",
+    // The placement test's old public pathname. The test was retired on
+    // 2026-09-26 (the Practice tab's survey replaced it); a saved link to it
+    // lands on Practice, where that survey is.
+    diagnostic: "practice",
     "split-tool": "split-tool",
     account: "account",
     courses: "courses",

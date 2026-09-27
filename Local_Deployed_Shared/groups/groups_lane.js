@@ -15,8 +15,8 @@
      +--------------------------+----------------------------------+
 
    The left column is unchanged from the first pass — the Learner
-   Home's own `.placement-area*` rows, drawn through
-   `PlacementResults`. The right column is the day's three-state
+   `.placement-area*` rows (styles/practice/home.css), scored through
+   `AreaReadiness` (practice/area-readiness.js). The right column is the day's three-state
    checklist, ported from Delta Note's sub-goals.
 
    ── 🔴 EXACTLY ONE COLUMN ON THIS PAGE IS AN EDITOR ──────────────
@@ -59,7 +59,7 @@ const DDGroupsLane = (() => {
   /**
    * The rows under a member's name.
    *
-   * `PlacementResults` owns the theta→readiness map; if it has not loaded
+   * `AreaReadiness` owns the theta→readiness map; if it has not loaded
    * there is nothing honest to draw, so the card says so rather than
    * inventing a scale.
    *
@@ -67,7 +67,7 @@ const DDGroupsLane = (() => {
    */
   const buildAreas = (areas) => {
     const wrap = el("div", "placement-areas dd-member-areas");
-    const results = window.PlacementResults;
+    const results = window.AreaReadiness;
     if (!results || !Array.isArray(areas) || !areas.length) {
       wrap.appendChild(el("p", "dd-group-note", "No measurements yet."));
       return wrap;
@@ -76,8 +76,8 @@ const DDGroupsLane = (() => {
     wrap.appendChild(el("div", "placement-areas-head", "Weakest first"));
 
     /* Weakest first, ties broken toward the area with more evidence — the
-       same order the Learner Home uses, so a member scanning their own row
-       and somebody else's is reading the same list twice rather than two
+       same order for every member, so a member scanning their own row and
+       somebody else's is reading the same list twice rather than two
        differently-sorted lists. */
     const rows = areas
       .slice()
@@ -125,16 +125,15 @@ const DDGroupsLane = (() => {
     if (isYou) nameRow.appendChild(el("span", "dd-member-you", "you"));
     who.appendChild(nameRow);
 
+    /* A stored placement's probe count, from before the test was retired
+       (2026-09-26). Said when there is one; nothing is owed when there is
+       not — the test no longer exists to be taken. */
     const probes = Number(member.probes) || 0;
-    who.appendChild(
-      el(
-        "span",
-        "dd-member-meta",
-        probes
-          ? `${probes} placement ${probes === 1 ? "probe" : "probes"}`
-          : "hasn't taken the placement test"
-      )
-    );
+    if (probes) {
+      who.appendChild(
+        el("span", "dd-member-meta", `${probes} placement ${probes === 1 ? "probe" : "probes"}`)
+      );
+    }
     head.appendChild(who);
     main.appendChild(head);
     main.appendChild(selector || buildAreas(member.areas));

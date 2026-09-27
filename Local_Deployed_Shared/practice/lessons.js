@@ -217,7 +217,7 @@ const LessonGate = (() => {
     // by nothing else (see the comment block at the end of `maybeShow`).
     // Teaching the lesson first anyway makes that radio a lie; it was
     // removed on 2026-09-15 and put back 2026-09-16.
-    if (question?.diagnostic_active || question?.attempt_first) return [];
+    if (question?.attempt_first) return [];
     if (practiceMode === "backend") {
       /* 🔴 …MINUS ANYTHING THIS BROWSER HAS ALREADY SHOWN.
 

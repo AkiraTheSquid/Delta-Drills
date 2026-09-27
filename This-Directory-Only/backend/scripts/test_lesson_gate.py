@@ -288,10 +288,8 @@ check("a fresh learner has an unlocked, gated question to be served", bool(_open
       if _open else "nothing unlocked carries a lesson gate — no first drill")
 _gate_subtopic = _open[0].subtopic if _open else ""
 _orig_select = question_pick.select_next_subtopic
-_orig_should_run = diagnostic.should_run
 question_pick.select_next_subtopic = lambda st, **kw: _gate_subtopic
 prioritization.select_next_subtopic = lambda st, **kw: _gate_subtopic
-diagnostic.should_run = lambda st: False
 try:
     data = client.get("/api/practice/next-question").json()
     gate_kcs = [e["kc"] for e in data["lesson_gate"]]
@@ -306,7 +304,6 @@ try:
 finally:
     question_pick.select_next_subtopic = _orig_select
     prioritization.select_next_subtopic = _orig_select
-    diagnostic.should_run = _orig_should_run
 app.dependency_overrides.clear()
 
 # --- API: legacy paused-question context recovery --------------------------
@@ -332,27 +329,6 @@ check("question context read does not mutate learner state",
 resp = client.get("/api/practice/question-context?question_id=999999")
 check("unknown saved question is rejected", resp.status_code == 404,
       f"got HTTP {resp.status_code}")
-app.dependency_overrides.clear()
-
-# --- diagnostic probes are never gated -------------------------------------
-probe_user = User(id=uuid.uuid4(), email="lesson-gate-diag@x.com", password_hash="x")
-app.dependency_overrides[auth.get_current_user] = lambda: probe_user
-qr = sys.modules["app.practice.questions_router"]
-from app.questions import get_question_by_id  # noqa: E402
-_orig_should_run = diagnostic.should_run
-_orig_should_finish = diagnostic.should_finish
-_orig_select_probe = diagnostic.select_probe
-diagnostic.should_run = lambda st: True
-diagnostic.should_finish = lambda st: False
-diagnostic.select_probe = lambda st: get_question_by_id(1)
-try:
-    data = client.get("/api/practice/next-question").json()
-    check("diagnostic test exercised probe branch", data.get("diagnostic_active") is True)
-    check("diagnostic probe has no lesson_gate", data["lesson_gate"] == [])
-finally:
-    diagnostic.should_run = _orig_should_run
-    diagnostic.should_finish = _orig_should_finish
-    diagnostic.select_probe = _orig_select_probe
 app.dependency_overrides.clear()
 
 print()

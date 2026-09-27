@@ -354,15 +354,7 @@ function renderQuestion(q, count) {
      the learner already knows which test they are in, and the paragraph was
      read once at most.
 
-     What survives is the part that changes: #placement-timer, now in
-     .question-number-row (see index.html). Nothing else read those nodes, so
-     there is no state to migrate — this is a deletion, not a move. */
-  // "I don't know yet" only exists during placement — in normal practice the
-  // Skip button (nothing recorded) covers that need.
-  if (typeof practiceDontKnowBtn !== "undefined" && practiceDontKnowBtn) {
-    practiceDontKnowBtn.classList.toggle("hidden", !q.diagnostic_active);
-    practiceDontKnowBtn.disabled = false;
-  }
+     Nothing else read those nodes, so there was no state to migrate. */
   setTargetDifficultyInitial(getTargetDifficultyForQuestion(q));
   window.DifficultyBar?.setStage(q.ladder_stage);
   window.DifficultyBar?.setProblem(q.difficulty);
@@ -428,10 +420,6 @@ function renderQuestion(q, count) {
   // Rigid session: every rendered question starts a fresh strict answer
   // countdown (no-op while no session is running).
   PracticeSession.onQuestionRendered();
-  // Placement probes run OUTSIDE a session, so they carry their own fixed
-  // clock. Also a no-op — and a stop() — on any non-probe question, so the
-  // placement countdown can never outlive the placement.
-  window.PlacementTimer?.onQuestionRendered();
 
   const pending = practiceProgress.pendingFeedback;
   if (pending) {

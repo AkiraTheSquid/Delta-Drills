@@ -35,20 +35,16 @@
    problem usually gets) and `secsFor` applies it to the problem's own
    number. The table still decides what each problem is worth relative to
    every other; the factor tightens all of them alike and is ≤ 1, so no
-   practice clock ever exceeds what the placement charges for the same
-   concept. Nothing is stored HERE — the factor lives in its own file and
+   practice clock ever exceeds the table's cap for the same concept. Nothing is stored HERE — the factor lives in its own file and
    is read through `window.SessionClockScale`, defaulting to 1 when that
    file is absent (the watch probes run this file alone).
 
-   🔴 THE PLACEMENT IS NOT ON THIS PATH. A probe carries
-   `diagnostic_secs_allowed` and practice/placement-timer.js displays it;
-   timer.js's `_answerSecsFor` asks PlacementTimer first. Same table, two
-   readers, because the placement also CHARGES the time server-side.
+   (The placement test read the same table through its own clock until it
+   was retired on 2026-09-26.)
    ================================================================ */
 
 (function initSessionClock() {
-  /* The server's own ceiling (diagnostic.PER_PROBLEM_SECS; the placement's
-     PLACEMENT_ANSWER_SECS is the same number): what a question gets when the
+  /* The server's own ceiling (diagnostic.PER_PROBLEM_SECS): what a question gets when the
      field is missing. Missing means "no opinion", never "no limit". */
   const CEILING_SECS = 1200;
 

@@ -3,8 +3,7 @@
 (() => {
   const picker = document.getElementById("practice-target");
   const note = document.getElementById("practice-target-note");
-  const diagnosticBtn = document.getElementById("ray-placement-btn");
-  if (!picker || !note || !diagnosticBtn) return;
+  if (!picker || !note) return;
   let generation = 0;
   let current = null;
   const paint = (data) => {
@@ -21,8 +20,11 @@
       if (focused && (!ids.has(e.source().id()) || !ids.has(e.target().id()))) e.style("display", "none");
       else e.removeStyle("display");
     });
+    /* `placement_ready` is a STORED ray placement's reading (the test itself
+       was retired 2026-09-26); said only when there is one. */
+    const placed = data.placement_ready?.length || 0;
     note.textContent = focused
-      ? `0.1 + ${ids.size} concepts including prerequisites. ${data.placement_ready?.length || 0} ready from placement (includes inferred prerequisites). Applies to your next practice question.`
+      ? `0.1 + ${ids.size} concepts including prerequisites.${placed ? ` ${placed} ready from an earlier placement.` : ""} Applies to your next practice question.`
       : "Practice across the curriculum.";
   };
   const request = async (target) => {
@@ -57,14 +59,7 @@
       note.textContent = err.message;
     } finally { picker.disabled = false; }
   });
-  diagnosticBtn.addEventListener("click", () => {
-    window.PlacementPlan?.setScope?.("raytracing-0.1");
-    const go = typeof switchTab !== "undefined" ? switchTab : window.switchTab;
-    go?.("placement");
-    window.DiagnosticPage?.refresh?.();
-  });
   window.addEventListener("delta:practice-mode-ready", refresh);
-  window.addEventListener("delta-drills-diagnostic-status", refresh);
   window.addEventListener("delta:practice-target-graph-ready", () => { if (current) paint(current); });
   if (window.DDPracticeModeReady) refresh();
 })();

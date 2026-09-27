@@ -7,10 +7,10 @@ request shapes, the refusals, and the one thing that is genuinely this file's
 own — turning a roster into a page of mastery bars.
 
 ── 🔴 THE MASTERY READ IS PER MEMBER AND IT IS NOT FREE ────────────────────
-`/groups/mine` answers every member's `areas` in the SAME shape
-`/diagnostic/status` answers for one learner, because the Groups page draws
-them with the Learner Home's own renderer (`PlacementResults.renderAreas`) and a
-second shape would be a second copy of the theta→readiness map to keep in step.
+`/groups/mine` answers every member's `areas` in `diagnostic.display_area_estimates`'
+`{topic, theta, sd, probes}` shape (the retired `/diagnostic/status` shape),
+scored on the client by `practice/area-readiness.js` — the ONE theta→readiness
+map; a second shape would be a second copy of it to keep in step.
 Getting them costs one practice-state load and one posterior recompute per
 member — bounded by `study_groups.MAX_MEMBERS`, which is why that cap exists on
 this side of the feature as well as on Delta Note's.
@@ -20,7 +20,7 @@ endpoint out. One unreadable state file must not be able to blank the group.
 
 ── 🔴 WHAT JOINING SHARES ─────────────────────────────────────────────────
 Everything on this page: your display name, your area mastery, and how much of
-it the placement actually measured. There is no per-member opt-out, so the
+it a (now retired, 2026-09-26) placement measured. There is no per-member opt-out, so the
 consent is asked once, on the client, in front of all three ways in — the same
 single-gate shape Delta Note's `accountability_discovery.js` uses. Leaving
 removes the membership row, and with it every readout of you the other members
@@ -77,7 +77,7 @@ class DisplayNameRequest(BaseModel):
 
 
 def _member_areas(user_id: str) -> list[dict]:
-    """One member's area mastery, in `/diagnostic/status`'s `areas` shape.
+    """One member's area mastery, in `display_area_estimates`' shape.
 
     Swallows on purpose: this is a readout of somebody else, and a state file
     that will not load is a reason to draw that one column as unmeasured, not a

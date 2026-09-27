@@ -71,13 +71,12 @@ Backend startup creates the additive target table through existing
   the read/action failure split described in `groups_store.js`.
 
 ## Does NOT own
-- **The readiness scale.** `PlacementResults.readiness()` / `.band()`
-  (`../practice/placement-results.js`) is the only theta→percentage map on this
-  side, and it is a mirror of `_mastery_from_theta` in
-  `backend/app/diagnostic.py` that `../practice/watch.py` fails on drift. This
-  folder does no arithmetic on `theta` at all.
+- **The readiness scale.** `AreaReadiness.readiness()` / `.band()`
+  (`../practice/area-readiness.js`, what survived `placement-results.js` when
+  the placement test was retired on 2026-09-26) is the only theta→percentage
+  map on this side. This folder does no arithmetic on `theta` at all.
 - **How a readiness bar looks.** `.placement-area*` is declared in
-  `../styles/practice/diagnostic.css`. `../styles/groups.css` is the frame
+  `../styles/practice/home.css`. `../styles/groups.css` is the frame
   around those rows and nothing more.
 - **Who is signed in.** `window.DDIdentity` (published by `../app.js`).
 - **Anybody's mastery numbers.** The server computes each member's `areas` from
@@ -131,14 +130,14 @@ Backend startup creates the additive target table through existing
   `study_group_days` table. A separate pair of endpoints ON PURPOSE: `/mine`
   recomputes every member's posterior, and the day picker is a control people
   click through a week.
-- `window.PlacementResults` from `../practice/placement-results.js`, and the
+- `window.AreaReadiness` from `../practice/area-readiness.js`, and the
   Tiptap bundle from `../vendor/tiptap/`.
 - A member on the wire is `{member_id, display_name, initials, joined_at,
-  areas, probes}`. `areas` is the SAME `{topic, theta, sd, probes}` shape
-  `/api/practice/diagnostic/status` answers for one learner — that is what lets
-  the member card reuse the Learner Home's renderer wholesale.
+  areas, probes}`. `areas` is `backend/app/diagnostic.py::display_area_estimates`'
+  `{topic, theta, sd, probes}` shape (a stored placement's frozen readout, or
+  the prior for a learner who never took one).
 - `window.apiFetch` and `window.DDIdentity` from `../app.js`;
-  `window.PlacementResults` from `../practice/placement-results.js`.
+  `window.AreaReadiness` from `../practice/area-readiness.js`.
 
 ## How It Works (Flow)
 1. `switchTab("groups")` calls `DDGroups.refresh()`.
@@ -331,6 +330,7 @@ Backend startup creates the additive target table through existing
     database.
 
 ## Recent Changes
+- 2026-09-26 (**placement retired**): readiness map is `window.AreaReadiness` (`../practice/area-readiness.js`) instead of `PlacementResults`; area row styles live in `../styles/practice/home.css`. `groups_lane.js` (`?v=3`) shows "N placement probes" only when N > 0.
 - 2026-09-13 (later): the board opens on the Competency graph instead of Goals
   (`view = "graph"` in `groups_view.js`, select reordered to match). The graph's
   crosshair now pins its date to the x-axis and its level to the y-axis as

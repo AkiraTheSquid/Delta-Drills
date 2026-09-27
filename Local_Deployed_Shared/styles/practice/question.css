@@ -376,8 +376,7 @@
 
 /* The Cold Start Badge and its .cold-start-label / .cold-start-note rules were
    deleted on 2026-08-23 with the markup — see practice/ui.js. #placement-timer
-   outlived it and has moved twice since: into .question-number-row, and then
-   onto the notch tab, which is where it is (styling still in diagnostic.css). */
+   outlived it until the placement test was retired on 2026-09-26. */
 /* Question body: separate the prose prompt from any starter/code block. */
 .question-prose { line-height: 1.6; }
 .question-prose + .question-prose { margin-top: 10px; }
