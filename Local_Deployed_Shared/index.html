@@ -70,6 +70,7 @@
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=2" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
        🔴 POSITION IS LOAD-BEARING: it must come after nav-drawer.css, whose
@@ -1936,6 +1937,19 @@
              element, same id, same writer (practice/placement-results.js
              renderAreas); only the host moved. The results card above keeps the
              meta chips and the overall figure, which ARE about one test. -->
+        <!-- MEASURED LEARNING (Seth, 2026-09-26). XP is a gain in the model's
+             knowledge of each concept, the same for every learner; today's XP
+             against a target that finishes the course by the learner's date;
+             daily XP bars and the trajectory toward the course. Built by
+             practice/xp-panel.js from /api/practice/xp (app/learning_xp.py),
+             via the `delta:xp-summary` event xp.js broadcasts for the level
+             pill — one read feeds both. `.is-empty` = no session or the read
+             failed: the whole card goes, like #learner-activity below. -->
+        <section class="learner-xp is-empty" id="learner-xp" aria-labelledby="learner-xp-head">
+          <h2 class="learner-xp-head" id="learner-xp-head">Measured learning <span class="xp-eyebrow">XP</span></h2>
+          <div class="xp-panel-body"></div>
+        </section>
+
         <section class="learner-areas" id="learner-areas">
           <h2 class="learner-areas-head">What you are learning</h2>
           <div class="placement-areas" id="placement-areas"></div>
@@ -2585,7 +2599,7 @@ t.manual_seed(0)
        key is derived from the signed-in email, so the listener has to be
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
-  <script src="xp.js?v=2"></script>
+  <script src="xp.js?v=3"></script>
   <script src="solo-route.js?v=6"></script>
   <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
        second column — a three-state Tiptap checklist per day, ported from
@@ -2821,6 +2835,7 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
+  <script src="practice/xp-panel.js?v=2"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
        `LessonTimer.start` at click/render time, and the notch mirrors it

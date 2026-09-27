@@ -418,10 +418,21 @@ def record(
             # per-atom encompassed mastery, per-kc prereqs. See AttemptRow.
             sources=getattr(values, "sources", None),
             ts=now,
+            probe=_served_as_probe(user_state, kc, question_id),
         )
     except Exception:  # pragma: no cover — logging must never break scoring
         pass
     return prediction
+
+
+def _served_as_probe(user_state, kc: str, question_id: Optional[int]) -> Optional[bool]:
+    """The explore-probe flag `record_ladder_outcome` put on this answer's
+    ladder row, for the durable log. None when the newest row is not this
+    question's (same rule as `_stamp_skill_p`)."""
+    rows = kc_graph.ladder_view(user_state, kc).get("attempts") or []
+    if question_id is None or not rows or rows[-1].get("question_id") != question_id:
+        return None
+    return bool(rows[-1].get("probe")) and not rows[-1].get("example")
 
 
 def _stamp_skill_p(user_state, kc: str, question_id: Optional[int],

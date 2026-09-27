@@ -375,6 +375,7 @@ def check_invariants():
         "scrollbars.css",
         "nav-drawer.css",
         "xp.css",
+        "xp-panel.css",
         "courses/page.css",
         "courses/forkgate.css",
         "courses/detail.css",
