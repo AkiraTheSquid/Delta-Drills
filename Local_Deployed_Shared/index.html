@@ -71,6 +71,7 @@
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
   <link rel="stylesheet" href="styles/xp-panel.css?v=2" />
+  <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
        🔴 POSITION IS LOAD-BEARING: it must come after nav-drawer.css, whose
@@ -1862,6 +1863,13 @@
     <div id="practice-workspace-home" hidden></div>
 
     <div class="practice-container">
+      <!-- "WHAT HAVE YOU DONE BEFORE?" (Seth, 2026-09-26) — replaces the
+           placement test as the way in. practice/survey.js fills it from
+           /api/practice/survey whenever a question is pending, and
+           while it is up the rest of the idle surface steps aside
+           (styles/survey.css). Answers set each area's prior for
+           explore/exploit (app/area_survey.py); Skip is remembered too. -->
+      <section class="learner-survey" id="learner-survey" hidden aria-live="polite"></section>
       <!-- THE IDLE SURFACE — what the Practice tab is when no question is
            timed. It replaced "Set up your session", a panel of three inputs
            (QUESTIONS / ANSWER TIME / REVIEW TIME) and a total-time estimate.
@@ -2837,6 +2845,7 @@ t.manual_seed(0)
   <script src="practice/activity-chart.js?v=4"></script>
   <script src="practice/xp-panel.js?v=2"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
+  <script src="practice/survey.js?v=1"></script>
        BEFORE lessons.js only for reading order — `showPage` calls
        `LessonTimer.start` at click/render time, and the notch mirrors it
        through events, so nothing here depends on load order. It resolves
