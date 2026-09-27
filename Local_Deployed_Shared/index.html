@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="styles/scrollbars.css?v=1" />
   <link rel="stylesheet" href="styles/layout.css?v=7" />
   <link rel="stylesheet" href="styles/components.css?v=5" />
-  <link rel="stylesheet" href="styles/how-it-works.css?v=37" />
+  <link rel="stylesheet" href="styles/how-it-works.css?v=38" />
   <!-- The Knowledge Graph's view modes (adaptive / condensed / complete) and
        its bottom-left settings card. AFTER how-it-works.css, which owns the
        .kg2-* rules it overrides on source order. -->
@@ -70,6 +70,8 @@
   <!-- Levels + the level pill that doubles as the progress bar. Feature
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
+  <link rel="stylesheet" href="styles/xp-panel.css?v=2" />
+  <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
        🔴 POSITION IS LOAD-BEARING: it must come after nav-drawer.css, whose
@@ -89,14 +91,14 @@
   <link rel="stylesheet" href="styles/practice/timer.css?v=9" />
   <!-- The idle screen: the readiness dial that replaced "Set up your session".
        After timer.css, which still owns the card the dial sits in. -->
-  <link rel="stylesheet" href="styles/practice/readiness.css?v=5" />
-  <link rel="stylesheet" href="styles/practice/question.css?v=7" />
-  <link rel="stylesheet" href="styles/practice/feedback.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/readiness.css?v=6" />
+  <link rel="stylesheet" href="styles/practice/question.css?v=8" />
+  <link rel="stylesheet" href="styles/practice/feedback.css?v=9" />
   <link rel="stylesheet" href="styles/practice/feedback-panel.css?v=1" />
   <link rel="stylesheet" href="styles/practice/editor.css?v=4" />
   <link rel="stylesheet" href="styles/practice/tutor.css?v=2" />
-  <link rel="stylesheet" href="styles/practice/misc.css?v=10" />
-  <link rel="stylesheet" href="styles/practice/lessons.css?v=13" />
+  <link rel="stylesheet" href="styles/practice/misc.css?v=11" />
+  <link rel="stylesheet" href="styles/practice/lessons.css?v=14" />
   <link rel="stylesheet" href="styles/practice/notebook-view.css?v=7" />
   <!-- AFTER notebook-view.css, and it has to be: the ARENA surface IS the
        notebook surface — same `.nbv-*` cells, toolbar and gutter — and this
@@ -114,16 +116,15 @@
   <link rel="stylesheet" href="styles/practice/ladder.css?v=4" />
   <link rel="stylesheet" href="styles/practice/question-examples.css?v=1" />
   <link rel="stylesheet" href="styles/practice/stage-ladder.css?v=12" />
-  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=10" />
+  <link rel="stylesheet" href="styles/practice/notch-menu.css?v=11" />
   <link rel="stylesheet" href="styles/practice/notebook-editor.css?v=3" />
   <link rel="stylesheet" href="styles/practice/code-highlight.css?v=1" />
-  <link rel="stylesheet" href="styles/practice/diagnostic.css?v=17" />
-  <!-- THE GROUPS TAB. AFTER diagnostic.css, and it has to be: a member card's
-       readiness rows carry that sheet's own `.placement-area*` classes (the
-       Learner Home's bars, quoted rather than copied), and the one rule in
-       groups.css that overrides them — `.dd-member-areas`'s tighter top
-       margin — is the same specificity, so source order is what settles it. -->
-  <link rel="stylesheet" href="styles/groups.css?v=3" />
+  <!-- What survived diagnostic.css when the placement test was retired
+       (2026-09-26): the course question's tiles, the group board's area rows,
+       the weekly activity bars. BEFORE groups.css: `.dd-member-areas` there
+       overrides `.placement-areas` here at the same specificity. -->
+  <link rel="stylesheet" href="styles/practice/home.css?v=1" />
+  <link rel="stylesheet" href="styles/groups.css?v=4" />
   <link rel="stylesheet" href="styles/conceptual/conceptual-chat.css?v=1" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
@@ -154,7 +155,7 @@
   <link rel="stylesheet" href="styles/concept-pill.css?v=4" />
   <!-- Inert unless practice/colab_mode.js adds html.dd-colab-edition, i.e. on
        the delta-drills-colab deploy. Loaded on both so the two stay one build. -->
-  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=14" />
+  <link rel="stylesheet" href="styles/practice/colab-edition.css?v=15" />
   <link rel="stylesheet" href="styles/practice/notebook.css?v=6" />
   <!-- A math (multiple-choice) question: choice list in, editor column out.
        practice/math-drill.js toggles `html.dd-math-mc` per question. -->
@@ -164,7 +165,7 @@
   <link rel="stylesheet" href="practice/arena-unlock-timer.css?v=3" />
   <link rel="stylesheet" href="targeted-practice/targeted-practice.css?v=8" />
   <!-- Last: solo routes must beat normal + responsive app-chrome rules. -->
-  <link rel="stylesheet" href="styles/solo-route.css?v=2" />
+  <link rel="stylesheet" href="styles/solo-route.css?v=3" />
   <link rel="stylesheet" href="styles/test-users.css?v=1" />
   <!-- The AISC write-up on #page-learn-about-app. Last of the app sheets so
        its #aisc-root rules win ties against how-it-works.css. Its three
@@ -257,12 +258,12 @@
          🔴 THE CLOCK IS NOT A NOTCH ANY MORE (Seth, 2026-08-24: "put the timer
          in the top middle bar rather than as the notch"). It used to hang off
          the top edge of `.practice-container` as a tab on the seam between the
-         panels, which meant it MOVED with the workspace — into the placement
-         host, out again, and off the screen entirely on every page that is not
+         panels, which meant it MOVED with the workspace — out of
+         the page, and off the screen entirely on every page that is not
          Practice. Up here it is app chrome: one clock, one place, the same
          pixels whatever the learner is doing. Every id is unchanged, so
-         practice/timer.js, practice/placement-timer.js and
-         practice/notch-menu.js all still find what they write. -->
+         practice/timer.js and practice/notch-menu.js
+         still find what they write. -->
     <div class="topbar-mid">
     <!-- THE ABOUT PAGE'S CONTENTS (Seth, 2026-09-24: "puts the table of
          contents in the actual real topbar, rather than the top bar that it
@@ -430,17 +431,6 @@
           <span class="account-menu-label">Learner home</span>
         </button>
         <div class="account-menu-sep" role="separator"></div>
-        <!-- RETAKE THE PLACEMENT TEST (Seth, 2026-08-31). It ROUTES, it does
-             not start: a retake CLEARS the probe log, so the destructive click
-             stays on the card. Label is state (id) — see account-menu.js.
-
-             🔴 IT ROUTES TO #page-placement, not to the Learner Home (Seth,
-             2026-09-01: the placement interface "only gets displayed whenever
-             you click on the drop-down one and you go to it specifically").
-             This menu row is the ONLY standing entry point to that page for a
-             learner already in the app, which is why the row has to survive
-             every state the test can be in — see the three-state label in
-             practice/diagnostic-page.js. -->
         <!-- GROUPS (Seth, 2026-09-02). First after the separator because it is
              the other place a learner GOES, as opposed to the four below it,
              which are things you set up or read once.
@@ -463,18 +453,6 @@
             </svg>
           </span>
           <span class="account-menu-label">Groups</span>
-        </button>
-        <button class="account-menu-item" type="button" role="menuitem"
-                data-goto-tab="placement" data-placement-retake>
-          <span class="account-menu-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
-                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-              <path d="M3.9 18a9 9 0 1 1 16.2 0"></path>
-              <path d="M12 17.2 16.1 11"></path>
-              <circle cx="12" cy="18" r="1.5"></circle>
-            </svg>
-          </span>
-          <span class="account-menu-label" id="account-menu-placement-label">Take the placement test</span>
         </button>
         <button class="account-menu-item" type="button" role="menuitem" data-goto-tab="account">
           <span class="account-menu-icon" aria-hidden="true">
@@ -588,11 +566,10 @@
          takes no column in the header's `1fr auto 1fr` grid.
 
          What the 2026-08-24 move fixed is KEPT: the old notch hung off
-         `.practice-container` and travelled with the workspace — into the
-         placement host, out again, off the screen on every page that is not the
+         `.practice-container` and travelled with the workspace — off the screen on every page that is not the
          Learner Home. This one hangs off the bar, which is on every page. Every
-         id below is unchanged, so practice/timer.js, practice/placement-timer.js
-         and practice/notch-menu.js are untouched by the move. -->
+         id below is unchanged, so practice/timer.js and practice/notch-menu.js
+         are untouched by the move. -->
     <div class="practice-notch" id="practice-notch">
       <!-- One tab, two parts: the countdown and the dots that open the
            menu. The clock is a MIRROR of #session-countdown, written by
@@ -632,36 +609,6 @@
              a second. -->
         <span class="practice-notch-clock hidden" id="practice-notch-clock"
               role="timer"></span>
-        <!-- THE PLACEMENT CLOCK, in the same slot as the session one. Seth,
-             2026-08-23: "for the placement test ... the timer is on the left
-             next to the title thing instead of being on the tab." It was a
-             pill in .question-number-row, beside the concept heading; it is
-             here now, and the two clocks TAKE TURNS — practice/notch-menu.js
-             hides #practice-notch-clock for as long as a probe is being
-             timed, so the tab never shows two countdowns.
-
-             Still a static element, still written only by
-             practice/placement-timer.js, and still inside .practice-container
-             so it re-parents onto the Placement page with the workspace.
-
-             🔴 NO `data-dd-info`. It carried one ("placement-timer"), and
-             infotips.js mints the dot as a SIBLING — which in this 15px-tall
-             row is an ⓘ wedged between the clock and the three dots. The copy
-             said the probes are all 2:00 and you do not set it; the tab's own
-             tooltip says that, so the registry entry was DELETED rather than
-             left orphaned (watch.py asserts both lists stay in step). -->
-        <!-- 🔴 IT CARRIES `.practice-notch-clock` TOO, and that is the whole
-             point (Seth, 2026-08-23: the placement should be "indistinguishable
-             user experience wise from the practice ... in terms of the user
-             experience with the top bar for the timer and all that, it should
-             just be exactly the same"). It briefly had its own `--info` tint
-             to mark it as the placement's clock; that IS a distinction, and a
-             distinction is what he asked to remove. Same rules, same colour,
-             same last-30-seconds red. `.placement-timer` survives as the
-             ANCHOR — the id JS writes to and watch.py asserts — and declares
-             nothing visual. -->
-        <span class="practice-notch-clock placement-timer hidden" id="placement-timer"
-              role="timer">02:00</span>
         <button class="practice-notch-btn" id="practice-notch-btn" type="button"
                 aria-haspopup="menu" aria-expanded="false" aria-label="Session controls">
           <span aria-hidden="true">&#8943;</span>
@@ -670,10 +617,6 @@
       <div class="practice-notch-menu hidden" id="practice-notch-menu" role="menu"
            aria-labelledby="practice-notch-btn">
         <button class="practice-notch-item" id="practice-notch-pause" type="button" role="menuitem">Pause &amp; exit</button>
-        <!-- Placement only (hidden otherwise): the way to END a placement
-             early from inside a probe, where the card carrying
-             #placement-finish-btn is off screen. Proxies to that button. -->
-        <button class="practice-notch-item hidden" id="practice-notch-finish" type="button" role="menuitem">Finish the placement test now</button>
         <p class="practice-notch-note hidden" id="practice-notch-note">No session running.</p>
         <!-- 🔴 THE REAL ELEMENTS, not proxies. Everything above this line
              forwards a click to a hidden button in #session-status-row;
@@ -776,10 +719,9 @@
        takes the guest banner off this one screen; styles/learn-about.css.
 
        Both arms are [data-goto-tab], app.js's existing jump-to-a-tab hook, so
-       neither needs a handler of its own. The RIGHT arm goes to the Placement
-       tab and stops there — that page is where the test is explained and
-       started, and auto-starting a timed test from a landing button is not a
-       thing to do to someone who has just arrived. -->
+       neither needs a handler of its own. The RIGHT arm asks which courses,
+       then lands on Practice, where the "what have you done before?" survey
+       waits for a first-time learner. -->
   <main class="page hidden" id="page-welcome">
     <div class="welcome-fork">
       <!-- 🔴 LOCALHOST ONLY, revealed by app.js::initLocalSignIn. Google
@@ -813,25 +755,14 @@
         <span class="welcome-arm-label">Learn how the app works, and why it exists</span>
         <span class="welcome-arm-note">This path is optional — you can skip it entirely.</span>
       </button>
-      <!-- 🔴 IT GOES TO THE PLACEMENT, NOT STRAIGHT TO PRACTICE (Seth,
-           2026-09-01: "whenever it says get started or whatever, it would
-           essentially take them to the placement diagnostic and then they would
-           take that"). The note under this arm has promised exactly that since
-           the fork was written; while the placement lived on the Learner Home
-           the arm pointed at the Home and the promise was kept by the card
-           happening to be on it. The card is on its own page now, so the arm
-           has to name that page or the sentence becomes false.
-
-           A learner who has ALREADY placed is not stranded by this: the card
-           reads "Retake the placement test" over their last results, and
-           #placement-skip-btn is a one-click route on to practice. -->
-      <!-- Since 2026-09-25 it stops at ONE question first, "which courses do
-           you want to study?" (#page-course-pick), and that page's Continue
-           opens the placement. -->
+      <!-- One question first, "which courses do you want to study?"
+           (#page-course-pick, 2026-09-25); its Continue opens Practice, whose
+           survey sets the starting point (the placement test it replaced was
+           retired 2026-09-26). -->
       <button type="button" class="welcome-arm welcome-arm--right" data-goto-tab="course-pick">
         <span class="welcome-arrow" aria-hidden="true">&#8594;</span>
         <span class="welcome-arm-label">Jump into practicing the app</span>
-        <span class="welcome-arm-note">Pick your courses, then a placement test.</span>
+        <span class="welcome-arm-note">Pick your courses, answer five quick questions, go.</span>
       </button>
       </div>
       <!-- THE THIRD, QUIET ARM (Seth, 2026-08-24): an expert reviewing the
@@ -854,20 +785,19 @@
 
 
   <!-- WHICH COURSES — the one question between the welcome fork's right arm
-       and the placement set-up (Seth, 2026-09-25: "a single prompt question
+       and Practice (Seth, 2026-09-25: "a single prompt question
        that asks them which courses they want to include for study").
        practice/course-pick.js fills the tiles from course-registry.js, posts
-       the answer (POST /api/practice/study-courses) and opens #page-placement.
-       NOT A TAB, like #page-placement: no [data-tab="course-pick"]. Tiles and
-       Continue borrow the placement set-up's classes so the two screens read
-       as one sequence. -->
+       the answer (POST /api/practice/study-courses) and opens Practice.
+       NOT A TAB: no [data-tab="course-pick"]. Tiles and Continue keep the
+       retired placement set-up's class names (styles/practice/home.css). -->
   <main class="page hidden" id="page-course-pick">
     <div class="container placement-page">
       <div class="diagnostic-eyebrow">Getting started</div>
       <section class="card diagnostic-card">
         <div class="placement-step">
           <h2 class="placement-step-q">Which courses do you want to study?</h2>
-          <p class="placement-step-hint">Pick one or more. Only these are practised and placed; you can change this any time on the Courses tab.</p>
+          <p class="placement-step-hint">Pick one or more. Only these are practised; you can change this any time on the Courses tab.</p>
           <div class="placement-focus-grid" id="course-pick-grid" role="group" aria-label="Courses to study"></div>
         </div>
         <div class="placement-wizard-nav">
@@ -976,7 +906,7 @@
           <div class="prose"><p>You will spend nearly all of your time on the second one.</p></div>
         </div>
         <div class="cols">
-          <div class="card"><span class="tag">Step 1</span><h4>Take the placement test</h4><p>Start here. The placement test serves you at most six problems and takes twelve minutes at the outside, since each problem is capped at two minutes. Every answer updates the app's estimate of your understanding across every concept in the knowledge graph, not just the concept the question came from. That is why six problems are enough: when the test ends, Practice knows where to start you.</p></div>
+          <div class="card"><span class="tag">Step 1</span><h4>Tell it where you are starting</h4><p>Pick your courses, then answer five quick questions on the Practice tab about what you have done before: PyTorch, einops, linear algebra, neural nets. Each answer sets a starting estimate for that area, so the first problems are pitched near your level instead of at the very beginning. Your answers take over from there.</p></div>
           <div class="card"><span class="tag">Step 2</span><h4>Live on the Practice tab</h4><p>Day to day, the Practice tab is the whole app. Open it and solve what it gives you. You do not pick topics or track what is due, and you do not decide when you are done with a concept; the app works that out from your answers. This is where you spend most of your time, and there is nothing else you need to manage.</p></div>
           <div class="card"><span class="tag">Step 3</span><h4>Then ARENA itself</h4><p>Whenever you are ready, the app brings you over to the ARENA curriculum itself, landing you on the exact coding problem for the ARENA exercise you are ready for. That handoff is the point of everything before it.</p></div>
         </div>
@@ -988,7 +918,7 @@
           <h2>One loop, run against your own frontier</h2>
         </div>
         <div class="cols three">
-          <div class="card"><span class="tag">1</span><h4>A placement test places you</h4><p>A short placement shows you where you actually stand against what ARENA will ask of you.</p></div>
+          <div class="card"><span class="tag">1</span><h4>You say where you start</h4><p>Five quick questions set a starting estimate for each area; every answer after that replaces the guess with evidence.</p></div>
           <div class="card"><span class="tag">2</span><h4>It picks the concept</h4><p>The app chooses the next concept to teach you, matched to your current level of mastery.</p></div>
           <div class="card"><span class="tag">3</span><h4>And picks how to teach it</h4><p>For that concept it serves one of three things: a lesson, a worked example, or practice problems.</p></div>
           <div class="card"><span class="tag">4</span><h4>Your answer moves the model</h4><p>How you do updates the student model, so the next choice is made on newer evidence than the last one.</p></div>
@@ -1436,7 +1366,7 @@
       </div>
       <p class="hiw-graph-cta">
         <button type="button" class="hiw-graph-cta-btn" data-goto-tab="practice">
-          Start with the placement test &rarr;
+          Start practicing &rarr;
         </button>
       </p>
       </div>
@@ -1455,7 +1385,6 @@
             <option value="raytracing-0.1">Ray Tracing 0.1</option>
           </select>
         </label>
-        <button type="button" id="ray-placement-btn">Place me for Ray Tracing 0.1</button>
         <span id="practice-target-note" role="status" style="font-size:12px">Loading practice focus…</span>
       </div>
       <!-- Graph first, lesson second — in the DOM, not just in the layout, so
@@ -1646,7 +1575,7 @@
           </div>
         </dl>
         <!-- APP MODE — basic is the default: the nav is just the learning
-             surface (Practice + Placement test + Why this app exists). Advanced
+             surface (Practice + Why this app exists). Advanced
              restores the instrument-panel tabs (Knowledge Graph, Course
              content, Notebooks, Targeted Practice).
              Deliberately OUTSIDE #account-form and with no Save step: the
@@ -1831,10 +1760,9 @@
        one it was not.
 
        🔴 A MEMBER'S BARS ARE THE LEARNER HOME'S BARS. groups_view.js emits the
-       same `.placement-area*` rows #placement-areas carries and scores them
-       with `PlacementResults.readiness`, which is a mirror of
-       `_mastery_from_theta` in app/diagnostic.py that practice/watch.py
-       already guards. That is the reason the Groups tab needs no arithmetic of
+       `.placement-area*` rows (styles/practice/home.css) and scores them
+       with `AreaReadiness.readiness` (practice/area-readiness.js), the one
+       copy of that map. That is the reason the Groups tab needs no arithmetic of
        its own, and the reason nothing here may grow a second scale. -->
   <main class="page hidden" id="page-groups">
     <div class="groups-page">
@@ -1861,6 +1789,13 @@
     <div id="practice-workspace-home" hidden></div>
 
     <div class="practice-container">
+      <!-- "WHAT HAVE YOU DONE BEFORE?" (Seth, 2026-09-26) — replaces the
+           placement test as the way in. practice/survey.js fills it from
+           /api/practice/survey whenever a question is pending, and
+           while it is up the rest of the idle surface steps aside
+           (styles/survey.css). Answers set each area's prior for
+           explore/exploit (app/area_survey.py); Skip is remembered too. -->
+      <section class="learner-survey" id="learner-survey" hidden aria-live="polite"></section>
       <!-- THE IDLE SURFACE — what the Practice tab is when no question is
            timed. It replaced "Set up your session", a panel of three inputs
            (QUESTIONS / ANSWER TIME / REVIEW TIME) and a total-time estimate.
@@ -1887,8 +1822,7 @@
           <p class="readiness-caption" id="readiness-caption">ready for the ARENA curriculum</p>
           <p class="readiness-detail" id="readiness-detail"></p>
           <!-- Each problem carries its own clock — its concept's cap in
-               lessons/placement_time_caps.json, the same table the placement
-               test charges against — sent on the question as `secs_allowed`
+               lessons/placement_time_caps.json, the per-concept table — sent on the question as `secs_allowed`
                and read by practice/session-clock.js. Seth, 2026-09-09: "keyed
                to how much time you need for each of them rather than what you
                select at the beginning". The per-question picker that stood
@@ -1917,34 +1851,20 @@
           <p class="session-summary hidden" id="session-summary"></p>
         </div>
 
-        <!-- WHAT THERE IS TO LEARN, and how far in you are on each part of it.
-             Seth, 2026-08-24: "it should display the information about einops,
-             numpy, and einsum to be learned".
-
-             🔴 THE LIST IS NOT HARD-CODED, and it must not become so. Every row
-             comes from `areas` in /api/practice/diagnostic/status — the backend
-             derives them from the bank's `subtopic_key` prefixes, so today that
-             is Einops / Einsum / Numpy and a bank change moves it without a
-             frontend deploy. The endpoint returns all three from the FIRST call
-             on a brand-new account (theta = the prior, probes = 0), which is why
-             this block can stand on the idle screen rather than waiting for a
-             finished placement.
-
-             🔴 IT USED TO LIVE INSIDE #diagnostic-results, which only ever
-             showed after the placement was complete — so the one screen a
-             learner sees every day said "0% ready" and named nothing. Same
-             element, same id, same writer (practice/placement-results.js
-             renderAreas); only the host moved. The results card above keeps the
-             meta chips and the overall figure, which ARE about one test. -->
-        <section class="learner-areas" id="learner-areas">
-          <h2 class="learner-areas-head">What you are learning</h2>
-          <div class="placement-areas" id="placement-areas"></div>
-          <p class="learner-areas-note" id="learner-areas-note">Each bar is this area's estimated readiness. Take the placement test from Account and Settings to measure them instead of assuming them.</p>
+        <!-- MEASURED LEARNING (Seth, 2026-09-26). XP is a gain in the model's
+             knowledge of each concept, the same for every learner; today's XP
+             against a target that finishes the course by the learner's date;
+             daily XP bars and the trajectory toward the course. Built by
+             practice/xp-panel.js from /api/practice/xp (app/learning_xp.py),
+             via the `delta:xp-summary` event xp.js broadcasts for the level
+             pill — one read feeds both. `.is-empty` = no session or the read
+             failed: the whole card goes, like #learner-activity below. -->
+        <section class="learner-xp is-empty" id="learner-xp" aria-labelledby="learner-xp-head">
+          <h2 class="learner-xp-head" id="learner-xp-head">Measured learning <span class="xp-eyebrow">XP</span></h2>
+          <div class="xp-panel-body"></div>
         </section>
 
-        <!-- HOW MUCH YOU WORKED, day by day. Seth, 2026-09-01: "Below the
-             information regarding your strength in all the different areas is
-             the amount of problems that you've done across the different days
+        <!-- HOW MUCH YOU WORKED, day by day. Seth, 2026-09-01: "... the amount of problems that you've done across the different days
              as like a bar chart ... Monday through Sunday ... for the current
              week."
 
@@ -1954,11 +1874,9 @@
              Today's bar grows as they practice (redrawn on
              delta:practice-state-changed).
 
-             🔴 `.is-empty` here means the same thing it means one section up
-             on #learner-areas: signed out, or the fetch failed — the whole box
-             goes rather than standing empty. The area bars above can render
-             from a status call a guest is allowed to make; this one cannot,
-             because a guest has no attempt log to count. -->
+             🔴 `.is-empty`: signed out, or the fetch failed — the whole box
+             goes rather than standing empty. A guest has no attempt log to
+             count. -->
         <section class="learner-activity is-empty" id="learner-activity">
           <h2 class="learner-activity-head">How much you practiced this week</h2>
           <div class="activity-week-chart" id="activity-week-chart" role="img"></div>
@@ -2025,12 +1943,6 @@
                INTACT, so practice/ui.js `renderQuestionIdChip` and
                practice/graph-jump.js still write to exactly the nodes they
                always wrote to. Look for them in .practice-notch-menu. -->
-          <!-- #placement-timer is NO LONGER IN THIS ROW. Seth, 2026-08-23:
-               "for the placement test, it has the problem that the timer is on
-               the left next to the title thing instead of being on the tab."
-               It is in .practice-notch-tab now, beside the session clock it
-               takes turns with — one countdown, one place, whichever test is
-               running. Element and id intact; see the notch above. -->
           <!-- THE HEADING CARD — the concept, and how far into it you are.
                Seth, 2026-08-23: "the bar goes on the left as well right below
                the title of the concept, and the title of the concept is center
@@ -2170,7 +2082,6 @@
           <!-- Submit Area (pre-submission) -->
           <div id="practice-submit-area">
             <button class="primary practice-submit-btn" id="practice-submit-btn" type="button">Submit</button>
-            <button class="ghost practice-dontknow-btn hidden" id="practice-dontknow-btn" type="button" title="Placement only: counts as strong evidence this is above your current level and moves the test along — faster and more honest than guessing.">I don't know yet</button>
             <!-- Reporting a problem was reachable only after a submit, and
                  `display:none` in basic mode — i.e. for everyone. It lives
                  here now, beside Submit, and opens #problem-feedback-panel at
@@ -2363,202 +2274,6 @@ t.manual_seed(0)
          only the practice content area swaps between the two views). -->
   </main>
 
-  <!-- THE PLACEMENT TEST, ON ITS OWN PAGE AGAIN (Seth, 2026-09-01: "we can
-       probably just keep the interface for the diagnostic ... separate, and
-       then it only gets displayed whenever you click on the drop-down one and
-       you go to it specifically").
-
-       It was merged into the Learner Home on 2026-08-24 and that merge is what
-       is being undone here — not reverted, rebuilt: everything learned since
-       (the account-menu route, the three-state label, the area bars on the
-       daily surface) stays where it is. What moves back is the OFFER. The
-       Learner Home is the screen opened every day and it now carries only the
-       readiness dial, the clock picker, the area bars and one way back into
-       practice; the card that pitches a test taken once has a page of its own.
-
-       🔴 NOT A TAB. There is no [data-tab="placement"], exactly as there is
-       none for #page-welcome — the strip stays a learner-facing list of places
-       to be, and this page is reached by name from three places instead: the
-       account menu row (data-goto-tab="placement"), the welcome fork's right
-       arm, and the /diagnostic pathname (solo-route.js). switchTab routes on
-       `page-<name>` existing, so no registration is needed for any of them.
-
-       🔴 AND THE PROBE IS HOSTED HERE, not on the Learner Home. That is what
-       makes the split safe: while a probe is on screen `.practice-container`
-       is a child of THIS page, so the practice page cannot render the probe
-       under its own name — the failure the 2026-08-23 tab lock existed to
-       prevent. app.js keeps a redirect for the other half of it (asking for
-       Practice mid-test lands here). -->
-  <main class="page hidden" id="page-placement">
-    <div class="container placement-page" id="diagnostic-overview">
-      <div class="placement-hero">
-        <div>
-          <div class="diagnostic-eyebrow">Placement</div>
-          <h1>Placement test</h1>
-          <p class="subtitle">Finds where to start you. It seeds practice; it never awards mastery.</p>
-        </div>
-        <!-- THE WAY OUT, on every state of this page. The placement is its
-             own page again, and a page with no tab in the strip needs a route
-             back that does not depend on the account menu being discovered:
-             someone who opened this from the welcome fork, decided not to sit
-             the test, and found no exit would be stranded on it. app.js owns
-             the jump ([data-goto-tab]); this is only the door. -->
-        <!-- 🔴 NO [data-goto-tab]. That binding routes through switchTab's
-             practice->placement redirect, and this button is on screen in
-             exactly the state the redirect fires in: a placement that is
-             ACTIVE but between probes (the card shows "Load next placement
-             question"). The advertised way out would have bounced straight
-             back to this page. app.js binds this id to a route that says it
-             is leaving on purpose. -->
-        <button type="button" class="placement-skip-btn" id="placement-skip-btn"
-                >Skip for now &rarr;</button>
-      </div>
-      <section class="card diagnostic-card" id="placement-card">
-        <div class="diagnostic-status" id="diagnostic-status" aria-live="polite">Loading placement status…</div>
-        <!-- HOW LONG THIS WILL TAKE, before you commit to it (Seth,
-             2026-08-23: "it should also make it more clear to the user the
-             amount of time that it will approximately take before they jump
-             into the placement test"). The static text is the floor — true
-             with no status loaded, and the only thing a signed-out visitor
-             sees. diagnostic-page.js::renderLength replaces it with the real
-             range as soon as the status call answers, because the number of
-             probes is the backend's to decide (`budget`, `min_probes`) and
-             hard-coding "about 30 minutes" here is how the page ends up
-             quoting a length the test stopped using. -->
-        <p class="diagnostic-timing" id="placement-length"><span class="placement-chip"><strong>20:00</strong> per problem</span></p>
-        <!-- How far through the test you are. `budget` is a CEILING, not a
-             length: the placement stops as soon as it is confident, which can
-             be at `min_probes`. The tick is where that becomes possible, so
-             the bar never promises a run to the end. Filled by
-             diagnostic-page.js; visible while the test is running, which is
-             the only time it means anything. -->
-        <div class="placement-progress hidden" id="placement-progress" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="14">
-          <div class="placement-progress-track" id="placement-progress-track">
-            <i class="placement-progress-fill" id="placement-progress-fill"></i>
-            <span class="placement-progress-tick hidden" id="placement-progress-tick"></span>
-          </div>
-          <span class="placement-progress-count" id="placement-progress-count"></span>
-        </div>
-        <!-- THE SET-UP, AS A SHORT RUN OF QUESTIONS (Seth, 2026-09-24: "it
-             should essentially have sequential questions that it asks the
-             user, and they can go to the previous question or the next one").
-             One question on screen at a time, Back / Next underneath:
-               1. which areas do you want to improve   (#placement-step-areas)
-               2. how much have you done before         (#placement-step-level,
-                  only while a self-reported prior can still apply)
-               3. how long do you want to spend         (#placement-step-length)
-             The three lengths are cut from the areas picked in step 1, so a
-             narrower focus is offered shorter tests. practice/placement-plan.js
-             owns which step shows and fills the two dynamic grids; the steps,
-             the self-report buttons (bound by practice/adaptive.js) and the
-             start button (bound by practice/advance-events.js) are static so
-             their handlers survive every repaint. Hidden while a run is live,
-             and on a finished placement until "Retake" opens it. -->
-        <div class="placement-plan hidden" id="placement-plan">
-          <ol class="placement-steps" id="placement-steps" aria-label="Placement set-up"></ol>
-          <section class="placement-step" id="placement-step-areas" data-step="areas">
-            <h2 class="placement-step-q" tabindex="-1">Which areas do you want to improve?</h2>
-            <p class="placement-step-hint">Leave out anything you already know well &mdash; it won&rsquo;t be tested, and the test gets shorter.</p>
-            <div class="placement-focus-grid" id="placement-focus-areas" role="group" aria-label="Areas to place"></div>
-            <div class="placement-focus-tools">
-              <button type="button" class="placement-textbtn" id="placement-focus-all">Select all</button>
-              <span class="placement-focus-count" id="placement-focus-count"></span>
-            </div>
-            <div class="placement-focus-alt" id="placement-focus-alt"></div>
-          </section>
-          <section class="placement-step hidden" id="placement-step-level" data-step="level">
-            <h2 class="placement-step-q" tabindex="-1">How much of this have you done before?</h2>
-            <p class="placement-step-hint">Sets where the first problems start. Your answers take over from there.</p>
-            <div class="self-report-row hidden" id="self-report-row">
-              <span class="self-report-label" data-dd-info="self-report">Starting point</span>
-              <div class="self-report-options" role="group" aria-label="Self-reported starting point">
-                <button type="button" class="self-report-btn" data-level="beginner">Complete beginner</button>
-                <button type="button" class="self-report-btn" data-level="default">Somewhere in between</button>
-                <button type="button" class="self-report-btn" data-level="strong">Experienced</button>
-              </div>
-              <span class="self-report-note hidden" id="self-report-note"></span>
-            </div>
-          </section>
-          <section class="placement-step hidden" id="placement-step-length" data-step="length">
-            <h2 class="placement-step-q" tabindex="-1">How long do you want to spend?</h2>
-            <p class="placement-step-hint" id="placement-length-hint">Longer tests pin down more concepts. It stops early once every concept is settled, and never runs past the time you pick.</p>
-            <div class="placement-plan-options" id="placement-length-options" role="group" aria-label="Placement test length"></div>
-            <p class="placement-plan-note" id="placement-length-note"></p>
-          </section>
-          <div class="placement-wizard-nav">
-            <button type="button" class="placement-back-btn" id="placement-back-btn">&larr; Back</button>
-            <button type="button" class="placement-forward-btn" id="placement-forward-btn">Next &rarr;</button>
-            <!-- The CTA is wrapped because infotips.js FORCES place="after" for a
-                 <button> anchor (a button cannot nest a button) and inserts the
-                 dot into the anchor's parentNode. Unwrapped, that dot was a flex
-                 child of .diagnostic-actions sitting on its own line underneath a
-                 full-width button. The wrapper is what keeps the ⓘ tight against
-                 the button's right edge, as one control.
-                 NOTE the buttons no longer carry `.primary`: it sets width:100%
-                 and 12px/28px padding, and .placement-start-btn's own 4px/10px
-                 padding won on padding only — so the button rendered as a
-                 full-bleed 4px-tall strip. -->
-            <span class="placement-wizard-start hidden" id="placement-wizard-start">
-              <span class="placement-cta">
-                <button type="button" class="placement-start-btn hidden" id="placement-start-btn" data-dd-info="placement" data-dd-info-place="after">Start the placement test</button>
-              </span>
-            </span>
-          </div>
-        </div>
-        <div class="diagnostic-actions" id="placement-actions">
-          <!-- A finished placement shows its results; this opens the set-up
-               questions again. It never starts a run by itself — a retake
-               clears the probe log, so the start stays one deliberate click
-               at the end of the questions. practice/placement-plan.js. -->
-          <button type="button" class="placement-next-btn hidden" id="placement-retake-btn">Retake the placement test</button>
-          <button type="button" class="placement-next-btn hidden" id="diagnostic-practice-btn">Load next placement question</button>
-          <!-- PAUSE THE PLACEMENT. Hidden here, and permanently so: the only
-               moment pausing means anything is while a probe is on screen, and
-               a probe on screen is exactly when this card is hidden
-               (.diagnostic-running, styles/practice/diagnostic.css). The
-               surface is the topbar notch — its square and its menu row — and
-               this is the button they proxy to, the same arrangement
-               #session-pause-btn has with the notch for a practice session.
-               It exists rather than the notch calling DiagnosticPage.pause()
-               itself so there is ONE place the behaviour is written down and
-               one element carrying its enabled state; practice/notch-menu.js
-               documents why it clicks the real control instead of copying it.
-               practice/diagnostic-page.js owns what pausing does. -->
-          <button type="button" class="ghost placement-pause-btn hidden" id="placement-pause-btn"
-                  >Pause the placement test</button>
-          <!-- FINISH EARLY (Seth, 2026-09-08: "make it such that you can end the
-               diagnostic early … after an hour, maybe two"). Shown while a run
-               is ACTIVE with at least one answer and no probe on screen; the
-               notch menu's #practice-notch-finish proxies to it mid-probe. Two
-               clicks: the first arms it and rewrites its label with what will
-               happen, the second calls /diagnostic/finish — no window.confirm
-               (a modal dialog blocks the page and every automation on it).
-               practice/diagnostic-page.js owns what finishing does. -->
-          <button type="button" class="ghost placement-finish-btn hidden" id="placement-finish-btn"
-                  >Finish the test now</button>
-        </div>
-      </section>
-      <!-- Filled by practice/placement-results.js from the SAME
-           /diagnostic/status payload that drives the card above; these ids are
-           its only anchors. diagnostic-page.js decides whether the card shows,
-           placement-results.js decides what is inside it. -->
-      <section class="card diagnostic-results hidden" id="diagnostic-results">
-        <h2>Your placement</h2>
-        <p class="placement-results-meta" id="placement-results-meta"></p>
-        <div class="placement-readiness" id="placement-readiness"></div>
-        <p class="placement-results-empty hidden" id="placement-results-empty">No areas came back for this placement — retake it to get a fresh reading.</p>
-      </section>
-    </div>
-    <!-- WHERE A PLACEMENT PROBE IS HOSTED. Same element, same id, same writer
-         (practice/diagnostic-page.js syncWorkspace) — it just lives on this
-         page now, because the Placement page it used to sit on no longer
-         exists. `.practice-container` is moved in here while a probe is on
-         screen and back to #practice-workspace-home when it is not, which is
-         what takes the idle surface (dial, areas, placement card) off the
-         screen for the duration of a probe and puts it back afterwards. -->
-    <div class="diagnostic-workspace-host hidden" id="diagnostic-workspace-host"></div>
-  </main>
-
   <!-- #page-targeted-practice is injected at runtime by
        targeted-practice/targeted-practice-dom.js (inserts as a previous
        sibling of <footer>). Extracted here to keep index.html under the
@@ -2585,8 +2300,8 @@ t.manual_seed(0)
        key is derived from the signed-in email, so the listener has to be
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
-  <script src="xp.js?v=2"></script>
-  <script src="solo-route.js?v=6"></script>
+  <script src="xp.js?v=3"></script>
+  <script src="solo-route.js?v=7"></script>
   <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
        second column — a three-state Tiptap checklist per day, ported from
        Delta Note's sub-goals). 🔴 BEFORE app.js, NOT AFTER IT. app.js runs its boot
@@ -2597,7 +2312,7 @@ t.manual_seed(0)
        the invite link opens the Learner Home — silently, because every other
        part of the feature works and the token is still in the URL. Caught in
        the browser, not by a check.
-       Every one of them reads `apiFetch`, `DDIdentity`, `PlacementResults` and
+       Every one of them reads `apiFetch`, `DDIdentity`, `AreaReadiness` and
        each other off `window` at CALL time, never at load, so loading early
        costs nothing and the order inside the group is for readability. The
        400 KB Tiptap bundle these use is NOT loaded here: `groups_checklist.js`
@@ -2610,17 +2325,20 @@ t.manual_seed(0)
   <script src="groups/groups_day.js?v=2"></script>
   <script src="groups/groups_join.js?v=2"></script>
   <script src="groups/groups_progress.js?v=2"></script>
-  <script src="groups/groups_lane.js?v=2"></script>
-  <script src="groups/groups_view.js?v=5"></script>
+  <!-- before groups_lane.js + app.js: a boot straight onto Groups renders
+       member areas through AreaReadiness on the first refresh. -->
+  <script src="practice/area-readiness.js?v=1"></script>
+  <script src="groups/groups_lane.js?v=3"></script>
+  <script src="groups/groups_view.js?v=6"></script>
   <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
   <script src="conceptual/conceptual_chat.js?v=1"></script>
-  <script src="app.js?v=36"></script>
+  <script src="app.js?v=37"></script>
   <script src="about-page-editor.js?v=5"></script>
-  <!-- Gives a signed-out visitor a backend session so the diagnostic,
+  <!-- Gives a signed-out visitor a backend session so practice,
        the lessons and the student model work with no sign-in. MUST stay
        after app.js: it writes app.js's top-level authToken/authEmail
        bindings, which do not exist until that script has evaluated. -->
-  <script src="guest-session.js?v=3"></script>
+  <script src="guest-session.js?v=4"></script>
   <!-- Test users (@P, 2026-08-23). Seth demos the app and hands someone a clean,
        named learner state without losing his own; each test user is a REAL
        backend account minted the way guest-session.js mints a guest. AFTER
@@ -2634,7 +2352,7 @@ t.manual_seed(0)
        time. Both load AFTER app.js on purpose: the tab dots are already in
        the markup, so app.js's auth-only NodeLists pick them up, and anything
        injected later is re-derived from the DOM by infotips.js's observer. -->
-  <script src="infotips-registry.js?v=15"></script>
+  <script src="infotips-registry.js?v=16"></script>
   <script src="infotips.js?v=2"></script>
   <script src="lessons/glossary.js?v=3"></script>
   <script src="jargon.js?v=2"></script>
@@ -2648,7 +2366,7 @@ t.manual_seed(0)
        which is a top-level `const` in app.js and therefore NOT on `window`.
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
-  <script src="account-menu.js?v=6"></script>
+  <script src="account-menu.js?v=7"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
@@ -2681,7 +2399,7 @@ t.manual_seed(0)
   <!-- The mastery bar's markup. Before lesson-graph.js, which calls it. Both
        are `defer`, so document order is execution order. -->
   <script src="concept-graph/mastery-bar.js?v=2" defer></script>
-  <script src="concept-graph/kc_lattice_read.js?v=3" defer></script>
+  <script src="concept-graph/kc_lattice_read.js?v=4" defer></script>
   <!-- How the graph draws (node look setting, curved edges, shortcuts).
        BEFORE lesson-graph.js, which builds its stylesheet from it. -->
   <!-- Node placement + edge routing that cut crossings; runs itself as a
@@ -2714,17 +2432,17 @@ t.manual_seed(0)
   <script src="practice/mode.js?v=11"></script>
   <script src="practice/questions.js?v=28"></script>
   <script src="practice/engine.js?v=10"></script>
-  <script src="practice/adaptive.js?v=11"></script>
+  <script src="practice/adaptive.js?v=12"></script>
   <script src="practice/storage.js?v=7"></script>
   <!-- BEFORE session-clock.js, which multiplies every problem's own clock by
        the factor this holds (window.SessionClockScale), and AFTER storage.js,
        whose getPracticeStorageKey() makes the factor per-account. It also
        binds #session-clock-scale on the idle screen. -->
-  <script src="practice/session-clock-scale.js?v=2"></script>
+  <script src="practice/session-clock-scale.js?v=3"></script>
   <!-- BEFORE timer.js: it reads the learner's per-question allowance through
        window.SessionClock on every phase change, and AFTER storage.js, whose
        getPracticeStorageKey() is what makes the choice per-account. -->
-  <script src="practice/session-clock.js?v=6"></script>
+  <script src="practice/session-clock.js?v=7"></script>
   <!-- BEFORE timer.js, and after storage.js: it owns the pause snapshot (the
        reader, the writer and the resume arithmetic, split out of timer.js on
        2026-09-09 at Modulario's LOC limit) and keys it with
@@ -2732,7 +2450,7 @@ t.manual_seed(0)
        parse time — the dependency runs that way round precisely because this
        file is parsed first. -->
   <script src="practice/session-snapshot.js?v=2"></script>
-  <script src="practice/dom.js?v=20"></script>
+  <script src="practice/dom.js?v=21"></script>
   <script src="practice/bars.js?v=12"></script>
   <script src="practice/question-examples.js?v=1"></script>
   <!-- Math (multiple-choice) questions: `window.DeltaMath`. Before ui.js
@@ -2758,18 +2476,18 @@ t.manual_seed(0)
   <!-- The drill prompt's markdown (headings, bold, lists). Before ui.js,
        whose renderQuestionBody hands it each prose chunk. -->
   <script src="practice/prompt-markdown.js?v=1"></script>
-  <script src="practice/ui.js?v=46"></script>
+  <script src="practice/ui.js?v=48"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
-  <script src="practice/test-check.js?v=3"></script>
+  <script src="practice/test-check.js?v=4"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=33"></script>
+  <script src="practice/api.js?v=35"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=38"></script>
+  <script src="practice/timer.js?v=39"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2783,8 +2501,8 @@ t.manual_seed(0)
        error. 🔴 The overlay's metrics are SHARED with .code-editor in
        styles/practice/editor.css: never restate a font, padding or border in
        one without the other or the overlay drifts off its textarea. -->
-  <script src="practice/code-highlight.js?v=1"></script>
-  <script src="practice/code-complete.js?v=1"></script>
+  <script src="practice/code-highlight.js?v=2"></script>
+  <script src="practice/code-complete.js?v=2"></script>
   <!-- Colab-style ARENA code cells (session [J], 2026-09-06): no grey fill,
        syntax colour + autocomplete, code at prose size. Self-wires off the
        `arena-notebook:rendered` event, so it needs nothing from
@@ -2796,9 +2514,10 @@ t.manual_seed(0)
   <script src="practice/notebook-cells.js?v=3"></script>
   <script src="practice/notebook-code-edit.js?v=5"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
-  <script src="practice/runner.js?v=24"></script>
+  <script src="practice/runner.js?v=25"></script>
   <script src="practice/notebook.js?v=13"></script>
-  <script src="practice/notebook-editor.js?v=8"></script>
+  <script src="practice/notebook-editor.js?v=9"></script>
+  <script src="practice/lang-js.js?v=1"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
@@ -2809,8 +2528,8 @@ t.manual_seed(0)
   <!-- The topbar concept pill. AFTER stage-ladder.js for reading order only —
        it computes nothing and only listens for `dd-concept-progress`, which
        cannot fire before a question lands. -->
-  <script src="concept-pill.js?v=6"></script>
-  <script src="practice/notch-menu.js?v=13"></script>
+  <script src="concept-pill.js?v=7"></script>
+  <script src="practice/notch-menu.js?v=14"></script>
   <!-- THE IDLE SCREEN. readiness.js reads the number (lessons/kc_registry.json
        + window.deltaKcReadinessInfo); session-idle.js paints the dial and
        proxies Continue practicing to the hidden resume/start buttons. AFTER
@@ -2821,6 +2540,8 @@ t.manual_seed(0)
   <!-- The weekly problems-done bars under the area list. After app.js (it
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
+  <script src="practice/xp-panel.js?v=2"></script>
+  <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
        `LessonTimer.start` at click/render time, and the notch mirrors it
@@ -2828,7 +2549,7 @@ t.manual_seed(0)
        `PracticeSession` through the shared classic-script scope (timer.js
        above), which is why it is not a module. -->
   <script src="practice/lesson-timer.js?v=1"></script>
-  <script src="practice/lessons.js?v=46"></script>
+  <script src="practice/lessons.js?v=47"></script>
   <!-- After lessons.js: the view renders through LessonGate.renderMarkdown,
        and after notebook.js, whose runSource is the one cell harness. -->
   <script src="practice/notebook-view.js?v=8"></script>
@@ -2859,7 +2580,7 @@ t.manual_seed(0)
   <script src="practice/arena-notebook-resume.js?v=1"></script>
   <script src="practice/arena-notebook-session.js?v=1"></script>
   <script src="practice/arena-notebook.js?v=10"></script>
-  <script src="practice/ladder.js?v=13"></script>
+  <script src="practice/ladder.js?v=14"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
   <script src="practice/exercise-planner.js?v=2"></script>
@@ -2870,7 +2591,7 @@ t.manual_seed(0)
   <!-- Exercise practice sessions (2026-09-06): the button under each ARENA
        exercise heading, the answer/review/count dialog, resume. Needs
        kc-practice.js (startScoped) and timer.js (configure) above it. -->
-  <script src="practice/exercise-timer.js?v=4"></script>
+  <script src="practice/exercise-timer.js?v=5"></script>
   <script src="practice/exercise-session.js?v=10"></script>
   <!-- After exercise-session.js: it reads the blocks that file puts under
        each exercise (`dd-exercise-blocks:decorated`) and tells the topbar
@@ -2879,9 +2600,9 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=52"></script>
+  <script src="practice/events.js?v=53"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
-  <script src="practice/advance-events.js?v=2"></script>
+  <script src="practice/advance-events.js?v=3"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
        the three buttons, it MOVES #feedback-prompt + .feedback-buttons out
        of #practice-feedback-area and into a bar pinned to the bottom of the
@@ -2891,18 +2612,8 @@ t.manual_seed(0)
        markup exactly where index.html declares it. -->
   <script src="practice/difficulty-dock.js?v=4"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
-  <!-- Before diagnostic-page.js, which calls into it: that file kicks off its
-       own refresh at load if the placement page is already on screen. -->
-  <script src="practice/placement-wizard.js?v=3"></script>
-  <script src="practice/placement-plan.js?v=5"></script>
-  <script src="practice/placement-results.js?v=6"></script>
-  <script src="practice/practice-target.js?v=1"></script>
-  <script src="practice/diagnostic-page.js?v=26"></script>
-  <!-- Placement probes run outside a practice session, so they carry their own
-       fixed per-question clock. Loaded after ui.js/events.js, whose hooks call
-       into it. -->
-  <script src="practice/placement-timer.js?v=6"></script>
-  <script src="practice/init.js?v=19"></script>
+  <script src="practice/practice-target.js?v=2"></script>
+  <script src="practice/init.js?v=20"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three
        files survive because the rest of the app depends on them:
@@ -2924,9 +2635,8 @@ t.manual_seed(0)
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
   <script src="courses.js?v=7"></script>
-  <!-- After course-registry.js (the tiles) and placement-wizard.js (reset on
-       Continue). -->
-  <script src="practice/course-pick.js?v=1"></script>
+  <!-- After course-registry.js (the tiles). -->
+  <script src="practice/course-pick.js?v=2"></script>
   <!-- arena/manifest.js exposes window.ARENA_STAGE1_PROBLEMS + window.computeArenaReadiness; -->
   <!-- arena/exercises.js exposes window.ARENA_EXERCISES_BY_NOTEBOOK. -->
   <!-- Both consumed by practice/arena-unlock.js and targeted-practice.js. -->

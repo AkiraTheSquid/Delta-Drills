@@ -27,6 +27,23 @@
 
   const $ = (id) => document.getElementById(id);
   let bar = null, sub = null;
+  const SELF = document.currentScript && document.currentScript.src;
+
+  // `?kgtune=1` (remembered in this browser; `?kgtune=0` forgets it): load
+  // kg-tune.js, the layout optimizer's sliders. Nobody else downloads it.
+  const loadTune = () => {
+    let on = false;
+    try {
+      const v = new URLSearchParams(location.search).get("kgtune");
+      if (v === "0" || v === "1") localStorage.setItem("dd_kg_tune_on", v);
+      on = localStorage.getItem("dd_kg_tune_on") === "1";
+    } catch (_) {}
+    if (!on || !SELF || document.querySelector("script[data-kg-tune]")) return;
+    const sc = document.createElement("script");
+    sc.src = new URL("kg-tune.js?v=1", SELF).href;
+    sc.dataset.kgTune = "1";
+    document.head.appendChild(sc);
+  };
 
   const el = (tag, cls, html) => {
     const n = document.createElement(tag);
@@ -191,6 +208,7 @@
     new ResizeObserver(() => { if (!queued) { queued = true; requestAnimationFrame(measure); } }).observe(head);
     adoptNoData();
     new MutationObserver(adoptNoData).observe(graph, { childList: true });
+    loadTune();
     return true;
   };
 

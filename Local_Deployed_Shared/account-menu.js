@@ -107,85 +107,8 @@
     if (opening) requestAnimationFrame(() => focusItem(0));
   });
 
-  /* THE PLACEMENT ROW (Seth, 2026-08-31: "make it such that it shows up for
-     having the ability to retake the diagnostic in the account and settings
-     dropdown ... that way you can always retake the placement diagnostic if you
-     need to").
-
-     🔴 IT MUST NOT START THE TEST FROM HERE. `POST /diagnostic/start` calls
-     `diagnostic.start()`, which sets `probes = []` and `completed_at = None` —
-     retaking THROWS AWAY the reading the learner already has. This row sits one
-     pixel below "Learner home" in a menu that opens on a single click, so it
-     routes instead: `data-goto-tab="placement"` is app.js's binding (same
-     division of labour as `data-lab-open` above — this file never re-implements
-     the jump), and the destructive press stays on #placement-start-btn, on a
-     card that says what the test is and how long it takes.
-
-     🔴 IT ROUTES TO #page-placement (Seth, 2026-09-01). The placement is a page
-     of its own again, and this row is the only standing route to it from inside
-     the app — there is no tab for it in the strip, by design.
-
-     What this adds is the part a bare jump cannot do: the card has two controls
-     on it and which one is live depends on the state of the test. Focus and
-     flash whichever that is, so the row lands on an answer rather than a page.
-
-     🔴 THE SCROLL AND THE FLASH ARE ON DIFFERENT CLOCKS. The card can be
-     scrolled to on the next frame — `switchTab` un-hides the page in this same
-     task, and it has a layout box as soon as the style recalculation lands. The
-     BUTTON cannot: it is `.hidden` until a /diagnostic/status call answers
-     (diagnostic-page.js::renderStartButton owns that), and `.focus()` on a
-     `display: none` element does nothing at all. So scroll now, and flash after
-     the refresh resolves. */
-  const flash = (el) => {
-    el.classList.remove("placement-cta-flash");
-    // Reading layout between the remove and the add is what restarts a running
-    // animation; without it a second click from the menu does nothing visible.
-    void el.offsetWidth;
-    el.classList.add("placement-cta-flash");
-  };
-
-  const revealPlacement = () => {
-    /* 🔴 THERE IS NOTHING TO UN-HIDE ANY MORE. Until 2026-09-01 the card sat on
-       the Learner Home and was hidden once the placement had been taken, so
-       this function opened with `DiagnosticPage.reveal()` — an override that
-       lifted the hide for the length of one visit — and called it a second time
-       after the refresh, because the render that refresh triggers re-decided
-       the card's visibility from a fresh "completed" status.
-
-       The card is the content of a page the learner navigates to now, and it
-       shows in every state. `reveal()` is deleted rather than left as a no-op,
-       here and in diagnostic-page.js's exports: a call that means nothing is
-       how the next reader concludes the visibility rule still exists.
-
-       The scroll stays. The card is short but the results section under it is
-       not, and a learner arriving from this row on a page scrolled where they
-       last left it should be looking at the control. */
-    const card = document.getElementById("diagnostic-overview");
-    // Hidden means a probe is on screen (#page-placement.diagnostic-running):
-    // the learner is mid-test, and the card they are asking for IS the test.
-    if (card && card.offsetParent !== null) {
-      requestAnimationFrame(() => {
-        card.scrollIntoView({ block: "start", behavior: "smooth" });
-      });
-    }
-    Promise.resolve(window.DiagnosticPage?.refresh?.()).catch(() => {}).then(() => {
-      /* Whichever of the two is on screen. Mid-test the start button is hidden
-         and "Load next placement question" is the live control, so pointing at
-         the start button unconditionally would focus nothing exactly when the
-         learner most needs the page to answer. */
-      /* A finished placement keeps its set-up questions closed behind
-         "Retake" (placement-wizard.js), and the start button sits inside
-         them — so ask what is actually on screen, not only `.hidden` on the
-         element itself: a start button in a hidden step is not a target. */
-      const target = ["placement-start-btn", "placement-retake-btn", "diagnostic-practice-btn"]
-        .map((id) => document.getElementById(id))
-        .find((el) => el && !el.classList.contains("hidden") && el.offsetParent !== null);
-      if (!target) return;
-      target.focus({ preventScroll: true });
-      flash(target);
-    });
-  };
-
+  /* 🪦 The placement row and its reveal (focus + flash the card's live
+     control) went with the placement test (Seth, 2026-09-26). */
   menu.addEventListener("click", (e) => {
     const item = e.target.closest(".account-menu-item");
     if (!item) return;
@@ -195,7 +118,6 @@
        belongs to is on screen — hence after, in the same task. */
     const lab = item.dataset.labOpen;
     if (lab) openDisclosure(lab);
-    if (item.hasAttribute("data-placement-retake")) revealPlacement();
   });
 
   /* Click-away and Escape. Both are what a menu is expected to do, and without
@@ -236,5 +158,5 @@
     }
   }
 
-  window.DDAccountMenu = { close, openDisclosure, revealPlacement };
+  window.DDAccountMenu = { close, openDisclosure };
 })();

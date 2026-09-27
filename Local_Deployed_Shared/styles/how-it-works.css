@@ -676,7 +676,6 @@ html.dd-colab-edition .kg2-controls .kg2-max {
 /* Single-concept view: the adaptive-queue framing (what Practice is, where to
    start across all topics) is about a different flow and reads as noise here.
    The concept pill in the topbar is the header for this page. */
-.kg-embed #self-report-row { display: none !important; }
 
 /* Parent overlay: full-screen, above everything, with a slim Minimize bar. */
 .kg-maxi { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; background: var(--bg); }

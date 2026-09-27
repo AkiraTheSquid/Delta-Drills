@@ -318,139 +318,6 @@ const PracticeAPI = {
     return this.currentQuestion;
   },
 
-  // --- Placement test (backend mode only) --------------------------------
-  // "I don't know yet" and self-rated probe results go here; answered probes
-  // are recorded server-side by /submit while the diagnostic is active.
-  /* Every placement status that comes back through this object is kept on
-     `lastDiagnosticStatus` and announced as `delta-drills-diagnostic-status`,
-     so the problem clock (placement-timer.js) and the plan readout
-     (placement-plan.js) read the plan the SERVER is running — total cap, time
-     left, what the next problem is allowed — without each fetching it again.
-     `null` / `unavailable` are not statuses and are not kept. */
-  lastDiagnosticStatus: null,
-  _keepDiagnosticStatus(status) {
-    if (!status || status.unavailable) return status;
-    this.lastDiagnosticStatus = status;
-    try {
-      window.dispatchEvent(new CustomEvent("delta-drills-diagnostic-status", { detail: status }));
-    } catch (_) {}
-    return status;
-  },
-
-  async diagnosticAnswer(questionId, result) {
-    if (practiceMode !== "backend") return null;
-    /* Advisory only: the server charges its own serve-to-answer time and
-       ignores this whenever it has one. Sent so a status that predates the
-       server's clock still carries a number. */
-    const elapsed = window.PlacementTimer?.elapsedSecs?.();
-    const res = await apiFetch("/api/practice/diagnostic/answer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question_id: questionId,
-        result,
-        elapsed_secs: Number.isFinite(elapsed) ? elapsed : null,
-      }),
-    });
-    if (res.status === 401) {
-      handleExpiredToken();
-      return null;
-    }
-    if (!res.ok) {
-      const detail = await res.text();
-      throw new Error(detail || "Failed to record placement answer.");
-    }
-    return this._keepDiagnosticStatus(await res.json());
-  },
-
-  /* End the placement NOW on the evidence so far (Seth, 2026-09-08). The
-     server seeds from whatever was answered; an unanswered probe on screen is
-     simply dropped, not recorded. With zero answers the server treats it as a
-     decline. Returns the finished status, kept like every other status. */
-  async diagnosticFinish() {
-    if (practiceMode !== "backend") return null;
-    const res = await apiFetch("/api/practice/diagnostic/finish", { method: "POST" });
-    if (res.status === 401) {
-      handleExpiredToken();
-      return null;
-    }
-    if (!res.ok) {
-      const detail = await res.text();
-      throw new Error(detail || "Failed to finish the placement test.");
-    }
-    return this._keepDiagnosticStatus(await res.json());
-  },
-
-  /* The set-up's numbers (practice/placement-wizard.js): the area catalogue,
-     and three lengths cut to `areas` (null = the whole curriculum), each
-     with how many problems it is likely to hold. */
-  async diagnosticPlan(areas) {
-    if (practiceMode !== "backend") return null;
-    const q = Array.isArray(areas) && areas.length
-      ? `?areas=${encodeURIComponent(areas.join(","))}`
-      : "";
-    try {
-      const res = await apiFetch(`/api/practice/diagnostic/plan${q}`);
-      if (res.ok) return await res.json();
-      return { unavailable: true, httpStatus: res.status };
-    } catch (_) {
-      return { unavailable: true, httpStatus: 0 };
-    }
-  },
-
-  /* What the learner answered in the set-up — scope, areas and the chosen
-     length in minutes — read from placement-wizard.js when the caller does
-     not say, so the start button in advance-events.js needs no knowledge of
-     it. `hours` is still honoured for a caller that passes one; the server
-     falls back to its default plan for anything it does not recognise. */
-  async diagnosticStart(hours, scope) {
-    if (practiceMode !== "backend") return null;
-    const pick = window.PlacementWizard?.startPayload?.() || {};
-    const h = Number(hours);
-    const res = await apiFetch("/api/practice/diagnostic/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hours: Number.isFinite(h) && h > 0 ? h : null,
-        minutes: Number.isFinite(h) && h > 0 ? null : (pick.minutes ?? null),
-        areas: pick.areas ?? null,
-        scope: scope || pick.scope || window.PlacementPlan?.selectedScope?.() || "all",
-      }),
-    });
-    if (res.status === 401) {
-      handleExpiredToken();
-      return null;
-    }
-    if (!res.ok) {
-      const detail = await res.text();
-      throw new Error(detail || "Failed to start the placement test.");
-    }
-    return this._keepDiagnosticStatus(await res.json());
-  },
-
-  /* Three different answers, and they used to be one.
-
-     `null` meant "no placement for you" AND "the server said no" AND "the
-     server never answered", so the Placement page rendered its signed-out
-     copy — "Sign in to take the placement test", every button hidden — at a
-     signed-in learner whose backend was restarting. Nothing to click, and an
-     instruction that did not apply to them.
-
-     Now `null` keeps its one honest meaning (this build is not talking to a
-     backend at all) and a failure comes back marked, with the HTTP status
-     when there was one and 0 when the request never landed. Callers must
-     treat `unavailable` as "no status", not as a status. */
-  async diagnosticStatus() {
-    if (practiceMode !== "backend") return null;
-    try {
-      const res = await apiFetch("/api/practice/diagnostic/status");
-      if (res.ok) return this._keepDiagnosticStatus(await res.json());
-      return { unavailable: true, httpStatus: res.status };
-    } catch (_) {
-      return { unavailable: true, httpStatus: 0 };
-    }
-  },
-
   async submitAnswer(questionId, userCode, { timedOut = false } = {}) {
     /* A torch submit from a session stranded in local mode (guest provision
        failed once at boot and DDGuest.ensure() memoized it) used to throw the
@@ -489,6 +356,16 @@ const PracticeAPI = {
       questionNeedsEinops(this.currentQuestion) &&
       !needsTorchRuntime(this.currentQuestion, userCode);
 
+    /* A LeetCode drill answered in JavaScript (practice/lang-js.js) is graded
+       by node on the server and nowhere else. Falling through to the Pyodide
+       path below would run JS as Python and RECORD a wrong answer. */
+    const language = window.DeltaLang?.languageFor?.(this.currentQuestion) || "python";
+    if (language === "javascript" && practiceMode !== "backend") {
+      const blocked = new Error("JavaScript answers are graded on the server. Sign in again to submit.");
+      blocked.blocked = true;
+      throw blocked;
+    }
+
     if (practiceMode === "backend" && !requiresLocalPyodide) {
       const res = await apiFetch("/api/practice/submit", {
         method: "POST",
@@ -496,6 +373,7 @@ const PracticeAPI = {
         body: JSON.stringify({
           question_id: questionId,
           user_code: userCode,
+          language,
           example_shown: _exampleShown(questionId),
           // The answer clock pressed Submit, not the learner (timer.js
           // consumeTimedOut). The server logs a wrong answer under this as a
@@ -505,6 +383,11 @@ const PracticeAPI = {
       });
       if (res.status === 401) {
         handleExpiredToken();
+        if (language === "javascript") {
+          const blocked = new Error("Signed out — JavaScript answers are graded on the server. Sign in again to submit.");
+          blocked.blocked = true;
+          throw blocked;
+        }
         // fall through to local mode below
       } else if (!res.ok) {
         const detail = await res.text();
@@ -857,9 +740,9 @@ if (typeof window !== "undefined") {
    XP HOOKS — one wrap, every path that records learner data.
 
    The topbar seam (../xp.js) has to move whenever the learner enters
-   ANYTHING: a graded submit, a placement probe, "I don't know yet", the
-   felt-difficulty rating, a torch self-rating, a content flag. Those are
-   six handlers spread over events.js, colab_mode.js and diagnostic-page.js,
+   ANYTHING: a graded submit, the felt-difficulty rating, a torch
+   self-rating, a content flag. Those are handlers spread over events.js
+   and colab_mode.js,
    but every one of them ends up calling a method on this object — so the
    award belongs HERE, wrapped once, rather than as six calls that the next
    handler to be added will forget to make.
@@ -891,14 +774,11 @@ if (typeof window !== "undefined") {
     };
   };
 
-  // A miss still pays. The placement test is BUILT out of misses, and a bar
-  // that only moved on a correct answer would charge the learner for using
-  // the feature that finds their level.
+  // A miss still pays: a bar that only moved on a correct answer would
+  // charge the learner for exploring past their level.
   wrap("submitAnswer", (result) => (result && result.correct ? "answer_correct" : "answer_wrong"));
   // Torch / Colab self-rating and the local Pyodide engine path.
   wrap("recordLocalEval", (_r, args) => (args[1] ? "answer_correct" : "answer_wrong"));
-  // Placement probe answered without a code attempt ("I don't know yet").
-  wrap("diagnosticAnswer", (_r, args) => (args[1] === "dont_know" ? "placement_skip" : "placement_answer"));
   wrap("sendFeedback", () => "difficulty_rating");
   wrap("overrideCorrect", () => "override");
   wrap("reportProblem", () => "problem_report");

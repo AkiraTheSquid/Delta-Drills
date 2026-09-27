@@ -7,18 +7,19 @@
    between the 'take me to diagnostic' and viewing diagnostic controls".
 
    So the welcome fork's right arm lands on #page-course-pick, not on the
-   placement: one question, one tile per course
+   Practice tab: one question, one tile per course
    (concept-graph/course-registry.js), and Continue. Continue posts the
-   answer to POST /api/practice/study-courses and then opens #page-placement,
-   whose set-up questions (practice/placement-wizard.js) now offer only the
-   picked courses' areas.
+   answer to POST /api/practice/study-courses and then opens Practice, whose
+   "what have you done before?" survey (practice/survey.js) asks only about
+   the picked courses' areas. (It opened the placement test until that was
+   retired on 2026-09-26.)
 
    What the answer does is the backend's (app/course_registry.py::course_off):
    a course left out has its concepts switched off everywhere — practice, the
-   placement, the Knowledge Graph — ARENA's whole graph included. The Courses
+   Knowledge Graph — ARENA's whole graph included. The Courses
    tab changes it later; its toggles and this page read the same state.
 
-   Like #page-placement this is a page with no tab: reached by name
+   This is a page with no tab: reached by name
    ([data-goto-tab="course-pick"]) and by nothing else.
    ================================================================ */
 (function initCoursePick() {
@@ -107,10 +108,7 @@
     paint();
   };
 
-  const toPlacement = () => {
-    window.PlacementWizard?.coursesChanged?.();
-    switchTab("placement");
-  };
+  const toPractice = () => switchTab("practice");
 
   go.addEventListener("click", async () => {
     if (saving || !chosen || !chosen.size) return;
@@ -138,7 +136,7 @@
     try { await window.deltaRefreshKcLattice?.(); } catch (_) {}
     window.dispatchEvent(new CustomEvent("delta:courses-changed"));
     window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed"));
-    toPlacement();
+    toPractice();
   });
 
   /* Read once the backend mode is settled (a first-time visitor's guest

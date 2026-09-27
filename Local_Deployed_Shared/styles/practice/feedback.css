@@ -192,15 +192,6 @@
 #practice-submit-area.hidden { display: none; }
 .practice-skip-btn { white-space: nowrap; }
 
-/* Placement-only "I don't know yet" — amber accent so it reads as a real,
-   sanctioned diagnostic answer rather than a bail-out. */
-.practice-dontknow-btn {
-  white-space: nowrap;
-  border-color: rgb(var(--warn-rgb) / 0.55);
-  color: var(--warn);
-}
-.practice-dontknow-btn:hover { border-color: var(--warn); }
-
 /* Difficulty rating: helper line + a visually-marked default button. */
 .feedback-help {
   font-size: 12px;

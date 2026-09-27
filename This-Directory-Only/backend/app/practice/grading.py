@@ -20,6 +20,7 @@ from app.code_runner import (
     run_function_tests,
     torch_available,
 )
+from app import leetcode_js
 from app.models import User
 from app.practice.chatgpt_helpers import call_chatgpt
 from app.practice.prompts import build_ai_judge_prompt
@@ -138,10 +139,31 @@ def grade_choice(question: Question, chosen: str) -> Tuple[bool, str, str, List[
     return correct, picked, key, []
 
 
+def grade_javascript(question: Question, user_code: str) -> Tuple[bool, str, str, List[dict]]:
+    """A LeetCode drill answered in JavaScript: the same cases, translated
+    (app/leetcode_js.py), graded by node. Never falls to the AI judge — a
+    drill the translator cannot carry is refused, not guessed at."""
+    try:
+        results, execution, _cases = leetcode_js.run_js_tests(user_code, question)
+    except leetcode_js.Untranslatable as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"This drill can't be answered in JavaScript ({exc}). Switch to Python.",
+        ) from exc
+    actual_output = execution.stdout.strip() or execution.stderr.strip()
+    failed = [
+        {"actual": r.actual, "expected": r.expected, "error": r.error}
+        for r in results
+        if not r.passed
+    ]
+    return all(r.passed for r in results), actual_output, "", failed
+
+
 def grade_submission(
     question: Question,
     user_code: str,
     user: User,
+    language: str = "python",
 ) -> Tuple[bool, str, str, List[dict]]:
     """
     Run user code and decide correctness using the appropriate strategy:
@@ -151,6 +173,9 @@ def grade_submission(
     """
     if question.submission_mode == "mc":
         return grade_choice(question, user_code)
+
+    if language == leetcode_js.LANGUAGE:
+        return grade_javascript(question, user_code)
 
     # Torch drills grade in-process via the fork runner when torch is
     # preloaded (app startup). Refuse with the Colab-routing message only

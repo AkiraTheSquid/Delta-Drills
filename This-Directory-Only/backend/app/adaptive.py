@@ -214,6 +214,14 @@ class UserPracticeState:
     # other course's concepts out. None = never asked: every course is in as
     # before (ARENA always, a standalone course while its share is > 0).
     study_courses: Optional[List[str]] = None
+    # The learner's XP goal (app/learning_xp.py): {"mode": "date", "date":
+    # ISO} to finish the course by a day, {"mode": "daily", "daily": n} for a
+    # fixed XP per day, or None when they have not set one.
+    xp_target: Optional[Dict] = None
+    # The "what have you done before?" answers (app/area_survey.py):
+    # {question id: never|some|lot}. None = never asked (the Practice tab
+    # asks); {} = skipped.
+    area_survey: Optional[Dict[str, str]] = None
     # The drill on screen right now: the LAST question served, across every
     # subtopic. The on-screen guard in question_pick reads this. It used to
     # read each subtopic's own served tail, which is not "on screen" at all —
@@ -292,6 +300,8 @@ def _save_user_state(state: UserPracticeState) -> None:
         "practice_target": state.practice_target,
         "course_shares": state.course_shares,
         "study_courses": state.study_courses,
+        "xp_target": state.xp_target,
+        "area_survey": state.area_survey,
         "last_served_question_id": state.last_served_question_id,
         "practice_placements": state.practice_placements,
         "kc_exposure": state.kc_exposure,
@@ -349,6 +359,10 @@ def _load_user_state(user_id: str) -> Optional[UserPracticeState]:
             state.course_shares["arena"] = float(data["arena_share"])
         study = data.get("study_courses")
         state.study_courses = list(study) if isinstance(study, list) else None
+        xp_target = data.get("xp_target")
+        state.xp_target = dict(xp_target) if isinstance(xp_target, dict) else None
+        survey = data.get("area_survey")
+        state.area_survey = dict(survey) if isinstance(survey, dict) else None
         state.last_served_question_id = data.get("last_served_question_id")
         state.practice_placements = data.get("practice_placements") or {}
         state.kc_exposure = data.get("kc_exposure") or {}

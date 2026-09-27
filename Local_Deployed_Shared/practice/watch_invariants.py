@@ -428,13 +428,11 @@ def check_invariants():
         "pending for that rating to land on"
     )
     # ...and the rating step is only offered when an attempt really is parked.
-    # A placement diagnostic creates none, and an older backend does not answer
-    # the field at all; showing the buttons in either case posts a /feedback
-    # that fails.
+    # An older backend does not answer the field at all; showing the buttons
+    # then posts a /feedback that fails.
     assert "record.pending === true" in events_colab, (
         "the Colab review shows the felt-difficulty buttons without checking "
-        "that an attempt is pending — during a placement diagnostic there is "
-        "none, and the rating fails"
+        "that an attempt is pending — without one the rating fails"
     )
     assert "showFeedbackButtons()" in events_colab, (
         "the Colab review branch no longer offers the felt-difficulty rating"
@@ -715,14 +713,11 @@ def check_a_deleted_practice_notice_stays_deleted():
     renders identically in that state. practice/mode.js carries the full note
     and the shape of an acceptable replacement.
 
-    The progress bar is the other half: a placement in progress has to say how
-    far through it is, and `budget` is a CEILING, so the bar must never claim a
-    fixed length — the count says "of at most" and a tick marks the earliest
-    possible finish.
+    (The placement clock and progress bar this check also guarded went with
+    the placement test on 2026-09-26; practice/watch.py keeps them gone.)
     """
     index = read(os.path.join(SHARED, "index.html"))
     mode = read(os.path.join(HERE, "mode.js"))
-    page = read(os.path.join(HERE, "diagnostic-page.js"))
 
     # Matched on the ATTRIBUTE, never the bare name: these files carry comments
     # explaining what was deleted, and a substring check over prose fails on its
@@ -752,60 +747,6 @@ def check_a_deleted_practice_notice_stays_deleted():
             f"{fname} still styles {sel.strip(' {')} — the element was deleted "
             "on 2026-08-23, so this rule matches nothing"
         )
-    # The countdown outlived the badge that used to host it.
-    assert 'id="placement-timer"' in index, (
-        "#placement-timer went with the cold-start badge — the placement's "
-        "fixed 2:00 clock has no anchor and every probe becomes untimed"
-    )
-    # ...and it is ON THE NOTCH TAB (Seth, 2026-08-23: the timer belongs on the
-    # tab, not beside the concept heading). The anchor has now moved twice, so
-    # what is asserted is the CURRENT home, in the markup rather than in the JS:
-    # placement-timer.js reads it by id and no longer knows which row it is in.
-    notch_tab = index.split('id="practice-notch-tab"', 1)
-    assert len(notch_tab) == 2, "the notch tab is gone — #practice-notch-tab"
-    tab_markup = notch_tab[1].split("</div>", 1)[0]
-    assert 'id="placement-timer"' in tab_markup, (
-        "#placement-timer left the notch tab. It is the placement's only "
-        "countdown and notch-menu.js hides the session clock while it shows, "
-        "so anywhere else means a probe timed off-screen"
-    )
-    timer_js = read(os.path.join(HERE, "placement-timer.js"))
-    assert 'getElementById("cold-start-badge")' not in timer_js and (
-        'getElementById("placement-timer")' in timer_js), (
-        "placement-timer.js is not reading its element by id — _chip() returns "
-        "null and the countdown never renders"
-    )
-    # 🔴 One clock on the tab. The placement runs outside a session, so
-    # `_sessionOpen()` is false throughout and the session clock would sit
-    # beside the probe's countdown, greyed at its idle allowance — two numbers,
-    # one of them stopped.
-    notch_js = read(os.path.join(HERE, "notch-menu.js"))
-    assert '"placement-timer"' in notch_js, (
-        "notch-menu.js no longer defers to the placement clock — the tab shows "
-        "the idle session allowance next to a running probe countdown"
-    )
-    assert "PracticeNotch?.syncClock" in timer_js, (
-        "placement-timer.js must poke the notch when it shows or hides its "
-        "clock; nothing else observes this module and the session clock would "
-        "not come back when the test ends"
-    )
-
-    # The progress bar: anchors present, and honest about the ceiling.
-    for anchor in ("placement-progress", "placement-progress-fill",
-                   "placement-progress-tick", "placement-progress-count"):
-        assert f'id="{anchor}"' in index, f"index.html lost the #{anchor} anchor"
-    assert "of at most" in page, (
-        "the placement progress count must say 'of at most' — the test stops as "
-        "soon as it is confident, so `budget` is a ceiling and not a length"
-    )
-    assert "min_probes" in page, (
-        "the bar lost its earliest-finish tick, so it implies a run to the full "
-        "budget that most placements never make"
-    )
-    assert 'host.classList.toggle("hidden", !show)' in page, (
-        "the progress bar must hide outside an active placement — a finished "
-        "test showing a part-full bar reads as unfinished"
-    )
 
 
 def check_practice_never_detours_to_colab():

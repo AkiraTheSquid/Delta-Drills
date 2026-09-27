@@ -1,8 +1,10 @@
 """
 The Run button's dry grade: which test cases pass RIGHT NOW, recorded nowhere.
 
-Endpoint (mounted under /api/practice by the parent router):
+Endpoints (mounted under /api/practice by the parent router):
   POST /check
+  GET  /js-starter/{question_id}   JavaScript on a LeetCode drill: its starter
+  POST /run-js                     JavaScript cell ▶: console output only
 
 Seth, 2026-09-13: "when you run the code, it tells you which test cases
 passed and which test cases failed, even if you didn't submit it, so that
@@ -22,6 +24,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from app import leetcode_js
 from app.auth import get_current_user
 from app.code_runner import (
     TORCH_COLAB_MESSAGE,
@@ -32,7 +35,7 @@ from app.code_runner import (
 )
 from app.models import User
 from app.practice.grading import run_and_get_expected_output
-from app.practice_schemas import CheckRequest, CheckResponse
+from app.practice_schemas import CheckRequest, CheckResponse, CodeRunRequest, CodeRunResponse
 from app.questions import get_question_by_id
 
 router = APIRouter()
@@ -49,6 +52,9 @@ def check_answer(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Question not found",
         )
+
+    if payload.language == leetcode_js.LANGUAGE:
+        return _check_javascript(question, payload.user_code)
 
     # Same refusal as grade_submission: without torch there is no honest run.
     if not torch_available() and (
@@ -108,3 +114,52 @@ def check_answer(
 
     # AI-judged drill: no deterministic verdict exists before Submit.
     return CheckResponse(supported=False, correct=False, actual_output="", tests=[])
+
+
+def _check_javascript(question, user_code: str) -> CheckResponse:
+    """▶ on a LeetCode drill answered in JavaScript: grading.grade_javascript's
+    harness, verdict discarded. `call` is the translated JS call as the learner
+    would write it (leetcode_js._display), not the Python one."""
+    try:
+        results, execution, cases = leetcode_js.run_js_tests(user_code, question)
+    except leetcode_js.Untranslatable:
+        return CheckResponse(supported=False, correct=False, actual_output="", tests=[])
+    tests = [
+        {
+            "call": cases[i]["display"] if i < len(cases) else "",
+            "passed": r.passed,
+            "actual": r.actual,
+            "expected": r.expected,
+            "error": r.error,
+            "note": r.note,
+        }
+        for i, r in enumerate(results)
+    ]
+    return CheckResponse(
+        supported=True,
+        correct=all(r.passed for r in results),
+        actual_output=(execution.stdout.strip() or execution.stderr.strip()),
+        tests=tests,
+    )
+
+
+@router.get("/js-starter/{question_id}")
+def js_starter(question_id: int, user: User = Depends(get_current_user)) -> dict:
+    """Whether this drill can be answered in JavaScript, and its stub. JS
+    grading itself rides /check and /submit (`language: "javascript"`)."""
+    question = get_question_by_id(question_id)
+    if question is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
+    if leetcode_js.node_binary() is None:
+        return {"supported": False, "starter": "", "reason": "The server has no JavaScript runtime."}
+    try:
+        leetcode_js.js_cases(question)
+        return {"supported": True, "starter": leetcode_js.starter_js(question), "reason": ""}
+    except leetcode_js.Untranslatable as exc:
+        return {"supported": False, "starter": "", "reason": str(exc)}
+
+
+@router.post("/run-js", response_model=CodeRunResponse)
+def run_js(payload: CodeRunRequest, user: User = Depends(get_current_user)) -> CodeRunResponse:
+    result = leetcode_js.run_js(payload.code)
+    return CodeRunResponse(stdout=result.stdout, stderr=result.stderr, success=result.success)

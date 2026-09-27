@@ -18,18 +18,14 @@
    RANGE [0.1, 4]. It started as "for less time" (≤ 1). Seth, 2026-09-25:
    "allow adjusting the time multiplier upwards, not just downwards ...
    increasing it to 2". So it loosens too, up to 4× — a 40:00 LeetCode
-   hard at 2 is 80:00. The placement stays unscaled (below), so what it
-   charges is still comparable. 1 is the default and means "the table as
+   hard at 2 is 80:00. 1 is the default and means "the table as
    written"; an account
    that never touches the input is on exactly the 09-09 behaviour. The
    floor stops a slip of the keyboard (0.01, 0) from producing a question
    that expires as it renders; the rounding downstream keeps every scaled
    clock at ≥ 1 s regardless.
 
-   🔴 THE PLACEMENT IS NOT SCALED. A probe is timed by PlacementTimer
-   (timer.js's `_answerSecsFor` asks it first) and the server CHARGES the
-   same number; a learner-tightened placement would not be comparable
-   evidence. An ARENA exercise session is not scaled either — it brings
+   🔴 AN ARENA EXERCISE SESSION IS NOT SCALED — it brings
    its own answer/review numbers (`sessionConfig`), which timer.js reads
    before it asks SessionClock at all.
 

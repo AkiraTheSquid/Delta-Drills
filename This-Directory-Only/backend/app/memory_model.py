@@ -412,6 +412,9 @@ class Event(NamedTuple):
     t: float
     grades: Dict[str, int]
     p_skill: Optional[Dict[str, float]] = None
+    # The question answered, when known. Not used here; `learning_xp` joins
+    # each event to its attempt-log row by (kc, question, time).
+    qid: Optional[int] = None
 
 
 def _events(user_state) -> List[Event]:
@@ -458,7 +461,7 @@ def _events(user_state) -> List[Event]:
                     ps[kc] = p
                 continue
         events.append((t, qid, {kc: g}, {} if p is None else {kc: p}))
-    return [Event(t, grades, ps) for t, _q, grades, ps in events]
+    return [Event(t, grades, ps, q) for t, q, grades, ps in events]
 
 
 def _credits_below(g: int) -> bool:

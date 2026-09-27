@@ -336,13 +336,13 @@ def check_concept_pill():
 
     # ── Nothing was renamed on the way ─────────────────────────────
     # The whole point of moving the notch with CSS is that practice/timer.js,
-    # practice/placement-timer.js and practice/notch-menu.js keep working
-    # untouched. They address it by id.
+    # and practice/notch-menu.js keep working untouched. They address it by
+    # id. (#placement-timer left with the placement test on 2026-09-26.)
     for el_id in ("practice-notch", "practice-notch-tab", "practice-notch-clock",
-                  "practice-notch-stop", "practice-notch-btn", "placement-timer"):
+                  "practice-notch-stop", "practice-notch-btn"):
         assert 'id="%s"' % el_id in index_html, (
             "#%s is gone from index.html. The notch moved by CSS precisely so "
-            "the three scripts that write to it did not have to change" % el_id
+            "the scripts that write to it did not have to change" % el_id
         )
 
     # ── THE CHIP IS DOWN WHEN THE QUESTION IS NOT ON SCREEN ────────

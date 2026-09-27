@@ -212,7 +212,6 @@ html.dd-colab-edition .stage-ladder-reading b {
 
 /* ---- the rail's own rows ----------------------------------------------- */
 
-html.dd-colab-edition .self-report-row,
 html.dd-colab-edition .session-status-row,
 html.dd-colab-edition .question-number-row {
   flex-wrap: wrap;

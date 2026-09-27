@@ -156,6 +156,11 @@ class AttemptRow:
     # --- what was served ----------------------------------------------------
     stage: Optional[str] = None
     difficulty_score: Optional[int] = None
+    # Served as an explore probe (no lesson, no example: `kc_explore.probing`).
+    # Copied off the ladder row, which drops out of its 20-row window;
+    # `learning_xp` needs it for as long as the history is replayed, or an old
+    # probe turns into lesson-backed learning. None = written before 2026-09-26.
+    probe: Optional[bool] = None
 
     # --- what the model saw and said ---------------------------------------
     features: Dict[str, float] = field(default_factory=dict)
@@ -285,6 +290,7 @@ def record_attempt(
     config: E.EngineConfig = E.DEFAULT_CONFIG,
     base_dir: Optional[Path] = None,
     ts: Optional[str] = None,
+    probe: Optional[bool] = None,
 ) -> AttemptRow:
     """Log a graded attempt together with the prediction that preceded it."""
     row = AttemptRow(
@@ -297,6 +303,7 @@ def record_attempt(
         atoms=list(atoms or []),
         stage=E.normalize_stage(stage),
         difficulty_score=difficulty_score,
+        probe=probe,
         features={k: float(v) for k, v in values.items()},
         feature_sources=dict(sources) if sources else None,
         predicted_p=prediction.p,

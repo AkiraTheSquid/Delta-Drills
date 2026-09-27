@@ -3,8 +3,7 @@
 Runs via `mod watch` — exit 0 = PASS, exit non-zero = FAIL.
 
 The checks are split across focused modules to stay under Modulario's LOC line:
-this file keeps file/API/threshold checks, `watch_placement.py` holds placement
-probes, `watch_invariants.py` holds the invariant sweep, and `watch_lessons.py`
+this file keeps file/API/threshold checks, `watch_invariants.py` holds the invariant sweep, and `watch_lessons.py`
 holds lesson-page probes. 🔴 The runner
 list below is the ONLY thing that decides what actually runs — a check that
 exists and is not in it has silently stopped running twice before now, so the
@@ -24,7 +23,6 @@ import watch_notebook
 import watch_notebook_arena
 import watch_basic_mode
 import watch_feedback
-import watch_placement
 from watch_common import (  # noqa: F401 — re-exported for anything importing watch
     HERE, SHARED, REQUIRED_JS, REQUIRED_DOCS, REQUIRED_ASSETS, read,
 )
@@ -74,11 +72,6 @@ from watch_lessons import (
     check_the_gate_teaches_one_concept_then_drills_it,
     check_the_notebook_kernel_has_a_fallback,
     check_no_cell_asks_for_more_time_than_the_kernel_allows,
-)
-from watch_placement import (
-    check_a_taken_placement_leaves_the_learner_home,
-    check_every_placement_question_gets_the_same_clock,
-    check_the_placement_result_is_the_number_the_backend_seeded,
 )
 
 
@@ -144,56 +137,20 @@ def check_public_api():
     assert 'holdClock("problem-feedback-note")' in events
     assert 'releaseClock("problem-feedback-note")' in events
     index_html = read(os.path.join(SHARED, "index.html"))
-    # 🔴 ONE TAB SINCE 2026-08-24. The Placement test stopped being a page and
-    # a tab of its own — Seth: "the diagnostic and practice should be combined
-    # into one tab, with it being called Learner Home" — so the overview card,
-    # the results card and the workspace host all live inside #page-practice.
-    assert 'id="page-diagnostic"' not in index_html and 'data-tab="diagnostic"' not in index_html, (
-        "the Placement test is a page/tab of its own again. Two tabs sharing "
-        "one editor and one PracticeAPI.currentQuestion is what the Practice "
-        "tab lock existed to paper over"
+    # 🪦 THE PLACEMENT TEST IS RETIRED (Seth, 2026-09-26: "just removing the
+    # diagnostic test distinction"). The Practice tab's survey sets the
+    # starting point now. Its page, clock, pause and "I don't know yet" stay
+    # gone: a probe served into Practice would be timed and graded by rules
+    # nothing on screen explains.
+    for gone in ('id="page-placement"', 'id="placement-timer"', 'id="practice-dontknow-btn"',
+                 'id="self-report-row"', 'practice/diagnostic-page.js', 'practice/placement-timer.js'):
+        assert gone not in index_html, f"{gone} is back in index.html — the placement test was retired"
+    for f in ("diagnostic-page.js", "placement-timer.js", "placement-wizard.js",
+              "placement-plan.js", "placement-results.js"):
+        assert not os.path.exists(os.path.join(HERE, f)), f"practice/{f} is back"
+    assert "/api/practice/diagnostic" not in read(os.path.join(HERE, "api.js")), (
+        "practice/api.js calls a diagnostic route again; the routes are gone"
     )
-    assert 'id="diagnostic-workspace-host"' in index_html
-    assert 'id="diagnostic-workspace-host"' in index_html.split('id="page-practice"')[1], (
-        "the placement workspace host must be inside #page-practice: it is "
-        "what takes the idle surface off the screen while a probe is up"
-    )
-    assert "Continue diagnostic in Practice" not in index_html
-    # An unfinished placement must not cost the learner the Practice tab.
-    diagnostic_page = read(os.path.join(HERE, "diagnostic-page.js"))
-    # These are substring checks over source, so they are spelled to match the
-    # mechanism rather than a word that could survive in a comment: the guard
-    # names the definition AND the call site that has to consume it.
-    assert "setPracticeTabDisabled" not in diagnostic_page and (
-        ".disabled = true" not in diagnostic_page
-    ), (
-        "an active placement must never disable the Practice tab: no :disabled "
-        "style exists, so the tab looks live and silently eats the click"
-    )
-    assert "setPracticeLock(" not in diagnostic_page, (
-        "the Practice tab lock is back. There is one tab now and it cannot be "
-        "locked against itself"
-    )
-    assert "const diagnosticOnScreen =" in diagnostic_page and (
-        "running && diagnosticOnScreen()" in diagnostic_page
-    ), (
-        "the workspace may be hosted only while the page that owns the "
-        "placement is on screen — delta:practice-state-changed fires from any "
-        "tab, and keying on the placement alone hauls the workspace under a "
-        "page nobody is looking at"
-    )
-    assert 'byId("page-practice")' in diagnostic_page and (
-        'byId("page-diagnostic")' not in diagnostic_page
-    ), (
-        "diagnostic-page.js must address the Learner Home; every read of the "
-        "deleted #page-diagnostic is silently undefined"
-    )
-    assert 'practicePage.classList.add("hidden")' not in diagnostic_page and (
-        "practicePage.hidden = true" not in diagnostic_page
-    ), (
-        "app.js owns page visibility; hiding #page-practice from here blanks the tab"
-    )
-    assert index_html.count('id="self-report-row"') == 1
     assert 'maxlength="5000"' in index_html and '<textarea class="problem-feedback-note"' in index_html
     assert "ensureArenaNumbersInPyodide" in runner, "runner.js missing ensureArenaNumbersInPyodide"
 
@@ -587,11 +544,12 @@ def check_one_progress_readout():
         "concept button would open the knowledge graph on the wrong node"
     )
 
-    # A graded verdict returns a fresh estimate and the fill is drawn from it.
+    # The rating returns a fresh estimate and the fill is drawn from it
+    # (a code answer's /feedback, a Colab answer's recorded reading).
     # Dropping it leaves the section showing where the learner stood BEFORE the
-    # answer, for as long as the review is on screen.
+    # answer. Submit itself paints nothing: it has not scored the attempt.
     events_js = read(os.path.join(HERE, "events.js"))
-    for update in ("setProgress(result.ladder_estimate)",
+    for update in ("setProgress(response.ladder_estimate)",
                    "setProgress(record.ladderEstimate)"):
         assert update in events_js, (
             f"events.js lost {update} — ladder fill would stay on pre-answer "
@@ -621,7 +579,7 @@ def _every_check_is_registered(checks):
     registered = {id(fn) for fn in checks}
     for module in (sys.modules[__name__], watch_invariants, watch_lessons,
                    watch_notebook, watch_notebook_arena, watch_basic_mode,
-                   watch_feedback, watch_placement):
+                   watch_feedback):
         for name in dir(module):
             fn = getattr(module, name)
             if name.startswith("check_") and callable(fn) and id(fn) not in registered:
@@ -671,9 +629,6 @@ if __name__ == '__main__':
               check_the_answer_only_lives_where_the_learner_can_see_it,
               check_only_one_module_patches_a_code_editors_value,
               check_a_code_cell_grows_to_fit_its_own_code,
-              check_every_placement_question_gets_the_same_clock,
-              check_the_placement_result_is_the_number_the_backend_seeded,
-              check_a_taken_placement_leaves_the_learner_home,
               check_a_deleted_practice_notice_stays_deleted,
               check_a_hidden_rating_still_commits_the_attempt,
               check_next_is_never_offered_under_an_unanswered_question,

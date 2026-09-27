@@ -27,8 +27,8 @@
    not the Learner Home. This one hangs off the bar, which is on every page and
    never re-parents. The clock is still app chrome: one clock, one place,
    whatever the learner is doing. Only where it is DRAWN changed, and it is
-   still the same element with the same ids, so practice/notch-menu.js,
-   practice/timer.js and practice/placement-timer.js are all untouched.
+   still the same element with the same ids, so practice/notch-menu.js
+   and practice/timer.js are untouched.
 
    🔴 IT IS A DIRECT CHILD OF `<header class="topbar">`, and that is deliberate
    rather than incidental. `position: absolute` resolves against the nearest

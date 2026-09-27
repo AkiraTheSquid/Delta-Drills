@@ -21,8 +21,7 @@ body.lesson-mode #torch-colab-notice,
 body.lesson-mode #question-meta-top,
 body.lesson-mode #question-id-chip,
 body.lesson-mode .question-number-row,
-body.lesson-mode #session-status-row,
-body.lesson-mode #self-report-row {
+body.lesson-mode #session-status-row {
   display: none !important;
 }
 /* #cold-start-badge and #practice-mode-intro left this list on 2026-08-23 —

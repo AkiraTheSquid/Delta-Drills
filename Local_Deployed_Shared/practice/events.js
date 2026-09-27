@@ -30,10 +30,6 @@ practiceSubmitBtn.addEventListener("click", async () => {
     return;
   }
   PracticeSession.pauseForGrading();
-  // Same contract for a placement probe's fixed clock: once the grade is in
-  // flight the learner is no longer answering, so the countdown stops instead
-  // of expiring underneath the result.
-  window.PlacementTimer?.pauseForGrading();
   practiceSubmitBtn.disabled = true;
   let result;
   try {
@@ -54,10 +50,8 @@ practiceSubmitBtn.addEventListener("click", async () => {
       // all. Re-arming a countdown means expiry force-submits, the submit is
       // refused again, and the clock bounces back to 00:30 forever.
       PracticeSession.blockOnUnrunnableQuestion();
-      window.PlacementTimer?.stop();
     } else {
       PracticeSession.resumeAnswerPhase();
-      window.PlacementTimer?.resumeAfterFailedSubmit();
     }
     return;
   }
@@ -136,15 +130,8 @@ practiceSubmitBtn.addEventListener("click", async () => {
      score the attempt at /submit at all — `feedback_router` calls
      `finalize_attempt`, which writes the history, the per-atom BKT and the new
      target difficulty. Painting at submit was painting an estimate the server
-     had not committed to yet.
-
-     Placement probes keep the submit-time paint, because they have no rating
-     step to defer to: /submit records the probe outright and the branch below
-     goes straight to Next. Same condition, spelled the same way, on purpose. */
-  const _ratingStepFollows = !(q.diagnostic_active && practiceMode === "backend");
-  if (result.ladder_estimate && window.StageLadder && !_ratingStepFollows) {
-    window.StageLadder.setProgress(result.ladder_estimate);
-  }
+     had not committed to yet. (Placement probes, which had no rating step,
+     painted here until the placement test was retired on 2026-09-26.) */
   // Preserve enough of the grade UI to reconstruct this review after a pause
   // or reload, including the learner's submitted code and failed cases.
   PracticeSession.recordReviewResult({
@@ -176,19 +163,6 @@ practiceSubmitBtn.addEventListener("click", async () => {
   else if (result.timed_out && !result.correct) {
     feedbackPrompt.textContent = "Time ran out — that counts as a miss. " +
       "How much easier do you want the next problem to be?";
-  }
-  // Placement probe: the backend already recorded it at /submit — there is no
-  // pending attempt and no felt-difficulty step. Go straight to Next.
-  if (q.diagnostic_active && practiceMode === "backend") {
-    feedbackPrompt.textContent = result.correct
-      ? "Placement recorded — on to the next probe."
-      : "Placement recorded — misses here just pin down your level.";
-    if (!practiceProgress.completedQuestionIds.includes(q.question_id)) {
-      practiceProgress.completedQuestionIds.push(q.question_id);
-    }
-    savePracticeProgress(practiceProgress);
-    showNextProblemButton();
-    _notifyIfPlacementDone();
   }
   if (practiceMode === "backend" || practiceMode === "supabase") {
     aiExplanationSection.classList.remove("hidden");
@@ -374,10 +348,8 @@ feedbackButtons.forEach((btn) => {
 
        🔴 A SYNTHETIC CLICK ON THE REAL BUTTON, not a call to
        `_loadNextPracticeQuestion`. The handler is the one place that knows how
-       to advance — it routes a placement probe differently from an ordinary
-       drill (`_advancePlacementOrFinish`), and calling the loader directly
-       here would load a practice question on top of a live placement test.
-       It used to matter for a second reason too, the ARENA unlock
+       to advance. It used to route a placement probe differently from an
+       ordinary drill (retired 2026-09-26), and it used to matter for a second reason too, the ARENA unlock
        interstitial, which was deleted on 2026-09-09.
        `timer.js::_forceAdvance` reaches the next question the same way, for
        the same reason.
@@ -505,9 +477,6 @@ const _loadNextPracticeQuestion = async () => {
   // near 00:00 leaves the old answer timer live and it force-submits the
   // question being skipped.
   PracticeSession.pauseForAdvance();
-  // Third countdown, same reason: the placement clock must die on every
-  // advance path, or "I don't know yet" at 00:01 expires onto the NEXT probe.
-  window.PlacementTimer?.stop();
   practiceProgress.currentQuestion = null;
   practiceProgress.pendingFeedback = null;
   practiceProgress.currentTargetDifficulty = null;
@@ -642,18 +611,14 @@ const _drawColabDifficultyStep = (q, record) => {
   // it the old target — that number is a property of the problem, so a correct
   // answer on an easy one would draw a red band for a step that went UP.
   //
-  // Three ways to land here and they are not the same news, so they do not get
-  // the same sentence: a placement probe is locating the learner instead of
-  // stepping the staircase (nothing finalized AND no earlier target on file),
-  // this is the first answer in the concept and there is no earlier target it
+  // Two ways to land here and they are not the same news, so they do not get
+  // the same sentence: this is the first answer in the concept and there is no earlier target it
   // could have moved from, or the recording never came back at all. The last is
   // the default because it is the only one that admits the attempt might not be
   // in — better to under-claim than to explain a step nobody took.
   if (!Number.isFinite(oldTarget) || !Number.isFinite(newTarget)) {
     let note = "Couldn't read the ladder for this one.";
-    if (record && record.finalized === false && !Number.isFinite(oldTarget)) {
-      note = "Placement in progress — these answers find your level rather than stepping the ladder.";
-    } else if (record && record.finalized && Number.isFinite(newTarget)) {
+    if (record && record.finalized && Number.isFinite(newTarget)) {
       note = "First answer here — the ladder starts stepping from the next one.";
     }
     setTargetDifficultyUnavailable(note, newTarget);
@@ -726,9 +691,8 @@ const _rateTorchAndAdvance = async (correct) => {
     // mode used to hide the buttons and click the default here; that stand-in
     // is gone (practice/basic-mode.js).
     //
-    // Only when there is an attempt parked for the rating to apply to. During a
-    // placement diagnostic nothing is pending, and a null `pending` is an older
-    // backend that was never asked — both fall through to the plain review.
+    // Only when there is an attempt parked for the rating to apply to. A null
+    // `pending` is an older backend that was never asked — it falls through to the plain review.
     if (record && record.pending === true) {
       feedbackPrompt.textContent = correct
         ? "Recorded as correct. How much harder do you want the next problem to be?"

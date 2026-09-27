@@ -91,7 +91,7 @@ def course_off(user_state, kc: str) -> bool:
         2026-09-25) is set and leaves it out. This is the ONLY way ARENA's
         main graph goes off; None = never asked, everything as before.
       * a STANDALONE course whose share is 0 (its Courses tab toggle).
-        diagnostic_router keeps the two in step for standalone courses."""
+        settings_router keeps the two in step for standalone courses."""
     course_id = course_of(kc)
     if course_off_by_study(user_state, course_id):
         return True

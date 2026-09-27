@@ -9,9 +9,9 @@ Endpoints (mounted under /api/practice by the parent router):
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
-from app import bkt_mastery, diagnostic
+from app import bkt_mastery
 from app import kc_graph
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
@@ -19,8 +19,6 @@ from app.models import User
 from app.practice.question_pick import queue_next_kc
 from app.practice_schemas import (
     PracticeStateResponse,
-    SelfReportRequest,
-    SelfReportResponse,
     SubtopicStateSnapshot,
     SubtopicStatsResponse,
     WeightsUpdateRequest,
@@ -123,31 +121,6 @@ def update_weights(
     user_state.custom_weights = {k: float(v) for k, v in payload.weights.items()}
     save_user_state(user_id)
     return {"ok": True}
-
-
-@router.put("/self-report", response_model=SelfReportResponse)
-def update_self_report(
-    payload: SelfReportRequest,
-    user: User = Depends(get_current_user),
-) -> SelfReportResponse:
-    """Persist the learner's self-reported experience level.
-
-    Seeds the BKT prior for never-practiced atoms (bkt_mastery.PRIOR_BY_LEVEL)
-    so the first questions start near the learner's level. It is a prior, not
-    evidence: mastery/unlock gates ignore it, and the first few attempts
-    overrule it. "default" (or anything unrecognized) clears it.
-    """
-    user_id = str(user.id)
-    user_state = get_user_state(user_id)
-    if not diagnostic.can_set_prior(user_state):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Starting-point prior is locked after learner evidence exists.",
-        )
-    level = payload.level.strip().lower()
-    user_state.self_reported_level = level if level in bkt_mastery.PRIOR_BY_LEVEL else None
-    save_user_state(user_id)
-    return SelfReportResponse(success=True, level=user_state.self_reported_level)
 
 
 @router.get("/atom-gates")

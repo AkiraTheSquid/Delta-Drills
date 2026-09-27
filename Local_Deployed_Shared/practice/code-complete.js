@@ -284,7 +284,11 @@ const DeltaCodeComplete = (() => {
     const freq = localNames(value);
     const { aliases, symbols } = readImports(value);
     const groups = [];
-    if (receiver) {
+    /* JavaScript (practice/lang-js.js): the pools below are Python keywords,
+       builtins and tensor methods. Only the learner's own names apply. */
+    if (editor.closest?.("[data-code-lang]")?.dataset.codeLang === "javascript") {
+      groups.push(receiver ? [attrsOf(value, receiver), 0] : [Array.from(freq.keys()), 0]);
+    } else if (receiver) {
       const pool = poolFor(receiver, aliases) || TENSOR;
       groups.push([attrsOf(value, receiver), 0], [pool, 1]);
     } else {

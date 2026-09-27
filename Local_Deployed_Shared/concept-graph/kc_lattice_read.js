@@ -190,23 +190,13 @@
   function getKcLattice() { return _lattice; }
 
   /* Whether the learner has finished the placement test. Used ONLY for copy —
-   * which words the map puts on screen — never to decide a number. A failure
-   * leaves it null and the copy falls back to its pre-placement wording. */
-  function loadPlacementStatus(force) {
-    if (_placementReq && !force) return _placementReq;
-    _placementReq = _fetch("/api/practice/diagnostic/status")
-      .then(function (res) { return res && res.ok ? res.json() : null; })
-      .then(function (d) {
-        _placement = d
-          ? {
-              completed: !!d.completed_at,
-              completedAt: d.completed_at || null,
-              probes: Number.isFinite(d.probes_done) ? d.probes_done : 0,
-            }
-          : null;
-        return _placement;
-      })
-      .catch(function () { _placement = null; return null; });
+   * which words the map puts on screen — never to decide a number. Since the
+   * test was retired (2026-09-26) there is no status route to ask, so this
+   * answers null and the copy keeps its "not placed" wording; the stored
+   * placement a learner may carry still feeds the numbers server-side. The
+   * two exports stay so lesson-graph.js needs no second code path. */
+  function loadPlacementStatus() {
+    if (!_placementReq) _placementReq = Promise.resolve(null);
     return _placementReq;
   }
 

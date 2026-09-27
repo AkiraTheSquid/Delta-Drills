@@ -1,0 +1,218 @@
+/* ================================================================
+   HOME.CSS — what survived the placement test's stylesheet.
+
+   Seth retired the placement test on 2026-09-26 (the Practice tab's
+   "what have you done before?" survey replaces it: styles/survey.css,
+   practice/survey.js). Its sheet, styles/practice/diagnostic.css, went
+   with it; three things it styled are still on screen and live here:
+
+   1. The onboarding course question (#page-course-pick,
+      practice/course-pick.js). It borrowed the placement set-up's tiles,
+      and keeps their `placement-*` class names.
+   2. The area rows on the group board (groups/groups_lane.js):
+      `.placement-areas` / `.placement-area*`, scored through
+      practice/area-readiness.js. styles/groups.css lays them out.
+   3. The weekly activity bars on the Learner Home
+      (practice/activity-chart.js).
+   ================================================================ */
+
+/* ---- 1. THE COURSE QUESTION ------------------------------------------- */
+.placement-page { max-width: 880px; padding-bottom: 64px; padding-top: 44px; }
+.diagnostic-eyebrow { color: var(--accent-text); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.diagnostic-card { border-radius: 14px; margin-top: 0; padding: 22px 24px; }
+
+.placement-step { animation: placement-step-in .18s ease-out; }
+@keyframes placement-step-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .placement-step { animation: none; } }
+.placement-step-q { color: var(--text); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; margin: 0 0 6px; }
+.placement-step-hint { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 20px; max-width: 62ch; }
+.placement-step-loading { color: var(--muted); font-size: 13px; margin: 0; }
+
+/* A course is "a big button you pick". */
+.placement-focus-tile {
+  align-items: flex-start;
+  background: rgb(var(--well-rgb) / calc(0.14 * var(--well-k)));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  transition: border-color .12s ease, background .12s ease, opacity .12s ease;
+}
+.placement-focus-tile:hover { border-color: rgb(var(--info-rgb) / 0.6); }
+.placement-focus-tile.is-selected {
+  background: rgb(var(--info-rgb) / 0.08);
+  border-color: var(--info);
+  box-shadow: inset 0 0 0 1px var(--info);
+}
+.placement-focus-tile:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+.placement-focus-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.placement-focus-check {
+  border: 1.5px solid var(--muted-dim);
+  border-radius: 6px;
+  flex: none;
+  height: 18px;
+  margin-top: 1px;
+  position: relative;
+  width: 18px;
+}
+.is-selected > .placement-focus-check { background: var(--info); border-color: var(--info); }
+.is-selected > .placement-focus-check::after {
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  content: "";
+  height: 9px;
+  left: 5px;
+  position: absolute;
+  top: 1.5px;
+  transform: rotate(45deg);
+  width: 4px;
+}
+.placement-focus-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.placement-focus-name { font-size: 15px; font-weight: 650; }
+.placement-focus-blurb { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+.placement-focus-count { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.placement-focus-count.is-warning { color: rgb(var(--warn-rgb)); }
+
+/* The note on the left, Continue on the right. */
+.placement-wizard-nav {
+  align-items: center;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 26px;
+  padding-top: 18px;
+}
+.placement-forward-btn {
+  background: var(--info);
+  border: 1px solid var(--info);
+  border-radius: 10px;
+  color: var(--bg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 22px;
+}
+.placement-forward-btn:hover:not(:disabled) { background: rgb(var(--info-rgb) / 0.85); border-color: rgb(var(--info-rgb) / 0.85); }
+.placement-forward-btn:disabled { cursor: not-allowed; opacity: .4; }
+.placement-forward-btn.hidden { display: none; }
+
+@media (max-width: 620px) {
+  .placement-step-q { font-size: 19px; }
+  .placement-focus-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- 2. AREA ROWS (the group board) ------------------------------------ */
+.placement-areas { border-top: 1px solid var(--border); margin-top: 22px; padding-top: 18px; }
+.placement-areas-head { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 8px; text-transform: uppercase; }
+/* Fixed track column so every bar starts and ends on the same two pixels —
+   rows that each size their own bar cannot be compared by eye, which is the
+   entire point of the list. */
+.placement-area {
+  align-items: center;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(120px, 1.4fr) minmax(80px, 3fr) 44px 40px 74px;
+  padding: 7px 8px;
+  margin: 0 -8px;
+}
+.placement-area:hover { background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k))); }
+.placement-area-name { color: var(--text); font-size: 13px; }
+.placement-area-bar { background: rgb(var(--well-rgb) / calc(0.22 * var(--well-k))); border-radius: 999px; height: 6px; overflow: hidden; }
+.placement-area-bar i { background: var(--info); border-radius: 999px; display: block; height: 100%; }
+.placement-area-pct { color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
+.placement-area-conf { color: var(--muted-dim); font-size: 11.5px; font-variant-numeric: tabular-nums; text-align: right; }
+.placement-area-probes { color: var(--muted-dim); font-size: 11.5px; text-align: right; }
+/* An unprobed area is a prior wearing a percentage. Everything about the row
+   is dialled down, and the bar is hollow rather than filled, so it never
+   reads as a measurement taken. */
+.placement-area--unprobed .placement-area-name,
+.placement-area--unprobed .placement-area-pct { color: var(--muted); }
+.placement-area--unprobed .placement-area-bar i { background: rgb(var(--info-rgb) / 0.3); }
+.placement-area--unprobed .placement-area-probes { font-style: italic; }
+
+@media (max-width: 620px) {
+  .placement-area { grid-template-columns: 1fr 44px 40px; grid-template-areas: "name pct conf" "bar bar probes"; }
+  .placement-area-name { grid-area: name; }
+  .placement-area-bar { grid-area: bar; }
+  .placement-area-pct { grid-area: pct; }
+  .placement-area-conf { grid-area: conf; }
+  .placement-area-probes { grid-area: probes; text-align: left; }
+}
+
+/* ---- 3. WEEKLY ACTIVITY BARS --------------------------------------------
+   The problems-answered-per-day chart on the Learner Home (Seth, 2026-09-01),
+   drawn by practice/activity-chart.js from /api/practice/activity-week.
+   Signed out or fetch failed → the whole box goes (.is-empty). Bars scale
+   against the week's own best day — the JS writes each .activity-day-bar
+   height as a percentage of it. */
+.learner-activity {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 22px auto 0;
+  max-width: 560px;
+  padding: 18px 20px 16px;
+  text-align: left;
+  width: 100%;
+}
+.learner-activity.is-empty { display: none; }
+.learner-activity-head {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.activity-week-chart {
+  align-items: stretch;
+  display: flex;
+  gap: 10px;
+}
+.activity-day {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+}
+.activity-day-count {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  /* Reserve the line even when empty so all seven tracks stay level. */
+  min-height: 15px;
+}
+/* Fixed-height track with the bar growing up from the floor — same "every bar
+   shares the same two pixels" reasoning as .placement-area-bar, rotated
+   vertical. The hairline floor keeps a zero day visibly a day, not a gap. */
+.activity-day-track {
+  align-items: flex-end;
+  background: rgb(var(--well-rgb) / calc(0.12 * var(--well-k)));
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  height: 88px;
+}
+.activity-day-bar {
+  background: var(--info);
+  border-radius: 4px 4px 0 0;
+  display: block;
+  width: 100%;
+}
+.activity-day-letter {
+  color: var(--muted-dim);
+  font-size: 11px;
+  font-weight: 700;
+}
+/* Today reads a shade louder than the finished days — it is the bar that is
+   still being earned. */
+.activity-day.is-today .activity-day-letter,
+.activity-day.is-today .activity-day-count { color: var(--text); }

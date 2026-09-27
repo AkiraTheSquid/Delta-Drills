@@ -12,6 +12,8 @@ from app.conceptual import router as conceptual_router
 from app.jobs_router import router as jobs_router
 from app.lifecycle import register_lifecycle
 from app.practice import router as practice_router
+from app.practice.survey_router import router as survey_router
+from app.practice.xp_router import router as xp_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,6 +24,8 @@ app = FastAPI(title="PDF Split Tool Backend", version="0.1.0")
 register_lifecycle(app)
 
 app.include_router(practice_router)
+app.include_router(xp_router)
+app.include_router(survey_router)
 app.include_router(auth_router)
 app.include_router(about_page_router)
 app.include_router(jobs_router)

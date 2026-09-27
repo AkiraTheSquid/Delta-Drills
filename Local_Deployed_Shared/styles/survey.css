@@ -1,0 +1,135 @@
+/* ================================================================
+   SURVEY.CSS — "What have you done before?" (../practice/survey.js,
+   2026-09-26). Shown on the idle Learner Home until answered or skipped.
+
+   Same ink as the XP card (`--xp-from` / `--xp-to`, `--xp-glow-rgb`) so
+   the first thing a new learner sees belongs to the page under it.
+   Token-only: no hex (styles/watch.py).
+   ================================================================ */
+
+/* While it is up it is the whole idle surface: the dial, the XP card and
+   the area list would answer questions the learner has not been asked yet.
+   Idle only — a question on screen never sits under it. */
+#page-practice.session-idle.is-surveying .practice-container > :not(#learner-survey) { display: none; }
+
+.learner-survey[hidden],
+#page-practice:not(.session-idle) .learner-survey { display: none; }
+
+.learner-survey {
+  margin: 28px auto 0;
+  max-width: 560px;
+  width: 100%;
+}
+
+.survey-card {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgb(var(--xp-glow-rgb) / 0.12), transparent 60%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 22px 20px 18px;
+  position: relative;
+  text-align: left;
+  animation: survey-in 320ms ease-out both;
+}
+.survey-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--xp-from), var(--xp-to));
+}
+
+.survey-eyebrow {
+  color: var(--xp-to);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+.survey-title {
+  color: var(--white);
+  font-family: "Instrument Serif", var(--prose-heading);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+.survey-lede {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.survey-row {
+  align-items: center;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.survey-row-level { border-top: 0; padding-top: 0; }
+.survey-q {
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+}
+
+.survey-choices {
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  display: inline-flex;
+  overflow: hidden;
+}
+.survey-choice {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12.5px;
+  min-width: 72px;
+  padding: 7px 12px;
+}
+.survey-choice + .survey-choice { border-left: 1px solid var(--border); }
+.survey-choice[aria-pressed="true"] {
+  background: rgb(var(--xp-glow-rgb) / 0.16);
+  color: var(--white);
+}
+.survey-choice:focus-visible { outline: 2px solid var(--xp-to); outline-offset: -2px; }
+
+.survey-actions {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+}
+.survey-skip {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.survey-status { color: var(--danger); font-size: 13px; margin: 8px 0 0; }
+.survey-status:empty { display: none; }
+
+@media (max-width: 520px) {
+  .survey-row { align-items: stretch; flex-direction: column; }
+  .survey-choices { width: 100%; }
+  .survey-choice { flex: 1; min-width: 0; }
+}
+
+@keyframes survey-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .survey-card { animation: none; }
+}

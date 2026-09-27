@@ -80,7 +80,7 @@ P_SLIP = 0.10
 P_GUESS_CODE = 0.10
 P_SLIP_CODE = 0.15
 
-SETTLE_P = 0.90
+SETTLE_P = 0.95                 # Seth 09-26: sims (sims/README) — 0.85/0.80 lose ~10% if learning is gradual or mixed; 0.95 safest
 OUT_OF_STATE = 0.20
 INDIRECT_CLIP = 1.2
 
@@ -162,12 +162,14 @@ def probe_cost_ratio(kc: str) -> float:
     return PROBE_COST_RATIO_MATH if kc.startswith("math.") else PROBE_COST_RATIO_CODE
 
 
-def area_known(kc: str, counts: Dict[str, Tuple[int, int]]) -> float:
+def area_known(kc: str, counts: Dict[str, Tuple[int, int]],
+               centers: Optional[Dict[str, float]] = None) -> float:
     """P(known) for a concept in `kc`'s area with no evidence of its own, from
-    `counts[area] = (probes, correct)`."""
+    `counts[area] = (probes, correct)`, shrunk toward the learner's survey
+    answer for the area (`app/area_survey.py`, `centers[area]`) or 0.5."""
     guess, slip = likelihood(kc)
     n, h = counts.get(area_of(kc), (0, 0))
-    neutral = guess + (1.0 - guess - slip) * 0.5
+    neutral = guess + (1.0 - guess - slip) * (centers or {}).get(area_of(kc), 0.5)
     acc = (h + AREA_PRIOR_PSEUDO * neutral) / (n + AREA_PRIOR_PSEUDO)
     return min(0.98, max(0.02, (acc - guess) / (1.0 - guess - slip)))
 
@@ -181,11 +183,12 @@ def leave_out(counts: Dict[str, Tuple[int, int]], kc: str, own: Optional[Tuple[i
     return {**counts, area_of(kc): (max(0, n - own[0]), max(0, h - own[1]))}
 
 
-def worth_probing(kc: str, x: float, counts: Dict[str, Tuple[int, int]]) -> bool:
+def worth_probing(kc: str, x: float, counts: Dict[str, Tuple[int, int]],
+                  centers: Optional[Dict[str, float]] = None) -> bool:
     """The cost gate: the posterior `x` (log-odds) combined with the area prior
     clears the break-even P(known), by PROBE_MARGIN. The 1e-9 keeps a neutral
     0.5 against a 0.5 ratio from flipping on float rounding."""
-    p = _sigmoid(x + _logit(area_known(kc, counts)))
+    p = _sigmoid(x + _logit(area_known(kc, counts, centers)))
     return p >= probe_cost_ratio(kc) + PROBE_MARGIN - 1e-9
 
 
@@ -370,15 +373,18 @@ def _default_graph(reg: Dict[str, dict]):
 
 
 class _Inputs:
-    __slots__ = ("reg", "ev", "level", "graph", "L", "counts", "own", "answer_days", "last_day", "now_day")
+    __slots__ = ("reg", "ev", "level", "graph", "L", "counts", "own", "answer_days", "last_day", "now_day",
+                 "centers")
 
 
 def _inputs(user_state) -> _Inputs:
-    from app import kc_evidence, kc_graph, memory_model
+    from app import area_survey, kc_evidence, kc_graph, memory_model
     reg = kc_graph._registry()
     level = getattr(user_state, "self_reported_level", None)
     now_day = time.time() / 86400.0
-    fp = (memory_model._fingerprint(user_state), level, EXPLORE_PREFIXES, id(reg), int(now_day * 24))
+    centers = area_survey.centers(user_state)
+    fp = (memory_model._fingerprint(user_state), level, EXPLORE_PREFIXES, id(reg), int(now_day * 24),
+          tuple(sorted(centers.items())))
     key = id(user_state)
     hit = _memo.get(key)
     if hit is not None and hit[0]() is user_state and hit[1] == fp:
@@ -386,7 +392,7 @@ def _inputs(user_state) -> _Inputs:
     attempts = {k: (kc_graph.ladder_view(user_state, k).get("attempts") or []) for k in reg}
     graph = _default_graph(reg)
     I = _Inputs()
-    I.reg, I.level, I.graph, I.now_day = reg, level, graph, now_day
+    I.reg, I.level, I.graph, I.now_day, I.centers = reg, level, graph, now_day, centers
     # Retention (kc_evidence.weigher) discounts an answer from long ago, so a
     # concept settled a month back reopens as a probe.
     I.ev = evidence({k: a for k, a in attempts.items() if in_area(k)}, kc_evidence.weigher(user_state))
@@ -464,7 +470,7 @@ def explorable(user_state, kc: str) -> bool:
     x = L.get(kc)
     if x is None or x >= SETTLE_LOGODDS or x <= OUT_LOGODDS:
         return False
-    if not worth_probing(kc, x, leave_out(I.counts, kc, I.own.get(kc))):
+    if not worth_probing(kc, x, leave_out(I.counts, kc, I.own.get(kc)), I.centers):
         return False
     for p in I.reg[kc]["prereqs"]:
         if p in L:

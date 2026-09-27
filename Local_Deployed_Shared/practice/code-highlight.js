@@ -104,6 +104,40 @@ const DeltaCodeHighlight = (() => {
     "(?<op>[-+*/%=<>!&|^~@:,.;]+)",
   ].join("|"), "g");
 
+  /* JavaScript, for a LeetCode drill answered in JS (practice/lang-js.js,
+     which marks the notebook `data-code-lang="javascript"`). Same token
+     classes, so the same CSS colours it; `//` and block comments, template
+     strings, `function`/`class` introduce names. */
+  const JS_KEYWORDS = new Set([
+    "async", "await", "break", "case", "catch", "class", "const", "continue",
+    "debugger", "default", "delete", "do", "else", "export", "extends",
+    "finally", "for", "function", "if", "import", "in", "instanceof", "let",
+    "new", "of", "return", "static", "super", "switch", "throw", "try",
+    "typeof", "var", "void", "while", "yield",
+  ]);
+  const JS_CONSTANTS = new Set(["true", "false", "null", "undefined", "NaN", "Infinity"]);
+  const JS_SOFT = new Set(["this"]);
+  const JS_BUILTINS = new Set([
+    "Array", "Map", "Set", "Math", "Number", "Object", "String", "JSON",
+    "console", "parseInt", "parseFloat", "Boolean", "BigInt", "Symbol",
+    "WeakMap", "WeakSet", "Infinity", "isNaN",
+  ]);
+  const JS_TOKEN = new RegExp([
+    "(?<comment>\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?(?:\\*\\/|$))",
+    "(?<tstring>`(?:\\\\[\\s\\S]|[^`\\\\])*`?)",
+    "(?<string>\"(?:\\\\[\\s\\S]|[^\"\\\\\\n])*\"?|'(?:\\\\[\\s\\S]|[^'\\\\\\n])*'?)",
+    "(?<decorator>(?!))",
+    "(?<number>(?<![\\w.$])(?:0[xXoObB][0-9a-fA-F_]+n?|(?:\\d[\\d_]*\\.?[\\d_]*|\\.\\d[\\d_]*)(?:[eE][+-]?\\d+)?n?))",
+    "(?<name>[A-Za-z_$][\\w$]*)",
+    "(?<op>[-+*/%=<>!&|^~?:,.;]+)",
+  ].join("|"), "g");
+  const LANGS = {
+    python: { token: TOKEN, keywords: KEYWORDS, constants: CONSTANTS, soft: SOFT, builtins: BUILTINS, def: "def" },
+    javascript: { token: JS_TOKEN, keywords: JS_KEYWORDS, constants: JS_CONSTANTS, soft: JS_SOFT, builtins: JS_BUILTINS, def: "function" },
+  };
+  const langOf = (editor) =>
+    (editor?.closest?.("[data-code-lang]")?.dataset.codeLang === "javascript" ? "javascript" : "python");
+
   const escapeHtml = (s) => s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -112,21 +146,21 @@ const DeltaCodeHighlight = (() => {
   /* What an identifier IS depends on what surrounds it, which a regex
      cannot see: `shape` is an attribute in `x.shape` and a variable on its
      own, `solve` is a definition after `def` and a call before `(`. */
-  const classifyName = (src, word, start, end, prevWord) => {
-    if (KEYWORDS.has(word)) return "kw";
-    if (CONSTANTS.has(word)) return "const";
+  const classifyName = (src, word, start, end, prevWord, L = LANGS.python) => {
+    if (L.keywords.has(word)) return "kw";
+    if (L.constants.has(word)) return "const";
     let back = start - 1;
     while (back >= 0 && (src[back] === " " || src[back] === "\t")) back -= 1;
     const afterDot = back >= 0 && src[back] === "." && src[back - 1] !== ".";
     let fwd = end;
     while (fwd < src.length && (src[fwd] === " " || src[fwd] === "\t")) fwd += 1;
     const called = src[fwd] === "(";
-    if (prevWord === "def") return "fn";
+    if (prevWord === L.def) return "fn";
     if (prevWord === "class") return "cls";
     if (called) return "fn";
     if (afterDot) return "attr";
-    if (BUILTINS.has(word)) return "builtin";
-    if (SOFT.has(word)) return "self";
+    if (L.builtins.has(word)) return "builtin";
+    if (L.soft.has(word)) return "self";
     // A bare Capitalised name is a class or a dtype far more often than not
     // (`nn.Linear`, `Tensor`, `MyModule`) — colouring it as one is what makes
     // a torch snippet read the way it does in Colab.
@@ -137,14 +171,20 @@ const DeltaCodeHighlight = (() => {
   /* Tokenise `src` into a flat list of {start, end, cls}. Plain runs
      (whitespace, brackets, anything the regex did not claim) are emitted as
      `null` class so the caller can still splice the ghost into them. */
-  const tokenize = (src) => {
+  const tokenize = (src, lang = "python") => {
+    const L = LANGS[lang] || LANGS.python;
+    const TOK = L.token;
     const out = [];
     let at = 0;
     let prevWord = "";
-    TOKEN.lastIndex = 0;
+    TOK.lastIndex = 0;
     let m;
-    while ((m = TOKEN.exec(src)) !== null) {
-      if (m.index > at) out.push({ start: at, end: m.index, cls: null });
+    while ((m = TOK.exec(src)) !== null) {
+      if (m.index > at) {
+        out.push({ start: at, end: m.index, cls: null });
+        // `function(nums`: a bracket between them means `nums` is not the name defined.
+        if (src.slice(at, m.index).trim()) prevWord = "";
+      }
       const g = m.groups;
       let cls = null;
       if (g.comment !== undefined) cls = "com";
@@ -153,12 +193,12 @@ const DeltaCodeHighlight = (() => {
       else if (g.number !== undefined) cls = "num";
       else if (g.op !== undefined) cls = "op";
       else if (g.name !== undefined) {
-        cls = classifyName(src, g.name, m.index, m.index + m[0].length, prevWord);
+        cls = classifyName(src, g.name, m.index, m.index + m[0].length, prevWord, L);
       }
       out.push({ start: m.index, end: m.index + m[0].length, cls });
       prevWord = g.name !== undefined ? g.name : "";
       at = m.index + m[0].length;
-      if (m[0].length === 0) TOKEN.lastIndex += 1; // paranoia: never spin
+      if (m[0].length === 0) TOK.lastIndex += 1; // paranoia: never spin
     }
     if (at < src.length) out.push({ start: at, end: src.length, cls: null });
     return out;
@@ -170,9 +210,9 @@ const DeltaCodeHighlight = (() => {
      `ghostAt`. The ghost is spliced INTO the already-tokenised stream rather
      than by highlighting `before + ghost + after`, because a triple-quoted
      string straddling the caret would be two broken halves that way. */
-  const paint = (src, ghost, ghostAt) => {
+  const paint = (src, ghost, ghostAt, lang = "python") => {
     const parts = [];
-    for (const tok of tokenize(src)) {
+    for (const tok of tokenize(src, lang)) {
       const text = src.slice(tok.start, tok.end);
       if (ghost && ghostAt >= tok.start && ghostAt < tok.end) {
         parts.push(span(tok.cls, text.slice(0, ghostAt - tok.start)));
@@ -213,7 +253,7 @@ const DeltaCodeHighlight = (() => {
     const overlay = overlayOf(editor);
     if (!overlay) return;
     const ghost = editor.__deltaGhost || "";
-    overlay.innerHTML = paint(editor.value, ghost, editor.selectionStart);
+    overlay.innerHTML = paint(editor.value, ghost, editor.selectionStart, langOf(editor));
     syncGutter(editor, overlay);
     overlay.scrollTop = editor.scrollTop;
     overlay.scrollLeft = editor.scrollLeft;

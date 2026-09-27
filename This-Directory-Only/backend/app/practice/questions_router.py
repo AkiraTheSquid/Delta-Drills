@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app import diagnostic, kc_graph, lesson_readiness, lessons, practice_targets
+from app import kc_graph, lesson_readiness, lessons, practice_targets
 from app.adaptive import (
     COLD_START_TARGETS,
     UNRATED,
@@ -77,90 +77,21 @@ def claim_question(
     return {"already_served": already_served}
 
 
-def _serve_diagnostic_probe(user_id: str, user_state) -> NextQuestionResponse | None:
-    """When the placement diagnostic is active, serve the next ALEKS-style
-    probe (max-information item across topic areas) instead of the normal
-    weakest-subtopic flow. Returns None when no informative probe remains —
-    the diagnostic finishes (seeding BKT) and the caller falls through."""
-    if diagnostic.should_finish(user_state):
-        # Budget already met/exceeded (e.g. history credit shrank it between
-        # requests) — finish now rather than serving probe N+1 "of ≤N".
-        diagnostic.finish(user_state)
-        save_user_state(user_id)
-        return None
-    question = diagnostic.select_probe(user_state)
-    if question is None:
-        diagnostic.finish(user_state)
-        save_user_state(user_id)
-        return None
-
-    sub_state = user_state.get_subtopic_state(question.subtopic)
-    if question.id not in sub_state.served_question_ids:
-        sub_state.served_question_ids.append(question.id)
-    user_state.last_served_question_id = question.id
-    save_user_state(user_id)
-
-    return NextQuestionResponse(
-        question_id=question.id,
-        question_text=question.question_text,
-        topic=question.topic,
-        subtopic=question.subtopic,
-        difficulty=question.difficulty_score,
-        target_difficulty=question.difficulty_score,
-        expected_output=expected_output_for(question),
-        solution_code=compose_full_solution(question.starter_code, question.answer_code),
-        is_cold_start=False,
-        subtopic_n=sub_state.n,
-        p_current=None,
-        primary_library=question.primary_library,
-        task_type=question.task_type,
-        expected_artifact_type=question.expected_artifact_type,
-        supports_visual_output=question.supports_visual_output,
-        function_name=question.function_name,
-        starter_code=question.starter_code,
-        test_cases=question.test_cases,
-        submission_mode=question.submission_mode,
-        wrong_examples=question.wrong_examples,
-        provenance=question.provenance,
-        hint=question.hint,
-        **mc_fields(question),
-        solution_notebook_path=question.solution_notebook_path,
-        problem_notebook_path=question.problem_notebook_path,
-        diagnostic_active=True,
-        diagnostic_probe_index=len(diagnostic.get_diag(user_state)["probes"]) + 1,
-        diagnostic_budget=diagnostic.effective_budget(user_state),
-        diagnostic_area=question.topic,
-        # select_probe set (or resumed) `pending` for this very question just
-        # above, so this is its concept's clock — less the time it has already
-        # been on screen when this is a resume — or the plan's remainder.
-        diagnostic_secs_allowed=diagnostic.pending_secs_left(user_state),
-    )
-
-
 @router.get("/next-question", response_model=NextQuestionResponse)
 def next_question(
     focus_subtopic: str | None = Query(None),
     user: User = Depends(get_current_user),
 ) -> NextQuestionResponse:
     """`focus_subtopic` pins the queue to one subtopic (single-KC practice from
-    the concept graph). It only overrides *selection*; scoring, unlock gates and
-    the placement diagnostic are untouched. Unknown values fall back to the
-    normal weakest-subtopic pick rather than 404ing."""
+    the concept graph). It only overrides *selection*; scoring and unlock gates
+    are untouched. Unknown values fall back to the normal weakest-subtopic pick
+    rather than 404ing."""
     user_id = str(user.id)
     user_state = get_user_state(user_id)
 
     subtopic = None
     if focus_subtopic and get_questions_by_subtopic(focus_subtopic):
         subtopic = focus_subtopic
-
-    # A focused request skips placement probing: the learner opened ONE concept
-    # from the graph, and cross-topic probes there would look broken (and would
-    # never move that concept's competency bar). The diagnostic stays active and
-    # resumes on the normal queue; these attempts still count as evidence.
-    if subtopic is None and diagnostic.should_run(user_state):
-        probe = _serve_diagnostic_probe(user_id, user_state)
-        if probe is not None:
-            return probe
 
     # The retry loop lives in question_pick.run_queue so the lattice route can
     # run the SAME selection without serving (its next_kc is the concept this
@@ -256,10 +187,7 @@ def next_question(
         **mc_fields(question),
         solution_notebook_path=question.solution_notebook_path,
         problem_notebook_path=question.problem_notebook_path,
-        # Exposure guard: placement probes are never gated (the diagnostic
-        # measures prior knowledge — teaching first would corrupt it), so
-        # this only runs on the normal adaptive-queue path. Unread pages, then
-        # a page the engine says the learner needs to re-read before THIS
+        # Exposure guard: unread pages, then a page the engine says the learner needs to re-read before THIS
         # drill is a drill rather than a problem (lesson_readiness).
         lesson_gate=lesson_readiness.lesson_gate(
             user_state, question.id, difficulty_score=question.difficulty_score
@@ -288,49 +216,34 @@ def submit_answer(
         )
 
     correct, actual_output, expected_output, failed_tests = grade_submission(
-        question, payload.user_code, user
+        question, payload.user_code, user, payload.language
     )
 
-    is_diagnostic = diagnostic.get_diag(user_state)["active"]
-    if is_diagnostic:
-        # Placement probe: update the diagnostic posterior directly (BKT is
-        # seeded once at finish). No pending attempt / felt-difficulty step —
-        # /override can still flip the latest probe's result.
-        diagnostic.record_probe(
-            user_state, question, "correct" if correct else "incorrect"
-        )
     timed_out = bool(payload.timed_out) and not correct
-    if is_diagnostic:
-        pass
-    else:
-        # Anything still parked is about to be overwritten by this one.
-        flush_stale_attempt(user_state)
-        if timed_out:
-            # The clock submitted this, not the learner — and it COUNTS AS A
-            # MISS. Until 2026-09-20 it was logged and scored nowhere, and the
-            # drill came back: Seth's record held 103 timeouts against 107
-            # answers, invisible to mastery, struggle and the picker. Seth:
-            # "It should count it as wrong whenever I run out of time because
-            # usually it's because I was struggling on a problem and couldn't
-            # finish." The `timeout` row is still written first, so the audit
-            # can tell which misses were the clock; the miss itself then takes
-            # the ordinary path below — ability, ladder, pending attempt,
-            # felt-difficulty rating. See attempt_log.KIND_TIMEOUT.
-            record_timeout_submit(user_state, question)
-        record_attempt(
-            user_state=user_state,
-            question_id=question.id,
-            subtopic=question.subtopic,
-            difficulty_score=question.difficulty_score,
-            correct=correct,
-        )
-        # Ladder evidence is recorded only OUTSIDE the diagnostic. A placement
-        # probe measures prior knowledge on questions the learner was never
-        # taught, so counting it would demote them to worked examples for
-        # concepts the probe never intended to teach.
-        record_ladder_outcome(user_state, question.id, correct, example_shown=payload.example_shown)
+    # Anything still parked is about to be overwritten by this one.
+    flush_stale_attempt(user_state)
+    if timed_out:
+        # The clock submitted this, not the learner — and it COUNTS AS A
+        # MISS. Until 2026-09-20 it was logged and scored nowhere, and the
+        # drill came back: Seth's record held 103 timeouts against 107
+        # answers, invisible to mastery, struggle and the picker. Seth:
+        # "It should count it as wrong whenever I run out of time because
+        # usually it's because I was struggling on a problem and couldn't
+        # finish." The `timeout` row is still written first, so the audit
+        # can tell which misses were the clock; the miss itself then takes
+        # the ordinary path below — ability, ladder, pending attempt,
+        # felt-difficulty rating. See attempt_log.KIND_TIMEOUT.
+        record_timeout_submit(user_state, question)
+    record_attempt(
+        user_state=user_state,
+        question_id=question.id,
+        subtopic=question.subtopic,
+        difficulty_score=question.difficulty_score,
+        correct=correct,
+    )
+    record_ladder_outcome(user_state, question.id, correct, example_shown=payload.example_shown)
     save_user_state(user_id)
-    ladder = {} if is_diagnostic else ladder_fields(user_state, question.id)
+    ladder = ladder_fields(user_state, question.id)
 
     return SubmitResponse(
         correct=correct,
@@ -371,17 +284,6 @@ def submit_local_eval(
             detail="Question not found",
         )
 
-    if diagnostic.get_diag(user_state)["active"]:
-        # A placement probe is not a graded attempt: it updates the diagnostic
-        # posterior directly and never creates a pending attempt, so there is
-        # nothing here to finalize and no subtopic reading that would have
-        # moved. Same rule as /submit.
-        diagnostic.record_probe(
-            user_state, question, "correct" if payload.correct else "incorrect"
-        )
-        save_user_state(user_id)
-        return LocalEvalResponse(success=True, finalized=False)
-
     td_before = p_before = None
     if payload.finalize:
         # Read the "before" numbers first: finalize_attempt overwrites both.
@@ -393,8 +295,7 @@ def submit_local_eval(
         p_before = sub_state.p
 
     # Same rule as /submit: an attempt left parked by an earlier request is
-    # about to be overwritten, and losing it is the 2026-08-03 bug. Runs after
-    # the diagnostic branch above, which returns before creating anything.
+    # about to be overwritten, and losing it is the 2026-08-03 bug.
     flush_stale_attempt(user_state)
     record_attempt(
         user_state=user_state,
@@ -439,22 +340,6 @@ def override_attempt(
 ) -> OverrideAttemptResponse:
     user_id = str(user.id)
     user_state = get_user_state(user_id)
-
-    if diagnostic.get_diag(user_state)["active"] or (
-        diagnostic.get_diag(user_state)["probes"]
-        and diagnostic.get_diag(user_state)["probes"][-1]["question_id"]
-        == payload.question_id
-        and user_state.pending_attempt is None
-    ):
-        # During (or right at the end of) placement, override flips the
-        # latest probe instead of a pending attempt.
-        if diagnostic.override_probe(user_state, payload.question_id, payload.correct):
-            if diagnostic.get_diag(user_state)["completed_at"]:
-                # The flipped probe was the finishing one — re-seed from the
-                # corrected posterior (seeding only ever raises mastery).
-                diagnostic.finish(user_state)
-            save_user_state(user_id)
-            return OverrideAttemptResponse(success=True)
 
     updated = override_pending_attempt(
         user_state=user_state,

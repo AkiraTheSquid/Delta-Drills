@@ -218,7 +218,7 @@ const LadderUI = (() => {
     const kc = _kcOf(question);
     if (_stageOf(question) !== "worked" || !kc) return false;
     if (!window.LessonGate || typeof window.LessonGate.showLesson !== "function") return false;
-    if (question.diagnostic_active || question.attempt_first) return false;
+    if (question.attempt_first) return false;
 
     const shown = await window.LessonGate.showLesson(kc, onDone, question);
     if (!shown) {
