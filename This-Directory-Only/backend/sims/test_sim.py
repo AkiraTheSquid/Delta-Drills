@@ -124,6 +124,55 @@ for Bel in (BKTBelief, JointBelief):
           np.allclose(others, np.delete(bel._p(), cands) if Bel is JointBelief else bel._p()[5:],
                       atol=0.02 if Bel is BKTBelief else 1e-9))
 
+print("planner (#3)")
+import copy as _copy  # noqa: E402
+from sims import planner as Pl  # noqa: E402
+tr = world.Truth(G, "W2", "torch", 5)
+ep = sim.Episode(G, tr, sim.make_belief("bkt", G, tr, 5), "B", 0.95, 30.0, 0.8)
+for _ in range(15):
+    ep.session()
+fk = ep.fork(_copy.deepcopy(tr))
+check("a forked episode on a copy of its learner plays out identically",
+      ep.run() == fk.run() and np.array_equal(ep.learned, fk.learned))
+tr = world.Truth(G, "W1", "novice", 6)
+ref = sim.Episode(G, tr, sim.make_belief("bkt", G, tr, 6), "B", 0.95, 0.0, 0.8)
+for _ in range(10):
+    ref.session()
+snap = (ref.learned.copy(), ref.bel.pL.copy(), ref.practice_min)
+e2 = ref.fork(world.Truth(G, "W1", "strong", 7))
+e2.theta = 0.8
+e2.run()
+check("a rollout leaves the live episode untouched",
+      np.array_equal(snap[0], ref.learned) and np.array_equal(snap[1], ref.bel.pL)
+      and snap[2] == ref.practice_min)
+for w in ("W1", "W2"):
+    tr = world.Truth(G, w, "novice", 8)
+    bel = sim.make_belief("bkt", G, tr, 8)
+    e3 = sim.Episode(G, tr, bel, "B", 0.99, 0.0, 0.8)
+    f = Pl.LearnerFilter(G, bel, 8)
+    e3.observer = lambda what, c, t, y, f=f: f.lesson(c, t) if what == "lesson" else f.answer(c, t, y)
+    for _ in range(30):
+        e3.session()
+    check(f"learner filter identifies {w} after 30 sessions", (f.p_w1() > 0.9) == (w == "W1"),
+          f"P(W1)={f.p_w1():.2f}")
+h = f.sample(1, np.random.default_rng(0), e3.lesson_read)[0]
+check("a hypothesized learner never reuses a real seed", h.seed >= Pl.HYPO_SEED0)
+
+print("fast engine (numba)")
+from sims import fast  # noqa: E402
+bad = []
+for w, lt, s, arm, brk in (("W1", "novice", 11, "B", 0.0), ("W2", "strong", 12, "C", 180.0),
+                           ("W3", "math", 13, "B", 30.0), ("W3", "torch", 14, "B", 180.0)):
+    tr = world.Truth(G, w, lt, s)
+    e4 = sim.Episode(G, tr, sim.make_belief("bkt", G, tr, s), arm, 0.95, brk, 0.8)
+    for _ in range(12):                 # mid-course, so a rollout's starting state is exercised
+        e4.session()
+    got = fast.run(e4, 0.9, 0.7, truth=_copy.deepcopy(tr))
+    e4.theta, e4.review_at = 0.9, 0.7
+    if got != e4.run():
+        bad.append((w, lt, arm))
+check("fast.run = the Python episode, result for result (W1-W3, B and C, mid-course)", not bad, str(bad))
+
 print("sanity runs")
 res = {arm: [sim.run(G, "W1", lt, s, arm, 0.80, 0) for lt in ("novice", "torch") for s in (1, 2)]
        for arm in ("C", "O", "A", "B", "H", "BV", "K", "KV")}

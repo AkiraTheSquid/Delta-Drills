@@ -10,7 +10,15 @@ free (Seth, 2026-09-26):
      (the continuous-skill world FSRS-alone assumes). FSRS-6 forgetting
      scales it.
 
-Both: the learner's own FSRS weights are the concept prior perturbed per
+  W3 "misspecified" (Seth 2026-09-26: did the planner overfit the
+     simulator?): a world NO belief or planner models. Each concept is
+     randomly jump-style (as W1) or gradual with an S-shaped curve (slow
+     start: growth x (0.3 + k), unlike W2's fraction-of-what-is-left);
+     forgetting weights vary ~2x more per learner; prerequisites matter more
+     (tau 0.8); and one day in five is a bad day (knowing x 0.75 on answers,
+     not on the crossing metric, which measures ability).
+
+All: the learner's own FSRS weights are the concept prior perturbed per
 learner, each concept learns at its own speed, and an answer also needs the
 concepts it encompasses (noisy-AND over the registry's `encompassing` edges).
 Knowing the prerequisites speeds learning (multiplicative, tau 0.5 per
@@ -45,6 +53,7 @@ TAU = 0.5                  # prerequisite transfer (T1)
 FIRE_SCALE = 0.5           # implicit repetition share, memory_model's
 CROSS_P = 0.80             # a goal is mastered when P(correct) a day out >= this
 LEARNER_TYPES = ("novice", "torch", "math", "strong")
+WORLDS = ("W1", "W2", "W3")
 MAX_EVENTS = 2000          # CRN array depth per concept (MAX_DAYS x cap, with room)
 
 
@@ -126,7 +135,7 @@ def _known_areas(ltype: str) -> Dict[str, float]:
 
 @dataclass
 class Truth:
-    """One hidden learner. `world` is "W1" or "W2"."""
+    """One hidden learner. `world` is "W1", "W2" or "W3"."""
     g: Graph
     world: str
     ltype: str
@@ -139,20 +148,23 @@ class Truth:
     lesson_read: np.ndarray = field(init=False)
     n_ans: np.ndarray = field(init=False)
     n_learn: np.ndarray = field(init=False)
+    crn_events = MAX_EVENTS    # CRN array depth; the planner's hypothesized learners use 0
+    tau = TAU
 
     def __post_init__(self):
-        rng = np.random.default_rng([self.seed, 1 if self.world == "W1" else 2,
+        rng = np.random.default_rng([self.seed, WORLDS.index(self.world) + 1,
                                      LEARNER_TYPES.index(self.ltype)])
+        w3 = self.world == "W3"
         C = len(self.g.ids)
         w = np.array(F.CONCEPT_PRIOR_WEIGHTS)
         # The learner's own forgetting: stability weights +-25%, decay +-15%.
         for i in (0, 1, 2, 3, 8, 11, 13):
-            w[i] *= math.exp(rng.normal(0, 0.22))
-        w[20] *= math.exp(rng.normal(0, 0.13))
+            w[i] *= math.exp(rng.normal(0, 0.5 if w3 else 0.22))
+        w[20] *= math.exp(rng.normal(0, 0.3 if w3 else 0.13))
         self.w = tuple(w)
         self.speed = np.exp(rng.normal(0, 0.35, C))
-        self.u_ans = rng.random((C, MAX_EVENTS))
-        self.u_learn = rng.random((C, MAX_EVENTS))
+        self.u_ans = rng.random((C, self.crn_events))
+        self.u_learn = rng.random((C, self.crn_events))
         self.L = np.zeros(C, bool)
         self.k = np.zeros(C)
         self.mem = [None] * C
@@ -170,15 +182,28 @@ class Truth:
                 self.k[c] = rng.uniform(0.85, 1.0)
                 self.mem[c] = (float(np.exp(rng.normal(math.log(25), 0.7))), 5.0,
                                -float(rng.uniform(3, 60)))
+        # jump[c]: the concept is learned-or-not (W1) rather than a strength (W2).
+        self.jump = np.full(C, self.world == "W1")
+        self.bad_day = np.zeros(0, bool)
+        if w3:                                 # drawn last: W1/W2 streams untouched
+            self.jump = rng.random(C) < 0.5
+            self.bad_day = rng.random(2000) < 0.2
+            self.tau = 0.8
 
     # --- what the learner knows --------------------------------------------
+    _fw = None                 # the w that _fac/_dec were computed for (F.R, hoisted: hot)
+
     def _R(self, c, t):
         m = self.mem[c]
-        return 0.0 if m is None else F.R(m[0], m[2], t, self.w)
+        if m is None:
+            return 0.0
+        if self._fw is not self.w:
+            self._fw, self._fac, self._dec = self.w, F.factor(self.w), F.decay(self.w)
+        return (1 + self._fac * max(0.0, t - m[2]) / m[0]) ** self._dec
 
     def own(self, c, t) -> float:
         """This concept's own step, recalled at t (no components)."""
-        base = float(self.L[c]) if self.world == "W1" else self.k[c]
+        base = float(self.L[c]) if self.jump[c] else self.k[c]
         return base * self._R(c, t)
 
     def know(self, c, t) -> float:
@@ -188,17 +213,27 @@ class Truth:
             p *= 1 - wt * (1 - self.own(comp, t))
         return p
 
-    def p_correct(self, c, t) -> float:
+    def p_correct(self, c, t, luck=True) -> float:
         gu, sl = self.g.guess[c], self.g.slip[c]
-        return gu + (1 - gu - sl) * self.know(c, t)
+        know = self.know(c, t)
+        if luck and len(self.bad_day) and self.bad_day[int(t)]:
+            know *= 0.75
+        return gu + (1 - gu - sl) * know
 
     def crossed(self, c, t) -> bool:
-        return self.p_correct(c, t + 1.0) >= CROSS_P
+        return self.p_correct(c, t + 1.0, luck=False) >= CROSS_P
+
+    def _grow(self, c, r):
+        """Gradual strength step: W2 takes r of what is left; W3 starts slow."""
+        k = self.k[c]
+        if self.world == "W3":
+            return min(1.0, r * (0.3 + k)) * (1 - k)
+        return r * (1 - k)
 
     def _pre(self, c, t) -> float:
         out = 1.0
         for p in self.g.prereqs[c]:
-            out *= 1 - TAU * (1 - self.own(p, t))
+            out *= 1 - self.tau * (1 - self.own(p, t))
         return out
 
     def _draw_learn(self, c) -> float:
@@ -212,7 +247,7 @@ class Truth:
     def lesson(self, c, t):
         pre = self._pre(c, t) * self.speed[c]
         u = self._draw_learn(c)
-        if self.world == "W1":
+        if self.jump[c]:
             if not self.L[c]:
                 if u < min(0.95, 0.6 * pre):
                     self.L[c] = True
@@ -220,7 +255,7 @@ class Truth:
             else:
                 self.mem[c] = F.implicit(self.mem[c], t, 0.5, self.w)
         else:
-            self.k[c] += min(0.95, 0.6 * pre) * (1 - self.k[c])
+            self.k[c] += self._grow(c, min(0.95, 0.6 * pre))
             self.mem[c] = (F.review(None, t, F.GOOD, self.w) if self.mem[c] is None
                            else F.implicit(self.mem[c], t, 0.5, self.w))
         self.lesson_read[c] = True
@@ -230,21 +265,25 @@ class Truth:
             raise RuntimeError(f"common random numbers exhausted on {self.g.ids[c]}")
         correct = bool(self.u_ans[c, self.n_ans[c]] < self.p_correct(c, t))
         self.n_ans[c] += 1
+        self.update(c, t, correct)
+        return correct
+
+    def update(self, c, t, correct: bool):
+        """The learner's state after answering c (right or wrong) at t."""
         grade = F.GOOD if correct else F.AGAIN
         pre = self._pre(c, t) * self.speed[c]
         u = self._draw_learn(c)
         rate = 0.15 if self.lesson_read[c] else 0.04
-        if self.world == "W1":
+        if self.jump[c]:
             if self.L[c]:
                 self.mem[c] = F.review(self.mem[c], t, grade, self.w)
             elif u < min(0.95, rate * pre):
                 self.L[c] = True
                 self.mem[c] = F.review(None, t, F.GOOD, self.w)
         else:
-            self.k[c] += min(0.95, 2.7 * rate * pre) * (1 - self.k[c])
+            self.k[c] += self._grow(c, min(0.95, 2.7 * rate * pre))
             self.mem[c] = F.review(self.mem[c], t, grade, self.w)
         if correct:
             for comp, wt in self.g.enc[c]:
                 if self.mem[comp] is not None:
                     self.mem[comp] = F.implicit(self.mem[comp], t, wt * FIRE_SCALE, self.w)
-        return correct

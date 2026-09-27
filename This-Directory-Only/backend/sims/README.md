@@ -6,8 +6,10 @@
 - Offline research tool. Nothing in the app imports it.
 
 ## Owns
-- The hidden true learner in two worlds (`world.py`): W1 two-state learned/unlearned,
-  W2 gradual strength. A winner must hold in both.
+- The hidden true learner in three worlds (`world.py`): W1 two-state learned/unlearned,
+  W2 gradual strength, W3 misspecified (per-concept jump-or-S-curve, 2x forgetting spread,
+  tau 0.8, bad days) that NO belief or planner models. A winner must hold in W1 and W2;
+  W3 tests whether it only wins by knowing the simulator.
 - The beliefs under test (`beliefs.py`) and the one shared policy (`sim.py`).
 - The grid runner and paired report (`run.py`).
 
@@ -27,13 +29,20 @@
   encompassing-edge likelihood.
 - `voi.py`: probe for minutes saved (BV/KV): per-concept optimal-stopping DP J(p);
   score = teach-now minus probe cost, plus spillover on the concave hull of J.
-- `sim.py`: review → explore → exploit policy, run loop, metric.
+- `sim.py`: review → explore → exploit policy as a forkable `Episode` (one `session()` per day), metric.
+- `planner.py`: arm P (#3): B + a planner that re-picks B's gate/review knobs per learner by
+  playing the rest of the course on learners drawn from a per-concept particle filter
+  (W1 vs W2 posterior included). Expensive: run with `final --n 25 --arms P`.
+- `fast.py`: numba copy of the B-family episode (belief + policy + true learner, W1-W3) for
+  the planner's rollouts, ~20x faster, results identical (checked in `test_sim.py`;
+  `SIM_FAST=0` = Python rollouts).
 - `run.py`: `pilot` (theta tuning), `final` (fresh seeds, breaks), `report`.
 - `test_sim.py`: FSRS parity, common random numbers, collapsed-particle = point FSRS, sanity.
 
 ## Data & External Dependencies
 - Reads `Local_Deployed_Shared/lessons/kc_registry.json` (prereqs, encompassing, arena_section).
-- numpy; `test_sim.py`/`watch.py` import `app.memory_model` for parity.
+- numpy, numba (sims only: `pip install numba` into the backend venv; the app never imports it);
+  `test_sim.py`/`watch.py` import `app.memory_model` for parity.
 - Output: `sims/out/*.jsonl` (gitignored).
 
 ## How It Works (Flow)
@@ -51,6 +60,8 @@
 - Common random numbers: truth draws are indexed by (concept, event count), so arms are paired.
 - Tune and score on disjoint seeds.
 - FSRS copy must match `memory_model` (watch.py + test_sim.py fail otherwise).
+- `fast.py` must match `sim.Episode` + `BKTBelief` + `Truth` result for result: a change to
+  any of them changes both copies, then re-run `test_sim.py`.
 - 10 workers at nice 19 inside `systemd-run --user --scope -p CPUQuota=1000%` (Seth 09-26:
   whole machine <= 80%; 16 cores).
 - Arms are paired per learner, so a new arm runs alone (`--arms X`) and appends; it
@@ -59,7 +70,8 @@
 ## Extension Points
 - New belief: implement `K`, `K_row`, `gate`, `due_R`, `info`, `lesson`, `answer` in
   `beliefs.py`, register in `sim.ARMS` / `make_belief`.
-- Rollout planner arm (deferred by Seth 09-26): a new action chooser in `sim.py` over the winner.
+- Planner: `Episode.planner` (called before each session) and `Episode.observer` (each event,
+  before the belief moves); `Episode.fork(truth)` copies mid-course state for rollouts.
 
 ## Known Issues, Recurring Bugs, and Pain Points (and How to Prevent Them)
 
@@ -72,6 +84,20 @@
   was deleted. This one is committed.
 
 ## Recent Changes
+- 2026-09-26: `fast.py` (numba) runs P's rollouts: P 2-4 s per learner (was 40-85 s), identical
+  results (144 whole B/C runs + P end to end). Result, P n=25 x 4 types x 3 breaks: P ties the
+  best FIXED gate for each world without knowing the world (W1: = gate 0.9, -9% vs B; W2: = B,
+  -8% vs gate 0.9). Its gain is identifying the world and picking the knob; W3 tests whether
+  that survives a world it does not model.
+- 2026-09-26: W3 (misspecified world) + `B9` reference arm (B at gate 0.9); `final/report
+  --worlds W3 --out final_w3.jsonl`. `Truth.jump[c]` replaces `world == "W1"` checks (oracle
+  too). Speedups, results bit-identical: vectorised prerequisite masks, cached area prior
+  (`_prior_v`) and recall (`_mem_v`), hoisted FSRS constants in `Truth._R`; resume skips rows
+  already on disk; `SIM_WORKERS` env (Seth: up to 14 workers / CPUQuota=1400%).
+- 2026-09-26: Arm P (planner.py, #3). `sim.run` is now `Episode`; `Truth.answer` split into
+  draw + `update(c, t, correct)` (a hypothesized learner takes an OBSERVED outcome). Existing
+  arms bit-identical (checked on 21 runs). 🔴 A joint particle cloud over all 71 concepts
+  degenerated and called every W1 learner W2 — the filter is per concept.
 - 2026-09-26: Result (800 fresh learners × 3 breaks, paired vs B): BV at B's gate (0.99, 0.8)
   = tie (W1 +1%, W2 ±1%); its pilot pick (0.9) gave W1 −9% / W2 +9% — that is the GATE,
   not decision-value probing. K +8% W1 / +11–16% W2; KV +21–35%; BS ≈ 0. B stays the belief.

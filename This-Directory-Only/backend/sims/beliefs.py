@@ -64,6 +64,7 @@ class _Shared:
         C = len(g.ids)
         self.counts: Dict[str, List[int]] = {}
         self.ind = np.zeros(C)
+        self._prior_v, self._pe_v, self._pe = 0, -1, None   # prior_eff cache (hot in rollouts)
         self.touched = np.zeros(C, bool)
         self.areas = sorted(set(g.area))
         self.area_ix = np.array([self.areas.index(a) for a in g.area])
@@ -78,12 +79,18 @@ class _Shared:
         return np.clip((acc - g.guess) / (1 - g.guess - g.slip), 0.02, 0.98)
 
     def prior_eff(self) -> np.ndarray:
-        return _sig(_logit(self.prior()) + self.ind)
+        """Read-only; recomputed only after counts / ind change (_prior_v)."""
+        if self._pe_v != self._prior_v:
+            self._pe = _sig(_logit(self.prior()) + self.ind)
+            self._pe.flags.writeable = False
+            self._pe_v = self._prior_v
+        return self._pe
 
     def record_probe(self, c, correct):
         a = self.g.area[c]
         n, h = self.counts.get(a, [0, 0])
         self.counts[a] = [n + 1, h + int(correct)]
+        self._prior_v += 1
 
     def indirect_budget(self, comp, wt) -> float:
         """Tempered logit credit for `comp` from a correct answer upstream."""
@@ -91,6 +98,7 @@ class _Shared:
         full = wt * math.log((1 - g.slip[comp]) / g.guess[comp])
         d = max(0.0, min(full, INDIRECT_CLIP - self.ind[comp]))
         self.ind[comp] += d
+        self._prior_v += 1
         return d / full if full > 0 else 0.0
 
 
@@ -105,12 +113,19 @@ class BKTBelief(_Shared):
         self.D = np.full(C, 5.0)
         self.tl = np.zeros(C)
         self.has_mem = np.zeros(C, bool)
+        self._mem_v, self._R_key, self._Rc = 0, None, None   # _R cache: memory changes in answer()
 
     def _p(self):
         return np.where(self.touched, self.pL, self.prior_eff())
 
     def _R(self, t):
-        return np.where(self.has_mem, F.vR(self.S, self.tl, t, W), 1.0)
+        """Read-only; recomputed only for a new t or after answer() moved memory."""
+        key = (t, self._mem_v)
+        if self._R_key != key:
+            self._Rc = np.where(self.has_mem, F.vR(self.S, self.tl, t, W), 1.0)
+            self._Rc.flags.writeable = False
+            self._R_key = key
+        return self._Rc
 
     def K(self, t):
         return self._p() * self._R(t)
@@ -155,12 +170,14 @@ class BKTBelief(_Shared):
                 post = p[c] * ll / (p[c] * ll + (1 - p[c]) * lu)
                 n, h = saved or [0, 0]
                 self.counts[a] = [n + 1, h + y]
+                self._prior_v += 1
                 out[j, y, same] = self.prior_eff()[same]
                 out[j, y, c] = post + (1 - post) * T_PROBE
             if saved is None:
                 del self.counts[a]
             else:
                 self.counts[a] = saved
+            self._prior_v += 1
         return out, q
 
     def _touch(self, c):
@@ -184,6 +201,7 @@ class BKTBelief(_Shared):
         mem = (self.S[c], self.D[c], self.tl[c]) if self.has_mem[c] else None
         self.S[c], self.D[c], self.tl[c] = F.review(mem, t, grade, W)
         self.has_mem[c] = True
+        self._mem_v += 1
         if correct:
             for comp, wt in g.enc[c]:
                 if self.has_mem[comp]:
@@ -424,7 +442,7 @@ class OracleBelief:
         durable crossing itself holds every concept back until reviews have
         spaced it, which no belief does; it made a poor bound.)"""
         tr = self.truth
-        return float(tr.L[c]) if tr.world == "W1" else float(tr.k[c])
+        return float(tr.L[c]) if tr.jump[c] else float(tr.k[c])
 
     def info(self, t):
         return np.zeros(len(self.g.ids))

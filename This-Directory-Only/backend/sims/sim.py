@@ -29,6 +29,7 @@ A goal never reached counts as 1.5 x the horizon.
 """
 from __future__ import annotations
 
+import copy
 import math
 from dataclasses import dataclass
 from typing import Optional
@@ -60,6 +61,8 @@ ARMS = {
     "A0": ("fsrs", False, None),       # Bayesian FSRS alone, no explore
     "A": ("fsrs", True, "var"),        # Bayesian FSRS alone + explore
     "H": ("hybrid", True, "var"),      # Bayesian FSRS + learned state + explore
+    "B9": ("bkt", True, "var"),        # B at a fixed gate 0.9 (W1's best): a reference
+    "P": ("bkt", True, "var"),         # B + rollout planner over its knobs (planner.py)
     "O": ("oracle", False, None),      # sees the truth
 }
 
@@ -75,6 +78,7 @@ class Result:
     lessons: int
     reviews: int
     drills: int
+    plan: str = ""            # planner arm: its knob choices, P(W1) at the end
 
 
 def make_belief(kind, g, truth, seed):
@@ -92,144 +96,212 @@ def make_belief(kind, g, truth, seed):
     return B.OracleBelief(g, truth)
 
 
-def run(g: Graph, world: str, ltype: str, seed: int, arm: str, theta: float,
-        break_days: float, review_at: float = 0.80) -> Result:
-    truth = Truth(g, world, ltype, seed)
-    kind, explore, scorer = ARMS[arm]
-    bel = make_belief(kind, g, truth, seed)
-    oracle = kind == "oracle"
-    C = len(g.ids)
-    gu, sl = g.guess, g.slip
-    learned = np.zeros(C, bool)
-    lesson_read = np.zeros(C, bool)
-    own_answers = np.zeros(C, int)
-    last_answer = np.full(C, -1e9)
-    focus: Optional[int] = None
-    today = np.zeros(C, int)                # drills per concept this session
-    crossed_at = np.full(C, np.nan)
-    stats = dict(false_decl=0, decl=0, probes=0, lessons=0, reviews=0, drills=0)
-    prereq_lists = g.prereqs
-    cost = np.array([COST_RATIO[k] for k in g.kind])
-    practice_min, day = 0.0, 0.0
-    took_break = break_days <= 0
-    last_was_review = False
-    return_until, stale = -1.0, np.zeros(C, bool)
-    last_session_day = None
+class Episode:
+    """One learner under one arm, as state that can be copied mid-course
+    (the planner forks it to simulate ahead). `session()` plays one day."""
 
-    def mark_learned(c, t):
-        if learned[c]:
+    def __init__(self, g: Graph, truth, bel, arm: str, theta: float,
+                 break_days: float, review_at: float = 0.80):
+        self.g, self.truth, self.bel = g, truth, bel
+        self.arm = arm
+        self.kind, self.explore, self.scorer = ARMS[arm]
+        self.oracle = self.kind == "oracle"
+        self.theta, self.review_at, self.break_days = theta, review_at, break_days
+        C = len(g.ids)
+        self.learned = np.zeros(C, bool)
+        self.lesson_read = np.zeros(C, bool)
+        self.own_answers = np.zeros(C, int)
+        self.last_answer = np.full(C, -1e9)
+        self.focus: Optional[int] = None
+        self.today = np.zeros(C, int)                # drills per concept this session
+        self.crossed_at = np.full(C, np.nan)
+        self.stats = dict(false_decl=0, decl=0, probes=0, lessons=0, reviews=0, drills=0)
+        self.cost = np.array([COST_RATIO[k] for k in g.kind])
+        self.practice_min, self.day = 0.0, 0.0
+        self.took_break = break_days <= 0
+        self.last_was_review = False
+        self.return_until, self.stale = -1.0, np.zeros(C, bool)
+        self.last_session_day = None
+        self.observer = None                         # f(what, c, t, correct) per event, before the belief
+        self.planner = None                          # f(episode) before each session
+
+    @staticmethod
+    def _pre_mat(g):
+        """[C, C] bool: row c marks c's prerequisites (cached on the graph)."""
+        m = getattr(g, "_pre_mat", None)
+        if m is None:
+            m = np.zeros((len(g.ids), len(g.ids)), bool)
+            for c, ps in enumerate(g.prereqs):
+                m[c, ps] = True
+            g._pre_mat = m
+        return m
+
+    def fork(self, truth):
+        """A copy that shares nothing mutable with this one, on `truth`."""
+        ep = copy.copy(self)
+        ep.truth = truth
+        ep.bel = copy.deepcopy(self.bel, {id(self.g): self.g})
+        for k in ("learned", "lesson_read", "own_answers", "last_answer", "today",
+                  "crossed_at", "stale"):
+            setattr(ep, k, getattr(self, k).copy())
+        ep.stats = dict(self.stats)
+        ep.observer = ep.planner = None
+        return ep
+
+    def mark_learned(self, c, t):
+        if self.learned[c]:
             return
-        if bel.gate(c, t) >= theta and (oracle or own_answers[c] > 0):
-            learned[c] = True
-            if g.goal[c]:
-                stats["decl"] += 1
-                stats["false_decl"] += int(not truth.crossed(c, t))
+        if self.bel.gate(c, t) >= self.theta and (self.oracle or self.own_answers[c] > 0):
+            self.learned[c] = True
+            if self.g.goal[c]:
+                self.stats["decl"] += 1
+                self.stats["false_decl"] += int(not self.truth.crossed(c, t))
 
-    while practice_min < HORIZON_H * 60 and day < MAX_DAYS:
-        t = day + 0.4
-        if last_session_day is not None and explore and day - last_session_day >= RETURN_GAP:
-            return_until = t + RETURN_WINDOW
-            stale = (lesson_read | learned) & (last_answer < last_session_day + 1)
-        last_session_day = day
-        today[:] = 0
-        session_end = min(practice_min + SESSION_MIN, HORIZON_H * 60)
-        while practice_min < session_end:
-            K = bel.K(t)
-            if oracle:
-                for c in np.flatnonzero(~learned):
-                    mark_learned(c, t)
-            due = learned & (bel.due_R(t) < review_at)
-            action = None
-            if due.any() and not last_was_review:
-                cands = np.flatnonzero(due)
-                c = cands[np.lexsort((bel.due_R(t)[cands], -g.value[cands]))[0]]
-                action = ("review", c)
-            if action is None and explore:
-                ok_pre = learned | (K >= REFUTED)
-                pre_ok = np.array([all(ok_pre[p] for p in prereq_lists[c]) for c in range(C)])
-                fresh = ~learned & ~lesson_read & pre_ok & (today < DAY_CAP)
-                back = stale & (today < DAY_CAP) if t < return_until else np.zeros(C, bool)
-                if scorer == "voi" and back.any():
-                    # Return window: re-probe what the break may have erased
-                    # first, by the same rule every explore arm uses.
-                    score = np.where(back, g.value * bel.info(t), -1.0)
+    def done(self) -> bool:
+        return self.practice_min >= HORIZON_H * 60 or self.day >= MAX_DAYS
+
+    def run(self) -> Result:
+        while not self.done():
+            if self.planner is not None:
+                self.planner(self)
+            if self.session():
+                break
+        return self.result()
+
+    def _choose(self, t):
+        g, bel, theta = self.g, self.bel, self.theta
+        learned, lesson_read, today = self.learned, self.lesson_read, self.today
+        C = len(g.ids)
+        K = bel.K(t)
+        if self.oracle:
+            for c in np.flatnonzero(~learned):
+                self.mark_learned(c, t)
+        dR = bel.due_R(t)
+        due = learned & (dR < self.review_at)
+        pm = self._pre_mat(g)
+        if due.any() and not self.last_was_review:
+            cands = np.flatnonzero(due)
+            c = cands[np.lexsort((dR[cands], -g.value[cands]))[0]]
+            return ("review", c)
+        if self.explore:
+            ok_pre = learned | (K >= REFUTED)
+            pre_ok = ~(pm & ~ok_pre).any(1)
+            fresh = ~learned & ~lesson_read & pre_ok & (today < DAY_CAP)
+            back = (self.stale & (today < DAY_CAP) if t < self.return_until
+                    else np.zeros(C, bool))
+            if self.scorer == "voi" and back.any():
+                # Return window: re-probe what the break may have erased
+                # first, by the same rule every explore arm uses.
+                score = np.where(back, g.value * bel.info(t), -1.0)
+                c = int(np.argmax(score))
+                if score[c] > 1e-6:
+                    return ("probe", c)
+            elif self.scorer == "voi":
+                # Probe for minutes saved (voi.py); no cost gate: the
+                # score already charges the probe's minutes.
+                cands = np.flatnonzero(fresh)
+                if len(cands):
+                    pa, q = bel.p_after(cands, t)
+                    sc = voi.scores(g, theta, cands, bel._p(), pa, q, learned, lesson_read)
+                    j = int(np.argmax(sc))
+                    if sc[j] > 0:
+                        return ("probe", int(cands[j]))
+            else:
+                cand = (fresh & (K >= self.cost)) | back
+                if cand.any():
+                    if hasattr(bel, "probe_scores"):
+                        score = np.full(C, -1.0)
+                        ix = np.flatnonzero(cand)
+                        score[ix] = bel.probe_scores(t, ix)
+                    else:
+                        score = np.where(cand, g.value * bel.info(t), -1.0)
                     c = int(np.argmax(score))
                     if score[c] > 1e-6:
-                        action = ("probe", c)
-                elif scorer == "voi":
-                    # Probe for minutes saved (voi.py); no cost gate: the
-                    # score already charges the probe's minutes.
-                    cands = np.flatnonzero(fresh)
-                    if len(cands):
-                        pa, q = bel.p_after(cands, t)
-                        sc = voi.scores(g, theta, cands, bel._p(), pa, q, learned, lesson_read)
-                        j = int(np.argmax(sc))
-                        if sc[j] > 0:
-                            action = ("probe", int(cands[j]))
-                else:
-                    cand = (fresh & (K >= cost)) | back
-                    if cand.any():
-                        if hasattr(bel, "probe_scores"):
-                            score = np.full(C, -1.0)
-                            ix = np.flatnonzero(cand)
-                            score[ix] = bel.probe_scores(t, ix)
-                        else:
-                            score = np.where(cand, g.value * bel.info(t), -1.0)
-                        c = int(np.argmax(score))
-                        if score[c] > 1e-6:
-                            action = ("probe", c)
+                        return ("probe", c)
+        focus = self.focus
+        if focus is None or learned[focus] or today[focus] >= DAY_CAP:
+            front = np.flatnonzero(~learned & (today < DAY_CAP) & ~(pm & ~learned).any(1))
+            focus = self.focus = (int(max(front, key=lambda c: (g.value[c], -g.depth[c], -c)))
+                                  if len(front) else None)
+        if focus is not None:
+            return ("lesson", focus) if not lesson_read[focus] else ("drill", focus)
+        # Frontier used up for today (or done): review the weakest learned
+        # concept not yet answered today, else end the session.
+        spare = np.flatnonzero(learned & (today == 0))
+        if not len(spare):
+            return None
+        return ("review", spare[np.argmin(dR[spare])])
+
+    def session(self) -> bool:
+        """Play one day. True when every goal has crossed (the run is over)."""
+        g, truth, bel = self.g, self.truth, self.bel
+        t = self.day + 0.4
+        if (self.last_session_day is not None and self.explore
+                and self.day - self.last_session_day >= RETURN_GAP):
+            self.return_until = t + RETURN_WINDOW
+            self.stale = ((self.lesson_read | self.learned)
+                          & (self.last_answer < self.last_session_day + 1))
+        self.last_session_day = self.day
+        self.today[:] = 0
+        session_end = min(self.practice_min + SESSION_MIN, HORIZON_H * 60)
+        while self.practice_min < session_end:
+            action = self._choose(t)
             if action is None:
-                if focus is None or learned[focus] or today[focus] >= DAY_CAP:
-                    front = [c for c in np.flatnonzero(~learned & (today < DAY_CAP))
-                             if all(learned[p] for p in prereq_lists[c])]
-                    focus = max(front, key=lambda c: (g.value[c], -g.depth[c], -c)) if front else None
-                if focus is not None:
-                    action = ("lesson", focus) if not lesson_read[focus] else ("drill", focus)
-                else:
-                    # Frontier used up for today (or done): review the weakest
-                    # learned concept not yet answered today, else end the session.
-                    spare = np.flatnonzero(learned & (today == 0))
-                    if not len(spare):
-                        break
-                    action = ("review", spare[np.argmin(bel.due_R(t)[spare])])
+                break
             what, c = action
-            last_was_review = what == "review"
+            self.last_was_review = what == "review"
             if what == "lesson":
                 truth.lesson(c, t)
+                if self.observer is not None:
+                    self.observer(what, c, t, None)
                 bel.lesson(c, t)
-                lesson_read[c] = True
-                stats["lessons"] += 1
+                self.lesson_read[c] = True
+                self.stats["lessons"] += 1
                 dt = minutes(g, c, "lesson")
             else:
                 probe = what == "probe"
                 correct = truth.answer(c, t)
-                bel.answer(c, t, correct, probe=probe and not lesson_read[c],
-                           lesson_read=lesson_read[c])
-                own_answers[c] += 1
-                last_answer[c] = t
+                if self.observer is not None:       # before the belief moves
+                    self.observer(what, c, t, correct)
+                bel.answer(c, t, correct, probe=probe and not self.lesson_read[c],
+                           lesson_read=self.lesson_read[c])
+                self.own_answers[c] += 1
+                self.last_answer[c] = t
                 if probe:
-                    stale[c] = False
-                    stats["probes"] += 1
+                    self.stale[c] = False
+                    self.stats["probes"] += 1
                 elif what == "review":
-                    stats["reviews"] += 1
+                    self.stats["reviews"] += 1
                 else:
-                    stats["drills"] += 1
-                if what != "lesson":
-                    today[c] += 1
-                mark_learned(c, t)
+                    self.stats["drills"] += 1
+                self.today[c] += 1
+                self.mark_learned(c, t)
                 dt = minutes(g, c, "drill")
-            practice_min += dt
+            self.practice_min += dt
             t += dt / 1440.0
-        for c in np.flatnonzero(g.goal & np.isnan(crossed_at)):
+        for c in np.flatnonzero(g.goal & np.isnan(self.crossed_at)):
             if truth.crossed(c, t):
-                crossed_at[c] = practice_min / 60.0
-        if not np.isnan(crossed_at[g.goal]).any():
-            break
-        day += 1.0
-        if not took_break and practice_min >= BREAK_AT_H * 60:
-            day += break_days
-            took_break = True
-    goal_h = crossed_at[g.goal]
-    n_cross = int((~np.isnan(goal_h)).sum())
-    total = float(np.nansum(goal_h) + (len(goal_h) - n_cross) * 1.5 * HORIZON_H)
-    return Result(total, n_cross, len(goal_h), **stats)
+                self.crossed_at[c] = self.practice_min / 60.0
+        if not np.isnan(self.crossed_at[g.goal]).any():
+            return True
+        self.day += 1.0
+        if not self.took_break and self.practice_min >= BREAK_AT_H * 60:
+            self.day += self.break_days
+            self.took_break = True
+        return False
+
+    def result(self, plan: str = "") -> Result:
+        goal_h = self.crossed_at[self.g.goal]
+        n_cross = int((~np.isnan(goal_h)).sum())
+        total = float(np.nansum(goal_h) + (len(goal_h) - n_cross) * 1.5 * HORIZON_H)
+        return Result(total, n_cross, len(goal_h), **self.stats, plan=plan)
+
+
+def run(g: Graph, world: str, ltype: str, seed: int, arm: str, theta: float,
+        break_days: float, review_at: float = 0.80) -> Result:
+    truth = Truth(g, world, ltype, seed)
+    if arm == "P":
+        from sims.planner import run_planned
+        return run_planned(g, truth, seed, theta, break_days, review_at)
+    bel = make_belief(ARMS[arm][0], g, truth, seed)
+    return Episode(g, truth, bel, arm, theta, break_days, review_at).run()

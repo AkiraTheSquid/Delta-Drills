@@ -48,10 +48,15 @@ P_THETAS = (0.8, 0.9, 0.95, 0.98, 0.99)
 R_THETAS = (0.5, 0.7, 0.8, 0.9, 0.95)
 THETAS = {"C": P_THETAS, "B": P_THETAS, "BS": P_THETAS, "BV": P_THETAS,
           "K": P_THETAS, "KV": P_THETAS, "H": P_THETAS, "A0": R_THETAS, "A": R_THETAS,
-          "O": (0.9,)}
+          "O": (0.9,), "P": (0.99,)}
 REVIEWS = (0.6, 0.7, 0.8, 0.9, 0.95)
 CONTENDERS = ("C", "B", "BS", "BV", "K", "KV", "A0", "A", "H")
-WORKERS = 10               # + systemd CPUQuota=1000%: <= 62.5% of 16 cores (Seth: <= 80% total)
+# P (planner.py) is never piloted (it picks its own knobs per learner, starting
+# from B's pilot pair) and ~300x a B run, so it runs only on request:
+# `final --n 25 --arms P`. The report includes it when its rows exist.
+REPORTED = (*CONTENDERS, "B9", "P")
+FIXED = {"B9": [0.9, 0.8]}      # reference arms at a set (gate, review), never piloted
+WORKERS = int(os.environ.get("SIM_WORKERS", 10))   # x CPUQuota=<100*WORKERS>% (Seth: ~80% of 16 cores total)
 _G = None
 
 
@@ -70,9 +75,13 @@ def _one(task):
 
 def _grid(tasks, path: Path, append=False):
     OUT.mkdir(exist_ok=True)
+    if append and path.exists():            # resume: skip units already on disk
+        have = {(r["world"], r["ltype"], r["seed"], r["arm"], r["theta"], r.get("review"),
+                 r["break"]) for r in map(json.loads, path.open())}
+        tasks = [t for t in tasks if t not in have]
     t0 = time.time()
     with Pool(WORKERS, initializer=_init) as pool, path.open("a" if append else "w") as f:
-        for i, row in enumerate(pool.imap_unordered(_one, tasks, chunksize=4)):
+        for i, row in enumerate(pool.imap_unordered(_one, tasks, chunksize=1 if any(t[3] == "P" for t in tasks) else 4)):
             f.write(json.dumps(row) + "\n")
             if (i + 1) % 500 == 0:
                 print(f"  {i + 1}/{len(tasks)}  {time.time() - t0:.0f}s", flush=True)
@@ -119,14 +128,14 @@ def pick(path: Path):
     (OUT / "pilot_best.json").write_text(json.dumps(best, indent=1))
 
 
-def final(n, arms=None):
+def final(n, arms=None, worlds=WORLDS, path: Path = OUT / "final.jsonl"):
     best = json.loads((OUT / "pilot_best.json").read_text())
-    tasks = [(w, lt, s, arm, *best[arm], brk)
-             for w, lt, s in itertools.product(WORLDS, world.LEARNER_TYPES, range(1000, 1000 + n))
+    tasks = [(w, lt, s, arm, *(FIXED.get(arm) or best.get(arm, best["B"])), brk)
+             for w, lt, s in itertools.product(worlds, world.LEARNER_TYPES, range(1000, 1000 + n))
              for brk in (0.0, 30.0, 180.0)
              for arm in (arms or (*CONTENDERS, "O"))]
-    _grid(tasks, OUT / "final.jsonl", append=bool(arms))
-    report()
+    _grid(tasks, path, append=bool(arms))
+    report(path, worlds)
 
 
 def _boot_median(x, reps=2000, seed=0):
@@ -163,19 +172,19 @@ def _boot_learners(rows, arm, ref, w, lt, reps=2000):
     return point, float(np.percentile(meds, 2.5)), float(np.percentile(meds, 97.5))
 
 
-def report(path: Path = OUT / "final.jsonl"):
+def report(path: Path = OUT / "final.jsonl", worlds=WORLDS):
     rows = _rows(path)
     best = json.loads((OUT / "pilot_best.json").read_text())
     print(f"\n{len(rows)} runs. (gate, review) per arm: {best}")
     print("negative % = FASTER than the reference on the same learner; [95% CI]\n")
     for ref in ("B", "C"):
         print(f"### vs {ref}")
-        print("| world | break | " + " | ".join(a for a in (*CONTENDERS, "O") if a != ref) + " |")
-        print("|---|---|" + "---|" * (len(CONTENDERS)) + "")
-        for w in WORLDS:
+        print("| world | break | " + " | ".join(a for a in (*REPORTED, "O") if a != ref) + " |")
+        print("|---|---|" + "---|" * (len(REPORTED)) + "")
+        for w in worlds:
             for brk in (0.0, 30.0, 180.0):
                 cells = []
-                for arm in (*CONTENDERS, "O"):
+                for arm in (*REPORTED, "O"):
                     if arm == ref:
                         continue
                     d = _paired(rows, arm, ref, world=w, **{"break": brk})
@@ -187,18 +196,19 @@ def report(path: Path = OUT / "final.jsonl"):
                 print(f"| {w} | {brk:.0f}d | " + " | ".join(cells) + " |")
         print()
     print("### new arms and H vs B by learner type, all breaks (cluster bootstrap over learners)")
-    for w in WORLDS:
+    for w in worlds:
         for lt in world.LEARNER_TYPES:
             parts = []
-            for arm in ("BS", "BV", "K", "KV", "H"):
-                if not any(r["arm"] == arm for r in rows):
+            for arm in ("BS", "BV", "K", "KV", "H", "B9", "P"):
+                if not all(any(r["arm"] == a and r["world"] == w and r["ltype"] == lt for r in rows)
+                           for a in (arm, "B")):
                     continue
                 m, lo, hi = _boot_learners(rows, arm, "B", w, lt)
                 parts.append(f"{arm} {m:+6.1f}% [{lo:+.1f}, {hi:+.1f}]")
             print(f"  {w} {lt:7s}  " + "   ".join(parts))
     print("\n### medians (summed crossing hours), goals crossed, false declarations")
-    for w in WORLDS:
-        for arm in (*CONTENDERS, "O"):
+    for w in worlds:
+        for arm in (*REPORTED, "O"):
             sel = [r for r in rows if r["world"] == w and r["arm"] == arm]
             if not sel:
                 continue
@@ -214,6 +224,9 @@ if __name__ == "__main__":
     ap.add_argument("phase", choices=("pilot", "pick", "final", "report"))
     ap.add_argument("--n", type=int, default=20)
     ap.add_argument("--arms", nargs="+", help="run only these arms, appending")
+    ap.add_argument("--worlds", nargs="+", default=list(WORLDS), help="final/report: truth worlds")
+    ap.add_argument("--out", default="final.jsonl", help="final/report: file under out/")
     a = ap.parse_args()
     {"pilot": lambda: pilot(a.n, a.arms), "pick": lambda: pick(OUT / "pilot.jsonl"),
-     "final": lambda: final(a.n, a.arms), "report": report}[a.phase]()
+     "final": lambda: final(a.n, a.arms, tuple(a.worlds), OUT / a.out),
+     "report": lambda: report(OUT / a.out, tuple(a.worlds))}[a.phase]()

@@ -91,6 +91,7 @@ class JointBelief(BKTBelief):
         mem = (self.S[c], self.D[c], self.tl[c]) if self.has_mem[c] else None
         self.S[c], self.D[c], self.tl[c] = F.review(mem, t, grade, W)
         self.has_mem[c] = True
+        self._mem_v += 1
         if correct:
             for comp, wt in g.enc[c]:
                 if self.has_mem[comp]:
