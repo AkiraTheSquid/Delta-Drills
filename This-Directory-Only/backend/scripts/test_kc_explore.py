@@ -76,13 +76,17 @@ print("settling is the posterior")
 s = state()
 answer(s, "math.linear-combinations", True)      # encompasses vector-arithmetic w=0.9
 check("prereq not settled without its own answer", not X.settled(s, "math.vector-arithmetic"))
+# Counts at SETTLE_P 0.95 (sim_kc_explore.py table): vouched-for 2, neutral 3.
 answer(s, "math.vector-arithmetic", True)
-check("one correct settles a concept a harder answer vouched for", X.settled(s, "math.vector-arithmetic"))
+check("one correct does not settle it yet", not X.settled(s, "math.vector-arithmetic"))
+answer(s, "math.vector-arithmetic", True)
+check("two correct settle a concept a harder answer vouched for", X.settled(s, "math.vector-arithmetic"))
 s = state()
 answer(s, "math.ray-distance", True)             # neutral-ish: ray-distance has no encompassing parent
-check("one correct on a neutral concept does not settle", not X.settled(s, "math.ray-distance"))
 answer(s, "math.ray-distance", True)
-check("two do", X.settled(s, "math.ray-distance"))
+check("two correct on a neutral concept do not settle", not X.settled(s, "math.ray-distance"))
+answer(s, "math.ray-distance", True)
+check("three do", X.settled(s, "math.ray-distance"))
 s = state()
 answer(s, "math.vector-arithmetic", True, example=True)
 answer(s, "math.vector-arithmetic", True, example=True)
@@ -91,6 +95,7 @@ check("aided answers are not evidence", not X.settled(s, "math.vector-arithmetic
 print("settled = learned")
 s = state()
 answer(s, "math.linear-combinations", True)
+answer(s, "math.vector-arithmetic", True)
 answer(s, "math.vector-arithmetic", True)
 check("settled concept is learned", kc_graph.kc_is_learned(s, "math.vector-arithmetic"))
 check("learned concept leaves the frontier",

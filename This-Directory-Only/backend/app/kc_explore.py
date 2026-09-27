@@ -80,7 +80,7 @@ P_SLIP = 0.10
 P_GUESS_CODE = 0.10
 P_SLIP_CODE = 0.15
 
-SETTLE_P = 0.90
+SETTLE_P = 0.95                 # Seth 09-26: sims (sims/README) — 0.85/0.80 lose ~10% if learning is gradual or mixed; 0.95 safest
 OUT_OF_STATE = 0.20
 INDIRECT_CLIP = 1.2
 

@@ -118,6 +118,7 @@
   - Status: `RESOLVED` (2026-04-27).
 
 ## Recent Changes
+- 2026-09-26 (**settle gate `kc_explore.SETTLE_P` 0.90 → 0.95**, Seth): learner sims (`sims/`, 9000 paired runs, three truth worlds) — vs 0.90, gate 0.95 is +1.3% practice time if learning jumps and −1.7/−1.9% if it is gradual/mixed; 0.85/0.80 save ~2.5% only if it jumps and cost ~10% otherwise. Cost: one more own answer per concept (vouched-for 1→2, neutral 2→3, `scripts/sim_kc_explore.py`); `ready_route.READY_P` follows it. `test_kc_explore.py` counts updated.
 - 2026-09-25 (**study set — a course can be left out, ARENA included**): `UserPracticeState.study_courses: Optional[List[str]]` (None = never asked; old saves load as None). `course_registry.course_of(kc)` (standalone course, else `arena`), `normalize_study`, `course_off_by_study`; `course_off` is now true for any concept whose course is outside an answered set — so leaving ARENA out switches off its whole main graph through `kc_prefs.is_disabled`, with no second rule — and, as before, for a standalone course at share 0. `course_mix.status` rows carry `studied`.
 - 2026-09-25 (**LeetCode Patterns = third standalone course**): `course_registry.py` has a
   `leetcode` entry; its milestones are every `leetcode.*` KC and `course_off` gates them by
