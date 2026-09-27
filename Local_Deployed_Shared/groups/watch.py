@@ -86,8 +86,8 @@ def check_public_api():
     """index.html loads all three, in order, and app.js still wires the page.
 
     Loading is not optional and the ORDER is not either: app.js's boot
-    switchTab can route straight to #page-groups off an invite link, so the
-    store has to exist by then.
+    switchTab asks the store whether an invite link brought this visitor,
+    so the store has to exist by then.
     """
     index = _read(os.path.join(SHARED, "index.html"))
     positions = []
@@ -139,42 +139,56 @@ def check_public_api():
     assert max(positions) < app_at, (
         "the groups scripts moved BELOW app.js in index.html — app.js's boot "
         "switchTab reads DDGroupStore.inviteFromLocation(), so an invite link "
-        "would stop landing on the Groups tab, with no error anywhere"
+        "would stop landing on the Learner Home's group board, with no error "
+        "anywhere"
     )
 
-    assert 'id="page-groups"' in index, (
-        "#page-groups is gone; switchTab falls back to Practice for a name with "
-        "no page, so the menu row would look like a dead button"
+    # 🔴 THE BOARD IS ON THE LEARNER HOME (Seth, 2026-09-26: "Full board, tab
+    # removed"). No page, no strip tab, no menu row; #groups-root sits in
+    # #learner-group inside #page-practice, and a stale `groups` name routes
+    # to Practice through app.js's renamedTabs.
+    assert 'id="page-groups"' not in index and 'data-tab="groups"' not in index \
+        and 'data-goto-tab="groups"' not in index, (
+        "a Groups tab/page/menu row came back — the board lives on the "
+        "Learner Home now, and two copies of #groups-root cannot both mount"
     )
-    assert 'id="groups-root"' in index, "#groups-root is the only mount point"
-    assert 'data-goto-tab="groups"' in index, (
-        "the account-menu row is gone. It is the REAL entry point — basic mode "
-        "is the default and hides the tab strip entirely"
+    assert index.count('id="groups-root"') == 1, "#groups-root is the only mount point"
+    practice_at = index.find('id="page-practice"')
+    section_at = index.find('id="learner-group"')
+    root_at = index.find('id="groups-root"')
+    assert practice_at != -1 and practice_at < section_at < root_at, (
+        "#groups-root is no longer inside #learner-group on the Learner Home"
     )
     assert 'href="styles/groups.css' in index, "index.html stopped loading styles/groups.css"
 
     app_js = _read(os.path.join(SHARED, "app.js"))
-    assert "window.DDGroups?.refresh()" in app_js, (
-        "app.js stopped refreshing the roster on arrival — the page would show "
-        "whatever the last visit left behind"
+    assert re.search(r'\bgroups: "practice"', app_js), (
+        "app.js's renamedTabs lost `groups: \"practice\"` — a stale stored "
+        "tab or an old link would fall through to the generic fallback"
     )
-    # 🔴 And tearing the editor down on the way OUT. The teardown is what
-    # flushes the save debounce; without it, typing a line and immediately
-    # clicking another tab loses the line with no error anywhere.
-    assert "window.DDGroups?.suspend?.()" in app_js, (
-        "app.js stopped suspending the Groups tab on leave — the checklist "
-        "editor's half-second save debounce would never be flushed, so the "
-        "last line typed before switching tabs is silently discarded"
+    assert "DDGroups" not in app_js.split("const invitedToGroup")[0], (
+        "app.js drives DDGroups from switchTab again — groups/groups_home.js "
+        "owns refresh/suspend, and two drivers double-read and double-teardown"
+    )
+
+    # 🔴 THE LIFECYCLE: refresh when the board comes on screen, SUSPEND when
+    # it goes — the teardown is what flushes the checklist editor's save
+    # debounce, so a line typed just before starting a session is not lost.
+    home = _src("groups_home.js")
+    assert "window.DDGroups?.refresh()" in home and "window.DDGroups?.suspend?.()" in home, (
+        "groups_home.js stopped refreshing on arrival or suspending on leave"
+    )
+    for cls in ('"hidden"', '"session-idle"', '"is-surveying"'):
+        assert cls in home, f"groups_home.js stopped watching the {cls} class"
+    home_at = index.find('src="groups/groups_home.js')
+    assert home_at > index.find('src="app.js'), (
+        "groups_home.js loads before app.js — it asks DDIdentity (published "
+        "by app.js) whether this is an account, and would hide the board for "
+        "everybody"
     )
     assert "window.DDIdentity" in app_js, (
         "app.js stopped publishing DDIdentity; groups_store.js reads it to "
         "decide whether to make the call at all"
-    )
-    advanced = re.search(r"const advancedOnlyTabs = \[[^\]]*\]", app_js)
-    assert advanced and '"groups"' not in advanced.group(0), (
-        "groups landed in advancedOnlyTabs — switchTab REFUSES to route to one "
-        "in basic mode, which is the default, so the menu row would silently "
-        "open Practice instead"
     )
 
 
