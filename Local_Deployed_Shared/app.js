@@ -105,8 +105,7 @@ const renamedTabs = {
      bookmark — land on Practice, where that survey is asked. */
   diagnostic: "practice",
   placement: "practice",
-  /* The Groups board lives on the Learner Home since 2026-09-26 (Seth:
-     "Full board, tab removed"); groups/groups_home.js runs it there. */
+  /* Groups were removed on 2026-09-26; a stale tab name lands on Practice. */
   groups: "practice",
 };
 
@@ -465,10 +464,8 @@ window.apiFetch = apiFetch;
 /* 🔴 PUBLISHED FOR THE SAME REASON, and only these two facts.
 
    `isSignedIn` and `authEmail` are top-level bindings in this classic script,
-   so groups/groups_store.js cannot see them — and it needs both: whether to
-   make the call at all (a guest's progress lives in this browser, so every
-   /api/practice/groups/* call would be a 401 per boot) and what to call the
-   person in a roster before they have said otherwise.
+   so other scripts (about-page-editor.js, conceptual/conceptual_chat.js)
+   cannot see them: whether this is an account, and who it is.
 
    A FUNCTION for the email, not the value. `authEmail` is reassigned by
    setAuthState on every sign-in and sign-out; a snapshot taken here would be
@@ -758,20 +755,7 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
 // argument for the app assumed the visitor wanted to read one. #page-welcome
 // offers that path and the other one, says which is optional, and shows
 // nothing else.
-/* A group invite in the address bar is somebody who just clicked a link a
-   friend sent them, and every other landing rule would drop them on the
-   Learner Home with the token still in the URL and nothing saying what it
-   was for. It sits under `soloTab` because a pathname deep link is an
-   explicit request for one chromeless page, and above the rest because
-   nothing else here was asked for by the person arriving. The board is ON
-   the Learner Home now, so this lands on Practice and groups/groups_home.js
-   puts the section first for the visit.
-
-   Reading it does NOT consume it: groups/groups_store.js clears the
-   parameter only once the join has actually happened, so a reload before
-   then still lands here. */
-const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "practice" : "";
-switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
+switchTab(soloTab || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by

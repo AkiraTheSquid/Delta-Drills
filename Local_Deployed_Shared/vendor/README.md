@@ -6,9 +6,8 @@ Third-party code the app ships **as files it serves itself**, rather than
 pulling from a CDN at runtime. One subfolder per library, each with its own
 README, LICENSE and `watch.py`.
 
-Five tenants today:
+Four tenants today (`tiptap/` was removed with the groups UI, 2026-09-26):
 
-- `tiptap/` — the editor engine behind the Groups tab's three-state checklists.
 - `fonts/` — Inter (woff2 + `inter.css` with its gstatic URLs rewritten to the
   files beside it).
 - `katex/` — the maths renderer for question prompts and lesson prose.
@@ -39,8 +38,8 @@ of this repo at any commit is the app as it ran.
 ## Does NOT own
 
 - **How the library is used.** Every consumer lives in the folder that needs
-  it — `groups/groups_checklist.js` imports the Tiptap bundle; nothing in here
-  knows what a checklist is.
+  it — `conceptual/conceptual_chat.js` imports Deep Chat; nothing in here
+  knows what a chat is.
 - **The build.** There is no build step in this app. Whatever lands here is
   already the artefact the browser loads; nothing here is compiled, bundled or
   minified on the way out.
@@ -50,10 +49,6 @@ of this repo at any commit is the app as it ran.
 
 ## Key Files
 
-- `tiptap/` — Tiptap 3 as a single ESM bundle (~400 KB), copied from Delta
-  Note's `shared/web-components/js/vendor/tiptap/` so the two apps write the
-  same `{v, doc}` checklist document. Read `tiptap/README.md` before touching
-  it: the one-bundle rule there is a correctness constraint, not tidiness.
 - `deep-chat/` — `deepChat.bundle.js` byte for byte from the npm tarball
   (387 KB, sha256 pinned in its `watch.py`). Never script-tagged.
 
@@ -68,8 +63,8 @@ its copy came from and what version it is, because there is no lockfile to ask.
 
 ## How It Works (Flow)
 
-1. A consumer decides it needs the library — for Tiptap, that is the first time
-   somebody opens the Groups tab with a checklist of their own to edit.
+1. A consumer decides it needs the library — for Deep Chat, that is the first
+   time somebody opens the Concept Chat tab.
 2. It reaches the file by a **relative path from the consuming script**, and
    loads it with a dynamic `import()`.
 3. The promise is cached by the consumer, so one page load fetches one copy no
@@ -121,18 +116,12 @@ what changed, so the watcher's export list is the contract.
   - Symptom: works locally, 404 in production — and because the SPA rewrite
     answers 200 with `text/html`, a `curl` of the URL looks fine. Only the
     content type gives it away.
-  - Prevention: `tiptap/watch.py` asserts the bundle is present and large;
+  - Prevention: each subfolder's `watch.py` asserts its file is present and large;
     check `git check-ignore -v` when adding anything here.
 
-- **Two copies of an editor engine** — `PREVENTED`
-  - When it happens: a second feature wants Tiptap and adds a CDN tag "just for
-    that page".
-  - Symptom: documents that look right and fail to round-trip; ProseMirror
-    state/model must be a singleton.
-  - Prevention: the subfolder watcher fails if `index.html` script-tags the
-    bundle or if a CDN URL for the same library appears in the app.
-
 ## Recent Changes
+- 2026-09-26: `tiptap/` deleted with the groups UI (its only importer,
+  `groups/groups_checklist.js`, went with it).
 - 2026-09-02: Folder created for the Groups tab's checklists. First and only
   tenant: `tiptap/`, copied from Delta Note so both apps read and write the
   same stored document.

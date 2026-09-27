@@ -17,7 +17,6 @@ REQUIRED_JS = [
     "adaptive.js", "questions.js", "storage.js", "timer.js",
     "bars.js", "stage-ladder.js", "notebook-editor.js", "config.js",
     "notch-menu.js",  # the seam tab that proxies Pause & exit / End session to timer.js
-    "area-readiness.js",  # the one theta→readiness map for the group board's area rows
     "survey.js",  # the "what have you done before?" card that replaced the placement test
     "arena-unlock-dom.js",  # injects #arena-unlock-page into #page-practice at script-eval time
     "arena-unlock.js",  # interstitial controller (consumes the stats/predicted-prereqs-temp.js scaffold)
@@ -28,9 +27,10 @@ REQUIRED_JS = [
     # throwing — which is exactly why they have to be asserted here instead.
     "code-highlight.js",  # tokenised <pre> overlay behind the transparent textarea
     "code-complete.js",  # name-only ghost autocomplete, accepted with Tab
-    # The Practice tab's idle screen (2026-08-23).
-    "readiness.js",  # % of the 63 KCs mastered, atom-sourced readings only
-    "session-idle.js",  # paints the dial and proxies Continue to the real buttons
+    # The Learner Home (idle screen): the one button back in, and measured
+    # learning with its two graphs (2026-09-26).
+    "session-idle.js",  # proxies Continue to the real resume/start buttons
+    "xp-panel.js",
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
     # difficulty rating; this file is what still commits the attempt to mastery
     # and still reveals Next problem once it is hidden. A missing file is a

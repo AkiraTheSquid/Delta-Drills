@@ -1,19 +1,14 @@
 /* ================================================================
-   HOME.CSS — what survived the placement test's stylesheet.
-
-   Seth retired the placement test on 2026-09-26 (the Practice tab's
-   "what have you done before?" survey replaces it: styles/survey.css,
-   practice/survey.js). Its sheet, styles/practice/diagnostic.css, went
-   with it; three things it styled are still on screen and live here:
+   HOME.CSS — the Learner Home.
 
    1. The onboarding course question (#page-course-pick,
-      practice/course-pick.js). It borrowed the placement set-up's tiles,
-      and keeps their `placement-*` class names.
-   2. The area rows on the group board (groups/groups_lane.js):
-      `.placement-areas` / `.placement-area*`, scored through
-      practice/area-readiness.js. styles/groups.css lays them out.
-   3. The weekly activity bars on the Learner Home
-      (practice/activity-chart.js).
+      practice/course-pick.js). It borrowed the retired placement set-up's
+      tiles (2026-09-26) and keeps their `placement-*` class names.
+   2. The idle card: one screen, two columns (Seth, 2026-09-26: "simplify
+      it to fit onto a single page"). Measured learning, the multiplier and
+      the Continue button on the left (styles/xp-panel.css styles what
+      practice/xp-panel.js paints into it); daily XP above knowledge toward
+      the course on the right.
    ================================================================ */
 
 /* ---- 1. THE COURSE QUESTION ------------------------------------------- */
@@ -108,138 +103,101 @@
   .placement-focus-grid { grid-template-columns: 1fr; }
 }
 
-/* ---- 2. AREA ROWS (the group board) ------------------------------------ */
-.placement-areas { border-top: 1px solid var(--border); margin-top: 22px; padding-top: 18px; }
-.placement-areas-head { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 8px; text-transform: uppercase; }
-/* Fixed track column so every bar starts and ends on the same two pixels —
-   rows that each size their own bar cannot be compared by eye, which is the
-   entire point of the list. */
-.placement-area {
-  align-items: center;
-  border-radius: 8px;
-  display: grid;
-  gap: 12px;
-  grid-template-columns: minmax(120px, 1.4fr) minmax(80px, 3fr) 44px 40px 74px;
-  padding: 7px 8px;
-  margin: 0 -8px;
-}
-.placement-area:hover { background: rgb(var(--tint-rgb) / calc(0.04 * var(--tint-k))); }
-.placement-area-name { color: var(--text); font-size: 13px; }
-.placement-area-bar { background: rgb(var(--well-rgb) / calc(0.22 * var(--well-k))); border-radius: 999px; height: 6px; overflow: hidden; }
-.placement-area-bar i { background: var(--info); border-radius: 999px; display: block; height: 100%; }
-.placement-area-pct { color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
-.placement-area-conf { color: var(--muted-dim); font-size: 11.5px; font-variant-numeric: tabular-nums; text-align: right; }
-.placement-area-probes { color: var(--muted-dim); font-size: 11.5px; text-align: right; }
-/* An unprobed area is a prior wearing a percentage. Everything about the row
-   is dialled down, and the bar is hollow rather than filled, so it never
-   reads as a measurement taken. */
-.placement-area--unprobed .placement-area-name,
-.placement-area--unprobed .placement-area-pct { color: var(--muted); }
-.placement-area--unprobed .placement-area-bar i { background: rgb(var(--info-rgb) / 0.3); }
-.placement-area--unprobed .placement-area-probes { font-style: italic; }
-
-@media (max-width: 620px) {
-  .placement-area { grid-template-columns: 1fr 44px 40px; grid-template-areas: "name pct conf" "bar bar probes"; }
-  .placement-area-name { grid-area: name; }
-  .placement-area-bar { grid-area: bar; }
-  .placement-area-pct { grid-area: pct; }
-  .placement-area-conf { grid-area: conf; }
-  .placement-area-probes { grid-area: probes; text-align: left; }
-}
-
-/* ---- 3. WEEKLY ACTIVITY BARS --------------------------------------------
-   The problems-answered-per-day chart on the Learner Home (Seth, 2026-09-01),
-   drawn by practice/activity-chart.js from /api/practice/activity-week.
-   Signed out or fetch failed → the whole box goes (.is-empty). Bars scale
-   against the week's own best day — the JS writes each .activity-day-bar
-   height as a percentage of it. */
-.learner-activity {
+/* ---- 2. THE IDLE CARD -------------------------------------------------- */
+/* Off screen whenever a question is on the clock (styles/practice/timer.css).
+   `.practice-container` is a flex COLUMN that scrolls when idle
+   (styles/practice/layout.css): the card says its width out loud and never
+   shrinks, or it would be squashed into the viewport. */
+.session-setup {
+  --home-rule: var(--border);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
-  margin: 22px auto 0;
-  max-width: 560px;
-  padding: 18px 20px 16px;
-  text-align: left;
-  width: 100%;
-}
-.learner-activity.is-empty { display: none; }
-.learner-activity-head {
-  color: var(--white);
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-.activity-week-chart {
-  align-items: stretch;
-  display: flex;
-  gap: 10px;
-}
-.activity-day {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  text-align: center;
-}
-.activity-day-count {
-  color: var(--muted);
-  font-size: 11.5px;
-  font-variant-numeric: tabular-nums;
-  /* Reserve the line even when empty so all seven tracks stay level. */
-  min-height: 15px;
-}
-/* Fixed-height track with the bar growing up from the floor — same "every bar
-   shares the same two pixels" reasoning as .placement-area-bar, rotated
-   vertical. The hairline floor keeps a zero day visibly a day, not a gap. */
-.activity-day-track {
-  align-items: flex-end;
-  background: rgb(var(--well-rgb) / calc(0.12 * var(--well-k)));
-  border-bottom: 1px solid var(--border);
-  border-radius: 6px 6px 0 0;
-  display: flex;
-  height: 88px;
-}
-.activity-day-bar {
-  background: var(--info);
-  border-radius: 4px 4px 0 0;
-  display: block;
-  width: 100%;
-}
-.activity-day-letter {
-  color: var(--muted-dim);
-  font-size: 11px;
-  font-weight: 700;
-}
-/* Today reads a shade louder than the finished days — it is the bar that is
-   still being earned. */
-.activity-day.is-today .activity-day-letter,
-.activity-day.is-today .activity-day-count { color: var(--text); }
-
-/* STUDY GROUP — the board under the idle card (Seth, 2026-09-26: the
-   Groups tab folded into the Learner Home). `.groups-page` (styles/groups.css)
-   still gives it the 1100px measure; these rules only fit it into
-   `.practice-container`, a flex COLUMN. There `margin: 0 auto` stops the item
-   stretching and shrinks it to its content, so the width is said out loud;
-   and `flex-shrink: 0` because the idle container scrolls
-   (styles/practice/layout.css) — a shrinkable child would be squashed into
-   the viewport instead of scrolled to.
-
-   Off screen whenever a question is on the clock, like the idle card above
-   it; groups/groups_home.js suspends the board in the same states. The
-   survey hides it with everything else (styles/survey.css). */
-#page-practice:not(.session-idle) .learner-group { display: none; }
-.learner-group[hidden] { display: none; }
-.learner-group {
   box-sizing: border-box;
+  display: grid;
   flex-shrink: 0;
-  padding-top: 0;
-  width: 100%;
+  grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+  margin: 28px auto;
+  max-width: 1120px;
+  overflow: hidden;
+  position: relative;
+  width: calc(100% - 48px);
 }
-/* Arrived on an invite link: the join card is what they came for. */
-.learner-group.is-invited { order: -1; }
-.learner-group-head {
-  font-size: 22px;
-  margin: 0 0 6px;
+/* The one bright line on the card: the level pill's own ink. */
+.session-setup::before {
+  background: linear-gradient(90deg, var(--xp-from), var(--xp-to));
+  content: "";
+  height: 2px;
+  inset: 0 0 auto 0;
+  opacity: 0.85;
+  position: absolute;
+}
+/* No XP to show (a guest, or the read failed): just the way back in. */
+.session-setup:has(> .home-graphs.is-empty) {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 420px;
+}
+.home-main {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  padding: 28px 28px 24px;
+}
+.home-graphs {
+  border-left: 1px solid var(--home-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  padding: 24px 28px 20px;
+}
+.home-graphs.is-empty { display: none; }
+
+/* The multiplier and the button: the foot of the left column. */
+.session-go {
+  border-top: 1px solid var(--home-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+.learner-xp.is-empty + .session-go { border-top: 0; padding-top: 0; }
+.session-clock-scale {
+  align-items: center;
+  color: var(--muted);
+  cursor: text;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  gap: 6px 8px;
+}
+.session-clock-scale-label { color: var(--text); font-weight: 600; }
+.session-clock-scale-x { color: var(--muted); }
+.session-clock-scale-input {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 8px;
+  text-align: center;
+  width: 60px;
+}
+.session-clock-scale-input:focus { border-color: var(--accent); outline: none; }
+.session-clock-scale-hint { color: var(--muted-dim); flex-basis: 100%; font-size: 11.5px; }
+.session-continue-btn { width: 100%; }
+
+@media (max-width: 860px) {
+  .session-setup,
+  .session-setup:has(> .home-graphs.is-empty) {
+    grid-template-columns: minmax(0, 1fr);
+    margin: 16px auto;
+    width: calc(100% - 32px);
+  }
+  .home-main { padding: 22px 18px 20px; }
+  .home-graphs { border-left: 0; border-top: 1px solid var(--home-rule); padding: 20px 18px; }
 }

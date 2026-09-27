@@ -21,12 +21,8 @@ const sessionProgressLabel = document.getElementById("session-progress");
 const sessionPhaseLabel = document.getElementById("session-phase");
 const sessionCountdown = document.getElementById("session-countdown");
 const sessionPauseBtn = document.getElementById("session-pause-btn");
-// The idle screen: the readiness dial, its caption, and the one button back in.
+// The idle screen's one button back in.
 const sessionContinueBtn = document.getElementById("session-continue-btn");
-const readinessDial = document.getElementById("readiness-dial");
-const readinessPct = document.getElementById("readiness-pct");
-const readinessCaption = document.getElementById("readiness-caption");
-const readinessDetail = document.getElementById("readiness-detail");
 const questionMetaTop = document.getElementById("question-meta-top");
 const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");

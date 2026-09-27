@@ -7,8 +7,8 @@
    Token-only: no hex (styles/watch.py).
    ================================================================ */
 
-/* While it is up it is the whole idle surface: the dial, the XP card and
-   the area list would answer questions the learner has not been asked yet.
+/* While it is up it is the whole idle surface: the XP card and its graphs
+   would answer questions the learner has not been asked yet.
    Idle only — a question on screen never sits under it. */
 #page-practice.session-idle.is-surveying .practice-container > :not(#learner-survey) { display: none; }
 

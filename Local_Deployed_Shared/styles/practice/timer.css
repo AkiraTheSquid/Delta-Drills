@@ -1,9 +1,8 @@
 /* Practice tab — the idle screen + the (hidden) in-session status row.
 
-   The learner sets nothing: both allowances are constants in
-   practice/timer.js. What used to be a setup panel of three inputs is a
-   readiness dial and one button now — its own rules are in
-   styles/practice/readiness.css. */
+   The learner sets nothing but a multiplier: each problem brings its own
+   clock. What used to be a setup panel of three inputs is the Learner Home's
+   idle card now — its own rules are in styles/practice/home.css. */
 
 /* While no session is running, only the setup panel is visible; once a
    session starts, the setup panel yields to the question split. */
@@ -29,20 +28,9 @@
   display: none;
 }
 
-/* THE IDLE CARD. Same box the setup panel used, minus everything that was in
-   it — see styles/practice/readiness.css for what is. */
-.session-setup {
-  max-width: 560px;
-  margin: 48px auto;
-  padding: 28px 32px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
 /* 🔴 OFF THE SCREEN, NOT GONE. timer.js binds resume, discard and start to
    these, and #session-resume-btn's `disabled` is how a saved question that is
-   no longer in the bank refuses to come back. The Continue button on the dial
+   no longer in the bank refuses to come back. The Continue button on the idle card
    forwards a click to whichever applies (practice/session-idle.js). Deleting
    them means moving three handlers, not tidying up markup.
 
