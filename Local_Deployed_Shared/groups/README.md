@@ -41,7 +41,8 @@ Backend startup creates the additive target table through existing
 `Base.metadata.create_all`; `schema.sql` includes the same table for manual setup.
 
 ## Purpose
-- The Groups tab: a handful of learners practising the same curriculum, reading
+- The study-group board — a tab until 2026-09-26, now the `#learner-group`
+  section of the Learner Home under the XP card: a handful of learners practising the same curriculum, reading
   each other's readiness AND each other's day side by side. Start a group, join
   one by invite link or out of the public directory, then see one ROW per
   member: their area mastery on the left, and on the right the three-state
@@ -103,7 +104,14 @@ Backend startup creates the additive target table through existing
   to hang three files off.
 - `groups_view.js` (`window.DDGroups`): the page. Reads the group, holds which
   day is showing, decides between the discovery card and the roster, and
-  composes the rows. `refresh()` and `suspend()` are what `app.js` calls.
+  composes the rows. `refresh()` and `suspend()` are what `groups_home.js` calls.
+- `groups_home.js` (no global): the board's lifecycle on the Learner Home.
+  One MutationObserver on `#page-practice`'s class list: live (refresh) while
+  the page is showing, `session-idle` and not `is-surveying`; `suspend()` in
+  every other state — which flushes the checklist editor's save debounce, so a
+  line typed just before starting a session is kept. Loaded AFTER `app.js`
+  (reads `DDIdentity`). A guest gets no board unless an invite link brought
+  them; an invite puts the section first (`.is-invited`, `order: -1`).
 - `groups_lane.js` (`window.DDGroupsLane`): ONE member as a full-width row —
   the mastery column, the checklist column, and the only live editor mount on
   the page. `destroyAll()` is the teardown the page calls before every repaint.
@@ -330,6 +338,7 @@ Backend startup creates the additive target table through existing
     database.
 
 ## Recent Changes
+- 2026-09-26 (**Groups tab removed**, Seth: "Full board, tab removed"): the board is `#learner-group` on the Learner Home (`#page-practice`), after the idle card; `#page-groups`, the strip tab and the account-menu row are gone. `groups_home.js` (`?v=1`) replaces app.js's switchTab refresh/suspend; app.js `renamedTabs.groups = "practice"` and the invite boot lands on Practice. Styling: `../styles/practice/home.css` `.learner-group`; `groups.css` drops `.groups-page > h1`. `watch.py` `check_public_api` asserts the new shape.
 - 2026-09-26 (**placement retired**): readiness map is `window.AreaReadiness` (`../practice/area-readiness.js`) instead of `PlacementResults`; area row styles live in `../styles/practice/home.css`. `groups_lane.js` (`?v=3`) shows "N placement probes" only when N > 0.
 - 2026-09-13 (later): the board opens on the Competency graph instead of Goals
   (`view = "graph"` in `groups_view.js`, select reordered to match). The graph's

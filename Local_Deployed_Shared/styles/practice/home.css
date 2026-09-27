@@ -216,3 +216,30 @@
    still being earned. */
 .activity-day.is-today .activity-day-letter,
 .activity-day.is-today .activity-day-count { color: var(--text); }
+
+/* STUDY GROUP — the board under the idle card (Seth, 2026-09-26: the
+   Groups tab folded into the Learner Home). `.groups-page` (styles/groups.css)
+   still gives it the 1100px measure; these rules only fit it into
+   `.practice-container`, a flex COLUMN. There `margin: 0 auto` stops the item
+   stretching and shrinks it to its content, so the width is said out loud;
+   and `flex-shrink: 0` because the idle container scrolls
+   (styles/practice/layout.css) — a shrinkable child would be squashed into
+   the viewport instead of scrolled to.
+
+   Off screen whenever a question is on the clock, like the idle card above
+   it; groups/groups_home.js suspends the board in the same states. The
+   survey hides it with everything else (styles/survey.css). */
+#page-practice:not(.session-idle) .learner-group { display: none; }
+.learner-group[hidden] { display: none; }
+.learner-group {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding-top: 0;
+  width: 100%;
+}
+/* Arrived on an invite link: the join card is what they came for. */
+.learner-group.is-invited { order: -1; }
+.learner-group-head {
+  font-size: 22px;
+  margin: 0 0 6px;
+}

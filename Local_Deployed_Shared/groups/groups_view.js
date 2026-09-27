@@ -2,7 +2,9 @@
    GROUPS PAGE — everybody's readiness and everybody's day, side by
    side.
 
-   The Groups tab (Seth, 2026-09-02). One ROW per member, two columns:
+   The Groups tab (Seth, 2026-09-02), on the Learner Home under the XP
+   card since 2026-09-26 (groups/groups_home.js runs its lifecycle there).
+   One ROW per member, two columns:
    their area mastery on the left — `.placement-area*` rows scored
    through `AreaReadiness` (practice/area-readiness.js) — and
    on the right the three-state checklist they wrote for the day the
@@ -28,7 +30,8 @@
    are the ones that vanish.
 
    ── WHEN IT LOADS ────────────────────────────────────────────────
-   On arrival at the tab, on a day change, and after a mutating call.
+   When the board comes on screen, on a day change, and after a mutating
+   call.
    No poll: a roster changes when somebody joins, and a page that
    refreshed itself would be a request per open tab per interval —
    and a repaint under a live caret.
@@ -352,11 +355,10 @@ const DDGroups = (() => {
   };
 
   /* 🔴 THE INVITE ROUTE IS IN app.js, NOT HERE. An invite in the address
-     bar is a person who clicked a link somebody sent them, and the app
-     opens on the Learner Home — so the boot call at the bottom of app.js
-     is what has to land them on this tab. Doing it from here would mean a
-     second switchTab AFTER the first one had already run its
-     practice-refresh and placement-lock passes. */
+     bar is a person who clicked a link somebody sent them; the boot call at
+     the bottom of app.js lands them on the Learner Home, where this board
+     lives, and groups/groups_home.js puts it first for that visit. A switchTab from
+     here would run after the boot one had already done its passes. */
 
   return {
     refresh,
@@ -372,8 +374,9 @@ const DDGroups = (() => {
       fetchSeq += 1;
       window.DDGroupProgress?.reset();
     },
-    /* Leaving the tab is a teardown, not a pause: it flushes the save
-       debounce. app.js calls this from switchTab on the way out. */
+    /* Leaving the board is a teardown, not a pause: it flushes the save
+       debounce. groups/groups_home.js calls this whenever the board goes
+       off screen — another tab, a question on the clock, the survey. */
     suspend() {
       lane()?.destroyAll();
       /* 🔴 Both, and neither is enough alone. `active = false` stops a

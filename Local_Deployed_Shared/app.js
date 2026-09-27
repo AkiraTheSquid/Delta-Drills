@@ -105,6 +105,9 @@ const renamedTabs = {
      bookmark — land on Practice, where that survey is asked. */
   diagnostic: "practice",
   placement: "practice",
+  /* The Groups board lives on the Learner Home since 2026-09-26 (Seth:
+     "Full board, tab removed"); groups/groups_home.js runs it there. */
+  groups: "practice",
 };
 
 const switchTab = (tabName, opts) => {
@@ -195,20 +198,6 @@ const switchTab = (tabName, opts) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
-  /* The Groups roster is read on ARRIVAL and at no other time. Somebody
-     joining is the only thing that changes it, and a page that polled would
-     be a request per open tab per interval for a list that changes once a
-     week. The group is kept in memory, so the next arrival paints before its
-     read comes back.
-
-     🔴 LEAVING IS NOT A NO-OP ANY MORE. Since the member rows grew a live
-     three-state checklist, that tab holds a ProseMirror editor with a
-     half-second save debounce. `suspend()` tears it down, and the teardown is
-     what FLUSHES the debounce — without it, typing a line and immediately
-     clicking another tab loses the line, silently, because the page it was
-     typed on is gone by the time the timer fires. */
-  if (tabName === "groups") window.DDGroups?.refresh();
-  else window.DDGroups?.suspend?.();
   // Concept Chat mounts lazily (it imports a 387 KB bundle) and re-fits its
   // height to the viewport on every arrival. conceptual/conceptual_chat.js.
   if (tabName === "concept-chat") window.DDConceptualChat?.open();
@@ -774,12 +763,14 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
    Learner Home with the token still in the URL and nothing saying what it
    was for. It sits under `soloTab` because a pathname deep link is an
    explicit request for one chromeless page, and above the rest because
-   nothing else here was asked for by the person arriving.
+   nothing else here was asked for by the person arriving. The board is ON
+   the Learner Home now, so this lands on Practice and groups/groups_home.js
+   puts the section first for the visit.
 
    Reading it does NOT consume it: groups/groups_store.js clears the
    parameter only once the join has actually happened, so a reload before
    then still lands here. */
-const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "groups" : "";
+const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "practice" : "";
 switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
