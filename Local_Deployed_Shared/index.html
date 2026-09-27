@@ -2780,16 +2780,16 @@ t.manual_seed(0)
   <!-- The drill prompt's markdown (headings, bold, lists). Before ui.js,
        whose renderQuestionBody hands it each prose chunk. -->
   <script src="practice/prompt-markdown.js?v=1"></script>
-  <script src="practice/ui.js?v=46"></script>
+  <script src="practice/ui.js?v=47"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
-  <script src="practice/test-check.js?v=3"></script>
+  <script src="practice/test-check.js?v=4"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=33"></script>
+  <script src="practice/api.js?v=34"></script>
   <script src="practice/answer-history.js?v=1"></script>
   <script src="practice/timer.js?v=38"></script>
   <script src="practice/kernel.js?v=8"></script>
@@ -2805,8 +2805,8 @@ t.manual_seed(0)
        error. 🔴 The overlay's metrics are SHARED with .code-editor in
        styles/practice/editor.css: never restate a font, padding or border in
        one without the other or the overlay drifts off its textarea. -->
-  <script src="practice/code-highlight.js?v=1"></script>
-  <script src="practice/code-complete.js?v=1"></script>
+  <script src="practice/code-highlight.js?v=2"></script>
+  <script src="practice/code-complete.js?v=2"></script>
   <!-- Colab-style ARENA code cells (session [J], 2026-09-06): no grey fill,
        syntax colour + autocomplete, code at prose size. Self-wires off the
        `arena-notebook:rendered` event, so it needs nothing from
@@ -2818,9 +2818,10 @@ t.manual_seed(0)
   <script src="practice/notebook-cells.js?v=3"></script>
   <script src="practice/notebook-code-edit.js?v=5"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
-  <script src="practice/runner.js?v=24"></script>
+  <script src="practice/runner.js?v=25"></script>
   <script src="practice/notebook.js?v=13"></script>
-  <script src="practice/notebook-editor.js?v=8"></script>
+  <script src="practice/notebook-editor.js?v=9"></script>
+  <script src="practice/lang-js.js?v=1"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
@@ -2844,8 +2845,8 @@ t.manual_seed(0)
        calls apiFetch at load) and beside the other idle-screen painters. -->
   <script src="practice/activity-chart.js?v=4"></script>
   <script src="practice/xp-panel.js?v=2"></script>
-  <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
   <script src="practice/survey.js?v=1"></script>
+  <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls
        `LessonTimer.start` at click/render time, and the notch mirrors it
        through events, so nothing here depends on load order. It resolves
