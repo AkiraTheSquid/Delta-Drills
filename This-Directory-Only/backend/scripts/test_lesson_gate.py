@@ -114,7 +114,7 @@ resp = client.post("/api/practice/exposure", json={"kcs": ["x"] * 65})
 check("exposure payload has batch cap", resp.status_code == 422,
       f"got HTTP {resp.status_code}")
 
-# --- readiness: a page comes back when the ENGINE says the drill needs it ----
+# --- readiness: a page comes back after a MISS the page would have prevented -
 # Seth's own case, 2026-09-19: q650 (torch.dtype-astype, concept s1) read on
 # 09-18 00:40, no attempt on the concept until the drill 45.5 h later, missed.
 # His posterior on the KC at serve time, off Fly: ability mean -1.785, var
@@ -173,6 +173,19 @@ def _learner(mean, var, n=1, exposure=None, attempts=None):
     return st
 
 
+# PROBE FIRST (2026-09-28): the page comes back only after a miss on the
+# concept since it was read. His q650 was that miss; the fixture replays it as
+# a sibling drill missed 20 h before serve, so the forecast clauses below are
+# exercised on a learner the probe already caught. Not half an hour: a miss
+# that fresh zeroes FSRS `recency` and lifted lo_now to 0.541, 0.009 under
+# the bar. At 20 h: lo_now 0.503, lo_after 0.628.
+_MISS_AFTER_READ = [
+    {"correct": False, "stage": "partial", "question_id": 651,
+     "ts": (_read - timedelta(days=2)).isoformat()},
+    {"correct": False, "stage": "partial", "question_id": 652,
+     "ts": (_serve - timedelta(hours=20)).isoformat()},
+]
+
 # 🔴 Not his exact mean. On his real state the bounds were 0.430 / 0.557
 # against 0.55 — a real decision, but a 0.007 margin that the fixture's
 # BKT approximation and any content edit (a new prerequisite, a difficulty
@@ -183,7 +196,7 @@ def _learner(mean, var, n=1, exposure=None, attempts=None):
 # 14-day curve said 0.83) costs ~0.1 logit more, which put lo_after 0.002
 # under the bar. -1.45 re-centres the fixture: lo_now 0.458, lo_after 0.585.
 _SETH_MEAN = -1.45
-_seth = _learner(_SETH_MEAN, 1.0)
+_seth = _learner(_SETH_MEAN, 1.0, attempts=_MISS_AFTER_READ)
 _v = R.readiness(_seth, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
 _lo_now, _ = _v["now"].interval(E.LADDER_Z)
 _lo_after, _ = _v["after_read"].interval(E.LADDER_Z)
@@ -199,6 +212,37 @@ check("gate entry is the concept's own page, marked as a revisit",
 check("gate entry carries the stale read_at and the bounds it was decided on",
       bool(_rv) and _rv[0]["read_at"] == _read.isoformat()
       and _rv[0]["ready_lo"] < _rv[0]["ready_bar"] <= _rv[0]["ready_lo_after_read"])
+
+# Probe first: the SAME forecast with no answer since the read serves the
+# drill bare — the forecast alone never brings a page back.
+_unprobed = _learner(_SETH_MEAN, 1.0)
+_vu = R.readiness(_unprobed, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
+check("no answer since the read → drill served bare (it is the probe)",
+      not _vu["missed_since_read"] and not _vu["lesson_needed"]
+      and not R.revisit_target_kcs(_unprobed, 650, difficulty_score=_Q650_DIFF, now=_serve),
+      f"ready_now={_vu['ready_now']} ready_after={_vu['ready_after_read']}")
+_recovered = _learner(_SETH_MEAN, 1.0, attempts=_MISS_AFTER_READ + [
+    {"correct": True, "stage": "partial", "question_id": 653,
+     "ts": (_serve - timedelta(minutes=10)).isoformat()},
+])
+check("a miss then a correct answer since the read → no page",
+      not R.readiness(_recovered, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)["missed_since_read"]
+      and not R.revisit_target_kcs(_recovered, 650, difficulty_score=_Q650_DIFF, now=_serve))
+check("a miss after `now` is not evidence yet (replay / clock skew)",
+      not R.missed_since_read(_seth, _rv_kc, _read, now=_read + timedelta(hours=1))
+      and R.missed_since_read(_seth, _rv_kc, _read, now=_serve))
+check("a row with no timestamp counts as before the read",
+      not R.missed_since_read(_learner(_SETH_MEAN, 1.0, attempts=[
+          {"correct": False, "stage": "partial", "question_id": 651}]), _rv_kc, _read))
+# A probe measures what the learner brought; a page in front of it measures
+# the page (kc_explore). Never gated, even with the miss on record.
+_orig_probing = R.kc_explore.probing
+R.kc_explore.probing = lambda st, kc: True
+try:
+    check("a probe is never gated, even after a miss",
+          not R.revisit_target_kcs(_seth, 650, difficulty_score=_Q650_DIFF, now=_serve))
+finally:
+    R.kc_explore.probing = _orig_probing
 
 # Time enters only through the model: the same learner an hour after reading.
 check("the same learner an hour after reading is not gated",
@@ -217,19 +261,20 @@ check("no posterior anywhere gates a page read a moment ago",
           for m in (-4.0, -2.0, -1.0, 0.0, 1.0, 3.0) for v in (0.1, 0.6, 1.2)))
 # Expertise reversal: a learner who has demonstrated the concept is never
 # sent back to the page, however stale the read.
-_strong = _learner(2.0, 0.3, n=12)
+_strong = _learner(2.0, 0.3, n=12, attempts=_MISS_AFTER_READ)
 check("a strong posterior is not gated on a stale read",
       not R.revisit_target_kcs(_strong, 650, difficulty_score=_Q650_DIFF, now=_read + timedelta(days=30)))
 # The page cannot lift a learner who is far below the bar: that is a missing
 # prerequisite (remediation's job), not a stale page, and gating would loop.
-_lost = _learner(-4.0, 0.5, n=6)
+_lost = _learner(-4.0, 0.5, n=6, attempts=_MISS_AFTER_READ)
 _vl = R.readiness(_lost, _rv_kc, 650, difficulty_score=_Q650_DIFF, now=_serve)
 check("a learner the page would not lift over the bar is not gated",
       not _vl["ready_after_read"] and not _vl["lesson_needed"])
 check("nothing read (placement-only exposure) never revisits",
       not R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure={}), 650,
                                difficulty_score=_Q650_DIFF, now=_serve))
-_whole = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure={_rv_kc: _read.isoformat()}), 650,
+_whole = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure={_rv_kc: _read.isoformat()},
+                                       attempts=_MISS_AFTER_READ), 650,
                               difficulty_score=_Q650_DIFF, now=_serve)
 check("a pre-split learner holding only the KC key gets the whole-KP step",
       len(_whole) == 1 and _whole[0]["exposure_key"] == _rv_kc)
@@ -238,7 +283,7 @@ _untagged = next(q for q, kcs in lessons._question_target_kcs.items()
                  if kcs == [_rv_kc] and q not in lessons._question_segment)
 _two = {f"{_rv_kc}#{lessons._kc_segments[_rv_kc][0]['concept_id']}": (_read - timedelta(days=1)).isoformat(),
         _rv_key: _read.isoformat()}
-_rv_un = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure=_two), _untagged,
+_rv_un = R.revisit_target_kcs(_learner(_SETH_MEAN, 1.0, exposure=_two, attempts=_MISS_AFTER_READ), _untagged,
                               difficulty_score=_Q650_DIFF, now=_serve)
 check("an unsegmented drill re-teaches the most recently read concept",
       len(_rv_un) == 1 and _rv_un[0]["exposure_key"] == _rv_key,
@@ -256,7 +301,7 @@ _all_read = _learner(_SETH_MEAN, 1.0, exposure={
     _rv_key: _read.isoformat(),
     f"{_rv_kc}#{lessons._kc_segments[_rv_kc][0]['concept_id']}": "2026-09-01T00:00:00+00:00",
     _seg2_key: "2026-09-01T00:00:00+00:00",
-})
+}, attempts=_MISS_AFTER_READ)
 _gate = R.lesson_gate(_all_read, 650, difficulty_score=_Q650_DIFF, now=_serve)
 check("lesson_gate: all read → the one the engine wants back comes as a revisit",
       len(_gate) == 1 and _gate[0].get("revisit") is True and _gate[0]["exposure_key"] == _rv_key)
