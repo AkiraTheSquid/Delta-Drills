@@ -75,7 +75,7 @@
   // ── daily XP bars ──────────────────────────────────────────────
   /** `count` days ending today; a short history is padded with empty days
       so a week always reads as seven. */
-  function bars(s, { count, width }) {
+  function bars(s, { count, width, peak: floor = 0 }) {
     const byDate = new Map(s.days.map((d) => [d.date, d]));
     const last = s.today.date;
     const days = [];
@@ -90,7 +90,8 @@
 
     const W = width, H = 172, L = 34, R = W - 6, T = 14, B = 146;
     const target = s.today.target || 0;
-    const peak = Math.max(10, target, ...days.map((d) => d.xp));
+    // `floor`: a shared top, so a group's cards compare by eye.
+    const peak = Math.max(10, floor, target, ...days.map((d) => d.xp));
     // Round gridlines: a 1-2-5 step that fits the peak in at most four.
     const mag = 10 ** Math.floor(Math.log10(peak / 4));
     const tickStep = [1, 2, 5, 10].map((m) => m * mag).find((st) => peak / st <= 4);
@@ -207,7 +208,7 @@
 
   /** `window` pins the x range while the target is dragged, so the axis
       cannot slide under the pointer. */
-  function trajectory(s, { count, width, window: pinned }) {
+  function trajectory(s, { count, width, window: pinned, yWindow, self = true }) {
     const box = el("section", "xp-chart");
     const total = s.course.total_xp || 1;
     const pct = (v) => (Math.min(total, Math.max(0, v)) / total) * 100;
@@ -265,6 +266,12 @@
       lo = Math.max(0, Math.floor(vmin / step) * step);
       hi = Math.min(100, Math.max(lo + step, Math.ceil(vmax / step) * step));
       lo = Math.min(lo, hi - step); // at 100% both clamp to the top
+      // A group's cards share one y window (practice/xp-group-view.js).
+      if (yWindow) {
+        step = niceStep(Math.max(0.3, yWindow.hi - yWindow.lo));
+        lo = Math.max(0, Math.floor(yWindow.lo / step) * step);
+        hi = Math.min(100, Math.max(lo + step, Math.ceil(yWindow.hi / step) * step));
+      }
     }
 
     const W = width, H = 200, L = 40, R = W - 10, T = 18, B = 160;
@@ -343,7 +350,7 @@
     box.appendChild(frame(svg));
     box.appendChild(el("p", "xp-readout"));
     // For practice/xp-target-drag.js: where the plot is, in SVG units.
-    box.xpPlot = { svg, W, L, R, start, end, span };
+    box.xpPlot = { svg, W, L, R, start, end, span, lo, hi };
 
     const legend = el("ul", "xp-legend");
     const key = (cls, text) => {
@@ -351,9 +358,10 @@
       li.append(el("i", `xp-key ${cls}`), document.createTextNode(text));
       legend.appendChild(li);
     };
-    key("xp-key-line", "your knowledge");
-    if (s.pace > 0) key("xp-key-projection", `your pace, ${fmt(s.pace)}/day`);
-    if (all ? target : needEnd !== null) key("xp-key-needed", `your target, ${fmt(need)}/day`);
+    const your = self ? "your " : "";
+    key("xp-key-line", `${your}knowledge`);
+    if (s.pace > 0) key("xp-key-projection", `${your}pace, ${fmt(s.pace)}/day`);
+    if (all ? target : needEnd !== null) key("xp-key-needed", `${your}target, ${fmt(need)}/day`);
     box.appendChild(legend);
     return box;
   }

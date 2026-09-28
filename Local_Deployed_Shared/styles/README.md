@@ -82,6 +82,7 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-09-27 (**Groups tab back + group graphs**): `groups.css` (`?v=5`) restored; new `groups-rows.css` holds the `.placement-area*` rows and `.activity-day*` bars that lived in `practice/home.css` (load it BEFORE `groups.css`); new `xp-group.css` lays out the Learner Home's group view — `.xp-group-controls` (two `.xp-select`s, chevron by token-tinted mask), `.xp-group-grid` (auto-FIT, 280px min, matching `xp-group-view.js`'s column count), `.xp-group-card.is-you` left rule.
 - 2026-09-26 (**placement retired**): `solo-route.css` drops the `data-solo-page="placement"` selectors; `groups.css` comments point at `practice/home.css`.
 - 2026-09-27 (**XP panel cleanup**): `xp-panel.css` (`?v=4`) — flat `--xp-to` ink for bars/line/meter (no `--xp-from` gradients), `--warn` for every target mark, sentence-case UI-face labels, Plex Mono only on axis ticks; `.xp-range` is a 4-column grid across the graph column; new `.xp-chart-note`, `.xp-now-rule`. `practice/home.css` (`?v=4`) drops the card's gradient top rule for a soft shadow.
 - 2026-09-27 (**course graph = target setter**): `xp-panel.css` (`?v=5`) — `.xp-day-rule` (`.is-week` for Mondays), `.xp-axis.is-date`, `.xp-target-dot.is-beyond` (hollow), crosshair / grabbing cursors on `.xp-trajectory`, focus ring, `.xp-chart.is-picking` readout in `--warn`, `.xp-readout.is-error`.

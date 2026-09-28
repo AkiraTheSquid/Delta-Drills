@@ -19,7 +19,10 @@
      * one row of range tabs across the column — Week (the default),
        Month, 3 months, All — that controls BOTH graphs (Seth, 2026-09-27);
      * DAILY XP bars and TOWARD THE COURSE under it, drawn by
-       ./xp-charts.js for that range.
+       ./xp-charts.js for that range;
+     * in a study group, ./xp-group-view.js draws the column instead: a
+       Time and a Graph dropdown, then one graph type for every member, or
+       "Just me" — both of yours (Seth, 2026-09-27).
 
    It draws from `delta:xp-summary`, which ../xp.js broadcasts after every
    read it makes for the level pill — one request feeds both. Nothing here
@@ -288,6 +291,17 @@
   }
 
   // ── the range: one row of tabs over both graphs ────────────────
+  // (in a group, practice/xp-group-view.js's Time select sets the same one)
+  function setRange(id) {
+    range = id;
+    try {
+      localStorage.setItem(RANGE_KEY, range);
+    } catch (_) {
+      /* convenience only */
+    }
+    paintGraphs();
+  }
+
   function rangeTabs() {
     const tabs = el("div", "xp-range");
     // Plain toggle buttons, not a tablist: there are no tab panels, and
@@ -299,13 +313,7 @@
       b.type = "button";
       b.setAttribute("aria-pressed", String(r.id === range));
       b.addEventListener("click", () => {
-        range = r.id;
-        try {
-          localStorage.setItem(RANGE_KEY, range);
-        } catch (_) {
-          /* convenience only */
-        }
-        paintGraphs();
+        setRange(r.id);
         graphs()?.querySelector('.xp-range-btn[aria-pressed="true"]')?.focus();
       });
       tabs.appendChild(b);
@@ -322,13 +330,16 @@
     drawnWidth = chartWidth();
     const opts = { width: drawnWidth };
     const course = { ...opts, count: days };
-    // A target set from the keyboard repaints this column; keep focus on the graph.
-    const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
-    right.replaceChildren(
-      rangeTabs(),
+    // Both graphs for the range — here, and as the group view's "Just me".
+    const solo = () => [
       window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length }),
       window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course),
-    );
+    ];
+    // In a group the column is the group view's (dropdowns, one graph type).
+    if (window.DDXpGroupView?.paint(right, summary, { width: drawnWidth, range, ranges: RANGES, setRange, solo })) return;
+    // A target set from the keyboard repaints this column; keep focus on the graph.
+    const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
+    right.replaceChildren(rangeTabs(), ...solo());
     if (refocus) right.querySelector(".xp-trajectory")?.focus();
   }
 
@@ -405,5 +416,5 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 
-  window.DDXpPanel = { paint };
+  window.DDXpPanel = { paint, paintGraphs };
 })();

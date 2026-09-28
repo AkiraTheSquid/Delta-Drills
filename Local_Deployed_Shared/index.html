@@ -71,6 +71,7 @@
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
   <link rel="stylesheet" href="styles/xp-panel.css?v=5" />
+  <link rel="stylesheet" href="styles/xp-group.css?v=1" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -119,6 +120,10 @@
   <!-- The Learner Home: the two-column idle card, and the course
        question's tiles (what survived diagnostic.css, 2026-09-26). -->
   <link rel="stylesheet" href="styles/practice/home.css?v=4" />
+  <!-- The Groups tab (restored 2026-09-27): member rows + activity bars, then
+       the board. groups-rows.css FIRST: groups.css overrides it. -->
+  <link rel="stylesheet" href="styles/groups-rows.css?v=1" />
+  <link rel="stylesheet" href="styles/groups.css?v=5" />
   <link rel="stylesheet" href="styles/conceptual/conceptual-chat.css?v=1" />
   <!-- BASIC MODE. Last of the practice sheets on purpose: every rule in it is
        a `body.dd-basic-mode` override of something declared above, so it has to
@@ -287,6 +292,7 @@
       <button class="tab" data-tab="account" type="button">Account</button>
       <button class="tab auth-only" data-tab="courses" type="button">Course content</button>
       <button class="tab auth-only" data-tab="practice" type="button">Learner Home</button>
+      <button class="tab auth-only" data-tab="groups" type="button">Groups</button>
       <button class="tab auth-only" data-tab="concept-chat" type="button">Concept Chat</button>
       <button class="tab auth-only" data-tab="notebooks" type="button">Notebooks</button>
       <!-- HIDDEN 2026-08-23 (Seth, via @O): Targeted Practice is not being
@@ -424,6 +430,29 @@
           <span class="account-menu-label">Learner home</span>
         </button>
         <div class="account-menu-sep" role="separator"></div>
+        <!-- GROUPS (Seth, 2026-09-02). First after the separator because it is
+             the other place a learner GOES, as opposed to the four below it,
+             which are things you set up or read once.
+
+             🔴 THE MENU ROW IS THE REAL ENTRY POINT, not the `.tab` above.
+             Basic mode is the default and it hides the whole tab strip, so
+             for almost every learner the strip entry does not exist — the
+             same argument that moved Knowledge graph and Course content in
+             here. `groups` is deliberately NOT in `advancedOnlyTabs`
+             (app.js), or switchTab would refuse this row in basic mode and it
+             would read as a dead button. -->
+        <button class="account-menu-item" type="button" role="menuitem" data-goto-tab="groups">
+          <span class="account-menu-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+              <circle cx="9" cy="8.2" r="3.1"></circle>
+              <path d="M3.4 19.4a5.9 5.9 0 0 1 11.2 0"></path>
+              <path d="M16.2 5.6a3 3 0 0 1 0 5.5"></path>
+              <path d="M17.4 14.2a5.2 5.2 0 0 1 3.2 4.4"></path>
+            </svg>
+          </span>
+          <span class="account-menu-label">Groups</span>
+        </button>
         <button class="account-menu-item" type="button" role="menuitem" data-goto-tab="account">
           <span class="account-menu-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
@@ -1720,6 +1749,28 @@
     <div class="arena-notebooks-container" id="arena-notebook-host"></div>
   </main>
 
+  <!-- GROUPS — everybody's readiness, side by side (Seth, 2026-09-02).
+
+       ONE MOUNT POINT AND NOTHING ELSE. The whole surface is built by
+       groups/groups_view.js, because the page is two entirely different
+       screens — the discovery card while you are in no group, the roster once
+       you are — and markup authored here would be the third copy of whichever
+       one it was not.
+
+       Member rows are the `.placement-area*` rows (styles/groups-rows.css),
+       scored by `AreaReadiness.readiness` (practice/area-readiness.js), the
+       one copy of that map; nothing here may grow a second scale.
+       Removed 2026-09-26, back 2026-09-27 (Seth: "bring back the groups tab
+       for the drop down"). Being in a group also changes the Learner Home's
+       graphs — practice/xp-group-view.js. -->
+  <main class="page hidden" id="page-groups">
+    <div class="groups-page">
+      <h1>Groups</h1>
+      <p class="groups-page-lede">Follow everyone's goals, daily practice, and competency over time. Start a study group, join a listed one, or paste an invite link.</p>
+      <div id="groups-root" aria-live="polite"></div>
+    </div>
+  </main>
+
 
 
   <!-- CONCEPT CHAT — the ChatGPT-style "why does this work" tab (Seth,
@@ -2222,11 +2273,39 @@ t.manual_seed(0)
        key is derived from the signed-in email, so the listener has to be
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
-  <script src="xp.js?v=3"></script>
+  <script src="xp.js?v=4"></script>
   <script src="solo-route.js?v=7"></script>
+  <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
+       second column — a three-state Tiptap checklist per day, ported from
+       Delta Note's sub-goals). 🔴 BEFORE app.js, NOT AFTER IT. app.js runs its boot
+       `switchTab` as it parses, and that call asks `DDGroupStore` whether the
+       address bar carries an invite token (`?group=...`) so a person who
+       clicked an invite lands on this tab instead of on Practice. Loaded after
+       app.js the store does not exist yet, the question answers undefined, and
+       the invite link opens the Learner Home — silently, because every other
+       part of the feature works and the token is still in the URL. Caught in
+       the browser, not by a check.
+       Every one of them reads `apiFetch`, `DDIdentity`, `AreaReadiness` and
+       each other off `window` at CALL time, never at load, so loading early
+       costs nothing and the order inside the group is for readability. The
+       400 KB Tiptap bundle these use is NOT loaded here: `groups_checklist.js`
+       imports it on the first mount, so nobody who never opens this tab pays
+       for it. -->
+  <script src="practice/activity-bars.js?v=1"></script>
+  <script src="groups/groups_store.js?v=3"></script>
+  <script src="groups/groups_checklist_doc.js?v=1"></script>
+  <script src="groups/groups_checklist.js?v=1"></script>
+  <script src="groups/groups_day.js?v=2"></script>
+  <script src="groups/groups_join.js?v=3"></script>
+  <script src="groups/groups_progress.js?v=2"></script>
+  <!-- before groups_lane.js + app.js: a boot straight onto Groups renders
+       member areas through AreaReadiness on the first refresh. -->
+  <script src="practice/area-readiness.js?v=1"></script>
+  <script src="groups/groups_lane.js?v=3"></script>
+  <script src="groups/groups_view.js?v=7"></script>
   <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
   <script src="conceptual/conceptual_chat.js?v=1"></script>
-  <script src="app.js?v=38"></script>
+  <script src="app.js?v=39"></script>
   <script src="about-page-editor.js?v=5"></script>
   <!-- Gives a signed-out visitor a backend session so practice,
        the lessons and the student model work with no sign-in. MUST stay
@@ -2428,11 +2507,13 @@ t.manual_seed(0)
        hidden resume/start buttons — AFTER timer.js, whose
        `hasPausedSession()` decides which of the two the one button means.
        xp-panel.js paints measured learning and the range tabs; xp-charts.js
-       draws the two graphs under them. -->
+       draws the two graphs under them; in a study group xp-group-view.js
+       draws that column instead (dropdowns, one graph type per member). -->
   <script src="practice/session-idle.js?v=10"></script>
-  <script src="practice/xp-charts.js?v=3"></script>
+  <script src="practice/xp-charts.js?v=4"></script>
   <script src="practice/xp-target-drag.js?v=1"></script>
-  <script src="practice/xp-panel.js?v=5"></script>
+  <script src="practice/xp-group-view.js?v=1"></script>
+  <script src="practice/xp-panel.js?v=6"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
        BEFORE lessons.js only for reading order — `showPage` calls

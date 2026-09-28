@@ -224,8 +224,11 @@ def check_front_door():
     # Seth, 2026-09-26: the page has what he described and nothing else.
     for gone in ('id="readiness-dial"', 'id="learner-group"', 'id="learner-activity"'):
         assert gone not in home, f"{gone} is back on the Learner Home; it was removed"
-    assert not re.search(r'(?:src|href)="(?:styles/)?groups[/.]', index_html), (
-        "index.html loads the removed groups UI"
+    # Seth, 2026-09-27: the Groups TAB is back (account menu → Groups), and the
+    # board stays off the Learner Home — a group changes the Home's graphs
+    # (practice/xp-group-view.js), nothing else.
+    assert 'id="page-groups"' in index_html and 'data-goto-tab="groups"' in index_html, (
+        "the Groups tab and its account-menu row are gone again"
     )
     for word in ("ARENA", "LeetCode"):
         assert word not in index_html.split('id="practice-session-setup"')[1].split('id="session-resume-panel"')[0], (

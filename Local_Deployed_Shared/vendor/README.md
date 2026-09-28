@@ -6,8 +6,10 @@ Third-party code the app ships **as files it serves itself**, rather than
 pulling from a CDN at runtime. One subfolder per library, each with its own
 README, LICENSE and `watch.py`.
 
-Four tenants today (`tiptap/` was removed with the groups UI, 2026-09-26):
+Five tenants today (`tiptap/` left with the groups UI on 2026-09-26 and came back with it on 2026-09-27):
 
+- `tiptap/` — the Tiptap 3 editor bundle behind the Groups tab's three-state
+  checklists, `import()`-ed on first mount by `groups/groups_checklist.js`.
 - `fonts/` — Inter (woff2 + `inter.css` with its gstatic URLs rewritten to the
   files beside it).
 - `katex/` — the maths renderer for question prompts and lesson prose.
@@ -120,6 +122,7 @@ what changed, so the watcher's export list is the contract.
     check `git check-ignore -v` when adding anything here.
 
 ## Recent Changes
+- 2026-09-27: `tiptap/` back with the Groups tab (restored from 769682b3).
 - 2026-09-26: `tiptap/` deleted with the groups UI (its only importer,
   `groups/groups_checklist.js`, went with it).
 - 2026-09-02: Folder created for the Groups tab's checklists. First and only
