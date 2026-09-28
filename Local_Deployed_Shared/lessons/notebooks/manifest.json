@@ -43,7 +43,7 @@
    "topic": "Python",
    "subtopic_key": "Python: Getting started",
    "file": "py-0.json",
-   "cells": 713,
+   "cells": 796,
    "questions": [
     568,
     569,
@@ -153,6 +153,19 @@
     793,
     794,
     795,
+    1281,
+    1282,
+    1283,
+    1284,
+    1285,
+    1286,
+    1287,
+    1288,
+    1289,
+    1290,
+    1291,
+    1292,
+    1293,
     1526,
     1528
    ],
@@ -163,9 +176,15 @@
     "python.indexing",
     "python.calling-functions",
     "python.defining-functions",
-    "python.dots-and-imports"
+    "python.dots-and-imports",
+    "python.control-flow"
    ],
-   "segments": {}
+   "segments": {
+    "python.control-flow#branch": "dd-seg-python-control-flow-0",
+    "python.control-flow#inline-choice": "dd-seg-python-control-flow-1",
+    "python.control-flow#accumulator": "dd-seg-python-control-flow-2",
+    "python.control-flow#comprehension": "dd-seg-python-control-flow-3"
+   }
   },
   {
    "id": "np-1",
@@ -946,7 +965,7 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: ar-00",
    "file": "ar-00.json",
-   "cells": 563,
+   "cells": 480,
    "questions": [
     103,
     993,
@@ -1027,19 +1046,6 @@
     1086,
     1087,
     1088,
-    1281,
-    1282,
-    1283,
-    1284,
-    1285,
-    1286,
-    1287,
-    1288,
-    1289,
-    1290,
-    1291,
-    1292,
-    1293,
     1728
    ],
    "kcs": [
@@ -1048,8 +1054,7 @@
     "tensor.indexed-selection",
     "tensor.stable-probabilities",
     "tensor.classifier-evaluation",
-    "tensor.inverse-cdf",
-    "python.control-flow"
+    "tensor.inverse-cdf"
    ],
    "segments": {
     "tensor.row-normalization#row-length": "dd-seg-tensor-row-normalization-0",
@@ -1063,11 +1068,7 @@
     "tensor.classifier-evaluation#accuracy": "dd-seg-tensor-classifier-evaluation-0",
     "tensor.classifier-evaluation#cross-entropy": "dd-seg-tensor-classifier-evaluation-1",
     "tensor.inverse-cdf#interval-partition": "dd-seg-tensor-inverse-cdf-0",
-    "tensor.inverse-cdf#boundary-count": "dd-seg-tensor-inverse-cdf-1",
-    "python.control-flow#branch": "dd-seg-python-control-flow-0",
-    "python.control-flow#inline-choice": "dd-seg-python-control-flow-1",
-    "python.control-flow#accumulator": "dd-seg-python-control-flow-2",
-    "python.control-flow#comprehension": "dd-seg-python-control-flow-3"
+    "tensor.inverse-cdf#boundary-count": "dd-seg-tensor-inverse-cdf-1"
    }
   },
   {

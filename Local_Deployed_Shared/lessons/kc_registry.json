@@ -286,6 +286,18 @@
    ]
   },
   {
+   "id": "python.control-flow",
+   "lesson": "py-0",
+   "title": "Decisions and repeated work",
+   "syntax": true,
+   "prereqs": [
+    "python.defining-functions",
+    "python.lists-and-tuples",
+    "python.indexing"
+   ],
+   "assessment": "composite"
+  },
+  {
    "id": "torch.tensor-model",
    "lesson": "np-1",
    "title": "What a tensor is: data + shape + dtype",
@@ -879,20 +891,6 @@
     "torch.dot-matmul-patterns": 0.4
    },
    "arena_section": "0.2",
-   "assessment": "composite"
-  },
-  {
-   "id": "python.control-flow",
-   "lesson": "ar-00",
-   "title": "Decisions and repeated work",
-   "syntax": true,
-   "prereqs": [
-    "python.defining-functions",
-    "python.lists-and-tuples",
-    "python.indexing",
-    "torch.boolean-masking"
-   ],
-   "arena_section": "0.0",
    "assessment": "composite"
   },
   {

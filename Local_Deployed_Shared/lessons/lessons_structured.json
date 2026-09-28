@@ -2468,6 +2468,196 @@
      ],
      "misconceptions_markdown": "- **\"Everything after a dot needs parentheses.\"** \u2014 Attributes do not.\n  `math.pi()` is an error; `math.pi` is a number.\n- **\"`text.len()` should work.\"** \u2014 Length is a built-in function, not a string\n  method. The arrangement is `len(text)`.\n- **\"`items.append(x)` gives me the longer list.\"** \u2014 It gives `None` and changes\n  `items` in place.",
      "notes_markdown": ""
+    },
+    {
+     "kc": "python.control-flow",
+     "kind": "code",
+     "title": "Decisions and repeated work",
+     "supporting_kcs": [
+      "python.defining-functions",
+      "python.lists-and-tuples",
+      "python.indexing"
+     ],
+     "new_syntax": [
+      "syntax.if",
+      "syntax.else",
+      "syntax.ternary",
+      "syntax.is",
+      "syntax.for",
+      "syntax.aug-assign",
+      "syntax.comprehension",
+      "syntax.comprehension-filter"
+     ],
+     "concept_markdown": "An `if` statement runs its indented block only when its condition is true. An `else` block handles every remaining case. The general procedure is: write down the cases the input can be in, decide what the function should do in each, and only then write the branch. The reason to state the cases first is that the branch you forget is the one the program silently gets wrong \u2014 an empty list, an option that was never given, a batch with one example. Naming each case in prose turns \"it crashed on empty input\" into a line of code you can point at.\n\nA condition is any expression that is true or false: a comparison such as `len(xs)==0`, or a test such as `value>0`. When the true block returns, the code after the whole `if` is the else case, so an explicit `else` is optional \u2014 but it is clearer when both branches assign the same name.\n\n```python\nxs=[]\nif len(xs)==0:\n    result=7\nelse:\n    result=xs[0]\nprint(result)\n# Hidden checks\nassert result==7\n```\n\nHere the two cases are \"empty\" and \"has a first item\", and `result` is set in both, so nothing after the branch has to wonder whether the name exists.\n\nWhen the two branches differ only in the value they produce, Python has an expression form: `a if condition else b`. It evaluates to `a` when the condition holds and to `b` otherwise, and it can sit anywhere a value can \u2014 on the right of `=`, inside a `return`, inside a list. Use it when each arm is a single value; use the statement form when an arm needs more than one line, because a long inline choice hides the cases instead of naming them.\n\nA related decision is how to represent an option that was not given. Python uses `None` for absence and tests it with `is None`. The reason to test with `is` rather than `==` is that `None` is a single object: `x is None` asks \"is this the absent marker?\", while `x==0` would also be false for an absent value and true for a real zero. Zero is a value; `None` is the lack of one.\n\n```python\noffset=None\ny=3 if offset is None else 3+offset\nprint(y)\n# Hidden checks\nassert y==3\n```\n\nA `for` loop visits each item of a list in order. To compute something about the whole list, keep an accumulator: a variable that records what has been learned so far, updated once per item. The procedure is to decide, before the loop, what the accumulator means and what its value is when nothing has been seen yet; then write the one update that keeps the meaning true after each item. If the meaning holds before and after every step, it holds at the end \u2014 that is the whole argument for why the loop is correct.\n\nThe starting value is the identity of the update: `0` for a sum, `1` for a product, an empty list for collecting. `total += value` is shorthand for `total = total + value`: read the current value, combine, write it back. Choosing the wrong start \u2014 `1` for a sum, say \u2014 is the classic accumulator bug, and it shows first on the empty list, where the start value is the answer.\n\n```python\nxs=[2,-1,4]\ntotal=0\nfor value in xs:\n    total += value\nprint(total)\n# Hidden checks\nassert total==5\n```\n\nWhen every output depends only on its own input item, write a list comprehension: `[expression for item in xs]`. It produces a new list of the same length, one result per item, in order. A trailing `if` \u2014 `[expression for item in xs if condition]` \u2014 keeps only the items that pass the test, so the result can be shorter. The rule for choosing between a comprehension and a loop is whether the outputs depend on each other: a running total needs an accumulator, but squaring every item does not, and the comprehension says so in one line.\n\nThe filter runs before the expression, so the expression only ever sees items that passed. That ordering is what makes `[1/x for x in xs if x!=0]` safe: the zero is dropped before it is divided by.\n\n```python\nxs=[2,-1,4]\npositive_squares=[value*value for value in xs\n                  if value>0]\nprint(positive_squares)\n# Hidden checks\nassert positive_squares==[4,16]\n```",
+     "worked_example_markdown": "We want the sign of a number as a word. The cases are negative, zero and positive, so the branch needs three arms: `if`, an `elif` for the middle case, and `else` for the rest. Predict the word before running.\n\n```python\nn=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n```\n\nThe `elif` is tested only when the first condition failed, so `n==0` never has to repeat `not n<0`. Now change the input and check that the middle arm is reachable \u2014 a case you never exercise is a case you never tested.\n\n```python\nn=0\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"zero\"\n```\n\nA layer may or may not have a bias. We compute the output as the product plus the bias when a bias was given, and just the product when it was not. Predict `out` before running.\n\n```python\nproduct=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n```\n\nNow give a bias of zero. The output is unchanged \u2014 but for a different reason: the bias exists and adds nothing. A test written as `bias==0` would have treated the two cases the same; `is None` keeps them apart.\n\n```python\nbias=0\nout=product if bias is None else product+bias\nprint(out, bias is None)\n# Hidden checks\nassert out==10 and bias is not None\n```\n\nWe count how many items of a list are even. The accumulator `count` means \"even items seen so far\", so it starts at zero and grows by one only inside the branch. Predict the count before running.\n\n```python\nxs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n```\n\nOn an empty list the loop body never runs, and the start value is returned untouched \u2014 zero even items, which is right. That is the empty case checking itself.\n\n```python\ncount=0\nfor value in []:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==0\n```\n\nWe convert a list of lengths in metres to centimetres, then keep only the ones under a threshold. The first comprehension has no filter, so its output has the same length as the input.\n\n```python\nmetres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n```\n\nAdding the filter drops items; the survivors keep their original order. Predict which lengths remain before running.\n\n```python\nshort=[100*m for m in metres if m<1.5]\nprint(short)\n# Hidden checks\nassert short==[50.0,125.0]\n```",
+     "segments": [
+      {
+       "concept_id": "branch",
+       "title": "A branch chooses which code runs",
+       "concept_markdown": "An `if` statement runs its indented block only when its condition is true. An `else` block handles every remaining case. The general procedure is: write down the cases the input can be in, decide what the function should do in each, and only then write the branch. The reason to state the cases first is that the branch you forget is the one the program silently gets wrong \u2014 an empty list, an option that was never given, a batch with one example. Naming each case in prose turns \"it crashed on empty input\" into a line of code you can point at.\n\nA condition is any expression that is true or false: a comparison such as `len(xs)==0`, or a test such as `value>0`. When the true block returns, the code after the whole `if` is the else case, so an explicit `else` is optional \u2014 but it is clearer when both branches assign the same name.\n\n```python\nxs=[]\nif len(xs)==0:\n    result=7\nelse:\n    result=xs[0]\nprint(result)\n# Hidden checks\nassert result==7\n```\n\nHere the two cases are \"empty\" and \"has a first item\", and `result` is set in both, so nothing after the branch has to wonder whether the name exists.",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "We want the sign of a number as a word. The cases are negative, zero and positive, so the branch needs three arms: `if`, an `elif` for the middle case, and `else` for the rest. Predict the word before running.\n\n```python\nn=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n```\n\nThe `elif` is tested only when the first condition failed, so `n==0` never has to repeat `not n<0`. Now change the input and check that the middle arm is reachable \u2014 a case you never exercise is a case you never tested.\n\n```python\nn=0\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"zero\"\n```",
+       "worked_example_code": "n=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n",
+       "faded_items": [
+        {
+         "question_id": 1281,
+         "prompt": "Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer.",
+         "starter_code": "def solve(xs,fallback):\n    pass\n",
+         "solution": "def solve(xs,fallback):\n    if len(xs)==0:\n        return fallback\n    return xs[0]\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "inline-choice",
+       "title": "An inline choice selects one value",
+       "concept_markdown": "When the two branches differ only in the value they produce, Python has an expression form: `a if condition else b`. It evaluates to `a` when the condition holds and to `b` otherwise, and it can sit anywhere a value can \u2014 on the right of `=`, inside a `return`, inside a list. Use it when each arm is a single value; use the statement form when an arm needs more than one line, because a long inline choice hides the cases instead of naming them.\n\nA related decision is how to represent an option that was not given. Python uses `None` for absence and tests it with `is None`. The reason to test with `is` rather than `==` is that `None` is a single object: `x is None` asks \"is this the absent marker?\", while `x==0` would also be false for an absent value and true for a real zero. Zero is a value; `None` is the lack of one.\n\n```python\noffset=None\ny=3 if offset is None else 3+offset\nprint(y)\n# Hidden checks\nassert y==3\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "A layer may or may not have a bias. We compute the output as the product plus the bias when a bias was given, and just the product when it was not. Predict `out` before running.\n\n```python\nproduct=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n```\n\nNow give a bias of zero. The output is unchanged \u2014 but for a different reason: the bias exists and adds nothing. A test written as `bias==0` would have treated the two cases the same; `is None` keeps them apart.\n\n```python\nbias=0\nout=product if bias is None else product+bias\nprint(out, bias is None)\n# Hidden checks\nassert out==10 and bias is not None\n```",
+       "worked_example_code": "product=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n",
+       "faded_items": [
+        {
+         "question_id": 1282,
+         "prompt": "Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer.",
+         "starter_code": "def solve(xs,fallback):\n    pass\n",
+         "solution": "def solve(xs,fallback):\n    return xs if fallback==0 else [fallback]\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "accumulator",
+       "title": "A loop carries a small piece of state",
+       "concept_markdown": "A `for` loop visits each item of a list in order. To compute something about the whole list, keep an accumulator: a variable that records what has been learned so far, updated once per item. The procedure is to decide, before the loop, what the accumulator means and what its value is when nothing has been seen yet; then write the one update that keeps the meaning true after each item. If the meaning holds before and after every step, it holds at the end \u2014 that is the whole argument for why the loop is correct.\n\nThe starting value is the identity of the update: `0` for a sum, `1` for a product, an empty list for collecting. `total += value` is shorthand for `total = total + value`: read the current value, combine, write it back. Choosing the wrong start \u2014 `1` for a sum, say \u2014 is the classic accumulator bug, and it shows first on the empty list, where the start value is the answer.\n\n```python\nxs=[2,-1,4]\ntotal=0\nfor value in xs:\n    total += value\nprint(total)\n# Hidden checks\nassert total==5\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "We count how many items of a list are even. The accumulator `count` means \"even items seen so far\", so it starts at zero and grows by one only inside the branch. Predict the count before running.\n\n```python\nxs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n```\n\nOn an empty list the loop body never runs, and the start value is returned untouched \u2014 zero even items, which is right. That is the empty case checking itself.\n\n```python\ncount=0\nfor value in []:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==0\n```",
+       "worked_example_code": "xs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n",
+       "faded_items": [
+        {
+         "question_id": 1283,
+         "prompt": "Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty.",
+         "starter_code": "def solve(xs):\n    pass\n",
+         "solution": "def solve(xs):\n    total=0\n    for value in xs:\n        total += value\n    return total\n"
+        }
+       ]
+      },
+      {
+       "concept_id": "comprehension",
+       "title": "A comprehension builds a list from independent outputs",
+       "concept_markdown": "When every output depends only on its own input item, write a list comprehension: `[expression for item in xs]`. It produces a new list of the same length, one result per item, in order. A trailing `if` \u2014 `[expression for item in xs if condition]` \u2014 keeps only the items that pass the test, so the result can be shorter. The rule for choosing between a comprehension and a loop is whether the outputs depend on each other: a running total needs an accumulator, but squaring every item does not, and the comprehension says so in one line.\n\nThe filter runs before the expression, so the expression only ever sees items that passed. That ordering is what makes `[1/x for x in xs if x!=0]` safe: the zero is dropped before it is divided by.\n\n```python\nxs=[2,-1,4]\npositive_squares=[value*value for value in xs\n                  if value>0]\nprint(positive_squares)\n# Hidden checks\nassert positive_squares==[4,16]\n```",
+       "watch_out_markdown": "",
+       "worked_example_markdown": "We convert a list of lengths in metres to centimetres, then keep only the ones under a threshold. The first comprehension has no filter, so its output has the same length as the input.\n\n```python\nmetres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n```\n\nAdding the filter drops items; the survivors keep their original order. Predict which lengths remain before running.\n\n```python\nshort=[100*m for m in metres if m<1.5]\nprint(short)\n# Hidden checks\nassert short==[50.0,125.0]\n```",
+       "worked_example_code": "metres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n",
+       "faded_items": [
+        {
+         "question_id": 1284,
+         "prompt": "Return squares of positive values in xs, in original order. xs: list of integers, possibly empty.",
+         "starter_code": "def solve(xs):\n    pass\n",
+         "solution": "def solve(xs):\n    return [value*value for value in xs if value>0]\n"
+        }
+       ]
+      }
+     ],
+     "faded_items": [
+      {
+       "question_id": 1281,
+       "prompt": "Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer.",
+       "starter_code": "def solve(xs,fallback):\n    pass\n",
+       "solution": "def solve(xs,fallback):\n    if len(xs)==0:\n        return fallback\n    return xs[0]\n"
+      },
+      {
+       "question_id": 1282,
+       "prompt": "Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer.",
+       "starter_code": "def solve(xs,fallback):\n    pass\n",
+       "solution": "def solve(xs,fallback):\n    return xs if fallback==0 else [fallback]\n"
+      },
+      {
+       "question_id": 1283,
+       "prompt": "Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty.",
+       "starter_code": "def solve(xs):\n    pass\n",
+       "solution": "def solve(xs):\n    total=0\n    for value in xs:\n        total += value\n    return total\n"
+      },
+      {
+       "question_id": 1284,
+       "prompt": "Return squares of positive values in xs, in original order. xs: list of integers, possibly empty.",
+       "starter_code": "def solve(xs):\n    pass\n",
+       "solution": "def solve(xs):\n    return [value*value for value in xs if value>0]\n"
+      }
+     ],
+     "guided_items": [],
+     "applied_items": [],
+     "solo_items": [
+      {
+       "question_id": 1285,
+       "prompt": "Return the last item when xs is nonempty, otherwise fallback. xs: list of integers, possibly empty; fallback: integer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1286,
+       "prompt": "Return the sum of all positive items. xs: list of integers, possibly empty.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1287,
+       "prompt": "Return a list replacing negative items with fallback, preserving other items and order. xs: list of integers, possibly empty; fallback: integer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1288,
+       "prompt": "Return the product of all items. The empty product is one. xs: list of integers, possibly empty.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1289,
+       "prompt": "Return the first positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1290,
+       "prompt": "Return the last positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1291,
+       "prompt": "Return items strictly greater than the average of xs, in original order. Empty input returns an empty list. xs: list of integers, possibly empty.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1292,
+       "prompt": "Return the largest item, or fallback for an empty list. Do not assume items are positive. xs: list of integers, possibly empty; fallback: integer.",
+       "worked_example_code": ""
+      },
+      {
+       "question_id": 1293,
+       "prompt": "Return the length of the longest uninterrupted run of positive items. xs: list of integers, possibly empty.",
+       "worked_example_code": ""
+      }
+     ],
+     "integrated_items": [
+      {
+       "question_id": 1294,
+       "prompt": "Return the value nearest to fallback; ties choose the earliest item. Empty input returns fallback. xs: list of integers, possibly empty; fallback: integer."
+      },
+      {
+       "question_id": 1295,
+       "prompt": "Return how many times xs changes sign between consecutive nonzero values. Zeros are ignored, not separators. xs: list of integers, possibly empty."
+      },
+      {
+       "question_id": 1296,
+       "prompt": "Return the maximum prefix sum, including the empty prefix with sum zero. xs: list of integers, possibly empty."
+      }
+     ],
+     "independent_items": [
+      1285,
+      1286,
+      1287,
+      1288,
+      1289,
+      1290,
+      1291,
+      1292,
+      1293
+     ],
+     "misconceptions_markdown": "- **Zero is absence.** `0` is a value and `None` is the lack of one; test for absence with `is None`, not `==0`.\n- **A loop with no matching item returns nothing.** It returns the accumulator's start value \u2014 which is why the start must be the identity of the update (`0` for a sum, `1` for a product).\n- **A comprehension can carry state.** It cannot; each output sees only its own item. A running total or \"changes since the previous item\" needs a loop.\n- **`elif` re-tests the earlier conditions.** It runs only when every earlier arm failed, so its condition can assume they did.",
+     "notes_markdown": ""
     }
    ]
   },
@@ -10188,197 +10378,6 @@
       1088
      ],
      "misconceptions_markdown": "- **The class is the endpoint nearest to the draw.** It is the count of endpoints at or below the draw; nearness would pick the wrong side of a boundary.\n- **A zero-probability class can be hit by a boundary draw.** Its endpoint coincides with the previous one, so the count skips it.\n- **`u >= ends` compares each draw with its own endpoint.** It needs `u[:, None]` to compare every draw with every endpoint; without the new axis the shapes do not line up.\n- **The cumulative sum is order-free.** Reordering the probabilities moves every slice; the endpoints are running totals, not sorted values.",
-     "notes_markdown": ""
-    },
-    {
-     "kc": "python.control-flow",
-     "kind": "code",
-     "title": "Decisions and repeated work",
-     "supporting_kcs": [
-      "python.defining-functions",
-      "python.lists-and-tuples",
-      "python.indexing",
-      "torch.boolean-masking"
-     ],
-     "new_syntax": [
-      "syntax.if",
-      "syntax.else",
-      "syntax.ternary",
-      "syntax.is",
-      "syntax.for",
-      "syntax.aug-assign",
-      "syntax.comprehension",
-      "syntax.comprehension-filter"
-     ],
-     "concept_markdown": "An `if` statement runs its indented block only when its condition is true. An `else` block handles every remaining case. The general procedure is: write down the cases the input can be in, decide what the function should do in each, and only then write the branch. The reason to state the cases first is that the branch you forget is the one the program silently gets wrong \u2014 an empty list, an option that was never given, a batch with one example. Naming each case in prose turns \"it crashed on empty input\" into a line of code you can point at.\n\nA condition is any expression that is true or false: a comparison such as `len(xs)==0`, or a test such as `value>0`. When the true block returns, the code after the whole `if` is the else case, so an explicit `else` is optional \u2014 but it is clearer when both branches assign the same name.\n\n```python\nxs=[]\nif len(xs)==0:\n    result=7\nelse:\n    result=xs[0]\nprint(result)\n# Hidden checks\nassert result==7\n```\n\nHere the two cases are \"empty\" and \"has a first item\", and `result` is set in both, so nothing after the branch has to wonder whether the name exists.\n\nWhen the two branches differ only in the value they produce, Python has an expression form: `a if condition else b`. It evaluates to `a` when the condition holds and to `b` otherwise, and it can sit anywhere a value can \u2014 on the right of `=`, inside a `return`, inside a list. Use it when each arm is a single value; use the statement form when an arm needs more than one line, because a long inline choice hides the cases instead of naming them.\n\nA related decision is how to represent an option that was not given. Python uses `None` for absence and tests it with `is None`. The reason to test with `is` rather than `==` is that `None` is a single object: `x is None` asks \"is this the absent marker?\", while `x==0` would also be false for an absent value and true for a real zero. Zero is a value; `None` is the lack of one.\n\n```python\noffset=None\ny=3 if offset is None else 3+offset\nprint(y)\n# Hidden checks\nassert y==3\n```\n\nA `for` loop visits each item of a list in order. To compute something about the whole list, keep an accumulator: a variable that records what has been learned so far, updated once per item. The procedure is to decide, before the loop, what the accumulator means and what its value is when nothing has been seen yet; then write the one update that keeps the meaning true after each item. If the meaning holds before and after every step, it holds at the end \u2014 that is the whole argument for why the loop is correct.\n\nThe starting value is the identity of the update: `0` for a sum, `1` for a product, an empty list for collecting. `total += value` is shorthand for `total = total + value`: read the current value, combine, write it back. Choosing the wrong start \u2014 `1` for a sum, say \u2014 is the classic accumulator bug, and it shows first on the empty list, where the start value is the answer.\n\n```python\nxs=[2,-1,4]\ntotal=0\nfor value in xs:\n    total += value\nprint(total)\n# Hidden checks\nassert total==5\n```\n\nWhen every output depends only on its own input item, write a list comprehension: `[expression for item in xs]`. It produces a new list of the same length, one result per item, in order. A trailing `if` \u2014 `[expression for item in xs if condition]` \u2014 keeps only the items that pass the test, so the result can be shorter. The rule for choosing between a comprehension and a loop is whether the outputs depend on each other: a running total needs an accumulator, but squaring every item does not, and the comprehension says so in one line.\n\nThe filter runs before the expression, so the expression only ever sees items that passed. That ordering is what makes `[1/x for x in xs if x!=0]` safe: the zero is dropped before it is divided by.\n\n```python\nxs=[2,-1,4]\npositive_squares=[value*value for value in xs\n                  if value>0]\nprint(positive_squares)\n# Hidden checks\nassert positive_squares==[4,16]\n```",
-     "worked_example_markdown": "We want the sign of a number as a word. The cases are negative, zero and positive, so the branch needs three arms: `if`, an `elif` for the middle case, and `else` for the rest. Predict the word before running.\n\n```python\nn=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n```\n\nThe `elif` is tested only when the first condition failed, so `n==0` never has to repeat `not n<0`. Now change the input and check that the middle arm is reachable \u2014 a case you never exercise is a case you never tested.\n\n```python\nn=0\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"zero\"\n```\n\nA layer may or may not have a bias. We compute the output as the product plus the bias when a bias was given, and just the product when it was not. Predict `out` before running.\n\n```python\nproduct=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n```\n\nNow give a bias of zero. The output is unchanged \u2014 but for a different reason: the bias exists and adds nothing. A test written as `bias==0` would have treated the two cases the same; `is None` keeps them apart.\n\n```python\nbias=0\nout=product if bias is None else product+bias\nprint(out, bias is None)\n# Hidden checks\nassert out==10 and bias is not None\n```\n\nWe count how many items of a list are even. The accumulator `count` means \"even items seen so far\", so it starts at zero and grows by one only inside the branch. Predict the count before running.\n\n```python\nxs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n```\n\nOn an empty list the loop body never runs, and the start value is returned untouched \u2014 zero even items, which is right. That is the empty case checking itself.\n\n```python\ncount=0\nfor value in []:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==0\n```\n\nWe convert a list of lengths in metres to centimetres, then keep only the ones under a threshold. The first comprehension has no filter, so its output has the same length as the input.\n\n```python\nmetres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n```\n\nAdding the filter drops items; the survivors keep their original order. Predict which lengths remain before running.\n\n```python\nshort=[100*m for m in metres if m<1.5]\nprint(short)\n# Hidden checks\nassert short==[50.0,125.0]\n```",
-     "segments": [
-      {
-       "concept_id": "branch",
-       "title": "A branch chooses which code runs",
-       "concept_markdown": "An `if` statement runs its indented block only when its condition is true. An `else` block handles every remaining case. The general procedure is: write down the cases the input can be in, decide what the function should do in each, and only then write the branch. The reason to state the cases first is that the branch you forget is the one the program silently gets wrong \u2014 an empty list, an option that was never given, a batch with one example. Naming each case in prose turns \"it crashed on empty input\" into a line of code you can point at.\n\nA condition is any expression that is true or false: a comparison such as `len(xs)==0`, or a test such as `value>0`. When the true block returns, the code after the whole `if` is the else case, so an explicit `else` is optional \u2014 but it is clearer when both branches assign the same name.\n\n```python\nxs=[]\nif len(xs)==0:\n    result=7\nelse:\n    result=xs[0]\nprint(result)\n# Hidden checks\nassert result==7\n```\n\nHere the two cases are \"empty\" and \"has a first item\", and `result` is set in both, so nothing after the branch has to wonder whether the name exists.",
-       "watch_out_markdown": "",
-       "worked_example_markdown": "We want the sign of a number as a word. The cases are negative, zero and positive, so the branch needs three arms: `if`, an `elif` for the middle case, and `else` for the rest. Predict the word before running.\n\n```python\nn=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n```\n\nThe `elif` is tested only when the first condition failed, so `n==0` never has to repeat `not n<0`. Now change the input and check that the middle arm is reachable \u2014 a case you never exercise is a case you never tested.\n\n```python\nn=0\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"zero\"\n```",
-       "worked_example_code": "n=-4\nif n<0:\n    word=\"negative\"\nelif n==0:\n    word=\"zero\"\nelse:\n    word=\"positive\"\nprint(word)\n# Hidden checks\nassert word==\"negative\"\n",
-       "faded_items": [
-        {
-         "question_id": 1281,
-         "prompt": "Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer.",
-         "starter_code": "def solve(xs,fallback):\n    pass\n",
-         "solution": "def solve(xs,fallback):\n    if len(xs)==0:\n        return fallback\n    return xs[0]\n"
-        }
-       ]
-      },
-      {
-       "concept_id": "inline-choice",
-       "title": "An inline choice selects one value",
-       "concept_markdown": "When the two branches differ only in the value they produce, Python has an expression form: `a if condition else b`. It evaluates to `a` when the condition holds and to `b` otherwise, and it can sit anywhere a value can \u2014 on the right of `=`, inside a `return`, inside a list. Use it when each arm is a single value; use the statement form when an arm needs more than one line, because a long inline choice hides the cases instead of naming them.\n\nA related decision is how to represent an option that was not given. Python uses `None` for absence and tests it with `is None`. The reason to test with `is` rather than `==` is that `None` is a single object: `x is None` asks \"is this the absent marker?\", while `x==0` would also be false for an absent value and true for a real zero. Zero is a value; `None` is the lack of one.\n\n```python\noffset=None\ny=3 if offset is None else 3+offset\nprint(y)\n# Hidden checks\nassert y==3\n```",
-       "watch_out_markdown": "",
-       "worked_example_markdown": "A layer may or may not have a bias. We compute the output as the product plus the bias when a bias was given, and just the product when it was not. Predict `out` before running.\n\n```python\nproduct=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n```\n\nNow give a bias of zero. The output is unchanged \u2014 but for a different reason: the bias exists and adds nothing. A test written as `bias==0` would have treated the two cases the same; `is None` keeps them apart.\n\n```python\nbias=0\nout=product if bias is None else product+bias\nprint(out, bias is None)\n# Hidden checks\nassert out==10 and bias is not None\n```",
-       "worked_example_code": "product=10\nbias=None\nout=product if bias is None else product+bias\nprint(out)\n# Hidden checks\nassert out==10\n",
-       "faded_items": [
-        {
-         "question_id": 1282,
-         "prompt": "Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer.",
-         "starter_code": "def solve(xs,fallback):\n    pass\n",
-         "solution": "def solve(xs,fallback):\n    return xs if fallback==0 else [fallback]\n"
-        }
-       ]
-      },
-      {
-       "concept_id": "accumulator",
-       "title": "A loop carries a small piece of state",
-       "concept_markdown": "A `for` loop visits each item of a list in order. To compute something about the whole list, keep an accumulator: a variable that records what has been learned so far, updated once per item. The procedure is to decide, before the loop, what the accumulator means and what its value is when nothing has been seen yet; then write the one update that keeps the meaning true after each item. If the meaning holds before and after every step, it holds at the end \u2014 that is the whole argument for why the loop is correct.\n\nThe starting value is the identity of the update: `0` for a sum, `1` for a product, an empty list for collecting. `total += value` is shorthand for `total = total + value`: read the current value, combine, write it back. Choosing the wrong start \u2014 `1` for a sum, say \u2014 is the classic accumulator bug, and it shows first on the empty list, where the start value is the answer.\n\n```python\nxs=[2,-1,4]\ntotal=0\nfor value in xs:\n    total += value\nprint(total)\n# Hidden checks\nassert total==5\n```",
-       "watch_out_markdown": "",
-       "worked_example_markdown": "We count how many items of a list are even. The accumulator `count` means \"even items seen so far\", so it starts at zero and grows by one only inside the branch. Predict the count before running.\n\n```python\nxs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n```\n\nOn an empty list the loop body never runs, and the start value is returned untouched \u2014 zero even items, which is right. That is the empty case checking itself.\n\n```python\ncount=0\nfor value in []:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==0\n```",
-       "worked_example_code": "xs=[4,7,10,3]\ncount=0\nfor value in xs:\n    if value%2==0:\n        count += 1\nprint(count)\n# Hidden checks\nassert count==2\n",
-       "faded_items": [
-        {
-         "question_id": 1283,
-         "prompt": "Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty.",
-         "starter_code": "def solve(xs):\n    pass\n",
-         "solution": "def solve(xs):\n    total=0\n    for value in xs:\n        total += value\n    return total\n"
-        }
-       ]
-      },
-      {
-       "concept_id": "comprehension",
-       "title": "A comprehension builds a list from independent outputs",
-       "concept_markdown": "When every output depends only on its own input item, write a list comprehension: `[expression for item in xs]`. It produces a new list of the same length, one result per item, in order. A trailing `if` \u2014 `[expression for item in xs if condition]` \u2014 keeps only the items that pass the test, so the result can be shorter. The rule for choosing between a comprehension and a loop is whether the outputs depend on each other: a running total needs an accumulator, but squaring every item does not, and the comprehension says so in one line.\n\nThe filter runs before the expression, so the expression only ever sees items that passed. That ordering is what makes `[1/x for x in xs if x!=0]` safe: the zero is dropped before it is divided by.\n\n```python\nxs=[2,-1,4]\npositive_squares=[value*value for value in xs\n                  if value>0]\nprint(positive_squares)\n# Hidden checks\nassert positive_squares==[4,16]\n```",
-       "watch_out_markdown": "",
-       "worked_example_markdown": "We convert a list of lengths in metres to centimetres, then keep only the ones under a threshold. The first comprehension has no filter, so its output has the same length as the input.\n\n```python\nmetres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n```\n\nAdding the filter drops items; the survivors keep their original order. Predict which lengths remain before running.\n\n```python\nshort=[100*m for m in metres if m<1.5]\nprint(short)\n# Hidden checks\nassert short==[50.0,125.0]\n```",
-       "worked_example_code": "metres=[0.5,2.0,1.25]\ncm=[100*m for m in metres]\nprint(cm)\n# Hidden checks\nassert cm==[50.0,200.0,125.0]\n",
-       "faded_items": [
-        {
-         "question_id": 1284,
-         "prompt": "Return squares of positive values in xs, in original order. xs: list of integers, possibly empty.",
-         "starter_code": "def solve(xs):\n    pass\n",
-         "solution": "def solve(xs):\n    return [value*value for value in xs if value>0]\n"
-        }
-       ]
-      }
-     ],
-     "faded_items": [
-      {
-       "question_id": 1281,
-       "prompt": "Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer.",
-       "starter_code": "def solve(xs,fallback):\n    pass\n",
-       "solution": "def solve(xs,fallback):\n    if len(xs)==0:\n        return fallback\n    return xs[0]\n"
-      },
-      {
-       "question_id": 1282,
-       "prompt": "Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer.",
-       "starter_code": "def solve(xs,fallback):\n    pass\n",
-       "solution": "def solve(xs,fallback):\n    return xs if fallback==0 else [fallback]\n"
-      },
-      {
-       "question_id": 1283,
-       "prompt": "Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty.",
-       "starter_code": "def solve(xs):\n    pass\n",
-       "solution": "def solve(xs):\n    total=0\n    for value in xs:\n        total += value\n    return total\n"
-      },
-      {
-       "question_id": 1284,
-       "prompt": "Return squares of positive values in xs, in original order. xs: list of integers, possibly empty.",
-       "starter_code": "def solve(xs):\n    pass\n",
-       "solution": "def solve(xs):\n    return [value*value for value in xs if value>0]\n"
-      }
-     ],
-     "guided_items": [],
-     "applied_items": [],
-     "solo_items": [
-      {
-       "question_id": 1285,
-       "prompt": "Return the last item when xs is nonempty, otherwise fallback. xs: list of integers, possibly empty; fallback: integer.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1286,
-       "prompt": "Return the sum of all positive items. xs: list of integers, possibly empty.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1287,
-       "prompt": "Return a list replacing negative items with fallback, preserving other items and order. xs: list of integers, possibly empty; fallback: integer.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1288,
-       "prompt": "Return the product of all items. The empty product is one. xs: list of integers, possibly empty.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1289,
-       "prompt": "Return the first positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1290,
-       "prompt": "Return the last positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1291,
-       "prompt": "Return items strictly greater than the average of xs, in original order. Empty input returns an empty list. xs: list of integers, possibly empty.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1292,
-       "prompt": "Return the largest item, or fallback for an empty list. Do not assume items are positive. xs: list of integers, possibly empty; fallback: integer.",
-       "worked_example_code": ""
-      },
-      {
-       "question_id": 1293,
-       "prompt": "Return the length of the longest uninterrupted run of positive items. xs: list of integers, possibly empty.",
-       "worked_example_code": ""
-      }
-     ],
-     "integrated_items": [
-      {
-       "question_id": 1294,
-       "prompt": "Return the value nearest to fallback; ties choose the earliest item. Empty input returns fallback. xs: list of integers, possibly empty; fallback: integer."
-      },
-      {
-       "question_id": 1295,
-       "prompt": "Return how many times xs changes sign between consecutive nonzero values. Zeros are ignored, not separators. xs: list of integers, possibly empty."
-      },
-      {
-       "question_id": 1296,
-       "prompt": "Return the maximum prefix sum, including the empty prefix with sum zero. xs: list of integers, possibly empty."
-      }
-     ],
-     "independent_items": [
-      1285,
-      1286,
-      1287,
-      1288,
-      1289,
-      1290,
-      1291,
-      1292,
-      1293
-     ],
-     "misconceptions_markdown": "- **Zero is absence.** `0` is a value and `None` is the lack of one; test for absence with `is None`, not `==0`.\n- **A loop with no matching item returns nothing.** It returns the accumulator's start value \u2014 which is why the start must be the identity of the update (`0` for a sum, `1` for a product).\n- **A comprehension can carry state.** It cannot; each output sees only its own item. A running total or \"changes since the previous item\" needs a loop.\n- **`elif` re-tests the earlier conditions.** It runs only when every earlier arm failed, so its condition can assume they did.",
      "notes_markdown": ""
     }
    ]
