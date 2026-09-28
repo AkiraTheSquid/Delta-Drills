@@ -2340,6 +2340,9 @@ t.manual_seed(0)
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
   <script src="account-menu.js?v=7"></script>
+  <!-- Feedback bubble (self-hosted Quackback). AFTER app.js and guest-session.js:
+       it reads window.DDIdentity / window.apiFetch and the guest flag. -->
+  <script src="feedback-widget/quackback_widget.js?v=1"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
