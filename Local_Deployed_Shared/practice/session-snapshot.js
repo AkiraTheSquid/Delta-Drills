@@ -99,6 +99,30 @@
     };
   };
 
+  /* The lesson pages on screen at pause (practice/lessons.js `openSteps`),
+     OPTIONAL like `ladder` and outside the version for the same reason. They
+     reach `_findKp` and a page's eyebrow, so strings are strings, indices are
+     small non-negative integers, and anything else drops the whole record —
+     a resume then asks the gate, which is what it did before this field. */
+  const _readLesson = (raw) => {
+    if (!Array.isArray(raw) || !raw.length || raw.length > 8) return null;
+    const idx = (v, min) => (Number.isInteger(v) && v >= min && v < 64 ? v : null);
+    const steps = raw.map((s) => {
+      const kc = _str(s?.kc);
+      const segmentIndex = idx(s?.segmentIndex, 0);
+      const segmentTotal = idx(s?.segmentTotal, 1);
+      if (!kc || segmentIndex === null || segmentTotal === null) return null;
+      if (segmentIndex >= segmentTotal) return null;
+      return {
+        kc, segmentIndex, segmentTotal,
+        exposureKey: _str(s.exposureKey) || kc,
+        revisit: s.revisit === true,
+        readAt: _str(s.readAt) || "",
+      };
+    });
+    return steps.every(Boolean) ? steps : null;
+  };
+
   /* The exercise session's own settings, carried in the snapshot as an
      OPTIONAL field — a snapshot without one is a plain block and restores as
      it always did. Shape-checked: a hand-edited entry cannot hand the clock a
@@ -161,6 +185,7 @@
         attemptFirst: saved.attemptFirst === true,
         secsAllowed,
         ladder: _readLadder(saved.ladder),
+        lesson: _readLesson(saved.lesson),
         draft: typeof saved.draft === "string" || (
           saved.draft?.version === 1 && Array.isArray(saved.draft.cells)
         ) ? saved.draft : "",

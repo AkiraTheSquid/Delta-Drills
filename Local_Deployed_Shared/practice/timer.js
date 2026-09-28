@@ -298,6 +298,10 @@ const PracticeSession = (() => {
          A silent data loss is not a fair price for a field that degrades. */
       attemptFirst: PracticeAPI.currentQuestion?.attempt_first === true,
       ladder: _ladderContext(),
+      // The lesson pages on screen, replayed by `resume()` (practice/lessons.js
+      // `resumeSteps`). Optional and unversioned, like `ladder`.
+      lesson: document.body.classList.contains("lesson-mode")
+        ? window.LessonGate?.openSteps?.() || null : null,
       config: _configRecord(),
       draft: _draft(),
       review,
@@ -933,16 +937,23 @@ const PracticeSession = (() => {
     const _repaintRestored = () => {
       if (pausedState) renderQuestion(PracticeAPI.currentQuestion, pausedState.served);
     };
+    /* 🔴 THE PAGES THAT WERE ON SCREEN FIRST, then the gate's own question.
+       Asking the gate alone lost every lesson it could not see from the drill
+       behind it — see practice/lessons.js `openSteps`. */
+    const onDone = () => {
+      resumePending = false;
+      _repaintRestored();
+      _resumeCore();
+    };
+    const gate = window.LessonGate;
+    const q = PracticeAPI.currentQuestion;
     let taught = false;
     try {
       taught = !!(
-        window.LessonGate &&
+        gate &&
         pausedState.phase !== "review" &&
-        (await window.LessonGate.maybeShow(PracticeAPI.currentQuestion, () => {
-          resumePending = false;
-          _repaintRestored();
-          _resumeCore();
-        }))
+        ((pausedState.lesson && (await gate.resumeSteps(pausedState.lesson, q, onDone))) ||
+          (await gate.maybeShow(q, onDone)))
       );
     } catch (err) {
       console.warn("[session] lesson gate failed during resume:", err);
@@ -1163,10 +1174,16 @@ const PracticeSession = (() => {
     if (snapshot && !["answer", "review"].includes(snapshot.phase)) {
       snapshot.phase = "answer";
       snapshot.review = null;
+      /* A reload ON A LESSON is `pauseFromLesson` without the button: the
+         drill behind it has not been served yet, so it gets its own whole
+         allowance and the number it will carry, not the last question's. */
+      if (snapshot.lesson) {
+        snapshot.served += 1;
+        snapshot.remaining = _answerSecsFor();
       /* `|| 0` on a null `remaining` would hand an untimed question 30
          seconds on the next load — the one thing "No limit" promises it will
          not do. Untimed snapshots pass through untouched. */
-      if (snapshot.remaining !== null) {
+      } else if (snapshot.remaining !== null) {
         snapshot.remaining = Math.max(30, snapshot.remaining || 0);
       }
     }

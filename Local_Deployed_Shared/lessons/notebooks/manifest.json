@@ -1076,7 +1076,7 @@
    "topic": "PyTorch",
    "subtopic_key": "PyTorch: ar-01",
    "file": "ar-01.json",
-   "cells": 402,
+   "cells": 414,
    "questions": [
     1089,
     1090,
@@ -1432,6 +1432,17 @@
     "deltadrills.spaced-repetition",
     "deltadrills.why-drills"
    ],
+   "segments": {}
+  },
+  {
+   "id": "lc-1",
+   "title": "LeetCode Patterns",
+   "topic": "LeetCode",
+   "subtopic_key": "LeetCode: Patterns",
+   "file": "lc-1.json",
+   "cells": 3,
+   "questions": [],
+   "kcs": [],
    "segments": {}
   }
  ]
