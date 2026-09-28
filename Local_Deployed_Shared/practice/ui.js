@@ -269,6 +269,9 @@ function renderQuestion(q, count) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
     return;
   }
+  // A drill outside the learner's practice focus (Ray Tracing 0.1) that the
+  // client restored rather than the server served — practice/practice-target.js.
+  if (window.PracticeTarget?.redirects?.(q, count)) return;
   practiceQuestionCount = count;
   /* 🔴 A FAILED-TESTS BLOCK OUTLIVES THE QUESTION IT GRADED. It is a singleton
      hidden only by Submit and Next (events.js), so a question that arrives by
