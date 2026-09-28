@@ -17,7 +17,10 @@
        scale (bar height, the course graph's y window, All's x window) so
        the cards can be compared by eye; your own course graph still sets
        your target (./xp-target-drag.js);
-     * Graph = Just me → the solo column, both graphs, without the tabs.
+     * Graph = Just me → the solo column, both graphs, without the tabs;
+     * a third select, Measure (Seth, 2026-09-28): XP, or problems solved —
+       the bars count right answers and the course graph becomes their
+       running total (./xp-solved-chart.js), in every Graph choice.
 
    Out of a group, or before the roster has come back, `paint` answers
    false and ./xp-panel.js draws the solo column as it always has.
@@ -33,21 +36,38 @@
 
   const { el, shortDate } = window.DDXpCharts.util;
   const VIEW_KEY = "dd_xp_group_graph";
-  const VIEWS = [
-    { id: "bars", label: "Daily XP" },
-    { id: "course", label: "Toward the course" },
+  const MEASURE_KEY = "dd_xp_measure";
+  const MEASURES = [
+    { id: "xp", label: "XP" },
+    { id: "solved", label: "Problems solved" },
+  ];
+  // The Graph options are named in the chosen measure.
+  const views = (m) => [
+    { id: "bars", label: m === "solved" ? "Solved per day" : "Daily XP" },
+    { id: "course", label: m === "solved" ? "Solved in all" : "Toward the course" },
     { id: "me", label: "Just me — both graphs" },
   ];
   const PAD = 14; // a row's inner padding (styles/xp-group.css)
 
   let roster; // undefined = not read yet, null = in no group, else {group, members}
-  let view = "bars";
-  try {
-    const saved = localStorage.getItem(VIEW_KEY);
-    if (VIEWS.some((v) => v.id === saved)) view = saved;
-  } catch (_) {
-    /* per-viewer convenience only */
-  }
+  // Per-viewer conveniences only: a blocked store just means the defaults.
+  const recall = (key, options, fallback) => {
+    try {
+      const saved = localStorage.getItem(key);
+      return options.some((o) => o.id === saved) ? saved : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const remember = (key, id) => {
+    try {
+      localStorage.setItem(key, id);
+    } catch (_) {
+      /* convenience only */
+    }
+  };
+  let view = recall(VIEW_KEY, views("xp"), "bars");
+  let measure = recall(MEASURE_KEY, MEASURES, "xp");
 
   const fetcher = () => (typeof apiFetch === "function" ? apiFetch : window.apiFetch);
   const signedIn = () => window.DDIdentity?.isSignedIn?.() === true;
@@ -100,15 +120,17 @@
         ctx.setRange(id);
         focusSelect(0);
       }),
-      select("Graph", VIEWS, view, (id) => {
+      select("Graph", views(measure), view, (id) => {
         view = id;
-        try {
-          localStorage.setItem(VIEW_KEY, id);
-        } catch (_) {
-          /* convenience only */
-        }
+        remember(VIEW_KEY, id);
         repaint();
         focusSelect(1);
+      }),
+      select("Measure", MEASURES, measure, (id) => {
+        measure = id;
+        remember(MEASURE_KEY, id);
+        repaint();
+        focusSelect(2);
       }),
     );
     const n = roster.members.length;
@@ -129,19 +151,22 @@
     const drawable = people.filter((m) => m.xp && Array.isArray(m.xp.days));
     const width = ctx.width - 2 * PAD;
     const barCount = (s) => (Number.isFinite(days) ? days : s.days.length);
+    const solved = measure === "solved";
+    const course = (s, opts) =>
+      solved ? window.DDXpSolvedChart.cumulative(s, opts) : window.DDXpCharts.trajectory(s, opts);
 
     let draw;
     if (view === "bars") {
       // Tallest bar or target anywhere in the range sets everybody's scale.
-      const peak = Math.max(10, ...drawable.map((m) => {
-        const recent = m.xp.days.slice(-barCount(m.xp)).map((d) => d.xp);
-        return Math.max(m.xp.today.target || 0, ...recent);
+      const peak = Math.max(solved ? 4 : 10, ...drawable.map((m) => {
+        const recent = m.xp.days.slice(-barCount(m.xp)).map((d) => (solved ? d.solved : d.xp) || 0);
+        return Math.max(solved ? 0 : m.xp.today.target || 0, ...recent);
       }));
-      draw = (m) => window.DDXpCharts.bars(m.xp, { width, count: barCount(m.xp), peak });
+      draw = (m) => window.DDXpCharts.bars(m.xp, { width, count: barCount(m.xp), peak, measure });
     } else {
-      // First pass: each card's own windows; the union is everybody's.
+      // First pass: each row's own windows; the union is everybody's.
       const base = { width, count: days, self: false };
-      const plots = drawable.map((m) => window.DDXpCharts.trajectory(m.xp, base).xpPlot).filter(Boolean);
+      const plots = drawable.map((m) => course(m.xp, base).xpPlot).filter(Boolean);
       const pinned = plots.length
         ? {
           window: {
@@ -153,8 +178,9 @@
         : {};
       draw = (m) => {
         const opts = { ...base, ...pinned, self: m.is_you };
-        const box = window.DDXpCharts.trajectory(m.xp, opts);
-        return m.is_you ? window.DDXpTargetDrag.attach(box, m.xp, opts) : box;
+        const box = course(m.xp, opts);
+        // The target is in XP: it is only set on the XP graph.
+        return m.is_you && !solved ? window.DDXpTargetDrag.attach(box, m.xp, opts) : box;
       };
     }
 
@@ -171,7 +197,7 @@
           if (m.is_you) title.appendChild(el("span", "xp-you-tag", "you"));
         }
         const finish = m.xp.projected_finish;
-        if (view === "course" && finish) box.querySelector(".xp-chart-note")?.append(` · done ${shortDate(finish)}`);
+        if (view === "course" && !solved && finish) box.querySelector(".xp-chart-note")?.append(` · done ${shortDate(finish)}`);
         card.appendChild(box);
       }
       rows.appendChild(card);
@@ -185,7 +211,7 @@
     const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
     const top = controls(ctx);
     if (view === "me") {
-      right.replaceChildren(top, ...ctx.solo());
+      right.replaceChildren(top, ...ctx.solo(measure));
     } else {
       right.replaceChildren(top, cards(ctx, summary));
     }

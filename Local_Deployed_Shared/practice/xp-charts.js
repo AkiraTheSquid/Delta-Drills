@@ -7,7 +7,11 @@
 
    DAILY XP — one bar per day of the range, today's hatched (provisional:
      later answers can still move credit to the day it happened), today's
-     target as a line.
+     target as a line. `measure: "solved"` counts problems solved instead
+     (Seth, 2026-09-28), with no target: the target is in XP.
+
+   The problems-solved counterpart of the course graph is
+   ./xp-solved-chart.js.
 
    TOWARD THE COURSE — course knowledge, on the percent-of-course scale.
      * All: the whole journey, first day → finish (or the target date),
@@ -58,6 +62,14 @@
     d.setDate(d.getDate() + n);
     return isoOf(d);
   };
+  /** The smallest whole 1-2-5 step (1, 2, 5, 10, 20 …) that puts at most
+      `lines` gridlines on `span`. */
+  const step125 = (span, lines) => {
+    for (let mag = 1; ; mag *= 10) {
+      const st = [1, 2, 5].map((m) => m * mag).find((v) => span / v <= lines);
+      if (st) return st;
+    }
+  };
   const pctText = (v) => (v < 10 && v !== Math.round(v) ? v.toFixed(1) : String(Math.round(v)));
 
   const head = (title, note) => {
@@ -75,26 +87,30 @@
   // ── daily XP bars ──────────────────────────────────────────────
   /** `count` days ending today; a short history is padded with empty days
       so a week always reads as seven. */
-  function bars(s, { count, width, peak: floor = 0 }) {
+  function bars(s, { count, width, peak: floor = 0, measure = "xp" }) {
+    const solved = measure === "solved";
+    const val = (d) => (solved ? d.solved : d.xp) || 0;
+    const unit = solved ? "solved" : "XP";
     const byDate = new Map(s.days.map((d) => [d.date, d]));
     const last = s.today.date;
     const days = [];
     for (let i = count - 1; i >= 0; i -= 1) {
       const iso = addDays(last, -i);
-      days.push(byDate.get(iso) || { date: iso, xp: 0, answers: 0, knowledge: null });
+      days.push(byDate.get(iso) || { date: iso, xp: 0, answers: 0, solved: 0, knowledge: null });
     }
-    const sum = days.reduce((a, d) => a + (d.xp || 0), 0);
+    const sum = days.reduce((a, d) => a + val(d), 0);
 
     const box = el("section", "xp-chart");
-    box.appendChild(head("Daily XP", `${fmt(sum)} XP · ${fmt(sum / days.length)} a day`));
+    box.appendChild(head(solved ? "Solved per day" : "Daily XP",
+      `${fmt(sum)} ${unit} · ${solved ? (sum / days.length).toFixed(1) : fmt(sum / days.length)} a day`));
 
     const W = width, H = 172, L = 34, R = W - 6, T = 14, B = 146;
-    const target = s.today.target || 0;
+    const target = solved ? 0 : s.today.target || 0;
     // `floor`: a shared top, so a group's cards compare by eye.
-    const peak = Math.max(10, floor, target, ...days.map((d) => d.xp));
-    // Round gridlines: a 1-2-5 step that fits the peak in at most four.
-    const mag = 10 ** Math.floor(Math.log10(peak / 4));
-    const tickStep = [1, 2, 5, 10].map((m) => m * mag).find((st) => peak / st <= 4);
+    const peak = Math.max(solved ? 4 : 10, floor, target, ...days.map(val));
+    // Round gridlines: a 1-2-5 step that fits the peak in at most four
+    // (the peak is at least 4, so the step is whole — no 0.5 solved).
+    const tickStep = step125(peak, 4);
     const ticks = Math.ceil(peak / tickStep);
     const top = ticks * tickStep * 1.06;
     const y = (v) => B - (v / top) * (B - T);
@@ -103,7 +119,7 @@
 
     const svg = svgEl("svg", {
       viewBox: `0 0 ${W} ${H}`, class: "xp-bars", role: "img",
-      "aria-label": `Daily XP, ${shortDate(days[0].date)} to ${shortDate(last)}: ${fmt(sum)} XP` +
+      "aria-label": `${solved ? "Problems solved" : "Daily XP"}, ${shortDate(days[0].date)} to ${shortDate(last)}: ${fmt(sum)} ${unit}` +
         (target ? `; today's target ${fmt(target)}` : ""),
     });
     const defs = svgEl("defs");
@@ -121,14 +137,14 @@
 
     const readout = el("p", "xp-readout");
     const describe = (d) =>
-      `${longDate(d.date)} · ${fmt(d.xp)} XP · ${d.answers || 0} answer${d.answers === 1 ? "" : "s"}` +
+      `${longDate(d.date)} · ${solved ? `${d.solved || 0} solved of` : `${fmt(d.xp)} XP ·`} ${d.answers || 0} answer${d.answers === 1 ? "" : "s"}` +
       (d.date === last ? " · today, still settling" : "");
     readout.textContent = describe(days[days.length - 1]);
 
     const every = Math.ceil(days.length / 7);
     days.forEach((d, i) => {
       const cx = L + slot * (i + 0.5);
-      const h = Math.max(d.xp > 0 ? 2 : 0, B - y(d.xp));
+      const h = Math.max(val(d) > 0 ? 2 : 0, B - y(val(d)));
       const isToday = d.date === last;
       const g = svgEl("g", { class: `xp-bar${isToday ? " is-today" : ""}`, style: `--i:${i}` });
       g.appendChild(svgEl("rect", { x: cx - slot / 2, y: T, width: slot, height: B - T, class: "xp-bar-hit" }));
@@ -369,6 +385,6 @@
   window.DDXpCharts = {
     bars,
     trajectory,
-    util: { el, fmt, shortDate, longDate, daysBetween, addDays },
+    util: { el, svgEl, head, frame, fmt, shortDate, longDate, daysBetween, addDays, timeAxis, step125 },
   };
 })();

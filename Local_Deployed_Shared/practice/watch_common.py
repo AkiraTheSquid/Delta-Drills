@@ -32,6 +32,7 @@ REQUIRED_JS = [
     "session-idle.js",  # proxies Continue to the real resume/start buttons
     "xp-charts.js",  # both graphs; xp-panel.js reads its helpers at load
     "xp-target-drag.js",  # click / drag the course graph to set the target
+    "xp-solved-chart.js",  # the course graph in problems solved; reads xp-charts.js helpers
     "xp-group-view.js",  # in a group, draws the graph column; before xp-panel.js
     "xp-panel.js",
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
