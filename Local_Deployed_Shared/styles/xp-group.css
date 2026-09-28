@@ -90,5 +90,13 @@
 @media (max-width: 620px) {
   .xp-group-name { flex-basis: 100%; margin: 0; }
 }
+/* The problems-solved running total (../practice/xp-solved-chart.js) sizes
+   like the course graph it stands in for (xp-panel.css). */
+.xp-solved-total {
+  display: block;
+  height: auto;
+  overflow: visible;
+  width: 100%;
+}
 /* Somebody else's course graph has no readout (only yours takes a target). */
 .xp-group-card .xp-readout:empty { display: none; }

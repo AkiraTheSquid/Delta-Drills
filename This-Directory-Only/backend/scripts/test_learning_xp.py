@@ -134,6 +134,30 @@ check("two answers in one second keep their own probe flags",
       X._meta_for(metas, CODE_KC, 3001, X.memory_model._to_days(START.isoformat()))[0] is True
       and X._meta_for(metas, CODE_KC, 3002, X.memory_model._to_days(same.isoformat()))[0] is False)
 
+print("problems solved per day")
+# 5 of 7 right on day one, 1 of 3 on day two: `solved` counts the right ones,
+# `answers` all of them, each on its own day.
+two_days = state({CODE_KC: seq(START, "1101101") + seq(START + timedelta(days=1), "010")})
+by_day = {d["date"]: d for d in run(two_days, START + timedelta(days=1, hours=2))["days"]}
+d1, d2 = by_day[START.date().isoformat()], by_day[(START + timedelta(days=1)).date().isoformat()]
+check("solved counts only right answers, per day",
+      (d1["solved"], d1["answers"], d2["solved"], d2["answers"]) == (5, 7, 1, 3),
+      f'{d1["solved"]}/{d1["answers"]}, {d2["solved"]}/{d2["answers"]}')
+# A right placement probe is a solved problem; a wrong one is not.
+probed = run(state(probes=[(CODE_KC, START, True), (CODE_KC, START + timedelta(minutes=5), False)]),
+             START + timedelta(hours=1))["days"][-1]
+check("a right placement probe counts as solved",
+      (probed["solved"], probed["answers"]) == (1, 2), f'{probed["solved"]}/{probed["answers"]}')
+# One question tagged with two concepts is ONE problem: both ladder rows
+# share its question id and time.
+OTHER_KC = next(k for k in SCOPE if k != CODE_KC)
+pair = state()
+pair.kc_ladder = {kc: {"attempts": [{"ts": START.isoformat(), "correct": True, "stage": "partial",
+                                     "question_id": 4001}]} for kc in (CODE_KC, OTHER_KC)}
+paired = run(pair, START + timedelta(hours=1))["days"][-1]
+check("a question tagged with two concepts is one problem solved",
+      (paired["solved"], paired["answers"]) == (1, 1), f'{paired["solved"]}/{paired["answers"]}')
+
 print("forgetting and relearning")
 back = START + timedelta(days=90)
 learned = {CODE_KC: seq(START, "1111")}

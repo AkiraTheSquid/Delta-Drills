@@ -330,10 +330,13 @@
     drawnWidth = chartWidth();
     const opts = { width: drawnWidth };
     const course = { ...opts, count: days };
-    // Both graphs for the range — here, and as the group view's "Just me".
-    const solo = () => [
-      window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length }),
-      window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course),
+    // Both graphs for the range — here, and as the group view's "Just me",
+    // which may ask for them in problems solved (./xp-solved-chart.js).
+    const solo = (measure = "xp") => [
+      window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length, measure }),
+      measure === "solved"
+        ? window.DDXpSolvedChart.cumulative(summary, course)
+        : window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course),
     ];
     // In a group the column is the group view's (dropdowns, one graph type).
     if (window.DDXpGroupView?.paint(right, summary, { width: drawnWidth, range, ranges: RANGES, setRange, solo })) return;

@@ -275,7 +275,8 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
 
     Returns {"days": [date...], "xp": [per-day XP], "knowledge": [course
     knowledge XP at each day's close], "open_knowledge": knowledge at the first
-    day's open, "answers": [answers per day]}."""
+    day's open, "answers": [answers per day], "solved": [answers per day
+    that were right]}."""
     now = now or datetime.now(timezone.utc)
     scope = scope_kcs()
     in_scope = set(scope)
@@ -307,6 +308,9 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
     snap_R: List[Dict[str, float]] = []
     snap_j: List[Dict[str, int]] = []
     answers = [0] * n_days
+    # Right answers (a pass, not a miss and not a read answer): the Learner
+    # Home's "Problems solved" measure (Seth, 2026-09-28).
+    solved = [0] * n_days
 
     def snapshot(t: float) -> None:
         snap_R.append({kc: memory_model.retrievability(m, t, cfg)
@@ -336,6 +340,8 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
             answers[bi - 1] += 1
         if kind == 1:
             kc, ok = payload
+            if ok and 1 <= bi <= n_days:
+                solved[bi - 1] += 1
             if kc in in_scope:
                 observe(kc, t, ok, probe=True)
                 # The placement answer is a retrieval like any other: without
@@ -346,6 +352,11 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
                 memory_model._apply(mems, t, {kc: grade}, cfg, None)
             continue
         ev = payload
+        # One question tagged with several concepts is one event; it was
+        # solved when its grades are passes.
+        if 1 <= bi <= n_days and ev.grades and all(
+                g not in (memory_model.AGAIN, memory_model.AIDED) for g in ev.grades.values()):
+            solved[bi - 1] += 1
         for kc, grade in ev.grades.items():
             if kc not in in_scope:
                 continue
@@ -379,6 +390,7 @@ def replay(user_state, zone, now: Optional[datetime] = None) -> dict:
         "open_knowledge": 100.0 * sum(capped[0]),
         "today_open_knowledge": 100.0 * sum(capped[n_days - 1]),
         "answers": answers,
+        "solved": solved,
         "per_kc_now": per_kc_now,
     }
 
@@ -463,8 +475,9 @@ def summary(user_state, zone, now: Optional[datetime] = None) -> dict:
         "pace": round(pace, 1),
         "pace_days": PACE_DAYS,
         "projected_finish": finish,
-        "days": [{"date": d.isoformat(), "xp": round(x, 1), "knowledge": round(k, 1), "answers": a}
-                 for d, x, k, a in zip(r["days"], r["xp"], r["knowledge"], r["answers"])],
+        "days": [{"date": d.isoformat(), "xp": round(x, 1), "knowledge": round(k, 1), "answers": a,
+                  "solved": v}
+                 for d, x, k, a, v in zip(r["days"], r["xp"], r["knowledge"], r["answers"], r["solved"])],
     }
 
 
