@@ -130,7 +130,7 @@
   };
 
   /* ---------------- edge style ----------------------------------------- */
-  // Straight lines (the default) or the optimizer's routes (kg-look.js).
+  // Dagre's rows with bending edges (the default) or the optimizer's routes (kg-look.js).
   const buildEdges = () => {
     const look = window.DeltaKgLook;
     if (!look || !look.setEdgeStyle) return null;
@@ -138,9 +138,9 @@
     seg.setAttribute("role", "group");
     seg.setAttribute("aria-label", "Edge style");
     seg.innerHTML =
-      '<button type="button" data-edges="straight" title="Straight edges — dagre\'s rows, a line from each concept to the next">' +
-        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M3 12 L17 2"/></svg>' +
-        '<span class="kgt-sr">Straight</span></button>' +
+      '<button type="button" data-edges="rows" title="Rows — concepts in levels, edges bending between them">' +
+        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M4 12 C4 7 16 7 16 2"/></svg>' +
+        '<span class="kgt-sr">Rows</span></button>' +
       '<button type="button" data-edges="routed" title="Routed edges — nodes moved and edges routed around them to cut crossings">' +
         '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M3 12 V8 Q3 6 5 6 H15 Q17 6 17 4 V2"/></svg>' +
         '<span class="kgt-sr">Routed</span></button>';

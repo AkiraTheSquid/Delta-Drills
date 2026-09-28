@@ -17,10 +17,11 @@
  *
  *   2. EDGES — soft slate instead of solid red, width by encompassing
  *      weight. Two styles, a learner setting (dd_kg_edges):
- *        "straight" — the default: dagre's rows, each edge a straight line
- *                     (Seth, 2026-09-28: "go back to the linear version for
- *                     now … save this setting for later").
- *        "routed"   — drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
+ *        "rows"   — the default: dagre's rows, each edge curved along
+ *                   dagre's own bend points (an S-bend between neighbouring
+ *                   rows), no optimizer (Seth, 2026-09-28: "the bending arms
+ *                   where it looks more hierarchical … save this setting").
+ *        "routed" — drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
  *      moves the nodes off dagre's rows and routes every edge around the
  *      nodes to cut crossings; the nodes glide there and each edge becomes an
  *      unbundled bezier through its route's control points (`routeLayout`).
@@ -46,9 +47,9 @@
   const SHORTCUT_KEY = "dd_kg_shortcuts";
   const EDGE_KEY = "dd_kg_edges";
   const LOOKS = ["label", "dot"];
-  const EDGE_STYLES = ["straight", "routed"];
+  const EDGE_STYLES = ["rows", "routed"];
   let look = "label";
-  let edgeStyle = "straight";
+  let edgeStyle = "rows";
   let showShortcuts = false;
   try { const v = localStorage.getItem(LOOK_KEY); if (LOOKS.includes(v)) look = v; } catch (_) {}
   try { const v = localStorage.getItem(EDGE_KEY); if (EDGE_STYLES.includes(v)) edgeStyle = v; } catch (_) {}
@@ -104,7 +105,7 @@
   // lesson-graph.js's selectNode) or while graph-views.js's fan lights them.
   const edgeRules = () => [
     { selector: "edge", style: {
-        "curve-style": routed() ? "unbundled-bezier" : "straight", "edge-distances": "node-position",
+        "curve-style": "unbundled-bezier", "edge-distances": "node-position",
         "control-point-distances": 0, "control-point-weights": 0.5,
         "width": 1.4, "line-color": () => edgeInk, "target-arrow-color": () => edgeInk,
         "target-arrow-shape": "triangle", "arrow-scale": 0.7, "opacity": 0.55,
@@ -244,7 +245,7 @@
     if (cy.__kgGlide) { try { cy.__kgGlide.stop(); } catch (_) {} cy.__kgGlide = null; }
     const started = Date.now();
     watchTouch(cy);
-    // Straight edges: dagre's rows stand, no optimizer, no routes.
+    // Rows: dagre's places and dagre's routes stand; no optimizer.
     const L = routed() ? window.DeltaKgLayout : null;
     const input = L ? layoutInput(eles, pos) : null;
     const hit = L ? L.cached(input.nodes, input.edges, input.opt) : null;
@@ -260,7 +261,7 @@
       if (cy.destroyed() || cy.__kgGen !== gen) return;
       // A copy: dragging a node deletes entries, and the cache's own map
       // must survive for the next time this layout is asked for.
-      cy.__kgRoutes = routed() ? Object.assign({}, hit ? hit.routes : dagreRoutes) : {};
+      cy.__kgRoutes = Object.assign({}, hit ? hit.routes : dagreRoutes);
       if (hit) cy.__kgLayoutStats = Object.assign({ cached: true }, hit.stats);
       else if (!L) cy.__kgLayoutStats = null;  // no optimizer ran: no stale numbers
       kickCurve(cy);
@@ -357,7 +358,6 @@
     return toCtrl(s, t, [{ x: s.x, y: my }, { x: t.x, y: my }]);
   };
   const curveNow = (cy) => {
-    if (!routed()) return;  // straight lines ignore control points
     cy.batch(() => cy.edges().forEach((e) => {
       if (e.removed()) return;
       const s = e.source().position(), t = e.target().position();
