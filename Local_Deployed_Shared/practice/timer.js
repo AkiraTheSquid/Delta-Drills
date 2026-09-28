@@ -538,7 +538,8 @@ const PracticeSession = (() => {
     const review = state.review;
     if (!review) return;
     _restoreDraft(state.draft || review.userCode);
-    solutionCode.textContent = review.solutionCode || PracticeAPI.currentQuestion?.solution_code || "";
+    const restoredSol = review.solutionCode || PracticeAPI.currentQuestion?.solution_code || "";
+    solutionCode.textContent = window.DeltaLang?.solutionFor?.(restoredSol) || restoredSol;
     const restoredEinops = PracticeAPI.currentQuestion?.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(PracticeAPI.currentQuestion?.question_id || PracticeAPI.currentQuestion?.id) : "") || "";
     if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
       solutionCodeEinops.textContent = restoredEinops;

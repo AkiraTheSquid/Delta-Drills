@@ -3,9 +3,13 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # System deps: gcc for psycopg/numpy compilation, libpq-dev for PostgreSQL driver,
-# nodejs for LeetCode drills answered in JavaScript (app/leetcode_js.py)
+# nodejs for LeetCode drills answered in JavaScript (app/leetcode_js.py),
+# a JDK (javac, not just a JRE) for the ones answered in Java
+# (app/leetcode_java.py). 🔴 JDK 21 pinned: the Java sandbox is a
+# SecurityManager, which JDK 24+ no longer has, and the harness refuses to run
+# learner code without it.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libpq-dev nodejs && rm -rf /var/lib/apt/lists/*
+    gcc libpq-dev nodejs openjdk-21-jdk-headless && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies. torch MUST come from the cpu index first —
 # plain PyPI serves the CUDA-bundled wheel (multi-GB, OOMs the VM); the cpu

@@ -371,7 +371,7 @@ function renderQuestion(q, count) {
     const einopsSol = getEinopsSolution(q.question_id || q.id);
     if (einopsSol) q.einops_solution = einopsSol;
   }
-  solutionCode.textContent = q.solution_code;
+  solutionCode.textContent = window.DeltaLang?.solutionFor?.(q.solution_code) || q.solution_code;
   if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
     solutionCodeEinops.textContent = q.einops_solution || "";
   }

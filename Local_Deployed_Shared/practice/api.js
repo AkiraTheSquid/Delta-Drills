@@ -356,12 +356,12 @@ const PracticeAPI = {
       questionNeedsEinops(this.currentQuestion) &&
       !needsTorchRuntime(this.currentQuestion, userCode);
 
-    /* A LeetCode drill answered in JavaScript (practice/lang-js.js) is graded
-       by node on the server and nowhere else. Falling through to the Pyodide
-       path below would run JS as Python and RECORD a wrong answer. */
+    /* A LeetCode drill answered in JavaScript or Java (practice/lang-js.js)
+       is graded on the server and nowhere else. Falling through to the
+       Pyodide path below would run it as Python and RECORD a wrong answer. */
     const language = window.DeltaLang?.languageFor?.(this.currentQuestion) || "python";
-    if (language === "javascript" && practiceMode !== "backend") {
-      const blocked = new Error("JavaScript answers are graded on the server. Sign in again to submit.");
+    if (language !== "python" && practiceMode !== "backend") {
+      const blocked = new Error("JavaScript and Java answers are graded on the server. Sign in again to submit.");
       blocked.blocked = true;
       throw blocked;
     }
@@ -383,8 +383,8 @@ const PracticeAPI = {
       });
       if (res.status === 401) {
         handleExpiredToken();
-        if (language === "javascript") {
-          const blocked = new Error("Signed out — JavaScript answers are graded on the server. Sign in again to submit.");
+        if (language !== "python") {
+          const blocked = new Error("Signed out — JavaScript and Java answers are graded on the server. Sign in again to submit.");
           blocked.blocked = true;
           throw blocked;
         }

@@ -3,8 +3,11 @@ The Run button's dry grade: which test cases pass RIGHT NOW, recorded nowhere.
 
 Endpoints (mounted under /api/practice by the parent router):
   POST /check
-  GET  /js-starter/{question_id}   JavaScript on a LeetCode drill: its starter
+  GET  /starter/{question_id}?language=javascript|java
+                                   a LeetCode drill in another language: its starter
+  GET  /js-starter/{question_id}   the same for JavaScript (older clients)
   POST /run-js                     JavaScript cell ▶: console output only
+  POST /run-java                   Java cell ▶: compile, run a `main` if any
 
 Seth, 2026-09-13: "when you run the code, it tells you which test cases
 passed and which test cases failed, even if you didn't submit it, so that
@@ -22,9 +25,9 @@ and the client shows nothing rather than a guess.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app import leetcode_js
+from app import leetcode_java, leetcode_js
 from app.auth import get_current_user
 from app.code_runner import (
     TORCH_COLAB_MESSAGE,
@@ -34,7 +37,7 @@ from app.code_runner import (
     torch_available,
 )
 from app.models import User
-from app.practice.grading import run_and_get_expected_output
+from app.practice.grading import TRANSLATED, run_and_get_expected_output
 from app.practice_schemas import CheckRequest, CheckResponse, CodeRunRequest, CodeRunResponse
 from app.questions import get_question_by_id
 
@@ -53,8 +56,8 @@ def check_answer(
             detail="Question not found",
         )
 
-    if payload.language == leetcode_js.LANGUAGE:
-        return _check_javascript(question, payload.user_code)
+    if payload.language in TRANSLATED:
+        return _check_translated(question, payload.user_code, payload.language)
 
     # Same refusal as grade_submission: without torch there is no honest run.
     if not torch_available() and (
@@ -116,12 +119,13 @@ def check_answer(
     return CheckResponse(supported=False, correct=False, actual_output="", tests=[])
 
 
-def _check_javascript(question, user_code: str) -> CheckResponse:
-    """▶ on a LeetCode drill answered in JavaScript: grading.grade_javascript's
-    harness, verdict discarded. `call` is the translated JS call as the learner
-    would write it (leetcode_js._display), not the Python one."""
+def _check_translated(question, user_code: str, language: str) -> CheckResponse:
+    """▶ on a LeetCode drill answered in JavaScript or Java:
+    grading.grade_translated's harness, verdict discarded. `call` is the
+    translated call as the learner would write it, not the Python one."""
+    run_tests, _label = TRANSLATED[language]
     try:
-        results, execution, cases = leetcode_js.run_js_tests(user_code, question)
+        results, execution, cases = run_tests(user_code, question)
     except leetcode_js.Untranslatable:
         return CheckResponse(supported=False, correct=False, actual_output="", tests=[])
     tests = [
@@ -143,23 +147,52 @@ def _check_javascript(question, user_code: str) -> CheckResponse:
     )
 
 
-@router.get("/js-starter/{question_id}")
-def js_starter(question_id: int, user: User = Depends(get_current_user)) -> dict:
-    """Whether this drill can be answered in JavaScript, and its stub. JS
-    grading itself rides /check and /submit (`language: "javascript"`)."""
+# language -> (runtime present?, cases (raises Untranslatable), starter, runtime name)
+_STARTERS = {
+    leetcode_js.LANGUAGE: (lambda: leetcode_js.node_binary() is not None, leetcode_js.js_cases,
+                           leetcode_js.starter_js, "JavaScript"),
+    leetcode_java.LANGUAGE: (lambda: leetcode_java.java_binary() is not None and leetcode_java.javac_binary() is not None,
+                             leetcode_java.java_cases, leetcode_java.starter_java, "Java"),
+}
+
+
+@router.get("/starter/{question_id}")
+def lang_starter(
+    question_id: int,
+    language: str = Query(...),
+    user: User = Depends(get_current_user),
+) -> dict:
+    """Whether this drill can be answered in `language`, and its stub.
+    Grading itself rides /check and /submit (`language: ...`)."""
+    if language not in _STARTERS:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"No starters in {language!r}")
     question = get_question_by_id(question_id)
     if question is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
-    if leetcode_js.node_binary() is None:
-        return {"supported": False, "starter": "", "reason": "The server has no JavaScript runtime."}
+    runtime_ok, cases, starter, name = _STARTERS[language]
+    if not runtime_ok():
+        return {"supported": False, "starter": "", "reason": f"The server has no {name} runtime."}
     try:
-        leetcode_js.js_cases(question)
-        return {"supported": True, "starter": leetcode_js.starter_js(question), "reason": ""}
+        cases(question)
+        return {"supported": True, "starter": starter(question), "reason": ""}
     except leetcode_js.Untranslatable as exc:
         return {"supported": False, "starter": "", "reason": str(exc)}
+
+
+@router.get("/js-starter/{question_id}")
+def js_starter(question_id: int, user: User = Depends(get_current_user)) -> dict:
+    """/starter?language=javascript, for a client cached before Java."""
+    return lang_starter(question_id, leetcode_js.LANGUAGE, user)
 
 
 @router.post("/run-js", response_model=CodeRunResponse)
 def run_js(payload: CodeRunRequest, user: User = Depends(get_current_user)) -> CodeRunResponse:
     result = leetcode_js.run_js(payload.code)
+    return CodeRunResponse(stdout=result.stdout, stderr=result.stderr, success=result.success)
+
+
+@router.post("/run-java", response_model=CodeRunResponse)
+def run_java(payload: CodeRunRequest, user: User = Depends(get_current_user)) -> CodeRunResponse:
+    question = get_question_by_id(payload.question_id) if payload.question_id is not None else None
+    result = leetcode_java.run_java(payload.code, question)
     return CodeRunResponse(stdout=result.stdout, stderr=result.stderr, success=result.success)
