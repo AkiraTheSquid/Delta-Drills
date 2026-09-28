@@ -1,7 +1,7 @@
 /* ================================================================
    XP-GROUP.CSS — the Learner Home's graph column inside a study group
    (../practice/xp-group-view.js, Seth 2026-09-27): a Time and a Graph
-   dropdown, then one card per member on one shared scale.
+   dropdown, then one full-width row per member on one shared scale.
 
    The chart marks themselves are xp-panel.css's; this file only lays out
    the dropdowns and the cards. Token-first, no hex (styles/watch.py).
@@ -26,7 +26,12 @@
 }
 .xp-select-input {
   appearance: none;
-  background: rgb(var(--well-rgb) / calc(0.20 * var(--well-k)));
+  /* OPAQUE on purpose: Chrome paints the open list on the select's own
+     background-color, and a translucent one lands over white — so the
+     options' --text went white-on-white (Seth, 2026-09-28). The well tint
+     rides on top as an image instead. */
+  background-color: var(--surface);
+  background-image: linear-gradient(rgb(var(--well-rgb) / calc(0.20 * var(--well-k))), rgb(var(--well-rgb) / calc(0.20 * var(--well-k))));
   border: 1px solid var(--border);
   border-radius: 9px;
   color: var(--text);
@@ -37,6 +42,7 @@
   min-height: 36px;
   padding: 7px 34px 7px 12px;
 }
+.xp-select-input option { background-color: var(--surface); color: var(--text); }
 .xp-select-input:hover { border-color: var(--muted-dim); }
 .xp-select-input:focus-visible { outline: 2px solid var(--xp-ink); outline-offset: 1px; }
 /* The chevron: a mask tinted by a token, so it follows the theme. */
@@ -58,12 +64,12 @@
   margin: 0 0 9px auto;
 }
 
-/* ---- the cards: auto-FIT, so a lone card takes the whole column — the
-   same column count xp-group-view.js's cardWidth() draws for. ---------- */
-.xp-group-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+/* ---- the rows: one per member, full column width — the width
+   xp-group-view.js draws each chart at. ---------------------------------- */
+.xp-group-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .xp-group-card {
   border: 1px solid var(--border);

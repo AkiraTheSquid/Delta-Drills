@@ -82,6 +82,7 @@
   - Status: `ACTIVE`.
 
 ## Recent Changes
+- 2026-09-28 (**group view: rows + readable dropdowns**): `xp-group.css` (`?v=2`) — `.xp-group-grid` → `.xp-group-rows` (one full-width row per member, flex column); `.xp-select-input` background is now OPAQUE (`--surface` + the well tint as a gradient image) with explicit `option` colors, because Chrome paints an open select's list on the select's background-color and the old translucent well landed over white → white option text on white.
 - 2026-09-27 (**Groups tab back + group graphs**): `groups.css` (`?v=5`) restored; new `groups-rows.css` holds the `.placement-area*` rows and `.activity-day*` bars that lived in `practice/home.css` (load it BEFORE `groups.css`); new `xp-group.css` lays out the Learner Home's group view — `.xp-group-controls` (two `.xp-select`s, chevron by token-tinted mask), `.xp-group-grid` (auto-FIT, 280px min, matching `xp-group-view.js`'s column count), `.xp-group-card.is-you` left rule.
 - 2026-09-26 (**placement retired**): `solo-route.css` drops the `data-solo-page="placement"` selectors; `groups.css` comments point at `practice/home.css`.
 - 2026-09-27 (**XP panel cleanup**): `xp-panel.css` (`?v=4`) — flat `--xp-to` ink for bars/line/meter (no `--xp-from` gradients), `--warn` for every target mark, sentence-case UI-face labels, Plex Mono only on axis ticks; `.xp-range` is a 4-column grid across the graph column; new `.xp-chart-note`, `.xp-now-rule`. `practice/home.css` (`?v=4`) drops the card's gradient top rule for a soft shadow.

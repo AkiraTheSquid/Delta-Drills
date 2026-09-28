@@ -11,8 +11,9 @@
    So in a group the right column is:
      * two selects: Time (Week / Month / 3 months / All — the same range
        the solo tabs keep, one stored choice) and Graph;
-     * Graph = Daily XP or Toward the course → one card per member, you
-       first, the chart titled with their name. Every card shares one
+     * Graph = Daily XP or Toward the course → one row per member, you
+       first, the chart titled with their name (Seth, 2026-09-28: "rows
+       instead of the grid with one row for each user"). Every row shares one
        scale (bar height, the course graph's y window, All's x window) so
        the cards can be compared by eye; your own course graph still sets
        your target (./xp-target-drag.js);
@@ -37,9 +38,7 @@
     { id: "course", label: "Toward the course" },
     { id: "me", label: "Just me — both graphs" },
   ];
-  const CARD_MIN = 280; // px: below two of these side by side, one column
-  const GAP = 16;
-  const PAD = 14; // a card's inner padding (styles/xp-group.css)
+  const PAD = 14; // a row's inner padding (styles/xp-group.css)
 
   let roster; // undefined = not read yet, null = in no group, else {group, members}
   let view = "bars";
@@ -120,21 +119,15 @@
   const focusSelect = (i) =>
     document.querySelectorAll("#learner-xp-graphs .xp-select-input")[i]?.focus();
 
-  // ── the cards ──────────────────────────────────────────────────
-  /** Card width for `count` cards in a column `width` wide. */
-  const cardWidth = (width, count) => {
-    const cols = Math.max(1, Math.min(count, Math.floor((width + GAP) / (CARD_MIN + GAP))));
-    return Math.floor((width - GAP * (cols - 1)) / cols);
-  };
-
+  // ── the rows ───────────────────────────────────────────────────
   const rangeOf = (ctx) => ctx.ranges.find((r) => r.id === ctx.range)?.days ?? 7;
 
-  /** One chart per member on one scale. `you` is the live summary. */
+  /** One full-width row per member, one scale. `you` is the live summary. */
   function cards(ctx, you) {
     const days = rangeOf(ctx);
     const people = roster.members.map((m) => ({ ...m, xp: m.is_you ? you : m.xp }));
     const drawable = people.filter((m) => m.xp && Array.isArray(m.xp.days));
-    const width = cardWidth(ctx.width, people.length) - 2 * PAD;
+    const width = ctx.width - 2 * PAD;
     const barCount = (s) => (Number.isFinite(days) ? days : s.days.length);
 
     let draw;
@@ -165,7 +158,7 @@
       };
     }
 
-    const grid = el("div", "xp-group-grid");
+    const rows = el("div", "xp-group-rows");
     people.forEach((m) => {
       const card = el("div", `xp-group-card${m.is_you ? " is-you" : ""}`);
       if (!m.xp || !Array.isArray(m.xp.days)) {
@@ -181,9 +174,9 @@
         if (view === "course" && finish) box.querySelector(".xp-chart-note")?.append(` · done ${shortDate(finish)}`);
         card.appendChild(box);
       }
-      grid.appendChild(card);
+      rows.appendChild(card);
     });
-    return grid;
+    return rows;
   }
 
   /** Draw the group column into `right`. False when not in a group. */
