@@ -89,39 +89,93 @@ def solve(ny,nz,yl,zl):
 
 ## Concept: A pixel names a direction through the image plane
 
-The camera sits at the origin and looks along `+x`; the image plane is `x = 1`. A pixel at `(y, z)` on that plane is the point `(1, y, z)`, and the ray through it from the origin has direction `(1, y, z)` — the point itself, because the origin is zero. Each stored ray is `[origin, direction]`, shape `(2, 3)`, so the whole fan is `(ny * nz, 2, 3)`: allocate zeros, set `[:, 1, 0]` to `1`, and write the flattened `y` and `z` grids into `[:, 1, 1]` and `[:, 1, 2]`.
-
-The reason direction equals the pixel point only for a camera at the origin is that a direction is a difference: `pixel − origin`. Move the camera to `O` while the image plane stays where it is in the world and the direction becomes `pixel − O`; move the camera *and* its plane together and the direction is unchanged. The stored ray keeps both origin and direction so that later code can evaluate `O + u·D` without knowing where the camera was.
+The camera sits at the point `(0, 0, 0)` and looks along `+x`. In front of it is the image plane, the flat sheet `x = 1`. A pixel with coordinates `(y, z)` on that sheet is the 3-D point `(1, y, z)`: the `x` is always `1`, and `y`, `z` come from the pixel grid.
 
 ```python
 import torch as t
-pixels=t.tensor([[1.,-.5,-1.],[1.,-.5,1.]])
-r=t.zeros(2,2,3)
-r[:,1]=pixels
-print(r)
+pixel=t.tensor([1.,-1.,2.])
+print(pixel)
 # Hidden checks
-assert r[:,0].eq(0).all() and r[:,1].tolist()==pixels.tolist()
+assert pixel.tolist()==[1.,-1.,2.]
+```
+
+A ray needs a direction, and a direction is a difference: where you are going minus where you start, `pixel − origin`. Below, `origin` is a variable holding the camera's position. Here that position is `(0, 0, 0)`, so subtracting it changes nothing and the direction comes out equal to the pixel.
+
+```python
+origin=t.zeros(3)
+print(origin, pixel-origin)
+# Hidden checks
+assert origin.tolist()==[0.,0.,0.] and (pixel-origin).tolist()==pixel.tolist()
+```
+
+One ray is stored as two rows, `[origin, direction]`, so its shape is `(2, 3)`: row 0 is where the ray starts, row 1 is the way it points.
+
+```python
+ray=t.stack((origin,pixel-origin))
+print(ray, ray.shape)
+# Hidden checks
+assert ray.shape==(2,3) and ray[0].tolist()==[0.,0.,0.] and ray[1].tolist()==[1.,-1.,2.]
+```
+
+The whole fan is one such ray per pixel, shape `(ny * nz, 2, 3)`. Start from zeros: every row 0 is already the origin, and every direction still needs filling. Index `[:, 1]` picks the direction row of every ray at once.
+
+```python
+rays=t.zeros(6,2,3)
+print(rays.shape, rays[:,1])
+# Hidden checks
+assert rays.shape==(6,2,3) and rays.eq(0).all()
+```
+
+Every pixel sits on the plane `x = 1`, so the `x` part of every direction is `1`. That is component `0` of the direction row, `[:, 1, 0]`.
+
+```python
+rays[:,1,0]=1
+print(rays[:,1])
+# Hidden checks
+assert rays[:,1,0].eq(1).all() and rays[:,1,1:].eq(0).all()
+```
+
+The `y` and `z` parts come from the pixel grid built in the first segment, flattened with `reshape(-1)` into one value per pixel in the same `z`-fastest order as the rays.
+
+```python
+y=t.tensor([-1.,1.]); z=t.tensor([-2.,0.,2.])
+yy=y[:,None]+t.zeros_like(z)[None,:]
+zz=t.zeros_like(y)[:,None]+z[None,:]
+print(yy.reshape(-1), zz.reshape(-1))
+# Hidden checks
+assert yy.reshape(-1).tolist()==[-1.,-1.,-1.,1.,1.,1.] and zz.reshape(-1).tolist()==[-2.,0.,2.,-2.,0.,2.]
+```
+
+Write them into components `1` and `2` of the direction row, and each ray now points through its own pixel.
+
+```python
+rays[:,1,1]=yy.reshape(-1)
+rays[:,1,2]=zz.reshape(-1)
+print(rays)
+# Hidden checks
+assert rays[:,0].eq(0).all() and rays[3,1].tolist()==[1.,1.,-2.] and rays[2,1].tolist()==[1.,-1.,2.]
 ```
 
 ## Worked example
 
-We move the camera to `(0, 2, 0)` while the image plane stays at `x = 1`. The direction to a pixel is the pixel minus the new origin, and it is no longer equal to the pixel's coordinates.
+Now move the camera: `origin` becomes `(0, 2, 0)` while the image plane stays at `x = 1`. The subtraction `pixel − origin` now does real work, and the direction is no longer the pixel's coordinates.
 
 ```python
 import torch as t
-o=t.tensor([0.,2.,0.]); pixel=t.tensor([1.,3.,1.])
-d=pixel-o
+origin=t.tensor([0.,2.,0.])
+pixel=t.tensor([1.,3.,1.])
+d=pixel-origin
 print(d)
 # Hidden checks
 assert d.tolist()==[1.,1.,1.]
 ```
 
-Walking `u = 2` along that ray from the origin lands at `O + 2·D`; at `u = 1` it passes exactly through the pixel, which is the check that the direction was computed the right way round.
+The ray keeps both rows so later code can find any point on it as `origin + u·d` without knowing where the camera was. At `u = 1` it passes exactly through the pixel, which checks that the direction was computed the right way round; `u = 2` is twice as far along.
 
 ```python
-print(o+1*d, o+2*d)
+print(origin+1*d, origin+2*d)
 # Hidden checks
-assert (o+1*d).tolist()==pixel.tolist() and (o+2*d).tolist()==[2.,4.,2.]
+assert (origin+1*d).tolist()==pixel.tolist() and (origin+2*d).tolist()==[2.,4.,2.]
 ```
 
 ## Faded practice
