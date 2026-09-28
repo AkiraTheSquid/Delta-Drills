@@ -162,7 +162,52 @@
     return steps.find((st) => span / st <= 5) || 25;
   };
 
-  function trajectory(s, { count, width }) {
+  const isMonday = (iso) => dateOf(iso).getDay() === 1;
+  const monthName = (iso) =>
+    dateOf(iso).toLocaleDateString(undefined, iso.slice(5, 7) === "01" ? { month: "short", year: "numeric" } : { month: "short" });
+
+  /** Day rules and date labels under [start, end]. A week reads day by day
+      (weekday over date, Mondays ruled heavier); a month by its Mondays;
+      longer spans by month. Labels thin out rather than collide, and keep
+      clear of the start / end labels when `ends` draws those. */
+  function timeAxis(svg, { start, end, span, x, T, B, today, ends }) {
+    const pxDay = (x(end) - x(start)) / span;
+    const dates = Array.from({ length: span + 1 }, (_, i) => addDays(start, i));
+    const rule = (iso, cls) => svg.appendChild(svgEl("line", { x1: x(iso), x2: x(iso), y1: T, y2: B, class: cls }));
+    const label = (iso, text, row, anchor = "middle", extra = "") => svg.appendChild(svgEl("text", {
+      x: x(iso), y: B + 18 + row * 13, "text-anchor": anchor,
+      class: `xp-axis${iso === today ? " is-now" : ""}${extra}`,
+    }, text));
+
+    if (pxDay >= 14) {
+      const weekday = pxDay >= 30 ? "short" : "narrow";
+      dates.forEach((iso) => {
+        rule(iso, isMonday(iso) ? "xp-day-rule is-week" : "xp-day-rule");
+        label(iso, dateOf(iso).toLocaleDateString(undefined, { weekday }), 0);
+        label(iso, String(dateOf(iso).getDate()), 1, "middle", " is-date");
+      });
+      return;
+    }
+    const byWeek = pxDay * 7 >= 44;
+    if (pxDay * 7 >= 12) dates.filter(isMonday).forEach((iso) => rule(iso, "xp-day-rule is-week"));
+    const marks = dates.filter(byWeek ? isMonday : (iso) => iso.endsWith("-01"));
+    if (!byWeek && pxDay * 7 < 12) marks.forEach((iso) => rule(iso, "xp-day-rule is-week"));
+    const gap = marks.length > 1 ? x(marks[1]) - x(marks[0]) : Infinity;
+    const every = Math.max(1, Math.ceil(48 / gap));
+    const clear = ends ? 46 : 16; // an edge label, or the frame's edge
+    marks.forEach((iso, i) => {
+      if (i % every || x(iso) < x(start) + clear || x(iso) > x(end) - clear) return;
+      label(iso, byWeek ? shortDate(iso) : monthName(iso), 0);
+    });
+    if (ends) {
+      label(start, shortDate(start), 0, "start");
+      label(end, typeof ends === "string" ? ends : shortDate(end), 0, "end");
+    }
+  }
+
+  /** `window` pins the x range while the target is dragged, so the axis
+      cannot slide under the pointer. */
+  function trajectory(s, { count, width, window: pinned }) {
     const box = el("section", "xp-chart");
     const total = s.course.total_xp || 1;
     const pct = (v) => (Math.min(total, Math.max(0, v)) / total) * 100;
@@ -191,7 +236,8 @@
     const horizon = addDays(today, 365);
     if (all) {
       start = history[0].date;
-      const ends = [today];
+      // A month ahead at least, so there is always a future to click.
+      const ends = [addDays(today, 30)];
       if (s.projected_finish) ends.push(s.projected_finish);
       if (target) ends.push(target);
       // A projection years away would flatten the history into a sliver;
@@ -204,11 +250,12 @@
       start = addDays(today, -(count - 1));
       end = addDays(today, count);
     }
+    if (pinned) ({ start, end } = pinned);
     const span = Math.max(1, daysBetween(start, end));
     const shown = history.filter((d) => d.date >= start);
     const ahead = Math.max(0, daysBetween(today, end));
     const paceEnd = s.knowledge + (s.pace || 0) * ahead;
-    const needEnd = need ? s.knowledge + need * Math.max(0, daysBetween(today, target && target < end ? target : end)) : null;
+    const needEnd = need ? s.knowledge + need * Math.max(0, daysBetween(today, target && target <= end ? target : end)) : null;
     let step = 25;
     if (!all) {
       const vals = [...shown.map((d) => pct(d.knowledge)), pct(s.knowledge), pct(paceEnd)];
@@ -220,7 +267,7 @@
       lo = Math.min(lo, hi - step); // at 100% both clamp to the top
     }
 
-    const W = width, H = 188, L = 40, R = W - 10, T = 18, B = 160;
+    const W = width, H = 200, L = 40, R = W - 10, T = 18, B = 160;
     const x = (iso) => L + (Math.min(span, Math.max(0, daysBetween(start, iso))) / span) * (R - L);
     const yp = (p) => B - ((Math.min(hi, Math.max(lo, p)) - lo) / (hi - lo)) * (B - T);
     const y = (v) => yp(pct(v));
@@ -242,9 +289,16 @@
       svg.appendChild(svgEl("text", { x: L - 8, y: yp(v) + 3.5, "text-anchor": "end", class: "xp-axis" }, `${pctText(v)}%`));
     }
 
+    const beyond = all && end === horizon && [s.projected_finish, target].some((d) => d && d > horizon);
+    timeAxis(svg, { start, end, span, x, T, B, today, ends: all && (beyond ? `${shortDate(end)} →` : true) });
+
     // Today's rule splits what happened from what is projected.
     const nowX = x(today), nowY = y(s.knowledge);
-    if (!all) svg.appendChild(svgEl("line", { x1: nowX, x2: nowX, y1: T, y2: B, class: "xp-now-rule" }));
+    if (!all) {
+      svg.appendChild(svgEl("line", { x1: nowX, x2: nowX, y1: T, y2: B, class: "xp-now-rule" }));
+      // A week names today in its own axis; longer ranges label the rule.
+      if (count > 7) svg.appendChild(svgEl("text", { x: nowX, y: T - 6, "text-anchor": "middle", class: "xp-axis is-now" }, "Today"));
+    }
 
     if (shown.length) {
       const pts = shown.map((d) => `${x(d.date).toFixed(1)},${y(d.knowledge).toFixed(1)}`);
@@ -271,20 +325,25 @@
     } else {
       if (s.pace > 0) svg.appendChild(svgEl("line", { x1: nowX, y1: nowY, x2: x(end), y2: y(paceEnd), class: "xp-projection" }));
       if (needEnd !== null) {
-        const nx = target && target < end ? x(target) : x(end);
-        svg.appendChild(svgEl("line", { x1: nowX, y1: nowY, x2: nx, y2: y(needEnd), class: "xp-needed" }));
+        const inside = target && target <= end;
+        const nx = inside ? x(target) : x(end), ny = y(needEnd);
+        svg.appendChild(svgEl("line", { x1: nowX, y1: nowY, x2: nx, y2: ny, class: "xp-needed" }));
+        // The dot is the handle: past the window it waits, hollow, at the edge.
+        if (target) {
+          svg.appendChild(svgEl("circle", { cx: nx, cy: ny, r: 4, class: `xp-target-dot${inside ? "" : " is-beyond"}` }));
+          const right = nx < R - 56;
+          svg.appendChild(svgEl("text", {
+            x: right ? nx + 8 : nx - 8, y: ny + (ny < T + 10 ? 12 : -8), "text-anchor": right ? "start" : "end", class: "xp-target-label",
+          }, inside ? shortDate(target) : `${shortDate(target)} →`));
+        }
       }
     }
     svg.appendChild(svgEl("circle", { cx: nowX, cy: nowY, r: 4.5, class: "xp-now-dot" }));
 
-    const tick = (iso, label, anchor, cls = "xp-axis") =>
-      svg.appendChild(svgEl("text", { x: x(iso), y: B + 18, "text-anchor": anchor, class: cls }, label));
-    tick(start, shortDate(start), "start");
-    if (!all) tick(today, "Today", "middle", "xp-axis is-now");
-    const beyond = all && end === horizon && [s.projected_finish, target].some((d) => d && d > horizon);
-    tick(end, beyond ? `${shortDate(end)} →` : shortDate(end), "end");
-
     box.appendChild(frame(svg));
+    box.appendChild(el("p", "xp-readout"));
+    // For practice/xp-target-drag.js: where the plot is, in SVG units.
+    box.xpPlot = { svg, W, L, R, start, end, span };
 
     const legend = el("ul", "xp-legend");
     const key = (cls, text) => {

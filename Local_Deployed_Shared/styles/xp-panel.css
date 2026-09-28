@@ -404,7 +404,24 @@
   stroke-dasharray: 6 4;
   stroke-width: 1.5;
 }
-.xp-target-dot { fill: var(--warn); }
+.xp-target-dot { fill: var(--warn); stroke: var(--surface); stroke-width: 2; }
+/* The target sits past the drawn range: the handle waits at the edge. */
+.xp-target-dot.is-beyond { fill: var(--surface); stroke: var(--warn); }
+
+/* Days under "Toward the course": each day ruled faintly, Mondays (the week
+   boundaries) a step stronger, the date number under the weekday. */
+.xp-day-rule { stroke: var(--border); stroke-width: 1; opacity: 0.5; }
+.xp-day-rule.is-week { stroke: var(--border-strong); opacity: 0.9; }
+.xp-axis.is-date { fill: var(--muted-dim); font-size: 9.5px; }
+.xp-axis.is-date.is-now { fill: var(--text); }
+
+/* The course graph sets the target: click a day, or drag. */
+.xp-trajectory { cursor: crosshair; user-select: none; }
+.xp-trajectory:focus { outline: none; }
+.xp-trajectory:focus-visible { outline: 2px solid var(--xp-ink); outline-offset: 4px; border-radius: 4px; }
+.xp-chart.is-picking .xp-trajectory { cursor: grabbing; }
+.xp-chart.is-picking .xp-readout { color: var(--warn); }
+.xp-readout.is-error { color: var(--danger); }
 .xp-now-dot {
   fill: var(--surface);
   stroke: var(--xp-ink);

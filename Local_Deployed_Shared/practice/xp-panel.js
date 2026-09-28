@@ -321,11 +321,15 @@
     // Measured after the column is shown: a hidden column is 0 wide.
     drawnWidth = chartWidth();
     const opts = { width: drawnWidth };
+    const course = { ...opts, count: days };
+    // A target set from the keyboard repaints this column; keep focus on the graph.
+    const refocus = !!document.activeElement?.matches?.(".xp-trajectory");
     right.replaceChildren(
       rangeTabs(),
       window.DDXpCharts.bars(summary, { ...opts, count: Number.isFinite(days) ? days : summary.days.length }),
-      window.DDXpCharts.trajectory(summary, { ...opts, count: days }),
+      window.DDXpTargetDrag.attach(window.DDXpCharts.trajectory(summary, course), summary, course),
     );
+    if (refocus) right.querySelector(".xp-trajectory")?.focus();
   }
 
   // ── paint ──────────────────────────────────────────────────────
