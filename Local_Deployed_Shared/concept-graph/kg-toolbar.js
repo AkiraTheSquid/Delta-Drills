@@ -129,6 +129,32 @@
     return seg;
   };
 
+  /* ---------------- edge style ----------------------------------------- */
+  // Straight lines (the default) or the optimizer's routes (kg-look.js).
+  const buildEdges = () => {
+    const look = window.DeltaKgLook;
+    if (!look || !look.setEdgeStyle) return null;
+    const seg = el("div", "kgt-seg kgt-look kgt-edges");
+    seg.setAttribute("role", "group");
+    seg.setAttribute("aria-label", "Edge style");
+    seg.innerHTML =
+      '<button type="button" data-edges="straight" title="Straight edges — dagre\'s rows, a line from each concept to the next">' +
+        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M3 12 L17 2"/></svg>' +
+        '<span class="kgt-sr">Straight</span></button>' +
+      '<button type="button" data-edges="routed" title="Routed edges — nodes moved and edges routed around them to cut crossings">' +
+        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M3 12 V8 Q3 6 5 6 H15 Q17 6 17 4 V2"/></svg>' +
+        '<span class="kgt-sr">Routed</span></button>';
+    const paint = () => seg.querySelectorAll("[data-edges]").forEach((b) => {
+      const on = b.dataset.edges === look.edgeStyle();
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    seg.querySelectorAll("[data-edges]").forEach((b) => b.addEventListener("click", () => look.setEdgeStyle(b.dataset.edges)));
+    window.addEventListener("delta:kg-look-changed", paint);
+    paint();
+    return seg;
+  };
+
   /* ---------------- assemble ------------------------------------------- */
   // #kg-nodata is created lazily by lesson-graph.js; adopt it when it shows up.
   const adoptNoData = () => {
@@ -155,6 +181,8 @@
     bar.append(viewSeg, colour, buildFilter(panel), el("span", "kgt-spacer"));
     const look = buildLook();
     if (look) bar.appendChild(look);
+    const edges = buildEdges();
+    if (edges) bar.appendChild(edges);
     // Reset and Fit as icons, their words kept for screen readers and the
     // tooltip: in a full bar the words were what made it wrap.
     const iconize = (btn, svg, label) => {

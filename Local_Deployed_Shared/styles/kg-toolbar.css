@@ -99,6 +99,8 @@
 .kgt-look svg { width: 18px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 .kgt-look button.active svg { fill: color-mix(in srgb, var(--accent-text) 45%, transparent); }
 .kgt-look button { padding: 0 8px !important; }
+/* Edge style: open lines, never filled. */
+.kgt-edges svg, .kgt-edges button.active svg { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .kgt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---- filter popover --------------------------------------------------- */
