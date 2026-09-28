@@ -20,6 +20,9 @@ const LessonGate = (() => {
   // True once a lesson page has been drawn into #question-text — the node the
   // gate borrows from the question screen and hands back in _cleanup.
   let painted = false;
+  // The pages a live gate still owes — the one on screen and any after it —
+  // as `openSteps()` hands them to the pause snapshot. See `resumeSteps`.
+  let openGate = null;
   // config.js owns the text; see DEFAULT_EDITOR_CODE there for why it is torch.
   const DEFAULT_EDITOR = DEFAULT_EDITOR_CODE;
 
@@ -753,6 +756,7 @@ const LessonGate = (() => {
        comes through here: practice/lesson-timer.js `pause()` keeps the record
        and the session snapshot carries it. */
     window.LessonTimer?.stop?.();
+    openGate = null;
     // The notch's graph row belongs to whatever renderQuestion draws next.
     window.clearGraphJumpKc?.();
     /* 🔴 THE GATE GIVES THE COLUMN BACK, and until 2026-09-22 it only gave
@@ -793,16 +797,17 @@ const LessonGate = (() => {
     if (out) out.textContent = "";
   };
 
-  const maybeShow = async (question, onDone, forceKcs = null) => {
+  const maybeShow = async (question, onDone, forceKcs = null, savedSteps = null) => {
     try {
       if (question?.attempt_first) return false;
       // Content first: a local-mode step is read out of the KP's own segment
       // list, so `_pendingSteps` cannot answer before the lessons have loaded.
       await _ensureLessons();
       if (!lessonsData) return false;
-      const steps = forceKcs
-        ? forceKcs.map((kc) => _stepFor(kc, _localExposure()))
-        : await _pendingSteps(question);
+      const steps = savedSteps
+        || (forceKcs
+          ? forceKcs.map((kc) => _stepFor(kc, _localExposure()))
+          : await _pendingSteps(question));
       if (!steps.length) return false;
       const pages = _buildPages(steps);
       if (!pages.length) return false;
@@ -849,6 +854,7 @@ const LessonGate = (() => {
       let finished = false;
       // KPs whose worked example the learner actually read through to the end.
       const taught = [];
+      openGate = { pages, at: () => index, done: () => finished };
 
       const finishAll = async () => {
         if (finished) return;
@@ -1052,6 +1058,38 @@ const LessonGate = (() => {
   const showLesson = (kc, onDone = () => {}, question = null) =>
     maybeShow(question, onDone, [kc]);
 
+  /* 🔴 A PAUSED LESSON COMES BACK AS THE PAGES THAT WERE ON SCREEN, not as a
+     second opinion on whether one is owed. Seth, 2026-09-28: "if you pause or
+     exit, and then try to come back to that page, it essentially doesn't come
+     back to that lesson that you were reading at all. it just serves you a
+     practice problem." timer.js `resume()` used to re-ASK the gate about the
+     drill behind the lesson, and it was blind in two ways (reproduced
+     locally, three of four pause/reload cases):
+       • a reload between pause and Continue rebuilds that drill from the
+         static bank whenever the queue has since overwritten the persisted
+         served copy — and the bank has no `lesson_gate`;
+       • a `showLesson` page (the `worked` rung, practice/ladder.js) was never
+         on `lesson_gate` at all;
+     so the gate answered "nothing pending" and the drill was served. The
+     snapshot now carries `openSteps()` and `resumeSteps` replays them — the
+     page the learner was on, then any after it, `revisit` note included.
+     Only pages not yet Continued are open, so nothing read is re-taught. */
+  const openSteps = () => {
+    if (!openGate || openGate.done()) return null;
+    const steps = openGate.pages.slice(openGate.at()).map(({ step }) => ({
+      kc: step.kc,
+      segmentIndex: step.segmentIndex,
+      segmentTotal: step.segmentTotal,
+      exposureKey: step.exposureKey,
+      revisit: !!step.revisit,
+      readAt: step.readAt || "",
+    }));
+    return steps.length ? steps : null;
+  };
+
+  const resumeSteps = (steps, question, onDone = () => {}) =>
+    maybeShow(question, onDone, null, steps);
+
   // Exposed for the single-KC ladder (kc-practice.js): it needs the KP's
   // faded/independent item lists and the lesson's subtopic_key, which are the
   // same records the gate already loads.
@@ -1063,6 +1101,8 @@ const LessonGate = (() => {
   return {
     maybeShow,
     showLesson,
+    openSteps,
+    resumeSteps,
     getKpEntry,
     // The ladder renders the same worked-example markdown beside faded and
     // partial problems. Sharing this renderer keeps that example looking
