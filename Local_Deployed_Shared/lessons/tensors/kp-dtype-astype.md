@@ -228,40 +228,63 @@ def solve(n, name):
 
 ## Concept: dtype is a memory choice — element_size and numel
 
-The number in a dtype's name is bits: `int32` = 4 bytes per element,
-`float64` = 8. Total buffer size is `elements × bytes-per-element` —
-**`x.numel()`** elements at **`x.element_size()`** bytes each. Dtype choices
-are memory choices: halving precision halves the buffer, which is the whole
-reason models train in float32 (or bfloat16) rather than float64.
+The number in a dtype's name is bits, and 8 bits make a byte: `float32` is
+4 bytes per element. **`x.element_size()`** returns that byte count.
 
 ```python
 import torch as t
 
 grid = t.zeros((10, 10))
-for dtype in (t.float64, t.float32, t.int16, t.bool):
-    z = grid.to(dtype)
-    print(
-        f"{str(dtype):15} {z.numel()} x {
-        z.element_size()} = " f"{
-        z.numel() * z.element_size()} bytes")
+print(grid.dtype)
+print(grid.element_size())
 # Hidden checks
-assert _delta_output == 'torch.float64   100 x 8 = 800 bytes\ntorch.float32   100 x 4 = 400 bytes\ntorch.int16     100 x 2 = 200 bytes\ntorch.bool      100 x 1 = 100 bytes\n'
+assert grid.element_size() == 4
 ```
 
-Same 100 numbers, an 8× spread in what they cost:
+**`x.numel()`** counts the elements. A 10×10 grid holds 100.
 
 ```python
-print("float64 is exactly",
-      grid.to(t.float64).element_size(),
-      "bytes/element,", "float32",
-      grid.to(t.float32).element_size())
-print("100 float32 elements =",
-      grid.to(t.float32).numel() * grid.to(
-    t.float32).element_size(), "bytes")
+print(grid.numel())
 # Hidden checks
-assert grid.to(t.float64).element_size() == 2 * grid.to(t.float32).element_size()
-assert grid.to(t.float32).numel() * grid.to(t.float32).element_size() == 400
+assert grid.numel() == 100
 ```
+
+The whole buffer is elements × bytes per element: 100 × 4 = 400 bytes.
+
+```python
+print(grid.numel() * grid.element_size())
+# Hidden checks
+assert grid.numel() * grid.element_size() == 400
+```
+
+Convert the same grid to `float64`. Still 100 numbers, now 8 bytes each,
+so the buffer doubles to 800 bytes.
+
+```python
+g64 = grid.to(t.float64)
+print(g64.element_size())
+print(g64.numel() * g64.element_size())
+# Hidden checks
+assert g64.element_size() == 8
+assert g64.numel() * g64.element_size() == 800
+```
+
+Smaller dtypes shrink it the other way: `int16` is 2 bytes per element,
+`bool` is 1.
+
+```python
+g16 = grid.to(t.int16)
+print(g16.numel() * g16.element_size())
+gb = grid.to(t.bool)
+print(gb.numel() * gb.element_size())
+# Hidden checks
+assert g16.numel() * g16.element_size() == 200
+assert gb.numel() * gb.element_size() == 100
+```
+
+Same 100 numbers, an 8× spread in what they cost. That is why dtype choices
+are memory choices: halving precision halves the buffer, which is the whole
+reason models train in float32 (or bfloat16) rather than float64.
 
 ## Worked example
 
