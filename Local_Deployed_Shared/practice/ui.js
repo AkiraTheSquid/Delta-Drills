@@ -269,6 +269,9 @@ function renderQuestion(q, count) {
     PracticeAPI.getNextQuestion().then((nextQ) => renderQuestion(nextQ, count));
     return;
   }
+  // A drill outside the learner's practice focus (Ray Tracing 0.1) that the
+  // client restored rather than the server served — practice/practice-target.js.
+  if (window.PracticeTarget?.redirects?.(q, count)) return;
   practiceQuestionCount = count;
   /* 🔴 A FAILED-TESTS BLOCK OUTLIVES THE QUESTION IT GRADED. It is a singleton
      hidden only by Submit and Next (events.js), so a question that arrives by
@@ -368,7 +371,7 @@ function renderQuestion(q, count) {
     const einopsSol = getEinopsSolution(q.question_id || q.id);
     if (einopsSol) q.einops_solution = einopsSol;
   }
-  solutionCode.textContent = q.solution_code;
+  solutionCode.textContent = window.DeltaLang?.solutionFor?.(q.solution_code) || q.solution_code;
   if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
     solutionCodeEinops.textContent = q.einops_solution || "";
   }

@@ -131,12 +131,43 @@ const DeltaCodeHighlight = (() => {
     "(?<name>[A-Za-z_$][\\w$]*)",
     "(?<op>[-+*/%=<>!&|^~?:,.;]+)",
   ].join("|"), "g");
+  /* Java, for a LeetCode drill answered in Java. Primitive types are keywords
+     (they colour like `int` in any IDE); `'a'` is a char literal, `@Override`
+     an annotation (the decorator class). A method name is caught by `called`,
+     since Java has no `def`. */
+  const JAVA_KEYWORDS = new Set([
+    "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class",
+    "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally",
+    "float", "for", "if", "implements", "import", "instanceof", "int", "interface", "long",
+    "new", "package", "private", "protected", "public", "record", "return", "short",
+    "static", "super", "switch", "synchronized", "throw", "throws", "try", "var", "void",
+    "while", "yield",
+  ]);
+  const JAVA_CONSTANTS = new Set(["true", "false", "null"]);
+  const JAVA_BUILTINS = new Set([
+    "String", "Integer", "Long", "Double", "Boolean", "Character", "Math", "System",
+    "List", "ArrayList", "LinkedList", "Map", "HashMap", "TreeMap", "Set", "HashSet",
+    "TreeSet", "Deque", "ArrayDeque", "Queue", "PriorityQueue", "Stack", "Arrays",
+    "Collections", "StringBuilder", "Object", "Comparator", "Optional",
+  ]);
+  const JAVA_TOKEN = new RegExp([
+    "(?<comment>\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?(?:\\*\\/|$))",
+    "(?<tstring>\"\"\"[\\s\\S]*?(?:\"\"\"|$))",
+    "(?<string>\"(?:\\\\[\\s\\S]|[^\"\\\\\\n])*\"?|'(?:\\\\[\\s\\S]|[^'\\\\\\n])*'?)",
+    "(?<decorator>@[A-Za-z_]\\w*)",
+    "(?<number>(?<![\\w.$])(?:0[xXbB][0-9a-fA-F_]+[lL]?|(?:\\d[\\d_]*\\.?[\\d_]*|\\.\\d[\\d_]*)(?:[eE][+-]?\\d+)?[lLfFdD]?))",
+    "(?<name>[A-Za-z_$][\\w$]*)",
+    "(?<op>[-+*/%=<>!&|^~?:,.;]+)",
+  ].join("|"), "g");
   const LANGS = {
     python: { token: TOKEN, keywords: KEYWORDS, constants: CONSTANTS, soft: SOFT, builtins: BUILTINS, def: "def" },
     javascript: { token: JS_TOKEN, keywords: JS_KEYWORDS, constants: JS_CONSTANTS, soft: JS_SOFT, builtins: JS_BUILTINS, def: "function" },
+    java: { token: JAVA_TOKEN, keywords: JAVA_KEYWORDS, constants: JAVA_CONSTANTS, soft: JS_SOFT, builtins: JAVA_BUILTINS, def: "\u0000" },
   };
-  const langOf = (editor) =>
-    (editor?.closest?.("[data-code-lang]")?.dataset.codeLang === "javascript" ? "javascript" : "python");
+  const langOf = (editor) => {
+    const lang = editor?.closest?.("[data-code-lang]")?.dataset.codeLang;
+    return LANGS[lang] ? lang : "python";
+  };
 
   const escapeHtml = (s) => s
     .replace(/&/g, "&amp;")

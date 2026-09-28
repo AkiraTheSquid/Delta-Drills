@@ -16,7 +16,12 @@
  *      sizes, so dagre has to place them again).
  *
  *   2. EDGES — soft slate instead of solid red, width by encompassing
- *      weight, drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
+ *      weight. Two styles, a learner setting (dd_kg_edges):
+ *        "rows"   — the default: dagre's rows, each edge curved along
+ *                   dagre's own bend points (an S-bend between neighbouring
+ *                   rows), no optimizer (Seth, 2026-09-28: "the bending arms
+ *                   where it looks more hierarchical … save this setting").
+ *        "routed" — drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
  *      moves the nodes off dagre's rows and routes every edge around the
  *      nodes to cut crossings; the nodes glide there and each edge becomes an
  *      unbundled bezier through its route's control points (`routeLayout`).
@@ -40,13 +45,18 @@
 
   const LOOK_KEY = "dd_kg_node_look";
   const SHORTCUT_KEY = "dd_kg_shortcuts";
+  const EDGE_KEY = "dd_kg_edges";
   const LOOKS = ["label", "dot"];
+  const EDGE_STYLES = ["rows", "routed"];
   let look = "label";
+  let edgeStyle = "rows";
   let showShortcuts = false;
   try { const v = localStorage.getItem(LOOK_KEY); if (LOOKS.includes(v)) look = v; } catch (_) {}
+  try { const v = localStorage.getItem(EDGE_KEY); if (EDGE_STYLES.includes(v)) edgeStyle = v; } catch (_) {}
+  const routed = () => edgeStyle === "routed";
   try { showShortcuts = localStorage.getItem(SHORTCUT_KEY) === "1"; } catch (_) {}
 
-  const fire = () => window.dispatchEvent(new CustomEvent("delta:kg-look-changed", { detail: { look, showShortcuts } }));
+  const fire = () => window.dispatchEvent(new CustomEvent("delta:kg-look-changed", { detail: { look, edgeStyle, showShortcuts } }));
 
   /* ---------------- node look ------------------------------------------ */
   // `scale` 1 = the main canvas; the condensed view's opened sections draw
@@ -235,7 +245,8 @@
     if (cy.__kgGlide) { try { cy.__kgGlide.stop(); } catch (_) {} cy.__kgGlide = null; }
     const started = Date.now();
     watchTouch(cy);
-    const L = window.DeltaKgLayout;
+    // Rows: dagre's places and dagre's routes stand; no optimizer.
+    const L = routed() ? window.DeltaKgLayout : null;
     const input = L ? layoutInput(eles, pos) : null;
     const hit = L ? L.cached(input.nodes, input.edges, input.opt) : null;
     const target = hit ? hit.pos : pos;
@@ -252,8 +263,9 @@
       // must survive for the next time this layout is asked for.
       cy.__kgRoutes = Object.assign({}, hit ? hit.routes : dagreRoutes);
       if (hit) cy.__kgLayoutStats = Object.assign({ cached: true }, hit.stats);
+      else if (!L) cy.__kgLayoutStats = null;  // no optimizer ran: no stale numbers
       kickCurve(cy);
-      if (hit) announce(cy);
+      if (hit || !L) announce(cy);
       if (hit || !L) return;
       // A tick later: a caller that stops this layout to start the next one
       // fires this `layoutstop` first, and the next layout's generation
@@ -398,6 +410,14 @@
       if (!LOOKS.includes(v) || v === look) return;
       look = v;
       try { localStorage.setItem(LOOK_KEY, v); } catch (_) {}
+      fire();
+    },
+    edgeStyle: () => edgeStyle,
+    edgeStyles: () => EDGE_STYLES.slice(),
+    setEdgeStyle: (v) => {
+      if (!EDGE_STYLES.includes(v) || v === edgeStyle) return;
+      edgeStyle = v;
+      try { localStorage.setItem(EDGE_KEY, v); } catch (_) {}
       fire();
     },
     shortcutsShown: () => showShortcuts,

@@ -65,7 +65,8 @@ practiceSubmitBtn.addEventListener("click", async () => {
   const actualOutput = result.actual_output || "";
   const expectedOutput = result.expected_output || q.expected_output || "";
 
-  solutionCode.textContent = solCode;
+  // Java on a LeetCode drill: the Java answer (practice/lang-js.js).
+  solutionCode.textContent = window.DeltaLang?.solutionFor?.(solCode) || solCode;
   const einopsSol = q.einops_solution || (typeof getEinopsSolution === "function" ? getEinopsSolution(q.question_id || q.id) : "") || "";
   if (typeof solutionCodeEinops !== "undefined" && solutionCodeEinops) {
     solutionCodeEinops.textContent = einopsSol;
@@ -676,7 +677,7 @@ const _rateTorchAndAdvance = async (correct) => {
     if (window.DDColab && typeof window.DDColab.revealSolution === "function") {
       window.DDColab.revealSolution(q.question_id);
     }
-    solutionCode.textContent = q.solution_code || "";
+    solutionCode.textContent = window.DeltaLang?.solutionFor?.(q.solution_code || "") || q.solution_code || "";
     practiceSubmitArea.classList.add("hidden");
     practiceFeedbackArea.classList.remove("hidden");
     applyResult(correct);

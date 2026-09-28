@@ -206,10 +206,10 @@ json.dumps(_delta_results)
     const withCalls = (tests) => tests.map((t, i) => ({ ...t, call: t.call || cases[i]?.call || "" }));
     const requiresLocalPyodide =
       questionNeedsEinops(question) && !needsTorchRuntime(question, code);
-    // JavaScript (practice/lang-js.js) only ever runs on the server.
+    // JavaScript / Java (practice/lang-js.js) only ever run on the server.
     const language = window.DeltaLang?.languageFor?.(question) || "python";
-    if (language === "javascript" && practiceMode !== "backend") {
-      return { error: "JavaScript answers are checked on the server. Sign in again to check them." };
+    if (language !== "python" && practiceMode !== "backend") {
+      return { error: "JavaScript and Java answers are checked on the server. Sign in again to check them." };
     }
 
     if (practiceMode === "backend" && !requiresLocalPyodide) {
@@ -305,9 +305,9 @@ json.dumps(_delta_results)
     const rows = [];
     for (let i = 0; i < total; i++) {
       const t = outcome.tests[i];
-      // A JS call carries its inputs inline; the Python setup_code is not them.
+      // A JS/Java call carries its inputs inline; the Python setup_code is not them.
       const call = esc(clip((t && t.call) || cases[i]?.call || `case ${i + 1}`))
-        + (outcome.language === "javascript" ? [] : inputsOf(cases[i])).map((l, j) => `\n    ${j ? "          " : "with:     "}${esc(l)}`).join("");
+        + (outcome.language && outcome.language !== "python" ? [] : inputsOf(cases[i])).map((l, j) => `\n    ${j ? "          " : "with:     "}${esc(l)}`).join("");
       if (!t) {
         // The harness stopped before this case (the code itself failed to
         // run): the first row carries the traceback, the rest never ran.

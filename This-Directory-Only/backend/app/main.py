@@ -14,6 +14,7 @@ from app.lifecycle import register_lifecycle
 from app.practice import router as practice_router
 from app.practice.survey_router import router as survey_router
 from app.practice.xp_router import router as xp_router
+from app.quackback_sso import router as quackback_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ app.include_router(about_page_router)
 app.include_router(jobs_router)
 app.include_router(chapters_router)
 app.include_router(conceptual_router)
+app.include_router(quackback_router)
 
 app.add_middleware(
     CORSMiddleware,

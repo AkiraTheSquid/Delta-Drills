@@ -115,11 +115,13 @@ const DeltaNotebook = (() => {
          fallback (practice/init.js and notch-menu.js do the same). */
       const _papi = typeof PracticeAPI !== "undefined" ? PracticeAPI : window.PracticeAPI;
       const question = window.LessonGate?.activeQuestion || _papi?.currentQuestion;
-      /* A LeetCode drill answered in JavaScript (practice/lang-js.js) has no
-         Python kernel to run in: every learner cell, joined the way Submit
-         joins them, runs once in node on the server. */
-      const js = window.DeltaLang?.isJsEditor?.();
-      let result = js ? await window.DeltaLang.runCell(submissionCode()) : await window.LessonNotebook?.runSource(editor.value, {
+      /* A LeetCode drill answered in JavaScript or Java (practice/lang-js.js)
+         has no Python kernel to run in: every learner cell, joined the way
+         Submit joins them, runs once on the server (node / the JVM). The
+         solution cell runs its OWN code, not the learner's. */
+      const js = window.DeltaLang?.isServerEditor?.();
+      const serverCode = cell.dataset.solutionCell ? editor.value : submissionCode();
+      let result = js ? await window.DeltaLang.runCell(serverCode) : await window.LessonNotebook?.runSource(editor.value, {
         context: "practice-editor",
         name: `<cell ${cell.dataset.cellId}>`,
         echo: true,
@@ -268,7 +270,14 @@ const DeltaNotebook = (() => {
      Editable on purpose, exactly like Colab's: poking at the reference answer
      to see what breaks is the point. Nothing here is graded — the marker
      attribute keeps it out of submissionCode() — so an edit costs nothing. */
+  let shownSolution = null;  // showSolution's own arguments, for refreshSolution
   const showSolution = (code, einopsCode = "") => {
+    shownSolution = [code, einopsCode];
+    /* A LeetCode drill answered in Java shows the Java answer
+       (practice/lang-js.js, lessons/leetcode/solutions_java.json). */
+    const inLang = window.DeltaLang?.solutionFor?.(code);
+    const translated = !!inLang && inLang !== code;
+    if (translated) code = inLang;
     if (!cellsHost || !code) return null;
     /* 🔴 EXISTS IS NOT VISIBLE. #notebook-cells stays in the DOM on surfaces
        that hide the whole right pane — a torch drill routed out to Colab, the
@@ -324,7 +333,9 @@ const DeltaNotebook = (() => {
     if (labelSpan) {
       labelSpan.textContent = einopsCode
         ? "💡 Solution (PyTorch) — the answer this was graded against"
-        : "💡 Solution — the answer this was graded against";
+        : translated
+          ? "💡 Solution (Java) — a reference answer that passes every case"
+          : "💡 Solution — the answer this was graded against";
     }
     const editor = editorOf(cell);
     editor.value = code;
@@ -391,7 +402,15 @@ const DeltaNotebook = (() => {
     return cell;
   };
 
+  /* Re-show the answer on screen from the same arguments: the Java answers
+     can arrive after it was first shown (lang-js.js fetches them), and the
+     cell must not keep the Python answer under a Java editor. */
+  const refreshSolution = () => {
+    if (solutionCell() && shownSolution) showSolution(...shownSolution);
+  };
+
   const clearSolution = () => {
+    shownSolution = null;
     solutionCell()?.remove();
     solutionEinopsCell()?.remove();
     document.body.classList.remove("dd-solution-in-notebook");
@@ -475,7 +494,7 @@ const DeltaNotebook = (() => {
      caller that does not say otherwise is putting Python in. */
   const reset = (code, { addScratch = true, lang = "python" } = {}) => {
     if (!primary) return;
-    if (host) host.dataset.codeLang = lang === "javascript" ? "javascript" : "python";
+    if (host) host.dataset.codeLang = lang === "javascript" || lang === "java" ? lang : "python";
     clearSolution();
     cells().slice(1).forEach((cell) => cell.remove());
     const editor = editorOf(primary);
@@ -520,7 +539,7 @@ const DeltaNotebook = (() => {
   const submissionCode = () => cells()
     .map((cell, index) => {
       const code = editorOf(cell)?.value.trimEnd() || "";
-      const mark = host?.dataset.codeLang === "javascript" ? "//" : "#";
+      const mark = host?.dataset.codeLang === "javascript" || host?.dataset.codeLang === "java" ? "//" : "#";
       return code ? `${mark} --- cell ${index + 1} ---\n${code}` : "";
     })
     .filter(Boolean)
@@ -536,7 +555,7 @@ const DeltaNotebook = (() => {
 
   return {
     addCell, markRun, reset, restore, runCell, serialize, submissionCode,
-    showSolution, clearSolution, scrollToSolution,
+    showSolution, refreshSolution, clearSolution, scrollToSolution,
   };
 })();
 

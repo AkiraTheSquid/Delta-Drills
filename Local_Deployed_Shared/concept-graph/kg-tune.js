@@ -151,9 +151,13 @@
     tick();
     timer = setInterval(tick, 200);
   };
+  // The knobs only mean something to the optimizer: moving one while edges
+  // are on Rows switches them to Routed, which lays out again by itself.
+  const isRouted = () => { const k = window.DeltaKgLook; return !k || !k.edgeStyle || k.edgeStyle() === "routed"; };
   const relayout = () => {
     write(over);
     running();
+    if (!isRouted()) { window.DeltaKgLook.setEdgeStyle("routed"); return; }
     if (window.deltaKgView && typeof window.deltaKgView.relayout === "function") window.deltaKgView.relayout();
   };
   const moved = () => {
@@ -262,8 +266,9 @@
 
   const show = (cy) => {
     if (!cy || !statusEl) return;
-    const m = measure(cy);
     clearInterval(timer);
+    if (!isRouted()) { say("Edges are on Rows (no optimizer). Move a slider (or pick Routed in the bar) to run the optimizer."); return; }
+    const m = measure(cy);
     say(`<b>${m.crossings}</b> crossings · <b>${m.closeCells == null ? "–" : m.closeCells}</b> cells beside another edge<br>` +
       (m.gapMed == null ? "nearest-node gap: – · " : `nearest-node gap: median <b>${m.gapMed}</b> px, min ${m.gapMin} px · `) + ` ${m.cached ? "cached" : (m.ms / 1000).toFixed(1) + " s"}`);
   };
@@ -278,7 +283,7 @@
   // previous visit apply to the next layout, so lay out again now.
   const boot = () => {
     if (!build()) { setTimeout(boot, 300); return; }
-    if (Object.keys(over.place).length || Object.keys(over.route).length) relayout();
+    if (isRouted() && (Object.keys(over.place).length || Object.keys(over.route).length)) relayout();
   };
   boot();
 })();

@@ -71,7 +71,7 @@
        layer, before responsive.css like every other one. -->
   <link rel="stylesheet" href="styles/xp.css?v=3" />
   <link rel="stylesheet" href="styles/xp-panel.css?v=5" />
-  <link rel="stylesheet" href="styles/xp-group.css?v=1" />
+  <link rel="stylesheet" href="styles/xp-group.css?v=2" />
   <link rel="stylesheet" href="styles/survey.css?v=1" />
   <!-- The two-arrow welcome fork, the disclosures on "Learn about the App",
        and the rule that takes the tab strip off the screen in basic mode.
@@ -2340,6 +2340,9 @@ t.manual_seed(0)
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
   <script src="account-menu.js?v=7"></script>
+  <!-- Feedback bubble (self-hosted Quackback). AFTER app.js and guest-session.js:
+       it reads window.DDIdentity / window.apiFetch and the guest flag. -->
+  <script src="feedback-widget/quackback_widget.js?v=1"></script>
   <!-- After account-menu.js: instructor-mode.js only getElementById's static
        markup, but keeping the pair adjacent keeps the account-dropdown wiring
        in one place in this list. -->
@@ -2449,18 +2452,18 @@ t.manual_seed(0)
   <!-- The drill prompt's markdown (headings, bold, lists). Before ui.js,
        whose renderQuestionBody hands it each prose chunk. -->
   <script src="practice/prompt-markdown.js?v=1"></script>
-  <script src="practice/ui.js?v=48"></script>
+  <script src="practice/ui.js?v=50"></script>
   <!-- The Run button's test-case check. Before api.js: submitAnswer grades
        a guest through DeltaTestCheck.runPyodideTests (one harness, not two). -->
-  <script src="practice/test-check.js?v=4"></script>
+  <script src="practice/test-check.js?v=5"></script>
   <script src="practice/ai.js?v=6"></script>
   <script src="practice/tutor.js?v=1"></script>
   <!-- Delivery for the two feedback surfaces. BEFORE api.js: api.js calls
        DDFeedbackQueue at module scope. -->
   <script src="practice/feedback-queue.js?v=1"></script>
-  <script src="practice/api.js?v=35"></script>
+  <script src="practice/api.js?v=36"></script>
   <script src="practice/answer-history.js?v=1"></script>
-  <script src="practice/timer.js?v=39"></script>
+  <script src="practice/timer.js?v=40"></script>
   <script src="practice/kernel.js?v=8"></script>
   <!-- Rich cell output (plotly / HTML / PNG mimebundles from the sandbox
        kernel). Before notebook.js and both notebook views, which optional-
@@ -2474,8 +2477,8 @@ t.manual_seed(0)
        error. 🔴 The overlay's metrics are SHARED with .code-editor in
        styles/practice/editor.css: never restate a font, padding or border in
        one without the other or the overlay drifts off its textarea. -->
-  <script src="practice/code-highlight.js?v=2"></script>
-  <script src="practice/code-complete.js?v=2"></script>
+  <script src="practice/code-highlight.js?v=3"></script>
+  <script src="practice/code-complete.js?v=3"></script>
   <!-- Colab-style ARENA code cells (session [J], 2026-09-06): no grey fill,
        syntax colour + autocomplete, code at prose size. Self-wires off the
        `arena-notebook:rendered` event, so it needs nothing from
@@ -2487,10 +2490,10 @@ t.manual_seed(0)
   <script src="practice/notebook-cells.js?v=3"></script>
   <script src="practice/notebook-code-edit.js?v=5"></script>
   <script src="practice/visual-fixture.js?v=1"></script>
-  <script src="practice/runner.js?v=25"></script>
+  <script src="practice/runner.js?v=26"></script>
   <script src="practice/notebook.js?v=13"></script>
-  <script src="practice/notebook-editor.js?v=9"></script>
-  <script src="practice/lang-js.js?v=1"></script>
+  <script src="practice/notebook-editor.js?v=11"></script>
+  <script src="practice/lang-js.js?v=3"></script>
   <script src="practice/arena-unlock-timer.js?v=4"></script>
   <script src="practice/drill-solutions-manifest.js?v=1"></script>
   <script src="practice/drill-hints-manifest.js?v=1"></script>
@@ -2512,7 +2515,7 @@ t.manual_seed(0)
   <script src="practice/session-idle.js?v=10"></script>
   <script src="practice/xp-charts.js?v=4"></script>
   <script src="practice/xp-target-drag.js?v=1"></script>
-  <script src="practice/xp-group-view.js?v=1"></script>
+  <script src="practice/xp-group-view.js?v=2"></script>
   <script src="practice/xp-panel.js?v=6"></script>
   <script src="practice/survey.js?v=1"></script>
   <!-- Fifteen minutes on a lesson page, and the Pause that goes with it.
@@ -2573,7 +2576,7 @@ t.manual_seed(0)
   <script src="practice/drills-catalog.js?v=26"></script>
   <!-- Before events.js, which calls settleRating() on both graded paths. -->
   <script src="practice/basic-mode.js?v=2"></script>
-  <script src="practice/events.js?v=53"></script>
+  <script src="practice/events.js?v=54"></script>
   <!-- events.js owns shared loading; this module owns controls that advance. -->
   <script src="practice/advance-events.js?v=3"></script>
   <!-- 🔴 AFTER events.js, and it must stay after it. The dock does not own
@@ -2585,7 +2588,7 @@ t.manual_seed(0)
        markup exactly where index.html declares it. -->
   <script src="practice/difficulty-dock.js?v=4"></script>
   <script src="practice/feedback-panel.js?v=3"></script>
-  <script src="practice/practice-target.js?v=2"></script>
+  <script src="practice/practice-target.js?v=3"></script>
   <script src="practice/init.js?v=20"></script>
   <script src="practice.js?v=4"></script>
   <!-- stats/ no longer backs a Statistics tab (removed 2026-07-31). These three

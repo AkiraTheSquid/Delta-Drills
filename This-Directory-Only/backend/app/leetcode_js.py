@@ -325,6 +325,12 @@ def _display(js: str) -> str:
     return _SOLUTION_CALL.sub(r"\1(", js).replace("__", "")
 
 
+# Shared with app/leetcode_java.py, which translates the same rows.
+ENV_KEYS = _ENV_KEYS
+ordered_args = _ordered_args
+signature = _signature
+
+
 def supports_js(question) -> bool:
     try:
         js_cases(question)

@@ -19,7 +19,8 @@ counterfactual: the same drill with the page re-read a moment ago.
 
     ready_now         = lo(P | page as it stands)   >= PROMOTE_P
     ready_after_read  = lo(P | page read just now)  >= PROMOTE_P
-    show the page     = not ready_now and ready_after_read
+    show the page     = missed_since_read and not probing
+                        and not ready_now and ready_after_read
 
 Below the bar, a drill is what Seth called it: not retrieval practice but
 problem solving on material that is not there, and the worked-example effect
@@ -33,6 +34,30 @@ page would NOT lift the learner over the bar, re-reading it is not the answer
 and, mechanically, it is what stops a loop: the moment the page is read its
 value is at its maximum, so `ready_now == ready_after_read` and the gate
 cannot fire twice in a row for a re-read that did not help.
+
+PROBE FIRST: A MISS, NOT A FORECAST, BRINGS THE PAGE BACK
+
+Seth, 2026-09-28, shown "Refresher — you read this 18 days ago" for the einops
+pattern page: "is this consistent with the FSRS model and the explore/exploit
+BKT? perhaps it should do a probe before assuming that I need a lesson like
+this?" It was not. The decision above reads a LOWER bound, and a long gap
+widens the posterior (`inflate`), so the less the model knew the more it
+re-taught — the opposite of `kc_explore`, where uncertainty is a reason to
+probe. And the `lesson` feature's one-day half-life (unfitted) rates any page
+read more than a few days ago at ~0 whatever FSRS says the concept's memory
+is, so after day three the verdict hardly depended on the page at all.
+
+So the forecast no longer fires on its own. The drill is served bare first:
+it IS the probe, and a retrieval attempt before restudy is the better move
+anyway. The page comes back only when the concept's newest answer since the
+page was last read is a miss (`missed_since_read`) — evidence, not a lower
+bound — and the two-clause test above still has to agree the page is what
+helps. A correct answer after the miss clears it; re-reading the page resets
+it, which is also what keeps the gate from firing twice for one miss.
+
+A PROBE IS NEVER GATED. `kc_explore.probing` (a return re-probe, or a
+concept not yet taught) is a measurement of what the learner brought; the page
+in front of it would measure the page.
 
 WHAT MAKES TIME ENTER
 
@@ -58,7 +83,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from app import engine_bridge, kc_graph, lessons, practice_targets
+from app import engine_bridge, kc_explore, kc_graph, lessons, practice_targets
 from app import logistic_engine as E
 
 
@@ -73,6 +98,35 @@ def is_ready(prediction: E.Prediction) -> bool:
     return _lower_bound(prediction) >= E.PROMOTE_P
 
 
+def _ts(value) -> Optional[datetime]:
+    try:
+        ts = datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    return ts if ts.tzinfo else ts.replace(tzinfo=timezone.utc)
+
+
+def missed_since_read(
+    user_state, kc: str, read_at: datetime, now: Optional[datetime] = None
+) -> bool:
+    """The concept's newest answer AFTER the page was last read (and not after
+    `now` — a replay or a skewed clock must not see the future) was a miss.
+
+    False with no answer since the read: the next drill is the probe. Rows
+    without a readable `ts` predate the field and count as before the read.
+    Read off the ladder row (windowed to the last 20), which is ample for
+    "since the last read" — a reader 20 answers past the read who is still
+    missing is remediation's case, and the window still holds that miss."""
+    for attempt in reversed(kc_graph.ladder_view(user_state, kc).get("attempts") or []):
+        ts = _ts(attempt.get("ts"))
+        if ts is not None and now is not None and ts > now:
+            continue
+        if ts is None or ts <= read_at:
+            return False
+        return not attempt.get("correct")
+    return False
+
+
 def readiness(
     user_state,
     kc: str,
@@ -85,10 +139,10 @@ def readiness(
     """Everything the gate decides from, for one concept of one drill.
 
     Returns `page` (the step fields + `read_at`, or None), `days_since_read`,
-    the two predictions (`now`, `after_read`), the two verdicts, and
-    `lesson_needed`. `stage` defaults to the rung the ladder would serve this
-    concept at; the scoring path's `served_stage` is the same value read back
-    from the row it wrote.
+    the two predictions (`now`, `after_read`), the two verdicts, the evidence
+    (`missed_since_read`, `probing`), and `lesson_needed`. `stage` defaults
+    to the rung the ladder would serve this concept at; the scoring path's
+    `served_stage` is the same value read back from the row it wrote.
     """
     now = now or datetime.now(timezone.utc)
     page = lessons.read_page_for(question_id, kc, getattr(user_state, "kc_exposure", None) or {})
@@ -104,6 +158,10 @@ def readiness(
     )
     ready_now = is_ready(current)
     ready_after = is_ready(after_read)
+    missed = page is not None and missed_since_read(user_state, kc, page["read_at"], now)
+    # Only asked when it could change the verdict: `probing` rebuilds the
+    # explore posteriors.
+    probe = missed and kc_explore.probing(user_state, kc)
     return {
         "kc": kc,
         "page": page,
@@ -113,8 +171,11 @@ def readiness(
         "after_read": after_read,
         "ready_now": ready_now,
         "ready_after_read": ready_after,
-        # A page never read is not re-taught here — see the module note.
-        "lesson_needed": page is not None and not ready_now and ready_after,
+        "missed_since_read": missed,
+        "probing": probe,
+        # A page never read is not re-taught here, and a forecast alone never
+        # re-teaches one that was — see PROBE FIRST in the module note.
+        "lesson_needed": missed and not probe and not ready_now and ready_after,
     }
 
 
@@ -126,8 +187,9 @@ def revisit_target_kcs(
     now: Optional[datetime] = None,
     skip: Optional[set] = None,
 ) -> List[dict]:
-    """Gate entries re-teaching the page of every target concept the engine
-    says this learner needs before this drill. Entries carry `revisit: True`,
+    """Gate entries re-teaching the page of every target concept the learner
+    missed since reading and the engine says the page would carry over the
+    bar. Entries carry `revisit: True`,
     the ISO `read_at` the client compares its own record against, and the two
     lower bounds the decision was made on."""
     gates: List[dict] = []
