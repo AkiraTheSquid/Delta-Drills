@@ -31,6 +31,7 @@ REQUIRED_JS = [
     # learning with its two graphs (2026-09-26).
     "session-idle.js",  # proxies Continue to the real resume/start buttons
     "xp-charts.js",  # both graphs; xp-panel.js reads its helpers at load
+    "xp-target-drag.js",  # click / drag the course graph to set the target
     "xp-panel.js",
     # Basic mode (2026-08-23). styles/practice/basic-mode.css hides the felt-
     # difficulty rating; this file is what still commits the attempt to mastery
