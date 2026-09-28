@@ -122,6 +122,14 @@ window.DD_NOTEBOOKS = {
       "subtopic_key": "Delta Drills: How this app works",
       "file": "dd-1-what-this-app-is--and-the-math-behind-it.ipynb",
       "problems": 0
+    },
+    {
+      "id": "lc-1",
+      "title": "LeetCode Patterns",
+      "topic": "LeetCode",
+      "subtopic_key": "LeetCode: Patterns",
+      "file": "lc-1-leetcode-patterns.ipynb",
+      "problems": 0
     }
   ],
   "subtopics": {
@@ -139,6 +147,7 @@ window.DD_NOTEBOOKS = {
     "PyTorch: ar-00": "ar-00",
     "PyTorch: ar-01": "ar-01",
     "PyTorch: ar-02": "ar-02",
-    "Delta Drills: How this app works": "dd-1"
+    "Delta Drills: How this app works": "dd-1",
+    "LeetCode: Patterns": "lc-1"
   }
 };
