@@ -226,6 +226,8 @@
     award: () => refreshSoon(),
     refresh,
     setTarget,
+    /** `tz_offset=…&tz_name=…` for any per-day read (practice/xp-group-view.js). */
+    tzQuery,
     summary: () => summary,
     state: () => (summary ? { level: summary.level, into: summary.into, need: summary.need } : null),
     reload: () => {

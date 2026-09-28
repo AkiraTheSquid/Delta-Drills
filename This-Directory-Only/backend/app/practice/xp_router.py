@@ -2,7 +2,8 @@
 
 The numbers are `app/learning_xp.py`'s; this file only reads the learner's
 time zone and stores their target. The Learner Home XP panel and the topbar
-level pill both read GET /xp.
+level pill both read GET /xp; the Learner Home's group view reads
+GET /groups/xp, every member's summary (app/group_xp.py).
 """
 from __future__ import annotations
 
@@ -11,10 +12,12 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
-from app import learning_xp
+from app import group_xp, learning_xp
 from app.adaptive import get_user_state, save_user_state
 from app.auth import get_current_user
+from app.db import get_db
 from app.models import User
 from app.study_group_progress import zone_for
 from app.study_groups import GroupError
@@ -64,3 +67,15 @@ def set_xp_target(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     save_user_state(str(user.id))
     return learning_xp.summary(state, zone)
+
+
+@router.get("/groups/xp")
+def groups_xp(
+    tz_offset: int = Query(0, ge=-960, le=960),
+    tz_name: Optional[str] = Query(None, max_length=64),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Every member's `/xp` summary, for the Learner Home's group view
+    (app/group_xp.py). `{group: null}` when the caller is in no group."""
+    return group_xp.read_group_xp(db, user, _zone(tz_offset, tz_name))

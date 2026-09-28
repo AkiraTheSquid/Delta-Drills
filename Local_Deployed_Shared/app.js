@@ -105,8 +105,6 @@ const renamedTabs = {
      bookmark — land on Practice, where that survey is asked. */
   diagnostic: "practice",
   placement: "practice",
-  /* Groups were removed on 2026-09-26; a stale tab name lands on Practice. */
-  groups: "practice",
 };
 
 const switchTab = (tabName, opts) => {
@@ -197,6 +195,19 @@ const switchTab = (tabName, opts) => {
     if (typeof window.deltaInitConceptGraph === "function") initConceptGraph();
     else window.addEventListener("load", initConceptGraph, { once: true });
   }
+  /* The Groups roster is read on ARRIVAL and at no other time. Somebody
+     joining is the only thing that changes it, and a page that polled would
+     be a request per open tab per interval for a list that changes once a
+     week. The group is kept in memory, so the next arrival paints before its
+     read comes back.
+
+     🔴 LEAVING IS NOT A NO-OP. The member rows hold a live three-state
+     checklist, a ProseMirror editor with a half-second save debounce.
+     `suspend()` tears it down, and the teardown is what FLUSHES the
+     debounce — without it, typing a line and immediately clicking another
+     tab loses the line, silently. */
+  if (tabName === "groups") window.DDGroups?.refresh();
+  else window.DDGroups?.suspend?.();
   // Concept Chat mounts lazily (it imports a 387 KB bundle) and re-fits its
   // height to the viewport on every arrival. conceptual/conceptual_chat.js.
   if (tabName === "concept-chat") window.DDConceptualChat?.open();
@@ -464,8 +475,10 @@ window.apiFetch = apiFetch;
 /* 🔴 PUBLISHED FOR THE SAME REASON, and only these two facts.
 
    `isSignedIn` and `authEmail` are top-level bindings in this classic script,
-   so other scripts (about-page-editor.js, conceptual/conceptual_chat.js)
-   cannot see them: whether this is an account, and who it is.
+   so other scripts (groups/groups_store.js, about-page-editor.js,
+   conceptual/conceptual_chat.js) cannot see them: whether this is an account
+   (a guest's /api/practice/groups/* call would be a 401 per boot), and who
+   it is.
 
    A FUNCTION for the email, not the value. `authEmail` is reassigned by
    setAuthState on every sign-in and sign-out; a snapshot taken here would be
@@ -755,7 +768,18 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
 // argument for the app assumed the visitor wanted to read one. #page-welcome
 // offers that path and the other one, says which is optional, and shows
 // nothing else.
-switchTab(soloTab || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
+/* A group invite in the address bar is somebody who just clicked a link a
+   friend sent them, and every other landing rule would drop them on the
+   Learner Home with the token still in the URL and nothing saying what it
+   was for. It sits under `soloTab` because a pathname deep link is an
+   explicit request for one chromeless page, and above the rest because
+   nothing else here was asked for by the person arriving.
+
+   Reading it does NOT consume it: groups/groups_store.js clears the
+   parameter only once the join has actually happened, so a reload before
+   then still lands here. */
+const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "groups" : "";
+switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
 // Auth is the Continue-with-Google button rendered into the guest banner by
