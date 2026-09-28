@@ -8887,7 +8887,7 @@ def solve(x,k,s,p):
     peak=x.max(dim=3,keepdim=True)[0].max(dim=2,keepdim=True)[0]
     return (x==peak).to(x.dtype)
 ",85,
-PyTorch,ar-00,"Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the first value of xs, or fallback when xs is empty. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8895,13 +8895,13 @@ def solve(xs,fallback):
         return fallback
     return xs[0]
 ",25,
-PyTorch,ar-00,"Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return xs when fallback is zero, otherwise return a one-item list containing fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
     return xs if fallback==0 else [fallback]
 ",30,
-PyTorch,ar-00,"Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the sum of xs, using a loop. Empty lists total zero. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8910,19 +8910,19 @@ def solve(xs,fallback):
         total += value
     return total
 ",35,
-PyTorch,ar-00,"Return squares of positive values in xs, in original order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return squares of positive values in xs, in original order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
     return [value*value for value in xs if value>0]
 ",40,
-PyTorch,ar-00,"Return the last item when xs is nonempty, otherwise fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the last item when xs is nonempty, otherwise fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
     return xs[-1] if len(xs)>0 else fallback
 ",45,
-PyTorch,ar-00,"Return the sum of all positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the sum of all positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8932,13 +8932,13 @@ def solve(xs,fallback):
             total += value
     return total
 ",45,
-PyTorch,ar-00,"Return a list replacing negative items with fallback, preserving other items and order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return a list replacing negative items with fallback, preserving other items and order. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
     return [fallback if value<0 else value for value in xs]
 ",55,
-PyTorch,ar-00,"Return the product of all items. The empty product is one; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the product of all items. The empty product is one; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8947,7 +8947,7 @@ def solve(xs,fallback):
         product *= value
     return product
 ",55,
-PyTorch,ar-00,"Return the first positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the first positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8957,7 +8957,7 @@ def solve(xs,fallback):
             answer=value
     return fallback if answer is None else answer
 ",65,
-PyTorch,ar-00,"Return the last positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the last positive item, or fallback if none exists. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8967,7 +8967,7 @@ def solve(xs,fallback):
             answer=value
     return fallback if answer is None else answer
 ",65,
-PyTorch,ar-00,"Return items strictly greater than the average of xs, in original order. Empty input returns an empty list; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return items strictly greater than the average of xs, in original order. Empty input returns an empty list; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8979,7 +8979,7 @@ def solve(xs,fallback):
     mean=total/len(xs)
     return [value for value in xs if value>mean]
 ",65,
-PyTorch,ar-00,"Return the largest item, or fallback for an empty list. Do not assume items are positive. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the largest item, or fallback for an empty list. Do not assume items are positive. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -8989,7 +8989,7 @@ def solve(xs,fallback):
             answer=value
     return fallback if answer is None else answer
 ",65,
-PyTorch,ar-00,"Return the length of the longest uninterrupted run of positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the length of the longest uninterrupted run of positive items; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -9001,7 +9001,7 @@ def solve(xs,fallback):
             best=current
     return best
 ",65,
-PyTorch,ar-00,"Return the value nearest to fallback; ties choose the earliest item. Empty input returns fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the value nearest to fallback; ties choose the earliest item. Empty input returns fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -9011,7 +9011,7 @@ def solve(xs,fallback):
             best=value
     return fallback if best is None else best
 ",75,
-PyTorch,ar-00,"Return how many times xs changes sign between consecutive nonzero values. Zeros are ignored, not separators; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return how many times xs changes sign between consecutive nonzero values. Zeros are ignored, not separators; ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):
@@ -9024,7 +9024,7 @@ def solve(xs,fallback):
             previous=value
     return changes
 ",80,
-PyTorch,ar-00,"Return the maximum prefix sum, including the empty prefix with sum zero. Ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
+Python,Getting started,"Return the maximum prefix sum, including the empty prefix with sum zero. Ignore fallback. xs: list of integers, possibly empty; fallback: integer. Return the described Python value.","import torch as t
 import einops
 
 def solve(xs,fallback):

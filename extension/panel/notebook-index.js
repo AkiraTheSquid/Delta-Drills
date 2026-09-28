@@ -25,7 +25,7 @@ window.DD_NOTEBOOKS = {
       "topic": "Python",
       "subtopic_key": "Python: Getting started",
       "file": "py-0-python-you-need-first.ipynb",
-      "problems": 110
+      "problems": 123
     },
     {
       "id": "np-1",
@@ -97,7 +97,7 @@ window.DD_NOTEBOOKS = {
       "topic": "PyTorch",
       "subtopic_key": "PyTorch: ar-00",
       "file": "ar-00-arena-0-0---tensor-reasoning.ipynb",
-      "problems": 93
+      "problems": 80
     },
     {
       "id": "ar-01",
