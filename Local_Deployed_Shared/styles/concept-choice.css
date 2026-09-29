@@ -3,12 +3,21 @@
    and its not-ready dialog (../practice/concept-choice.js, Seth
    2026-09-28).
 
-   Each row's bar IS the topbar concept pill (styles/concept-pill.css):
-   same markup, same two text layers, same fill, driven by the same
-   `--dd-concept-pct`. Here it is only resized to the row — the pill's
-   own width (a third of the viewport) belongs to the topbar. The
-   `.concept-choice` prefix outranks the pill's single-class rules,
-   including its narrow-screen width.
+   A LEDGER, NOT A STACK OF PILLS (Seth, 2026-09-28, on v1 — a full
+   topbar pill per row with the name written on the fill: "this just doesn't
+   look that good"). v1 broke the home's own rules (styles/xp-panel.css:
+   one ink per job, numerals in Instrument Serif): names cut mid-word by the
+   fill's seam and by the ellipsis, the AI's row boxed while the rest floated,
+   and two outlined tags in two more colours. Now each row is
+       [AI pick · Paused · continue]            eyebrow, only when it applies
+       Name, on as many lines as it needs  57   serif figure, / 80 under it
+       lesson · not tried yet             / 80
+       ━━━━━━━━━━━━━━━━━━━━━━━──────────        the meter
+   The meter is still the topbar concept pill (styles/concept-pill.css) —
+   its tinted track, hairline border, round ends and violet→cyan fill —
+   slimmed to 6px, so the bar Seth asked for is recognisably the same one
+   and no word ever sits on a seam. Rows are divided by hairlines; the AI's
+   pick is set apart by a faint wash and its cyan eyebrow, nothing louder.
 
    Token-first, no hex (styles/watch.py).
    ================================================================ */
@@ -17,101 +26,166 @@
 .concept-choice {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   min-width: 0;
 }
+/* The heading runs into a hairline: the list is the second way in, under
+   the red button, and reads as a section of the column rather than a card. */
 .concept-choice-head {
+  align-items: center;
   color: var(--white);
+  display: flex;
   font-size: 15px;
   font-weight: 600;
+  gap: 12px;
   letter-spacing: -0.005em;
   margin: 0;
+}
+.concept-choice-head::after {
+  border-top: 1px solid var(--border);
+  content: "";
+  flex: 1;
 }
 .concept-choice-note {
   color: var(--muted);
   font-size: 12.5px;
-  margin: 0 0 6px;
+  line-height: 1.45;
+  margin: 4px 0 10px;
 }
 
 .cc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   list-style: none;
-  margin: 0;
+  margin: 0 -10px;
   padding: 0;
 }
+.cc-item + .cc-item .cc-row::before {
+  border-top: 1px solid var(--border);
+  content: "";
+  left: 10px;
+  position: absolute;
+  right: 10px;
+  top: -1px;
+}
 .cc-row {
+  align-items: baseline;
+  animation: cc-row-in 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--cc-i, 0) * 45ms);
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 12px;
+  border: 0;
+  border-radius: 10px;
   color: var(--text);
+  column-gap: 14px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   font: inherit;
-  gap: 6px;
-  padding: 9px 10px 8px;
+  grid-template-areas:
+    "eyebrow eyebrow"
+    "title   figure"
+    "sub     figure"
+    "bar     bar";
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px 10px 13px;
+  position: relative;
   text-align: left;
+  transition: background 0.14s ease;
   width: 100%;
 }
-.cc-row:hover { background: rgb(var(--tint-rgb) / calc(0.05 * var(--tint-k))); border-color: var(--border); }
-.cc-row:focus-visible { outline: 2px solid var(--xp-to); outline-offset: 1px; }
+@keyframes cc-row-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-row { animation: none; }
+}
+.cc-row.is-ai { background: rgb(var(--tint-rgb) / calc(0.035 * var(--tint-k))); }
+.cc-row:hover { background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k))); }
+/* A washed row needs no hairline against its neighbours. */
+.cc-row.is-ai::before,
+.cc-item:has(.cc-row.is-ai) + .cc-item .cc-row::before { display: none; }
+.cc-row:focus-visible { outline: 2px solid var(--xp-to); outline-offset: -2px; }
 .cc-row:disabled { cursor: progress; opacity: 0.6; }
-/* The AI's pick: a rule down the left in the knowledge ink, nothing louder. */
-.cc-row.is-ai { border-color: var(--border); box-shadow: inset 3px 0 0 var(--xp-to); }
 
-/* The bar: the topbar pill, full row width and a little shorter. `display`
-   too: the TOPBAR's chip is dropped under 620px (concept-pill.css), and a
-   row without its bar is a list of names with no ability on it. */
-.concept-choice .dd-concept {
-  display: inline-grid;
-  flex: none;
-  height: 30px;
-  width: 100%;
-}
-.concept-choice .dd-concept-text {
-  font-size: 13.5px;
-  font-weight: 600;
-  padding: 0 12px;
-}
-
-.cc-meta {
-  align-items: center;
-  color: var(--muted);
+.cc-eyebrow {
   display: flex;
-  flex-wrap: wrap;
-  font-size: 12px;
-  gap: 4px 10px;
-  padding: 0 4px;
+  gap: 10px;
+  grid-area: eyebrow;
+  margin-bottom: 5px;
 }
-.cc-xp {
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
+.cc-flag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.cc-flag--ai { color: var(--xp-to); }
+.cc-flag--continue { color: var(--accent-text); }
+
+.cc-title {
+  color: var(--white);
+  font-size: 14px;
   font-weight: 600;
-}
-.cc-lesson {
+  grid-area: title;
+  line-height: 1.3;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-wrap: pretty;
+}
+.cc-sub {
+  color: var(--muted);
+  font-size: 12px;
+  grid-area: sub;
+  line-height: 1.4;
+  margin-top: 3px;
+  min-width: 0;
+}
+.cc-sub:empty { display: none; }
+
+/* The figure: the home's numeral face (styles/xp-panel.css --xp-display),
+   so the list reads in the same voice as Level, Course and Finish. */
+.cc-figure {
+  align-items: baseline;
+  align-self: center;
+  display: flex;
+  gap: 3px;
+  grid-area: figure;
   white-space: nowrap;
 }
-.cc-tag {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text);
-  font-size: 11px;
-  font-weight: 600;
+.cc-xp {
+  color: var(--white);
+  font-family: var(--xp-display);
+  font-size: 28px;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.01em;
   line-height: 1;
-  padding: 3px 8px;
 }
-.cc-tag--ai { border-color: var(--xp-to); color: var(--xp-to); }
-.cc-tag--continue { border-color: var(--accent); color: var(--accent); }
+.cc-of {
+  color: var(--muted-dim);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The meter: the topbar pill's track and fill (styles/concept-pill.css),
+   6px tall. */
+.cc-bar {
+  background: rgb(var(--tint-rgb) / calc(0.06 * var(--tint-k)));
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  display: block;
+  grid-area: bar;
+  height: 6px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.cc-bar-fill {
+  background: linear-gradient(90deg, var(--accent-2) 0%, var(--xp-to) 100%);
+  display: block;
+  height: 100%;
+  width: var(--cc-pct, 0%);
+}
 
 .cc-error {
   color: var(--warn);
   font-size: 12.5px;
-  margin: 4px 0 0;
+  margin: 8px 0 0;
 }
 .cc-error.hidden { display: none; }
 
