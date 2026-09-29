@@ -66,7 +66,10 @@ def set_course_share(payload: CourseShareRequest, user: User = Depends(get_curre
     if payload.course not in course_registry.COURSE_IDS:
         raise HTTPException(status_code=400, detail=f"Unknown course '{payload.course}'")
     state = get_user_state(str(user.id))
-    course_mix.toggle(state, payload.course, payload.enabled)
+    try:
+        course_mix.toggle(state, payload.course, payload.enabled)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=str(err))
     save_user_state(str(user.id))
     return course_shares(user)
 

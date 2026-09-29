@@ -74,10 +74,30 @@ def normalize_study(courses) -> List[str]:
     return [c for c in COURSE_IDS if c in picked]
 
 
-def course_off_by_study(user_state, course_id: str) -> bool:
-    """The learner answered "which courses?" and left this one out."""
+def studied(user_state) -> List[str]:
+    """The courses practice serves, registry order.
+
+    With an onboarding answer (`study_courses`), that answer. Without one,
+    the Courses tab's ticks: every course switched on. With NOTHING switched
+    on (a learner who never touched the tab), ARENA — the default course.
+
+    🔴 ARENA UNTICKED = NO ARENA (Seth, 2026-09-29). This used to read
+    "never asked → ARENA always in, its tick is only its exercise mix", and a
+    learner who ticked LeetCode alone (ARENA's box empty, never asked) was
+    served ARENA's graph on every non-LeetCode turn — 19 of 30 in a replay of
+    her state; she met a linear algebra drill mid-LeetCode. A tick is what
+    the learner sees, so a tick is what decides."""
     study = getattr(user_state, "study_courses", None)
-    return study is not None and course_id not in study
+    if study is not None:
+        return normalize_study(study)
+    from app import course_mix
+    on = course_mix.enabled_courses(user_state)
+    return on or ["arena"]
+
+
+def course_off_by_study(user_state, course_id: str) -> bool:
+    """This course is not one the learner is studying (`studied`)."""
+    return course_id not in studied(user_state)
 
 
 def course_off(user_state, kc: str) -> bool:
@@ -87,9 +107,10 @@ def course_off(user_state, kc: str) -> bool:
     placement — respects the course choice too, with no second rule.
 
     Two ways a course is out:
-      * `study_courses` (the onboarding "which courses?" question, Seth
-        2026-09-25) is set and leaves it out. This is the ONLY way ARENA's
-        main graph goes off; None = never asked, everything as before.
+      * it is not in `studied` — left out of the onboarding "which
+        courses?" answer (Seth 2026-09-25), or, never asked, left unticked
+        on the Courses tab while another course is ticked. These are the
+        ONLY ways ARENA's main graph goes off.
       * a STANDALONE course whose share is 0 (its Courses tab toggle).
         settings_router keeps the two in step for standalone courses."""
     course_id = course_of(kc)

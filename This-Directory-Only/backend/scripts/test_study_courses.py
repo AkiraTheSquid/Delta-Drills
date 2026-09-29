@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """The onboarding "which courses do you want to study?" answer (2026-09-25).
 
-Covers: `study_courses` = None keeps the old rules (ARENA always in, a
-standalone course only while its share is on); an answered set takes every
+Covers: `study_courses` = None reads the Courses tab's ticks (ARENA only
+when ticked or nothing is — Seth 2026-09-29, a LeetCode-only learner was
+served ARENA); an answered set takes every
 other course's concepts out, ARENA's main graph included; stored placement
 evidence follows it; POST /study-courses and the Courses tab toggle keep the
 set and the shares in step; the save/load round trip.
@@ -50,10 +51,30 @@ check("normalize_study: registry order, unknown dropped",
 
 print("\n--- never asked (study_courses None) ---")
 st = UserPracticeState(user_id="study-none")
-check("ARENA concept on", not kc_prefs.is_disabled(st, ARENA_KC))
+check("nothing ticked: ARENA is the default", not kc_prefs.is_disabled(st, ARENA_KC))
 check("LeetCode off while its share is 0", kc_prefs.is_disabled(st, LC_KC))
 st.course_shares = {"leetcode": 0.4}
 check("LeetCode on once its share is on", not kc_prefs.is_disabled(st, LC_KC))
+# 🔴 Seth 2026-09-29: prod user 9f4b132a — LeetCode ticked, ARENA unticked,
+# never asked — was served ARENA drills (linear algebra) mid-LeetCode.
+check("LeetCode ticked, ARENA unticked: ARENA concept OFF", kc_prefs.is_disabled(st, ARENA_KC))
+row = course_mix.status(st, "arena")
+check("status: unticked ARENA not studied", row["studied"] is False)
+st.course_shares = {"leetcode": 0.4, "arena": 0.4}
+check("both ticked: ARENA on", not kc_prefs.is_disabled(st, ARENA_KC))
+check("both ticked: LeetCode on", not kc_prefs.is_disabled(st, LC_KC))
+st.course_shares = {"arena": 0.4}
+check("ARENA alone ticked: LeetCode off", kc_prefs.is_disabled(st, LC_KC))
+st = UserPracticeState(user_id="study-none-default")
+check("status: default ARENA shows ticked", course_mix.status(st, "arena")["studied"] is True)
+course_mix.toggle(st, "leetcode", True)
+check("first toggle writes down the default ARENA beside LeetCode",
+      st.study_courses == ["arena", "leetcode"])
+try:
+    course_mix.toggle(UserPracticeState(user_id="study-none-last"), "arena", False)
+    check("unticking the default ARENA with nothing else refused", False)
+except ValueError:
+    check("unticking the default ARENA with nothing else refused", True)
 
 print("\n--- answered: LeetCode only ---")
 st = UserPracticeState(user_id="study-lc")
@@ -106,11 +127,71 @@ check("enabling ARENA studies it again", state.study_courses == ["arena", "leetc
 check("ARENA concept on after toggle", not kc_prefs.is_disabled(state, ARENA_KC))
 router.set_course_share(CourseShareRequest(course="arena", enabled=False), user=user)
 state = adaptive.get_user_state("router-user")
-check("ARENA mix off keeps ARENA studied", "arena" in state.study_courses)
+check("ARENA unticked stops studying it", state.study_courses == ["leetcode"])
+check("ARENA concept off after untick", kc_prefs.is_disabled(state, ARENA_KC))
+try:
+    router.set_course_share(CourseShareRequest(course="leetcode", enabled=False), user=user)
+    check("unticking the last course refused", False)
+except HTTPException as e:
+    check("unticking the last course refused", e.status_code == 400 and "at least one" in str(e.detail))
+state = adaptive.get_user_state("router-user")
+check("refused untick changed nothing",
+      state.study_courses == ["leetcode"] and course_mix.share(state, "leetcode") > 0)
+router.set_course_share(CourseShareRequest(course="arena", enabled=True), user=user)
 router.set_course_share(CourseShareRequest(course="leetcode", enabled=False), user=user)
 state = adaptive.get_user_state("router-user")
 check("LeetCode off stops studying it", state.study_courses == ["arena"])
 check("LeetCode concept off", kc_prefs.is_disabled(state, LC_KC))
+
+print("\n--- the queue never serves an unticked course ---")
+import datetime  # noqa: E402
+from app import questions  # noqa: E402
+from app.adaptive import AttemptRecord  # noqa: E402
+from app.practice import question_pick  # noqa: E402
+questions.get_all_questions()
+
+
+def served_courses(st, n=30):
+    """Serve-and-answer n drills (a wrong answer each, so the course mix's
+    turn keeps moving); the set of courses they belonged to."""
+    seen = set()
+    for i in range(n):
+        picked, _ = question_pick.run_queue("", st, None, None, record=False)
+        if not picked:
+            break
+        q = picked[1]
+        seen |= {course_registry.course_of(k) for k in kc_graph.question_kcs(q.id)}
+        sub = st.get_subtopic_state(q.subtopic)
+        sub.served_question_ids.append(q.id)
+        sub.history.append(AttemptRecord(
+            question_id=q.id, subtopic=q.subtopic, difficulty_score=q.difficulty_score or 20,
+            grade=0.0, correct=False,
+            timestamp=(datetime.datetime(2026, 9, 29) + datetime.timedelta(minutes=i)).isoformat()))
+    return seen
+
+
+st = UserPracticeState(user_id="her-replay")
+st.course_shares = {"leetcode": 0.4}
+got = served_courses(st)
+check("her state (LeetCode ticked, never asked): only LeetCode served", got == {"leetcode"}, str(got))
+# The backstop: an upstream path that forgets the course switch (simulated by
+# blinding kc_prefs.is_disabled) still cannot get an ARENA drill out.
+real = kc_prefs.is_disabled
+kc_prefs.is_disabled = lambda *_a, **_k: False
+try:
+    st = UserPracticeState(user_id="her-replay-blind")
+    st.course_shares = {"leetcode": 0.4}
+    got = served_courses(st)
+    check("upstream filter blinded: backstop still serves only LeetCode", got == {"leetcode"}, str(got))
+finally:
+    kc_prefs.is_disabled = real
+st = UserPracticeState(user_id="arena-replay")
+st.course_shares = {"arena": 0.4}
+got = served_courses(st)
+check("ARENA alone ticked: only ARENA served", got == {"arena"}, str(got))
+st = UserPracticeState(user_id="default-replay")
+got = served_courses(st)
+check("nothing ticked: ARENA served (the default)", got == {"arena"}, str(got))
 
 print("\n--- save / load ---")
 adaptive.write_state_file(state)

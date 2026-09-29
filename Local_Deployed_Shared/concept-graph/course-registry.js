@@ -93,9 +93,11 @@
       label: "ARENA",
       eyebrow: "AI safety, hands-on",
       detailKind: "arena",
-      // Its concepts are the main graph whether or not this is on; on, a
-      // share of drills comes from its own exercises before the gate.
-      toggleLabel: "Mix its exercises into practice",
+      // Ticked = practice serves ARENA (Seth, 2026-09-29: unticked means
+      // none of it, not "graph yes, exercise mix no" — a LeetCode-only
+      // learner was served linear algebra). On, a share of its drills also
+      // comes from its own exercises before the gate.
+      toggleLabel: "Add to practice",
       milestoneKcs: loadArenaKcs,
     },
     {

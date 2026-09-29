@@ -203,21 +203,26 @@ def order(user_state, kcs: Iterable[str]) -> List[str]:
 
 
 def toggle(user_state, course_id: str, enabled: bool) -> None:
-    """The Courses tab toggle. Enabling sets the fixed share and, with an
-    answered study set, studies the course (for ARENA, the only way back in
-    after leaving it out at onboarding); switching a standalone course off
-    stops studying it. Switching ARENA's MIX off leaves ARENA studied — its
-    concepts are the main graph."""
+    """The Courses tab toggle: the tick IS "practice serves this course",
+    ARENA included (Seth, 2026-09-29 — see course_registry.studied).
+    Enabling sets the fixed share and studies the course; disabling zeroes
+    the share and stops studying it. The first toggle of a learner never
+    asked "which courses?" writes down the set they were being served, so
+    ticking LeetCode beside a default ARENA keeps ARENA.
+
+    Raises ValueError when the toggle would leave no course at all."""
+    study = set(course_registry.studied(user_state))
+    if enabled:
+        study.add(course_id)
+    else:
+        study.discard(course_id)
+    study = course_registry.normalize_study(study)
+    if not study:
+        raise ValueError("Keep at least one course in practice — tick another course first.")
     shares = dict(user_state.course_shares or {})
     shares[course_id] = DEFAULT_ENABLE_SHARE if enabled else 0.0
     user_state.course_shares = shares
-    if user_state.study_courses is not None:
-        study = set(user_state.study_courses)
-        if enabled:
-            study.add(course_id)
-        elif course_id != "arena":
-            study.discard(course_id)
-        user_state.study_courses = course_registry.normalize_study(study)
+    user_state.study_courses = study
 
 
 def set_study(user_state, picked: List[str]) -> None:
@@ -245,8 +250,9 @@ def status(user_state, course_id: str) -> dict:
         "course": course_id,
         "share": s,
         "enabled": s > 0.0,
-        # In the learner's study set (course_registry.course_off): with no
-        # onboarding answer, ARENA always and a standalone course while on.
+        # Practice serves it (course_registry.course_off) — what the Courses
+        # tab's tick shows. With no onboarding answer, the ticked courses, or
+        # ARENA alone when nothing is ticked.
         "studied": not course_registry.course_off_by_study(user_state, course_id)
         and (course_id == "arena" or s > 0.0),
         "scope": getattr(user_state, "practice_target", "all") if course_id == "arena" else "all",

@@ -211,8 +211,9 @@ class UserPracticeState:
     course_shares: Dict[str, float] = field(default_factory=dict)
     # The courses the learner said they want to study (the onboarding "which
     # courses?" question, 2026-09-25); course_registry.course_off takes every
-    # other course's concepts out. None = never asked: every course is in as
-    # before (ARENA always, a standalone course while its share is > 0).
+    # other course's concepts out. None = never asked: the ticked courses
+    # (share > 0) are in, ARENA alone when nothing is ticked — never ARENA
+    # beside an unticked box (course_registry.studied, 2026-09-29).
     study_courses: Optional[List[str]] = None
     # The learner's XP goal (app/learning_xp.py): {"mode": "date", "date":
     # ISO} to finish the course by a day, {"mode": "daily", "daily": n} for a
