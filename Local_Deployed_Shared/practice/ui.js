@@ -852,7 +852,9 @@ function renderFailedTests(result, question) {
     return `✗ failing case ${i + 1}:\n    expected: ${_escapeHtml(clip(t.expected))}\n    got:      ${_escapeHtml(clip(t.actual))}`;
   });
   block.innerHTML =
-    `<div class="failed-tests-title">Failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}${id ? ` · ID ${_escapeHtml(id)}` : ""}</div>` +
+    // "Submitted answer": a ▶ after the grade paints its own cases above this
+    // block (test-check.js), and the two must not read as the same run.
+    `<div class="failed-tests-title">Submitted answer failed ${result.failed_tests.length} of ${total} test case${total === 1 ? "" : "s"}${id ? ` · ID ${_escapeHtml(id)}` : ""}</div>` +
     `<pre class="failed-tests-body">${rows.join("\n")}</pre>`;
   // Whose failures these are, so a later render of a DIFFERENT question can
   // tell a stale block from its own (see renderQuestion).
