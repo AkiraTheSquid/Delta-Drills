@@ -71,6 +71,16 @@ def check_front_door():
         assert ref.startswith("aisc-") and f'id="{ref}"' in aisc, (
             f'href="#{ref}" in the write-up points at no aisc- section'
         )
+    # A link to another PAGE is a root-relative pathname (deep-link.js moves the
+    # app in place). One segment only — every asset url here is relative, so
+    # `/about/x` would break the page — and it must name a route, or the click
+    # reloads the app onto the landing page instead.
+    link_js = _read(os.path.join(HERE, "deep-link.js"))
+    for path in re.findall(r'href="/([^"]*)"', aisc):
+        assert re.fullmatch(r"[a-z0-9-]+", path) and (
+            f'  {path}: "' in link_js or f'"{path}": ' in link_js
+            or f'["{path}", "aisc-' in link_js or re.fullmatch(r"arena-\d+-\d+", path)
+        ), f'href="/{path}" in the write-up is not a deep-link.js route'
     # The styles are scoped and loaded after the app's own, and the figures are
     # booted lazily AFTER cytoscape + dagre (vendor/graph/, deferred).
     assert 'href="aisc/aisc.css' in index_html, "aisc/aisc.css is not linked"

@@ -6,40 +6,27 @@
   const SOLO_CLASS = "dd-solo";
   const READY_CLASS = "dd-solo-ready";
 
-  // Public URL slug -> existing internal tab/page id. Slugs match without case
-  // or an optional .html suffix; values stay identical to data-tab/page-*.
-  const ROUTES = Object.freeze({
-    "learn-about-app": "learn-about-app",
-    // Legacy slugs. "Why This App Exists" and "How to use it" were two tabs
-    // until 2026-08-23 and both were linkable pathnames; they are one page
-    // now, and a link that used to open one of them still opens it.
-    "why-this-app": "learn-about-app",
-    "how-to-use": "learn-about-app",
-    "knowledge-graph": "knowledge-graph",
-    // The placement test's old public pathname. The test was retired on
-    // 2026-09-26 (the Practice tab's survey replaced it); a saved link to it
-    // lands on Practice, where that survey is.
-    diagnostic: "practice",
-    "split-tool": "split-tool",
-    account: "account",
-    courses: "courses",
-    practice: "practice",
-    notebooks: "notebooks",
-    "targeted-practice": "targeted-practice",
-  });
+  /* 🔴 SOLO IS OPT-IN SINCE 2026-09-29. A bare pathname (/knowledge-graph)
+     opens the FULL app on that page now (deep-link.js; Seth chose it over the
+     chromeless view). This one-page, no-navigation view is for embeds and
+     asks for itself: /knowledge-graph?solo=1. The route table is
+     deep-link.js's, so the two can never disagree about what a path names. */
+  const isSolo = () => {
+    try {
+      return new URLSearchParams(global.location?.search || "").get("solo") === "1";
+    } catch (_) {
+      return false;
+    }
+  };
 
-  const pathSlug = () => String(global.location?.pathname || "")
-    .replace(/\.html?$/i, "")
-    .replace(/^\/+|\/+$/g, "")
-    .toLowerCase();
-
-  const read = () => ROUTES[pathSlug()] || "";
+  const read = () => (isSolo() ? global.DDDeepLink?.read?.() || "" : "");
 
   const mountFullAppLink = () => {
     if (document.querySelector(".dd-solo-exit")) return;
     const link = document.createElement("a");
     link.className = "dd-solo-exit";
-    link.href = "/";
+    // The same page, with the navigation back.
+    link.href = global.location?.pathname || "/";
     link.textContent = "Open full app";
     link.title = "Open Delta Drills with full navigation";
     if (global.top !== global.self) {

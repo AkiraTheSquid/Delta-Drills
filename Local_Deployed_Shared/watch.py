@@ -742,24 +742,33 @@ def check_solo_routes():
     solo_css = _read(os.path.join(HERE, "styles", "solo-route.css"))
     vercel = json.loads(_read(os.path.join(HERE, "vercel.json")))
 
-    # Every visible app tab gets a stable pathname spelling. Internal values
-    # remain exact data-tab names so switchTab stays sole page owner.
-    for tab in (
-        "learn-about-app", "knowledge-graph", "split-tool",
-        "account", "courses", "practice", "notebooks", "targeted-practice",
-    ):
-        assert f'data-tab="{tab}"' in index_html, f"missing tab {tab}"
-        assert f'"{tab}"' in solo_js, f"solo-route.js missing route {tab}"
-
-    for legacy in ("why-this-app", "how-to-use"):
-        assert f'"{legacy}": "learn-about-app"' in solo_js, (
-            f"/{legacy} was a linkable pathname before the 2026-08-23 merge and "
-            "must still open the page those two tabs became"
+    # Every page has a pathname (deep-link.js, Seth 2026-09-29): a bare path
+    # opens the FULL app there; `?solo=1` is the chromeless embed view. A page
+    # with no route is a page nobody can link to.
+    link_js = _read(os.path.join(HERE, "deep-link.js"))
+    pages = set(re.findall(r'id="page-([a-z-]+)"', index_html)) | {"targeted-practice"}
+    for page in sorted(pages - {"offset", "offset-field"}):
+        named = {"learn-about-app": "ABOUT_TAB", "arena-notebook": "ARENA_TAB"}
+        assert f': "{page}"' in link_js or f": {named.get(page)}," in link_js, (
+            f"deep-link.js has no pathname for #page-{page}"
         )
-
+    for legacy in ("why-this-app", "how-to-use", "how-it-works"):
+        assert f'["{legacy}", "aisc-' in link_js, (
+            f"/{legacy} is a published link to the About page and must still "
+            "open its place on it"
+        )
+    assert '.get("solo") === "1"' in solo_js and '"solo") === "1"' in index_html, (
+        "solo (chromeless) mode is opt-in with ?solo=1; a bare path is the full app"
+    )
     assert 'classList.add("dd-solo")' in index_html, (
         "index.html must stamp solo mode before paint"
     )
+    link_pos = index_html.find('src="deep-link.js')
+    assert 0 <= link_pos < index_html.find('src="solo-route.js'), (
+        "deep-link.js must load before solo-route.js (solo reads its routes)"
+    )
+    for hook in ("DDDeepLink?.read", "DDDeepLink?.onSwitch", "DDDeepLink?.boot"):
+        assert hook in app_js, f"app.js no longer calls {hook}"
     css_pos = index_html.find('href="styles/solo-route.css')
     responsive_pos = index_html.find('href="styles/responsive.css')
     assert css_pos > responsive_pos >= 0, (
@@ -768,9 +777,7 @@ def check_solo_routes():
     route_pos = index_html.find('src="solo-route.js')
     app_pos = index_html.find('src="app.js')
     assert 0 <= route_pos < app_pos, "solo-route.js must load before app.js"
-    assert "DDSoloRoute?.read" in app_js and "DDSoloRoute?.apply" in app_js, (
-        "app.js no longer boots + confirms pathname routes"
-    )
+    assert "DDSoloRoute?.apply" in app_js, "app.js no longer confirms solo routes"
     assert 'window.addEventListener("load", initConceptGraph' in app_js, (
         "direct Knowledge Graph boot must retry after deferred graph scripts load"
     )

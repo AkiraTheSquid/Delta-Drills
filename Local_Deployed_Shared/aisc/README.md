@@ -64,7 +64,11 @@
 ## Invariants & Constraints
 - Every id in the write-up is `aisc-` prefixed; every in-page `href="#…"` names
   one (checked in `../watch_front_door.py`). Links scroll via JS, never set
-  `location.hash`.
+  `location.hash`; the address bar gets the section's PATH instead
+  (`/about-placement`, `/the-case` — `../deep-link.js`).
+- A link to another app page is a root-relative, one-segment path
+  (`href="/knowledge-graph"`) that `../deep-link.js` knows; also checked in
+  `../watch_front_door.py`. Article 1's words stay verbatim — links only wrap them.
 - Tokens must stay `#rrggbb` hex: `AISC.rgb01` parses them for colour mixing
   (Fig. 5 nodes, lesson colours).
 - Never un-nest a rule out of `#aisc-root`: the site's `.card`/`.btn`/`.note`/
@@ -193,3 +197,6 @@
   `#aisc-articles`.
 - 2026-09-25: Figs. 3/5/6 nodes are the standalone site's circles again, filled
   red → green by P(known); arrows/highlight stay why-graph's. See js/README.md.
+- 2026-09-29: Deep links — every article/section has a path (`/why-this-app`,
+  `/how-it-works`, `/about-<x>`); ~28 in-prose links to the pages and sections
+  the text explains. `articles.js` reports link clicks to `DDDeepLink.onAbout`.

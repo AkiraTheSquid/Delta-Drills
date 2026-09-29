@@ -7,13 +7,28 @@
   <!-- delta-drills.vercel.app → deltadrills.com, carrying localStorage across.
        FIRST and SYNCHRONOUS: it may stop the page before anything else reads
        storage on the wrong origin. See domain-move.js. -->
+  <!-- 🔴 NO TRAILING SLASH, BEFORE ANY RELATIVE URL LOADS. Every src/href
+       here is relative, and vercel.json serves this page at ANY path, so at
+       /practice/ the next line would ask for /practice/domain-move.js (and get
+       this page back). Deep links are one segment (deep-link.js); strip the
+       slash and reload before a single asset is requested. -->
+  <script>
+    try {
+      if (/.\/+$/.test(location.pathname)) {
+        location.replace(location.pathname.replace(/\/+$/, "") + location.search + location.hash);
+      }
+    } catch (e) {}
+  </script>
   <script src="domain-move.js?v=1"></script>
-  <!-- Stamp deep links before first paint. solo-route.js confirms known paths
-       after app.js has selected the requested page; unknown paths remove it. -->
+  <!-- Stamp the CHROMELESS view before first paint. A bare pathname
+       (/knowledge-graph) is the full app on that page (deep-link.js); only
+       ?solo=1 asks for one page with no navigation. solo-route.js confirms
+       known paths after app.js has selected the page; unknown ones remove it. -->
   <script>
     try {
       const path = location.pathname.replace(/\.html?$/i, "").replace(/^\/+|\/+$/g, "");
-      if (path) document.documentElement.classList.add("dd-solo");
+      const solo = new URLSearchParams(location.search).get("solo") === "1";
+      if (path && solo) document.documentElement.classList.add("dd-solo");
     } catch (e) {}
   </script>
   <!-- Embedded/maximized practice view: when this page is loaded inside the
@@ -864,20 +879,20 @@
           <p class="kicker">Article 1</p>
           <h2>Why this app exists</h2>
           <div class="prose">
-            <p>Delta Drills is an <strong>intelligent tutoring system</strong> that serves the learner LeetCode-style problems to train PyTorch prerequisites specifically for the AI-safety <strong>ARENA</strong> curriculum. Given that it is an intelligent tutoring system, there are three markers that distinguish it in value from something like LeetCode or Khan Academy (or simply prompting ChatGPT or Claude as a tutor).</p>
+            <p>Delta Drills is an <strong>intelligent tutoring system</strong> that serves the learner LeetCode-style problems to train PyTorch prerequisites specifically for the AI-safety <a href="/courses"><strong>ARENA</strong> curriculum</a>. Given that it is an intelligent tutoring system, there are three markers that distinguish it in value from something like LeetCode or Khan Academy (or simply prompting ChatGPT or Claude as a tutor).</p>
           </div>
         </div>
         <div class="tile">
           <h3>It is personalized, and AI-paced (as opposed to self-paced)</h3>
           <div class="prose">
-            <p>The app maintains a student model that estimates a student's strengths and weaknesses as they work. It then serves them the right concept at the right level of difficulty and scaffolding. Students move on from a concept when they have mastered it, rather than after they run out of time in a course where time conditions dictate keeping up with everyone else in your cohort (as with any in-person program).</p>
+            <p>The app maintains a <a href="#aisc-how">student model</a> that estimates a student's strengths and weaknesses as they work. It then serves them the right concept at the right level of difficulty and scaffolding. Students move on from a concept when they have mastered it, rather than after they run out of time in a course where time conditions dictate keeping up with everyone else in your cohort (as with any in-person program).</p>
           </div>
         </div>
         <div class="tile">
           <h3>It eliminates decision fatigue of choosing content, while preserving human connection</h3>
           <div class="prose">
             <p>For this MVP, I target PyTorch, but these principles apply just as well to all the other concepts necessary for ARENA prerequisites (and beyond, to ARENA itself). In order to prepare for ARENA, the learner is left with prioritizing learning linear algebra, calculus, information theory, and neural networks, all before even touching the curriculum. Self-diagnosing and practicing the right concepts with the right investment becomes irrelevant if one has a tool that does all of that automatically. There are no modules to click on like one has with Khan Academy.</p>
-            <p>For the ARENA curriculum itself, one may wonder how this would align with a linear 8-week program. It doesn't. Or rather, not without adjustment. My vision is to give the option to go through the ARENA curriculum with Delta Drills driving it all. Interacting with other humans is also valuable, however, which is why I designed a path that syncs well with the in-person program. The curriculum already serves up suggested time limits for working on problems. If a learner spends 15 minutes on a problem they struggled with, they should spend time later shoring up the concepts that made it hard. Delta Drills queues that practice for them, so they keep pace with the cohort and the gaps still get closed.</p>
+            <p>For the ARENA curriculum itself, one may wonder how this would align with a linear 8-week program. It doesn't. Or rather, not without adjustment. My vision is to give the option to go through the ARENA curriculum with Delta Drills driving it all. Interacting with <a href="/groups">other humans</a> is also valuable, however, which is why I designed a path that syncs well with the in-person program. The curriculum already serves up suggested time limits for working on problems. If a learner spends 15 minutes on a problem they struggled with, they should spend time later shoring up the concepts that made it hard. Delta Drills <a href="#aisc-modes">queues that practice for them</a>, so they keep pace with the cohort and the gaps still get closed.</p>
           </div>
         </div>
         <div class="tile">
@@ -895,9 +910,9 @@
           <div class="prose"><p>You will spend nearly all of your time on the second one.</p></div>
         </div>
         <div class="cols">
-          <div class="card"><span class="tag">Step 1</span><h4>Tell it where you are starting</h4><p>Pick your courses, then answer five quick questions on the Practice tab about what you have done before: PyTorch, einops, linear algebra, neural nets. Each answer sets a starting estimate for that area, so the first problems are pitched near your level instead of at the very beginning. Your answers take over from there.</p></div>
-          <div class="card"><span class="tag">Step 2</span><h4>Live on the Practice tab</h4><p>Day to day, the Practice tab is the whole app. Open it and solve what it gives you. You do not pick topics or track what is due, and you do not decide when you are done with a concept; the app works that out from your answers. This is where you spend most of your time, and there is nothing else you need to manage.</p></div>
-          <div class="card"><span class="tag">Step 3</span><h4>Then ARENA itself</h4><p>Whenever you are ready, the app brings you over to the ARENA curriculum itself, landing you on the exact coding problem for the ARENA exercise you are ready for. That handoff is the point of everything before it.</p></div>
+          <div class="card"><span class="tag">Step 1</span><h4>Tell it where you are starting</h4><p><a href="/courses">Pick your courses</a>, then answer five quick questions on the <a href="/practice">Practice tab</a> about what you have done before: PyTorch, einops, linear algebra, neural nets. Each answer sets a starting estimate for that area, so the first problems are pitched near your level instead of at the very beginning. Your answers take over from there.</p></div>
+          <div class="card"><span class="tag">Step 2</span><h4>Live on the Practice tab</h4><p>Day to day, the <a href="/practice">Practice tab</a> is the whole app. Open it and solve what it gives you. You do not pick topics or track what is due, and you do not decide when you are done with a concept; the app works that out from your answers. This is where you spend most of your time, and there is nothing else you need to manage.</p></div>
+          <div class="card"><span class="tag">Step 3</span><h4>Then ARENA itself</h4><p>Whenever you are ready, the app brings you over to <a href="/courses">the ARENA curriculum itself</a>, landing you on <a href="#aisc-modes">the exact coding problem</a> for the ARENA exercise you are ready for. That handoff is the point of everything before it.</p></div>
         </div>
       </section>
 
@@ -907,18 +922,19 @@
           <h2>One loop, run against your own frontier</h2>
         </div>
         <div class="cols three">
-          <div class="card"><span class="tag">1</span><h4>You say where you start</h4><p>Five quick questions set a starting estimate for each area; every answer after that replaces the guess with evidence.</p></div>
-          <div class="card"><span class="tag">2</span><h4>It picks the concept</h4><p>The app chooses the next concept to teach you, matched to your current level of mastery.</p></div>
+          <div class="card"><span class="tag">1</span><h4>You say where you start</h4><p><a href="/practice">Five quick questions</a> set a starting estimate for each area; every answer after that replaces the guess with evidence.</p></div>
+          <div class="card"><span class="tag">2</span><h4>It picks the concept</h4><p>The app chooses the next concept to teach you, matched to <a href="/knowledge-graph">your current level of mastery</a>.</p></div>
           <div class="card"><span class="tag">3</span><h4>And picks how to teach it</h4><p>For that concept it serves one of three things: a lesson, a worked example, or practice problems.</p></div>
-          <div class="card"><span class="tag">4</span><h4>Your answer moves the model</h4><p>How you do updates the student model, so the next choice is made on newer evidence than the last one.</p></div>
-          <div class="card"><span class="tag">5</span><h4>The scaffolding fades</h4><p>As you solve problems the model tracks your learning frontier and pulls the support back to match it.</p></div>
-          <div class="card"><span class="tag">6</span><h4>Then the real thing</h4><p>Once you're ready for an ARENA problem, it gives you the ARENA problem.</p></div>
+          <div class="card"><span class="tag">4</span><h4>Your answer moves the model</h4><p>How you do updates the <a href="#aisc-fire">student model</a>, so the next choice is made on newer evidence than the last one.</p></div>
+          <div class="card"><span class="tag">5</span><h4>The scaffolding fades</h4><p>As you solve problems the model tracks your <a href="#aisc-placement">learning frontier</a> and pulls the support back to match it.</p></div>
+          <div class="card"><span class="tag">6</span><h4>Then the real thing</h4><p>Once you're ready for an ARENA problem, it gives you <a href="#aisc-modes">the ARENA problem</a>.</p></div>
         </div>
         <div class="tile">
           <h3>The map underneath: every concept, and what it needs first</h3>
           <div class="prose">
             <p>The app knows the curriculum as a graph: each box is one concept, and an arrow means you need the concept it comes from before the one it points to. That is what lets it tell "you have not learned this yet" apart from "you were never taught the thing underneath it".</p>
             <p><a href="#aisc-fig-graph">See the whole map (Fig. 2, in How it works) →</a></p>
+            <p><a href="/knowledge-graph">Open your own Knowledge graph →</a></p>
           </div>
         </div>
       </section>
@@ -979,9 +995,9 @@
         <div class="chain rv" data-slot="chain">
           <div><b>Safety is talent-constrained at the ramp</b><span>More people want to do technical safety work than can get research-ready quickly.</span><span class="assume">Assumes: oversubscribed programs; long self-study times.</span></div>
           <div><b>The ramp stalls on prerequisites</b><span>Stalls trace to specific, diagnosable gaps upstream of the exercise.</span><span class="assume">Untested: interviews start this autumn.</span></div>
-          <div><b>Delta Drills closes those gaps</b><span>Placement finds the frontier; drills teach only what is missing; review keeps it.</span><span class="assume">Mechanisms in § How it works.</span></div>
-          <div><b>Shorter ramp, fewer drop-outs</b><span>Learners reach ARENA-ready sooner and more of them finish.</span><span class="assume">Measured in the AISC pilot.</span></div>
-          <div><b>More researcher-years, earlier</b><span>Banked before the period when AI research effort dwarfs ours.</span><span class="assume">Fig. 1 makes this explicit.</span></div>
+          <div><b>Delta Drills closes those gaps</b><span><a href="#aisc-placement">Placement</a> finds the frontier; <a href="#aisc-remediation">drills teach only what is missing</a>; <a href="#aisc-spacing">review keeps it</a>.</span><span class="assume">Mechanisms in <a href="#aisc-how">§ How it works</a>.</span></div>
+          <div><b>Shorter ramp, fewer drop-outs</b><span>Learners reach ARENA-ready sooner and more of them finish.</span><span class="assume">Measured in <a href="#aisc-plan">the AISC pilot</a>.</span></div>
+          <div><b>More researcher-years, earlier</b><span>Banked before the period when AI research effort dwarfs ours.</span><span class="assume"><a href="#aisc-fig-effort">Fig. 1</a> makes this explicit.</span></div>
         </div>
       </section>
 
@@ -996,13 +1012,13 @@
           <p class="kicker">How it works</p>
           <h2>An expert tutor's decisions, <em>made by the graph</em>.</h2>
           <div class="prose">
-            <p>The architecture follows Math Academy's published design — a knowledge graph, a student model, a diagnostic, and spaced repetition that understands how skills contain one another. We rebuilt it for a different domain: instead of multiple-choice mathematics, learners write PyTorch that is executed and graded, and the graph is the prerequisite structure of the ARENA curriculum. Every figure below runs the same update rules as the production backend.</p>
+            <p>The architecture follows Math Academy's published design — <a href="/knowledge-graph">a knowledge graph</a>, a <a href="#aisc-fire">student model</a>, <a href="#aisc-placement">a diagnostic</a>, and <a href="#aisc-spacing">spaced repetition</a> that understands <a href="#aisc-fire">how skills contain one another</a>. We rebuilt it for a different domain: instead of multiple-choice mathematics, learners write PyTorch that is executed and graded, and the graph is the prerequisite structure of the ARENA curriculum. Every figure below runs the same update rules as the production backend.</p>
           </div>
         </div>
 
         <div class="tile">
           <h3 id="aisc-modes">Two ways through the same content</h3>
-          <div class="prose"><p><b>Read ARENA in order. Drills patch the gaps.</b> The ARENA notebooks themselves are built into Delta Drills and read section by section, in order; ARENA stays the course. Under every exercise sits one button, e.g. <i>Practice make_rays_1d</i>: it starts a short timed block of drills on the concepts that exercise uses. A miss inside the block pulls drills on that concept's direct prerequisites to the front of the queue. When the block ends, the learner goes back to the notebook.</p></div>
+          <div class="prose"><p><b>Read ARENA in order. Drills patch the gaps.</b> <a href="/courses">The ARENA notebooks themselves are built into Delta Drills</a> and read section by section, in order; ARENA stays the course. Under every exercise sits one button, e.g. <a href="/arena-0-1"><i>Practice make_rays_1d</i></a>: it starts a short timed block of drills on the concepts that exercise uses. A miss inside the block pulls drills on that concept's direct prerequisites to the front of the queue. When the block ends, the learner goes back to the notebook.</p></div>
         </div>
         <div class="modes rv" data-slot="modes">
           <div class="lane lin"><span class="tag">Linear path · ARENA notebooks, in-app</span>
@@ -1026,7 +1042,7 @@
 
         <div class="tile">
           <h3 id="aisc-graph">The knowledge graph</h3>
-          <div class="prose"><p>Each node is a concept a learner can be tested on; each arrow says "you cannot do this without that." Grey nodes are prerequisites, and nodes are coloured by the lesson they belong to. Click any concept to light up everything it depends on and everything that depends on it.</p></div>
+          <div class="prose"><p>Each node is a concept a learner can be tested on; each arrow says "you cannot do this without that." Grey nodes are prerequisites, and nodes are coloured by the lesson they belong to. Click any concept to light up everything it depends on and everything that depends on it.</p><p><a href="/knowledge-graph">Open the full Knowledge graph, coloured by your own mastery →</a></p></div>
         </div>
         <figure class="fig rv" data-about-runtime id="aisc-fig-graph">
           <div class="fig-head"><span class="fig-title">The ARENA prerequisite graph</span><span class="fig-no">Fig. 2 · live data</span></div>
@@ -1097,7 +1113,7 @@
               <div class="legend"><span><i style="background:var(--amber);border-radius:0;width:12px"></i>review = 1 rep</span><span><i style="background:var(--amber);opacity:.55;border-radius:0;width:6px"></i>implicit = <span id="aisc-forget-w">0.3</span> rep</span></div>
             </div>
           </div>
-          <figcaption>Drag the review markers under the plot. Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty); the scheduler reviews when recall drops to 70%. <b>Implicit reviews</b> (thin bars, +0.3 each) are the fractional repetitions a concept gets when a harder concept that encompasses it is practised — see Fig. 5. They count toward its repetitions and lengthen its half-life, so the scheduler waits longer before the next full review. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is Stream 2.</figcaption>
+          <figcaption>Drag the review markers under the plot. Each successful review multiplies the memory's half-life, more when recall had dropped further (desirable difficulty); the scheduler reviews when recall drops to 70%. <b>Implicit reviews</b> (thin bars, +0.3 each) are the fractional repetitions a concept gets when a harder concept that encompasses it is practised — see <a href="#aisc-fig-fire">Fig. 5</a>. They count toward its repetitions and lengthen its half-life, so the scheduler waits longer before the next full review. In <b>Production today</b> mode the half-life stays at 14 days whatever you do, so reviews come at a constant rhythm; the real engine also decays toward the prior rather than to zero. <b>Planned</b> mode is illustrative: the speeds and growth factor are not yet fitted to anyone. Fitting them is <a href="#aisc-plan">Stream 2</a>.</figcaption>
         </figure>
 
         <div class="tile">
@@ -1178,7 +1194,7 @@
         </ol>
         <div class="tile">
           <h3 id="aisc-n-of-1">Case study: one learner's September</h3>
-          <div class="prose"><p>The first learner is the project lead. Below is every graded answer, placement probe and lesson read from September on the ARENA prerequisites, pulled from the production log and scored three ways. It is one person, so it proves nothing about anyone else; what it does show is where the model is wrong, which is where Stream 2 starts.</p></div>
+          <div class="prose"><p>The first learner is the project lead. Below is every graded answer, placement probe and lesson read from September on the ARENA prerequisites, pulled from the production log and scored three ways. It is one person, so it proves nothing about anyone else; what it does show is where the model is wrong, which is where <a href="#aisc-plan">Stream 2</a> starts.</p></div>
         </div>
         <p class="stat" id="aisc-seth-total" data-slot="seth-total">≈48 h studied in the app since Jul 21.</p>
         <figure class="fig rv" data-about-runtime id="aisc-fig-seth">
@@ -1205,7 +1221,7 @@
           <h3 id="aisc-status">Where things stand, honestly</h3>
         </div>
         <div class="cols" data-slot="evidence-log">
-          <div class="card"><span class="tag">Built</span><p>Live app; 14 lessons, 82 concepts, 1,585 drills; engine, placement and remediation; ARENA notebooks in-app.</p></div>
+          <div class="card"><span class="tag">Built</span><p><a href="/practice">Live app</a>; 14 lessons, <a href="/knowledge-graph">82 concepts</a>, 1,585 drills; engine, <a href="#aisc-placement">placement</a> and <a href="#aisc-remediation">remediation</a>; <a href="/courses">ARENA notebooks in-app</a>.</p></div>
           <div class="card"><span class="tag">Users</span><p>EAGx Berkeley: 7–8 people tried it when it wasn't ready (weak content, confusing UX). Since the rebuild, one outside learner, and he chose to do ARENA in Delta Drills instead of Google Colab. That is a commitment, not a compliment, but he is a friend: n = 1, biased. The only sustained user is the author (above).</p></div>
           <div class="card"><span class="tag">Interviews</span><p>None formal yet. Next: the local AI-safety group, then the GEAR online ARENA cohort (Oct–Dec, applying now), where the author works through ARENA inside Delta Drills alongside other learners. Questions are about their last stuck moment, not about the product.</p></div>
         </div>
@@ -1230,7 +1246,7 @@
         <div>
           <p class="kicker">AI Safety Camp 12 · Project proposal · Virtual, Jan–Apr 2027</p>
           <h1>Get researchers <span class="delta">ARENA-ready</span> in weeks, not months.</h1>
-          <p class="lede">Delta Drills is an adaptive tutor for the prerequisites of AI safety research engineering. It maps what a learner already knows onto a knowledge graph of the ARENA curriculum, teaches only what is missing, and keeps it from decaying.</p>
+          <p class="lede">Delta Drills is an adaptive tutor for the prerequisites of AI safety research engineering. It maps what a learner already knows onto <a href="/knowledge-graph">a knowledge graph of the ARENA curriculum</a>, teaches only what is missing, and keeps it from decaying.</p>
           <dl class="meta">
             <dt>Project lead</dt><dd>Seth Gibson</dd>
             <dt>Live app</dt><dd><a href="https://deltadrills.com" rel="noopener">deltadrills.com</a></dd>
@@ -1241,7 +1257,7 @@
       </section>
 
       <div class="status rv" data-slot="status">
-        <div class="built"><b>● Built</b><p><span id="aisc-stat-kcs" class="num">82</span> concepts on a prerequisite graph, <span id="aisc-stat-q" class="num">1,585</span> executable drills, a graph-wide placement test, spaced review, and remediation that walks down the graph.</p></div>
+        <div class="built"><b>● Built</b><p><span id="aisc-stat-kcs" class="num">82</span> concepts on a <a href="#aisc-graph">prerequisite graph</a>, <span id="aisc-stat-q" class="num">1,585</span> executable drills, a graph-wide <a href="#aisc-placement">placement test</a>, <a href="#aisc-spacing">spaced review</a>, and <a href="#aisc-remediation">remediation that walks down the graph</a>.</p></div>
         <div class="testing"><b>● Being tested now</b><p>Do ARENA organizers discover prerequisite gaps only after a cohort starts? When learners stall mid-course, is the cause a missing prerequisite?</p></div>
         <div class="unknown"><b>● Not yet known</b><p>Whether a shorter ramp translates into more safety research, and whether organizers will change their workflow to use it. The AISC project is designed to find out.</p></div>
       </div>
@@ -1287,7 +1303,7 @@
         <div class="cols" data-slot="uncertainties">
           <div class="card"><span class="tag">Users</span><h4>Do AI-safety learners actually want this?</h4><p>Beyond saying they're interested. Today: 7–8 EAGx testers when it wasn't ready, one outside learner since (a friend, who switched from Colab to Delta Drills for ARENA), no formal interviews; the author is the only sustained user. How we find out: the GEAR cohort (if accepted) and the local AI-safety group, asked about their last stuck moment.</p></div>
           <div class="card"><span class="tag">Timelines</span><h4>Is upskilling too slow if AGI comes soon?</h4><p>Maybe it is better to deploy the skills people already have. Our view: short timelines are why fast upskilling matters. The value is near zero if the window is months, and highest at 2–5 years. This is an open crux, not a settled answer.</p></div>
-          <div class="card"><span class="tag">Also open</span><h4>Mechanism and measurement</h4><p>Is a missing prerequisite really what stalls people? Untested. Does the engine measure right? On the one learner with data it under-predicts by 13 points (Fig. 7).</p></div>
+          <div class="card"><span class="tag">Also open</span><h4>Mechanism and measurement</h4><p>Is a missing prerequisite really what stalls people? Untested. Does the engine measure right? On the one learner with data it under-predicts by 13 points (<a href="#aisc-fig-seth">Fig. 7</a>).</p></div>
         </div>
         <div class="tile">
           <h3>Downside risks</h3>
@@ -2288,7 +2304,8 @@ t.manual_seed(0)
        on the bus first. It reads localStorage directly rather than app.js
        globals, which is what lets it load this early. -->
   <script src="xp.js?v=5"></script>
-  <script src="solo-route.js?v=7"></script>
+  <script src="deep-link.js?v=2"></script>
+  <script src="solo-route.js?v=8"></script>
   <!-- THE GROUPS TAB (seven files since 2026-09-02: the member rows grew a
        second column — a three-state Tiptap checklist per day, ported from
        Delta Note's sub-goals). 🔴 BEFORE app.js, NOT AFTER IT. app.js runs its boot
@@ -2319,7 +2336,7 @@ t.manual_seed(0)
   <script src="groups/groups_view.js?v=7"></script>
   <script src="conceptual/conceptual_chat_theme.js?v=1"></script>
   <script src="conceptual/conceptual_chat.js?v=3"></script>
-  <script src="app.js?v=39"></script>
+  <script src="app.js?v=40"></script>
   <script src="about-page-editor.js?v=5"></script>
   <!-- Gives a signed-out visitor a backend session so practice,
        the lessons and the student model work with no sign-in. MUST stay
@@ -2354,7 +2371,7 @@ t.manual_seed(0)
        which is a top-level `const` in app.js and therefore NOT on `window`.
        A classic script later in the same document shares that script scope;
        a module or a defer would not. -->
-  <script src="account-menu.js?v=7"></script>
+  <script src="account-menu.js?v=8"></script>
   <!-- Feedback bubble (self-hosted Quackback). AFTER app.js and guest-session.js:
        it reads window.DDIdentity / window.apiFetch and the guest flag. -->
   <script src="feedback-widget/quackback_widget.js?v=1"></script>
@@ -2427,7 +2444,7 @@ t.manual_seed(0)
   <!-- The AISC write-up's figures. Fetches nothing until #aisc-root is on
        screen; then aisc/js/* in order. After the vendor/graph/ tags
        above, whose cytoscape + dagre its graph figures use. -->
-  <script src="aisc/articles.js?v=2" defer></script>
+  <script src="aisc/articles.js?v=3" defer></script>
   <script src="aisc/boot.js?v=15" defer></script>
   <script src="split-tool.js"></script>
   <script src="supabase-practice.js?v=8"></script>
@@ -2581,9 +2598,9 @@ t.manual_seed(0)
        blank page. -resume.js watches #page-courses for itself, so it must load
        after app.js (line ~2100) has defined `switchTab`. -->
   <script src="practice/arena-notebook-outputs.js?v=1"></script>
-  <script src="practice/arena-notebook-resume.js?v=1"></script>
+  <script src="practice/arena-notebook-resume.js?v=2"></script>
   <script src="practice/arena-notebook-session.js?v=1"></script>
-  <script src="practice/arena-notebook.js?v=10"></script>
+  <script src="practice/arena-notebook.js?v=11"></script>
   <script src="practice/ladder.js?v=14"></script>
   <!-- The greedy exercise-session planner (session [G], 2026-09-06); read by
        kc-practice.js below it. -->
