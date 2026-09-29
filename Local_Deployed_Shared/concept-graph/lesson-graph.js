@@ -8,12 +8,14 @@
      - lessons/lessons_structured.json → per-KC teaching content
                                       (concept / worked example / misconceptions).
 
-   Each bubble is one KC, coloured by lesson, laid out bottom-up so
-   prerequisites sit beneath what they unlock. Click a bubble to:
-     - light up its full prerequisite chain, and
-     - render that KC's learning content in the left pane.
-   The left pane's "Practice" (maximize) button hands off to the real
-   Delta-Drills practice screen via window.LessonGate.showLesson(kc).
+   Each bubble is one KC, coloured by mastery or by area, laid out
+   bottom-up so prerequisites sit beneath what they unlock. Click a bubble
+   to light up its full prerequisite chain and show its reading in the side
+   panel; click an AREA's header (kg-sections.js) to light up the whole area.
+   The side panel itself — concept, area, the cog's settings — is
+   concept-graph/kg-panel.js, which reads everything through
+   `window.DeltaKgCore` below. Its "Practice" (maximize) button hands off to
+   the real Delta-Drills practice screen in an overlay (openMaximize).
 
    Superseded concept-graph/graph-viz.js (the old ARENA 205-atom graph),
    which is no longer wired into index.html.
@@ -25,11 +27,11 @@
 (() => {
   "use strict";
 
-  /* ---- the two colour axes: SECTION (broad) and FAMILY (fine) ----------
-     The switch under "Fit" picks which one is painted. They are INDEPENDENT
-     readings of the same map, not a nesting — that is the whole change from
-     the first cut of this, which made family a subdivision of chapter and so
-     could not express the fact below.
+  /* ---- the AREA axis: which section of the course a concept is in ------
+     Two colourings, switched above the map: Mastery, and Sections. (Categories
+     and Math / code were removed with the legend on 2026-09-29 — the area
+     headers on the map, kg-sections.js, now say what each colour is, and a
+     reading with no header to name it would be a colour with no key.)
 
        SECTION - which ARENA section a concept belongs to, and the only
                  question it answers is: does ARENA's OWN curriculum test this
@@ -39,28 +41,18 @@
                  floor, -1.1 for the arrays / einops / tensor work.
                  So the prep tiers are muted and the two ARENA sections are
                  vivid: what pops out of the map is the part ARENA grades.
-       FAMILY  - the subject: broadcasting vs einops vs einsum vs ray tracing.
-                 Grouped in the legend by SUBJECT AREA, because a subject
-                 straddles the section boundary — `einops.merge-axes` is
-                 exercised by ARENA 0.0 while `einops.singleton-and-lists`,
-                 the same subject and the same lesson, is ours.
 
      Section membership is DATA, read from `lessons/arena_exercise_kcs.json` —
      the same file `practice/exercise-session.js` uses to decide which ARENA
      notebook headings get a Practice button. It is not inferred from lesson
      or KC ids, because "ARENA wrote a problem for this" is not a fact any id
      encodes, and it changes every time an exercise is mapped. Reading the map
-     means the colour stays true with no edit here.
-
-     Family membership IS keyed on the KC id, because a lesson is a teaching
-     unit and a family is a subject and the two do not line up: np-3 holds
-     broadcasting AND stacking, and `einops.*` spans four lessons but is one
-     thing to a learner. First matching rule wins, so specific tests sit above
-     the catch-alls.
+     means the colour stays true with no edit here. It is loaded as soon as
+     this file runs (loadArenaMap), not when the graph is first built, because
+     the Courses tab's previews (course-graph.js) colour by it too.
 
      Node labels are painted #15151f, so every colour here is light enough to
-     keep dark text legible on it - the reason these are tints rather than the
-     saturated hues a legend alone could afford. */
+     keep dark text legible on it. */
 
   // Notebook slug (the key in arena_exercise_kcs.json) -> the section it is.
   // A slug with no entry here still counts as ARENA-tested; it just lands in
@@ -90,8 +82,8 @@
   // gets its own tier, in a hue no ARENA or prep tier uses (Seth, 2026-09-25).
   const COURSE_LEETCODE = { id: "clc", label: "LeetCode Patterns — standalone course", color: "#b8dc6e" };
   const COURSE_DELTA = { id: "cdd", label: "Delta Drills — how the app works (standalone course)", color: "#c4a8f0" };
-  // Legend order: the prep tiers, ARENA's sections in notebook order, then
-  // the standalone courses.
+  // Area order (headers, Filter rows): the prep tiers, ARENA's sections in
+  // notebook order, then the standalone courses.
   const SECTION_ORDER = [PREP_PYTHON, PREP_ARRAYS, PREP_MATH]
     .concat(Object.keys(ARENA_SECTIONS).sort().map((k) => ARENA_SECTIONS[k]))
     .concat([ARENA_LATER, COURSE_LEETCODE, COURSE_DELTA]);
@@ -99,7 +91,7 @@
   // kc id -> section, built from the exercise map once it has loaded. Empty
   // until then, and empty forever if the fetch failed — which is why
   // `arenaMapLoaded` is tracked separately: with no map EVERY concept looks
-  // like prep, and a legend that says so without saying why would be a quiet
+  // like prep, and a map that says so without saying why would be a quiet
   // lie about what ARENA covers.
   let arenaSectionByKc = {};
   let arenaMapLoaded = false;
@@ -120,93 +112,19 @@
     });
     arenaMapLoaded = true;
   };
-
-  /* Ten families in five areas, not sixteen in six. The fine cut painted
-     three shades of one blue and three of one green, and at bubble size that
-     is one colour with a legend claiming otherwise: the rows were readable,
-     the MAP was not. It had also gone stale — its NumPy rules were keyed on
-     `numpy.*`, and those ids became `torch.*` in the rename, so six of its
-     sixteen families painted nothing at all while every tensor concept fell
-     into one bucket. These are the coarsest splits that still answer "what
-     kind of work is this?" — a subject a learner would name, each with a hue
-     of its own rather than a tint of a neighbour's. First matching rule wins,
-     so specific tests sit above the catch-alls. */
-  const FAMILIES = [
-    /* --- maths: rose. Same colour as the −1.2 section tier and the Math side
-       of Math/code, so maths reads as maths in all three modes. ---------- */
-    { id: "fa.math", group: "Mathematics", label: "Linear algebra & geometry", color: "#f0a3a3",
-      test: (id) => id.startsWith("math.") },
-
-    /* --- Python: amber ------------------------------------------------- */
-    { id: "fa.python", group: "Python", label: "The Python language", color: "#eeb257",
-      test: (id) => id.startsWith("python.") },
-
-    /* --- tensors: blues, split the way the lessons split (np-1 / np-2 /
-       np-3). Specific tests above the catch-all. ------------------------ */
-    { id: "fa.shapes", group: "Tensors", label: "Broadcasting, reductions & matmul", color: "#4f97dd",
-      test: (id) => /^torch\.(broadcasting-rules|axis-reductions|stack-concat-interleave|dot-matmul-patterns|linalg-basics|elementwise-ops|aggregations)$/.test(id) },
-    { id: "fa.indexing", group: "Tensors", label: "Indexing, masking & writes", color: "#7d8ce4",
-      test: (id) => /^torch\.(boolean-masking|argmin-argmax|slice-assignment|out-argument|slicing-views)$/.test(id) },
-    { id: "fa.tensors", group: "Tensors", label: "Tensor foundations & shapes", color: "#a9d3f2",
-      test: (id) => id.startsWith("torch.") },
-
-    /* --- einsum above einops: the concept lands as `einops.einsum`, so a
-       plain `^einops\.` catch-all would swallow it. --------------------- */
-    { id: "fa.einsum", group: "Einops & einsum", label: "Einsum", color: "#57cfca",
-      test: (id) => id.includes("einsum") },
-    { id: "fa.einops", group: "Einops & einsum", label: "Einops — rearrange, reduce & repeat", color: "#7fd3a0",
-      test: (id) => id.startsWith("einops.") },
-
-    /* --- ARENA's own material: light blue, pink, orange ---------------- */
-    { id: "fa.tensor", group: "ARENA exercises", label: "ARENA tensor reasoning", color: "#84c8ed",
-      test: (id) => id.startsWith("tensor.") },
-    { id: "fa.ray", group: "ARENA exercises", label: "Ray tracing", color: "#e79ad9",
-      test: (id) => id.startsWith("raytracing.") },
-    { id: "fa.cnn", group: "ARENA exercises", label: "CNNs & ResNets", color: "#e8a765",
-      test: (id) => id.startsWith("cnn.") },
-
-    /* --- LeetCode Patterns (standalone course): four families in hues the
-       map does not use elsewhere — lime, yellow, slate, sand. Split the way
-       the course's prerequisite chains run. Specific tests above the
-       catch-all, which keeps arrays, pointers, search, sorting and maths. -- */
-    { id: "fa.lc-lists", group: "LeetCode patterns", label: "Linked lists, stacks & heaps", color: "#e6d35a",
-      test: (id) => /^leetcode\.(linked-lists|fast-slow-pointers|in-place-reversal|stack|monotonic-stack|top-k-elements|two-heaps|k-way-merge)$/.test(id) },
-    { id: "fa.lc-graphs", group: "LeetCode patterns", label: "Trees, tries & graphs", color: "#8fa6b8",
-      test: (id) => /^leetcode\.(binary-trees|tree-bfs|tree-dfs|bst|trie|graphs|islands|topological-sort|union-find|shortest-paths|mst)$/.test(id) },
-    { id: "fa.lc-dp", group: "LeetCode patterns", label: "Recursion, backtracking & DP", color: "#c9a27e",
-      test: (id) => /^leetcode\.(recursion|subsets|backtracking|knapsack-dp|dp-[a-z0-9-]+)$/.test(id) },
-    { id: "fa.lc-arrays", group: "LeetCode patterns", label: "Arrays, pointers, search & sorting", color: "#b8dc6e",
-      test: (id) => id.startsWith("leetcode.") },
-
-    /* --- Delta Drills (standalone course): the app explaining itself ---- */
-    { id: "fa.dd", group: "Delta Drills", label: "How the app works", color: "#c4a8f0",
-      test: (id) => id.startsWith("deltadrills.") },
-  ];
-  const FAMILY_GROUPS = [];
-  FAMILIES.forEach((f) => { if (FAMILY_GROUPS.indexOf(f.group) < 0) FAMILY_GROUPS.push(f.group); });
-  const UNFILED = { id: "other", group: "Other", label: "Uncategorised", color: "#dddddd" };
-
-  /* ---- the fourth reading: MATHEMATICS vs CODE -------------------------
-     The coarsest cut there is, and the one the other three modes cannot make.
-     Sections answer "whose curriculum is this", categories answer "what
-     subject", mastery answers "do I know it" — none of them separates the
-     concepts you reason about on paper from the ones you type. With maths now
-     on the map (`math.*`, lessons ma-00/ma-01) that split is half the reason a
-     learner is stuck: the ray-triangle solve is a linear system before it is a
-     `torch.linalg.solve` call. Two colours only. A third bucket would make it
-     a fourth category mode instead of the contrast it exists to draw. */
-  const DOMAINS = [
-    { id: "dm.math", label: "Mathematics — reason it out on paper", color: "#f0a3a3",
-      test: (id) => id.startsWith("math.") },
-    // Catch-all: no test, so anything that is not maths is code.
-    { id: "dm.code", label: "Code — write it in Python, NumPy, einops or PyTorch", color: "#6fa8dc" },
-  ];
-  const _domainOf = (kc) => {
-    const id = typeof kc === "string" ? kc : "";
-    for (let i = 0; i < DOMAINS.length; i++) if (!DOMAINS[i].test || DOMAINS[i].test(id)) return DOMAINS[i];
-    return DOMAINS[DOMAINS.length - 1];
+  // Once per page; a failure is not cached, so the graph's build retries it.
+  let arenaMapLoad = null;
+  const loadArenaMap = () => {
+    arenaMapLoad ??= fetch("lessons/arena_exercise_kcs.json", { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((map) => {
+        if (!map) throw new Error("arena_exercise_kcs.json unavailable");
+        _buildArenaSections(map);
+        window.dispatchEvent(new CustomEvent("delta:kg-sections-ready"));
+      })
+      .catch(() => { arenaMapLoad = null; arenaMapLoaded = false; });
+    return arenaMapLoad;
   };
-  const domainColor = (kc) => _domainOf(kc).color;
 
   const FALLBACK = "#dddddd";
   const ACCENT = "#ffd23f"; // prerequisite-path highlight
@@ -217,11 +135,6 @@
   const NEXT_UP = ACCENT;
 
   const $ = (id) => document.getElementById(id);
-  const _familyOf = (kc) => {
-    const id = typeof kc === "string" ? kc : "";
-    for (let i = 0; i < FAMILIES.length; i++) if (FAMILIES[i].test(id)) return FAMILIES[i];
-    return UNFILED;
-  };
   /* Which ARENA section a concept sits in. The exercise map is the ONLY thing
      that can promote a concept out of prep — an id tells you the subject, not
      who wrote a problem for it. Which is also why Python is separated by id
@@ -238,7 +151,6 @@
     if (id.startsWith("math.") || /^ma-/.test(lid)) return PREP_MATH;
     return PREP_ARRAYS;
   };
-  const familyColor = (kc) => _familyOf(kc).color;
   const sectionColor = (kc) => _sectionOf(kc).color;
 
   /* The concept's topic ("Numpy", "Einops", "Einsum").
@@ -270,7 +182,7 @@
   const _userOff = (row) => !!(row && row.pref && row.pref.enabled === false);
   const _courseOff = (row) => !!(row && row.state === "disabled" && !_userOff(row));
   const DIM_DISABLED_KEY = "dd_kg_dim_disabled";
-  let colorMode = "mastery";             // "mastery" | "section" | "category" | "domain"
+  let colorMode = "mastery";             // "mastery" | "section"
   let dimDisabled = true;
   try { dimDisabled = localStorage.getItem(DIM_DISABLED_KEY) !== "false"; } catch (_) {}
 
@@ -366,26 +278,6 @@
     return { r: NaN, source: "none", coveredW: 0 };
   };
   const kcReadiness = (kc) => kcReadinessInfo(kc).r;
-  const kcLastTs = (kc) => {
-    const s = _learnerState();
-    if (!s || !s.atom_last_ts) return null;
-    if (s.atom_last_ts[kc]) return s.atom_last_ts[kc];
-    // Same disjoint-id problem as the mastery read: for a measured KC the
-    // timestamps live under the atom ids, so "last seen" was blank on exactly
-    // the nodes with real evidence.
-    if (typeof window.kcCrosswalkReadiness === "function") {
-      const x = window.kcCrosswalkReadiness(kc, s.atom_mastery, s.atom_last_ts, _decay);
-      if (x && x.ts) return x.ts;
-    }
-    return null;
-  };
-  // The ladder's own last attempt, for the 43 concepts the crosswalk cannot see.
-  // Without it "last practiced" reads `never` on a concept the learner answered
-  // this morning, directly above the row reporting how many they got right.
-  const _ladderLastTs = (kc) => {
-    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
-    return (row && row.ladder_estimate && row.ladder_estimate.last_ts) || null;
-  };
   // red (low) → amber → green (high); gray for no estimate.
   // #d64848 → #e2a92e → #34a862, restated in mastery-bar.js, why-graph.js,
   // arena-notebook-focus.js and how-it-works.css's .kg2-scale-bar.
@@ -408,8 +300,6 @@
   window.addEventListener("delta:theme-changed", () => { readInk(); if (cy) cy.style().update(); });
   const nodeColor = (kc) => {
     if (colorMode === "section") return sectionColor(kc);
-    if (colorMode === "category") return familyColor(kc);
-    if (colorMode === "domain") return domainColor(kc);
     return masteryColor(kcReadiness(kc));
   };
   const masteryBand = (r) => {
@@ -419,17 +309,7 @@
     if (r < 0.85) return "Proficient";
     return "Strong";
   };
-  const relTime = (ts) => {
-    if (!ts) return null;
-    const t = Date.parse(ts); if (!Number.isFinite(t)) return null;
-    const s = Math.max(0, (Date.now() - t) / 1000);
-    if (s < 90) return "just now";
-    const m = s / 60; if (m < 90) return `${Math.round(m)} min ago`;
-    const h = m / 60; if (h < 36) return `${Math.round(h)} h ago`;
-    return `${Math.round(h / 24)} d ago`;
-  };
-
-  /* ---- learner-model readout (rendered into the left pane on select) ----
+  /* ---- learner-model readout (kg-panel.js draws it, via DeltaKgCore) ----
      Two layers of evidence, kept visually distinct because they are NOT the
      same measurement:
        - concept level: the per-KC BKT posterior (`atom_mastery`). Only the
@@ -540,13 +420,6 @@
       for (const p of (parentsOf[cur] || [])) if (!seen.has(p)) { seen.add(p); q.push(p); }
     }
     return out;
-  };
-
-  const chipLink = (id) => {
-    const kc = kcById[id];
-    if (!kc) return "";
-    return `<button class="kg2-chip" data-goto="${esc(id)}" title="${esc(kc.title)}">
-      <span class="kg2-chip-dot" style="background:${familyColor(kc.id)}"></span>${esc(kc.title)}</button>`;
   };
 
   /* ---------------- learner model card --------------------------------- */
@@ -745,13 +618,6 @@
   };
 
   const _pct = (v) => (Number.isFinite(v) ? Math.round(v * 100) + "%" : "—");
-  // Attempts bearing on a concept is an ATTRIBUTED quantity, not a row count —
-  // the lesson's attempts scaled by how much of this KC they observed. Show one
-  // decimal below 10 so "1.4" doesn't round to a whole attempt that never
-  // happened; "~" keeps it from reading as a tally.
-  const _nAttempts = (n) =>
-    !Number.isFinite(n) ? "—" : n >= 10 ? "~" + Math.round(n) : "~" + (Math.round(n * 10) / 10);
-
   /* ---- how wide the band should be (see concept-graph/kc_interval.js) ------
      The band used to be a Wilson interval over `subtopic_states[key].n` — the
      lesson's attempt count — for every KC in that lesson. A concept nobody had
@@ -838,7 +704,7 @@
   // in a distinct hatch so a nearly-full-width stripe cannot be mistaken for a
   // very confident wide measurement.
   // The markup lives in `mastery-bar.js` so the Course content tab can draw the
-  // same bar without a second copy. `gates` on, because this dock shows ONE
+  // same bar without a second copy. `gates` on, because the panel shows ONE
   // concept and 85%/95% are that concept's real thresholds; `unknownColor` is
   // passed so a no-estimate bar keeps this file's grey rather than the
   // module's default.
@@ -847,273 +713,9 @@
       value: r, ci, measured, gates: true, unknownColor: UNKNOWN_COLOR,
     });
 
-  /* ---- the concept's own graded record ------------------------------------
-     Everything above this point measures a concept through the atom crosswalk,
-     which separates only 20 of the 63 KCs; for the other 43 the honest answer
-     has been "no direct evidence — inferred from related work", even for a
-     learner who has answered a dozen drills tagged with that exact concept.
-
-     The ladder does not have that gap. `record_ladder_outcome` writes one row
-     per graded attempt against every KC the question tags, for all 63, and
-     `/api/practice/kc-lattice` now returns it. It is a smaller claim than a
-     posterior — k correct out of n on this concept, over a 20-attempt window —
-     so it is reported as a plain record beside the estimate rather than folded
-     into it. Two evidence models, kept visibly separate, is the same discipline
-     the mastery/subtopic split above already follows.
-
-     Rendered only when the server sent it: guests have no lattice, and an empty
-     row here is better than an invented zero. */
-
-  // How many graded attempts the ladder holds for this concept. Read by the
-  // mastery copy above as well as by the rows below, because several of its
-  // sentences ("nothing graded has landed on this concept") are true of the
-  // crosswalk and false of the learner, and printing one directly above a row
-  // saying `7/9 correct` is worse than printing nothing at all.
-  const _ladderN = (kc) => {
-    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
-    const n = row && row.ladder_estimate ? row.ladder_estimate.n : 0;
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const _ladderRows = (kc) => {
-    const row = lattice && lattice.kcs ? lattice.kcs[kc] : null;
-    const est = row && row.ladder_estimate;
-    if (!est) return "";
-
-    let out = `<div class="kg2-dock-row"><span>Your record here</span><span>`;
-    if (est.n > 0) {
-      const ci = Array.isArray(est.ci) ? est.ci : null;
-      out += `${est.correct}/${est.n} correct` + (ci ? ` · ${_pct(ci[0])}–${_pct(ci[1])}` : "");
-    } else {
-      // `worked_seen` counts lesson screens read, which is exposure, not
-      // evidence — the distinction the ladder itself makes before it will
-      // promote anyone. Say which of the two states this is.
-      out += est.worked_seen ? "example seen, nothing graded yet" : "not attempted";
-    }
-    out += `</span></div>`;
-
-    // The rung, in the vocabulary the practice screen uses. StageLadder owns
-    // that mapping — the backend's stored names are one rung out of step with
-    // the learner-facing ones, and having two places translate them is how the
-    // graph and the practice page start disagreeing about what rung someone is
-    // on. If the ladder has not loaded, no rung is shown rather than a raw
-    // internal name.
-    const bar = window.StageLadder;
-    const stages = (bar && bar.STAGES) || [];
-    const id = bar && typeof bar.normalizeStage === "function"
-      ? bar.normalizeStage(row.ladder_stage)
-      : null;
-    const stage = id ? stages.find((s) => s.id === id) : null;
-    if (stage) {
-      out += `<div class="kg2-dock-row" title="${esc(stage.blurb)}">` +
-             `<span>Scaffold</span><span>${esc(stage.label)}</span></div>`;
-    }
-    return out;
-  };
-
-  /* ---- the readout: a panel docked across the bottom of the graph pane ----
-     Hovering a bubble previews that concept there; clicking one keeps it. The
-     panel is always present and fixed-height, so the graph never reflows under
-     the cursor — the canvas is inset by --kg2-dock-h rather than overlaid. */
-  let dockEl = null;
-  let dockedKc = null;   // node whose readout stays up (the gold-highlighted one)
-
-  const _ensureDock = () => {
-    if (dockEl) return dockEl;
-    dockEl = $("kg-dock");
-    if (!dockEl) {
-      dockEl = document.createElement("div");
-      dockEl.id = "kg-dock";
-      dockEl.className = "kg2-dock";
-      (document.querySelector(".kg2-graph") || document.body).appendChild(dockEl);
-    }
-    return dockEl;
-  };
-
-  const dockEmptyHtml = () =>
-    `<div class="kg2-dock-empty">Hover a bubble to preview its learner model — click one to keep it here.</div>`;
-
-  const dockHtml = (kc) => {
-    const k = kcById[kc];
-    if (!k) return dockEmptyHtml();
-    const info = kcReadinessInfo(kc);
-    const { r, source } = info;
-    // ONE band function for every source. `nDirect` is attempts bearing on THIS
-    // concept — 0 when the estimate is inherited from the lesson or projected
-    // from the learner's overall level, which is what makes those bands wide.
-    const band = _bandFor(kc, info);
-    const { ci, ev, ex } = band;
-    const measured = band.measured;
-    const nDirect = ev.nDirect;
-    const sub = _subtopicState(kc);
-    // Atom timestamp first (it is this concept's, when it exists), then the
-    // ladder's own last attempt, then the lesson's — narrowest source first.
-    const last = relTime(kcLastTs(kc))
-      || relTime(_ladderLastTs(kc))
-      || (sub ? relTime(sub.last_update_ts) : null);
-    const parents = parentsOf[kc] || [];
-    const ready = parents.filter((p) => { const pr = kcReadiness(p); return Number.isFinite(pr) && pr >= UNLOCK_T; }).length;
-    const sibs = sub ? _siblingCount(kc) : 0;
-    // Graded attempts the ladder holds here. Where this is non-zero, the copy
-    // below has to say the mastery MODEL cannot see them — not that they do
-    // not exist, which is what it used to say.
-    const ladderN = _ladderN(kc);
-    // A topic-grain reading needs saying twice — once as the evidence behind
-    // the number, once as the reason the band is the whole scale — so work out
-    // where it came from once. `placed` is copy, not arithmetic: the reading is
-    // the same number whether or not placement is what put it there.
-    const isTopic = source === "topic";
-    const topicName = _kcTopic(kc);
-    const placedSt = typeof window.kcPlacementStatus === "function" ? window.kcPlacementStatus() : null;
-    // Placed but not practised: the placement test finished, and nothing the
-    // learner has done since bears on this concept or its lesson. Deliberately
-    // NOT conditioned on which source won — `finish()` seeds every atom it can
-    // reach, so a measured-tier concept can be sitting on a placement seed just
-    // as a topic-proxy one is, and the copy for both was describing a learner
-    // who had practised.
-    const placed = !!(placedSt && placedSt.completed && !ladderN && !sub);
-    const topicPhrase = placed
-      ? (topicName
-          ? `your placement test, which estimated ${esc(topicName)} as a whole`
-          : `your placement test, which estimated this concept's topic as a whole`)
-      : (topicName
-          ? `${esc(topicName)} as a whole — this concept shares its evidence with its topic-mates`
-          : `this concept's topic as a whole — its evidence is shared with its topic-mates`);
-    const attemptsPhrase = ladderN
-      ? `your ${ladderN} graded attempt${ladderN === 1 ? "" : "s"} here are not among the atoms this model measures`
-      : "nothing graded has landed on this concept";
-
-    let rows = "";
-    if (kc === nextUpKc) {
-      rows += `<div class="kg2-dock-row is-next-up"><span>Next up</span>` +
-              `<span>what you're practising now, else the queue's next pick</span></div>`;
-    }
-    rows += placed && last
-      ? `<div class="kg2-dock-row"><span>Placement test</span><span>${esc(last)}</span></div>`
-      : `<div class="kg2-dock-row"><span>Last practiced</span><span>${last ? esc(last) : "never"}</span></div>`;
-    rows += _ladderRows(kc);
-    rows += parents.length
-      ? `<div class="kg2-dock-row"><span>Prerequisites ready</span><span>${ready}/${parents.length}</span></div>`
-      : `<div class="kg2-dock-row"><span>Prerequisites</span><span>none — foundation</span></div>`;
-    if (sub) {
-      rows += `<div class="kg2-dock-row"><span>Recent accuracy</span><span>${_pct(sub.p)}</span></div>`;
-      rows += `<div class="kg2-dock-row"><span>Target difficulty</span><span>${Number.isFinite(sub.target_difficulty) ? Math.round(sub.target_difficulty) : "—"}/100</span></div>`;
-    } else {
-      const d = _kcDifficulty(kc);
-      if (Number.isFinite(d)) {
-        rows += `<div class="kg2-dock-row"><span>Concept difficulty</span><span>${Math.round(d)}/100</span></div>`;
-      }
-      if (ex && Number.isFinite(ex.bBar)) {
-        rows += `<div class="kg2-dock-row"><span>Your practised level</span><span>${_pct(ex.mBar)} at ${Math.round(ex.bBar)}/100</span></div>`;
-      }
-    }
-
-    return (
-      `<div class="kg2-dock-col kg2-dock-id">` +
-        `<div class="kg2-dock-title">${esc(k.title)}</div>` +
-        `<div class="kg2-dock-meta">${topicName ? esc(topicName) + " · " : ""}${esc((lessonMeta[k.lesson] || {}).title || k.lesson)}</div>` +
-        // Named, because the numbers on the right are subtopic-wide: the count
-        // and the accuracy are shared by every concept in the lesson.
-        (placed
-          ? `<div class="kg2-dock-evidence">Evidence: your placement test — an estimate for ` +
-            `${topicName ? esc(topicName) : "this concept's topic"}, not a measurement of this concept. ` +
-            `<strong>Nothing graded here yet</strong>.</div>`
-          : isTopic && !sub
-          ? `<div class="kg2-dock-evidence">Evidence: ${topicPhrase}. ` +
-            `<strong>${ladderN ? "Not measured on this concept" : "Nothing graded on this concept yet"}</strong>.</div>`
-          : sub
-          ? `<div class="kg2-dock-evidence">Evidence: ${esc(sub.key)}` +
-            (sibs > 1 ? ` · shared by ${sibs} concepts` : "") +
-            (sub.mergedTopics ? ` · merged across ${esc(sub.mergedTopics.join(" + "))}` : "") +
-            // The band is sized by what landed on THIS concept, so say what did.
-            (measured
-              ? ""
-              : ` · <strong>${nDirect > 0
-                  ? "under one attempt's worth"
-                  : (ladderN ? "nothing measurable" : "nothing")} on this concept</strong>`) +
-            `</div>`
-          : ex
-            ? `<div class="kg2-dock-evidence">Evidence: your overall level — ${ex.attempts} attempt${ex.attempts === 1 ? "" : "s"} across ${ex.subtopics} lesson${ex.subtopics === 1 ? "" : "s"}, none on this concept</div>`
-            : "") +
-      `</div>` +
-      `<div class="kg2-dock-col kg2-dock-mastery">` +
-        `<div class="kg2-dock-headline">` +
-          `<strong style="color:${masteryColor(r)}">${_pct(r)}</strong>` +
-          `<span class="kg2-dock-band">${esc(masteryBand(r))}` +
-            // The percentage is only about THIS concept when it came from a
-            // per-atom posterior; say so when it didn't.
-            (source === "subtopic" ? ` <span class="kg2-dock-dim">· lesson-level</span>` : "") +
-            (source === "topic" ? ` <span class="kg2-dock-dim">· topic-level</span>` : "") +
-            (source === "extrapolated" ? ` <span class="kg2-dock-dim">· projected</span>` : "") +
-            // A per-atom read can still be thin: the crosswalk may have covered
-            // only a sliver of this KC's weight, or shared it with a dozen
-            // siblings. Say so rather than let "atom" imply "measured".
-            (source === "atom" && !measured ? ` <span class="kg2-dock-dim">· not measured here</span>` : "") +
-          `</span>` +
-        `</div>` +
-        _masteryBar(r, ci, measured) +
-        // Three readouts, because there are three genuinely different states and
-        // the old one only distinguished two. A measured concept gets a real CI
-        // and the attempt count behind it; an unmeasured one says outright that
-        // the number is inferred and why the band is nearly the whole scale.
-        `<div class="kg2-dock-ci-label">` +
-          (!ci
-            ? `<span class="kg2-dock-dim">No estimate yet — ${esc(attemptsPhrase)}.</span>`
-          : measured
-            ? `95% CI ${_pct(ci[0])}–${_pct(ci[1])} <span class="kg2-dock-dim">· from ${_nAttempts(nDirect)} graded attempt${nDirect >= 1.5 ? "s" : ""} bearing on this concept` +
-              (ev.nSub > nDirect + 0.5 ? ` (of ${Math.round(ev.nSub)} in this lesson)` : "") + `</span>`
-          : `No direct evidence — inferred from related work. ` +
-            `<span class="kg2-dock-dim">Range ${_pct(ci[0])}–${_pct(ci[1])}: as wide as it gets, because ${esc(attemptsPhrase)}. ` +
-            (ex
-              ? (Number.isFinite(ex.d) && Number.isFinite(ex.bBar)
-                  ? `Projected from your overall level — this concept rates ${Math.round(ex.d)}/100 against the ${Math.round(ex.bBar)}/100 you've been practising at.`
-                  : `Carried straight across from your overall level.`)
-              : source === "subtopic"
-                ? `The figure is this lesson's accuracy, shared by ${sibs || "several"} concepts.`
-              : placed
-                ? `The figure is what your placement test concluded about ${topicName ? esc(topicName) : "this topic"}. It is the number the practice queue is acting on — it is just not a reading of this concept.`
-              : isTopic
-                ? `The figure is the model's belief about ${topicName ? esc(topicName) : "this concept's topic"}, shared across that topic's concepts.`
-                : `Treat it as a prior, not a measurement.`) +
-            `</span>`) +
-        `</div>` +
-      `</div>` +
-      `<div class="kg2-dock-col kg2-dock-stats">${rows}</div>`
-    );
-  };
-
-  const showDock = (kc) => {
-    const el = _ensureDock();
-    if (!kcById[kc]) return;
-    el.innerHTML = dockHtml(kc);
-    el.classList.toggle("is-pinned", kc === dockedKc);
-    // One-way: until a concept has been shown here the pane reserves almost no
-    // room for this panel, because reserving 220px to say "hover a bubble" ate
-    // a fifth of a side panel. Never taken back — toggling it on hover-out
-    // would resize the canvas under the cursor every time you swept the graph.
-    const pane = el.parentElement;
-    if (pane && !pane.classList.contains("has-dock")) {
-      pane.classList.add("has-dock");
-      if (cy) cy.resize();
-    }
-  };
-
-  // Docked readout: sticks to the selected node, survives hovering elsewhere,
-  // and repaints when the learner model changes.
-  const pinDock = (kc) => { dockedKc = kc; showDock(kc); };
-  const unpinDock = () => {
-    dockedKc = null;
-    const el = _ensureDock();
-    el.innerHTML = dockEmptyHtml();
-    el.classList.remove("is-pinned");
-  };
-  const restoreDock = () => { if (dockedKc) showDock(dockedKc); else unpinDock(); };
-  const refreshDock = () => { if (dockedKc) showDock(dockedKc); };
-
   // The pane's CSS height assumes a fixed amount of chrome above it, but the
   // guest banner isn't always there — so the pane could end below the fold.
-  // That was survivable when the readout floated; with it docked at the pane's
-  // bottom edge, an overhang hides the numbers. Size the pane to what's left.
+  // Size the pane to what's left.
   const fitWrap = () => {
     const wrap = document.querySelector(".kg2 .kg2-wrap");
     if (!wrap) return;
@@ -1128,27 +730,17 @@
     if (cy) cy.resize();
   };
 
-  /* ---------------- lesson pane ---------------------------------------- */
-  const setPlaceholder = () => {
-    selectedKc = null;
-    const btn = $("kg-maximize");
-    if (btn) btn.hidden = true;
-    if (window.DDGraphColab) window.DDGraphColab.onDeselect();
-    if ($("kg-info-meta")) $("kg-info-meta").innerHTML = "";
-    if ($("kg-info-body"))
-      $("kg-info-body").innerHTML =
-        `<div class="kg2-placeholder"><strong>Click a bubble</strong> to open its lesson here.
-         <span class="kg2-placeholder-more">You'll see what the skill teaches and its worked
-         example, and the whole prerequisite chain lights up on the graph. Use
-         <strong>Practice ⤢</strong> to jump into the full practice screen.</span></div>`;
-  };
+  /* ---------------- lesson content (drawn in kg-panel.js) --------------- */
+  const panel = () => window.DeltaKgPanel || null;
+  const announceSelection = (kind, id) =>
+    window.dispatchEvent(new CustomEvent("delta:kg-selection-changed", { detail: { kind, id } }));
 
   /* The KP's teaching content, segment by segment — the same units, in the same
      order, that the practice screen pages through.
 
      `concept_markdown` and `worked_example_markdown` at the KP level are the
      segments CONCATENATED (compile_lessons.py builds them that way for the
-     back-compat single-page renderers). Printing those two fields gave the dock
+     back-compat single-page renderers). Printing those two fields gave the pane
      one wall of every concept in the KP followed by one wall of every worked
      example — which is not a view the learner meets anywhere else, and reads as
      a different lesson from the one the practice page is showing. Walk the
@@ -1176,273 +768,15 @@
     }).join("");
   };
 
-  /* ---------------- right pane tabs: Lesson | Metadata | Settings --------
-     Seth, 2026-09-06: "whenever you click on any given node, in the top right
-     it has three tabs … view the concept itself and maximize it, or look at
-     the metadata, or the third option is to change whether it's enabled or
-     disabled for the specific user … decrease its representativeness according
-     to the algorithm so it appears less often … 0.75 makes it 25% less likely,
-     1.5 makes it 50% more likely."
-
-     The strip is built here rather than in index.html so the markup file
-     stays another session's. Lesson is the pane as it always was; Metadata is
-     the registry + server row for the concept, read-only (edits are proposals
-     through instructor mode); Settings writes the learner's OWN preference to
-     /api/practice/kc-prefs/<kc>, which the frontier reads (kc_prefs.py). */
-  const PANE_TABS = [["lesson", "Lesson"], ["metadata", "Metadata"], ["settings", "Settings"]];
-  let paneTab = "lesson";
-
-  const _ensureTabs = () => {
-    let strip = $("kg-pane-tabs");
-    if (strip) return strip;
-    const head = document.querySelector(".kg2-info .kg2-info-head");
-    const body = $("kg-info-body");
-    if (!head || !body) return null;
-    strip = document.createElement("div");
-    strip.id = "kg-pane-tabs";
-    strip.className = "kg2-tabs";
-    strip.setAttribute("role", "tablist");
-    strip.innerHTML = PANE_TABS.map(([k, label]) =>
-      `<button type="button" role="tab" data-pane="${k}" aria-selected="${k === paneTab}">${label}</button>`).join("");
-    head.insertAdjacentElement("afterend", strip);
-    strip.querySelectorAll("button").forEach((b) =>
-      b.addEventListener("click", () => {
-        paneTab = b.dataset.pane;
-        _syncTabs();
-        if (selectedKc) renderContent(selectedKc);
-      }));
-    return strip;
-  };
-  const _syncTabs = () => {
-    const strip = _ensureTabs();
-    if (!strip) return;
-    strip.querySelectorAll("button").forEach((b) =>
-      b.setAttribute("aria-selected", String(b.dataset.pane === paneTab)));
-  };
-
-  /* Metadata — what the registry and the server say about this concept.
-     Read-only on purpose: the graph is built from lessons/kc_registry.json and
-     a browser is the wrong place to reshape it (instructor-graph-edit.js
-     queues PROPOSALS instead). The author's notes come from
-     lessons/notes/<kc>.md compiled into lessons_structured as notes_markdown. */
-  const renderMetadata = (id) => {
-    const kc = kcById[id] || {};
-    const kp = contentByKc[id] || {};
-    const row = lattice && lattice.kcs ? lattice.kcs[id] : null;
-    const lm = lessonMeta[kc.lesson] || {};
-    const cell = (k, v) => `<div class="kg2-md-k">${esc(k)}</div><div class="kg2-md-v">${v}</div>`;
-    const num = (v, d = 3) => (typeof v === "number" ? String(parseFloat(v.toFixed(d))) : "—");
-    let html = `<h2 class="kg2-title">${esc(kp.title || kc.title || id)}</h2>`;
-    html += `<div class="kg2-md-grid">`;
-    html += cell("Concept id", `<code>${esc(id)}</code>`);
-    html += cell("Lesson", `${esc(lm.title || kc.lesson || "—")} <span class="kg2-md-dim">(${esc(kc.lesson || "—")})</span>`);
-    html += cell("Topic", esc(_kcTopic(id) || "—"));
-    html += cell("Prerequisites", (parentsOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
-    const enc = kc.encompassing || {};
-    html += cell("Encompasses", Object.keys(enc).map((p) => `<code>${esc(p)}</code> <span class="kg2-md-dim">×${esc(String(enc[p]))}</span>`).join(" ") || "none");
-    html += cell("Integration index", `${integrationIndex(id)} <span class="kg2-md-dim">concepts reached by encompassing edges</span>`);
-    html += cell("Unlocks", (childrenOf[id] || []).map((p) => `<code>${esc(p)}</code>`).join(" ") || "none");
-    if (kp.segments && kp.segments.length) html += cell("Segments", String(kp.segments.length));
-    if (row) {
-      html += cell("Gate state", esc(row.state || "—"));
-      html += cell("Mastery", `${num(row.mastery)} <span class="kg2-md-dim">${esc(row.tier || "")}${row.evidenced ? "" : " · not evidenced"}</span>`);
-      html += cell("Coreness", `${row.coreness} <span class="kg2-md-dim">descendants</span>`);
-      html += cell("Depth", String(row.depth));
-      html += cell("Drills in bank", String(row.n_questions));
-      html += cell("Frontier rank", row.frontier_rank == null ? "—" : String(row.frontier_rank + 1));
-      html += cell("Ladder rung", esc(row.ladder_stage || "—"));
-      if (row.pref) html += cell("Your setting",
-        row.pref.enabled ? `weight ${num(row.pref.weight, 2)}` : "off");
-    } else {
-      html += cell("Learner row", `<span class="kg2-md-dim">sign in to see your state for this concept</span>`);
-    }
-    html += `</div>`;
-    if (kp.notes_markdown)
-      html += `<div class="kg2-md-notes"><h3>Author notes</h3>${md(kp.notes_markdown)}</div>`;
-    html += `<p class="kg2-md-foot">Read-only. Structure edits are proposals: open instructor mode and drag on the graph.</p>`;
-    return html;
-  };
-
-  /* Settings — the learner's own control over one concept. */
-  const WEIGHT_PRESETS = [0.5, 0.75, 1, 1.5, 2];
-  const _prefFor = (id) => {
-    const row = lattice && lattice.kcs ? lattice.kcs[id] : null;
-    const p = row && row.pref ? row.pref : { enabled: true, weight: 1 };
-    return { enabled: p.enabled !== false, weight: typeof p.weight === "number" ? p.weight : 1 };
-  };
-  const _pctLabel = (w) => {
-    const d = Math.round((w - 1) * 100);
-    if (d === 0) return "normal priority";
-    return d > 0 ? `${d}% more likely to come up` : `${-d}% less likely to come up`;
-  };
-  const renderSettings = (id) => {
-    const kc = kcById[id] || {};
-    const kp = contentByKc[id] || {};
-    const pref = _prefFor(id);
-    const signedIn = !!(lattice && lattice.kcs);
-    let html = `<h2 class="kg2-title">${esc(kp.title || kc.title || id)}</h2>`;
-    if (!signedIn) {
-      html += `<div class="kg2-set-guest"><strong>Sign in</strong> to switch concepts off or change how often they come up. Settings are saved to your account.</div>`;
-      return html;
-    }
-    html += `<div class="kg2-set" data-kc="${esc(id)}">`;
-    html += `<label class="kg2-set-row kg2-set-toggle">
-        <input type="checkbox" id="kg-set-enabled" ${pref.enabled ? "checked" : ""}>
-        <span><strong>Practice this concept</strong>
-        <small>Off = the queue skips it, and anything it unlocks is treated as if it were already learned.</small></span>
-      </label>`;
-    html += `<label class="kg2-set-row kg2-set-toggle">
-        <input type="checkbox" id="kg-set-dim-disabled" ${dimDisabled ? "checked" : ""}>
-        <span><strong>Fade switched-off concepts on the graph</strong>
-        <small>Shows every disabled concept in neutral gray at low opacity. This display choice applies to the whole graph and stays in this browser.</small></span>
-      </label>`;
-    html += `<div class="kg2-set-row kg2-set-weight ${pref.enabled ? "" : "is-off"}">
-        <div class="kg2-set-head"><strong>Priority weight</strong>
-          <output id="kg-set-out">${pref.weight.toFixed(2)} × — ${esc(_pctLabel(pref.weight))}</output></div>
-        <input type="range" id="kg-set-range" min="0.25" max="4" step="0.25" value="${pref.weight}">
-        <div class="kg2-set-presets">${WEIGHT_PRESETS.map((w) =>
-          `<button type="button" data-w="${w}" class="${Math.abs(w - pref.weight) < 1e-6 ? "active" : ""}">${w}×</button>`).join("")}</div>
-        <small>1 is normal. 1.5 sorts this concept as if it had 50% more dependents, so it reaches the front of the queue sooner; 0.75 as if it had 25% fewer. Only your queue changes — nobody else's.</small>
-      </div>`;
-    html += `<div class="kg2-set-status" id="kg-set-status" aria-live="polite"></div>`;
-    html += `</div>`;
-    return html;
-  };
-
-  /* Writes are SERIALIZED: a slider fires several changes in a second, and two
-     PUTs in flight can land in either order — the server would keep whichever
-     arrived last while the controls show the last one clicked. One chain, in
-     click order, and the lattice is re-read once after the write that changed
-     it. */
-  let _prefChain = Promise.resolve();
-  const _savePref = (id, patch) => {
-    const run = () => _savePrefNow(id, patch);
-    _prefChain = _prefChain.then(run, run);
-    return _prefChain;
-  };
-  const _savePrefNow = async (id, patch) => {
-    const status = $("kg-set-status");
-    const fn = typeof window.apiFetch === "function" ? window.apiFetch : null;
-    if (!fn) { if (status) status.textContent = "Sign in to save."; return null; }
-    if (status) status.textContent = "Saving…";
-    try {
-      const res = await fn(`/api/practice/kc-prefs/${encodeURIComponent(id)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch),
-      });
-      if (!res || !res.ok) { if (status) status.textContent = `Not saved (${res ? res.status : "offline"}).`; return null; }
-      const row = await res.json();
-      if (lattice && lattice.kcs && lattice.kcs[id])
-        lattice.kcs[id].pref = { enabled: row.enabled, weight: row.weight };
-      if (status) status.textContent = row.enabled ? "Saved." : "Saved — this concept is off for you.";
-      // The frontier is the server's; re-read it so next-up and the gate
-      // colours move with the change instead of lying until the next attempt.
-      // Awaited, so the chain's next write sees a current lattice.
-      await refreshLattice();
-      recolor(); refreshDock();
-      return row;
-    } catch (e) {
-      if (status) status.textContent = "Not saved (network).";
-      return null;
-    }
-  };
-
-  const wireSettings = (id) => {
-    const box = document.querySelector(".kg2-set");
-    if (!box) return;
-    const enabled = $("kg-set-enabled");
-    const dimDisabledToggle = $("kg-set-dim-disabled");
-    const range = $("kg-set-range");
-    const out = $("kg-set-out");
-    const weightRow = box.querySelector(".kg2-set-weight");
-    const presets = box.querySelectorAll(".kg2-set-presets button");
-    const paint = (w) => {
-      if (range) range.value = String(w);
-      if (out) out.textContent = `${Number(w).toFixed(2)} × — ${_pctLabel(Number(w))}`;
-      presets.forEach((b) => b.classList.toggle("active", Math.abs(Number(b.dataset.w) - Number(w)) < 1e-6));
-    };
-    const paintEnabled = (on) => {
-      if (enabled) enabled.checked = on;
-      if (weightRow) weightRow.classList.toggle("is-off", !on);
-    };
-    // A failed write puts every control back to what the server last said,
-    // not just the one that was touched.
-    const rollback = () => { const p = _prefFor(id); paintEnabled(p.enabled); paint(p.weight); };
-    if (enabled) enabled.addEventListener("change", async () => {
-      paintEnabled(enabled.checked);
-      const row = await _savePref(id, { enabled: enabled.checked });
-      if (!row) rollback();
-    });
-    if (dimDisabledToggle) dimDisabledToggle.addEventListener("change", () => {
-      dimDisabled = dimDisabledToggle.checked;
-      try { localStorage.setItem(DIM_DISABLED_KEY, String(dimDisabled)); } catch (_) {}
-      buildLegend();
-      recolor();
-    });
-    const saveWeight = async (w) => {
-      paint(w);
-      const row = await _savePref(id, { weight: w });
-      if (!row) rollback();
-    };
-    if (range) {
-      range.addEventListener("input", () => paint(range.value));
-      range.addEventListener("change", () => saveWeight(Number(range.value)));
-    }
-    presets.forEach((b) => b.addEventListener("click", () => saveWeight(Number(b.dataset.w))));
-  };
-
-  const renderContent = (id) => {
-    const kc = kcById[id];
+  // The lesson under "Read lesson" in the panel: every segment, then the
+  // KP's misconceptions. No title — the panel has already printed it.
+  const lessonHtml = (id) => {
     const kp = contentByKc[id];
-    if (!kc || !kp) return;
-    selectedKc = id;
-    const lm = lessonMeta[kc.lesson] || {};
-    _syncTabs();
-
-    const meta = $("kg-info-meta");
-    if (meta)
-      meta.innerHTML =
-        `<span class="kg2-meta-topic"><span class="kg2-chip-dot" style="background:${familyColor(kc.id)}"></span>${esc(kc.topic)}</span>
-         <span class="kg2-meta-lesson">${esc(lm.title || kc.lesson)}</span>`;
-
-    const btn = $("kg-maximize");
-    if (btn) { btn.hidden = false; btn.dataset.kc = id; }
-
-    // On the Colab edition the lesson the learner reads is in the notebook, so
-    // choosing a concept sends the tab beside this one to the section that
-    // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
-    if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
-
-    if (paneTab !== "lesson") {
-      const body = $("kg-info-body");
-      body.innerHTML = paneTab === "settings" ? renderSettings(id) : renderMetadata(id);
-      typesetMath(body);
-      body.scrollTop = 0;
-      if (paneTab === "settings") wireSettings(id);
-      return;
-    }
-
-    const parents = parentsOf[id] || [];
-    const kids = childrenOf[id] || [];
-    let html = `<h2 class="kg2-title">${esc(kp.title || kc.title)}</h2>`;
-    html += renderSegments(kp);
+    if (!kp) return "";
+    let html = renderSegments(kp);
     if (kp.misconceptions_markdown)
       html += `<div class="kg2-watch"><h3>Watch out</h3>${md(kp.misconceptions_markdown)}</div>`;
-
-    html += `<div class="kg2-nav">`;
-    html += `<div class="kg2-nav-col"><h4>Prerequisites (${parents.length})</h4>` +
-      (parents.length ? parents.map(chipLink).join("") : `<span class="kg2-nav-empty">Foundation skill — none.</span>`) + `</div>`;
-    html += `<div class="kg2-nav-col"><h4>Unlocks (${kids.length})</h4>` +
-      (kids.length ? kids.map(chipLink).join("") : `<span class="kg2-nav-empty">Nothing downstream yet.</span>`) + `</div>`;
-    html += `</div>`;
-
-    const body = $("kg-info-body");
-    body.innerHTML = html;
-    typesetMath(body);
-    body.scrollTop = 0;
-    body.querySelectorAll("[data-goto]").forEach((b) =>
-      b.addEventListener("click", () => selectNode(b.getAttribute("data-goto"))));
+    return html;
   };
 
   /* ---------------- selection + highlight ------------------------------ */
@@ -1460,14 +794,46 @@
         if (path.has(e.source().id()) && path.has(e.target().id())) e.removeClass("faded").addClass("hl");
       });
     });
-    renderContent(id);
-    pinDock(id);   // the bottom panel keeps the gold-highlighted node
+    selectedKc = id;
+    if (panel()) panel().showConcept(id);
+    // On the Colab edition the lesson the learner reads is in the notebook, so
+    // choosing a concept sends the tab beside this one to the section that
+    // teaches it. Inert on the normal deploy — concept-graph/kc-colab-route.js.
+    if (window.DDGraphColab) window.DDGraphColab.onSelect(id);
+    announceSelection("kc", id);
+  };
+
+  /* An AREA (a header on the map, kg-sections.js): every concept in it lights
+     up, the edges between them too, everything else fades, and the panel shows
+     the area's diagnostics. Same classes as a concept's chain, so the two
+     selections look like one vocabulary. */
+  const selectSection = (sid) => {
+    if (!cy || !sid) return;
+    const nodes = cy.nodes().filter((n) => _sectionOf(n.id()).id === sid);
+    if (!nodes.length) return;
+    const ids = new Set(nodes.map((n) => n.id()));
+    cy.batch(() => {
+      cy.elements().removeClass("hl hl-strong").addClass("faded");
+      nodes.removeClass("faded").addClass("hl");
+      cy.edges().forEach((e) => {
+        if (ids.has(e.source().id()) && ids.has(e.target().id())) e.removeClass("faded").addClass("hl");
+      });
+    });
+    // A header is outside the canvas, so no background tap unselected the
+    // concept picked before; do it here.
+    cy.nodes(":selected").unselect();
+    selectedKc = null;
+    if (panel()) panel().showSection(sid);
+    if (window.DDGraphColab) window.DDGraphColab.onDeselect();
+    announceSelection("section", sid);
   };
 
   const resetView = () => {
-    if (cy) cy.elements().removeClass("faded hl hl-strong");
-    unpinDock();
-    setPlaceholder();
+    if (cy) { cy.elements().removeClass("faded hl hl-strong"); cy.nodes(":selected").unselect(); }
+    selectedKc = null;
+    if (panel()) panel().showEmpty();
+    if (window.DDGraphColab) window.DDGraphColab.onDeselect();
+    announceSelection(null, null);
   };
 
   /* ---------------- maximize: focused practice page (own iframe) -------- */
@@ -1488,7 +854,7 @@
     // storage, not in this window's in-memory state. Re-read it so the card
     // and the node colours reflect the practice that just happened.
     Promise.all([_refreshLearnerState(), refreshLattice()])
-      .then(() => { recolor(); refreshDock(); });
+      .then(() => recolor());
     // Back to the workflow: the node is still selected and its lesson is still
     // on the left — just re-centre it so focus returns cleanly.
     if (selectedKc && cy) {
@@ -1660,112 +1026,7 @@
     _onKcMastered(e.data.kc);
   });
 
-  /* ---------------- legend (mode-aware) + recolour --------------------- */
-  // Whether the Category legend's family list is unfolded. Module-level
-  // because buildLegend() rewrites the element it lives on.
-  let legendFoldOpen = false;
-  const _disabledLegend = () => (dimDisabled
-    ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-off"></span>Off — your Settings</span>' +
-      (_anyCourseOff() ? '<span class="kg2-li"><span class="kg2-li-dot kg2-li-course-off"></span>Faded — its course is off in Courses</span>' : "")
-    : "") + _edgeLegend();
-  const _anyCourseOff = () => !!(lattice && lattice.kcs &&
-    Object.keys(lattice.kcs).some((k) => _courseOff(lattice.kcs[k])));
-  // Edge kinds are the same in every colour mode, so every legend carries them.
-  // With kg-look.js loaded, shortcut links (implied by a longer chain) are
-  // hidden and the Key carries the switch to show them.
-  const _edgeLegend = () =>
-    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-enc"></span>Encompasses — practising it also practises the parent (thicker = more)</span>' +
-    '<span class="kg2-li"><span class="kg2-li-edge kg2-li-edge-pre"></span>Prerequisite only — must be known first</span>' +
-    (LOOK() ? '<label class="kg2-li kg2-li-toggle"><input type="checkbox" data-kg-shortcuts' +
-      (LOOK().shortcutsShown() ? " checked" : "") + '>Show shortcut links (already implied by a longer chain)</label>' : "");
-  // Everything but the colour key folds under "Key", closed by default and
-  // remembered across rebuilds (this element's HTML is replaced every time).
-  let legendMoreOpen = false;
-  const _more = (extra) =>
-    '<details class="kg2-legend-more"' + (legendMoreOpen ? " open" : "") + "><summary>Key</summary>" +
-      '<div class="kg2-legend-more-body">' + (extra || "") + _disabledLegend() + "</div></details>";
-  const _wireMore = (el) => {
-    const more = el.querySelector(".kg2-legend-more");
-    if (more) more.addEventListener("toggle", () => { legendMoreOpen = more.open; });
-    const sc = el.querySelector("[data-kg-shortcuts]");
-    if (sc) sc.addEventListener("change", () => { if (LOOK()) LOOK().setShortcuts(sc.checked); });
-  };
-  const buildLegend = () => {
-    const el = $("kg-legend");
-    if (!el) return;
-    if (colorMode === "mastery") {
-      el.classList.add("kg2-legend-mastery");
-      el.classList.remove("kg2-legend-grouped");
-      el.innerHTML =
-        '<span class="kg2-li kg2-li-scale"><span>less</span><span class="kg2-scale-bar"></span><span>more mastered</span></span>' +
-        '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred</span>' +
-        _more('<span class="kg2-li"><span class="kg2-li-dot" style="background:' + UNKNOWN_COLOR + '"></span>No estimate</span>' +
-          '<span class="kg2-li"><span class="kg2-li-dot kg2-li-projected"></span>Inferred — nothing graded here yet</span>');
-    } else {
-      // The two non-mastery legends answer different questions, so they are
-      // built separately rather than as one list at two grains. Either way a
-      // colour is listed only where it is actually painted: a legend entry
-      // with no bubble invites the reading that the map is missing something
-      // it never had.
-      el.classList.remove("kg2-legend-mastery");
-      el.classList.add("kg2-legend-grouped");
-      const ids = Object.keys(kcById);
-      if (colorMode === "domain") {
-        // Two rows. No fold, no group heads — the whole point is that it fits
-        // in a glance, and a colour is listed only where it is painted.
-        const has = {};
-        ids.forEach((id) => { has[_domainOf(id).id] = true; });
-        el.innerHTML = DOMAINS.filter((d) => has[d.id]).map((d) =>
-          `<span class="kg2-li"><span class="kg2-li-dot" style="background:${d.color}"></span>${esc(d.label)}</span>`
-        ).join("") + _more();
-      } else if (colorMode === "section") {
-        const has = {};
-        ids.forEach((id) => { has[_sectionOf(id).id] = true; });
-        const rows = SECTION_ORDER.filter((sec) => has[sec.id]).map((sec) =>
-          `<span class="kg2-li"><span class="kg2-li-dot" style="background:${sec.color}"></span>${esc(sec.label)}</span>`
-        ).join("");
-        // With no exercise map every concept falls to prep, which looks like a
-        // finished answer instead of a missing file. Say which it is.
-        el.innerHTML = rows + (arenaMapLoaded ? "" :
-          '<span class="kg2-li kg2-li-warn">ARENA exercise map unavailable — nothing can be shown as 0.0 or 0.1</span>') + _more();
-      } else {
-        // Even at ten families the legend is tall enough to sit on top of
-        // the bubbles it is explaining — the prerequisite floor lands in
-        // exactly that corner of a BT layout. So it folds, and the fold is
-        // REMEMBERED:
-        // this whole element is replaced on every legend build, so a plain
-        // `open` attribute would silently reopen — and re-cover the map — the
-        // moment the learner flipped to Sections and back.
-        //
-        // Families are grouped by SUBJECT AREA, not by section, because a
-        // subject straddles the boundary: einops.merge-axes is ARENA 0.0 and
-        // einops.singleton-and-lists is ours, same lesson, same colour family.
-        const famHas = {};
-        ids.forEach((id) => { famHas[_familyOf(id).id] = true; });
-        const groups = FAMILY_GROUPS.concat(famHas[UNFILED.id] ? [UNFILED.group] : []);
-        const body = groups.map((g) => {
-          const rows = FAMILIES.filter((f) => f.group === g && famHas[f.id]);
-          if (g === UNFILED.group) rows.push(UNFILED);
-          if (!rows.length) return "";
-          return `<span class="kg2-li kg2-li-head">${esc(g)}</span>` +
-            rows.map((f) =>
-              `<span class="kg2-li kg2-li-sub"><span class="kg2-li-dot" style="background:${f.color}"></span>${esc(f.label)}</span>`
-            ).join("");
-        }).join("");
-        el.innerHTML =
-          '<details class="kg2-legend-fold"' + (legendFoldOpen ? " open" : "") + ">" +
-            '<summary>Colour = subject, grouped by area</summary>' +
-            '<div class="kg2-legend-fold-body">' + body + "</div>" +
-          "</details>" + _more();
-        // The element is rebuilt on every legend build, so the listener is
-        // fresh each time and nothing accumulates.
-        const fold = el.querySelector(".kg2-legend-fold");
-        if (fold) fold.addEventListener("toggle", () => { legendFoldOpen = fold.open; });
-      }
-    }
-    _wireMore(el);
-  };
-
+  /* ---------------- recolour ------------------------------------------ */
   // Unmeasured bubbles are washed out and dashed: they carry a colour because a
   // blank map was the wrong default, but they must never read as measured.
   // This used to key on `source === "extrapolated"` only, which let a concept
@@ -1774,7 +1035,6 @@
   // evidence bearing on this concept.
   // Border WIDTH is left to the stylesheet so the .hl prerequisite highlight
   // still wins; only the dash pattern is set per node.
-  let legendCourseOff = false;
   const recolor = () => {
     if (!cy) return;
     cy.batch(() => cy.nodes().forEach((n) => {
@@ -1793,10 +1053,6 @@
     markNextUp();
     _refreshNoData();
     _announceReadiness();
-    // The legend is first built before the lattice arrives; its "course off"
-    // row can only be decided once it has.
-    const courseOff = _anyCourseOff();
-    if (courseOff !== legendCourseOff) { legendCourseOff = courseOff; buildLegend(); }
   };
 
   /* Other surfaces read the learner model through the exports at the bottom of
@@ -1862,7 +1118,7 @@
 
      It MIRRORS the queue, it is not the server's literal pick — the queue
      selects a subtopic and then a question inside it, and it may serve a
-     placement probe instead. So the dock says "next up", not "you will be
+     placement probe instead. So the panel says "next up", not "you will be
      asked this". Getting that wrong would be a promise the app then breaks. */
   const _nextUpKc = () => {
     if (!kcById || !Object.keys(kcById).length) return null;
@@ -2069,13 +1325,10 @@
 
     // Which concepts ARENA's OWN exercises cover — the whole of the section
     // axis. Optional like the difficulty table: a missing map costs the broad
-    // colouring, not the graph, and the legend says so rather than presenting
-    // an all-prep map as fact.
-    try {
-      const arenaMap = await fetch("lessons/arena_exercise_kcs.json", { cache: "no-cache" })
-        .then((r) => (r.ok ? r.json() : null));
-      if (arenaMap) _buildArenaSections(arenaMap);
-    } catch (_) { arenaMapLoaded = false; }
+    // colouring, not the graph.
+    await loadArenaMap();
+    // The eager load at boot may have failed; this build gets one more try.
+    if (!arenaMapLoaded) await loadArenaMap();
 
     // The KC->atom join, so the 20 measurable concepts can read the mastery the
     // backend already holds instead of falling through to a lesson average.
@@ -2104,8 +1357,6 @@
       const pages = window.DDLessonlessConcepts ? await window.DDLessonlessConcepts.load() : {};
       Object.entries(pages).forEach(([kc, kp]) => { if (kcById[kc] && !contentByKc[kc]) contentByKc[kc] = kp; });
     } catch (_) {}
-
-    buildLegend();
 
     const elements = [];
     Object.values(kcById).forEach((k) => {
@@ -2151,7 +1402,7 @@
     const maxBtn = $("kg-maximize");
     if (maxBtn) maxBtn.onclick = () => openMaximize(maxBtn.dataset.kc);
 
-    /* ---- colour-mode toggle (Mastery ↔ Lessons) ---- */
+    /* ---- colour-mode toggle (Mastery ↔ Sections) ---- */
     const controls = document.querySelector(".kg2-controls");
     window.dispatchEvent(new CustomEvent("delta:practice-target-graph-ready"));
     if (controls && !$("kg-colormode")) {
@@ -2159,50 +1410,38 @@
       // Styled by ID. It carried `.kg2-seg` and that is the lesson-segment
       // class in the pane opposite — see how-it-works.css.
       seg.id = "kg-colormode";
-      // Four readings, not two. "Lessons" used to be the only alternative to
-      // Mastery and it painted one pastel per lesson id — eleven near-identical
-      // tints that answered a question nobody asked (which teaching unit is
-      // this?) while hiding the two that get asked: is this ARENA's own
-      // material or our run-up to it, and what subject is it.
+      // Two readings (2026-09-29): how strong you are, and which area a
+      // concept is in. The area headers (kg-sections.js) follow the switch —
+      // in Mastery they wear the area's average reading.
       seg.innerHTML =
         '<button type="button" data-mode="mastery" class="active">Mastery</button>' +
-        '<button type="button" data-mode="section">Sections</button>' +
-        '<button type="button" data-mode="category">Categories</button>' +
-        '<button type="button" data-mode="domain">Math / code</button>';
+        '<button type="button" data-mode="section">Sections</button>';
       controls.insertBefore(seg, controls.firstChild);
       seg.querySelectorAll("button").forEach((b) =>
         b.addEventListener("click", () => {
           colorMode = b.dataset.mode;
           seg.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
-          buildLegend();
           recolor();
+          window.dispatchEvent(new CustomEvent("delta:kg-colormode-changed", { detail: { mode: colorMode } }));
         }));
     }
 
-    /* ---- bottom panel: hover to preview any node, kept on the selected one ---- */
-    unpinDock();   // creates the panel and seeds its empty state
     fitWrap();
     window.addEventListener("resize", fitWrap);
-    cy.on("mouseover", "node", (evt) => showDock(evt.target.id()));
-    // Hovering elsewhere borrows the panel; on mouse-out it goes back to the
-    // selected node rather than leaving the selection without its readout.
-    // The panel is docked, so pan/zoom/node-drag need no re-anchoring.
-    cy.on("mouseout", "node", restoreDock);
 
-    // Recolour when the learner model changes (a graded attempt updates BKT),
-    // and repaint the panel with it.
+    // Recolour when the learner model changes (a graded attempt updates BKT);
+    // the panel repaints off recolor's `delta:kc-readiness-changed`.
     // A graded attempt can move a KC over the unlock threshold, which changes
     // the gate for everything downstream — so re-ask the server what the
     // lattice looks like now instead of repainting stale state.
     window.addEventListener("delta:adaptive-state-changed", () => {
-      refreshLattice().then(() => { recolor(); refreshDock(); });
+      refreshLattice().then(() => recolor());
     });
 
-    buildLegend();
     refreshLattice().then(() => recolor());
-    refreshPlacement().then(() => { _refreshNoData(); refreshDock(); });
+    refreshPlacement().then(() => { _refreshNoData(); _announceReadiness(); });
     recolor();
-    setPlaceholder();
+    resetView();
     building = false;
   }
 
@@ -2271,8 +1510,60 @@
      every other export here answers. */
   window.deltaConceptGraphCy = () => cy;
   // Which ARENA section a concept belongs to ({id, label, color}); read by
-  // graph-views.js so its condensed view groups by the same rule drawn here.
+  // graph-views.js (grouped layout, condensed view, area order), kg-sections.js
+  // (the headers) and course-graph.js (the Courses previews).
   window.deltaKcSection = (kc) => _sectionOf(kc);
+  window.deltaKcSectionOrder = () => SECTION_ORDER.slice();
+  // The switch above the map; kg-sections.js colours its headers by it.
+  window.deltaKgColorMode = () => colorMode;
+  // A header was clicked (kg-sections.js), or the panel's area chip.
+  window.deltaSelectKgSection = (sid) => selectSection(sid);
+
+  /* The side panel's one door into this file (kg-panel.js). Everything the
+     panel shows is read HERE, from the same reader the bubbles are painted
+     with, so the two cannot disagree about a number; its only writes are the
+     learner's own kc-prefs, after which it calls `refresh`. */
+  window.DeltaKgCore = {
+    kc: (id) => kcById[id] || null,
+    kp: (id) => contentByKc[id] || null,
+    lesson: (lid) => lessonMeta[lid] || null,
+    topic: (id) => _kcTopic(id),
+    section: (id) => _sectionOf(id),
+    parents: (id) => (parentsOf[id] || []).slice(),
+    children: (id) => (childrenOf[id] || []).slice(),
+    integration: (id) => integrationIndex(id),
+    row: (id) => (lattice && lattice.kcs ? lattice.kcs[id] || null : null),
+    signedIn: () => !!(lattice && lattice.kcs),
+    // {r, source, ci, measured} — the bar's inputs, from the one band function.
+    readout: (id) => {
+      const info = kcReadinessInfo(id);
+      const band = _bandFor(id, info);
+      return { r: info.r, source: info.source, ci: band.ci, measured: band.measured };
+    },
+    nextUp: () => nextUpKc,
+    color: masteryColor,
+    band: masteryBand,
+    bar: _masteryBar,
+    esc, md,
+    typeset: typesetMath,
+    lessonHtml,
+    select: (id) => selectNode(id),
+    // Recolour even when the re-read fails: a caller that patched the cached
+    // rows (kg-toolbar.js's area switch) still needs the bubbles repainted.
+    refresh: async () => { try { await refreshLattice(); } finally { recolor(); } },
+    // Nothing selected: graph-views.js calls it when the course changes.
+    deselect: () => resetView(),
+    dimDisabled: () => dimDisabled,
+    setDimDisabled: (on) => {
+      dimDisabled = !!on;
+      try { localStorage.setItem(DIM_DISABLED_KEY, String(dimDisabled)); } catch (_) {}
+      recolor();
+    },
+  };
+
+  // Load the area map now, not at build: the Courses previews colour by it
+  // before the graph has ever been opened.
+  loadArenaMap();
   // One concept's lesson as HTML — the segments, worked examples and "Watch
   // out" the pane renders — for a surface that shows a lesson without this
   // graph (course-builder/course-builder.js). Pure: `kp` is a

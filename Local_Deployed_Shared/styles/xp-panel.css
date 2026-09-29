@@ -83,6 +83,73 @@
   margin-top: 6px;
 }
 
+/* ---- today toward the daily target (../practice/xp-target.js) ---------- */
+
+.xp-goal { margin: 0 0 18px; }
+.xp-goal-head {
+  align-items: baseline;
+  color: var(--text);
+  display: flex;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.xp-goal-pct { color: var(--warn); font-family: var(--xp-mono); font-size: 12px; }
+.xp-goal-bar {
+  background: rgb(var(--tint-rgb) / calc(0.08 * var(--tint-k)));
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+.xp-goal-fill {
+  background: var(--warn);
+  border-radius: inherit;
+  height: 100%;
+  transition: width 0.25s ease;
+  width: 0;
+}
+.xp-goal.is-unset .xp-goal-head { color: var(--muted); }
+.xp-goal-finish {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+.xp-goal-pick { display: inline-block; position: relative; }
+.xp-goal-date {
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed var(--warn);
+  color: var(--white);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0 0 1px;
+}
+.xp-goal-date::after { color: var(--warn); content: " ▾"; font-size: 11px; }
+.xp-goal-date:hover { color: var(--warn); }
+.xp-goal-date:focus-visible { outline: 2px solid var(--warn); outline-offset: 2px; }
+/* The native date input under the button: invisible, but where its picker
+   opens from. */
+.xp-goal-input {
+  border: 0;
+  bottom: 0;
+  height: 1px;
+  left: 0;
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+.xp-goal-note {
+  color: var(--xp-quiet);
+  font-size: 11.5px;
+  margin: 4px 0 0;
+  min-height: 1.3em;
+}
+.xp-goal-note.is-error { color: var(--danger); }
+
 /* ---- the week's XP, over its bars -------------------------------------- */
 
 .xp-gained {
@@ -181,6 +248,25 @@
   stroke-width: 3px;
   stroke-linejoin: round;
 }
+
+/* The target's knob (drag: ../practice/xp-target.js). */
+.xp-target-knob { cursor: ns-resize; outline: none; touch-action: none; }
+.xp-target-knob-hit { fill: transparent; }
+.xp-target-knob-dot {
+  fill: var(--warn);
+  stroke: var(--surface);
+  stroke-width: 2;
+  transition: r 0.12s;
+}
+.xp-target-knob-grip { fill: none; stroke: var(--surface); stroke-width: 1.2; stroke-linecap: round; }
+.xp-target-knob:hover .xp-target-knob-dot,
+.xp-bars.is-dragging .xp-target-knob-dot { r: 8; }
+.xp-target-knob:focus-visible .xp-target-knob-hit { stroke: var(--warn); stroke-width: 1.5; }
+.xp-bars.is-dragging { cursor: ns-resize; user-select: none; }
+.xp-bars.is-dragging .xp-target-line { opacity: 1; }
+/* No target saved yet: the line is a faint suggestion until it is moved. */
+.xp-bars.is-target-unset .xp-target-line,
+.xp-bars.is-target-unset .xp-target-label { opacity: 0.4; }
 
 .xp-readout {
   color: var(--xp-quiet);

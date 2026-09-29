@@ -529,14 +529,9 @@
 }
 .kg2-chip:hover { border-color: var(--accent-text); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
 
-/* left graph pane — the canvas is inset by the docked readout's height so the
-   bottom panel never covers bubbles (see .kg2-dock). */
-.kg2-graph { flex: 1 1 auto; position: relative; min-width: 0; --kg2-dock-h: 144px; }
-/* Nothing has been in the dock yet, so it is one line of prompt. `has-dock` is
-   added by lesson-graph.js the first time a concept is shown there and never
-   removed — see showDock. */
-.kg2-graph:not(.has-dock) { --kg2-dock-h: 44px; }
-#kg-cy { position: absolute; inset: 0 0 var(--kg2-dock-h, 0px) 0; }
+/* left graph pane */
+.kg2-graph { flex: 1 1 auto; position: relative; min-width: 0; }
+#kg-cy { position: absolute; inset: 0; }
 .kg2-controls { position: absolute; top: 12px; right: 14px; z-index: 5; display: flex; gap: 8px; }
 .kg2-fit {
   background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text);
@@ -545,36 +540,13 @@
 }
 .kg2-fit:hover { border-color: var(--accent-text); color: var(--accent-text); }
 .kg2-legend {
-  position: absolute; bottom: calc(var(--kg2-dock-h, 0px) + 12px); left: 14px; z-index: 5;
+  position: absolute; bottom: 12px; left: 14px; z-index: 5;
   display: flex; flex-wrap: wrap; gap: 5px 14px;
   max-width: 70%; background: color-mix(in srgb, var(--surface) 88%, transparent);
   border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 11.5px; backdrop-filter: blur(4px);
 }
 .kg2-li { display: flex; align-items: center; gap: 6px; color: var(--muted); }
 .kg2-li-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
-/* Chapter / Category legend. The two modes are the same list at two grains,
-   so the fine families are NESTED under the chapter they belong to rather than
-   listed flat: a flat list of fourteen chips is a lookup table, a nested one
-   says which notebook each subject sits in, which is half the thing the colour
-   is encoding. The head takes a whole row (flex-basis 100%) so each chapter's
-   families wrap under it and not beside the previous chapter's.
-   Capped and scrollable because Category mode is 4 heads + 14 families: at
-   full height it would cover the bottom third of the canvas it is explaining. */
-.kg2-legend-grouped { max-width: 78%; max-height: 44%; overflow: hidden auto; row-gap: 2px; }
-.kg2-legend-grouped .kg2-li-head { flex: 0 0 100%; margin-top: 5px; color: var(--text); font-weight: 700; }
-.kg2-legend-grouped .kg2-li-head:first-child { margin-top: 0; }
-.kg2-legend-grouped .kg2-li-sub { margin-left: 15px; }
-/* Sections mode with no exercise map: every concept falls to prep, which reads
-   as a finished answer rather than a missing file. Flag it in the legend. */
-.kg2-legend-grouped .kg2-li-warn { flex: 0 0 100%; color: var(--warn); }
-/* Category mode folds, because its full list is tall enough to cover the
-   prerequisite floor a BT layout puts in this exact corner. <details> holds
-   the state, so a recolour cannot reset it. */
-.kg2-legend-fold { flex: 0 0 100%; }
-.kg2-legend-fold > summary { cursor: pointer; color: var(--muted); font-weight: 600; list-style-position: inside; }
-.kg2-legend-fold > summary:hover { color: var(--text); }
-.kg2-legend-fold[open] > summary { margin-bottom: 5px; }
-.kg2-legend-fold-body { display: flex; flex-wrap: wrap; gap: 2px 14px; }
 /* Matches the washed-out, dashed bubbles used for projected (unmeasured) concepts. */
 .kg2-li-projected { /* graph-legend */ background: rgba(138, 101, 151, .42); border-style: dashed; border-color: rgb(var(--tint-rgb) / calc(.55 * var(--tint-k))); }
 .kg2-status { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: var(--muted); font-size: 14px; }
@@ -616,11 +588,7 @@ html.dd-colab-edition .kg2-controls .kg2-max {
      leaving dead space under it. */
   html.dd-colab-edition .kg2 .kg2-wrap { height: calc(100vh - var(--dd-topbar-h) - 36px); }
   html.dd-colab-edition .kg2-graph { height: auto; }
-  /* Narrow: the dock's three columns stack, so it needs more room. */
-  .kg2-graph { height: 74vh; --kg2-dock-h: 220px; }
-  .kg2-dock { flex-direction: column; gap: 10px; overflow-y: auto; }
-  .kg2-dock-col + .kg2-dock-col { border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 10px; }
-  .kg2-dock-mastery { max-width: none; }
+  .kg2-graph { height: 74vh; }
 }
 
 /* ============================================================
@@ -723,34 +691,8 @@ body.kg-maxi-open { overflow: hidden; }
   /* graph-legend */
   background: linear-gradient(90deg, #d64848 0%, #e2a92e 50%, #34a862 100%); border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
 
-/* Learner-model readout, docked across the bottom of the graph pane.
-   Fixed height (--kg2-dock-h, which also insets #kg-cy) so hovering bubble to
-   bubble never reflows the canvas under the cursor. */
-.kg2-dock {
-  position: absolute; left: 0; right: 0; bottom: 0; height: var(--kg2-dock-h, 132px); z-index: 20;
-  display: flex; align-items: stretch; gap: 22px;
-  /* Scrolls rather than clips: in a narrow pane the columns wrap taller than the
-     fixed height, and a cut-off confidence line would misread as missing data. */
-  padding: 12px 18px; box-sizing: border-box; overflow: hidden auto;
-  background: var(--panel);
-  border-top: 1px solid var(--border);
-  font-size: 12.5px; color: var(--text);
-}
-/* Showing the selected (gold-highlighted) node rather than a hover preview. */
-.kg2-dock.is-pinned { border-top-color: color-mix(in srgb, var(--gold) 55%, var(--border)); }
-.kg2-dock-empty { margin: auto; color: var(--muted); font-size: 13px; }
-.kg2-dock-col { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-.kg2-dock-col + .kg2-dock-col { border-left: 1px solid var(--border); padding-left: 22px; }
-.kg2-dock-id { flex: 1 1 30%; }
-.kg2-dock-mastery { flex: 1 1 34%; max-width: 420px; }
-.kg2-dock-stats { flex: 1 1 26%; justify-content: center; }
-.kg2-dock-title { font-weight: 700; font-size: 15px; line-height: 1.3; margin-bottom: 4px; }
-.kg2-dock-meta { font-size: 11.5px; color: var(--muted); }
-.kg2-dock-evidence { margin-top: 7px; font-size: 11px; color: var(--muted); line-height: 1.35; }
-.kg2-dock-headline { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
-.kg2-dock-headline strong { font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
-.kg2-dock-band { font-size: 11.5px; color: var(--muted); }
-/* mastery bar: fill = P(known), shaded band = confidence interval, ticks = gates */
+/* mastery bar (concept-graph/mastery-bar.js; the class names are the old
+   dock's): fill = P(known), shaded band = confidence interval, ticks = gates */
 .kg2-dock-track {
   position: relative; height: 10px; border-radius: 5px; overflow: hidden;
   background: color-mix(in srgb, var(--text) 14%, transparent);
@@ -773,10 +715,6 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-dock-gate { position: absolute; top: 0; bottom: 0; width: 2px; background: color-mix(in srgb, var(--text) 60%, transparent); }
 .kg2-dock-gate.is-mastery { background: var(--gold); }
 .kg2-dock-scale { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 3px; }
-.kg2-dock-ci-label { font-size: 11.5px; color: var(--text); margin-top: 6px; line-height: 1.35; }
-.kg2-dock-dim { color: var(--muted); }
-.kg2-dock-row { display: flex; justify-content: space-between; gap: 14px; padding: 2px 0; color: var(--muted); }
-.kg2-dock-row span + span { color: var(--text); font-variant-numeric: tabular-nums; }
 
 /* Mastery handoff toast — shown on the graph after the embedded practice page
    reports a concept crossed the 0.95 mastery gate. */
@@ -797,27 +735,7 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-mastered-stay { background: transparent; color: var(--muted); }
 .kg2-mastered-stay:hover { color: var(--text); }
 
-/* ---- Right pane tabs: Lesson | Metadata | Settings (lesson-graph.js builds
-   the strip; 2026-09-06). Same control vocabulary as #kg-colormode. Hidden
-   with the head when nothing is selected. ---- */
-.kg2-tabs {
-  flex: 0 0 auto;
-  display: flex;
-  gap: 0;
-  padding: 0 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel-deep);
-}
-.kg2-tabs button {
-  background: transparent; border: 0; border-bottom: 2px solid transparent;
-  color: var(--muted); font: inherit; font-size: 12.5px; font-weight: 600;
-  padding: 8px 12px; cursor: pointer; margin-bottom: -1px;
-}
-.kg2-tabs button:hover { color: var(--text); }
-.kg2-tabs button[aria-selected="true"] { color: var(--accent-text); border-bottom-color: var(--accent); }
-.kg2-info:has(.kg2-placeholder) .kg2-tabs { display: none; }
-
-/* Metadata tab */
+/* Metadata (kg-panel.js settings, collapsed) */
 .kg2-md-grid { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 13px; align-items: baseline; }
 .kg2-md-k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
 .kg2-md-v { color: var(--text); min-width: 0; overflow-wrap: anywhere; }
@@ -825,7 +743,7 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-md-notes { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.6; }
 .kg2-md-foot { margin-top: 20px; color: var(--muted); font-size: 12px; }
 
-/* Settings tab */
+/* Settings (kg-panel.js, the cog) */
 .kg2-set { display: flex; flex-direction: column; gap: 18px; font-size: 14px; }
 .kg2-set-guest { color: var(--muted); font-size: 14px; line-height: 1.6; }
 .kg2-set-guest strong { color: var(--text); }
@@ -843,7 +761,3 @@ body.kg-maxi-open { overflow: hidden; }
 .kg2-set-presets button + button { border-left: 1px solid var(--border); }
 .kg2-set-presets button.active { background: var(--accent); color: var(--on-accent); }
 .kg2-set-status { color: var(--muted); font-size: 12px; min-height: 1.2em; }
-.kg2-li-off { /* graph-legend */ background: rgba(120, 120, 120, .22); border-style: solid; }
-.kg2-li-course-off { /* graph-legend */ background: #b8dc6e; opacity: .45; border-style: dotted; }
-.kg2-li-edge { /* graph-legend */ display: inline-block; width: 22px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 3px solid #e3212c; }
-.kg2-li-edge-pre { /* graph-legend */ border-top: 1px dashed #e3212c; opacity: .6; }

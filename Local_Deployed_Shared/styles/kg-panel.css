@@ -1,0 +1,98 @@
+/* kg-panel.css — the Knowledge Graph's side panel as concept-graph/kg-panel.js
+   draws it (2026-09-29): a concept (title, reading, mastery bar, one progress
+   line, "Read lesson"), an area (average, band strip, concepts weakest-first),
+   or the cog's settings, stacked with no tabs.
+
+   Linked AFTER how-it-works.css, which still owns the pane's frame
+   (`.kg2-info`, `.kg2-info-head`, `.kg2-title`, lesson typography, chips) and
+   the settings controls (`.kg2-set-*`, `.kg2-md-*`); this file adds the new
+   pieces and undoes the one old rule that hid the head when nothing is
+   selected — the cog lives there now and must always be reachable. */
+
+.kg2-info:has(.kg2-placeholder) .kg2-info-head { display: flex; }
+.kg2-info-head { min-height: 48px; box-sizing: border-box; }
+.kg2-info-head > #kg-maximize { margin-left: auto; }
+.kg2-info-head > #kg-maximize[hidden] { display: none; }
+
+/* ---- head: area chip + cog -------------------------------------------- */
+.kg2-area-chip {
+  display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+  background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 11px 4px 9px; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.kg2-area-chip:hover { border-color: var(--accent-text); color: var(--accent-text); }
+.kg2-cog {
+  flex: 0 0 auto; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+  transition: color 120ms, border-color 120ms, transform 200ms;
+}
+.kg2-cog svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.kg2-cog:hover { color: var(--text); border-color: var(--border); }
+.kg2-cog.active { color: var(--accent-text); border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.kg2-cog.active svg { transform: rotate(45deg); }
+.kg2-cog:focus-visible, .kg2-area-chip:focus-visible, .kgp-read:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
+
+/* ---- concept + area readings ------------------------------------------ */
+.kg2-info[data-view="concept"] .kg2-title,
+.kg2-info[data-view="section"] .kg2-title { margin-bottom: 4px; }
+.kgp-sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+.kgp-score { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 8px; font-size: 13px; color: var(--text); }
+.kgp-score strong { font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.kgp-dim { color: var(--muted); }
+.kgp-note { font-size: 13.5px; line-height: 1.55; }
+.kgp-progress { margin-top: 12px; font-size: 13px; line-height: 1.5; color: var(--text); }
+.kgp-progress strong { color: var(--info, var(--accent-text)); }
+.kgp-flag {
+  margin-top: 10px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.45;
+  background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text);
+}
+.kgp-flag.is-next { background: color-mix(in srgb, var(--gold) 16%, transparent); }
+.kgp-flag.is-off { color: var(--muted); }
+
+.kgp-read {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 18px;
+  background: transparent; color: var(--accent-text); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.kgp-read:hover { border-color: var(--accent-text); }
+.kgp-read span { font-size: 10px; }
+.kgp-lesson { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.kgp-lesson[hidden] { display: none; }
+
+/* Band strip: one proportional bar of how the area's concepts spread. The
+   band colours are the mastery ramp's (lesson-graph.js masteryColor), a fixed
+   data scale like the bubbles', so not tokens. */
+.kgp-strip { display: flex; height: 8px; gap: 2px; margin: 14px 0 8px; border-radius: 4px; overflow: hidden; }
+.kgp-strip-strong { /* graph-legend */ background: #34a862; }
+.kgp-strip-learning { /* graph-legend */ background: #e2a92e; }
+.kgp-strip-starting { /* graph-legend */ background: #d64848; }
+.kgp-strip-none { /* graph-legend */ background: #5b5b70; }
+.kgp-counts { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); }
+.kgp-counts li { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.kgp-key { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+.kgp-h { margin: 22px 0 8px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.kgp-kcs { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.kgp-kcs li { margin: 0; }
+.kgp-kcs button {
+  width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 72px 40px; align-items: center; gap: 10px;
+  background: transparent; color: var(--text); border: 0; border-radius: 7px; padding: 6px 8px;
+  font: inherit; font-size: 13px; text-align: left; cursor: pointer;
+}
+.kgp-kcs button:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.kgp-kcs button.is-off { color: var(--muted); }
+.kgp-kc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kgp-kc-bar { height: 6px; border-radius: 3px; overflow: hidden; background: color-mix(in srgb, var(--text) 12%, transparent); }
+.kgp-kc-bar span { display: block; height: 100%; border-radius: 3px; }
+.kgp-kcs button.is-inferred .kgp-kc-bar span { opacity: .55; }
+.kgp-kc-pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+
+/* ---- settings (the cog): stacked blocks -------------------------------- */
+.kgp-block { padding: 4px 0 18px; }
+.kgp-block + .kgp-block { border-top: 1px solid var(--border); padding-top: 4px; }
+.kgp-block .kg2-set-row + .kg2-set-row { margin-top: 14px; }
+.kgp-details { margin-top: 16px; }
+.kgp-details > summary { cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 600; }
+.kgp-details > summary:hover { color: var(--text); }
+.kgp-details[open] > summary { margin-bottom: 12px; }

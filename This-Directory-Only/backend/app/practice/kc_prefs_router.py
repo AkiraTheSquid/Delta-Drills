@@ -3,6 +3,9 @@
 Endpoints (mounted under /api/practice by the parent router):
   GET /kc-prefs            every concept the learner has changed
   PUT /kc-prefs/{kc}       {"enabled": bool?, "weight": float?} → stored row
+  PUT /kc-prefs            {"kcs": [kc, …], "enabled": bool} → those rows
+                           (a whole area at once: the graph Filter's per-area
+                           switch, 2026-09-29)
 
 The rule for what a preference DOES lives in `app/kc_prefs.py`; this file only
 moves it on and off the wire. `/kc-lattice` carries the same row per KC under
@@ -11,7 +14,7 @@ moves it on and off the wire. `/kc-lattice` carries the same row per KC under
 
 from __future__ import annotations
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
@@ -31,6 +34,13 @@ class KcPrefUpdate(BaseModel):
     weight: Optional[float] = Field(
         default=None, ge=kc_prefs.MIN_WEIGHT, le=kc_prefs.MAX_WEIGHT,
         allow_inf_nan=False)
+
+
+class KcPrefBulkUpdate(BaseModel):
+    # One write for an area's concepts, so switching an area off is one save
+    # and one lattice re-read, not forty. Bounded: the whole registry is ~200.
+    kcs: List[str] = Field(min_length=1, max_length=2000)
+    enabled: bool
 
 
 class KcPrefRow(BaseModel):
@@ -72,3 +82,26 @@ def update_kc_pref(
     kc_prefs.set_pref(user_state, kc, enabled=payload.enabled, weight=payload.weight)
     save_user_state(user_id)
     return KcPrefRow(kc=kc, **kc_prefs.pref_row(user_state, kc))
+
+
+@router.put("/kc-prefs", response_model=KcPrefsResponse)
+def update_kc_prefs_bulk(
+    payload: KcPrefBulkUpdate,
+    user: User = Depends(get_current_user),
+) -> KcPrefsResponse:
+    registry = kc_graph._registry()
+    unknown = sorted({kc for kc in payload.kcs if kc not in registry})
+    if unknown:
+        # All or nothing: a half-applied area switch would leave the Filter's
+        # checkbox showing a state the server doesn't hold.
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Unknown concept(s): {', '.join(unknown[:10])}")
+    user_id = str(user.id)
+    user_state = get_user_state(user_id)
+    kcs = list(dict.fromkeys(payload.kcs))
+    for kc in kcs:
+        kc_prefs.set_pref(user_state, kc, enabled=payload.enabled)
+    save_user_state(user_id)
+    return KcPrefsResponse(prefs={
+        kc: KcPrefRow(kc=kc, **kc_prefs.pref_row(user_state, kc)) for kc in kcs
+    })

@@ -13,17 +13,23 @@
 
      ARENA                                       6%
      through 0.2 · 125 concepts            complete
+     12 of 40 XP today ████░░░░░░            30%    ./xp-target.js
+     Finish the course by [Mar 25, 2027]
      157 XP gained this week · 12 today
-     ▁ ▃ ▂ ▅ ▁ ▆ ▒                          the week, one bar a day
+     ▁ ▃ ▂ ▅ ▁ ▆ ▒ ─ ─ ─ ─ ─ ─ ●               the week; the yellow line is
+                                              the daily target, dragged by ●
 
-   🪦 Gone with that: the Time / Graph / Measure dropdowns, the course line
-   and its drag-to-set target (xp-target-drag.js), the problems-solved
-   measure (xp-solved-chart.js), and the Today / Level / Course / Finish /
-   Target card. A target already saved stays in the learner's state and in
-   the summary; nothing here draws it.
+   Seth, 2026-09-29 (later): the target is back, set on the chart — drag the
+   yellow line's knob, or pick the finish date — with today's progress
+   toward it under the %. ./xp-target.js owns both.
 
-   THE BARS (#learner-xp-graphs) are drawn by ./xp-group-view.js: yours
-   alone, or in a study group one row per member. This file hands it `solo`.
+   🪦 Still gone: the Time / Graph / Measure dropdowns, the course line and
+   its drag-to-set date (xp-target-drag.js), the problems-solved measure
+   (xp-solved-chart.js), and the Today / Level / Course / Finish card.
+
+   THE BARS (#learner-xp-graphs) are drawn by ./xp-group-view.js: always
+   yours, and in a study group the week's leaderboard under them. This
+   file hands it `solo`.
 
    It draws from `delta:xp-summary`, which ../xp.js broadcasts after every
    read. `.is-empty` hides both halves when there is no summary (no
@@ -88,7 +94,12 @@
     if (!right || !summary) return;
     // Measured after the column is shown: a hidden column is 0 wide.
     drawnWidth = chartWidth();
-    const solo = () => [window.DDXpCharts.bars(summary, { width: drawnWidth, count: WEEK, bare: true, target: false })];
+    const T = window.DDXpTarget;
+    const solo = () => {
+      const target = T ? T.current(summary).daily : false;
+      const box = window.DDXpCharts.bars(summary, { width: drawnWidth, count: WEEK, bare: true, target, drag: !!T });
+      return [T ? T.wire(box, summary) : box];
+    };
     const ctx = { width: drawnWidth, days: WEEK, solo };
     if (window.DDXpGroupView) window.DDXpGroupView.paint(right, summary, ctx);
     else right.replaceChildren(...solo()); // the group view's file did not load
@@ -107,7 +118,7 @@
     }
     section.classList.remove("is-empty");
     right?.classList.remove("is-empty");
-    root.replaceChildren(course(summary), gained(summary));
+    root.replaceChildren(course(summary), ...(window.DDXpTarget ? [window.DDXpTarget.goal(summary)] : []), gained(summary));
     paintGraphs();
     if (!revealed) {
       revealed = true;

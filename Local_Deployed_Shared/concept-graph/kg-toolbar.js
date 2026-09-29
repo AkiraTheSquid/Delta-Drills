@@ -1,27 +1,35 @@
 /* concept-graph/kg-toolbar.js — ONE toolbar across the top of the Knowledge
  * Graph, instead of controls in three corners (Seth, 2026-09-25: "the filter
  * in the bottom left is separate from the top left … at the bottom left
- * there's too much information").
+ * there's too much information"), cut to four controls on 2026-09-29 ("keep
+ * condensed view. remove adaptive view. remove everything else"):
  *
- * It builds nothing the graph needs. It gathers controls the other files
- * already built and wired, and moves them into one bar:
- *
- *   [Adaptive|Condensed|Complete]  [Mastery|Sections|Categories|Math/code]
- *   [Filter ▾]  ……  [▭ ●]  [Reset] [Fit]
+ *   [Complete|Condensed]  [Mastery|Sections]  [Filter ▾]  ……  [Fit]
  *   hint line · cold-start notice
  *
- *   View segment, Reset, hint, Course select, Chapters list — graph-views.js
+ *   View segment, hint — graph-views.js
  *   Colour segment (#kg-colormode), .kg2-controls (Fit, Colab links),
  *   #kg-nodata — lesson-graph.js
- *   Node look (▭ labelled box / ● dot) — this file, over kg-look.js
+ *   Filter — this file
  *
  * Moving an element keeps its listeners, and every owner looks its elements
  * up by id (graph-views.js marks the view segment by `#kg-view-seg`, not
  * under its old card), so the owners don't know the bar exists. Without this
  * script the old layout stands: nothing else depends on it.
  *
- * The Filter popover holds the Course select and the Chapters list; its badge
- * counts what is filtered out, so a filtered map never looks complete. */
+ * The Filter is the PRACTICE switch per area (it replaced the Knowledge Graph
+ * page's "Practice focus" select, 2026-09-29: "make it more like the existing
+ * filter ui where you check off multiple areas to enable or disable nodes").
+ * Unticking an area turns its concepts off in kc-prefs (one bulk PUT
+ * /api/practice/kc-prefs) — the same `enabled: false` a concept's own switch
+ * in the panel's cog writes — so the practice queue skips them and the graph
+ * greys them with the machinery it already has for a disabled concept
+ * (lesson-graph.js `kc-disabled`). A partly-off area shows a dash. The badge
+ * counts areas with anything off. A save re-reads the lattice and repaints
+ * (DeltaKgCore.refresh), then `delta:kc-prefs-changed` tells the panel,
+ * the headers and practice/practice-target.js. An account still on the old
+ * Ray Tracing 0.1 focus sees it as a row of its own at the top, with a Turn
+ * off button (practice-target.js explains why it isn't converted). */
 (function () {
   "use strict";
 
@@ -52,14 +60,59 @@
     return n;
   };
 
-  /* ---------------- filter popover ------------------------------------- */
-  const filterCount = (pop) => {
-    let n = pop.querySelectorAll('input[data-sid]:not(:checked)').length;
-    const course = pop.querySelector("select");
-    if (course && course.value) n += 1;
-    return n;
+  /* ---------------- filter popover: practise these areas --------------- */
+  const lattice = () => (typeof window.getKcLattice === "function" ? window.getKcLattice() : null);
+  const sections = () => (window.deltaKgView && window.deltaKgView.sections ? window.deltaKgView.sections() : []);
+  const shortLabel = (s) => (window.DeltaKgSections && window.DeltaKgSections.label ? window.DeltaKgSections.label(s) : s.label);
+  // Off = the learner's own switch (row.pref.enabled === false). A concept
+  // whose whole COURSE is off in the Courses tab is a different switch
+  // (lesson-graph.js `_courseOff`) and is left to that tab.
+  const userOff = (row) => !!(row && row.pref && row.pref.enabled === false);
+  const courseOff = (row) => !!(row && row.state === "disabled" && !userOff(row));
+  const areaState = (sec) => {
+    const L = lattice();
+    const rows = sec.kcs.map((kc) => (L && L.kcs ? L.kcs[kc] : null));
+    const own = rows.filter((r) => !courseOff(r));
+    const off = own.filter(userOff).length;
+    return { total: own.length, off, courseOff: !own.length && rows.some(courseOff) };
   };
-  const buildFilter = (panel) => {
+  const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  let saving = Promise.resolve();
+  const saveArea = (sec, enabled) => {
+    const fn = typeof window.apiFetch === "function" ? window.apiFetch : null;
+    if (!fn) return Promise.resolve(false);
+    const L = lattice();
+    const kcs = sec.kcs.filter((kc) => !(L && L.kcs && courseOff(L.kcs[kc])));
+    if (!kcs.length) return Promise.resolve(true);
+    // Serialized: two quick clicks must land in click order.
+    const run = () => fn("/api/practice/kc-prefs", {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kcs, enabled }),
+    }).then(async (res) => {
+      if (!res || !res.ok) return false;
+      const body = await res.json().catch(() => null);
+      // Patch the cached lattice first, so the list and the badge are right
+      // even if the re-read below fails; then re-read the server's report
+      // (the real gate states) and repaint the bubbles before announcing.
+      const cur = lattice();
+      if (body && body.prefs && cur && cur.kcs) Object.keys(body.prefs).forEach((kc) => {
+        const row = cur.kcs[kc];
+        if (!row) return;
+        row.pref = { enabled: body.prefs[kc].enabled, weight: body.prefs[kc].weight };
+        // Off is "disabled" at once; back on, the real gate (locked,
+        // frontier, …) is the server's to say — unknown until the re-read.
+        row.state = enabled ? null : "disabled";
+      });
+      try { await window.DeltaKgCore?.refresh?.(); } catch (_) {}
+      window.dispatchEvent(new CustomEvent("delta:kc-prefs-changed", { detail: { kcs, enabled } }));
+      return true;
+    }).catch(() => false);
+    saving = saving.then(run, run);
+    return saving;
+  };
+
+  const buildFilter = () => {
     const wrap = el("div", "kgt-filter");
     const btn = el("button", "kgt-btn kgt-filter-btn",
       '<span>Filter</span><span class="kgt-badge" hidden></span><span class="kgt-caret" aria-hidden="true">▾</span>');
@@ -69,90 +122,82 @@
     const pop = el("div", "kgt-pop");
     pop.hidden = true;
     pop.setAttribute("role", "dialog");
-    pop.setAttribute("aria-label", "Filter the graph");
-    const course = panel.querySelector(".kgv-course");
-    if (course) pop.appendChild(course);
-    const chapters = panel.querySelector("details.kgv-chapters");
-    if (chapters) {
-      // Inside the popover the list is the point; no second fold.
-      chapters.open = true;
-      pop.appendChild(chapters);
-    }
+    pop.setAttribute("aria-label", "Areas to practise");
     wrap.append(btn, pop);
-
     const badge = btn.querySelector(".kgt-badge");
-    const refresh = () => {
-      const n = filterCount(pop);
+
+    const focus = () => {
+      const f = window.PracticeTarget && window.PracticeTarget.focus ? window.PracticeTarget.focus() : null;
+      return f && f.target && f.target !== "all" ? f : null;
+    };
+    const refreshBadge = () => {
+      const n = sections().filter((s) => areaState(s).off > 0).length + (focus() ? 1 : 0);
       badge.hidden = !n;
       badge.textContent = n ? String(n) : "";
       btn.classList.toggle("is-on", !!n);
-      btn.title = n ? `${n} filter${n === 1 ? "" : "s"} on` : "Filter by course or chapter";
+      btn.title = n ? `${n} area${n === 1 ? "" : "s"} switched off` : "Choose which areas you practise";
     };
-    // graph-views.js rebuilds the chapter list's HTML; listen on the popover.
-    pop.addEventListener("change", () => setTimeout(refresh, 0));
-    new MutationObserver(refresh).observe(pop, { childList: true, subtree: true });
-    refresh();
+    const render = () => {
+      const list = sections();
+      const f = focus();
+      pop.innerHTML = '<div class="kgt-pop-title">Practise these areas</div>' +
+        (f ? `<div class="kgt-focus"><span>Focus: <strong>${esc(f.label || f.target)}</strong> and what it builds on — ` +
+          `nothing else is served.</span><button type="button" class="kgt-btn kgt-focus-off">Turn off</button></div>` : "") +
+        '<div class="kgt-area-list">' + list.map((s) => {
+          const st = areaState(s);
+          const on = st.total - st.off;
+          const note = st.courseOff ? "course off" : st.off ? `${on}/${st.total}` : String(st.total);
+          return `<label class="kgt-area${st.courseOff ? " is-course-off" : ""}">` +
+            `<input type="checkbox" data-sid="${esc(s.id)}"${st.off < st.total ? " checked" : ""}${st.courseOff ? " disabled" : ""}>` +
+            `<span class="kgt-swatch" style="background:${esc(s.color)}"></span>` +
+            `<span class="kgt-area-label">${esc(shortLabel(s))}</span><span class="kgt-area-n">${note}</span></label>`;
+        }).join("") + "</div>" +
+        '<div class="kgt-pop-foot" aria-live="polite">Unticked areas are skipped in practice and greyed on the graph.</div>';
+      list.forEach((s) => {
+        const cb = pop.querySelector(`input[data-sid="${CSS.escape(s.id)}"]`);
+        const st = areaState(s);
+        if (cb) cb.indeterminate = st.off > 0 && st.off < st.total;
+      });
+      refreshBadge();
+    };
+    pop.addEventListener("click", async (e) => {
+      const off = e.target.closest(".kgt-focus-off");
+      if (!off || !window.PracticeTarget) return;
+      off.disabled = true;
+      off.textContent = "Turning off…";
+      try { await window.PracticeTarget.clearFocus(); } catch (_) { /* row stays; re-rendered below */ }
+      render();
+    });
+    pop.addEventListener("change", async (e) => {
+      const cb = e.target.closest("input[data-sid]");
+      if (!cb) return;
+      const sec = sections().find((s) => s.id === cb.dataset.sid);
+      if (!sec) return;
+      const foot = pop.querySelector(".kgt-pop-foot");
+      cb.disabled = true;
+      if (foot) foot.textContent = "Saving…";
+      const ok = await saveArea(sec, cb.checked);
+      render();
+      const f2 = pop.querySelector(".kgt-pop-foot");
+      if (!ok && f2) f2.textContent = window.apiFetch ? "Not saved — try again." : "Sign in to save.";
+    });
 
     const close = () => { pop.hidden = true; btn.setAttribute("aria-expanded", "false"); };
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (pop.hidden) render();
       pop.hidden = !pop.hidden;
       btn.setAttribute("aria-expanded", pop.hidden ? "false" : "true");
     });
     document.addEventListener("click", (e) => { if (!pop.hidden && !wrap.contains(e.target)) close(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) { close(); btn.focus(); } });
+    // The lattice lands after the bar, and moves with every graded attempt
+    // and every switch in the panel's cog. A course scope resolves AFTER
+    // kg-course-changed (its concept set is a fetch); kg-view-changed follows.
+    ["delta:kc-readiness-changed", "delta:kc-prefs-changed", "delta:kg-course-changed", "delta:kg-view-changed", "delta:practice-focus-changed"].forEach((ev) =>
+      window.addEventListener(ev, () => (pop.hidden ? refreshBadge() : render())));
+    refreshBadge();
     return wrap;
-  };
-
-  /* ---------------- node look ------------------------------------------ */
-  const buildLook = () => {
-    const look = window.DeltaKgLook;
-    if (!look) return null;
-    const seg = el("div", "kgt-seg kgt-look");
-    seg.setAttribute("role", "group");
-    seg.setAttribute("aria-label", "Node style");
-    seg.innerHTML =
-      '<button type="button" data-look="label" title="Labelled boxes — the name inside, the colour is the box">' +
-        '<svg viewBox="0 0 20 14" aria-hidden="true"><rect x="1.5" y="2.5" width="17" height="9" rx="3"/></svg>' +
-        '<span class="kgt-sr">Labels</span></button>' +
-      '<button type="button" data-look="dot" title="Dots — a small circle, the name underneath">' +
-        '<svg viewBox="0 0 20 14" aria-hidden="true"><circle cx="10" cy="7" r="4.5"/></svg>' +
-        '<span class="kgt-sr">Dots</span></button>';
-    const paint = () => seg.querySelectorAll("[data-look]").forEach((b) => {
-      const on = b.dataset.look === look.look();
-      b.classList.toggle("active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    seg.querySelectorAll("[data-look]").forEach((b) => b.addEventListener("click", () => look.setLook(b.dataset.look)));
-    window.addEventListener("delta:kg-look-changed", paint);
-    paint();
-    return seg;
-  };
-
-  /* ---------------- edge style ----------------------------------------- */
-  // Dagre's rows with bending edges (the default) or the optimizer's routes (kg-look.js).
-  const buildEdges = () => {
-    const look = window.DeltaKgLook;
-    if (!look || !look.setEdgeStyle) return null;
-    const seg = el("div", "kgt-seg kgt-look kgt-edges");
-    seg.setAttribute("role", "group");
-    seg.setAttribute("aria-label", "Edge style");
-    seg.innerHTML =
-      '<button type="button" data-edges="rows" title="Rows — concepts in levels, edges bending between them">' +
-        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M4 12 C4 7 16 7 16 2"/></svg>' +
-        '<span class="kgt-sr">Rows</span></button>' +
-      '<button type="button" data-edges="routed" title="Routed edges — nodes moved and edges routed around them to cut crossings">' +
-        '<svg viewBox="0 0 20 14" aria-hidden="true"><path d="M3 12 V8 Q3 6 5 6 H15 Q17 6 17 4 V2"/></svg>' +
-        '<span class="kgt-sr">Routed</span></button>';
-    const paint = () => seg.querySelectorAll("[data-edges]").forEach((b) => {
-      const on = b.dataset.edges === look.edgeStyle();
-      b.classList.toggle("active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    seg.querySelectorAll("[data-edges]").forEach((b) => b.addEventListener("click", () => look.setEdgeStyle(b.dataset.edges)));
-    window.addEventListener("delta:kg-look-changed", paint);
-    paint();
-    return seg;
   };
 
   /* ---------------- assemble ------------------------------------------- */
@@ -178,25 +223,14 @@
     colour.classList.add("kgt-seg");
     colour.setAttribute("role", "group");
     colour.setAttribute("aria-label", "Colour by");
-    bar.append(viewSeg, colour, buildFilter(panel), el("span", "kgt-spacer"));
-    const look = buildLook();
-    if (look) bar.appendChild(look);
-    const edges = buildEdges();
-    if (edges) bar.appendChild(edges);
-    // Reset and Fit as icons, their words kept for screen readers and the
-    // tooltip: in a full bar the words were what made it wrap.
+    bar.append(viewSeg, colour, buildFilter(), el("span", "kgt-spacer"));
+    // Fit as an icon, its words kept for screen readers and the tooltip.
     const iconize = (btn, svg, label) => {
       btn.classList.add("kgt-btn", "kgt-icon");
       btn.setAttribute("aria-label", label);
       btn.title = label;
       btn.innerHTML = svg + '<span class="kgt-sr">' + label + "</span>";
     };
-    const reset = $("kg-view-reset");
-    if (reset) {
-      iconize(reset, '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8a4.5 4.5 0 1 0 1.4-3.3"/><path d="M4.6 1.9v3h3"/></svg>',
-        "Reset — fold away what you opened");
-      bar.appendChild(reset);
-    }
     const controls = graph.querySelector(".kg2-controls");
     if (controls) {
       const fit = controls.querySelector("#kg-fit");

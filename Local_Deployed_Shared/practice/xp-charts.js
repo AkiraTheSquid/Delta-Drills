@@ -4,7 +4,10 @@
 
    DAILY XP — one bar per day of the range, today's hatched (provisional:
      later answers can still move credit to the day it happened), today's
-     target as a line unless `target: false`. `bare: true` drops the chart's
+     target as a line unless `target: false` (a number draws the line
+     there instead). `drag: true` leaves headroom above the line, draws its
+     knob at the right end and hands ./xp-target.js the pieces it moves
+     (`box.xpTarget`). `bare: true` drops the chart's
      own title and total, for a home that states them above it (Seth,
      2026-09-29). `measure: "solved"` counts problems solved instead
      (Seth, 2026-09-28), with no target: the target is in XP.
@@ -78,7 +81,7 @@
   // ── daily XP bars ──────────────────────────────────────────────
   /** `count` days ending today; a short history is padded with empty days
       so a week always reads as seven. */
-  function bars(s, { count, width, peak: floor = 0, measure = "xp", bare = false, target: withTarget = true }) {
+  function bars(s, { count, width, peak: floor = 0, measure = "xp", bare = false, target: withTarget = true, drag = false }) {
     const solved = measure === "solved";
     const val = (d) => (solved ? d.solved : d.xp) || 0;
     const unit = solved ? "solved" : "XP";
@@ -98,9 +101,11 @@
     }
 
     const W = width, H = 172, L = 34, R = W - 6, T = 14, B = 146;
-    const target = solved || !withTarget ? 0 : s.today.target || 0;
-    // `floor`: a shared top, so a group's cards compare by eye.
-    const peak = Math.max(solved ? 4 : 10, floor, target, ...days.map(val));
+    const target = solved || withTarget === false ? 0
+      : typeof withTarget === "number" ? withTarget : s.today.target || 0;
+    // `floor`: a shared top, so a group's cards compare by eye. Dragged, the
+    // line gets room above it; letting go redraws with more (./xp-target.js).
+    const peak = Math.max(solved ? 4 : 10, floor, target * (drag ? 1.4 : 1), ...days.map(val));
     // Round gridlines: a 1-2-5 step that fits the peak in at most four
     // (the peak is at least 4, so the step is whole — no 0.5 solved).
     const tickStep = step125(peak, 4);
@@ -155,9 +160,23 @@
     });
     svg.appendChild(svgEl("line", { x1: L, x2: R, y1: B, y2: B, class: "xp-floor" }));
     if (target) {
-      svg.appendChild(svgEl("line", { x1: L, x2: R, y1: y(target), y2: y(target), class: "xp-target-line" }));
-      svg.appendChild(svgEl("text", { x: R, y: y(target) - 6, "text-anchor": "end", class: "xp-target-label" },
-        `target ${fmt(target)}`));
+      const line = svgEl("line", { x1: L, x2: R, y1: y(target), y2: y(target), class: "xp-target-line" });
+      const label = svgEl("text", { x: drag ? R - 14 : R, y: y(target) - 6, "text-anchor": "end", class: "xp-target-label" },
+        `target ${fmt(target)}`);
+      svg.append(line, label);
+      if (drag) {
+        // The knob: a grip at the line's right end. Its hit circle is larger
+        // than what is drawn, for a finger.
+        const knob = svgEl("g", { class: "xp-target-knob", transform: `translate(${R - 4} ${y(target)})` });
+        knob.append(
+          svgEl("circle", { r: 14, class: "xp-target-knob-hit" }),
+          svgEl("circle", { r: 6.5, class: "xp-target-knob-dot" }),
+          svgEl("path", { d: "M-2.5 -1.5 L0 -4 L2.5 -1.5 M-2.5 1.5 L0 4 L2.5 1.5", class: "xp-target-knob-grip" }),
+        );
+        svg.appendChild(knob);
+        // XP at an SVG y, and the y of an XP value, on this chart's scale.
+        box.xpTarget = { svg, line, label, knob, W, R, T, B, top, y, valueAt: (sy) => ((B - sy) / (B - T)) * top };
+      }
     }
     svg.addEventListener("pointerleave", () => { readout.textContent = describe(days[days.length - 1]); });
 
@@ -167,6 +186,6 @@
 
   window.DDXpCharts = {
     bars,
-    util: { el, svgEl, head, frame, fmt, shortDate, longDate, daysBetween, addDays, step125 },
+    util: { el, svgEl, head, frame, fmt, dateOf, shortDate, longDate, daysBetween, addDays, step125 },
   };
 })();

@@ -93,10 +93,6 @@ window.DD_INFOTIPS = {
     title: "The map",
     body: "Every skill in the curriculum, with an edge from each prerequisite to what it unlocks. Click a node to read what it teaches and where you stand. Drag to pan, scroll to zoom, <strong>Fit</strong> to get back.",
   },
-  "kg-legend": {
-    title: "Legend",
-    body: "What the node colours mean, for whichever mode the switch above the map is set to. <strong>Mastery</strong> is your standing on each concept. <strong>Sections</strong> asks whether ARENA's own curriculum tests a concept: the vivid colours are section 0.0 and 0.1, where an exercise the ARENA authors wrote covers it, and the muted ones are our run-up to them &mdash; &minus;1.0 Python, &minus;1.1 arrays, einops and tensors, &minus;1.2 the maths underneath. <strong>Categories</strong> is the subject instead &mdash; ten families in five areas: maths; Python; tensors (foundations, indexing, and broadcasting/matmul); einops and einsum; and ARENA's own material (tensor reasoning, ray tracing, CNNs). <strong>Math / code</strong> is the coarsest cut of all: rose for the concepts you reason out on paper, blue for the ones you type. A subject can straddle a section, so these are separate readings rather than one nested inside another.",
-  },
   "kg-info": {
     title: "Concept detail",
     body: "What the selected concept covers, what it needs first, and your current mastery of it.",

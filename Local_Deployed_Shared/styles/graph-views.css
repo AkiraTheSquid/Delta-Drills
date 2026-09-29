@@ -1,90 +1,134 @@
-/* graph-views.css — the Knowledge Graph's VIEW card (bottom-left of the canvas)
-   and the condensed-view overlay. Markup is injected by
-   concept-graph/graph-views.js; nothing in index.html carries these classes.
+/* graph-views.css — the Knowledge Graph's view switch (Complete | Condensed,
+   concept-graph/graph-views.js), the condensed-view overlay, the AREA HEADERS
+   drawn over the canvas (concept-graph/kg-sections.js) and the course graph
+   previews on the Courses tab (concept-graph/course-graph.js). Markup is all
+   injected; nothing in index.html carries these classes.
 
    Lives beside the `.kg2-*` rules in how-it-works.css rather than inside them:
-   that file is ORANGE and owns the graph's own chrome (controls, legend, dock).
-   Linked AFTER it, because `.kg2-graph.has-kgv .kg2-legend` below repositions
-   the legend and has to come later in the cascade to win at equal
-   specificity — the legend and this card share the bottom-left corner. */
+   that file is ORANGE and owns the graph's own chrome. */
 
-.kg2-graph { --kgv-w: 236px; }
-
-/* ---- the card --------------------------------------------------------- */
+/* ---- the view switch -------------------------------------------------- */
+/* kg-toolbar.js moves the segment into its bar and hides the card; the card's
+   own look only shows if the toolbar never built. */
 .kgv-panel {
-  position: absolute; left: 14px; bottom: calc(var(--kg2-dock-h, 0px) + 12px); z-index: 6;
-  width: var(--kgv-w); box-sizing: border-box;
+  position: absolute; left: 14px; bottom: 12px; z-index: 6;
   display: flex; flex-direction: column; gap: 7px;
   background: color-mix(in srgb, var(--surface) 90%, transparent);
   border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px 8px;
   font-size: 11.5px; color: var(--text); backdrop-filter: blur(4px);
 }
-.kgv-head { display: flex; align-items: center; justify-content: space-between; }
-.kgv-title { font-weight: 700; font-size: 12px; letter-spacing: .02em; }
-.kgv-reset {
-  background: transparent; border: 1px solid transparent; border-radius: 5px;
-  color: var(--muted); font: inherit; font-size: 11px; padding: 1px 6px; cursor: pointer;
-}
-.kgv-reset:hover { color: var(--accent-text); border-color: var(--border); }
-/* Nothing to collapse in the complete view. */
-.kgv-panel[data-view="complete"] .kgv-reset { visibility: hidden; }
-
-/* Segmented control — same shape as #kg-colormode in the opposite corner. */
 .kgv-seg { display: flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
 .kgv-seg button {
-  flex: 1 1 0; background: transparent; color: var(--muted); border: 0; padding: 5px 4px;
+  flex: 1 1 0; background: transparent; color: var(--muted); border: 0; padding: 5px 8px;
   font: inherit; font-size: 11.5px; cursor: pointer; white-space: nowrap;
 }
 .kgv-seg button + button { border-left: 1px solid var(--border); }
 .kgv-seg button.active { background: var(--accent); color: var(--on-accent); font-weight: 700; }
 .kgv-seg button:not(.active):hover { color: var(--text); }
-
-/* Course dropdown — roots the graph on one course (course-registry.js). */
-.kgv-course { display: flex; align-items: center; gap: 6px; }
-.kgv-course-label { color: var(--muted); font-weight: 600; }
-.kgv-course-select {
-  flex: 1 1 auto; min-width: 0; font: inherit; font-size: 11.5px; color: var(--text);
-  background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 5px;
-}
-
-.kgv-hint { color: var(--muted); line-height: 1.4; min-height: 1.4em; }
+.kgv-hint { color: var(--muted); line-height: 1.4; }
 .kgv-hint b { color: var(--text); }
-/* The two fan colours, named in the hint the same way they are drawn. */
-.kgv-in  { color: #3d8bfd; font-weight: 700; }
-.kgv-out { color: #f28c28; font-weight: 700; }
-
-/* ---- chapters fold ---------------------------------------------------- */
-.kgv-chapters { border-top: 1px solid var(--border); padding-top: 6px; }
-.kgv-chapters > summary { cursor: pointer; color: var(--muted); font-weight: 600; list-style-position: inside; }
-.kgv-chapters > summary:hover { color: var(--text); }
-.kgv-chapters[open] > summary { margin-bottom: 5px; }
-.kgv-chapter-list { display: flex; flex-direction: column; gap: 3px; max-height: 32vh; overflow: hidden auto; }
-.kgv-chapter { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text); }
-.kgv-chapter input { margin: 0; }
-.kgv-swatch { flex: 0 0 10px; width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgb(var(--well-rgb) / calc(.25 * var(--well-k))); }
-.kgv-chapter-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.kgv-chapter-n { color: var(--muted); font-variant-numeric: tabular-nums; }
-.kgv-warn { color: var(--warn); margin-top: 4px; }
-
-/* ---- sharing the corner with the legend ------------------------------ */
-/* The legend was alone in the bottom-left; with the card there it moves
-   right of it. Width is capped so the two never overlap the controls. */
-.kg2-graph.has-kgv .kg2-legend {
-  left: calc(var(--kgv-w) + 26px);
-  max-width: calc(100% - var(--kgv-w) - 48px);
-}
-.kg2-graph.has-kgv .kg2-legend-grouped { max-width: calc(100% - var(--kgv-w) - 48px); }
 
 /* ---- condensed overlay ------------------------------------------------ */
 /* Same box as #kg-cy. The main canvas stays MOUNTED underneath (visibility,
    not display): lesson-graph.js keeps measuring and animating it, and a
-   display:none container cannot be measured — the reason that file builds
-   lazily in the first place. */
-.kgv-condensed { position: absolute; inset: 0 0 var(--kg2-dock-h, 0px) 0; z-index: 2; }
+   display:none container cannot be measured. */
+.kgv-condensed { position: absolute; inset: 0; z-index: 2; }
 .kgv-condensed[hidden] { display: none; }
 #kg-cy.kgv-behind { visibility: hidden; }
 
+/* ---- area headers (kg-sections.js) ------------------------------------ */
+/* Two layers in #kg-cy's box: the leader lines UNDER the canvas (the canvas
+   is transparent between bubbles, so they show through there and never
+   across a bubble), the headers OVER it. The header layer lets clicks through
+   everywhere but on a header. */
+.kgs-lines, .kgs-heads { position: absolute; pointer-events: none; overflow: hidden; }
+.kgs-lines { z-index: 0; }
+.kgs-heads { z-index: 3; }
+#kg-cy { z-index: 1; }
+.kgs-line {
+  fill: none; stroke-width: 1.2; stroke-dasharray: 2 4; stroke-linecap: round;
+  opacity: .42; transition: opacity 160ms;
+}
+.kgs-line.is-active { opacity: .9; stroke-width: 1.6; }
+.kgs-line.is-dim { opacity: .12; }
+.kgs-head {
+  --kgs-c: var(--muted);
+  position: absolute; left: 0; top: 0; pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 10px; border-radius: 9px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kgs-c) 55%, transparent);
+  color: var(--text); font: inherit; font-size: 14px; font-weight: 700; letter-spacing: .01em;
+  white-space: nowrap; cursor: pointer; backdrop-filter: blur(6px);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .14), 0 6px 18px -10px rgb(0 0 0 / .45);
+  transition: border-color 140ms, background 140ms;
+}
+/* The area's colour as a bar down the left edge: the one thing that ties the
+   header to its bubbles at a glance. */
+.kgs-head::before { content: ""; width: 4px; align-self: stretch; border-radius: 2px; background: var(--kgs-c); }
+.kgs-head:hover { border-color: var(--kgs-c); }
+.kgs-head.is-active {
+  border-color: var(--kgs-c);
+  background: color-mix(in srgb, var(--kgs-c) 22%, var(--surface));
+}
+.kgs-head:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+
+/* ---- course graph previews (course-graph.js) --------------------------- */
+.ccg-preview {
+  position: relative; width: 100%; margin-top: 12px; height: 150px; border-radius: 10px; cursor: zoom-in;
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  border: 1px solid var(--border); overflow: hidden;
+}
+.ccg-preview:hover { border-color: var(--accent-text); }
+.ccg-canvas { position: absolute; inset: 0; }
+.ccg-status { position: absolute; left: 10px; bottom: 7px; font-size: 11px; color: var(--muted); pointer-events: none; }
+.ccg-max {
+  position: absolute; top: 7px; right: 7px; width: 28px; height: 28px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text);
+  border: 1px solid var(--border); border-radius: 7px; font-size: 15px; line-height: 1; cursor: pointer;
+}
+.ccg-max:hover { border-color: var(--accent-text); color: var(--accent-text); }
+.ccg-max:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
+
+/* ---- the page's course head (index.html .kg-course-bar) --------------- */
+/* "← Courses" + the scoped course's name, above the graph. The Courses tab is
+   the only way in now (no Knowledge Graph tab), so this is the way back. The
+   pane loses the bar's height so the page still does not scroll; a moved-out
+   graph (why-graph.js, instructor-review.js) is no longer under the page, so
+   the rule stops matching it. */
+#page-knowledge-graph { --kg-course-bar-h: 40px; }
+.kg-course-bar {
+  display: flex; align-items: center; gap: 12px; height: var(--kg-course-bar-h);
+  margin: -4px 0 4px; box-sizing: border-box;
+}
+.kg-course-back {
+  flex: 0 0 auto; background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 8px; padding: 5px 11px;
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.kg-course-back:hover { color: var(--text); border-color: var(--accent-text); }
+.kg-course-back:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 1px; }
+.kg-course-title {
+  margin: 0; min-width: 0; font-size: 18px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Wide only: under 820px how-it-works.css sets the pane's height to auto (and
+   the colab edition's to its own), which this ID selector would outrank. A
+   solo embed hides the bar and has its own height (solo-route.css), so the
+   bar's share goes to 0 there rather than fighting that rule's specificity. */
+@media (min-width: 821px) {
+  #page-knowledge-graph .kg2 .kg2-wrap {
+    height: calc(100vh - var(--dd-topbar-h) - 36px - var(--kg-course-bar-h));
+  }
+  html.dd-solo[data-solo-page="knowledge-graph"] #page-knowledge-graph .kg2 .kg2-wrap {
+    height: calc(100vh - 16px);
+  }
+}
+html.dd-solo[data-solo-page="knowledge-graph"] .kg-course-bar { display: none; }
+
 @media (max-width: 820px) {
-  .kg2-graph { --kgv-w: 190px; }
   .kgv-hint { display: none; }
+  .kgs-head { font-size: 12.5px; padding: 4px 10px 4px 8px; }
+  .ccg-preview { height: 120px; }
 }

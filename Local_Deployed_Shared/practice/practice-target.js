@@ -20,11 +20,20 @@
    kc_prefs.is_disabled), but nothing asked it for a new drill. So the
    course choice is checked here too: `studied: false` from
    /course-shares is exactly the server's course_off, and a drill tagged to a
-   concept of such a course is out, the same way an out-of-focus one is. */
+   concept of such a course is out, the same way an out-of-focus one is.
+
+   🔴 THE FOCUS PICKER IS GONE (Seth, 2026-09-29: "for practice focus, move it
+   in to … the filter … where you check off multiple areas"). Choosing what to
+   practise is now the graph toolbar's per-area switches (kg-toolbar.js), which
+   write kc-prefs `enabled: false` — the same off the server already honours —
+   and a concept switched off that way is out for this file too (`kcWhyOut`),
+   so a drill already on screen goes when its area does.
+   An account that still holds the Ray Tracing 0.1 focus is NOT converted: the
+   focus also scopes ARENA's milestones (course_mix.milestones → Home's "%
+   complete") and a stored ray placement's exposure (practice_targets), which
+   area switches do not reproduce. The Filter shows it as its own row with a
+   Turn off button (`focus()` / `clearFocus()` below) until the learner does. */
 (() => {
-  const picker = document.getElementById("practice-target");
-  const note = document.getElementById("practice-target-note");
-  if (!picker || !note) return;
   const RAY = "raytracing-0.1";
   let generation = 0;
   let current = null;
@@ -66,13 +75,23 @@
      refuses those under a focus anyway); refusing it here too could bounce a
      lane the q-matrix does not cover back and forth. Fails open until the
      q-matrix loads: the server is still the real filter. */
+  const userOff = (kc) => {
+    const row = window.getKcLattice?.()?.kcs?.[kc];
+    return !!(row && row.pref && row.pref.enabled === false);
+  };
+  const anyUserOff = () => {
+    const kcs = window.getKcLattice?.()?.kcs;
+    return !!kcs && Object.values(kcs).some((row) => row && row.pref && row.pref.enabled === false);
+  };
   const kcWhyOut = (kc) => {
     if (offCourses.has(courseOf(kc))) return "from a course you switched off";
+    if (userOff(kc)) return "on a concept you switched off";
     if (scope && !scope.has(kc)) return "on a concept outside Ray Tracing 0.1";
     return null;
   };
+  const filtering = () => !!(scope || offCourses.size || anyUserOff());
   const whyOut = (q) => {
-    if ((!scope && !offCourses.size) || !qmatrix || !q) return null;
+    if (!filtering() || !qmatrix || !q) return null;
     const kcs = qmatrix.get(Number(q.question_id ?? q.id ?? q.questionId)) || [];
     return kcs.map(kcWhyOut).find(Boolean) || null;
   };
@@ -109,7 +128,7 @@
      off a LeetCode concept's Practice ⤢), so an out pin is let go. On a page
      load nothing changed: a pin made by the link that opened the page stands. */
   const enforce = async ({ changed = false } = {}) => {
-    if ((!scope && !offCourses.size) || practiceMode !== "backend") return;
+    if (!filtering() || practiceMode !== "backend") return;
     await loadQmatrix();
     if (!qmatrix) return;
     // Script-global consts, not window properties (practice/timer.js, api.js).
@@ -132,33 +151,11 @@
     redirects(onScreen, practiceQuestionCount, { force: changed });
   };
 
-  const paint = (data) => {
-    current = data;
-    picker.value = data.target;
-    const focused = data.target === RAY;
-    const ids = new Set(data.kcs || []);
-    scope = focused ? ids : null;
-    const cy = window.deltaConceptGraphCy?.();
-    cy?.nodes().forEach((n) => {
-      if (focused && !ids.has(n.id())) n.style("display", "none");
-      else n.removeStyle("display");
-    });
-    cy?.edges().forEach((e) => {
-      if (focused && (!ids.has(e.source().id()) || !ids.has(e.target().id()))) e.style("display", "none");
-      else e.removeStyle("display");
-    });
-    /* `placement_ready` is a STORED ray placement's reading (the test itself
-       was retired 2026-09-26); said only when there is one. */
-    const placed = data.placement_ready?.length || 0;
-    note.textContent = focused
-      ? `0.1 + ${ids.size} concepts including prerequisites.${placed ? ` ${placed} ready from an earlier placement.` : ""}`
-      : "Practice across the curriculum.";
-  };
   const request = async (target) => {
     const res = await apiFetch("/api/practice/practice-target", target === undefined ? {} : {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ target }),
     });
-    if (!res.ok) throw new Error("Could not load practice focus. Check your connection and sign-in.");
+    if (!res.ok) throw new Error(`practice-target ${res.status}`);
     return res.json();
   };
   const refresh = async () => {
@@ -166,12 +163,25 @@
     try {
       const data = await request();
       if (mine !== generation) return;
-      paint(data);
-      picker.disabled = false;
+      current = data;
+      scope = data.target === RAY ? new Set(data.kcs || []) : null;
+      window.dispatchEvent(new CustomEvent("delta:practice-focus-changed", { detail: { target: data.target } }));
     } catch (err) {
-      if (mine === generation) { picker.disabled = true; note.textContent = err.message; }
+      console.warn("[practice-target] could not read the practice focus:", err);
     }
     recheck();
+  };
+  // The Filter's "Turn off" on the old focus row.
+  const clearFocus = async () => {
+    const mine = ++generation;
+    const data = await request("all");
+    if (mine !== generation) return false;
+    current = data;
+    scope = null;
+    await window.deltaRefreshKcLattice?.();
+    window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed"));
+    window.dispatchEvent(new CustomEvent("delta:practice-focus-changed", { detail: { target: data.target } }));
+    return true;
   };
   /* The course choice changed (courses.js toggle, course-pick.js), or the
      page just learned who the learner is: re-read which courses are off, then
@@ -183,26 +193,18 @@
     if (mine !== courseLoads) return;
     enforce({ changed }).catch((err) => console.warn("[practice-target] focus check failed:", err));
   };
-  picker.addEventListener("change", async () => {
-    const mine = ++generation;
-    picker.disabled = true;
-    try {
-      const data = await request(picker.value);
-      if (mine !== generation) return;
-      paint(data);
-      await window.deltaRefreshKcLattice?.();
-      window.dispatchEvent(new CustomEvent("delta:adaptive-state-changed"));
-    } catch (err) {
-      if (current) picker.value = current.target;
-      note.textContent = err.message;
-      return;
-    } finally { picker.disabled = false; }
-    enforce({ changed: true }).catch((err) => console.warn("[practice-target] focus check failed:", err));
-  });
-  window.PracticeTarget = { outOfScope, redirects };
+  window.PracticeTarget = {
+    outOfScope, redirects, clearFocus,
+    // {target, kcs} as the server last said, or null before it has.
+    focus: () => (current ? { target: current.target, kcs: current.kcs || [], label: current.target === RAY ? "Ray Tracing 0.1" : null } : null),
+  };
   loadQmatrix();
   window.addEventListener("delta:practice-mode-ready", refresh);
   window.addEventListener("delta:courses-changed", () => recheck(true));
-  window.addEventListener("delta:practice-target-graph-ready", () => { if (current) paint(current); });
+  // An area or a concept switched off on the graph (kg-toolbar.js Filter,
+  // kg-panel.js cog): the drill on screen may be one of them.
+  window.addEventListener("delta:kc-prefs-changed", (e) => {
+    if (e.detail && e.detail.enabled === false) enforce({ changed: true }).catch((err) => console.warn("[practice-target] focus check failed:", err));
+  });
   if (window.DDPracticeModeReady) refresh();
 })();

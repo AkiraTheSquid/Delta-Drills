@@ -1,35 +1,84 @@
 /* ================================================================
-   XP-GROUP.CSS — the Learner Home's bars inside a study group
-   (../practice/xp-group-view.js, Seth 2026-09-27): the group's name, then
-   one full-width row per member on one shared scale. (🪦 The Time / Graph /
-   Measure dropdowns that sat above them went 2026-09-29.)
+   XP-GROUP.CSS — the Learner Home's weekly leaderboard in a study group
+   (../practice/xp-group-view.js, Seth 2026-09-29): under your own bars,
+   one row per member, most XP first — rank, name, a bar scaled to the
+   leader's week, the number. (🪦 The one-chart-per-member rows of
+   2026-09-27/28 went with it.)
 
-   The chart marks themselves are xp-panel.css's; this file only lays out
-   the cards. Token-first, no hex (styles/watch.py).
+   Token-first, no hex (styles/watch.py).
    ================================================================ */
 
-.xp-group-name {
-  color: var(--muted-dim);
-  font-size: 12.5px;
-  margin: 0 0 9px;
+.xp-board {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 14px;
 }
-
-/* ---- the rows: one per member, full column width — the width
-   xp-group-view.js draws each chart at. ---------------------------------- */
-.xp-group-rows {
+.xp-board-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.xp-board-title {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.xp-board-note { color: var(--muted); font-size: 12.5px; margin: 0; }
+.xp-board-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.xp-group-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
+.xp-board-row {
+  align-items: center;
+  display: grid;
+  font-size: 13px;
+  gap: 10px;
+  grid-template-columns: 1.6em minmax(5em, 9em) minmax(0, 1fr) auto;
+}
+.xp-board-rank {
+  color: var(--muted);
+  font-family: var(--xp-mono);
+  font-size: 12px;
+  text-align: right;
+}
+.xp-board-row.is-first .xp-board-rank { color: var(--warn); font-weight: 600; }
+.xp-board-name {
+  color: var(--text);
   min-width: 0;
-  padding: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-/* You: a rule down the left in your own ink, nothing louder. */
-.xp-group-card.is-you { box-shadow: inset 3px 0 0 var(--xp-ink); }
-.xp-group-card .xp-chart-head { margin-bottom: 8px; }
+.xp-board-row.is-you .xp-board-name { color: var(--white); font-weight: 600; }
+.xp-board-bar {
+  background: rgb(var(--tint-rgb) / calc(0.07 * var(--tint-k)));
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+.xp-board-fill {
+  background: var(--xp-ink);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  opacity: 0.55;
+}
+.xp-board-row.is-you .xp-board-fill { opacity: 1; }
+.xp-board-xp {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 4.5em;
+  text-align: right;
+}
+.xp-board-row.is-you .xp-board-xp { color: var(--text); }
 .xp-you-tag {
   color: var(--muted);
   font-size: 11px;

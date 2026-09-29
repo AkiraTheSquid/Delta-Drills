@@ -5,23 +5,23 @@
  * logic (Seth, 2026-09-25: "make it modular … a setting to swap between the
  * two different versions for the nodes"):
  *
- *   1. NODE LOOK — a learner setting, remembered in localStorage:
- *        "label" — the original: a rounded box with the concept's name inside,
- *                  filled with its colour. The colour is the whole node, so
- *                  it reads at a glance.
- *        "dot"   — the AISC write-up's small circle with the name underneath.
- *      `node(scale, ink)` returns the Cytoscape style for the current look;
- *      a switch fires `delta:kg-look-changed` and the owners rebuild their
- *      stylesheets and re-run their layouts (a box and a dot are different
- *      sizes, so dagre has to place them again).
+ *   1. NODE LOOK — "label": a rounded box with the concept's name inside,
+ *      filled with its colour. (A "dot" look — the AISC write-up's small
+ *      circle, name underneath — is still here for the ?kgtune=1 harness, but
+ *      learners no longer get a switch: Seth, 2026-09-29, "remove everything
+ *      else" from the toolbar.) `node(scale, ink)` returns the style for the
+ *      current look; a switch fires `delta:kg-look-changed` and the owners
+ *      rebuild their stylesheets and re-run their layouts.
  *
  *   2. EDGES — soft slate instead of solid red, width by encompassing
- *      weight. Two styles, a learner setting (dd_kg_edges):
- *        "rows"   — the default: dagre's rows, each edge curved along
- *                   dagre's own bend points (an S-bend between neighbouring
- *                   rows), no optimizer (Seth, 2026-09-28: "the bending arms
- *                   where it looks more hierarchical … save this setting").
- *        "routed" — drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
+ *      weight. Two styles; learners always get the first (2026-09-29: "the
+ *      bending arms edge style as the one that stays"):
+ *        "rows"   — dagre's rows, each edge curved along dagre's own bend
+ *                   points (an S-bend between neighbouring rows), no
+ *                   optimizer (Seth, 2026-09-28: "the bending arms where it
+ *                   looks more hierarchical … save this setting").
+ *        "routed" — kg-tune.js only, this tab only (never remembered).
+ *      Drawn along ROUTES: after dagre, kg-layout.js (in a Worker)
  *      moves the nodes off dagre's rows and routes every edge around the
  *      nodes to cut crossings; the nodes glide there and each edge becomes an
  *      unbundled bezier through its route's control points (`routeLayout`).
@@ -35,7 +35,7 @@
  *      (66 of 268 on 2026-09-25) and they carry nothing the chain doesn't:
  *      they get the `kg-shortcut` class, are hidden unless on a highlighted
  *      chain, and are left OUT of the layout, so dagre routes around fewer
- *      crossings. A learner can show them again from the legend's Key.
+ *      crossings. A learner can show them again from the panel's cog (kg-panel.js).
  *
  * 🔴 Styles only. Nothing here adds, removes or reorders elements; the
  * instructor editor's add/remove contract (lesson-graph.js) is untouched.
@@ -43,16 +43,15 @@
 (function () {
   "use strict";
 
-  const LOOK_KEY = "dd_kg_node_look";
   const SHORTCUT_KEY = "dd_kg_shortcuts";
-  const EDGE_KEY = "dd_kg_edges";
   const LOOKS = ["label", "dot"];
   const EDGE_STYLES = ["rows", "routed"];
+  // Not read from storage: an old "dot"/"routed" pick (dd_kg_node_look,
+  // dd_kg_edges) from before 2026-09-29 must not strand a learner on a look
+  // they can no longer switch off.
   let look = "label";
   let edgeStyle = "rows";
   let showShortcuts = false;
-  try { const v = localStorage.getItem(LOOK_KEY); if (LOOKS.includes(v)) look = v; } catch (_) {}
-  try { const v = localStorage.getItem(EDGE_KEY); if (EDGE_STYLES.includes(v)) edgeStyle = v; } catch (_) {}
   const routed = () => edgeStyle === "routed";
   try { showShortcuts = localStorage.getItem(SHORTCUT_KEY) === "1"; } catch (_) {}
 
@@ -216,15 +215,25 @@
   };
   // The optimizer's answer is on the canvas (routes installed).
   const announce = (cy) => window.dispatchEvent(new CustomEvent("delta:kg-layout-done", { detail: { cy } }));
+  // `o.groupBy(id)` → a group key (or null): dagre lays each group out as one
+  // compound cluster, so a section's concepts sit together and kg-sections.js
+  // can hang one header over them (2026-09-29). Without it the sections
+  // interleave across the rows and a header's leader lines become a web.
   const routeLayout = (cy, o) => {
     const eles = layoutEles(cy);
-    const g = new window.dagre.graphlib.Graph({ multigraph: true });
+    const grouped = typeof o.groupBy === "function";
+    const g = new window.dagre.graphlib.Graph({ multigraph: true, compound: grouped });
     g.setGraph({ rankdir: o.rankDir || "BT", nodesep: o.nodeSep || 26, ranksep: o.rankSep || 150,
                  edgesep: o.edgeSep || 12, ranker: o.ranker || "network-simplex" });
     g.setDefaultEdgeLabel(() => ({}));
     eles.nodes().forEach((n) => {
       const bb = n.boundingBox({ includeLabels: true, includeOverlays: false });
       g.setNode(n.id(), { width: Math.max(1, bb.w), height: Math.max(1, bb.h) });
+      const key = grouped ? o.groupBy(n.id()) : null;
+      if (key == null) return;
+      const cid = "__kgGroup:" + key;
+      if (!g.hasNode(cid)) g.setNode(cid, {});
+      g.setParent(n.id(), cid);
     });
     eles.edges().forEach((e) => {
       g.setEdge(e.source().id(), e.target().id(), { weight: 1, minlen: 1 }, e.id());
@@ -406,10 +415,10 @@
   window.DeltaKgLook = {
     look: () => look,
     looks: () => LOOKS.slice(),
+    // Session-only switches for the ?kgtune=1 harness; no learner UI.
     setLook: (v) => {
       if (!LOOKS.includes(v) || v === look) return;
       look = v;
-      try { localStorage.setItem(LOOK_KEY, v); } catch (_) {}
       fire();
     },
     edgeStyle: () => edgeStyle,
@@ -417,7 +426,6 @@
     setEdgeStyle: (v) => {
       if (!EDGE_STYLES.includes(v) || v === edgeStyle) return;
       edgeStyle = v;
-      try { localStorage.setItem(EDGE_KEY, v); } catch (_) {}
       fire();
     },
     shortcutsShown: () => showShortcuts,
