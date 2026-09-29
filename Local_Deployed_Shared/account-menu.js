@@ -93,6 +93,10 @@
       });
     }
     window.AISCArticles?.openFor(wanted);
+    /* The address bar names the place, not just the page (deep-link.js):
+       /why-this-app, /how-this-app-works. REPLACE, because switchTab already
+       wrote the page's own path for this same click. */
+    window.DDDeepLink?.onAbout?.(id, { replace: true });
     requestAnimationFrame(() => {
       wanted.scrollIntoView({ block: "start", behavior: "smooth" });
     });

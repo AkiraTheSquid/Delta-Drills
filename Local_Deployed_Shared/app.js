@@ -126,11 +126,11 @@ const switchTab = (tabName, opts) => {
   if (isAdvancedOnlyTab(tabName) && !isAdvancedMode()) {
     // A tab that isn't in the nav must not be reachable by other means
     // either — e.g. a [data-goto-tab] button that outlived a mode flip.
-    // EXCEPT a solo pathname deep link (/notebooks, /knowledge-graph): that
-    // URL is an explicit request for that one page, it renders without app
-    // chrome anyway, and it's what embeds point at. Redirecting it would
-    // serve a chromeless Practice page to someone who asked for a notebook.
-    if (window.DDSoloRoute?.read?.() !== tabName) tabName = "practice";
+    // EXCEPT a pathname deep link (/notebooks, /targeted-practice): that URL
+    // is an explicit request for that one page, and it's what embeds point
+    // at. Redirecting it would serve Practice to someone who asked for a
+    // notebook. deep-link.js owns the route table.
+    if (window.DDDeepLink?.read?.() !== tabName) tabName = "practice";
   }
   tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
   pages.forEach((p) => p.classList.toggle("hidden", p.id !== `page-${tabName}`));
@@ -211,6 +211,11 @@ const switchTab = (tabName, opts) => {
   // Concept Chat mounts lazily (it imports a 387 KB bundle) and re-fits its
   // height to the viewport on every arrival. conceptual/conceptual_chat.js.
   if (tabName === "concept-chat") window.DDConceptualChat?.open();
+  /* The address bar follows the page (deep-link.js): every switch writes the
+     page's own pathname, so the URL is always a link to where you are and
+     Back returns to the page before. Last, so it records the page we
+     actually landed on after every fallback above. */
+  window.DDDeepLink?.onSwitch?.(tabName);
 };
 
 tabs.forEach((t) => {
@@ -732,7 +737,7 @@ if (authToken) {
 // A pathname deep link wins over the normal auth-aware landing page. Read it
 // before switching, then confirm the optimistic pre-paint class only after the
 // requested page is visible so no other page flashes first.
-const soloTab = window.DDSoloRoute?.read?.() || "";
+const linkedTab = window.DDDeepLink?.read?.() || "";
 /* A reload the LEARNER did not ask for should put them back where they were.
    The only one left is guest-session.js's last-resort recovery, and landing a
    learner somewhere else reads as the app having thrown their work away. Read once and clear: this is for the reload that
@@ -771,16 +776,29 @@ const firstRunTab = takeSessionTab(FIRST_RUN_TAB_KEY);
 /* A group invite in the address bar is somebody who just clicked a link a
    friend sent them, and every other landing rule would drop them on the
    Learner Home with the token still in the URL and nothing saying what it
-   was for. It sits under `soloTab` because a pathname deep link is an
-   explicit request for one chromeless page, and above the rest because
-   nothing else here was asked for by the person arriving.
+   was for. It sits above every other rule because nothing else here was
+   asked for by the person arriving (an invite link is `/?invite=…`, so the
+   pathname has no page of its own to compete with it).
 
    Reading it does NOT consume it: groups/groups_store.js clears the
    parameter only once the join has actually happened, so a reload before
    then still lands here. */
 const invitedToGroup = window.DDGroupStore?.inviteFromLocation?.() ? "groups" : "";
-switchTab(soloTab || invitedToGroup || recoveredTab || firstRunTab || (authToken ? "practice" : "welcome"));
+/* The two one-shot keys sit ABOVE the address bar since 2026-09-29. The URL
+   follows the page now (deep-link.js), so a reload keeps the pathname of
+   wherever the learner was — and both keys are written just before a reload
+   on purpose: a test-user swap reloads from /account and must still land a
+   never-used learner on the fork, and a recovery reload names the page the
+   learner was on, which is the page the URL names anyway. */
+const landedTab =
+  invitedToGroup || recoveredTab || firstRunTab || linkedTab || (authToken ? "practice" : "welcome");
+const bootSwitch = () => switchTab(landedTab);
+if (window.DDDeepLink?.booting) window.DDDeepLink.booting(bootSwitch);
+else bootSwitch();
 updateTabVisibility();
 window.DDSoloRoute?.apply?.();
+/* Open the place INSIDE the page a link named (an About section, an ARENA
+   notebook) and stamp this history entry, so Back can return to it. */
+window.DDDeepLink?.boot?.(document.querySelector(".page:not(.hidden)")?.id?.replace(/^page-/, "") || landedTab);
 // Auth is the Continue-with-Google button rendered into the guest banner by
 // initGoogleSignIn() above — no login/signup pages or CTA buttons to wire.

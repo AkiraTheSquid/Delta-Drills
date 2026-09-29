@@ -916,6 +916,8 @@ const ArenaNotebookView = (() => {
   const open = async (slug, exercise = null) => {
     const host = _host();
     if (!host || !canOpen(slug)) return false;
+    // The address bar names the section: /arena-0-1 (deep-link.js).
+    window.DDDeepLink?.onArena?.(slug);
     const request = ++openRequest;
 
     /* 🔴 REOPENING THE NOTEBOOK YOU ARE ALREADY IN DOES NOT REBUILD IT (Seth,

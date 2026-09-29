@@ -43,7 +43,13 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         treated as a route into the app.
         """
         local = super().translate_path(path)
-        if os.path.exists(local):
+        # 🔴 A DIRECTORY WITH NO index.html IS NOT A FILE TO VERCEL. `/practice`,
+        # `/groups` and `/course-builder` are both script folders and page
+        # routes (deep-link.js); production rewrites them to the app, while
+        # SimpleHTTPRequestHandler would 301 to `/practice/` and list the folder
+        # — and every relative `src=` would then resolve under /practice/.
+        bare_dir = os.path.isdir(local) and not os.path.exists(os.path.join(local, "index.html"))
+        if os.path.exists(local) and not bare_dir:
             return local
         route = path.split("?", 1)[0].split("#", 1)[0].strip("/")
         # No extension = a route, not an asset. `/foo.js` that is missing stays

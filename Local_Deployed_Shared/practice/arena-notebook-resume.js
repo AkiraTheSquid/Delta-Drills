@@ -122,6 +122,10 @@ const ArenaNotebookResume = (() => {
     const view = window.ArenaNotebook;
     if (!view || typeof view.open !== "function") return;
     resuming = true;
+    /* A REDIRECT, not a visit: the notebook takes over the /courses history
+       entry instead of stacking on it, or Back from the notebook would land on
+       /courses and be sent straight back here (deep-link.js). */
+    window.DDDeepLink?.redirecting?.();
     let pending;
     try {
       pending = Promise.resolve(view.open(saved.slug));

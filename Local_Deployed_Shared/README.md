@@ -9,12 +9,20 @@ The Vercel production branch is `deploy` and the public URL is:
 
 - https://delta-drills.vercel.app
 
-Direct page links use the ordinary app with global navigation hidden. Paths are
-case-insensitive; `/Knowledge-Graph` is the portfolio-facing default. Other
-routes: `/Why-This-App`, `/Courses`, `/Practice`, `/Notebooks`,
-`/Targeted-Practice`, `/Account`, and `/Split-Tool`. Each solo page keeps a faint
-"Open full app" exit in its top-left corner. (`/How-It-Works` was removed with
-the page it served on 2026-08-22 and now falls through to the full app.)
+Every page has a deep link (`deep-link.js`, 2026-09-29). A path opens the FULL
+app on that page, and the address bar follows you as you move around (Back /
+Forward work). Paths are case-insensitive and ONE segment (all asset urls are
+relative, so `/a/b` would break the page):
+
+- Pages: `/practice` (`/learner-home`), `/welcome`, `/course-pick`, `/courses`,
+  `/course-builder`, `/knowledge-graph`, `/groups`, `/account` (`/settings`),
+  `/concept-chat`, `/notebooks`, `/targeted-practice`, `/instructor-review`,
+  `/split-tool`; `/arena-0-1` etc. = one ARENA notebook section.
+- About page: `/why-this-app`, `/how-this-app-works`, `/how-it-works`,
+  `/the-case`, `/evidence`, `/aisc-proposal`; any other section or figure is
+  `/about-<id without aisc->`, e.g. `/about-placement`, `/about-fig-seth`.
+- `?solo=1` on any of them = the old chromeless view (one page, no navigation,
+  an "Open full app" exit) for embeds. `/diagnostic`, `/how-to-use` still work.
 
 ## Local development
 
@@ -161,6 +169,7 @@ cd /home/stellar-thread/Applications/Delta-Drills-Local
 - Keep deploy-only tweaks in the deploy worktree to avoid polluting local dev.
 
 ## Recent Changes
+- 2026-09-29 (**deep links for every page**, Seth: "create deeplinks for all the different pages … provide links within the about pages"): `deep-link.js` owns the route table; a path boots the full app there, `switchTab` pushes the page's path, popstate walks back. About articles/sections get their own paths; ~28 in-prose links in the write-up now go to the page or section they explain (`/courses`, `/practice`, `/knowledge-graph`, `/groups`, `/arena-0-1`, `#aisc-placement`…). `solo-route.js` is opt-in (`?solo=1`). Boot order: invite > recovery > first-run > path > default. `serve.py` now treats a folder with no index.html (`/practice`, `/groups`) as a route, like Vercel.
 - 2026-09-29 (**lesson figures — `lesson-figures.js` + `styles/lesson-figures.css`**, Seth's lesson feedback on math.barycentric-coordinates / q50018: "seeing a generated svg graph would be helpful … click and see the values of the points"): a ```` ```figure <name> ```` fence in a KP becomes an interactive figure. Mounted like jargon.js — a MutationObserver swaps `pre[data-fence^="figure"]`; `practice/lessons.js` already carried `data-fence`, `concept-graph/lesson-graph.js` now carries it for `figure` fences only. First builder: `barycentric` (click/drag/arrow keys move P; u, v, the three weights as bars from zero, `P = …·A + …·B + …·C`, inside / on edge / vertex / which bound failed; dashed parallelogram for the separate bounds; presets incl. the page's u = v = 0.6). Theme tokens only; verified dark + light, practice lesson + graph pane. **jargon.js**: one link per TERM per section (was per concept, which left "nondegenerate triangle" bare after "linear combinations" — same page), and the popup resolves by term (by concept it showed the FIRST term filed under that concept — latent on `math.dot-products-norms`, which has two); `.dd-figure` joined SKIP; `watch_jargon.py` asserts both.
 
 - 2026-09-27 (**Groups tab back; a group changes the Learner Home graphs**, Seth): the Groups tab returns as it was before 09-26 (account menu → Groups, `?group=` invites, `groups/`, `vendor/tiptap/`). In a group the Learner Home graph column becomes a Time + Graph dropdown over one card per member (or "Just me" = the solo two graphs) — `practice/xp-group-view.js`, `GET /api/practice/groups/xp`.

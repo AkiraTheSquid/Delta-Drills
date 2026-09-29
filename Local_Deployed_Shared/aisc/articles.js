@@ -70,6 +70,10 @@
     // The app routes on its own state, never the hash.
     e.preventDefault();
     var art = openFor(target);
+    // …but the address bar does follow it, as a path (/the-case,
+    // /about-placement), so every article and section is a link you can copy.
+    // ../deep-link.js; Back returns to where the link was clicked.
+    if (window.DDDeepLink && window.DDDeepLink.onAbout) window.DDDeepLink.onAbout(target.id);
     requestAnimationFrame(function () {
       if (art === target) {
         // An article: scroll only if its top is off screen or far down it.
