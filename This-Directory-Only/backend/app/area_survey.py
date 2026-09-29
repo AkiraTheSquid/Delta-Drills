@@ -56,7 +56,7 @@ _AREA_TO_Q = {a: q["id"] for q in QUESTIONS for a in q["areas"]}
 def pending(user_state) -> List[dict]:
     """The offered questions the learner has not answered or skipped yet."""
     survey = getattr(user_state, "area_survey", None) or {}
-    return [q for q in questions_for(getattr(user_state, "study_courses", None))
+    return [q for q in questions_for(_studied(user_state))
             if q["id"] not in survey]
 
 
@@ -79,6 +79,13 @@ def centers(user_state) -> Dict[str, float]:
     return {a: c for a in _AREA_TO_Q if (c := center(user_state, a)) is not None}
 
 
+def _studied(user_state) -> List[str]:
+    """The courses practice serves (course_registry.studied) — the same set,
+    so a LeetCode-only learner is not asked about PyTorch."""
+    from app import course_registry
+    return course_registry.studied(user_state)
+
+
 def questions_for(courses: Optional[List[str]]) -> List[dict]:
     """The questions for the courses being studied (None = never asked: ARENA
     only, as `course_registry` treats it)."""
@@ -91,7 +98,7 @@ def save(user_state, answers: Dict[str, str]) -> Dict[str, str]:
     an answer not in ANSWERS, raises ValueError. Every offered question left
     out is stored as SKIP (an empty dict = skip them all); earlier answers to
     other questions are kept."""
-    offered = [q["id"] for q in questions_for(getattr(user_state, "study_courses", None))]
+    offered = [q["id"] for q in questions_for(_studied(user_state))]
     for qid, ans in (answers or {}).items():
         if qid not in offered:
             raise ValueError(f"Unknown question {qid!r}.")

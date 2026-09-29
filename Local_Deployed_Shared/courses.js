@@ -546,7 +546,11 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ course: courseId, enabled }),
     });
-    if (!res.ok) throw new Error("Could not save that — check your connection and sign-in.");
+    if (!res.ok) {
+      // 400 = the server refused (e.g. unticking the last course): say why.
+      const body = res.status === 400 ? await res.json().catch(() => null) : null;
+      throw new Error((body && typeof body.detail === "string" && body.detail) || "Could not save that — check your connection and sign-in.");
+    }
     return res.json();
   };
 
@@ -658,17 +662,13 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
     const toggle = document.createElement("input");
     toggle.type = "checkbox";
     // The course name keeps each card's toggle distinguishable to a screen
-    // reader. The words are the course's own (course-registry.js): ARENA's
-    // toggle only mixes its exercises in early — its concepts are the main
-    // graph either way — while Delta Drills' is the only way into practice.
-    // A course left out at onboarding (practice/course-pick.js) is not
-    // studied at all — ARENA included — and switching it on is what brings
-    // it back, so its toggle says that instead.
+    // reader. The tick is `studied` — whether practice serves the course at
+    // all, ARENA included (Seth, 2026-09-29) — not its share: a learner
+    // whose ARENA box was empty was still being served ARENA's graph.
     const row = shareRow(course.id);
-    const notStudied = !!(row && row.studied === false);
-    const toggleWords = notStudied ? "Add to practice" : course.toggleLabel || "Add to practice";
+    const toggleWords = course.toggleLabel || "Add to practice";
     toggle.setAttribute("aria-label", `${course.label}: ${toggleWords}`);
-    toggle.checked = !!(row && row.enabled);
+    toggle.checked = !!(row && row.studied);
     toggle.disabled = !sharesReady;
     toggle.addEventListener("change", async () => {
       ++generation;
@@ -682,8 +682,9 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
         return;
       }
       toggle.disabled = false;
-      // ARENA's words depend on whether it is studied, which the save changed.
-      if (course.id === "arena") renderList();
+      // Repaint every row from the rows the save returned: they are the
+      // server's word on what practice now serves.
+      renderList();
       // The save already landed — a refresh hiccup here must not roll the
       // checkbox back and claim the change failed when it didn't.
       try {

@@ -9,7 +9,7 @@ are unchanged and the comments travelled with them.
 
 from __future__ import annotations
 
-from app import content_gaps, course_mix, diagnostic, kc_graph, leetcode_questions
+from app import content_gaps, course_mix, course_registry, diagnostic, kc_graph, leetcode_questions
 from app.practice.grading import select_question_for_difficulty
 from app.attempt_history import owed_question_ids
 from app.prioritization import (
@@ -310,10 +310,10 @@ def _pick_in_half(user_id, user_state, subtopic, focus_subtopic, half: set, reco
         if sub is None:
             return None, first_gap
         try:
-            return pick_for_subtopic(
+            picked = pick_for_subtopic(
                 user_id, user_state, sub, focus_subtopic, exclude_kcs=tried_kcs,
                 record=record, cooldown=cooldown,
-            ), first_gap
+            )
         except SubtopicDry as dry:
             if first_gap is None and dry.gap:
                 first_gap = dry.gap
@@ -325,6 +325,28 @@ def _pick_in_half(user_id, user_state, subtopic, focus_subtopic, half: set, reco
             else:
                 tried.add(sub)
             sub = None
+            continue
+        off = off_course_kcs(user_state, picked[1].id) if focus_subtopic is None else set()
+        if not off:
+            return picked, first_gap
+        # Every rule upstream already skips a switched-off course's concepts
+        # (kc_prefs.is_disabled → course_registry.course_off); this is the
+        # backstop for a path that forgets to, so the learner never sees it.
+        # Same termination as a dry pick: a new concept or a new subtopic.
+        if off - tried_kcs:
+            tried_kcs |= off
+        else:
+            tried.add(sub)
+        sub = None
+
+
+def off_course_kcs(user_state, qid: int) -> set:
+    """The concepts of drill `qid` that belong to a course the learner has
+    switched off (course_registry.course_off). Non-empty = never serve it
+    from the queue. 🔴 Seth, 2026-09-29: a LeetCode-only learner was served a
+    linear algebra drill — "make damn sure that doesn't happen again"."""
+    return {kc for kc in (kc_graph.question_kcs(qid) or ())
+            if course_registry.course_off(user_state, kc)}
 
 
 def _is_review_repeat(user_state, qid: int) -> bool:

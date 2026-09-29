@@ -2639,12 +2639,12 @@ t.manual_seed(0)
   <!-- course-registry.js is the shared course list courses.js (catalog cards),
        concept-graph/graph-views.js (the graph's course scope) and
        course-graph.js (the previews) read off window.DeltaCourseRegistry. -->
-  <script src="concept-graph/course-registry.js?v=2"></script>
+  <script src="concept-graph/course-registry.js?v=3"></script>
   <!-- courses-fork-gate.js must precede courses.js: courses.js hands the first
        Colab click to window.CoursesForkGate. Both need stats/predicted-links.js
        (loaded above) for colabUpstreamHref(). -->
   <script src="courses-fork-gate.js?v=1"></script>
-  <script src="courses.js?v=11"></script>
+  <script src="courses.js?v=12"></script>
   <!-- "Add your own course": the MCP prompt it copies, and the in-app
        builder it opens (data → graph → chat → page, in that order). -->
   <script src="course-builder/mcp-instructions.js?v=2"></script>
