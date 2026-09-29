@@ -2273,6 +2273,13 @@
   // Which ARENA section a concept belongs to ({id, label, color}); read by
   // graph-views.js so its condensed view groups by the same rule drawn here.
   window.deltaKcSection = (kc) => _sectionOf(kc);
+  // One concept's lesson as HTML — the segments, worked examples and "Watch
+  // out" the pane renders — for a surface that shows a lesson without this
+  // graph (course-builder/course-builder.js). Pure: `kp` is a
+  // lessons_structured.json KP or a lesson-less concept page.
+  window.deltaKcLessonHtml = (kp) =>
+    `<h2 class="kg2-title">${esc(kp.title || kp.kc || "")}</h2>` + renderSegments(kp) +
+    (kp.misconceptions_markdown ? `<div class="kg2-watch"><h3>Watch out</h3>${md(kp.misconceptions_markdown)}</div>` : "");
 
   window.deltaInitConceptGraph = function () {
     if (cy) { fitWrap(); cy.resize(); cy.fit(undefined, 36); return; }

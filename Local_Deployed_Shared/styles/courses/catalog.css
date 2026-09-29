@@ -1,34 +1,70 @@
-/* Courses tab — catalog: one card per course-registry.js entry.
+/* Courses tab — catalog: one row per course-registry.js entry, then the
+   "Add your own course" row (course-add.css).
    docs/spec-multi-course-catalog.md, 2026-09-25. The toggle round-trips
    GET/POST /api/practice/course-shares (courses.js); "View course" swaps
    in #courses-detail-view, styled by detail.css/modal.css. */
 
 .course-catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-/* `display: grid` above beats the UA's [hidden] rule — courses.js swaps the
+/* `display: flex` above beats the UA's [hidden] rule — courses.js swaps the
    two views with the `hidden` attribute, so restate it or both show. */
 .course-catalog-grid[hidden],
 .courses-detail-view[hidden] {
   display: none;
 }
 
+/* One course per ROW (2026-09-29, was a card grid): number · name + line ·
+   toggle + View. The accent rule on the left lights on hover/focus. */
 .course-catalog-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 20px 16px 18px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.course-catalog-card::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.course-catalog-card:hover,
+.course-catalog-card:focus-within {
+  border-color: var(--border-strong);
+}
+
+.course-catalog-card:hover::before,
+.course-catalog-card:focus-within::before {
+  opacity: 1;
+}
+
+.course-catalog-card-num {
+  min-width: 2ch;
+  color: var(--muted-dim);
+  font: 600 22px/1 ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .course-catalog-card-title {
-  margin: 0 0 4px;
-  font-size: 18px;
+  margin: 0 0 3px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text);
 }
@@ -43,8 +79,8 @@
 .course-catalog-card-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 16px;
 }
 
 .course-catalog-toggle {

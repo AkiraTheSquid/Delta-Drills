@@ -2,14 +2,17 @@
    COURSES.JS — Courses tab: a catalog of courses, each enable-able.
 
    Back to a list (docs/spec-multi-course-catalog.md, 2026-09-25): a
-   `#courses-list-view` card per `window.DeltaCourseRegistry.list()` entry
+   `#courses-list-view` row per `window.DeltaCourseRegistry.list()` entry
    (course-registry.js) with an enable toggle that reads/writes
    `GET/POST /api/practice/course-shares` — enabling a course sets its
    share above 0, which is what feeds it into practice (backend
    `app/course_mix.py`). "View course" swaps to `#courses-detail-view`,
    dispatched by the course's `detailKind`: "arena" renders the article
    below unchanged; "lesson-list" renders a small KC list that jumps into
-   the Knowledge Graph tab. A back control returns to the list.
+   the Knowledge Graph tab. A back control returns to the list. The list
+   ends with "Add your own course" (2026-09-29), which opens onto copying
+   MCP instructions for the learner's own AI or the in-app course builder
+   (course-builder/).
 
    ARENA's own render path — hero + source links + intro, then the
    alternating chapter rows, sections modal, in-app notebooks — is
@@ -619,9 +622,18 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
     detailView.replaceChildren(back, build(course));
   };
 
-  const buildCourseCard = (course) => {
+  // One course per ROW (Seth, 2026-09-29: "the courses in different rows …
+  // instead of being the current tiles"): its number, name and line on the
+  // left, the practice toggle and "View course" on the right.
+  const buildCourseCard = (course, index) => {
     const card = document.createElement("div");
     card.className = "course-catalog-card";
+
+    const num = document.createElement("span");
+    num.className = "course-catalog-card-num";
+    num.setAttribute("aria-hidden", "true");
+    num.textContent = String(index + 1).padStart(2, "0");
+    card.appendChild(num);
 
     const text = document.createElement("div");
     text.className = "course-catalog-card-text";
@@ -699,10 +711,71 @@ const arenaSlugForSection = (section) => String(section.number || "").trim().rep
     return card;
   };
 
+  /* "Add your own course" — the last row. It opens in place onto two
+     choices, stacked: copy a prompt that has the learner's own AI build the
+     course through the content MCP (course-builder/mcp-instructions.js), or
+     build it here, chat beside graph (course-builder/course-builder.js). */
+  let addOpen = false;
+  const buildAddRow = () => {
+    const wrap = document.createElement("div");
+    wrap.className = "course-add";
+    wrap.classList.toggle("is-open", addOpen);
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "course-add-toggle";
+    toggle.setAttribute("aria-expanded", String(addOpen));
+    toggle.innerHTML =
+      '<span class="course-add-plus" aria-hidden="true">+</span>' +
+      '<span class="course-add-text"><span class="course-add-title">Add your own course</span>' +
+      '<span class="course-add-sub">Build a concept graph, lessons and drills for a subject of your choosing.</span></span>';
+
+    const panel = document.createElement("div");
+    panel.className = "course-add-options";
+    panel.hidden = !addOpen;
+    panel.innerHTML = `
+      <div class="course-add-option">
+        <div class="course-add-option-text">
+          <div class="course-add-option-title">Copy the instructions for your AI</div>
+          <p>Paste them into Claude Code, or any AI that can use MCP. It builds your course through the Delta Drills content server, checking each step with the app's own validators.</p>
+        </div>
+        <button type="button" class="course-add-btn course-add-copy">Copy instructions</button>
+      </div>
+      <div class="course-add-option">
+        <div class="course-add-option-text">
+          <div class="course-add-option-title">Plan it here with the AI</div>
+          <p>Chat on the left and a course's graph on the right. Open any concept to see how it's doing, attach it to the conversation, or read its lesson. Planning only for now: the course itself is written through the instructions above.</p>
+        </div>
+        <button type="button" class="course-add-btn course-add-btn-solid course-add-build">Open the course builder →</button>
+      </div>`;
+
+    toggle.addEventListener("click", () => {
+      addOpen = !addOpen;
+      wrap.classList.toggle("is-open", addOpen);
+      toggle.setAttribute("aria-expanded", String(addOpen));
+      panel.hidden = !addOpen;
+    });
+    const copyBtn = panel.querySelector(".course-add-copy");
+    copyBtn.addEventListener("click", async () => {
+      const ok = await (window.DDCourseMcpInstructions?.copy?.() ?? Promise.resolve(false));
+      copyBtn.textContent = ok ? "Copied ✓" : "Copy failed. Try again.";
+      copyBtn.classList.toggle("is-done", ok);
+      setTimeout(() => {
+        copyBtn.textContent = "Copy instructions";
+        copyBtn.classList.remove("is-done");
+      }, 2200);
+    });
+    panel.querySelector(".course-add-build").addEventListener("click", () => window.DDCourseBuilder?.open());
+
+    wrap.appendChild(toggle);
+    wrap.appendChild(panel);
+    return wrap;
+  };
+
   const renderList = () => {
-    // listView (#courses-list-view) IS the grid — its class is set in
-    // index.html — so cards go straight in it, not into a second nested grid.
-    listView.replaceChildren(...registry().map(buildCourseCard));
+    // listView (#courses-list-view) IS the list — its class is set in
+    // index.html — so rows go straight in it, then the "add your own" row.
+    listView.replaceChildren(...registry().map(buildCourseCard), buildAddRow());
   };
 
   // Only a SUCCESSFUL load enables the toggles: a failed one keeps them

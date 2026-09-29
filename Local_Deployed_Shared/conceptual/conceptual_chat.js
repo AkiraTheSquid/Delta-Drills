@@ -39,7 +39,6 @@
   let bundle = null;
   let chat = null;
   let mountedFor = null; // identity the current thread belongs to
-  let inflight = null; // { ctrl, closed } of the answer streaming right now
 
   const loadBundle = () => {
     if (!bundle) {
@@ -78,11 +77,11 @@
       .replace(/\\\[([\s\S]*?)\\\]/g, (_, m) => `$$${m}$$`)
       .replace(/\\\(([\s\S]*?)\\\)/g, (_, m) => `$${m}$`))).join("");
 
-  const thread = () =>
-    (chat?.getMessages?.() || [])
+  // The visible thread of one <deep-chat>, in the server's shape.
+  const threadOf = (el) =>
+    (el?.getMessages?.() || [])
       .filter((m) => typeof m.text === "string" && m.text.trim() && (m.role === "user" || m.role === "ai"))
-      .map((m) => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }))
-      .slice(-MAX_SENT_TURNS);
+      .map((m) => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
 
   const errorText = async (res) => {
     try {
@@ -103,75 +102,87 @@
      is never shown and the page gets an uncaught exception. So a failure
      with nothing streamed yet closes the stream (which also clears the
      loading dots) and adds the error as its own message. */
-  const handler = async (_body, signals) => {
-    let text = "";
-    const fail = async (msg) => {
-      if (text) {
-        await signals.onResponse({ error: msg });
-      } else {
-        signals.onClose();
-        chat?.addMessage({ error: msg });
-      }
-    };
-    const fetcher = window.apiFetch;
-    const ctrl = new AbortController();
-    let closed;
-    const turn = { ctrl, closed: new Promise((r) => { closed = r; }) };
-    inflight = turn;
-    signals.stopClicked.listener = () => ctrl.abort();
-    try {
-      if (typeof fetcher !== "function") throw new Error("app not ready");
-      const res = await fetcher(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
-        body: JSON.stringify({ messages: thread() }),
-        signal: ctrl.signal,
-      });
-      if (!res.ok || !res.body) {
-        await fail(await errorText(res));
-        return;
-      }
-      signals.onOpen();
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += decoder.decode(value, { stream: true });
-        let cut;
-        while ((cut = buf.indexOf("\n\n")) >= 0) {
-          const line = buf.slice(0, cut).replace(/^data: ?/, "");
-          buf = buf.slice(cut + 2);
-          if (line === "[DONE]") continue;
-          let ev;
-          try { ev = JSON.parse(line); } catch (_) { continue; }
-          if (ev.delta) {
-            text += ev.delta;
-            await signals.onResponse({ text: normaliseMath(text), overwrite: true });
-          } else if (ev.error) {
-            await fail(ev.error);
+  /* One stream per chat surface: `getChat` returns its <deep-chat>, and
+     `body(thread)` turns the visible thread into the POST body — the Courses
+     tab's builder (course-builder/builder-chat.js) uses it to attach the
+     concepts picked on its graph. `inflight()` is that surface's own answer
+     in progress, so two chats never abort each other. */
+  const createStream = ({ getChat, body = (messages) => ({ messages }) }) => {
+    let inflight = null; // { ctrl, closed } of the answer streaming right now
+    const handler = async (_body, signals) => {
+      let text = "";
+      const chat = getChat();
+      const fail = async (msg) => {
+        if (text) {
+          await signals.onResponse({ error: msg });
+        } else {
+          signals.onClose();
+          chat?.addMessage({ error: msg });
+        }
+      };
+      const fetcher = window.apiFetch;
+      const ctrl = new AbortController();
+      let closed;
+      const turn = { ctrl, closed: new Promise((r) => { closed = r; }) };
+      inflight = turn;
+      signals.stopClicked.listener = () => ctrl.abort();
+      try {
+        if (typeof fetcher !== "function") throw new Error("app not ready");
+        const res = await fetcher(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+          body: JSON.stringify(body(threadOf(chat).slice(-MAX_SENT_TURNS))),
+          signal: ctrl.signal,
+        });
+        if (!res.ok || !res.body) {
+          await fail(await errorText(res));
+          return;
+        }
+        signals.onOpen();
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let cut;
+          while ((cut = buf.indexOf("\n\n")) >= 0) {
+            const line = buf.slice(0, cut).replace(/^data: ?/, "");
+            buf = buf.slice(cut + 2);
+            if (line === "[DONE]") continue;
+            let ev;
+            try { ev = JSON.parse(line); } catch (_) { continue; }
+            if (ev.delta) {
+              text += ev.delta;
+              await signals.onResponse({ text: normaliseMath(text), overwrite: true });
+            } else if (ev.error) {
+              await fail(ev.error);
+            }
           }
         }
+      } catch (err) {
+        if (err?.name !== "AbortError") {
+          console.warn("[concept-chat]", err);
+          await fail("Couldn't reach the tutor. Check your connection and try again.");
+        }
+      } finally {
+        signals.onClose();
+        if (inflight === turn) inflight = null;
+        closed();
       }
-    } catch (err) {
-      if (err?.name !== "AbortError") {
-        console.warn("[concept-chat]", err);
-        await fail("Couldn't reach the tutor. Check your connection and try again.");
-      }
-    } finally {
-      signals.onClose();
-      if (inflight === turn) inflight = null;
-      closed();
-    }
+    };
+    return { handler, inflight: () => inflight };
   };
+
+  const main = createStream({ getChat: () => chat });
 
   const build = () => {
     const el = document.createElement("deep-chat");
     el.id = "concept-chat";
     window.DDConceptualChatTheme?.apply(el);
     el.introMessage = { html: introHtml() };
-    el.connect = { stream: true, handler };
+    el.connect = { stream: true, handler: main.handler };
     el.remarkable = { math: true, linkTarget: "_blank", typographer: true };
     // Per account; no identity = no persistence, so two signed-out visitors
     // on one browser never see each other's thread.
@@ -211,26 +222,28 @@
     }
     // Replacing the component mid-answer: stop that answer first, or it keeps
     // spending the subscription into a detached element nobody can see.
-    inflight?.ctrl.abort();
+    main.inflight()?.ctrl.abort();
     chat = build();
     mountedFor = who;
     root.replaceChildren(chat);
   };
 
-  const newChat = async () => {
-    if (!chat) return;
-    // 🔴 ABORT, WAIT FOR THE CLOSE, THEN CLEAR. A still-streaming answer
-    // keeps writing into a cleared thread, and even once aborted, Deep Chat
-    // commits the half-streamed message on onClose — so clearing before the
-    // close lands leaves that fragment as the new thread's first message.
-    const turn = inflight;
+  // 🔴 ABORT, WAIT FOR THE CLOSE, THEN CLEAR. A still-streaming answer
+  // keeps writing into a cleared thread, and even once aborted, Deep Chat
+  // commits the half-streamed message on onClose — so clearing before the
+  // close lands leaves that fragment as the new thread's first message.
+  // Shared with the course builder's chat, which has the same lifecycle.
+  const resetChat = async (stream, el) => {
+    if (!el) return;
+    const turn = stream.inflight();
     if (turn) {
       turn.ctrl.abort();
       await turn.closed;
     }
-    chat.clearMessages(true);
-    chat.focusInput?.();
+    el.clearMessages(true);
+    el.focusInput?.();
   };
+  const newChat = () => resetChat(main, chat);
   document.getElementById("concept-chat-new")?.addEventListener("click", newChat);
 
   // Sign-in / guest adoption without a reload: re-key the thread if the tab
@@ -240,5 +253,5 @@
     if (chat && page && !page.classList.contains("hidden")) mount();
   });
 
-  window.DDConceptualChat = { open: mount, newChat };
+  window.DDConceptualChat = { open: mount, newChat, createStream, resetChat, loadBundle, normaliseMath };
 })();

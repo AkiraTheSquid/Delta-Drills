@@ -65,5 +65,6 @@
   - `normaliseMath` rewrites maths delimiters only OUTSIDE ``` fences and inline `code` (a regex `r"\("` must survive).
 
 ## Recent Changes
+- 2026-09-29: The SSE handler is a factory, `createStream({getChat, body})`, each with its own in-flight answer; exported with `loadBundle` + `normaliseMath` on `DDConceptualChat` so the course builder (`course-builder/builder-chat.js`) reuses the stream with its own request body. Concept Chat behaviour unchanged. `resetChat(stream, el)` (abort → await close → clear) is exported too, shared by both New chat buttons.
 - 2026-09-25: Critic fixes — New chat/remount abort the live stream (await close before clear); maths rewrite skips code; no `browserStorage` without an email.
 - 2026-09-25: Created. Concept Chat tab on Deep Chat 2.5.1: lazy bundle, SSE handler, ChatGPT-style theme (3 themes, phone), suggestions, New chat, Stop, error bubbles.
