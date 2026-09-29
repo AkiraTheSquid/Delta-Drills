@@ -203,6 +203,7 @@ Local_Deployed_Shared/practice/watch.py`.
   - Status: ACTIVE — keep as-is unless explicitly redesigning.
 
 ## Recent Changes
+- 2026-09-29 (**f-strings colour as ONE string**, Seth on dtype-astype: "the green quoting got misapplied … when you have the a quote that is multiple lines it doesn't have the green coloring"): `code-highlight.js` `?v=4` — the string regex ended an f-string at the first matching quote, so a quote inside a `{…}` field (`f"{d["k"]}"`, legal since 3.12) or a field spanning lines split the green. `fStringEnd(src, open)` now scans the literal with brace depth, `{{`/`}}` escapes and nested strings inside fields; a field that never closes falls back to the regex's own end.
 - 2026-09-29 (**one finish date**, Seth: "the date should be october but it's displaying [March] above. it doesn't need to be displayed in two different places"): `xp-panel.js` `?v=9` — with a date target the Finish stat IS the target date (sub = XP/day it asks; red while the pace would miss it, or once passed); the Target row no longer repeats the date, just "the Finish date" + Change. No target / XP-per-day target: Finish is still the projection at pace.
 - 2026-09-29 (**a course switched off leaves at once**, by d7e829, 8d1019ed): `practice-target.js` (`?v=4`) also enforces the Courses tab choice — a course switched off replaces its on-screen drill, discards a paused block on it, and releases a pinned concept of it via `KcPractice.release()` (`kc-practice.js` `?v=13`: `stop()` minus its scoped-only guard). `courses.js` `?v=8`.
 

@@ -199,6 +199,74 @@ const DeltaCodeHighlight = (() => {
     return "var";
   };
 
+  /* Where a one-quote Python f-string really ends. Since 3.12 (PEP 701) a
+     replacement field may span lines and reuse the outer quote —
+     f"{n} x {
+         z.element_size()} bytes" — and the regex, which ends every one-quote
+     string at its newline, closed the string there and coloured everything
+     after it inside-out (Seth on torch.dtype-astype, 2026-09-28). Scans from
+     the opening quote: `{{` is a literal brace, `{` opens a field, a quote
+     inside a field is a nested string, and only a quote or a newline OUTSIDE
+     every field ends it. Returns -1 when the field never closes (a learner
+     mid-typing `f"{x`): the caller keeps the line-bounded end, so one
+     unfinished brace does not turn the rest of the cell into a string. */
+  const fStringEnd = (src, open) => {
+    const quote = src[open];
+    // One frame per open replacement field: `br` counts (, [ and { of the
+    // expression (so a dict literal's `}` or a slice's `:` is not the
+    // field's), `spec` turns true at the format-spec colon, after which the
+    // text is literal — `f"{x:#x}"` is a spec, not a comment.
+    const fields = [];
+    let i = open + 1;
+    while (i < src.length) {
+      const ch = src[i];
+      const top = fields[fields.length - 1];
+      if (!top) {
+        if (ch === "\\") { i += 2; continue; }
+        if (ch === quote) return i + 1;
+        if (ch === "\n") return i;
+        if (ch === "{" && src[i + 1] === "{") { i += 2; continue; }
+        if (ch === "{") fields.push({ br: 0, spec: false });
+        i += 1;
+        continue;
+      }
+      if (top.spec) {
+        if (ch === "{") fields.push({ br: 0, spec: false });
+        else if (ch === "}") fields.pop();
+        else if (ch === quote || ch === "\n") return -1;
+        i += 1;
+        continue;
+      }
+      if (ch === "#") {
+        // A comment inside a multi-line field: its braces and quotes are text.
+        const nl = src.indexOf("\n", i);
+        if (nl < 0) return -1;
+        i = nl + 1;
+        continue;
+      }
+      if (ch === "'" || ch === '"') {
+        // A string inside a field: skip to its own closing quote(s).
+        const triple = src.startsWith(ch.repeat(3), i);
+        if (triple) {
+          const close = src.indexOf(ch.repeat(3), i + 3);
+          if (close < 0) return -1;
+          i = close + 3;
+          continue;
+        }
+        let j = i + 1;
+        while (j < src.length && src[j] !== ch && src[j] !== "\n") j += src[j] === "\\" ? 2 : 1;
+        i = j + 1;
+        continue;
+      }
+      if (ch === "(" || ch === "[" || ch === "{") top.br += 1;
+      else if ((ch === ")" || ch === "]") && top.br > 0) top.br -= 1;
+      else if (ch === "}") { if (top.br > 0) top.br -= 1; else fields.pop(); }
+      else if (ch === ":" && top.br === 0 && src[i + 1] !== "=") top.spec = true;
+      i += 1;
+    }
+    return -1;
+  };
+
   /* Tokenise `src` into a flat list of {start, end, cls}. Plain runs
      (whitespace, brackets, anything the regex did not claim) are emitted as
      `null` class so the caller can still splice the ghost into them. */
@@ -226,9 +294,19 @@ const DeltaCodeHighlight = (() => {
       else if (g.name !== undefined) {
         cls = classifyName(src, g.name, m.index, m.index + m[0].length, prevWord, L);
       }
-      out.push({ start: m.index, end: m.index + m[0].length, cls });
+      let end = m.index + m[0].length;
+      if (g.string !== undefined && L === LANGS.python) {
+        const prefix = /^[rRbBuUfF]*/.exec(g.string)[0];
+        const q = m.index + prefix.length;
+        // Triple-quoted f-strings already span lines in the regex; leave them.
+        if (/[fF]/.test(prefix) && src[q + 1] !== src[q]) {
+          const real = fStringEnd(src, q);
+          if (real > 0) { end = real; TOK.lastIndex = end; }
+        }
+      }
+      out.push({ start: m.index, end, cls });
       prevWord = g.name !== undefined ? g.name : "";
-      at = m.index + m[0].length;
+      at = end;
       if (m[0].length === 0) TOK.lastIndex += 1; // paranoia: never spin
     }
     if (at < src.length) out.push({ start: at, end: src.length, cls: null });
