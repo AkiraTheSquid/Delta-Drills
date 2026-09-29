@@ -321,7 +321,7 @@ print("\n--- an exhausted supported rung repeats; it never falls through to solo
 # narrowing entirely, and the difficulty picker handed a `solo` problem to a
 # learner sitting on `Worked`. Twenty attempts against nine drills is the
 # ordinary state of a concept revisited, not an edge case.
-from app import prioritization  # noqa: E402
+from app import lessons, prioritization  # noqa: E402
 
 LADDER_KC = "torch.tensor-model"
 POOL = list(kc_graph.questions_for_kc(LADDER_KC))
@@ -476,10 +476,27 @@ _stage, _ids, _gap = narrowed_for("FFFF", [_on_screen], answered=[], last_served
 check("the drill on screen is not the only thing offered after a skip",
       _stage == "partial" and _ids and _on_screen not in _ids and _gap is None,
       f"stage={_stage} servable={_ids} gap={_gap}")
+_stage, _ids, _gap = narrowed_for("FFFF", [], answered=[], last_served=None,
+                                  scores={_on_screen: 30})
+check("...and with nothing shown yet that band is served as usual",
+      _stage == "partial" and _ids == [_on_screen] and _gap is None,
+      f"stage={_stage} servable={_ids} gap={_gap}")
+
+# 🔴 EXAMPLES FIRST AMONG THE UNSHOWN (2026-09-29). A skipped example drill is
+# unanswered but not unseen; kept as the preferred pool it was the band on its
+# own, the on-screen guard called the rung dry, and twelve new learners were
+# walked off python.values-and-names (one example drill, q570) after a Skip.
+_examples = [q for q in _rung_floor if lessons.has_worked_example(q)]
 _stage, _ids, _gap = narrowed_for("FFFF", [_on_screen], answered=[], last_served=None,
                                   scores={_on_screen: 30})
-check("...and with nothing on screen that band is served as usual",
-      _stage == "partial" and _ids == [_on_screen] and _gap is None,
+check("a skipped example drill yields to the examples not yet shown",
+      _stage == "partial" and _ids and _on_screen not in _ids
+      and set(_ids) <= set(_examples) and _gap is None,
+      f"stage={_stage} servable={_ids} examples={_examples} gap={_gap}")
+_stage, _ids, _gap = narrowed_for("FFFF", _examples, answered=[], last_served=_examples[-1])
+check("every example shown and skipped: the unaided drills are offered, no gap",
+      _stage == "partial" and _ids and _ids != [_examples[-1]] and _gap is None
+      and set(_ids) - set(_examples),
       f"stage={_stage} servable={_ids} gap={_gap}")
 
 # 🔴 A MISS IS OWED A RETRY (2026-09-11). Promotion off Solo needs six DISTINCT
